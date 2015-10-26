@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * John Dallaway - Handle reduced build step input resource count (bug 366039)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -329,18 +330,28 @@ public class BuildDescription implements IBuildDescription {
 
 			}
 
-			if(!removed && !rebuild){
+			if(!removed){
 				for (BuildResource rc : rcs) {
 					if(rc.needsRebuild()){
 						if(DbgUtil.DEBUG)
 							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " needs rebuild");	//$NON-NLS-1$	//$NON-NLS-2$
 						rebuild = true;
-						break;
-					} else if(rc.isRemoved()){
+					}
+					if(rc.isRemoved()){
 						if(DbgUtil.DEBUG)
 							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " is removed");	//$NON-NLS-1$ 	//$NON-NLS-2$
+
+						// Remove the obsolete input resource from the action (Bug #366039)
+						for (BuildIOType type : action.getPrimaryTypes(true)) {
+							for (BuildResource res : (BuildResource[]) type.getResources()) {
+								if (res.equals(rc)) {
+									action.removeResource(type, rc, true);
+									break;
+								}
+							}
+						}
+
 						rebuild = true;
-						break;
 					}
 				}
 			}
@@ -356,6 +367,9 @@ public class BuildDescription implements IBuildDescription {
 						DbgUtil.trace("setting remove state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
 
 					((BuildResource)outRc).setRemoved(true);
+
+					// Delete the obsolete output file (Bug #366039)
+					deleteResource(outRc);
 				}
 
 			} else if(rebuild){
@@ -376,6 +390,23 @@ public class BuildDescription implements IBuildDescription {
 				DbgUtil.trace("<<leaving..");	//$NON-NLS-1$
 
 			return VISIT_CONTINUE;
+		}
+	}
+
+	private void deleteResource(IBuildResource rc) {
+		if (rc.isProjectResource()) {
+			final IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(rc.getFullPath());
+			if ((resource != null) && resource.isDerived(IResource.CHECK_ANCESTORS)) {
+				if (DbgUtil.DEBUG) {
+					DbgUtil.trace("deleting resource " + locationToRel(rc.getLocation()).toString()); //$NON-NLS-1$
+				}
+				try {
+					resource.delete(false, null);
+				} catch (CoreException e) {
+					ManagedBuilderCorePlugin.log(new Status(IStatus.WARNING,
+							ManagedBuilderCorePlugin.PLUGIN_ID,	IStatus.OK, e.getMessage(), e));
+				}
+			}
 		}
 	}
 

@@ -76,6 +76,8 @@ public class ArduinoTool {
 	public Properties getToolProperties() {
 		Properties properties = new Properties();
 		properties.put("runtime.tools." + name + ".path", ArduinoBuildConfiguration.pathString(getInstallPath())); // $NON-NLS-1$ //$NON-NLS-1$//$NON-NLS-2$
+		properties.put("runtime.tools." + name + '-' + version + ".path", //$NON-NLS-1$//$NON-NLS-2$
+				ArduinoBuildConfiguration.pathString(getInstallPath())); // $NON-NLS-1$
 		return properties;
 	}
 

@@ -327,18 +327,32 @@ public class ArduinoManager {
 							continue;
 						}
 
-						Path entryPath = installPath.resolve(entry.getName());
+						// Magic file for git tarballs
+						Path path = Paths.get(entry.getName());
+						if (path.endsWith("pax_global_header")) { //$NON-NLS-1$
+							continue;
+						}
+
+						// Strip the first directory of the path
+						Path entryPath = installPath.resolve(path.subpath(1, path.getNameCount()));
+
 						Files.createDirectories(entryPath.getParent());
 
 						if (entry instanceof TarArchiveEntry) {
 							TarArchiveEntry tarEntry = (TarArchiveEntry) entry;
 							if (tarEntry.isLink()) {
-								Path linkPath = installPath.resolve(tarEntry.getLinkName());
+								Path linkPath = Paths.get(tarEntry.getLinkName());
+								linkPath = installPath.resolve(linkPath.subpath(1, linkPath.getNameCount()));
+								Files.deleteIfExists(entryPath);
 								Files.createSymbolicLink(entryPath, entryPath.getParent().relativize(linkPath));
+							} else if (tarEntry.isSymbolicLink()) {
+								Path linkPath = Paths.get(tarEntry.getLinkName());
+								Files.deleteIfExists(entryPath);
+								Files.createSymbolicLink(entryPath, linkPath);
 							} else {
 								Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
 							}
-							if (!isWin) {
+							if (!isWin && !tarEntry.isSymbolicLink()) {
 								int mode = tarEntry.getMode();
 								Files.setPosixFilePermissions(entryPath, toPerms(mode));
 							}
@@ -352,22 +366,6 @@ public class ArduinoManager {
 					}
 				}
 
-				// Special hack for Intel - remove the pax_global_header file
-				File paxFile = new File(installPath.toFile(), "pax_global_header"); //$NON-NLS-1$
-				if (paxFile.exists()) {
-					paxFile.delete();
-				}
-
-				// Fix up directory
-				File[] children = installPath.toFile().listFiles();
-				if (children.length == 1 && children[0].isDirectory()) {
-					// make that directory the install path
-					Path childPath = children[0].toPath();
-					Path tmpPath = installPath.getParent().resolve("_t"); //$NON-NLS-1$
-					Files.move(childPath, tmpPath);
-					Files.delete(installPath);
-					Files.move(tmpPath, installPath);
-				}
 				return Status.OK_STATUS;
 			} catch (IOException | CompressorException | ArchiveException e) {
 				error = e;

@@ -244,6 +244,7 @@ public class ArduinoBuildConfiguration {
 			properties = new Properties();
 			properties.put("runtime.platform.path", platform.getInstallPath().toString()); //$NON-NLS-1$
 			properties.put("runtime.ide.version", "10607"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("software", "ARDUINO"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
 			properties.put("build.path", config.getName()); //$NON-NLS-1$
 			properties.put("build.variant.path", //$NON-NLS-1$
@@ -369,7 +370,7 @@ public class ArduinoBuildConfiguration {
 		properties.put("includes", includes); //$NON-NLS-1$
 
 		Path platformPath = platform.getInstallPath();
-		buildModel.put("platform_path", pathString(platformPath)); //$NON-NLS-1$
+		buildModel.put("platform_path", pathString(platformPath).replace("+", "\\+")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		buildModel.put("platform_srcs", //$NON-NLS-1$
 				platform.getSources(properties.getProperty("build.core"), properties.getProperty("build.variant"))); //$NON-NLS-1$ //$NON-NLS-2$
 

@@ -18,8 +18,8 @@
 	<properties>
 		<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/shared/common/gdb/gdb-all/bin</gdbPathOption>
 		<gdbTestSuite>AutomatedSuite.java</gdbTestSuite>
+		<dsf.gdb.tests.timeout.multiplier>1</dsf.gdb.tests.timeout.multiplier>
 	</properties>
-	
 	<build>
 		<plugins>
 			<plugin>
@@ -58,7 +58,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>false</useUIHarness>
-					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -XX:MaxPermSize=256M ${gdbPathOption}</argLine>
+					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -XX:MaxPermSize=256M ${gdbPathOption} -Ddsf.gdb.tests.timeout.multiplier=${dsf.gdb.tests.timeout.multiplier}</argLine>
 					<includes>
 						<include>**/${gdbTestSuite}</include>
 					</includes>

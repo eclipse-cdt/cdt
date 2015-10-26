@@ -352,6 +352,12 @@ public class ArduinoManager {
 					}
 				}
 
+				// Special hack for Intel - remove the pax_global_header file
+				File paxFile = new File(installPath.toFile(), "pax_global_header"); //$NON-NLS-1$
+				if (paxFile.exists()) {
+					paxFile.delete();
+				}
+
 				// Fix up directory
 				File[] children = installPath.toFile().listFiles();
 				if (children.length == 1 && children[0].isDirectory()) {

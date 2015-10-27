@@ -71,6 +71,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
+
 public class StackFramesVMNode extends AbstractDMVMNode 
     implements IElementLabelProvider, IElementMementoProvider, IElementPropertiesProvider
 {
@@ -759,7 +760,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
     	            // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
     	            // refresh the whole stack trace with every step would slow down stepping too much.
     	            if (triggeringCtx == null || !runControlService.isStepping(triggeringCtx)) {
-    	                parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+    	                parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT | IModelDelta.STATE);
     	            }
     	            
     	            rm.done();

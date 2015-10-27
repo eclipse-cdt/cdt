@@ -57,6 +57,7 @@ import org.junit.runners.Suite;
 		GDBProcessesTest.class,
 		PostMortemCoreTest.class,
 		CommandTimeoutTest.class,
+		GroupingTest.class,
 		/* Add your test class here */
 })
 public class SuiteGdb {

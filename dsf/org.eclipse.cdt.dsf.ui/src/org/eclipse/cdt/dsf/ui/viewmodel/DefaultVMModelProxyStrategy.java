@@ -528,7 +528,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 if (delta == null) {
                     delta = parentDelta.addNode(vmc, IModelDelta.NO_CHANGE);
                 }
-                callChildNodesToBuildDelta(node, childNodesWithDeltaFlags, delta, event, rm);
+                callChildNodesToBuildDelta(node, childNodesWithDeltaFlags, delta, event, countingRm);
                 count++;
             }
             countingRm.setDoneCount(count);

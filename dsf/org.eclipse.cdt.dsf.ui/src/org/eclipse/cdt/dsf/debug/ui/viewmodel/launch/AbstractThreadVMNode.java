@@ -258,7 +258,7 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
         	rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
         	rm.done();
         	return;
-        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
+       } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             getThreadVMCForModelProxyInstallEvent(
                 parentDelta,
                 new DataRequestMonitor<VMContextInfo>(getExecutor(), rm) {

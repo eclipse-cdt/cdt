@@ -128,7 +128,22 @@ public interface IVMNode extends IElementContentProvider
      * given event.
      */
     public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm);
-
+    
+    /**
+     * This method allows the view model provider to optimize 
+     * the generated Delta by allowing VM Nodes to filter-out children contexts, when 
+     * they are not contextually relevant for delta generation. The default implementation 
+     * doesn't filter anything.
+     *  
+     * @param parentDelta The parent delta in the processing of this event.
+     * @param event The event to check for the data model object.
+     * @param contexts[] The contexts to be verified as valid
+     * @param Request monitor for the array of elements corresponding to the 
+     * given event. 
+     */
+    public default void filterContexts(VMDelta parentDelta, Object event, IVMContext[] contexts, DataRequestMonitor<IVMContext[]> rm) {
+    	rm.done(contexts);
+    }
     /**
      * Releases the resources held by this node.
      */

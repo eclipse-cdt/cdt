@@ -208,8 +208,16 @@ public class GDBRunControl extends MIRunControl {
 	 */
 	@Override
     public void getExecutionContexts(IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
+		// user groups support 
+		IGDBGrouping groupService = getServicesTracker().getService(IGDBGrouping.class);
+		if (groupService != null) {
+			groupService.getExecutionContexts(containerDmc, rm);
+			return;
+		}
+		// end user group support
+		
 		fProcService.getProcessesBeingDebugged(
-				containerDmc,
+				containerDmc != null ? containerDmc : fConnection.getContext(),
 				new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {

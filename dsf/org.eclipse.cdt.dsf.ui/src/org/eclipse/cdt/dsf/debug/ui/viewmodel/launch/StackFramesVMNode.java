@@ -71,6 +71,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
+
 public class StackFramesVMNode extends AbstractDMVMNode 
     implements IElementLabelProvider, IElementMementoProvider, IElementPropertiesProvider
 {
@@ -609,6 +610,18 @@ public class StackFramesVMNode extends AbstractDMVMNode
         } else if (e instanceof FullStackRefreshEvent &&
             !(((FullStackRefreshEvent)e).getTriggeringEvent() instanceof IContainerSuspendedDMEvent) ) 
         {
+        	// Is the grand parent of Stack Frame a process? 
+        	// If so, is it for real of just the delta-build mechanism?
+//        	if (e instanceof IDMEvent<?>) {
+//        		IDMEvent<?> dmEvent = (IDMEvent<?>)e;
+//        		IDMContext dmc = DMContexts.getAncestorOfType(dmEvent.getDMContext(), IContainerDMContext.class);
+//        		if (dmc != null) {
+//        			IContainerDMContext proc = (IContainerDMContext) dmc;
+//        			
+//        		}
+//        	}
+        	
+        	
         	return IModelDelta.CONTENT;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
@@ -759,7 +772,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
     	            // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
     	            // refresh the whole stack trace with every step would slow down stepping too much.
     	            if (triggeringCtx == null || !runControlService.isStepping(triggeringCtx)) {
-    	                parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+    	                parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT | IModelDelta.STATE);
     	            }
     	            
     	            rm.done();

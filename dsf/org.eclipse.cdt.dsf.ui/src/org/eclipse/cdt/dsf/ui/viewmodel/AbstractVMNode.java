@@ -61,6 +61,12 @@ abstract public class AbstractVMNode implements IVMNode {
         rm.done();
     }
     
+    @Override 
+    public void filterInvalidPaths(VMDelta parentDelta, Object event, IVMContext[] contexts, DataRequestMonitor<IVMContext[]> rm) {
+    	// default implementation does not filter any context
+    	rm.done(contexts);
+    }
+    
     protected boolean isDisposed() { 
         return fDisposed;
     }

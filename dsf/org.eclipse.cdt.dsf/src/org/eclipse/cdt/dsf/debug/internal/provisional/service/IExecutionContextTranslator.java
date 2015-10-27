@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Texas Instruments, Inc. and others.
+ * Copyright (c) 2010, 2015 Texas Instruments, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.debug.internal.provisional.service;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
@@ -32,34 +33,36 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 public interface IExecutionContextTranslator extends IDsfService {
 	
 	/**
-	 * returns true if all DM contexts can be grouped into one container. 
+	 * Returns true if all specified execution contexts can be grouped together. 
 	 * 
-	 * @param context
-	 * @param rm
+	 * @param contexts The list of execution contexts to be grouped
+	 * @param rm Contains True if all specified contexts can be grouped together.
+	 *           Contains False otherwise.
 	 */
     void canGroup(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
     
 	/**
-	 * returns true if all DM contexts can be ungrouped.
+	 * Returns true if all specified execution contexts are groups, that can be un-grouped.  
 	 * 
-	 * @param context
-	 * @param rm
+	 * @param contexts The list of execution contexts to be un-grouped
+	 * @param rm Contains True if all specified contexts can be un-grouped.
+	 *           Contains False otherwise.
 	 */
     void canUngroup(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
     
     /**
      * Groups the specified execution contexts. 
      * 
-     * @param context
-     * @param requestMonitor
+     * @param contexts The list of contexts to group together, into a new group
+     * @param requestMonitor Returns the group created by the grouping action
+     * @since 2.7
      */
-    void group(IExecutionDMContext[] contexts, RequestMonitor requestMonitor);
+    void group(IExecutionDMContext[] contexts, DataRequestMonitor<IContainerDMContext> rm);
     
     /**
-     * Ungroups the specified execution contexts.
+     * Un-groups the specified execution contexts. 
      *  
-     * @param context
-     * @param requestMonitor
+     * @param contexts The list of groups to un-group
      */
-    void ungroup(IExecutionDMContext[] contexts, RequestMonitor requestMonitor);
+    void ungroup(IExecutionDMContext[] contexts, RequestMonitor rm);
 }

@@ -77,7 +77,12 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
     private IElementLabelProvider fLabelProvider;
     
 	public AbstractContainerVMNode(AbstractDMVMProvider provider, DsfSession session) {
-		super(provider, session, IRunControl.IContainerDMContext.class);
+		this(provider, session, IRunControl.IContainerDMContext.class);
+	}
+
+	public AbstractContainerVMNode(AbstractDMVMProvider provider, DsfSession session,
+			Class<? extends IDMContext> dmcClassType) {
+		super(provider, session, dmcClassType);
 		fLabelProvider = createLabelProvider();
 	}
 

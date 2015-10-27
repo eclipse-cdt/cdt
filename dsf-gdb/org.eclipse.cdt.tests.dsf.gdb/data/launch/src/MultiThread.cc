@@ -106,5 +106,7 @@ int main(int argc, char *argv[])
 	ThreadBarrierDestroy(&barrier_finish);
 	ThreadSemaphoreDestroy(&sem_start);
 
+	// Delay exit of main thread for some time
+	SLEEP(30);
 	return 0;
 }

@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -61,8 +62,11 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMData;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
@@ -100,6 +104,7 @@ public class SyncUtil {
 	private static IGDBProcesses fProcessesService;
 
 	private static ISourceLookup fSourceLookup;
+	private static IGDBGrouping fGroupingService;
 
 	// Initialize some common things, once the session has been established
 	public static void initialize(DsfSession session) throws Exception {
@@ -119,6 +124,7 @@ public class SyncUtil {
 				fMemory = tracker.getService(IMemory.class);
 				fCommandFactory = fGdbControl.getCommandFactory();
 				fSourceLookup = tracker.getService(ISourceLookup.class);
+				fGroupingService = tracker.getService(IGDBGrouping.class);
 
 				tracker.dispose();
 			}
@@ -555,7 +561,8 @@ public class SyncUtil {
     		runToLine,
     		runToLocation,
     		step,
-    		waitForStop
+    		waitForStop,
+    		groupUngroup
     	}
 
 		/**
@@ -585,6 +592,7 @@ public class SyncUtil {
     		sTimeouts.put(ETimeout.runToLocation, 10000);	// 10 seconds    		
     		sTimeouts.put(ETimeout.step, 1000);
     		sTimeouts.put(ETimeout.waitForStop, 10000);	// 10 seconds
+    		sTimeouts.put(ETimeout.groupUngroup, 1000);
     	}
 
 		/**
@@ -962,4 +970,161 @@ public class SyncUtil {
 
 		return query.get();
 	}
+	
+	
+	//
+	// grouping-related utility functions:
+	//
+	
+	/** creates a group, with the passed execution contexts as content. Returns the created group's context */
+	public static IGroupDMContext createGroup(IExecutionDMContext[] execDmcs) throws Throwable {
+		return createGroup(execDmcs, DefaultTimeouts.get(ETimeout.groupUngroup));
+	}
+	
+	private static IGroupDMContext createGroup(IExecutionDMContext[] execDmcs, int timeout) throws Throwable {
+		Query<IGroupDMContext> queryGroup = new Query<IGroupDMContext>() {
+			@SuppressWarnings("restriction")
+			@Override
+			protected void execute(final DataRequestMonitor<IGroupDMContext> rm) {
+		    	fGroupingService.group(
+		    			execDmcs,
+		    			new DataRequestMonitor<IContainerDMContext>(fGroupingService.getExecutor(), rm) {
+		    				@Override
+		    				protected void handleSuccess() {
+		    					assertTrue("Unexpected group type: " + getData().getClass().getName(),
+		    							   getData() instanceof IGroupDMContext);
+		    					rm.done((IGroupDMContext)getData());
+		    				}
+		    			});
+			}
+		};
+		fGroupingService.getExecutor().submit(queryGroup);
+		return queryGroup.get(TestsPlugin.massageTimeout(timeout), TimeUnit.MILLISECONDS);
+	}
+	
+	
+	/** Returns the list of groups for the current session */
+	public static List<IGroupDMContext> getGroups() throws Throwable {
+		return getGroups(DefaultTimeouts.get(ETimeout.groupUngroup));
+	}
+	
+	/** Returns the context for GroupAll */
+	public static IGroupDMContext getGroupAll() throws Throwable {
+		List<IGroupDMContext> groups = getGroups(DefaultTimeouts.get(ETimeout.groupUngroup));
+		// GroupAll should be the last group
+		return groups.get(groups.size() - 1 );
+	}
+	
+    private static List<IGroupDMContext> getGroups(int timeout) throws Exception {
+		final ArrayList<IGroupDMContext> groups = new ArrayList<>();
+		Query<Void> query = new Query<Void>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Void> rm) {
+				fRunControl.getExecutionContexts(
+		    			null, 
+		    			new DataRequestMonitor<IExecutionDMContext[]>(fRunControl.getExecutor(), rm) {
+		    				@Override
+		    				protected void handleSuccess() {
+		    					for (IExecutionDMContext dmc : getData()) {
+		    						if (dmc instanceof IGroupDMContext) {
+		    							groups.add((IGroupDMContext)dmc);
+		    						}
+		    					}
+		    					rm.done();
+		    				}
+		    			});
+			}
+		};
+		fRunControl.getExecutor().submit(query);
+		query.get(TestsPlugin.massageTimeout(timeout), TimeUnit.MILLISECONDS);
+		return groups;
+    }
+    
+    /**
+     * Returns the group data corresponding to a group context
+     * @throws ExecutionException 
+     * @throws InterruptedException 
+     */
+    public static IGroupDMData getGroupData(IGroupDMContext groupCtx) throws Throwable {
+		return getGroupData(groupCtx, DefaultTimeouts.get(ETimeout.groupUngroup));
+	}
+    
+    private static IGroupDMData getGroupData(IGroupDMContext groupCtx, int timeout) throws Exception {
+    	Query<IGroupDMData> queryData = new Query<IGroupDMData>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IGroupDMData> rm) {
+				fGroupingService.getExecutionData(
+		    			groupCtx,
+		    			new DataRequestMonitor<IGroupDMData>(fGroupingService.getExecutor(), rm) {
+		    				@Override
+		    				protected void handleSuccess() {
+		    					rm.done(getData());
+		    				}
+		    			});
+			}
+		};
+		fGroupingService.getExecutor().submit(queryData);
+		IGroupDMData groupData = null;
+		groupData = queryData.get(TestsPlugin.massageTimeout(timeout), TimeUnit.MILLISECONDS);
+		
+		return groupData;
+    }
+    
+    /** Returns the execution contexts that are under the given group */
+    public static List<IExecutionDMContext> getExecContextsForGroup(IGroupDMContext groupCtx) throws Throwable {
+		return getExecContextsForGroup(groupCtx, DefaultTimeouts.get(ETimeout.groupUngroup));
+	}
+    
+    private static List<IExecutionDMContext> getExecContextsForGroup(IGroupDMContext ctx, int timeout) throws Exception {
+    	final ArrayList<IExecutionDMContext> groupContent = new ArrayList<>();
+    	
+		Query<Void> query = new Query<Void>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Void> rm) {
+				fRunControl.getExecutionContexts(
+		    			ctx, 
+		    			new DataRequestMonitor<IExecutionDMContext[]>(fRunControl.getExecutor(), rm) {
+		    				@Override
+		    				protected void handleSuccess() {
+		    					for (IExecutionDMContext dmc : getData()) {
+		    						groupContent.add(dmc);
+		    					}
+		    					rm.done();
+		    				}
+		    			});
+			}
+		};
+		fRunControl.getExecutor().submit(query);
+		query.get(TestsPlugin.massageTimeout(timeout), TimeUnit.MILLISECONDS);
+		
+		return groupContent;
+    }
+    
+    /** Returns the execution contexts that are under the given group */
+    public static void ungroup(IGroupDMContext groupCtx) throws Throwable {
+    	ungroup(groupCtx, DefaultTimeouts.get(ETimeout.groupUngroup));
+	}
+    
+    private static void ungroup(IGroupDMContext groupToRemove, int timeout) throws Exception {
+    	final IExecutionDMContext[] groupsToRemove = new IExecutionDMContext[1];
+		groupsToRemove[0] = groupToRemove;
+		
+		Query<Void> queryData = new Query<Void>() {
+			@SuppressWarnings("restriction")
+			@Override
+			protected void execute(final DataRequestMonitor<Void> rm) {
+				fGroupingService.ungroup(
+		    			groupsToRemove,
+		    			new RequestMonitor(fGroupingService.getExecutor(), rm) {
+		    				@Override
+		    				protected void handleSuccess() {
+		    					rm.done();
+		    				}
+		    			});
+			}
+		};
+		fGroupingService.getExecutor().submit(queryData);
+		queryData.get(TestsPlugin.massageTimeout(timeout), TimeUnit.MILLISECONDS);
+    }
+    
 }

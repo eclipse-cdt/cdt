@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMContext;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -119,7 +120,6 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
             	fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
             	IThreadDMContext threadDmc = procService.createThreadContext(procDmc, "1");
             	fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
-            	
             	fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
             }
         };
@@ -184,6 +184,11 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				else {
 					i = 0;
 				}
+			}
+			try {
+				fis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 	    }
 	}
@@ -783,4 +788,249 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
         Assert.assertTrue("Target is running. It should have been suspended", (Boolean)wait.getReturnInfo());
         wait.waitReset();
     }
+    
+    /**
+     * Test that interrupting a running target works. The interruption happens after 
+     * some threads have exited, to test that the following gdb bug is (and stays) fixed 
+     * (https://sourceware.org/bugzilla/show_bug.cgi?id=17627) . 
+     * See the comment in testcase "interruptRunningTarget()" for more details.
+     */
+    @Test
+    public void interruptRunningTarget2() throws Throwable {
+    	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+        		getGDBLaunch().getSession(),
+        		ISuspendedDMEvent.class);
+
+ 
+        // Resume the target 
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+           		fRunCtrl.resume(fThreadExecDmc, 
+           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+           			@Override
+           			protected void handleCompleted() {
+           				wait.waitFinished(getStatus());
+           			}
+                });
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+         
+        // wait until worker threads exit
+        Thread.sleep(31000);	
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+           		fRunCtrl.suspend(fThreadExecDmc, 
+           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+           			@Override
+           			protected void handleCompleted() {
+           				wait.waitFinished(getStatus());
+           			}
+                });
+            }
+        });
+
+        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+
+        // Wait up to 2 seconds for the target to suspend. Should happen immediately.
+        suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
+
+        // Double check that the target is in the suspended state
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+            	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+            	wait.waitFinished();
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+        Assert.assertTrue("Target is running. It should have been suspended", (Boolean)wait.getReturnInfo());
+        wait.waitReset();
+    }
+
+    /**
+     * Test that interrupting a running target works, using a group context.
+     */
+    @Test
+    public void interruptRunningGroup() throws Throwable {
+    	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+        		getGDBLaunch().getSession(),
+        		ISuspendedDMEvent.class);
+ 
+        // create group 
+        IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+        IGroupDMContext group1 = SyncUtil.createGroup(threads);
+        
+        // Resume the target 
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+           		fRunCtrl.resume(fThreadExecDmc, 
+           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+           			@Override
+           			protected void handleCompleted() {
+           				wait.waitFinished(getStatus());
+           			}
+                });
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+         
+        // 
+        Thread.sleep(1000);	
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+           		fRunCtrl.suspend(group1, 
+           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+           			@Override
+           			protected void handleCompleted() {
+           				wait.waitFinished(getStatus());
+           			}
+                });
+            }
+        });
+
+        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+
+        // Wait up to 2 seconds for the target to suspend. Should happen immediately.
+        suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
+
+        // Double check that the target is in the suspended state
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+            	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+            	wait.waitFinished();
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+        Assert.assertTrue("Target is running. It should have been suspended", (Boolean)wait.getReturnInfo());
+        wait.waitReset();
+    }
+    
+    /**
+     * Test that resuming a suspended target works, using a group context.
+     * @throws Throwable 
+     */
+	@Test
+    public void resumeGroupContext() throws Throwable {
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+	    // create group 
+        IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+        IGroupDMContext group1 = SyncUtil.createGroup(threads);
+	    
+	    final DataRequestMonitor<MIInfo> rm = 
+        	new DataRequestMonitor<MIInfo>(fRunCtrl.getExecutor(), null) {
+            @Override
+			protected void handleCompleted() {
+                wait.waitFinished(getStatus());
+             }
+        };
+        
+        final ServiceEventWaitor<IResumedDMEvent> eventWaitor =
+            new ServiceEventWaitor<IResumedDMEvent>(
+                    getGDBLaunch().getSession(),
+                    IResumedDMEvent.class);
+
+         fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+           		fRunCtrl.resume(group1, rm);
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
+        try {
+			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
+			//TestsPlugin.debug("DsfMIRunningEvent received");	
+		} catch (Exception e) {
+			Assert.fail("Exception raised:: " + e.getMessage());
+			e.printStackTrace();
+			return;
+		}
+
+		Assert.assertTrue(wait.getMessage(), wait.isOK());
+		
+		wait.waitReset();
+		
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+            	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+            	wait.waitFinished();
+            }
+        });
+
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
+        Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
+
+        wait.waitReset();
+    }
+    
+    /*
+	 * getModelData() for Group DMC
+	 */
+	@Test
+	public void getModelDataForGroup() throws Throwable {
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+	    
+	    // create group 
+        IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+        IGroupDMContext group1 = SyncUtil.createGroup(threads);
+	    
+		// Add a breakpoint
+	    SyncUtil.addBreakpoint(SOURCE_NAME + ":21", false);
+	    
+	    // Resume till the breakpoint is hit
+		SyncUtil.resumeUntilStopped();
+
+	    final DataRequestMonitor<IExecutionDMData> rm = 
+        	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
+            @Override
+            protected void handleCompleted() {
+               if (isSuccess()) {
+                    wait.setReturnInfo(getData());
+                }
+                wait.waitFinished(getStatus());
+            }
+        };
+        
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+            	fRunCtrl.getExecutionData(group1, rm);
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        
+        IRunControl.IExecutionDMData data = rm.getData();
+        if (data == null) {
+        	Assert.fail("No data returned.");
+        }
+        else {
+            Assert.assertTrue(" State change reason for a normal execution should be BREAKPOINT instead of " + data.getStateChangeReason(), 
+                StateChangeReason.BREAKPOINT == data.getStateChangeReason());
+       } 
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -1108,9 +1109,17 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	@Override
 	public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
-        IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
+		// user groups support 
+		IGDBGrouping groupService = getServicesTracker().getService(IGDBGrouping.class);
+		if (groupService != null) {
+			groupService.getExecutionContexts(containerDmc, rm);
+			return;
+		}
+		// end user group support
+
+		IProcesses procService = getServicesTracker().getService(IProcesses.class);
 		procService.getProcessesBeingDebugged(
-				containerDmc,
+				containerDmc != null ? containerDmc : fConnection.getContext(),
 				new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {

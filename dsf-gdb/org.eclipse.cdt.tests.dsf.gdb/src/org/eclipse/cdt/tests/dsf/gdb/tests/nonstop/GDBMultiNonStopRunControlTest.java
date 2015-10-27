@@ -27,6 +27,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -58,6 +60,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 	private DsfServicesTracker fServicesTracker;
 
 	private IMultiRunControl fMultiRun;
+	
+	private IGDBGrouping fGroupingService;
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -79,10 +83,11 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
         Runnable runnable = new Runnable() {
             @Override
 			public void run() {
-           	fServicesTracker =
+            	fServicesTracker =
             		new DsfServicesTracker(TestsPlugin.getBundleContext(),
             				session.getId());
             	fMultiRun = fServicesTracker.getService(IMultiRunControl.class);
+            	fGroupingService = fServicesTracker.getService(IGDBGrouping.class);
             }
         };
         session.getExecutor().submit(runnable).get();
@@ -143,6 +148,28 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 
     	return result;
 	}
+	
+	
+	private IGroupDMContext createGroup(final IExecutionDMContext[] execDmcs) throws Exception {
+		Query<IGroupDMContext> queryGroup = new Query<IGroupDMContext>() {
+			@SuppressWarnings("restriction")
+			@Override
+			protected void execute(final DataRequestMonitor<IGroupDMContext> rm) {
+		    	fGroupingService.group(
+		    			execDmcs,
+		    			new DataRequestMonitor<IContainerDMContext>(fGroupingService.getExecutor(), rm) {
+		    				@Override
+		    				protected void handleSuccess() {
+		    					assertTrue("Unexpected group type: " + getData().getClass().getName(),
+		    							   getData() instanceof IGroupDMContext);
+		    					rm.done((IGroupDMContext)getData());
+		    				}
+		    			});
+			}
+		};
+		fGroupingService.getExecutor().submit(queryGroup);
+		return queryGroup.get();
+    }
 
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the run-state of multiple threads
@@ -4031,4 +4058,913 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertTrue("expected that all threads are suspended, but they are not", result);
 	}
+	
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	// Tests for verifying run status on groups
+	//////////////////////////////////////////////////////////////////////
+	
+	
+	/**
+	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
+	 * on group containing two suspended threads.
+	 */
+	@Test
+	public void testStateGroupContainsTwoStoppedThreads() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+				new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+		
+		SyncUtil.addBreakpoint("firstBreakpoint", false);
+
+		// Run program until both threads are stopped
+		SyncUtil.resumeAll();
+		eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+		eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected 2 threads thread but got " + threads.length, threads.length == 2);
+		
+		IGroupDMContext group1 = createGroup(threads);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		Boolean result;
+
+		// canResume calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to resume all, but cannot", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to resume some, but cannot", result);
+
+		// canSuspend calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to suspend all, but can", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to suspend some, but can", result);
+
+		// isSuspended calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to find all threads suspended but didn't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to find some threads suspended but didn't", result);
+	}
+	
+	/**
+	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
+	 * on group containing two running threads.
+	 */
+	@Test
+	public void testStateGroupContainsTwoRunningThreads() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+				new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+
+		SyncUtil.addBreakpoint("firstBreakpoint", false);
+		
+		// Run program until both threads are stopped
+		SyncUtil.resumeAll();
+		eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+		eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected 2 threads thread but got " + threads.length, threads.length == 2);
+		
+		IGroupDMContext group1 = createGroup(threads);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		// resume threads
+		SyncUtil.resumeAll();
+
+		Boolean result;
+
+		// canResume calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to resume all, but can", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to resume some, but can", result);
+
+		// canSuspend calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to suspend all, but can't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to suspend some, but can't", result);
+
+		// isSuspended calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected to find no thread suspended but didn't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected to find no thread suspended but didn't", result);
+	}
+	
+	/**
+	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
+	 * on group containing two threads - one running and one suspended.
+	 */
+	@Test
+	public void testStateGroupContainsTwoThreadsOneRunningOneSuspended() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+				new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+		
+		SyncUtil.addBreakpoint("firstBreakpoint", false);
+		
+		// Run program until both threads are stopped
+		SyncUtil.resumeAll();
+		eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+		eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected 2 threads thread but got " + threads.length, threads.length == 2);
+		
+		IGroupDMContext group1 = createGroup(threads);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		// resume first thread only
+		SyncUtil.resume(threads[0], 1000);
+
+		Boolean result;
+
+		// canResume calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to resume all, but can", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to resume some, but can't", result);
+
+		// canSuspend calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to suspend all, but can", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to suspend some, but can't", result);
+
+		// isSuspended calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected to find no thread suspended but didn't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to find some thread suspended but didn't", result);
+	}
+	
+	/**
+	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
+	 * on group containing a process containing two suspended threads.
+	 */
+	@Test
+	public void testStateGroupContainsProcessContainsTwoThreadsStopped() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+				new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+
+		SyncUtil.addBreakpoint("firstBreakpoint", false);
+		
+		// Run program until both threads are stopped
+		SyncUtil.resumeAll();
+		eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+		eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected 2 threads thread but got " + threads.length, threads.length == 2);
+		
+		IContainerDMContext[] process =
+				new IContainerDMContext[] { SyncUtil.getContainerContext() };
+		
+		IGroupDMContext group1 = createGroup(process);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		Boolean result;
+
+		// canResume calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to resume all, but cannot", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to resume some, but cannot", result);
+
+		// canSuspend calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to suspend all, but can", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to suspend some, but can", result);
+
+		// isSuspended calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to find all threads suspended but didn't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to find some threads suspended but didn't", result);
+	}
+	
+	/**
+	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
+	 * on group containing a process containing two running threads.
+	 */
+	@Test
+	public void testStateGroupContainsProcessContainsTwoThreadsRunning() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+				new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+
+		SyncUtil.addBreakpoint("firstBreakpoint", false);
+		
+		// Run program until both threads are stopped
+		SyncUtil.resumeAll();
+		eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+		eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected 2 threads thread but got " + threads.length, threads.length == 2);
+		
+		IContainerDMContext[] process =
+				new IContainerDMContext[] { SyncUtil.getContainerContext() };
+		
+		IGroupDMContext group1 = createGroup(process);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		// resume threads
+		SyncUtil.resumeAll();
+
+		Boolean result;
+
+		// canResume calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to resume all, but can", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to be able to resume some, but can", result);
+
+		// canSuspend calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to suspend all, but can't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to suspend some, but can't", result);
+
+		// isSuspended calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected to find no thread suspended but didn't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected to find no thread suspended but didn't", result);
+	}
+	
+	/**
+	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
+	 * on group containing a process containing two threads - one running and one suspended.
+	 */
+	@Test
+	public void testStateGroupContainsProcessContainsTwoThreadsOneRunningOneSuspended() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+				new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+
+		SyncUtil.addBreakpoint("firstBreakpoint", false);
+		
+		// Run program until both threads are stopped
+		SyncUtil.resumeAll();
+		eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+		eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected 2 threads thread but got " + threads.length, threads.length == 2);
+		
+		IContainerDMContext[] process =
+				new IContainerDMContext[] { SyncUtil.getContainerContext() };
+		
+		IGroupDMContext group1 = createGroup(process);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		// resume first thread only
+		SyncUtil.resume(threads[0], 1000);
+
+		Boolean result;
+
+		// canResume calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to resume all, but can't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canResumeSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to resume some, but can't", result);
+
+		// canSuspend calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to suspend all, but can't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.canSuspendSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to be able to suspend some, but can't", result);
+
+		// isSuspended calls
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to find no thread suspended but didn't", result);
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected to find some thread suspended but didn't", result);
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	// Tests for verifying Resume operation on groups
+	//////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Test resume of group with one thread which is stopped.
+	 */
+	@Test
+	public void testResumeGroupWithOneThreadStopped() throws Throwable {
+		IMIExecutionDMContext[] thread = SyncUtil.getExecutionContexts();
+		assertTrue("Expected a single thread but got " + thread.length, thread.length == 1);
+
+        ServiceEventWaitor<MIRunningEvent> eventRunning =
+                new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
+
+        IGroupDMContext group1 = createGroup(thread);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+        
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.resume(groupCtxArray, drm);
+			}
+		});
+
+		eventRunning.waitForEvent(100); // Wait for confirmation thread resumed
+
+		// Also confirm that all threads in group are running
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected no threads to be suspended, but found some", result);
+	}
+	
+	
+	/**
+	 * Test resume group with one thread which is running.
+	 */
+	@Test
+	public void testResumeGroupWithOneThreadRunning() throws Throwable {
+		ServiceEventWaitor<MIRunningEvent> eventRunning =
+                new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
+		
+		IMIExecutionDMContext[] thread = SyncUtil.getExecutionContexts();
+		assertTrue("Expected a single thread but got " + thread.length, thread.length == 1);
+
+		IGroupDMContext group1 = createGroup(thread);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		// Resume the program to get thread running
+		SyncUtil.resumeAll();
+		
+		eventRunning.waitForEvent(100); // wait for thread to resume
+
+		// Confirm that all threads in group are running
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected no threads to be suspended, but found some", result);
+
+		// No error should be thrown, the call should ignore running threads
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.resume(groupCtxArray, drm);
+			}
+		});
+
+		try {
+			eventRunning.waitForEvent(500); // Make sure no running event comes-in
+			fail("Got an unexpected running event");
+		} catch (Exception e) {
+			// Timeout expected.  Success.
+		}
+		
+		
+		// Confirm that all threads in group are still running
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected no threads to be suspended, but found some", result);
+	}
+	
+	/**
+	 * Test resume of group with two stopped threads. Both are resumed  
+	 */
+	@Test
+	public void testResumeGroupWithTwoThreadsStopped() throws Throwable {
+		ServiceEventWaitor<MIRunningEvent> eventRunning =
+                new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
+		
+		SyncUtil.addBreakpoint("firstBreakpoint", false);
+        
+		// Run program until both threads are stopped
+		SyncUtil.resumeAll();
+		eventRunning.waitForEvent(2000); // Wait for confirmation that the first thread resumed
+		eventRunning.waitForEvent(2000); // Wait for confirmation that the second thread resumed
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
+
+        IGroupDMContext group1 = createGroup(threads);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+        
+		// resume group
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.resume(groupCtxArray, drm);
+			}
+		});
+		eventRunning.waitForEvent(100); // Wait for confirmation that the first thread resumed
+		eventRunning.waitForEvent(100); // Wait for confirmation that the second thread resumed
+		
+		try {
+			eventRunning.waitForEvent(500); // Make sure no other running event comes-in
+			fail("Got an unexpected running event");
+		} catch (Exception e) {
+			// Timeout expected.  Success.
+		}
+		
+		// both threads should be running
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(groupCtxArray, drm);
+			}
+		});
+		assertFalse("expected not to find all threads suspended, but did", result);
+	}
+	
+	
+	/**
+	 * Test resume of group containing two running threads. 
+	 */
+	@Test
+	public void testResumeGroupWithTwoRunningThreads() throws Throwable {        
+        ServiceEventWaitor<MIRunningEvent> eventRunning =
+                new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
+        
+        SyncUtil.addBreakpoint("firstBreakpoint", false);
+        
+        // Run program until both threads are stopped	
+		SyncUtil.resumeAll();
+		eventRunning.waitForEvent(2000); // Wait for first thread to resume
+		eventRunning.waitForEvent(2000); // Wait for second thread to resume
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
+
+        IGroupDMContext group1 = createGroup(threads);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+        
+		SyncUtil.resumeAll();
+		eventRunning.waitForEvent(100); // Wait for confirmation that the first thread resumed
+		eventRunning.waitForEvent(100); // Wait for confirmation that the second thread resumed
+		
+		// already running - resume on group should have no effect
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.resume(groupCtxArray, drm);
+			}
+		});
+		
+		// we expect to receive no more thread resumed event
+		try {
+			eventRunning.waitForEvent(500); // Make sure no other resumed event arrives
+			fail("Got an unexpected resumed event");
+		} catch (Exception e) {
+			// Timeout expected.  Success.
+		}
+
+		// and both threads should still be running
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(threads, drm);
+			}
+		});
+		assertFalse("expected not to find suspended thread(s), but did", result);
+	}
+	
+	
+	/**
+	 * Test resume of group with one thread stopped and one running. 
+	 */
+	@Test
+	public void testResumeGroupWithTwoThreadsOneStoppedOneRunning() throws Throwable {
+        ServiceEventWaitor<MIStoppedEvent> eventStopped =
+                new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+        
+        ServiceEventWaitor<MIRunningEvent> eventRunning =
+                new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
+        
+        SyncUtil.addBreakpoint("firstBreakpoint", false);
+        
+        // Run program until both threads are stopped	
+		SyncUtil.resumeAll();
+		eventRunning.waitForEvent(2000); // Wait for confirmation first thread resumed
+		eventRunning.waitForEvent(2000); // Wait for confirmation second thread resumed
+		
+		eventStopped.waitForEvent(2000); // Wait for first thread to stop
+		eventStopped.waitForEvent(2000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
+
+        IGroupDMContext group1 = createGroup(threads);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+        
+		// resume first thread only
+		SyncUtil.resume(threads[0], 1000);
+		eventRunning.waitForEvent(100); // Wait for confirmation that thread resumed
+		
+		// Resume group
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.resume(groupCtxArray, drm);
+			}
+		});
+		
+		eventRunning.waitForEvent(100); // Wait for confirmation the other thread resumed
+
+		// both threads should be running
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedSome(threads, drm);
+			}
+		});
+		assertFalse("expected not to find suspended thread(s), but did", result);
+		
+		try {
+			eventRunning.waitForEvent(500); // Make sure no other resume event arrives
+			fail("Got an unexpected stopped event");
+		} catch (Exception e) {
+			// Timeout expected.  Success.
+		}
+		
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	// Tests for verifying Suspend operation on groups
+	//////////////////////////////////////////////////////////////////////
+	
+	
+	/**
+	 * Test suspend of group with one thread which is stopped.
+	 */
+	@Test
+	public void testSuspendGroupWithOneThreadStopped() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventStopped =
+                new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+		
+		IMIExecutionDMContext[] thread = SyncUtil.getExecutionContexts();
+		assertTrue("Expected a single thread but got " + thread.length, thread.length == 1);
+
+		IGroupDMContext group1 = createGroup(thread);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.suspend(groupCtxArray, drm);
+			}
+		});
+
+		// Also confirm that all threads in group are still suspended
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected no threads to be running, but found some", result);
+		
+		try {
+			eventStopped.waitForEvent(500); // Make sure no other resume event arrives
+			fail("Got an unexpected stopped event");
+		} catch (Exception e) {
+			// Timeout expected.  Success.
+		}
+	}
+	
+	/**
+	 * Test suspend of group with two threads which are stopped.
+	 */
+	@Test
+	public void testSuspendGroupWithTwoThreadsStopped() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventStopped =
+                new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+                
+        SyncUtil.addBreakpoint("firstBreakpoint", false);
+        
+        // Run program until both threads are stopped	
+		SyncUtil.resumeAll();
+		
+		eventStopped.waitForEvent(3000); // Wait for first thread to stop
+		eventStopped.waitForEvent(1000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
+
+		IGroupDMContext group1 = createGroup(threads);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.suspend(groupCtxArray, drm);
+			}
+		});
+
+		// Also confirm that all threads in group are still suspended
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected no threads to be running, but found some", result);
+		
+		try {
+			eventStopped.waitForEvent(500); // Make sure no other stopped event arrives
+			fail("Got an unexpected stopped event");
+		} catch (Exception e) {
+			// Timeout expected.  Success.
+		}
+	}
+	
+	
+	/**
+	 * Test suspend of group with one thread which is running.
+	 */
+	@Test
+	public void testSuspendGroupWithOneThreadRunning() throws Throwable {
+		ServiceEventWaitor<MIRunningEvent> eventRunning =
+                new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
+		
+		ServiceEventWaitor<MIStoppedEvent> eventStopped =
+                new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+		
+		IMIExecutionDMContext[] thread = SyncUtil.getExecutionContexts();
+		assertTrue("Expected a single thread but got " + thread.length, thread.length == 1);
+
+		IGroupDMContext group1 = createGroup(thread);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+
+		// Resume thread
+		SyncUtil.resumeAll();
+		eventRunning.waitForEvent(2000); // Wait for thread to run
+		
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.suspend(groupCtxArray, drm);
+			}
+		});
+		
+		// expect stop event
+		eventStopped.waitForEvent(2000);
+
+		// Confirm that all threads in group are suspended
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected no threads to be running, but found some", result);
+	}
+	
+	
+	/**
+	 * Test suspend of group with two threads, one running and one stopped.
+	 */
+	@Test
+	public void testSuspendGroupWithTwoThreadsStoppedAndRunning() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventStopped =
+                new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
+                
+        SyncUtil.addBreakpoint("firstBreakpoint", false);
+        
+        // Run program until both threads are stopped	
+		SyncUtil.resumeAll();
+		eventStopped.waitForEvent(2000); // Wait for first thread to stop
+		eventStopped.waitForEvent(2000); // Wait for second thread to stop
+		
+		IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
+
+		IGroupDMContext group1 = createGroup(threads);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		// Resume only one thread
+		SyncUtil.resume(threads[0], 100);
+
+		runAsyncCall(new AsyncRunnable<Object>() {
+			@Override public void run(DataRequestMonitor<Object> drm) {
+				fMultiRun.suspend(groupCtxArray, drm);
+			}
+		});
+		
+		eventStopped.waitForEvent(100);  // confirm one thread was suspended
+
+		// Also confirm that all threads in group are now suspended
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
+			@Override public void run(DataRequestMonitor<Boolean> drm) {
+				fMultiRun.isSuspendedAll(groupCtxArray, drm);
+			}
+		});
+		assertTrue("expected no threads to be running, but found some", result);
+		
+		try {
+			eventStopped.waitForEvent(500); // Make sure no other stopped event arrives
+			fail("Got an unexpected stopped event");
+		} catch (Exception e) {
+			// Timeout expected.  Success.
+		}
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	// Tests for verifying the step operation on group
+	//////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Test that the feature is not implemented.  Once this fails, we will
+	 * know we have new tests to write to test the feature.
+	 */
+	@Test
+	public void testGroupStepNotImplemented() throws Throwable {
+		final IMIExecutionDMContext[] thread = SyncUtil.getExecutionContexts();
+		assertTrue("Expected a single thread but got " + thread.length, thread.length == 1);
+
+		IGroupDMContext group1 = createGroup(thread);
+		IExecutionDMContext[] groupCtxArray = new IExecutionDMContext[1];
+		groupCtxArray[0] = group1;
+		
+		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
+			runAsyncCall(new AsyncRunnable<Object>() {
+				@Override public void run(DataRequestMonitor<Object> drm) {
+					fMultiRun.step(groupCtxArray, type, drm);
+				}
+			}, true /* Not implemented yet*/);
+		}
+	}
+
+	
 }

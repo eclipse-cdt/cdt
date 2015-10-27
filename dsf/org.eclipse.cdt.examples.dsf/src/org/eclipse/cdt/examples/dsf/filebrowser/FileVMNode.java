@@ -319,5 +319,12 @@ class FileVMNode
         return fProvider;
     }
 
+	@Override
+	public void filterInvalidPaths(VMDelta parentDelta, Object event, IVMContext[] contexts,
+			DataRequestMonitor<IVMContext[]> rm) {
+		rm.done(contexts);
+		return;
+	}
+
     
 }

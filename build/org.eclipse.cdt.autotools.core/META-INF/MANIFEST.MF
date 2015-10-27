@@ -29,7 +29,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %provider
 Export-Package: org.eclipse.cdt.autotools.core,
- org.eclipse.cdt.internal.autotools.core;x-internal:=true,
- org.eclipse.cdt.internal.autotools.core.configure;x-internal:=true,
- org.eclipse.cdt.internal.autotools.core.wizards;x-internal:=true
+ org.eclipse.cdt.internal.autotools.core;x-friends:="org.eclipse.cdt.autotools.ui",
+ org.eclipse.cdt.internal.autotools.core.configure;x-friends:="org.eclipse.cdt.autotools.ui",
+ org.eclipse.cdt.internal.autotools.core.wizards;x-friends:="org.eclipse.cdt.autotools.ui"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

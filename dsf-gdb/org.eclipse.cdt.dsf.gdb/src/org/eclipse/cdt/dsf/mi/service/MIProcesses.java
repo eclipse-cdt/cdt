@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ import org.osgi.framework.BundleContext;
 /**
  * @since 1.1
  */
-public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICachingService {
+public class MIProcesses extends AbstractDsfService implements IMIProcesses2, ICachingService {
 	
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI 
@@ -244,11 +244,11 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     	 * <p/>
     	 * 
     	 * @param sessionId Session that this context belongs to.
-         * @param controlDmc The control context parent of this process.
+         * @param dmc The context parent of this process.
     	 * @param id process identifier.
     	 */
-    	public MIProcessDMC(String sessionId, ICommandControlDMContext controlDmc, String id) {
-			super(sessionId, controlDmc == null ? new IDMContext[0] : new IDMContext[] { controlDmc });
+    	public MIProcessDMC(String sessionId, IDMContext dmc, String id) {
+			super(sessionId, dmc == null ? new IDMContext[0] : new IDMContext[] { dmc });
     		fId = id;
     	}
     	
@@ -437,7 +437,15 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 	@Override
     public IProcessDMContext createProcessContext(ICommandControlDMContext controlDmc, String pid) {
-        return new MIProcessDMC(getSession().getId(), controlDmc, pid);
+		return createProcessContext((IDMContext)controlDmc, pid);
+	}
+	
+    /**
+	 * @since 5.0
+	 */
+    @Override
+	public IProcessDMContext createProcessContext(IDMContext dmc, String pid) {
+        return new MIProcessDMC(getSession().getId(), dmc, pid);
     }
     
 	@Override
@@ -455,13 +463,27 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 	@Override
     public IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId) {
-    	return createContainerContextFromGroupId(controlDmc, UNIQUE_GROUP_ID);
+		return createContainerContextFromThreadId((IDMContext)controlDmc, threadId);
+	}
+
+	/**
+	 * @since 5.0
+	 */
+	@Override
+    public IMIContainerDMContext createContainerContextFromThreadId(IDMContext dmc, String threadId) {
+    	return createContainerContextFromGroupId(dmc, UNIQUE_GROUP_ID);
     }
     
     /** @since 4.0 */
 	@Override
     public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
-    	IProcessDMContext processDmc = createProcessContext(controlDmc, UNKNOWN_PROCESS_ID);
+		return createContainerContextFromGroupId((IDMContext)controlDmc, groupId);
+	}
+
+    /** @since 5.0 */
+	@Override
+    public IMIContainerDMContext createContainerContextFromGroupId(IDMContext dmc, String groupId) {
+    	IProcessDMContext processDmc = createProcessContext(dmc, UNKNOWN_PROCESS_ID);
     	return createContainerContext(processDmc, groupId);
     }
 

@@ -25,6 +25,7 @@ public class MessagesForGdbLaunchVM extends NLS {
     public static String ContainerVMNode_No_columns__Error__label;
     /** since 2.3 */
     public static String ContainerVMNode_filtered_running_threads;
+    public static String GroupVMNode_No_columns__text_format;
     
     static {
         // initialize resource bundle

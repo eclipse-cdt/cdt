@@ -426,7 +426,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 protected void handleCompleted() {
                     if (isSuccess()) {
                     	assert getData() != null;
-                    	buildChildDeltasForEventContext(getData(), node, event, parentDelta, nodeOffset, rm);
+                    	filterCotextPathsToBuildChildDeltas(getData(), node, event, parentDelta, nodeOffset, rm);
                     } 
                     else if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
                     	// The DMC for this node was not found in the event.  Call the 
@@ -440,6 +440,33 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 }
             });
     }
+    
+    /**
+     * Gives the nodes the opportunity to filter-down the list of valid contexts. This is necessary since
+     * not all paths down the VMDM tree are necessary valid, and the nodes are in the best position
+     * to known which is valid or not. 
+     */
+    protected void filterCotextPathsToBuildChildDeltas(final IVMContext[] candidateChildrenCtxs, final IVMNode node, 
+    		final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm ) 
+    {
+    	node.filterInvalidPaths(parentDelta,
+    			event, 
+    			candidateChildrenCtxs, 
+    			new DataRequestMonitor<IVMContext[]>(getVMProvider().getExecutor(), rm) {
+    				@Override
+                    protected void handleCompleted() {
+                        if (isSuccess()) {
+                        	assert getData() != null;
+                        	buildChildDeltasForEventContext(getData(), node, event, parentDelta, nodeOffset, rm);
+                        }
+                        else {
+                        	rm.done();
+                        	return;
+                        }
+    				}
+    			});
+    }
+    
     
     /** 
      * Base implementation that handles calling child nodes to build 

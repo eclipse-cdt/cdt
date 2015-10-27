@@ -90,6 +90,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	/** @since 4.8 */
 	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
 
+	private static final String ITSET_PROTOTYPE = "7.9.50-itsets"; //$NON-NLS-1$
+
 	private final String fVersion;
 	
 	public GdbDebugServicesFactory(String version) {
@@ -279,6 +281,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IExecutionContextTranslator createExecutionContextTranslator(DsfSession session) {
+		if (getVersion().equals(ITSET_PROTOTYPE)) {
+			return new GDBGrouping_7_11(session);
+		}
 		return new GDBGrouping(session);
 	}
 	

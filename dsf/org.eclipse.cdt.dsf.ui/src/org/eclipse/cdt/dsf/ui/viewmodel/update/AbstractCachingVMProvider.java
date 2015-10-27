@@ -902,6 +902,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                         if (!fDelayEventHandleForViewUpdate) {
                             rm.done();
                         }
+                        // TODO: Remove this debug trace
+                        System.out.println(this.toString());
                     }
                     @Override public String toString() {
                         return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + AbstractCachingVMProvider.this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

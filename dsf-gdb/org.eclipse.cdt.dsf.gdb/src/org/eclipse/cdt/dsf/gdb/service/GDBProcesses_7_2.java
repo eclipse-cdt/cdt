@@ -210,13 +210,13 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	}
 	
 	@Override
-    public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
+    public IMIContainerDMContext createContainerContextFromGroupId(IDMContext dmc, String groupId) {
     	String pid = getGroupToPidMap().get(groupId);
     	if (pid == null) {
     		// For GDB 7.2, the groupId is no longer the pid, so use our wildcard pid instead
     		pid = MIProcesses.UNKNOWN_PROCESS_ID;
     	}
-    	IProcessDMContext processDmc = createProcessContext(controlDmc, pid);
+    	IProcessDMContext processDmc = createProcessContext(dmc, pid);
     	return createContainerContext(processDmc, groupId);
     }
     

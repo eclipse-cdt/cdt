@@ -221,8 +221,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.cdt.managedbuilder.core"/>
       <plugin id="org.eclipse.cdt.managedbuilder.gnu.ui"/>
       <plugin id="org.eclipse.cdt.ui"/>
-      <plugin id="org.eclipse.cdt.visualizer.core"/>
-      <plugin id="org.eclipse.cdt.visualizer.ui"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>

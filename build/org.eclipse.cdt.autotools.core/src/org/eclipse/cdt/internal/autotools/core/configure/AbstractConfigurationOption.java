@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.autotools.core.configure;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractConfigurationOption implements IConfigureOption {
 
@@ -52,8 +53,8 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 	}
 	
 	@Override
-	public ArrayList<String> getParameters() {
-		ArrayList<String> parameters = new ArrayList<>();
+	public List<String> getParameters() {
+		List<String> parameters = new ArrayList<>();
 		if (isParmSet())
 			parameters.add(getParameter());
 		return parameters;

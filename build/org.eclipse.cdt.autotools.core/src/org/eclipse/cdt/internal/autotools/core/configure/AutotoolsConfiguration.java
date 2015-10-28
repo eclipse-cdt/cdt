@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
@@ -306,7 +307,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	}
 
 	@Override
-	public ArrayList<String> getToolArgs(String name) {
+	public List<String> getToolArgs(String name) {
 		if (isParmsDirty) {
 			configParms = new ArrayList<>();
 			Option[] options = getChildOptions(name);
@@ -316,11 +317,11 @@ public class AutotoolsConfiguration implements IAConfiguration {
 					Option[] childOptions = getChildOptions(option.getName());
 					for (int j = 0; j < childOptions.length; ++j) {
 						IConfigureOption childOption = getOption(childOptions[j].getName());
-						ArrayList<String> parameters = childOption.getParameters();
+						List<String> parameters = childOption.getParameters();
 						configParms.addAll(parameters);
 					}
 				} else {
-					ArrayList<String> parameters = option.getParameters();
+					List<String> parameters = option.getParameters();
 					configParms.addAll(parameters);
 				}
 			}

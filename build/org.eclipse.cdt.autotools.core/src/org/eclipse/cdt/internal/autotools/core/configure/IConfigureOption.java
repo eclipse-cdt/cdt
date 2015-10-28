@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.core.configure;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 
@@ -29,7 +29,7 @@ public interface IConfigureOption {
 
 	String getParameter();
 
-	ArrayList<String> getParameters();
+	List<String> getParameters();
 
 	boolean isParmSet();
 

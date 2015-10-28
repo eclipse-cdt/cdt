@@ -11,12 +11,13 @@
 package org.eclipse.cdt.internal.autotools.core.configure;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MultiArgConfigureOption extends AbstractConfigurationOption {
 
 	private String value;
-	private ArrayList<String> userArgs;
+	private List<String> userArgs;
 	private boolean isDirty;
 	
 	public MultiArgConfigureOption(String name, AutotoolsConfiguration cfg) {
@@ -65,7 +66,7 @@ public class MultiArgConfigureOption extends AbstractConfigurationOption {
 	}
 	
 	@Override
-	public ArrayList<String> getParameters() {
+	public List<String> getParameters() {
 		// May be multiple user-specified options in which case we
 		// need to split them up into individual options
 		if (!isDirty && userArgs != null)

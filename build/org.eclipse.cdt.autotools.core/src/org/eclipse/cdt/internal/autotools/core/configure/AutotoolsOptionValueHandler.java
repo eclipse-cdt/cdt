@@ -28,13 +28,13 @@ import org.eclipse.core.runtime.CoreException;
 public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler 
 	implements IOptionApplicability {
 	
-	public final static String DEFAULT_BUILD_DIR = "build"; //$NON-NLS-1$
-	public final static String CONFIGURE_TOOL_ID = "org.eclipse.linuxtools.cdt.autotools.core.gnu.toolchain.tool.configure"; //$NON-NLS-1$
-	public final static String BUILD_DIR_OPTION_ID = "org.eclipse.linuxtools.cdt.autotools.core.option.configure.builddir"; //$NON-NLS-1$
-	public final static String BUILD_DIR_APPLY = "BuildDir.apply"; //$NON-NLS-1$
-	public final static String BUILD_DIR_DEFAULT_QUESTION = "BuildDir.default"; //$NON-NLS-1$
-	public final static String BUILD_DIR_YES = "BuildDir.yes"; //$NON-NLS-1$
-	public final static String BUILD_DIR_NO = "BuildDir.no"; //$NON-NLS-1$
+	public static final String DEFAULT_BUILD_DIR = "build"; //$NON-NLS-1$
+	public static final String CONFIGURE_TOOL_ID = "org.eclipse.linuxtools.cdt.autotools.core.gnu.toolchain.tool.configure"; //$NON-NLS-1$
+	public static final String BUILD_DIR_OPTION_ID = "org.eclipse.linuxtools.cdt.autotools.core.option.configure.builddir"; //$NON-NLS-1$
+	public static final String BUILD_DIR_APPLY = "BuildDir.apply"; //$NON-NLS-1$
+	public static final String BUILD_DIR_DEFAULT_QUESTION = "BuildDir.default"; //$NON-NLS-1$
+	public static final String BUILD_DIR_YES = "BuildDir.yes"; //$NON-NLS-1$
+	public static final String BUILD_DIR_NO = "BuildDir.no"; //$NON-NLS-1$
 
 	//FIXME: Use holder to set option value, not the "option" parameter
 	@Override

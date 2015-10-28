@@ -12,12 +12,12 @@
 package org.eclipse.cdt.internal.autotools.core.configure;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FlagConfigureOption extends AbstractConfigurationOption {
 
 	private String value;
-	private ArrayList<String> children = 
- new ArrayList<>();
+	private ArrayList<String> children = new ArrayList<>();
 	
 	public FlagConfigureOption(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
@@ -30,11 +30,10 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private FlagConfigureOption(String name, AutotoolsConfiguration cfg,
-			String value, ArrayList<String> children) {
+	private FlagConfigureOption(String name, AutotoolsConfiguration cfg, String value, ArrayList<String> children) {
 		super(name, cfg);
 		this.value = value;
-		this.children = (ArrayList<String>)children.clone();
+		this.children = (ArrayList<String>) children.clone();
 	}
 	
 	@Override
@@ -93,8 +92,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 
 	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
-		FlagConfigureOption f = new FlagConfigureOption(name, config, value, children);
-		return f; 
+		return new FlagConfigureOption(name, config, value, children);
 	}
 
 	@Override
@@ -116,7 +114,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 		children.add(name);
 	}
 	
-	public ArrayList<String> getChildren() {
+	public List<String> getChildren() {
 		return children;
 	}
 	

@@ -33,7 +33,6 @@ public abstract class MarkerGenerator {
 	 * Constructor for MarkerGenerator
 	 */
 	public MarkerGenerator() {
-		super();
 	}
 
 	/*
@@ -157,14 +156,16 @@ public abstract class MarkerGenerator {
 		return IMarker.SEVERITY_ERROR;
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Removes the IMarkers for the project specified in the argument if the
-	 * project exists, and is open. 
+	 * project exists, and is open.
 	 * 
 	 * @param project
 	 */
 	public void removeAllMarkers(IProject project) {
-		if (project == null || !project.isAccessible()) return;
+		if (project == null || !project.isAccessible()) {
+			return;
+		}
 
 		// Clear out the problem markers
 		IWorkspace workspace = project.getWorkspace();

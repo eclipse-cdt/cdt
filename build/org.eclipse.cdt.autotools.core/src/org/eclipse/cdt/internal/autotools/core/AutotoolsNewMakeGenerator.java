@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,16 +87,16 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 @SuppressWarnings("deprecation")
 public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
-	public final String CONFIG_STATUS = "config.status"; //$NON-NLS-1$
-	public final String MAKEFILE = "Makefile"; //$NON-NLS-1$
-	public final String MAKEFILE_CVS = "Makefile.cvs"; //$NON-NLS-1$
-	public final String SETTINGS_FILE_NAME = ".cdtconfigure"; //$NON-NLS-1$
-	public final String SHELL_COMMAND = "sh"; //$NON-NLS-1$
+	public static final String CONFIG_STATUS = "config.status"; //$NON-NLS-1$
+	public static final String MAKEFILE = "Makefile"; //$NON-NLS-1$
+	public static final String MAKEFILE_CVS = "Makefile.cvs"; //$NON-NLS-1$
+	public static final String SETTINGS_FILE_NAME = ".cdtconfigure"; //$NON-NLS-1$
+	public static final String SHELL_COMMAND = "sh"; //$NON-NLS-1$
 	
-	public final String AUTOGEN_TOOL_ID = "autogen"; //$NON-NLS-1$
-	public final String CONFIGURE_TOOL_ID = "configure"; //$NON-NLS-1$
+	public static final String AUTOGEN_TOOL_ID = "autogen"; //$NON-NLS-1$
+	public static final String CONFIGURE_TOOL_ID = "configure"; //$NON-NLS-1$
 	
-	public final String GENERATED_TARGET = AutotoolsPlugin.PLUGIN_ID + ".generated.MakeTarget"; //$NON-NLS-1$
+	public static final String GENERATED_TARGET = AutotoolsPlugin.PLUGIN_ID + ".generated.MakeTarget"; //$NON-NLS-1$
 
 	private static final String MAKE_TARGET_KEY = MakeCorePlugin.getUniqueIdentifier() + ".buildtargets"; //$NON-NLS-1$
 	private static final String BUILD_TARGET_ELEMENT = "buildTargets"; //$NON-NLS-1$
@@ -127,7 +128,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	
 
 	public void generateDependencies() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -178,7 +178,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	 * @since 2.0
 	 */
 	public boolean isGeneratedResource() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -186,13 +185,13 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	 * @since 2.0
 	 */
 	public void regenerateDependencies() {
-		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc) Check whether the build has been cancelled. Cancellation
-	 * requests propagated to the caller by throwing <code>OperationCanceledException</code>.
+	/**
+	 * Check whether the build has been cancelled. Cancellation requests
+	 * propagated to the caller by throwing
+	 * <code>OperationCanceledException</code>.
 	 * 
 	 * @see org.eclipse.core.runtime.OperationCanceledException#OperationCanceledException()
 	 */
@@ -202,13 +201,13 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Return or create the makefile needed for the build. If we
-	 * are creating the resource, set the derived bit to true so the CM system
-	 * ignores the contents. If the resource exists, respect the existing
-	 * derived setting.
+	/**
+	 * Return or create the makefile needed for the build. If we are creating
+	 * the resource, set the derived bit to true so the CM system ignores the
+	 * contents. If the resource exists, respect the existing derived setting.
 	 * 
-	 * @param makefilePath @return IFile
+	 * @param makefilePath
+	 * @return IFile
 	 */
 	protected IFile createFile(IPath makefilePath) throws CoreException {
 		// Create or get the handle for the makefile
@@ -238,10 +237,11 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return newFile;
 	}
 
-	/*
-	 * Create a directory
+	/**
+	 * Create a directory.
 	 * 
-	 * @param boolean @return whether the directory was created
+	 * @param boolean
+	 * @return whether the directory was created
 	 */
 	private boolean createDirectory(String dirName) throws CoreException {
 		// Create or get the handle for the build directory
@@ -268,9 +268,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#getMakefileName()
 	 */
 	public String getMakefileName() {
@@ -331,7 +329,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private Status regenerateMakefiles(IConfiguration icfg, boolean reconfigure) throws CoreException {
 		MultiStatus status;
 		int rc = IStatus.OK;
-		String errMsg = new String();
+		String errMsg = "";
 		boolean needFullConfigure = false;
 
 		// See if the user has cancelled the build
@@ -489,12 +487,12 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 			}
 			
-			ArrayList<String> configureEnvs = new ArrayList<>();
-			ArrayList<String> configureCmdParms = new ArrayList<>();
+			List<String> configureEnvs = new ArrayList<>();
+			List<String> configureCmdParms = new ArrayList<>();
 			IPath configurePath = getConfigurePath(configureEnvs, configureCmdParms);
 			String[] configArgs = getConfigArgs(configureCmdParms);
-			ArrayList<String> autogenEnvs = new ArrayList<>();
-			ArrayList<String> autogenCmdParms = new ArrayList<>();
+			List<String> autogenEnvs = new ArrayList<>();
+			List<String> autogenCmdParms = new ArrayList<>();
 			IPath autogenPath = getAutogenPath(autogenEnvs, autogenCmdParms);
 			
 			// Check if we have a config.status (meaning configure has already run).
@@ -638,7 +636,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				rc = IStatus.ERROR;
 				errMsg = AutotoolsPlugin.getResourceString("MakeGenerator.didnt.generate"); //$NON-NLS-1$
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			// forgetLastBuiltState();
 			rc = IStatus.ERROR;
@@ -665,7 +663,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	 * @param envVars - ArrayList to add environment variables to
 	 * @return stripped command
 	 */
-	public static String stripEnvVars(String command, ArrayList<String> envVars) {
+	public static String stripEnvVars(String command, List<String> envVars) {
 		Pattern p1 = Pattern.compile("(\\w+[=]\\\".*?\\\"\\s+)\\w+.*");
 		Pattern p2 = Pattern.compile("(\\w+[=]'.*?'\\s+)\\w+.*");
 		Pattern p3 = Pattern.compile("(\\w+[=][^\\s]+\\s+)\\w+.*");
@@ -727,7 +725,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	 * @param envVars - ArrayList to add environment variables to
 	 * @return stripped option
 	 */
-	public static String stripEnvVarsFromOption(String str, ArrayList<String> envVars) {
+	public static String stripEnvVarsFromOption(String str, List<String> envVars) {
 		Pattern p1 = Pattern.compile("(\\w+[=]\\\".*?\\\"\\s*).*");
 		Pattern p2 = Pattern.compile("(\\w+[=]'.*?'\\s*).*");
 		Pattern p3 = Pattern.compile("(\\w+[=][^\\s]+).*");
@@ -780,7 +778,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return sourcePath;
 	}
 	
-	protected IPath getConfigurePath(ArrayList<String> envVars, ArrayList<String> cmdParms) {
+	protected IPath getConfigurePath(List<String> envVars, List<String> cmdParms) {
 		IPath configPath;
 		IConfigureOption configOption = toolsCfg.getOption(CONFIGURE_TOOL_ID);
 		String command = "configure"; // $NON-NLS-1$
@@ -812,7 +810,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return makefileCVSPath.toFile().exists();
 	}
 
-	protected IPath getAutogenPath(ArrayList<String> envVars, ArrayList<String> cmdParms) {
+	protected IPath getAutogenPath(List<String> envVars, List<String> cmdParms) {
 		IPath autogenPath;
 		IConfigureOption autogenOption = toolsCfg.getOption(AUTOGEN_TOOL_ID);
 		String command = "autogen.sh"; // $NON-NLS-1$
@@ -830,16 +828,16 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return autogenPath;
 	}
 	
-	private String[] getAutogenArgs(ArrayList<String> cmdParms) {
+	private String[] getAutogenArgs(List<String> cmdParms) {
 		// Get the arguments to be passed to config from build model
-		ArrayList<String> autogenArgs = toolsCfg.getToolArgs(AUTOGEN_TOOL_ID);
+		List<String> autogenArgs = toolsCfg.getToolArgs(AUTOGEN_TOOL_ID);
 		cmdParms.addAll(autogenArgs);
 		return cmdParms.toArray(new String[cmdParms.size()]);
 	}
 
-	private String[] getConfigArgs(ArrayList<String> cmdParms) {
+	private String[] getConfigArgs(List<String> cmdParms) {
 		// Get the arguments to be passed to config from build model
-		ArrayList<String> configArgs = toolsCfg.getToolArgs(CONFIGURE_TOOL_ID);
+		List<String> configArgs = toolsCfg.getToolArgs(CONFIGURE_TOOL_ID);
 		cmdParms.addAll(configArgs);
 		return cmdParms.toArray(new String[cmdParms.size()]);
 	}
@@ -1117,7 +1115,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
     // Run an autotools script (e.g. configure, autogen.sh, config.status).
 	private int runScript(IPath commandPath, IPath runPath, String[] args, String jobDescription, String errMsg,
-			IConsole console, ArrayList<String> additionalEnvs, boolean consoleStart)
+			IConsole console, List<String> additionalEnvs, boolean consoleStart)
 					throws CoreException, NullPointerException, IOException {
 
 		int rc = IStatus.OK;
@@ -1514,7 +1512,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		
 		IMakeTarget[] makeTargetArray = new IMakeTarget[makeTargets.size()];
 		Collection<IMakeTarget> values = makeTargets.values();
-		ArrayList<IMakeTarget> valueList = new ArrayList<>(values);
+		List<IMakeTarget> valueList = new ArrayList<>(values);
 		valueList.toArray(makeTargetArray);
 		MakeTargetComparator compareMakeTargets = new MakeTargetComparator();
 		Arrays.sort(makeTargetArray, compareMakeTargets);
@@ -1530,13 +1528,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			Method m = c.getMethod("setTargets", IContainer.class, IMakeTarget[].class);
 			m.invoke(makeTargetManager, project, makeTargetArray);
 			targetsAdded = true;
-		} catch (NoSuchMethodException e) {
-			// ignore and use fail-safe saveTargets method
-		} catch (IllegalArgumentException e) {
-			// ignore and use fail-safe saveTargets method
-		} catch (IllegalAccessException e) {
-			// ignore and use fail-safe saveTargets method
-		} catch (InvocationTargetException e) {
+		} catch (NoSuchMethodException | IllegalArgumentException | IllegalAccessException
+				| InvocationTargetException e) {
 			// ignore and use fail-safe saveTargets method
 		}
 		if (!targetsAdded)

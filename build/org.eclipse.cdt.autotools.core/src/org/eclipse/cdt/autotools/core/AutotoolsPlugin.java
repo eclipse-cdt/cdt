@@ -81,14 +81,6 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * This method is called upon plug-in activation
-	 */
-	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-	}
-
-	/**
 	 * This method is called when the plug-in is stopped
 	 */
 	@Override
@@ -182,8 +174,6 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 					return true;
 				}
 			}
-		} catch (CoreException e) {
-			// Don't care...fall through to not found.
 		} catch (Exception f) {
 			// Don't care...fall through to not found.
 		}
@@ -230,12 +220,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 		if (display == null)
 			display = Display.getDefault();
 		final IStatus fstatus = status;
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ErrorDialog.openError(null, title, null, fstatus);
-			}
-		});
+		display.asyncExec(() -> ErrorDialog.openError(null, title, null, fstatus));
 	}
 
 	public static void logException(Throwable e) {

@@ -213,7 +213,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 					return Integer.parseInt(m.group(1));
 				}
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			return -1;
 		} finally {
 			if (reader != null) {

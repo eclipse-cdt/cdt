@@ -19,13 +19,12 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
-import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IErrorParser2;
-import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 import org.eclipse.cdt.utils.EFSExtensionManager;
@@ -54,7 +53,7 @@ public class ErrorParserManager extends OutputStream {
 	 * Delimiter for error parsers presented in one string.
 	 * @since 5.2
 	 */
-	public final static char ERROR_PARSER_DELIMITER = ';';
+	public static final char ERROR_PARSER_DELIMITER = ';';
 
 	private int nOpens;
 	private int lineCounter=0;
@@ -63,7 +62,7 @@ public class ErrorParserManager extends OutputStream {
 	private final MarkerGenerator fMarkerGenerator;
 
 	private Map<String, ErrorParser> fErrorParsers;
-	private ArrayList<ProblemMarkerInfo> fErrors;
+	private List<ProblemMarkerInfo> fErrors;
 
 	private Vector<URI> fDirectoryStack;
 	private final URI fBaseDirectoryURI;
@@ -247,8 +246,10 @@ public class ErrorParserManager extends OutputStream {
 	 * supports error markers, use it, otherwise use conventional stream
 	 */
 	private void outputLine(String line, ProblemMarkerInfo marker) {
-		String l = line + "\n";  //$NON-NLS-1$
-		if ( outputStream == null ) return; 
+		String l = line + '\n';
+		if (outputStream == null) {
+			return;
+		}
 		try {
 			if (marker != null) {
 				if (outputStream instanceof IErrorMarkeredOutputStream) {
@@ -322,7 +323,7 @@ public class ErrorParserManager extends OutputStream {
 	 * @return the previous line, save in the working buffer.
 	 */
 	public String getPreviousLine() {
-		return new String((previousLine) == null ? "" : previousLine); //$NON-NLS-1$
+		return previousLine == null ? "" : previousLine; //$NON-NLS-1$
 	}
 
 	/**

@@ -22,6 +22,7 @@
      Martin Oberhuber (Wind River) - [198692] Use FTP LIST -a to list UNIX hidden files
      Javier Montalvo Orus (Symbian) - [225821] [ftp] opening "/home" fails on OS/400 IFS
      Martin Oberhuber (Wind River) - [214141] Avoid NPE if missing SYST command
+     Kaloyan Raev (Zend) - [480836] cannot list directories on IBM i
  -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -89,14 +90,24 @@
             label="%FTPParser.OS2"
             priority="100">
       </parser>
+      <!-- Bug 480836: Use Unix-style format for IBM i -->
       <parser
-            class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSEOS400FTPEntryParser"
+            class="org.apache.commons.net.ftp.parser.UnixFTPEntryParser"
             systemTypeRegex=".*[Oo][Ss]/400.*"
             id="org.eclipse.rse.ftp.parser.OS400"
             label="%FTPParser.OS400"
             priority="100">
          <initCommand
-               cmd="site namefmt 1">
+               cmd="SITE LISTFMT 1">
+         </initCommand>
+         <initCommand
+               cmd="SITE NAMEFMT 1">
+         </initCommand>
+         <initCommand
+               cmd="CWD /">
+         </initCommand>
+         <initCommand
+               cmd="CWD ~">
          </initCommand>
       </parser>
        <parser

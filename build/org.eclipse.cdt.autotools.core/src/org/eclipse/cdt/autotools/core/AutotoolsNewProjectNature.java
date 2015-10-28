@@ -38,12 +38,12 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 
 	public static final String AUTOTOOLS_NATURE_ID = "org.eclipse.cdt.autotools.core.autotoolsNatureV2";  //$NON-NLS-1$
 	public static final String OLD_AUTOTOOLS_NATURE_ID = "org.eclipse.linuxtools.cdt.autotools.core.autotoolsNatureV2"; //$NON-NLS-1$
-	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".genmakebuilder"; //$NON-NLS-1$
+	public static final String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".genmakebuilder"; //$NON-NLS-1$
 	/**
 	 * @since 1.3
 	 */
-	public final static String REMOTE_BUILDER_ID = "org.eclipse.ptp.rdt.sync.cdt.core.SyncBuilder"; // $NON-NLS-1$
-	public final static String OLD_AUTOTOOLS_BUILDER_ID = "org.eclipse.linuxtools.cdt.autotools.genmakebuilder"; //$NON-NLS-1$
+	public static final String REMOTE_BUILDER_ID = "org.eclipse.ptp.rdt.sync.cdt.core.SyncBuilder"; // $NON-NLS-1$
+	public static final String OLD_AUTOTOOLS_BUILDER_ID = "org.eclipse.linuxtools.cdt.autotools.genmakebuilder"; //$NON-NLS-1$
 
 	private IProject project;
 	

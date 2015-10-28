@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.core.configure;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public interface IAConfiguration {
@@ -26,7 +26,7 @@ public interface IAConfiguration {
 
 	String getToolParameters(String name);
 
-	ArrayList<String> getToolArgs(String name);
+	List<String> getToolArgs(String name);
 
 	void setOption(String name, String value);
 

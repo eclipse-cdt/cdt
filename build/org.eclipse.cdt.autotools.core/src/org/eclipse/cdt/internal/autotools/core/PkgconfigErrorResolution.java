@@ -27,7 +27,7 @@ import org.eclipse.ui.IMarkerResolution;
 
 public class PkgconfigErrorResolution implements IMarkerResolution {
 
-	private class ConsoleOutputStream extends OutputStream {
+	private static class ConsoleOutputStream extends OutputStream {
 		
 		protected StringBuffer fBuffer;
 			
@@ -54,7 +54,7 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 	    }
 	}
 	
-	private final static String PKG_UPDATE_MSG = "UpdatePackage.msg"; //$NON-NLS-1$
+	private static final String PKG_UPDATE_MSG = "UpdatePackage.msg"; //$NON-NLS-1$
 	private String pkgName;
 	
 	public PkgconfigErrorResolution(String pkgconfigRequirement) {
@@ -68,7 +68,6 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 	
 	@Override
 	public String getLabel() {
-		// TODO Auto-generated method stub
 		return AutotoolsPlugin.getFormattedString(PKG_UPDATE_MSG, new String[] {pkgName});
 	}
 
@@ -118,9 +117,8 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 			}
 			
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} //$NON-NLS-1$
+		}
 	}
 
 }

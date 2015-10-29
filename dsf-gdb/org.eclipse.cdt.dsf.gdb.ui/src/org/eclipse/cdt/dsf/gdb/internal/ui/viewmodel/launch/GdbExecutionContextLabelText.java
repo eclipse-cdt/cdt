@@ -39,6 +39,9 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
         if (IGdbLaunchVMConstants.PROP_EXIT_CODE_KNOWN.equals(propertyName)) {
         	return properties.get(IGdbLaunchVMConstants.PROP_EXIT_CODE) != null ? 1 : 0;
         }
+        if (IGdbLaunchVMConstants.PROP_ITSET_SPEC_KNOWN.equals(propertyName)) {
+        	return properties.get(IGdbLaunchVMConstants.PROP_ITSET_SPEC) != null ? 1 : 0;
+        }
         return super.getPropertyValue(propertyName, status, properties);
     }
 
@@ -51,7 +54,9 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
             IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN.equals(propertyName) ||
         	IGdbLaunchVMConstants.PROP_THREAD_SUMMARY.equals(propertyName) ||
         	IGdbLaunchVMConstants.PROP_EXIT_CODE_KNOWN.equals(propertyName) ||
-        	IGdbLaunchVMConstants.PROP_EXIT_CODE.equals(propertyName))
+        	IGdbLaunchVMConstants.PROP_EXIT_CODE.equals(propertyName) ||
+        	IGdbLaunchVMConstants.PROP_ITSET_SPEC_KNOWN.equals(propertyName) ||
+        	IGdbLaunchVMConstants.PROP_ITSET_SPEC.equals(propertyName))
         {
         	return true;
         } 

@@ -34,9 +34,15 @@ import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.gdb.service.GDBGrouping.MIUserGroupDMC;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupCreatedEvent;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDeletedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl.IReverseModeChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -387,6 +393,75 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		enabled = query.get();
 		assertTrue("Reverse debugging should not be enabled", !enabled);
 	}
+	
+	/**
+	 * This tests the notification is correctly sent when an ITSet group is created
+	 * from the console.   
+	 */
+    @Test 
+    public void testCreatingITSetGroupFromConsole() throws Throwable {
+    	fEventsReceived.clear();
+    	final String gName = "mySet1";
+    	final String gSpec = "tt1.1";
+    	
+    	// Create group from the console
+    	queueConsoleCommand("itset define " + gName + " " + gSpec);
+    	// wait for notification that a group was created
+    	IGroupCreatedEvent groupCreatedEvent = waitForEvent(IGroupCreatedEvent.class);
+    	
+    	IGroupDMData newGroupData = SyncUtil.getGroupData(groupCreatedEvent.getDMContext());
+    	
+    	assertEquals("Group name not as expected", gName, newGroupData.getName());
+        assertEquals("Group spec not as expected", gSpec, newGroupData.getSpec());
+        
+        // confirm that the group exists by asking the grouping service
+        List<IGroupDMContext> groups = SyncUtil.getGroups();
+        
+        // we expect group-all and the group we just created
+        assertEquals("Number of groups not as expected", 2, groups.size());
+        
+        // remove GroupAll
+        groups.remove(SyncUtil.getGroupAll());
+        
+        // the group we created should be the only one left in the list
+        IGroupDMContext ctx = groups.remove(0);
+        
+        assertEquals("DMContext from IGroupCreatedEvent does not match context obtained from service", groupCreatedEvent.getDMContext(), ctx);
+    }
+    
+    /** 
+     * This test the deletion of an existing group from the console, triggers the proper 
+     * notification.
+     */
+    @Test 
+    public void testDeleteITSetGroupFromConsole() throws Throwable {
+    	IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
+		assertTrue("Expecting at least one threads but got: " + threads.length, threads.length >= 1);
+		
+		// create group with all available threads, using the service
+		final IGroupDMContext group = SyncUtil.createGroup(threads);
+		IGroupDMData groupData = SyncUtil.getGroupData(group);
+		String groupId = groupData.getId();
+		String gName = groupData.getName();
+		
+		fEventsReceived.clear();
+		
+		// delete the new group from the console
+		queueConsoleCommand("itset undefine " + gName);
+		// wait for notification that a group was deleted
+		IGroupDeletedEvent groupDeletedEvent = waitForEvent(IGroupDeletedEvent.class);
+		
+		IGroupDMContext deletedGroupCtx = groupDeletedEvent.getDMContext();
+		if (deletedGroupCtx instanceof MIUserGroupDMC) {
+			String name = ((MIUserGroupDMC)deletedGroupCtx).getName();
+			assertEquals("Group name, from IGroupDeletedEvent, not as expected",gName, name);
+			String id = ((MIUserGroupDMC)deletedGroupCtx).getId();
+			assertEquals("Group id, from IGroupDeletedEvent, not as expected",groupId, id);
+		}
+		else {
+			assertTrue("Was expecting that the context contained in IGroupDeletedEvent to be instance of MIUserGroupDMC, but was not",false);
+		}
+    }
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	// End of tests

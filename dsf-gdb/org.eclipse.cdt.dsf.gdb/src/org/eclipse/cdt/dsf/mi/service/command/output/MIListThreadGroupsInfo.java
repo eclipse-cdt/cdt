@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIListThreadGroups.GroupType;
 
 /**
  * GDB/MI thread group parsing.
@@ -202,6 +203,12 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		 * @since 4.7
 		 */
 		Integer getExitCode();
+		
+		/**
+		 * @return the spec used to create the group, if applicable
+		 * @since 5.1
+		 */
+		default String getSpec() {return "";} //$NON-NLS-1$
 	}
 	
 	/**
@@ -224,6 +231,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		final String fExecutable;
 		final MIThread[] fThreadList;
 		final Integer fExitCode;
+		final String fSpec;
 
 		public ThreadGroupInfo(String id, String description, String type, String pid, 
 	               String user, String[] cores, String exec, MIThread[] threads) {
@@ -247,6 +255,25 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			fThreadList = threads;
 			
 			fExitCode = exitCode;
+			
+			// initialize unused field
+			fSpec = ""; //$NON-NLS-1$
+		}
+		
+		/**
+		 * @since 5.1
+		 */
+		public ThreadGroupInfo(String id, String type, String name, String spec) {
+			fGroupId = id;
+			fType = type;
+			fName = name;
+			fSpec = spec;
+			
+			// initialize unused fields
+			fDescription = fPid  = fUser = fExecutable = ""; //$NON-NLS-1$
+			fExitCode = 0;
+			fThreadList = new MIThread[0];
+			fCores = new String[0];
 		}
 		
 		protected String parseName(String desc) {
@@ -318,6 +345,12 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		public Integer getExitCode() {
 			return fExitCode;
 		}
+		
+		/*** @since 5.1 */
+		@Override
+		public String getSpec() {
+			return fSpec;
+		}
 	}
 	
 	
@@ -374,8 +407,8 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		fGroupList = new IThreadGroupInfo[values.length];
 		for (int i = 0; i < values.length; i++) {
 			MIResult[] results = ((MITuple)values[i]).getMIResults();
-			String id, desc, type, pid, exec, user;
-			id = desc = type = pid = exec = user = "";//$NON-NLS-1$
+			String id, desc, type, pid, exec, user, name, spec;
+			id = desc = type = pid = exec = user = name = spec = "";//$NON-NLS-1$
 			MIThread[] threads = null;
 			Integer exitCode = null;
 			
@@ -443,7 +476,20 @@ public class MIListThreadGroupsInfo extends MIInfo {
 						} catch (NumberFormatException e) {
 						}
 					}
+				} else if (var.equals("name")) { //$NON-NLS-1$
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						name = str.trim();;
+					}
+				} else if (var.equals("spec")) { //$NON-NLS-1$
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						spec = str.trim();;
+					}
 				}
+				
 			}
 			// In the case of -list-thread-groups --available, the pid field is not present, but the
 			// pid is used as the main id.  To know we are in this case, we check that we have
@@ -453,7 +499,18 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			if (pid.isEmpty() && !desc.isEmpty()) {
 				pid = id;
 			}
-			fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec, threads, exitCode);
+			
+			if (GroupType.GROUP_TYPE_PROCESS.getFlag().equals(type)) { //$NON-NLS-1$
+				fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec, threads, exitCode);
+			}
+			else if (GroupType.GROUP_TYPE_USER_DEFINED.getFlag().equals(type) || 
+					GroupType.GROUP_TYPE_BUILTIN.getFlag().equals(type)) 
+			{ 
+				fGroupList[i] = new ThreadGroupInfo(id,type,name,spec);
+			}
+			else {
+				assert(false);
+			}
 		}
 	}
 

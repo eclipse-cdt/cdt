@@ -362,6 +362,7 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 			if (dmc instanceof IContainerDMContext) {
 	    		parentDelta.setFlags(parentDelta.getFlags() |  IModelDelta.CONTENT);
 	    	} 
+			// TODO: is this needed still?
 			else {
 				// The grouping service will send a GroupModifiedEvent, for each group
 				// that was affected by the exited thread. So we do not need to take care

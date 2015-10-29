@@ -36,11 +36,11 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupChangedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupCreatedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMData;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDeletedEvent;
-import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupChangedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IThreadRemovedDMEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -93,7 +93,6 @@ public class GroupVMNode extends AbstractContainerVMNode
 	
 	public GroupVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IGroupDMContext.class);
-
         IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
         store.addPropertyChangeListener(fPropertyChangeListener);
         fHideRunningThreadsProperty = store.getBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS);
@@ -125,7 +124,9 @@ public class GroupVMNode extends AbstractContainerVMNode
                         ExecutionContextLabelText.PROP_NAME_KNOWN, 
                         PROP_NAME,  
                         IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN, 
-                        IGdbLaunchVMConstants.PROP_THREAD_SUMMARY }), 
+                        IGdbLaunchVMConstants.PROP_THREAD_SUMMARY,
+                        IGdbLaunchVMConstants.PROP_ITSET_SPEC_KNOWN,
+                        IGdbLaunchVMConstants.PROP_ITSET_SPEC}), 
                         
                 new LabelText(MessagesForGdbLaunchVM.ContainerVMNode_No_columns__Error__label, new String[0]),
                 
@@ -218,6 +219,9 @@ public class GroupVMNode extends AbstractContainerVMNode
     							// A group only has a name
     							if (isSuccess()) {
     								update.setProperty(PROP_NAME, getData().getName());
+    								if (update.getProperties().contains(IGdbLaunchVMConstants.PROP_ITSET_SPEC)) {
+    									update.setProperty(IGdbLaunchVMConstants.PROP_ITSET_SPEC, getData().getSpec());
+    								}
     							} else {
     								update.setStatus(getStatus());
     							}

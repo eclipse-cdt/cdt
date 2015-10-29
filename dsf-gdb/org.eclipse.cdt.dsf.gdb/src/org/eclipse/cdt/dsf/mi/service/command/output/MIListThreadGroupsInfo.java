@@ -249,6 +249,21 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			fExitCode = exitCode;
 		}
 		
+		/**
+		 * @since 5.0
+		 */
+		public ThreadGroupInfo(String id, String type, String name) {
+			fGroupId = id;
+			fType = type;
+			fName = name;
+			
+			// initialize unused fields
+			fDescription = fPid  = fUser = fExecutable = ""; //$NON-NLS-1$
+			fExitCode = 0;
+			fThreadList = new MIThread[0];
+			fCores = new String[0];
+		}
+		
 		protected String parseName(String desc) {
 			String name = ""; //$NON-NLS-1$
 
@@ -374,8 +389,8 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		fGroupList = new IThreadGroupInfo[values.length];
 		for (int i = 0; i < values.length; i++) {
 			MIResult[] results = ((MITuple)values[i]).getMIResults();
-			String id, desc, type, pid, exec, user;
-			id = desc = type = pid = exec = user = "";//$NON-NLS-1$
+			String id, desc, type, pid, exec, user, name;
+			id = desc = type = pid = exec = user = name = "";//$NON-NLS-1$
 			MIThread[] threads = null;
 			Integer exitCode = null;
 			
@@ -443,7 +458,14 @@ public class MIListThreadGroupsInfo extends MIInfo {
 						} catch (NumberFormatException e) {
 						}
 					}
+				} else if (var.equals("name")) { //$NON-NLS-1$
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						name = str.trim();;
+					}
 				}
+				
 			}
 			// In the case of -list-thread-groups --available, the pid field is not present, but the
 			// pid is used as the main id.  To know we are in this case, we check that we have
@@ -453,7 +475,16 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			if (pid.isEmpty() && !desc.isEmpty()) {
 				pid = id;
 			}
-			fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec, threads, exitCode);
+			
+			if ("process".equals(type)) { //$NON-NLS-1$
+				fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec, threads, exitCode);
+			}
+			else if ("user-defined".equals(type)) { //$NON-NLS-1$
+				fGroupList[i] = new ThreadGroupInfo(id,type,name);
+			}
+			else {
+				assert(false);
+			}
 		}
 	}
 

@@ -241,9 +241,22 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 	}
 
 	protected class GroupCreatedEvent extends AbstractDMEvent<IGroupDMContext> 
-	implements IGroupCreatedEvent {
+	implements IGroupCreatedEvent 
+	{
+		private final String fSpec;
+		
 		public GroupCreatedEvent(IGroupDMContext context) {
+			this(context, null);
+		}
+		
+		public GroupCreatedEvent(IGroupDMContext context, String spec) {
 			super(context);
+			fSpec = spec;
+		}
+
+		@Override
+		public String getSpec() {
+			return fSpec;
 		}
 	}
 
@@ -267,14 +280,22 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 	protected static class MIUserGroupDMC extends AbstractDMContext implements IGroupDMContext {
 
 		private String fId;
+		private String fName;
 
 		public MIUserGroupDMC(DsfSession session, IDMContext[] parents, String id) {
+			this(session, parents, id, id);
+		}
+		public MIUserGroupDMC(DsfSession session, IDMContext[] parents, String id, String name) {
 			super(session, parents);
 			fId = id;
+			fName = name;
 		}
 
 		public String getId() {
 			return fId;
+		}
+		public String getName() {
+			return fName;
 		}
 
 		@Override
@@ -700,7 +721,9 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 	}
 
 	protected String newGroupName() {
-		return "Group-" + new Integer(fNewGroupId++).toString(); //$NON-NLS-1$
+		// note: removing dash because "itset view <group name>" chokes on it
+//		return "Set-" + new Integer(fNewGroupId++).toString(); //$NON-NLS-1$
+		return "Set" + new Integer(fNewGroupId++).toString(); //$NON-NLS-1$
 	}
 
 	private UserGroupData findNode(UserGroupNodeDesc node) {

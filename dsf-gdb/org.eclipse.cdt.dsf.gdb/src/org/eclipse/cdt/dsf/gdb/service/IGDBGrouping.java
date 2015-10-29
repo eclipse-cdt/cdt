@@ -41,7 +41,11 @@ public interface IGDBGrouping extends IExecutionContextTranslator {
     /** 
      * Indicates that a new group has been created.
      */
-    interface IGroupCreatedEvent extends IDMEvent<IGroupDMContext> {}
+    interface IGroupCreatedEvent extends IDMEvent<IGroupDMContext> {
+    	// TODO: needed? 
+    	/** Returns the specification used to create the group */
+    	String getSpec();
+    }
     
     /** 
      * Indicates that a group has been deleted.

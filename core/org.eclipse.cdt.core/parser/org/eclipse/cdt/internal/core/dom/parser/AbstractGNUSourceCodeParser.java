@@ -2674,6 +2674,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		while (true) {
 			final int lt1= LT(1);
 
+			if (lt1 == IToken.tEOC)
+				throwBacktrack(LA(1));
+
 			// Ignore passages inside braces (such as for a statement-expression),
 			// as they can basically contain tokens of any kind.
 			if (lt1 == IToken.tLBRACE) {
@@ -2686,7 +2689,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				continue;
 			}
 
-			if (lt1 == IToken.tEOC || lt1 == terminator)
+			if (lt1 == terminator)
 				throwBacktrack(LA(1));
 
 			consume();

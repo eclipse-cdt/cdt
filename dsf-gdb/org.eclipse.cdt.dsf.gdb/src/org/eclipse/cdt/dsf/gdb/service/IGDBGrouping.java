@@ -34,8 +34,12 @@ public interface IGDBGrouping extends IExecutionContextTranslator {
 	 *  Model data interface corresponding to IGroupDMContext
 	 */
 	interface IGroupDMData extends IDMData {
+		/** Returns the id of the group */
 		String getId();
+		/** Returns the name of the group */
 		String getName();
+		/** Returns the spec used to create the group */
+		String getSpec();
 	}
 		
     /** 

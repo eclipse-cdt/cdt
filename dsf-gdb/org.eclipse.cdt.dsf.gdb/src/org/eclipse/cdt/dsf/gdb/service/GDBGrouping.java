@@ -241,7 +241,8 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 	}
 
 	protected class GroupCreatedEvent extends AbstractDMEvent<IGroupDMContext> 
-	implements IGroupCreatedEvent {
+	implements IGroupCreatedEvent 
+	{
 		public GroupCreatedEvent(IGroupDMContext context) {
 			super(context);
 		}
@@ -264,17 +265,25 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 	/**
 	 * This class represents a user group.
 	 */
-	protected static class MIUserGroupDMC extends AbstractDMContext implements IGroupDMContext {
+	public static class MIUserGroupDMC extends AbstractDMContext implements IGroupDMContext {
 
 		private String fId;
+		private String fName;
 
 		public MIUserGroupDMC(DsfSession session, IDMContext[] parents, String id) {
+			this(session, parents, id, id);
+		}
+		public MIUserGroupDMC(DsfSession session, IDMContext[] parents, String id, String name) {
 			super(session, parents);
 			fId = id;
+			fName = name;
 		}
 
 		public String getId() {
 			return fId;
+		}
+		public String getName() {
+			return fName;
 		}
 
 		@Override
@@ -298,10 +307,12 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 	protected static class MIUserGroupDMData implements IGroupDMData {
 		private String fId;
 		private String fName;
+		private String fSpec;
 
-		public MIUserGroupDMData(String id, String name) {
+		public MIUserGroupDMData(String id, String name, String spec) {
 			fId = id;
 			fName = name;
+			fSpec = spec;
 		}
 
 		@Override
@@ -312,7 +323,12 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 		@Override
 		public String getName() {
 			return fName;
-		}		
+		}
+		
+		@Override
+		public String getSpec() {
+			return fSpec;
+		}
 	}
 
 	private ICommandControlService fCommandControl;
@@ -602,7 +618,7 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 	public void getExecutionData(IGroupDMContext group, DataRequestMonitor<IGroupDMData> rm) {
 		if (group instanceof MIUserGroupDMC) {
 			MIUserGroupDMC groupDmc = (MIUserGroupDMC)group;
-			rm.done(new MIUserGroupDMData(groupDmc.getId(), groupDmc.getId()));
+			rm.done(new MIUserGroupDMData(groupDmc.getId(), groupDmc.getId(), null));
 		} else {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid type of context", null)); //$NON-NLS-1$
 		}
@@ -700,7 +716,12 @@ public class GDBGrouping extends AbstractDsfService implements IGDBGrouping, ICa
 	}
 
 	protected String newGroupName() {
-		return "Group-" + new Integer(fNewGroupId++).toString(); //$NON-NLS-1$
+		// note: removing dash because "itset view <group name>" chokes on it
+		// note2: there is also an issue with group names starting with certain letters
+		//        "i,t,g", for example. So we go with "Set" instead of "Group" to mitigate.
+		// note3: when a user creates a group on the command-line / console, we can't do
+		//        anything about it... 
+		return "Set" + new Integer(fNewGroupId++).toString(); //$NON-NLS-1$
 	}
 
 	private UserGroupData findNode(UserGroupNodeDesc node) {

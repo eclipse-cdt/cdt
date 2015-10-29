@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
@@ -25,7 +22,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -36,17 +32,15 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupChangedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupCreatedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMData;
 import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDeletedEvent;
-import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupChangedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IThreadRemovedDMEvent;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -93,7 +87,6 @@ public class GroupVMNode extends AbstractContainerVMNode
 	
 	public GroupVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IGroupDMContext.class);
-
         IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
         store.addPropertyChangeListener(fPropertyChangeListener);
         fHideRunningThreadsProperty = store.getBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS);
@@ -125,7 +118,9 @@ public class GroupVMNode extends AbstractContainerVMNode
                         ExecutionContextLabelText.PROP_NAME_KNOWN, 
                         PROP_NAME,  
                         IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN, 
-                        IGdbLaunchVMConstants.PROP_THREAD_SUMMARY }), 
+                        IGdbLaunchVMConstants.PROP_THREAD_SUMMARY,
+                        IGdbLaunchVMConstants.PROP_ITSET_SPEC_KNOWN,
+                        IGdbLaunchVMConstants.PROP_ITSET_SPEC}), 
                         
                 new LabelText(MessagesForGdbLaunchVM.ContainerVMNode_No_columns__Error__label, new String[0]),
                 
@@ -218,6 +213,9 @@ public class GroupVMNode extends AbstractContainerVMNode
     							// A group only has a name
     							if (isSuccess()) {
     								update.setProperty(PROP_NAME, getData().getName());
+    								if (update.getProperties().contains(IGdbLaunchVMConstants.PROP_ITSET_SPEC)) {
+    									update.setProperty(IGdbLaunchVMConstants.PROP_ITSET_SPEC, getData().getSpec());
+    								}
     							} else {
     								update.setStatus(getStatus());
     							}
@@ -293,87 +291,88 @@ public class GroupVMNode extends AbstractContainerVMNode
 			});
     }
 
-    @Override
-    public void getContextsForEvent(final VMDelta parentDelta, final Object event, final DataRequestMonitor<IVMContext[]> rm) {
-    	// do we care about at this event, here? 
-    	if (event instanceof IDMEvent<?>) {
-    		IDMEvent<?> dmEvent = (IDMEvent<?>)event;
-    		try {
-    			getSession().getExecutor().execute(new Runnable() { 
-    				@Override public void run() {
-    					Object eventCtx = null;
-    					IExecutionDMContext execCtx = null;
-    					
-    					if (event instanceof IContainerSuspendedDMEvent) {
-    						IContainerSuspendedDMEvent e = (IContainerSuspendedDMEvent) event;
-    						eventCtx = e.getTriggeringContexts()[0];
-    					}
-    					else {
-    						eventCtx = dmEvent.getDMContext();
-    					}
-    					
-    					if (eventCtx instanceof IExecutionDMContext) {
-    						execCtx = (IExecutionDMContext)eventCtx;
-    					}
-    					else {
-    						rm.setData(new IVMContext[0]);
-    						rm.done();
-    						return;
-    					}
-
-    					final DsfServicesTracker tracker = getServicesTracker();
-    					if (tracker != null) {
-    						IGDBGrouping groupingService = tracker.getService(IGDBGrouping.class);
-    						if (groupingService == null) {
-    							rm.setData(new IVMContext[0]);
-    							rm.done();
-    							return;
-    						}
-
-    						// 
-    						groupingService.getGroups(execCtx, true,
-    								new DataRequestMonitor<IGroupDMContext[]>(getExecutor(), rm) {
-    									@Override
-    									public void handleCompleted() {
-    										if (isSuccess()) {
-    											IGroupDMContext[] groups = getData();
-    											List<IVMContext> contextsForEvent = new ArrayList<IVMContext>();
-
-    											for (int i = 0; i < groups.length; i++) {
-    												// For the suspended event, we want only the first group 
-    												// containing the thread to be expanded/selected. Other events
-    												// should generate a delta for every group the thread appears in
-    												// e.g. FullStackRefresh event
-    												if (i == 0 || !(event instanceof ISuspendedDMEvent)) {
-    													contextsForEvent.add(createVMContext(groups[i]));
-    												} 
-    											}    											
-    											rm.setData(contextsForEvent.toArray(new IVMContext[contextsForEvent.size()]));
-    										}
-    										else {
-    											rm.setData(new IVMContext[0]);
-    											rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
-    										}
-    										rm.done();
-    									}
-    								});
-    					}
-    					else {
-    						rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
-    						rm.setData(new IVMContext[0]);
-    						rm.done();
-    					}
-    				}});
-    		} catch (RejectedExecutionException e) {
-    			// Session shut down, no delta to build.
-    			rm.done();
-    		}
-    	}
-    	// let super classes take care of this event
-    	else {
-    		super.getContextsForEvent(parentDelta, event, rm);
-    	}
-    }
+    // doesn't work for ITSet (<grouping service>.getGroups() not yet implemented for ITSet) - removing for now.
+//    @Override
+//    public void getContextsForEvent(final VMDelta parentDelta, final Object event, final DataRequestMonitor<IVMContext[]> rm) {
+//    	// do we care about at this event, here? 
+//    	if (event instanceof IDMEvent<?>) {
+//    		IDMEvent<?> dmEvent = (IDMEvent<?>)event;
+//    		try {
+//    			getSession().getExecutor().execute(new Runnable() { 
+//    				@Override public void run() {
+//    					Object eventCtx = null;
+//    					IExecutionDMContext execCtx = null;
+//    					
+//    					if (event instanceof IContainerSuspendedDMEvent) {
+//    						IContainerSuspendedDMEvent e = (IContainerSuspendedDMEvent) event;
+//    						eventCtx = e.getTriggeringContexts()[0];
+//    					}
+//    					else {
+//    						eventCtx = dmEvent.getDMContext();
+//    					}
+//    					
+//    					if (eventCtx instanceof IExecutionDMContext) {
+//    						execCtx = (IExecutionDMContext)eventCtx;
+//    					}
+//    					else {
+//    						rm.setData(new IVMContext[0]);
+//    						rm.done();
+//    						return;
+//    					}
+//
+//    					final DsfServicesTracker tracker = getServicesTracker();
+//    					if (tracker != null) {
+//    						IGDBGrouping groupingService = tracker.getService(IGDBGrouping.class);
+//    						if (groupingService == null) {
+//    							rm.setData(new IVMContext[0]);
+//    							rm.done();
+//    							return;
+//    						}
+//
+//    						// 
+//    						groupingService.getGroups(execCtx, true,
+//    								new DataRequestMonitor<IGroupDMContext[]>(getExecutor(), rm) {
+//    									@Override
+//    									public void handleCompleted() {
+//    										if (isSuccess()) {
+//    											IGroupDMContext[] groups = getData();
+//    											List<IVMContext> contextsForEvent = new ArrayList<IVMContext>();
+//
+//    											for (int i = 0; i < groups.length; i++) {
+//    												// For the suspended event, we want only the first group 
+//    												// containing the thread to be expanded/selected. Other events
+//    												// should generate a delta for every group the thread appears in
+//    												// e.g. FullStackRefresh event
+//    												if (i == 0 || !(event instanceof ISuspendedDMEvent)) {
+//    													contextsForEvent.add(createVMContext(groups[i]));
+//    												} 
+//    											}    											
+//    											rm.setData(contextsForEvent.toArray(new IVMContext[contextsForEvent.size()]));
+//    										}
+//    										else {
+//    											rm.setData(new IVMContext[0]);
+//    											rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+//    										}
+//    										rm.done();
+//    									}
+//    								});
+//    					}
+//    					else {
+//    						rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+//    						rm.setData(new IVMContext[0]);
+//    						rm.done();
+//    					}
+//    				}});
+//    		} catch (RejectedExecutionException e) {
+//    			// Session shut down, no delta to build.
+//    			rm.done();
+//    		}
+//    	}
+//    	// let super classes take care of this event
+//    	else {
+//    		super.getContextsForEvent(parentDelta, event, rm);
+//    	}
+//    }
     
     
     

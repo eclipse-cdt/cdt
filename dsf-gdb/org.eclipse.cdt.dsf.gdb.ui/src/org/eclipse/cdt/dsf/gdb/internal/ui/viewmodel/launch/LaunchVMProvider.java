@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractLaunchVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.LaunchRootVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.StackFramesVMNode;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStartedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStoppedDMEvent;
@@ -171,6 +172,10 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
                     IRunControl runControlService = tracker.getService(IRunControl.class);
                     if (runControlService instanceof ICachingService) {
                         ((ICachingService)runControlService).flushCache(null);
+                    }
+                    IGDBGrouping groupingService = tracker.getService(IGDBGrouping.class);
+                    if (groupingService instanceof ICachingService) {
+                        ((ICachingService)groupingService).flushCache(null);
                     }
                     tracker.dispose();
                 }

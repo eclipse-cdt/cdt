@@ -68,19 +68,46 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 	
 	/**
+	 * @since 5.1
+	 */
+	public enum GroupType {
+		GROUP_TYPE_PROCESS("process"),  //$NON-NLS-1$
+		GROUP_TYPE_BUILTIN("builtin"), // TODO: for future use //$NON-NLS-1$
+		GROUP_TYPE_USER_DEFINED("user-defined"); //$NON-NLS-1$
+		
+		private final String fGdbGroupTypeFlag;
+		
+		GroupType(String flag) {
+			fGdbGroupTypeFlag = flag;
+		}
+		
+		public String getFlag() {
+			return fGdbGroupTypeFlag;
+		}
+	}
+	
+	/**
 	 *  List all groups (processes) being debugged.
 	 */
 	public MIListThreadGroups(ICommandControlDMContext ctx) {
-		this(ctx, false);
+		this(ctx, false, null);
 	}
 
+	/**
+	 *  List all groups of a given type.
+	 * @since 5.1
+	 */
+	public MIListThreadGroups(ICommandControlDMContext ctx, GroupType type) {
+		this(ctx, false, type);
+	}
+	
 	/**
 	 *  If the parameter groupId is null, list all groups (processes) being debugged.
 	 *  If the parameter groupId is a valid group, list all threads 
 	 *  which are children of the specified group
 	 */
 	public MIListThreadGroups(ICommandControlDMContext ctx, String groupId) {
-		this(ctx, groupId, false, false);
+		this(ctx, groupId, false, false, null);
 	}
 
 	/**
@@ -89,7 +116,17 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 	 * If the parameter listAll is false, list only the processes being debugged. 
 	 */
 	public MIListThreadGroups(ICommandControlDMContext ctx, boolean listAll) {
-		this(ctx, null, listAll, false);
+		this(ctx, null, listAll, false, null);
+	}
+	
+	/**
+	 * If the parameter listAll is true, list all groups of a given type running on the 
+	 * target.
+	 * If the parameter listAll is false, list only the groups being debugged. 
+	 * @since 5.1
+	 */
+	public MIListThreadGroups(ICommandControlDMContext ctx, boolean listAll, GroupType type) {
+		this(ctx, null, listAll, false, type);
 	}
 
 	/**
@@ -97,12 +134,14 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 	 * @since 4.1
 	 */
 	public MIListThreadGroups(ICommandControlDMContext ctx, boolean listAll, boolean recurse) {
-		this(ctx, null, listAll, recurse);
+		this(ctx, null, listAll, recurse, null);
 	}
 	
 	// There should be no reason to have both listAll and groupId specified,
 	// so this constructor is private, and exists to avoid duplicating code.
-	private MIListThreadGroups(ICommandControlDMContext ctx, String groupId, boolean listAll, boolean recurse) {
+	private MIListThreadGroups(ICommandControlDMContext ctx, String groupId, boolean listAll, 
+			boolean recurse, GroupType type) 
+	{
 		super(ctx, "-list-thread-groups"); //$NON-NLS-1$
 		
 		assert !((groupId != null) && listAll); // see comment above
@@ -115,6 +154,13 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 		if (recurse) {
 			arguments.add("--recurse"); //$NON-NLS-1$
 			arguments.add("1"); //$NON-NLS-1$
+		}
+		
+		// specific type of group requested - be specific in MI command
+		if (type != null) {
+//			arguments.add("--all"); //$NON-NLS-1$
+			arguments.add("--type"); //$NON-NLS-1$
+			arguments.add(type.getFlag());
 		}
 
 		if (groupId != null) {

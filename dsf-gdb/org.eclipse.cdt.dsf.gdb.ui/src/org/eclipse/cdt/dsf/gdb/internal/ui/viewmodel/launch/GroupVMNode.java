@@ -83,7 +83,6 @@ public class GroupVMNode extends AbstractContainerVMNode
 	
 	public GroupVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IGroupDMContext.class);
-
         IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
         store.addPropertyChangeListener(fPropertyChangeListener);
         fHideRunningThreadsProperty = store.getBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS);

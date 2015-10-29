@@ -89,7 +89,10 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 extern "C"
 JNIEXPORT void JNICALL FUNC(close0)(JNIEnv *env, jobject jobj, jlong handle)
 {
+	CancelIoEx((HANDLE)handle, NULL);
 	CloseHandle((HANDLE)handle);
+	// Some drivers need us to delay a bit to make sure ports closed
+	Sleep(1000);
 }
 
 extern "C"

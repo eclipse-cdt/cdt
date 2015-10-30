@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Google, Inc and others.
+ * Copyright (c) 2013, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,6 +98,30 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	}
 	//	}
 	public void testNamespaceAlias_442117() throws Exception {
+		checkBindings();
+	}
+
+	// confuser.cpp
+	//	namespace ns1 {
+	//	namespace waldo {}
+	//	namespace ns2 {
+	//	namespace waldo {}
+	//	}
+	//	}
+
+	// test.cpp *
+	//	namespace waldo {
+	//	class A {};
+	//	}
+	//
+	//	namespace ns1 {
+	//	namespace ns2 {
+	//
+	//	waldo::A* x;
+	//
+	//	}
+	//	}
+	public void testNamespace_481161() throws Exception {
 		checkBindings();
 	}
 }

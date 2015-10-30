@@ -728,6 +728,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
                         }
                     })
                 );
+        } else {
+        	rm.done();
         }
     }
     

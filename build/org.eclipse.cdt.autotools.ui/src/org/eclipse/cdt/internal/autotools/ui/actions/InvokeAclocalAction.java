@@ -28,8 +28,9 @@ public class InvokeAclocalAction extends InvokeAction {
 	public void run(IAction action) {
 
 		IContainer container = getSelectedContainer();
-		if (container == null)
+		if (container == null) {
 			return;
+		}
 		
 		IPath execDir = getExecDir(container);
 		String cwd = InvokeMessages.getString("CWD") + getCWD(container); //$NON-NLS-1$
@@ -66,36 +67,33 @@ public class InvokeAclocalAction extends InvokeAction {
 		}
 
 		int iOption = 0;
-		if (targetList.length > 0)
+		if (targetList.length > 0) {
 			iOption = 1;
+		}
 
-		String[] argumentList = new String[targetList.length
-				+ optionsList.length + iOption];
+		String[] argumentList = new String[targetList.length + optionsList.length + iOption];
 
 		System.arraycopy(optionsList, 0, argumentList, 0, optionsList.length);
 
 		if (iOption == 1)
 			argumentList[optionsList.length] = "-I"; //$NON-NLS-1$
 
-		System.arraycopy(targetList, 0, argumentList, optionsList.length
-				+ iOption, targetList.length);
+		System.arraycopy(targetList, 0, argumentList, optionsList.length + iOption, targetList.length);
 
-		if (container != null) {
-			String aclocalCommand = null;
-			IProject project = getSelectedContainer().getProject();
-			try {
-				aclocalCommand = project.getPersistentProperty(AutotoolsPropertyConstants.ACLOCAL_TOOL);
-			} catch (CoreException e) {
-				// do nothing
-			}
-			
-			// If unset, use default system path
-			if (aclocalCommand == null)
-				aclocalCommand = DEFAULT_COMMAND;
-			
-			executeConsoleCommand(DEFAULT_COMMAND, aclocalCommand,
-					argumentList, execDir);
+		String aclocalCommand = null;
+		IProject project = getSelectedContainer().getProject();
+		try {
+			aclocalCommand = project.getPersistentProperty(AutotoolsPropertyConstants.ACLOCAL_TOOL);
+		} catch (CoreException e) {
+			// do nothing
 		}
+
+		// If unset, use default system path
+		if (aclocalCommand == null) {
+			aclocalCommand = DEFAULT_COMMAND;
+		}
+
+		executeConsoleCommand(DEFAULT_COMMAND, aclocalCommand, argumentList, execDir);
 	}
 
 	@Override

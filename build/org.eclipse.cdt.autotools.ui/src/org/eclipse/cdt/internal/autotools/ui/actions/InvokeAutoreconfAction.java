@@ -29,8 +29,9 @@ public class InvokeAutoreconfAction extends InvokeAction {
 	public void run(IAction action) {
 
 		IContainer container = getSelectedContainer();
-		if (container == null)
+		if (container == null) {
 			return;
+		}
 		
 		IPath execDir = getExecDir(container);
 		String cwd = InvokeMessages.getString("CWD") + getCWD(container); //$NON-NLS-1$
@@ -54,22 +55,20 @@ public class InvokeAutoreconfAction extends InvokeAction {
 
 		System.arraycopy(optionsList, 0, argumentList, 0, optionsList.length);
 
-		if (container != null) {
-			String autoreconfCommand = null;
-			IProject project = getSelectedContainer().getProject();
-			try {
-				autoreconfCommand = project.getPersistentProperty(AutotoolsPropertyConstants.AUTORECONF_TOOL);
-			} catch (CoreException e) {
-				// do nothing
-			}
-			
-			// If unset, use default system path
-			if (autoreconfCommand == null)
-				autoreconfCommand = DEFAULT_COMMAND;
-			
-			executeConsoleCommand(DEFAULT_COMMAND, autoreconfCommand,
-					argumentList, execDir);
+		String autoreconfCommand = null;
+		IProject project = getSelectedContainer().getProject();
+		try {
+			autoreconfCommand = project.getPersistentProperty(AutotoolsPropertyConstants.AUTORECONF_TOOL);
+		} catch (CoreException e) {
+			// do nothing
 		}
+
+		// If unset, use default system path
+		if (autoreconfCommand == null) {
+			autoreconfCommand = DEFAULT_COMMAND;
+		}
+
+		executeConsoleCommand(DEFAULT_COMMAND, autoreconfCommand, argumentList, execDir);
 	}
 
 	@Override

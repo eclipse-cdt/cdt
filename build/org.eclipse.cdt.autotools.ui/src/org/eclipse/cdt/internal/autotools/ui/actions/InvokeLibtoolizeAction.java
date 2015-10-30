@@ -29,19 +29,16 @@ public class InvokeLibtoolizeAction extends InvokeAction {
 	public void run(IAction action) {
 
 		IContainer container = getSelectedContainer();
-		if (container == null)
+		if (container == null) {
 			return;
+		}
 		
 		IPath execDir = getExecDir(container);
 		String cwd = InvokeMessages.getString("CWD") + getCWD(container); //$NON-NLS-1$
 
-		InputDialog optionDialog = new SingleInputDialog(
-				new Shell(),
-				cwd,
-				InvokeMessages
-						.getString("InvokeLibtoolizeAction.windowTitle.options"), //$NON-NLS-1$
-				InvokeMessages
-						.getString("InvokeLibtoolizeAction.message.options.otherOptions"), //$NON-NLS-1$
+		InputDialog optionDialog = new SingleInputDialog(new Shell(), cwd,
+				InvokeMessages.getString("InvokeLibtoolizeAction.windowTitle.options"), //$NON-NLS-1$
+				InvokeMessages.getString("InvokeLibtoolizeAction.message.options.otherOptions"), //$NON-NLS-1$
 				DEFAULT_OPTION, null);
 		optionDialog.open();
 
@@ -54,22 +51,20 @@ public class InvokeLibtoolizeAction extends InvokeAction {
 
 		System.arraycopy(optionsList, 0, argumentList, 0, optionsList.length);
 
-		if (container != null) {
-			String libtoolizeCommand = null;
-			IProject project = getSelectedContainer().getProject();
-			try {
-				libtoolizeCommand = project.getPersistentProperty(AutotoolsPropertyConstants.LIBTOOLIZE_TOOL);
-			} catch (CoreException e) {
-				// do nothing
-			}
-			
-			// If unset, use default system path
-			if (libtoolizeCommand == null)
-				libtoolizeCommand = DEFAULT_COMMAND;
-			
-			executeConsoleCommand(DEFAULT_COMMAND, libtoolizeCommand,
-					argumentList, execDir);
+		String libtoolizeCommand = null;
+		IProject project = getSelectedContainer().getProject();
+		try {
+			libtoolizeCommand = project.getPersistentProperty(AutotoolsPropertyConstants.LIBTOOLIZE_TOOL);
+		} catch (CoreException e) {
+			// do nothing
 		}
+
+		// If unset, use default system path
+		if (libtoolizeCommand == null) {
+			libtoolizeCommand = DEFAULT_COMMAND;
+		}
+
+		executeConsoleCommand(DEFAULT_COMMAND, libtoolizeCommand, argumentList, execDir);
 	}
 
 	@Override

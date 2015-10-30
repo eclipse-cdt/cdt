@@ -23,7 +23,7 @@ import org.eclipse.cdt.ui.wizards.conversion.ConversionWizard;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -173,7 +173,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(AutotoolsUIPlugin.getResourceString("WizardAutotoolsProjectConversion.monitor.convertingToMakeProject"), 2); //$NON-NLS-1$
 		try {
-			super.doRun(new SubProgressMonitor(monitor, 5));
+			super.doRun(SubMonitor.convert(monitor, 5));
 		} finally {
 			monitor.done();
 		}

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.jface.dialogs.DialogPage;
 
 public class StatusTool {

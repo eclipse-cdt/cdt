@@ -20,9 +20,6 @@ import org.eclipse.jface.action.IAction;
 
 /**
  * Class responsible for invoking autoconf.
- * 
- * @author klee
- * 
  */
 public class InvokeAutoconfAction extends InvokeAction {
 
@@ -35,21 +32,19 @@ public class InvokeAutoconfAction extends InvokeAction {
 		
 		IPath execDir = getExecDir(container);
 
-		if (container != null) {
-			IProject project = container.getProject();
-			String autoconfCommand = null;
-			try {
-				autoconfCommand = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOCONF_TOOL);
-			} catch (CoreException e) {
-				// do nothing
-			}
-			
-			// If unset for the project, default to system path
-			if (autoconfCommand == null)
-				autoconfCommand = DEFAULT_COMMAND;
-			
-			executeConsoleCommand(DEFAULT_COMMAND, autoconfCommand, new String[]{}, execDir);
+		IProject project = container.getProject();
+		String autoconfCommand = null;
+		try {
+			autoconfCommand = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOCONF_TOOL);
+		} catch (CoreException e) {
+			// do nothing
 		}
+
+		// If unset for the project, default to system path
+		if (autoconfCommand == null) {
+			autoconfCommand = DEFAULT_COMMAND;
+		}
+		executeConsoleCommand(DEFAULT_COMMAND, autoconfCommand, new String[] {}, execDir);
 	}
 
 

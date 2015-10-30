@@ -38,7 +38,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
@@ -121,9 +121,9 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 							project, monitor);
 
 					// C++ natures
-					if (isCPP)
-						CCProjectNature.addCCNature(project,
-								new SubProgressMonitor(monitor, 1));
+					if (isCPP) {
+						CCProjectNature.addCCNature(project, SubMonitor.convert(monitor, 1));
+					}
 
 					// Set up build information
 					ICProjectDescriptionManager pdMgr = CoreModel.getDefault()

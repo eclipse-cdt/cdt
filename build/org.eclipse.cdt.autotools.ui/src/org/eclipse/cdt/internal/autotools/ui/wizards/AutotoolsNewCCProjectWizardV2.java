@@ -33,20 +33,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 
-
 @SuppressWarnings("deprecation")
 public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 
-	/* (non-Javadoc)
-	 * String constants
-	 */
 	protected static final String PREFIX = "WizardAutotoolsNewCCProjectV2";	//$NON-NLS-1$
 	protected static final String OP_ERROR = PREFIX + ".op_error";	//$NON-NLS-1$
 	protected static final String WZ_TITLE = PREFIX + ".title";	//$NON-NLS-1$
@@ -168,13 +164,13 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 	protected void addNature(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 4);
 		monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_ADD_NATURE));
-		ManagedCProjectNature.addManagedNature(newProject, new SubProgressMonitor(monitor, 1));
+		ManagedCProjectNature.addManagedNature(newProject, SubMonitor.convert(monitor, 1));
 		monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_ADD_BUILDER));
-		ManagedCProjectNature.addManagedBuilder(newProject, new SubProgressMonitor(monitor, 1));
+		ManagedCProjectNature.addManagedBuilder(newProject, SubMonitor.convert(monitor, 1));
 		monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_ADD_NATURE));
-		AutotoolsNewProjectNature.addAutotoolsNature(newProject, new SubProgressMonitor(monitor, 1));
+		AutotoolsNewProjectNature.addAutotoolsNature(newProject, SubMonitor.convert(monitor, 1));
 		monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_ADD_BUILDER));
-		AutotoolsNewProjectNature.addAutotoolsBuilder(newProject, new SubProgressMonitor(monitor, 1));
+		AutotoolsNewProjectNature.addAutotoolsBuilder(newProject, SubMonitor.convert(monitor, 1));
 		monitor.done();
 	}
 	
@@ -189,11 +185,11 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 		}
 
 		// super.doRun() just creates the project and does not assign a builder to it.
-		super.doRun(new SubProgressMonitor(monitor, 5));
+		super.doRun(SubMonitor.convert(monitor, 5));
 
 		// Add the managed build nature and builder
 		try {
-			addNature(new SubProgressMonitor(monitor, 2));
+			addNature(SubMonitor.convert(monitor, 2));
 		} catch (CoreException e) {
 			AutotoolsUIPlugin.log(e);
 		}
@@ -265,7 +261,7 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 
 		// Modify the project settings
 		if (newProject != null) {
-			optionPage.performApply(new SubProgressMonitor(monitor, 2));
+			optionPage.performApply(SubMonitor.convert(monitor, 2));
 		}
 
 		// Save the build options
@@ -284,18 +280,12 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 		monitor.done();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunPrologue(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void doRunPrologue(IProgressMonitor monitor) {
 		// Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunEpilogue(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void doRunEpilogue(IProgressMonitor monitor) {
 		// Get my initializer to run
@@ -318,28 +308,19 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 			{
 				try {
 				operations[k].run(monitor);
-				} catch(InvocationTargetException e) {
-					//TODO: what should we do?
-				} catch(InterruptedException e) {
+				} catch (InvocationTargetException | InterruptedException e) {
 					//TODO: what should we do?
 				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#getProjectID()
-	 */
 	@Override
 	public String getProjectID() {
 //		return "org.eclipse.cdt.make.core.make"; //$NON-NLS-1$
 		return ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID;
 	}
 	
-//	public IProjectType getSelectedProjectType() {
-//		return projectConfigurationPage.getSelectedProjectType();
-//	}
-
 	public IConfiguration[] getSelectedConfigurations() {
 		return projectConfigurationPage.getSelectedConfigurations();
 	}

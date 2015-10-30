@@ -2013,6 +2013,7 @@ public class CPPSemantics {
 	    ObjectSet<ICPPFunction> fns= ObjectSet.emptySet();
 	    IBinding type = null;
 	    IBinding obj = null;
+	    boolean ambiguous = false;
 	    IBinding temp = null;
 
 	    final CPPASTTranslationUnit tu = data.getTranslationUnit();
@@ -2083,25 +2084,28 @@ public class CPPSemantics {
 
 	        	if (type == null) {
 	                type = temp;
+        			ambiguous = false;
 	        	} else if (!type.equals(temp)) {
 					int c = compareByRelevance(tu, type, temp);
 	        		if (c < 0) {
         				type= temp;
+	        			ambiguous = false;
 	        		} else if (c == 0) {
         				if (((IType) type).isSameType((IType) temp)) {
         					if (type instanceof ITypedef && !(temp instanceof ITypedef)) {
         						// Between same types prefer non-typedef.
         						type= temp;
+        	        			ambiguous = false;
         					}
         				} else {
-        					return new ProblemBinding(lookupName, lookupPoint,
-        							IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings());
+    	        			ambiguous = true;
         				}
         			}
 	            }
 	        } else {
 	        	if (obj == null) {
 	        		obj = temp;
+        			ambiguous = false;
 	        	} else if (!obj.equals(temp)) {
 	        		if (obj instanceof ICPPNamespace && temp instanceof ICPPNamespace &&
 	        				SemanticUtil.isSameNamespace((ICPPNamespace) obj, (ICPPNamespace) temp)) {
@@ -2110,13 +2114,18 @@ public class CPPSemantics {
 	        		int c = compareByRelevance(tu, obj, temp);
 	        		if (c < 0) {
 	        			obj= temp;
+	        			ambiguous = false;
 	        		} else if (c == 0) {
-	        			return new ProblemBinding(lookupName, lookupPoint,
-	        					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings());
+	        			ambiguous = true;
 	        		}
 	        	}
 	        }
 	    }
+		if (ambiguous) {
+			return new ProblemBinding(lookupName, lookupPoint,
+					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings());
+		}
+
 	    if (data.forUsingDeclaration) {
         	int cmp= -1;
 	        if (obj != null) {

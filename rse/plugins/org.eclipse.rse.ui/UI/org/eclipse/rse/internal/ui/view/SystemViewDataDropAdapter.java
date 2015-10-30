@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2015 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [234924] [ftp][dnd][Refresh] Copy/Paste file from Package Explorer doesn't refresh folder
  * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
  * David McKnight   (IBM)        - [398324] cross systems folder transfer breaks due to scoping rule
+ * Florian Holl (Fujitsu)        - [457303] - No visual feedback during Drag & Drop for invalid drop targets 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -369,7 +370,10 @@ extends ViewerDropAdapter
 	{
 		super.dragOver(event);
 		event.feedback &= ~DND.FEEDBACK_EXPAND;
-		event.detail = DND.DROP_COPY;
+		if (event.detail != DND.DROP_NONE)
+		{
+			event.detail = DND.DROP_COPY;
+		}
 	}
 
 }

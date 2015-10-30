@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -414,8 +414,8 @@ public abstract class InvokeAction extends AbstractTargetAction {
 								} catch (IOException e1) {
 								}
 
-								if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor1,
-										IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
+								if (launcher.waitAndRead(stdout, stderr,
+										SubMonitor.convert(monitor1)) != ICommandLauncher.OK) {
 									errMsg = launcher.getErrorMessage();
 								}
 

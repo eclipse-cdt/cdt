@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.ui.IEditorInput;
 
 /**

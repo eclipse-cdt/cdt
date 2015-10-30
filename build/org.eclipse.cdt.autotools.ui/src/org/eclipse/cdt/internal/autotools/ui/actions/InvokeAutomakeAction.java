@@ -34,18 +34,17 @@ public class InvokeAutomakeAction extends InvokeAction {
 	public void run(IAction action) {
 
 		IContainer container = getSelectedContainer();
-		if (container == null)
+		if (container == null) {
 			return;
+		}
 		
 		IPath execDir = getExecDir(container);
 		String cwd = InvokeMessages.getString("CWD") + getCWD(container); //$NON-NLS-1$
-;
 		TwoInputDialog optionDialog = new TwoInputDialog(new Shell(), cwd,
-		InvokeMessages
-		.getString("InvokeAutomakeAction.windowTitle.options"), //$NON-NLS-1$
-InvokeMessages
-		.getString("InvokeAutomakeAction.message.options.otherOptions"),InvokeMessages //$NON-NLS-1$
-		.getString("InvokeAutomakeAction.message.options.makeTargets"), DEFAULT_OPTION, null); //$NON-NLS-1$
+				InvokeMessages.getString("InvokeAutomakeAction.windowTitle.options"), //$NON-NLS-1$
+				InvokeMessages.getString("InvokeAutomakeAction.message.options.otherOptions"), InvokeMessages //$NON-NLS-1$
+						.getString("InvokeAutomakeAction.message.options.makeTargets"), //$NON-NLS-1$
+				DEFAULT_OPTION, null);
 		
 		optionDialog.open();
 		
@@ -74,22 +73,20 @@ InvokeMessages
 		System.arraycopy(targetList, 0, argumentList, optionsList.length,
 				targetList.length);
 
-		if (container != null) {
-			IProject project = container.getProject();
-			String automakeCommand = null;
-			try {
-				automakeCommand = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOMAKE_TOOL);
-			} catch (CoreException e) {
-				// do nothing
-			}
-			
-			// If automake path not set for the project, default to system path
-			if (automakeCommand == null)
-				automakeCommand = DEFAULT_COMMAND;
-
-			executeConsoleCommand(DEFAULT_COMMAND, automakeCommand,
-					argumentList, execDir);
+		IProject project = container.getProject();
+		String automakeCommand = null;
+		try {
+			automakeCommand = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOMAKE_TOOL);
+		} catch (CoreException e) {
+			// do nothing
 		}
+
+		// If automake path not set for the project, default to system path
+		if (automakeCommand == null) {
+			automakeCommand = DEFAULT_COMMAND;
+		}
+
+		executeConsoleCommand(DEFAULT_COMMAND, automakeCommand, argumentList, execDir);
 	}
 
 	@Override

@@ -14,8 +14,8 @@ package org.eclipse.cdt.internal.autotools.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-
 import java.text.BreakIterator;
+
 import org.eclipse.swt.graphics.GC;
 
 /*

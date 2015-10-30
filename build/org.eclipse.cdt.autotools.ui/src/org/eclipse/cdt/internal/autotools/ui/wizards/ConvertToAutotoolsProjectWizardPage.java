@@ -29,7 +29,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
@@ -117,7 +117,7 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 		IConfiguration defaultCfg = null;
 		Boolean convertingNewAutotoolsProject = false;
 		try {
-			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
+			super.convertProject(project, SubMonitor.convert(monitor, 1), projectID);
 			// Bug 289834 - Converting C Autotools project to C++ loses configurations
 			if (project.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID)) {
 				convertingNewAutotoolsProject = true;  // set this for finally clause
@@ -125,13 +125,12 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 			}
 			// Otherwise, we must scrap existing configurations as they will have tool settings we cannot use
 			monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_ADD_NATURE));
-			ManagedCProjectNature.addManagedNature(project, new SubProgressMonitor(monitor, 1));
-			AutotoolsNewProjectNature.addAutotoolsNature(project, new SubProgressMonitor(monitor, 1));
+			ManagedCProjectNature.addManagedNature(project, SubMonitor.convert(monitor, 1));
+			AutotoolsNewProjectNature.addAutotoolsNature(project, SubMonitor.convert(monitor, 1));
 			// We need to remove any old Autotools nature, if one exists.
-			AutotoolsNewProjectNature.removeOldAutotoolsNature(project, new SubProgressMonitor(monitor, 1));
+			AutotoolsNewProjectNature.removeOldAutotoolsNature(project, SubMonitor.convert(monitor, 1));
 			monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_ADD_BUILDER));
-//			ManagedCProjectNature.addManagedBuilder(project, new SubProgressMonitor(monitor, 1));
-			AutotoolsNewProjectNature.addAutotoolsBuilder(project, new SubProgressMonitor(monitor,1));
+			AutotoolsNewProjectNature.addAutotoolsBuilder(project, SubMonitor.convert(monitor, 1));
 			// FIXME: Default scanner property: make -w - eventually we want to use Make core's build scanner
 			project.setPersistentProperty(AutotoolsPropertyConstants.SCANNER_USE_MAKE_W, AutotoolsPropertyConstants.TRUE);
 			// Specify false for override in next call as override can cause the method to throw an
@@ -175,30 +174,10 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 				AutotoolsUIPlugin.log(e);
 			}
 
-			// Following is a bit of a hack because changing the project options
-			// causes a change event to be fired which will try to reindex the project.  
-			// We are in the middle of setting the project indexer which may end up 
-			// being the null indexer.  In that case, we don't want the default indexer 
-			// (Fast Indexer) to be invoked.
-			//IIndexManager manager = CCorePlugin.getIndexManager();
-			//ICProject cproject = CoreModel.getDefault().create(project);
-			//manager.setIndexerId(cproject, ConvertToAutotoolsProjectWizard.NULL_INDEXER_ID);
-		
 			// Modify the project settings
 			if (project != null) {
-				applyOptions(project, new SubProgressMonitor(monitor, 2));
+				applyOptions(project, SubMonitor.convert(monitor, 2));
 			}
-
-//			 Set the ScannerInfoProvider.  We must do this after
-//			 applying the options because changing the ScannerInfoProvider
-//			 is considered a change to the project and a reindex will
-//			 occur.  One of the options being applied above is the indexer
-//			 selected by the user.  Thus, we wait until now.
-//			try {
-//				AutotoolsUIPlugin.setScannerInfoProvider(project);
-//			} catch (CoreException e) {
-//				ManagedBuilderUIPlugin.log(e);
-//			}
 
 			// Save the build options
 			monitor.subTask(AutotoolsUIPlugin.getResourceString(MSG_SAVE));

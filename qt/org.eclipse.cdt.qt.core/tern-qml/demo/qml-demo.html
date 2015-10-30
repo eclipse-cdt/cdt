@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>QML Tern Demo</title>
+
+		<!-- CodeMirror -->
+		<link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css">
+		<script src="../node_modules/codemirror/lib/codemirror.js"></script>
+		<link rel="stylesheet" href="../node_modules/codemirror/theme/eclipse.css">
+		<script src="../node_modules/codemirror/addon/hint/show-hint.js"></script>
+		<script src="../node_modules/codemirror/addon/edit/closetag.js"></script>
+		<script src="../node_modules/codemirror/addon/edit/closebrackets.js"></script>
+		<script src="../node_modules/codemirror/addon/edit/matchbrackets.js"></script>
+		<script src="../node_modules/codemirror/addon/selection/active-line.js"></script>
+		<script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
+
+        <!-- Acorn -->
+        <script src="../node_modules/acorn/dist/acorn.js"></script>
+        <script src="../node_modules/acorn/dist/acorn_loose.js"></script>
+		<script src="../node_modules/acorn/dist/walk.js"></script>
+        <script src="../node_modules/acorn-qml/inject.js"></script>
+        <script src="../node_modules/acorn-qml/index.js"></script>
+        <script src="../node_modules/acorn-qml/walk/walk.js"></script>
+
+		<!-- Tern JS -->
+		<script src="../node_modules/tern/lib/signal.js"></script>
+		<script src="../node_modules/tern/lib/tern.js"></script>
+		<script src="../node_modules/tern/lib/def.js"></script>
+		<script src="../node_modules/tern/lib/comment.js"></script>
+		<script src="../node_modules/tern/lib/infer.js"></script>
+        <script src="../qml.js"></script>
+
+		<!-- Official CodeMirror Tern addon -->
+		<script src="../node_modules/codemirror/addon/tern/tern.js"></script>
+
+		<!-- Extension of CodeMirror Tern addon -->
+		<link rel="stylesheet" href="../node_modules/codemirror-javascript/addon/hint/tern/tern-extension.css">
+		<script src="../node_modules/codemirror-javascript/addon/hint/tern/tern-extension.js"></script>
+		<script src="defs/ecma5.json.js"></script>
+		<script src="defs/browser.json.js"></script>
+
+		<!-- CodeMirror Extension -->
+		<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hint/show-hint-eclipse.css">
+		<script src="../node_modules/codemirror-extension/addon/hint/show-context-info.js"></script>
+		<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hint/show-context-info.css">
+
+		<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hint/templates-hint.css">
+		<script src="../node_modules/codemirror-extension/addon/hint/templates-hint.js"></script>
+
+		<!-- CodeMirror Javascript -->
+		<script src="../node_modules/codemirror-javascript/addon/hint/javascript/javascript-templates.js"></script>
+
+		<!-- Tern Hover -->
+		<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hover/text-hover.css">
+		<script src="../node_modules/codemirror-extension/addon/hover/text-hover.js"></script>
+		<script src="../node_modules/codemirror-javascript/addon/hint/tern/tern-hover.js"></script>
+	</head>
+	<body>
+		<h1>Demo with QML Tern plugin </h1>
+		<form><textarea id="code" name="code">import QtQuick 2.3&#10;Window {&#10;&#09;prop: {&#10;&#09;&#09;Qt.quit();&#10;&#09;&#09;&#10;&#09;}&#10;}&#10;</textarea></form>
+		<script type="text/javascript">
+			function passAndHint(cm) {
+				setTimeout(function() {cm.execCommand("autocomplete");}, 100);
+				return CodeMirror.Pass;
+			}
+
+			function myHint(cm) {
+				return CodeMirror.showHint(cm, CodeMirror.ternHint, {async: true});
+			}
+
+			CodeMirror.commands.autocomplete = function(cm) {
+				CodeMirror.showHint(cm, myHint);
+			}
+
+			var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+				mode: 'text/javascript',
+				theme : "eclipse",
+				styleActiveLine: true,
+				lineNumbers: true,
+				lineWrapping: true,
+				autoCloseBrackets: true,
+				matchBrackets: true,
+				extraKeys: {
+					"'.'": passAndHint,
+					"Ctrl-Space": "autocomplete",
+					"Ctrl-I": function(cm) { CodeMirror.tern.showType(cm); },
+					"Ctrl-B": function(cm) { CodeMirror.tern.jumpToDef(cm); },
+					"Alt-,": function(cm) { CodeMirror.tern.jumpBack(cm); },
+					"Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); }
+				},
+				gutters: ["CodeMirror-linenumbers"],
+				ternWith: { plugins: { "qml" : true } }
+			});
+		</script>
+	</body>
+</html>

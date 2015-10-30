@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_4f1dd898",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-10-30T20:28:51Z",
+      "side": 1,
+      "message": "I guess if someone needs something from MIControlDMContext, one can use DMContexts.getAncestorOfType? I think that\u0027s fine. Or use an instanceof",
+      "range": {
+        "startLine": 485,
+        "startChar": 38,
+        "endLine": 485,
+        "endChar": 60
+      },
+      "revId": "fdab0034ad2cae9f58038db13812418021873a2d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

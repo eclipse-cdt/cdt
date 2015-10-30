@@ -632,6 +632,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
             }
         } else {
     	}
+        // this isjust a test
 
         return IModelDelta.NO_CHANGE;
     }
@@ -728,6 +729,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
                         }
                     })
                 );
+        } else {
+        	rm.done();
         }
     }
     

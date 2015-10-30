@@ -53,6 +53,7 @@ import org.junit.runners.Suite;
 	StepIntoSelectionTest_7_4.class,
 	StepIntoSelectionNonStopTest_7_4.class,
 	SourceLookupTest_7_4.class,
+	InferiorExitCodeTest_7_4.class,
 	/* Add your test class here */
 })
 

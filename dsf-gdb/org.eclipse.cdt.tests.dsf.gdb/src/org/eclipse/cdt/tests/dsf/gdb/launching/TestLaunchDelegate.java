@@ -43,7 +43,9 @@ public class TestLaunchDelegate extends GdbLaunchDelegate
 
     @Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
-    	return true;
+    	// Don't override the base method to allow it to set the GdbProcessFactory
+    	// which InferiorExitCodeTest depends on
+    	return super.preLaunchCheck(config, mode, monitor);
     }
     
     @Override

@@ -46,6 +46,7 @@ import org.junit.runners.Suite;
 	CommandTimeoutTest_6_6.class,
 	StepIntoSelectionTest_6_6.class,
 	SourceLookupTest_6_6.class,
+	InferiorExitCodeTest_6_6.class,
 	/* Add your test class here */
 })
 

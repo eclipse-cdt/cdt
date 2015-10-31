@@ -192,7 +192,7 @@ public class OpenIncludeAction extends Action {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
-	private void findFile(String[] includePaths, String name, ArrayList<Object> list) {
+	private void findFile(String[] includePaths, String name, List<Object> list) {
 		// in case it is an absolute path
 		IPath includeFile= new Path(name);		
 		if (includeFile.isAbsolute()) {
@@ -225,7 +225,7 @@ public class OpenIncludeAction extends Action {
 	 * @param list
 	 * @throws CoreException
 	 */
-	private void findFile(IContainer parent, final IPath name, final ArrayList<Object> list) throws CoreException {
+	private void findFile(IContainer parent, final IPath name, final List<Object> list) throws CoreException {
 		parent.accept(proxy -> {
 			if (proxy.getType() == IResource.FILE && proxy.getName().equalsIgnoreCase(name.lastSegment())) {
 				IPath rPath = proxy.requestResource().getLocation();

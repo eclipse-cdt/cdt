@@ -33,11 +33,6 @@ public class SingleInputDialog extends InputDialog {
 	}
 
 	@Override
-	protected void buttonPressed(int buttonId) {
-		super.buttonPressed(buttonId);
-	}
-
-	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		// create composite

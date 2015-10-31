@@ -271,11 +271,6 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		// Nothing to do
 	}
 
-	@Override
-	public void setVisible (boolean b) {
-		super.setVisible(b);
-	}
-	
 	private void initialize() {
 		String aclocalPath = null;
 		String automakePath = null;

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.autotools.ui.editors;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
@@ -20,7 +21,7 @@ import org.eclipse.jface.text.rules.Token;
 
 public class RecursiveSingleLineRule extends SingleLineRule {
 	
-	private ArrayList<IRule> rules;
+	private List<IRule> rules;
 	private int evalIndex;
 	private int startIndex;
 	private int endIndex;

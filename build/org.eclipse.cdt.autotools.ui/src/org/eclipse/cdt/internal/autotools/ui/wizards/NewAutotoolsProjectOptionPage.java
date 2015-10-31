@@ -20,7 +20,6 @@ import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.newui.CDTHelpContextIds;
-import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,7 +43,7 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 			parent = parentPage;
 		}
 
-		public class AutotoolsReferenceBlock extends ReferenceBlock {
+		public static class AutotoolsReferenceBlock extends ReferenceBlock {
 			AutotoolsReferenceBlock() {
 				super();
 			}
@@ -88,14 +87,12 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 	}
 	
 	protected ManagedWizardOptionBlock optionBlock;
-	protected NewCProjectWizard parentWizard;
 
 	/**
 	 * @param pageName
 	 */
-	public NewAutotoolsProjectOptionPage(String pageName, NewCProjectWizard parentWizard) {
+	public NewAutotoolsProjectOptionPage(String pageName) {
 		super(pageName);
-		this.parentWizard = parentWizard;
 		optionBlock = new ManagedWizardOptionBlock(this);
 	}
 

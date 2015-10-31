@@ -77,7 +77,7 @@ public class AutomakeErrorHandler {
 			} else if (directive instanceof BadDirective) {
 				int lineNumber = directive.getStartLine();
 				Integer charStart = getCharOffset(lineNumber - 1, 0);
-				Integer charEnd = Integer.valueOf(getCharOffset(directive.getEndLine() - 1, -1).intValue());
+				Integer charEnd = getCharOffset(directive.getEndLine() - 1, -1);
 				
 				String annotationType = CDT_ANNOTATION_ERROR;
 				Annotation annotation = new AutomakeAnnotation(annotationType, true, "Bad directive"); //$NON-NLS-1$
@@ -88,22 +88,17 @@ public class AutomakeErrorHandler {
 		return;
 	}
 	
-	public void removeExistingMarkers()
-	{
+	public void removeExistingMarkers() {
 		fAnnotationModel.removeAllAnnotations();
 	}
 	
 	
-	private Integer getCharOffset(int lineNumber, int columnNumber)
-	{
-		try
-		{
+	private Integer getCharOffset(int lineNumber, int columnNumber) {
+		try {
 			if (columnNumber >= 0)
 				return Integer.valueOf(document.getLineOffset(lineNumber) + columnNumber);
 			return Integer.valueOf(document.getLineOffset(lineNumber) + document.getLineLength(lineNumber));
-		}
-		catch (BadLocationException e)
-		{
+		} catch (BadLocationException e) {
 			e.printStackTrace();
 			return null;
 		}

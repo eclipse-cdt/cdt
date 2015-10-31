@@ -113,13 +113,13 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 		super.addPages();
 		
 		// Add the configuration selection page
-		projectConfigurationPage = new CProjectPlatformPage(PREFIX, this);
+		projectConfigurationPage = new CProjectPlatformPage(PREFIX);
 		projectConfigurationPage.setTitle(AutotoolsUIPlugin.getResourceString(CONF_TITLE));
 		projectConfigurationPage.setDescription(AutotoolsUIPlugin.getResourceString(CONF_DESC));
 		addPage(projectConfigurationPage);
 		
 		// Add the options (tabbed) page
-		optionPage = new NewAutotoolsProjectOptionPage(PREFIX, this);
+		optionPage = new NewAutotoolsProjectOptionPage(PREFIX);
 		optionPage.setTitle(AutotoolsUIPlugin.getResourceString(OPTIONS_TITLE));
 		optionPage.setDescription(AutotoolsUIPlugin.getResourceString(OPTIONS_DESC));
 		addPage(optionPage);

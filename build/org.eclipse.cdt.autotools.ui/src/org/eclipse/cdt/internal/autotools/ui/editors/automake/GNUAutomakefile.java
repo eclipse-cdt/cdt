@@ -68,7 +68,6 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 	}
 
 	public void parse(String name) throws IOException {
-		;
 		try (FileReader stream = new FileReader(name)) {
 			parse(name, stream);
 		}
@@ -270,7 +269,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 					cond = (Conditional) conditions.pop();
 					cond.setEndLine(endLine);
 				}
-				if (cond != null && cond instanceof IAutomakeConditional) {
+				if (cond instanceof IAutomakeConditional) {
 				   rules = ((IAutomakeConditional)cond).getRules();
 				}
 				if (rules != null) {

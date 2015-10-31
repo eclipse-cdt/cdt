@@ -26,8 +26,4 @@ public class AutoconfMacroArgumentElement extends AutoconfElement {
 	public AutoconfMacroArgumentElement(String name) {
 		super(name);
 	}
-	@Override
-	public String getVar() {
-		return super.getVar();
-	}
 }

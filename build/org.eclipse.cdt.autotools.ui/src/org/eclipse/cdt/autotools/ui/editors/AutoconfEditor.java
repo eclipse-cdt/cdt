@@ -150,10 +150,8 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
     	return getSourceViewer();
     }
     
-    protected IDocument getInputDocument()
-	{
-		IDocument document = getDocumentProvider().getDocument(input);
-		return document;
+	protected IDocument getInputDocument() {
+		return getDocumentProvider().getDocument(input);
 	}
 
     @Override

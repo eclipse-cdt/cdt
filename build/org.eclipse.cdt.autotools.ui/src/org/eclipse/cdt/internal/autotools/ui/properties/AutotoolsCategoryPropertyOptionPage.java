@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.autotools.ui.properties;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfiguration;
 import org.eclipse.cdt.internal.autotools.core.configure.IAConfiguration;
@@ -70,7 +71,7 @@ public class AutotoolsCategoryPropertyOptionPage extends
 		protected void doStore() {}
 	}
 	
-	private ArrayList<FieldEditor> fieldEditors;
+	private List<FieldEditor> fieldEditors;
 	
 	public AutotoolsCategoryPropertyOptionPage(ToolListElement element, IAConfiguration cfg) {
  		super(element.getName());
@@ -79,11 +80,6 @@ public class AutotoolsCategoryPropertyOptionPage extends
  		fieldEditors = new ArrayList<>();
 	}
 
-	@Override
-	public String getName() {
-		return super.getName();
-	}
-	
 	@Override
 	protected void createFieldEditors() {
 		super.createFieldEditors();

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -66,9 +65,8 @@ public class CProjectPlatformPage extends WizardPage {
 	public static final String TOOLCHAIN = "toolchain"; //$NON-NLS-1$
 	public static final String NATURE = "nature"; //$NON-NLS-1$
 	
-	protected Wizard parentWizard;
 	protected Text platformSelection;
-	private ArrayList<Object> selectedConfigurations;
+	private List<Object> selectedConfigurations;
 	protected IProjectType projectType;
 	protected Button showAllConfigs;
 	protected boolean showAllConfigsForced;
@@ -80,12 +78,11 @@ public class CProjectPlatformPage extends WizardPage {
 	 * @param pageName
 	 * @param wizard
 	 */
-	public CProjectPlatformPage(String pageName, Wizard parentWizard) {
+	public CProjectPlatformPage(String pageName) {
 		super(pageName);
 		setPageComplete(false);
 		projectType = ManagedBuildManager.getExtensionProjectType("org.eclipse.linuxtools.cdt.autotools.core.projectType"); //$NON-NLS-1$
 		selectedConfigurations = new ArrayList<>(0);
-		this.parentWizard = parentWizard;
 		showAllConfigsForced = false;
 	}
 

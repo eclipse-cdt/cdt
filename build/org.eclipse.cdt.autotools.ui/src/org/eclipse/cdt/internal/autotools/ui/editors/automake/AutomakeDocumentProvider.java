@@ -81,8 +81,7 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 	public IMakefile getWorkingCopy(Object element) {
 		FileInfo fileInfo= getFileInfo(element);		
 		if (fileInfo instanceof AutomakefileFileInfo) {
-			AutomakefileFileInfo info= (AutomakefileFileInfo) fileInfo;
-			return info.fCopy;
+			return ((AutomakefileFileInfo) fileInfo).fCopy;
 		}
 		return null;
 	}

@@ -134,7 +134,7 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 		}
 	}
 
-	private class AutomakefileLabelProvider extends LabelProvider {
+	private static class AutomakefileLabelProvider extends LabelProvider {
 
 		@Override
 		public Image getImage(Object element) {

@@ -171,11 +171,6 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 		// Nothing to do
 	}
 
-	@Override
-	public void setVisible (boolean b) {
-		super.setVisible(b);
-	}
-	
 	private void initialize() {
 		initializeACVersion();
 		initializeAMVersion();

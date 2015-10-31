@@ -65,8 +65,7 @@ public class EditorUtility {
 		if (input != null) {
 			IWorkbenchPage p= CUIPlugin.getActivePage();
 			if (p != null) {
-				IEditorPart editorPart= p.openEditor(input, editorID, activate);
-				return editorPart;
+				return p.openEditor(input, editorID, activate);
 			}
 		}
 		return null;

@@ -159,11 +159,6 @@ public class AutoconfCodeScanner extends RuleBasedScanner {
 		return -1;
 	}
 	
-	@Override
-	public IToken nextToken() {
-		return super.nextToken();
-	}
-
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		return indexOf(event.getProperty()) >= 0;
 	}

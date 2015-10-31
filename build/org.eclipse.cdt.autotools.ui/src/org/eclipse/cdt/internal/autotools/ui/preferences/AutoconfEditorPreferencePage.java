@@ -210,7 +210,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 				{AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_var_set"), ColorManager.AUTOCONF_VAR_SET_COLOR, null},  //$NON-NLS-1$
 				{AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_default"), ColorManager.AUTOCONF_DEFAULT_COLOR, null},  //$NON-NLS-1$
 			};
-		ArrayList<OverlayPreferenceStore.OverlayKey> overlayKeys= new ArrayList<>();
+		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_CONDITIONAL));
@@ -229,7 +229,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
 
-	private void addTextKeyToCover(ArrayList<OverlayPreferenceStore.OverlayKey> overlayKeys, String mainKey) {
+	private void addTextKeyToCover(List<OverlayPreferenceStore.OverlayKey> overlayKeys, String mainKey) {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, mainKey));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, mainKey + AutotoolsEditorPreferenceConstants.EDITOR_BOLD_SUFFIX));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, mainKey + AutotoolsEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
@@ -551,11 +551,6 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 	HighlightingColorListItem getHighlightingColorListItem() {
 		IStructuredSelection selection= (IStructuredSelection) fHighlightingColorListViewer.getSelection();
 		return (HighlightingColorListItem) selection.getFirstElement();
-	}
-
-	@Override
-	public boolean performOk() {
-		return super.performOk();
 	}
 
 	/**

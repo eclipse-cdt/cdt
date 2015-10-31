@@ -11,6 +11,7 @@
 package org.eclipse.cdt.autotools.ui.editors;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.ICharacterScanner;
@@ -21,7 +22,7 @@ import org.eclipse.jface.text.rules.Token;
 
 public class RestrictedEndOfLineRule extends EndOfLineRule {
 	
-	private ArrayList<IRule> rules;
+	private List<IRule> rules;
 	private int startIndex;
 	private int endIndex;
 	private String startSequence;

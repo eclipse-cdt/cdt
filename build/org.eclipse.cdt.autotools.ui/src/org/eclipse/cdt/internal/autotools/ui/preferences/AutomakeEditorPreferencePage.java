@@ -214,7 +214,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
 
-	private void addTextKeyToCover(ArrayList<OverlayPreferenceStore.OverlayKey> overlayKeys, String mainKey) {
+	private void addTextKeyToCover(List<OverlayPreferenceStore.OverlayKey> overlayKeys, String mainKey) {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, mainKey));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, mainKey + AutotoolsEditorPreferenceConstants.EDITOR_BOLD_SUFFIX));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, mainKey + AutotoolsEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
@@ -427,11 +427,6 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 	HighlightingColorListItem getHighlightingColorListItem() {
 		IStructuredSelection selection= (IStructuredSelection) fHighlightingColorListViewer.getSelection();
 		return (HighlightingColorListItem) selection.getFirstElement();
-	}
-
-	@Override
-	public boolean performOk() {
-		return super.performOk();
 	}
 
 	/**

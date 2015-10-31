@@ -21,8 +21,8 @@ public class TwoArrayQuickSort {
 
 	private static void internalSort(String[] keys, Object[] values, int left, int right, boolean ignoreCase) { 
 	
-		int original_left= left;
-		int original_right= right;
+		int originalLeft= left;
+		int originalRight= right;
 		
 		String mid= keys[(left + right) >>> 1]; 
 		do { 
@@ -46,11 +46,11 @@ public class TwoArrayQuickSort {
 			} 
 		} while (left <= right);
 		
-		if (original_left < right) {
-			internalSort(keys , values, original_left, right, ignoreCase); 
+		if (originalLeft < right) {
+			internalSort(keys , values, originalLeft, right, ignoreCase); 
 		}	
-		if (left < original_right) {
-			 internalSort(keys, values, left, original_right, ignoreCase); 
+		if (left < originalRight) {
+			 internalSort(keys, values, left, originalRight, ignoreCase); 
 		} 
 	}
 	private static boolean smaller(String left, String right, boolean ignoreCase) {

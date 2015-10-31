@@ -49,8 +49,7 @@ public class AutoconfSourceViewerConfiguration extends
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = new ContentAssistant();
 		
-		IContentAssistProcessor macroContentAssistProcessor =
-			new AutoconfMacroContentAssistProcessor(new AutoconfMacroCodeScanner(), fEditor);
+		IContentAssistProcessor macroContentAssistProcessor = new AutoconfMacroContentAssistProcessor(fEditor);
 		assistant.setContentAssistProcessor(macroContentAssistProcessor, AutoconfPartitionScanner.AUTOCONF_MACRO);
 		assistant.setContentAssistProcessor(macroContentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 		assistant.enableAutoActivation(true);

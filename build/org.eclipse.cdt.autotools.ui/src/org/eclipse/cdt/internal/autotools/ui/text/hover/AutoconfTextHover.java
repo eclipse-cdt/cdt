@@ -79,9 +79,9 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 
 	private static class AutotoolsHoverDoc {
 		public Document[] documents = new Document[2];
-		public AutotoolsHoverDoc(Document ac_document, Document am_document) {
-			this.documents[0] = ac_document;
-			this.documents[1] = am_document;
+		public AutotoolsHoverDoc(Document acDocument, Document amDocument) {
+			this.documents[0] = acDocument;
+			this.documents[1] = amDocument;
 		}
 		public Document getAcDocument() {
 			return documents[0];
@@ -101,10 +101,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	private static AutoconfEditor fEditor;
 
 	/* Mapping key to action */
-	private static IBindingService fBindingService;
-	{
-		fBindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
-	}
+	private static IBindingService fBindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 
 	public static String getAutoconfMacrosDocName(String version) {
 		return AUTOCONF_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
@@ -141,12 +138,12 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	}
 
 	protected static Document getACDoc(String acDocVer) {
-		Document ac_document = null;
+		Document acDocument = null;
 		if (acHoverDocs == null) {
 			acHoverDocs = new HashMap<>();
 		}
-		ac_document = acHoverDocs.get(acDocVer);
-		if (ac_document == null) {
+		acDocument = acHoverDocs.get(acDocVer);
+		if (acDocument == null) {
 			Document doc = null;
 			try {
 				// see comment in initialize()
@@ -192,22 +189,22 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 				} catch (URISyntaxException e) {
 					AutotoolsPlugin.log(e);
 				}
-				ac_document = doc;
+				acDocument = doc;
 			}
 			catch (IOException ioe) {
 			}
 		}
-		acHoverDocs.put(acDocVer, ac_document);
-		return ac_document;
+		acHoverDocs.put(acDocVer, acDocument);
+		return acDocument;
 	}
 	
 	protected static Document getAMDoc(String amDocVer) {
-		Document am_document = null;
+		Document amDocument = null;
 		if (amHoverDocs == null) {
 			amHoverDocs = new HashMap<>();
 		}
-		am_document = amHoverDocs.get(amDocVer);
-		if (am_document == null) {
+		amDocument = amHoverDocs.get(amDocVer);
+		if (amDocument == null) {
 			Document doc = null;
 			try {
 				// see comment in initialize()
@@ -253,13 +250,13 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 				} catch (URISyntaxException e) {
 					AutotoolsPlugin.log(e);
 				}
-				am_document = doc;
+				amDocument = doc;
 			}
 			catch (IOException ioe) {
 			}
 		}
-		amHoverDocs.put(amDocVer, am_document);
-		return am_document;
+		amHoverDocs.put(amDocVer, amDocument);
+		return amDocument;
 	}
 
 	protected static AutotoolsHoverDoc getHoverDoc(IEditorInput input) {
@@ -366,8 +363,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	public static AutoconfMacro[] getMacroList(AutoconfEditor editor) {
 		IEditorInput input = editor.getEditorInput();
 		AutotoolsHoverDoc hoverdoc = getHoverDoc(input);
-		AutoconfMacro[] macros = getMacroList(hoverdoc);
-		return macros;
+		return getMacroList(hoverdoc);
 	}
 	
 	private static AutoconfMacro[] getMacroList(AutotoolsHoverDoc hoverdoc) {

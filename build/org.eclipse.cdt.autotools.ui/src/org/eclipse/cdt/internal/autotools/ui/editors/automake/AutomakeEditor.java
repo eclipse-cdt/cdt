@@ -18,8 +18,6 @@ import org.eclipse.cdt.internal.autotools.ui.preferences.AutotoolsEditorPreferen
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
@@ -93,11 +91,6 @@ public class AutomakeEditor extends MakefileEditor {
 	}
 	
 	@Override
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
-	}
-	
-	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			return getAutomakeOutlinePage();
@@ -107,11 +100,6 @@ public class AutomakeEditor extends MakefileEditor {
 	
 	public AutomakefileSourceConfiguration getAutomakeSourceViewerConfiguration() {
 		return sourceViewerConfiguration;
-	}
-	
-	@Override
-	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		super.handlePreferenceStoreChanged(event);
 	}
 	
 	public IMakefile getMakefile() {

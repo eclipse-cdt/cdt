@@ -363,11 +363,6 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		setValues();
 	}
 	
-	@Override
-	public void setVisible (boolean b) {
-		super.setVisible(b);
-	}
-
 	// IPreferencePageContainer methods
 	@Override
 	public void updateButtons() {}

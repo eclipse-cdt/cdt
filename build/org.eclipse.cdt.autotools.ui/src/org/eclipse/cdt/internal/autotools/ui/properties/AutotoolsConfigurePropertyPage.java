@@ -47,15 +47,14 @@ public class AutotoolsConfigurePropertyPage extends AbstractPage {
 	}
 	
 	public IAConfiguration getConfiguration(ICConfigurationDescription cfgd) {
-		IAConfiguration acfg = AutotoolsConfigurationManager.getInstance().getTmpConfiguration(getProject(), cfgd);
-		return acfg;
+		return AutotoolsConfigurationManager.getInstance().getTmpConfiguration(getProject(), cfgd);
 	}
 	
 	@Override
-	protected void cfgChanged(ICConfigurationDescription _cfgd) {
-		cfgd = _cfgd;
+	protected void cfgChanged(ICConfigurationDescription cfgd) {
+		this.cfgd = cfgd;
 		// Let super update all pages
-		super.cfgChanged(_cfgd);
+		super.cfgChanged(cfgd);
 	}
 }
 

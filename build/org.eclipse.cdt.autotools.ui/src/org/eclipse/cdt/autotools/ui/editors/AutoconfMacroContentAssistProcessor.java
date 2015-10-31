@@ -21,17 +21,14 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.text.rules.ICharacterScanner;
 
 
 public class AutoconfMacroContentAssistProcessor implements
 		IContentAssistProcessor {
 	
-	protected ICharacterScanner scanner;
 	protected AutoconfEditor editor;
 	
-	public AutoconfMacroContentAssistProcessor(ICharacterScanner scanner, AutoconfEditor editor) {
-		this.scanner = scanner;
+	public AutoconfMacroContentAssistProcessor(AutoconfEditor editor) {
 		this.editor = editor;
 	}
 

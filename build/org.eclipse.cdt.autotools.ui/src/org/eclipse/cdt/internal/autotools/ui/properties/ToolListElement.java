@@ -11,10 +11,11 @@
 package org.eclipse.cdt.internal.autotools.ui.properties;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ToolListElement {
 	
-	private ArrayList<ToolListElement> children;
+	private List<ToolListElement> children;
 	private ToolListElement parent;
 	private String name;
 	private int type;

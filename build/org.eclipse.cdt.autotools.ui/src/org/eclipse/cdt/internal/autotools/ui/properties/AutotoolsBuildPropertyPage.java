@@ -17,6 +17,7 @@ import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -114,17 +115,12 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 			}
 		});
 		
-		fCleanMake.addSelectionListener(new SelectionListener() {
+		fCleanMake.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCleanDelete.setSelection(false);
 				fCleanMake.setSelection(true);
 				fCleanMakeTarget.setEnabled(true);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
 			}
 		});
 		
@@ -205,11 +201,6 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 	@Override
 	public void updateButtons() {
 		// what to do here?
-	}
-
-	@Override
-	public void setVisible (boolean b) {
-		super.setVisible(b);
 	}
 
 	private void initialize() {

@@ -11,7 +11,7 @@
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -22,7 +22,7 @@ public class AutoconfElement {
 	protected String var;
 	protected int startOffset;
 	protected int endOffset;
-	protected ArrayList<AutoconfElement> children;
+	protected List<AutoconfElement> children;
 	protected AutoconfElement parent;
 	private IDocument document;
 	
@@ -43,8 +43,7 @@ public class AutoconfElement {
 		String source = getSource();
 		if (source == null) {
 			StringBuffer kids = new StringBuffer();
-			for (Iterator<AutoconfElement> iterator = children.iterator(); iterator.hasNext();) {
-				AutoconfElement kid = iterator.next();
+			for (AutoconfElement kid : children) {
 				kids.append(kid.toString());
 				kids.append(","); //$NON-NLS-1$
 			}

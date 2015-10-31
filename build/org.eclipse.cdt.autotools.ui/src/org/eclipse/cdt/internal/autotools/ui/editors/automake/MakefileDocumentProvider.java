@@ -117,8 +117,7 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	public IMakefile getWorkingCopy(Object element) {
 		FileInfo fileInfo= getFileInfo(element);		
 		if (fileInfo instanceof MakefileFileInfo) {
-			MakefileFileInfo info= (MakefileFileInfo) fileInfo;
-			return info.fCopy;
+			return ((MakefileFileInfo) fileInfo).fCopy;
 		}
 		return null;
 	}

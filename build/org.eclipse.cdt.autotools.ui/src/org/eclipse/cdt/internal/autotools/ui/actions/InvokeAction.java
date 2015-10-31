@@ -16,6 +16,8 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
@@ -57,12 +59,10 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	public final String SHELL_COMMAND = "sh"; //$NON-NLS-1$
 
 	protected void showInformation(String title, String content) {
-
 		MessageDialog.openInformation(new Shell(), title, content);
 	}
 
 	protected void showError(String title, String content) {
-
 		MessageDialog.openError(new Shell(), title, content);
 	}
 
@@ -90,7 +90,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	protected String[] separateTargets(String rawArgList) {
 
 		StringTokenizer st = new StringTokenizer(rawArgList, " "); //$NON-NLS-1$
-		ArrayList<String> targetList = new ArrayList<>();
+		List<String> targetList = new ArrayList<>();
 
 		while (st.hasMoreTokens()) {
 			String currentWord = st.nextToken().trim();
@@ -136,7 +136,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	}
 
 	protected String[] separateOptions(String rawArgList) {
-		ArrayList<String> argList = new ArrayList<>();
+		List<String> argList = new ArrayList<>();
 		// May be multiple user-specified options in which case we
 		// need to split them up into individual options
 		rawArgList = rawArgList.trim();
@@ -162,7 +162,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	}
 
 	protected String[] simpleParseOptions(String rawArgList) {
-		ArrayList<String> argList = new ArrayList<>();
+		List<String> argList = new ArrayList<>();
 		int lastArgIndex = -1;
 		int i = 0;
 		while (i < rawArgList.length()) {
@@ -233,7 +233,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 		private final String[] envList;
 		private final IPath execDir;
 		private int status;
-		private HashMap<String, String> outputs = null;
+		private Map<String, String> outputs = null;
 		
 		public ExecuteProgressDialog(IPath command, String[] argumentList,
 				String[] envList, IPath execDir) {
@@ -280,7 +280,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 			}
 		}
 
-		public HashMap<String, String> getOutputs() {
+		public Map<String, String> getOutputs() {
 			return outputs;
 		}
 		
@@ -290,7 +290,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	}
 	
 	
-	protected HashMap<String, String> executeCommand(IPath command,
+	protected Map<String, String> executeCommand(IPath command,
 			String[] argumentList, String[] envList, IPath execDir) {
 		try {
 			ExecuteProgressDialog d = new ExecuteProgressDialog(command,

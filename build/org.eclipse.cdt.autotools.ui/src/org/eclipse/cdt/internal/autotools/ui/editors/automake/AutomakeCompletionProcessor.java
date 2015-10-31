@@ -158,24 +158,22 @@ public class AutomakeCompletionProcessor implements IContentAssistProcessor {
 			IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
 			ArrayList<String> contextList = new ArrayList<>();
 			if (macro) {
-				IDirective[] statements = makefile.getMacroDefinitions();
+			IMacroDefinition[] statements = makefile.getMacroDefinitions();
 				for (int i = 0; i < statements.length; i++) {
-					if (statements[i] instanceof IMacroDefinition) {
-						String name = ((IMacroDefinition) statements[i]).getName();
-						if (name != null && name.equals(wordPart.toString())) {
-							String value = ((IMacroDefinition) statements[i]).getValue().toString();
-							if (value != null && value.length() > 0) {
-								contextList.add(value);
-							}
+				String name = statements[i].getName();
+				if (name != null && name.equals(wordPart.toString())) {
+					String value = statements[i].getValue().toString();
+					if (value != null && value.length() > 0) {
+						contextList.add(value);
 						}
-					}
+				}
 				}
 				statements = makefile.getBuiltinMacroDefinitions();
 				for (int i = 0; i < statements.length; i++) {
 					if (statements[i] != null) {
-						String name = ((IMacroDefinition) statements[i]).getName();
+						String name = statements[i].getName();
 						if (name != null && name.equals(wordPart.toString())) {
-							String value = ((IMacroDefinition) statements[i]).getValue().toString();
+							String value = statements[i].getValue().toString();
 							if (value != null && value.length() > 0) {
 								contextList.add(value);
 							}

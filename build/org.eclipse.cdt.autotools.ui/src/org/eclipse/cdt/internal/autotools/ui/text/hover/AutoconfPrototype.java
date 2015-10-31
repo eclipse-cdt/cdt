@@ -11,13 +11,14 @@
 package org.eclipse.cdt.internal.autotools.ui.text.hover;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AutoconfPrototype {
 	protected String name;
 	protected int numPrototypes;
-	protected ArrayList<Integer> minParms;
-	protected ArrayList<Integer> maxParms;
-	protected ArrayList<ArrayList<String>> parmList;
+	protected List<Integer> minParms;
+	protected List<Integer> maxParms;
+	protected List<List<String>> parmList;
 	
 	public AutoconfPrototype() {
 		numPrototypes = 0;
@@ -59,14 +60,14 @@ public class AutoconfPrototype {
 	}
 	
 	public String getParmName(int prototypeNum, int parmNum) {
-		ArrayList<String> parms = parmList.get(prototypeNum);
+		List<String> parms = parmList.get(prototypeNum);
 		return parms.get(parmNum);
 	}
 
 	// This function assumes that parms will be added in order starting
 	// with lowest prototype first.
 	public void setParmName(int prototypeNum, int parmNum, String value) {
-		ArrayList<String> parms;
+		List<String> parms;
 		if (parmList.size() == prototypeNum) {
 			parms = new ArrayList<>();
 			parmList.add(parms);

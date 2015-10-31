@@ -73,9 +73,4 @@ public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 			//getBinaryParserBlock().updateValues();
 		}
 	}
-
-	@Override
-	public void update() {
-		super.update();
-	}
 }

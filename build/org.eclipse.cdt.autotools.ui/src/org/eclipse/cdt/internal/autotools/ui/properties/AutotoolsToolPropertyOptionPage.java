@@ -77,11 +77,6 @@ public class AutotoolsToolPropertyOptionPage extends
  		this.cfg = cfg;
 	}
 
-	@Override
-	public String getName() {
-		return super.getName();
-	}
-
 	public ToolListElement getElement() {
 		return element;
 	}

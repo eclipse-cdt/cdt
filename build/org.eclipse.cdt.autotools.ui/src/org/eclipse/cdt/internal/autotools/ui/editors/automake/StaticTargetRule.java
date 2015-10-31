@@ -22,10 +22,10 @@ public class StaticTargetRule extends InferenceRule implements IInferenceRule {
 	String targetPattern;
 	String[] prereqPatterns;
 
-	public StaticTargetRule(Directive parent, Target target, String target_pattern, String[] prereq_patterns, Command[] commands) {
+	public StaticTargetRule(Directive parent, Target target, String targetPattern, String[] prereqPatterns, Command[] commands) {
 		super(parent, target, commands);
-		targetPattern = target_pattern;
-		prereqPatterns = prereq_patterns.clone();
+		this.targetPattern = targetPattern;
+		this.prereqPatterns = prereqPatterns.clone();
 	}
 
 	public String[] getPrerequisitePatterns() {

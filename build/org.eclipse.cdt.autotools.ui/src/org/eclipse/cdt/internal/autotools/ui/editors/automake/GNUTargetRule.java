@@ -17,10 +17,10 @@ public class GNUTargetRule extends TargetRule {
 	String[] orderOnlyPrerequisites;
 	boolean doubleColon;
 
-	public GNUTargetRule(Directive parent, Target target, boolean double_colon, String[] normal_prereqs, String[] order_prereqs, Command[] commands) {
-		super(parent, target, normal_prereqs, commands);
-		orderOnlyPrerequisites = order_prereqs.clone();
-		doubleColon = double_colon;
+	public GNUTargetRule(Directive parent, Target target, boolean doubleColon, String[] normalPrereqs, String[] orderPrereqs, Command[] commands) {
+		super(parent, target, normalPrereqs, commands);
+		orderOnlyPrerequisites = orderPrereqs.clone();
+		this.doubleColon = doubleColon;
 	}
 
 	public boolean isDoubleColon() {

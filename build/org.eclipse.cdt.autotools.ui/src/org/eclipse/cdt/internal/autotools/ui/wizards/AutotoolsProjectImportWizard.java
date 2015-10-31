@@ -65,7 +65,7 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 		addPage(page);
 
 		// Add the configuration selection page
-		projectConfigurationPage = new CProjectPlatformPage(PREFIX, this);
+		projectConfigurationPage = new CProjectPlatformPage(PREFIX);
 		projectConfigurationPage.setTitle(AutotoolsUIPlugin
 				.getResourceString(CONF_TITLE));
 		projectConfigurationPage.setDescription(AutotoolsUIPlugin

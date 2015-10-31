@@ -94,4 +94,8 @@
    </feature>
    <feature id="org.eclipse.cdt.arduino">
    </feature>
+   <iu id="org.freemarker" version="0.0.0">
+   </iu>
+   <iu id="org.antlr.runtime" version="0.0.0">
+   </iu>
 </site>

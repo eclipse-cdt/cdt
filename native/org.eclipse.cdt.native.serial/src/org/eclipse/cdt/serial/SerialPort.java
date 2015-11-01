@@ -222,7 +222,7 @@ public class SerialPort {
 	public static String[] list() throws IOException {
 		String osName = System.getProperty("os.name"); //$NON-NLS-1$
 		if (osName.equals("Mac OS X")) { //$NON-NLS-1$
-			return listDevs(Pattern.compile("tty\\..*(usbserial|usbmodem).*")); //$NON-NLS-1$
+			return listDevs(Pattern.compile("(tty|cu)\\..*(usbserial|usbmodem).*")); //$NON-NLS-1$
 		} else if (osName.equals("Linux")) { //$NON-NLS-1$
 			return listDevs(Pattern.compile("tty(USB|ACM).*")); //$NON-NLS-1$
 		} else if (osName.startsWith("Windows")) { //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -289,8 +291,8 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 			data = new LookupData(fName, null, point);
 		} else {
 			functions = fFunctionSet.getBindings();
-			data = new LookupData(functions[0].getNameCharArray(),
-					fFunctionSet.getTemplateArguments(), point);
+			data = new LookupData(functions[0].getNameCharArray(), fFunctionSet.getTemplateArguments(),
+					point);
 			data.foundItems = functions;
 		}
 		data.setFunctionArguments(false, args);
@@ -305,11 +307,20 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 				Object[] foundItems = (Object[]) data.foundItems;
 				if (foundItems != null && (functions == null || foundItems.length > functions.length)) {
 					// ADL found additional functions.
-					functions = Arrays.copyOf(foundItems, foundItems.length, ICPPFunction[].class);
+					int start = functions == null ? 0 : functions.length;
+					for (int i = start; i < foundItems.length; i++) {
+						Object obj = foundItems[i];
+						if (obj instanceof ICPPFunction) {
+							functions = ArrayUtil.append(ICPPFunction.class, functions, (ICPPFunction) obj);
+						} else if (obj instanceof ICPPClassType) {
+							functions = ArrayUtil.addAll(ICPPFunction.class, functions,
+									ClassTypeHelper.getConstructors((ICPPClassType) obj, point));
+						}
+					}
 
 					// doKoenigLookup() may introduce duplicates into the result. These must be
 					// eliminated to avoid resolveFunction() reporting an ambiguity. (Normally, when
-					// looukp() and doKoenigLookup() are called on the same LookupData object, the
+					// lookup() and doKoenigLookup() are called on the same LookupData object, the
 					// two functions coordinate using data stored in that object to eliminate
 					// duplicates, but in this case lookup() was called before with a different
 					// LookupData object and now we are only calling doKoenigLookup()).

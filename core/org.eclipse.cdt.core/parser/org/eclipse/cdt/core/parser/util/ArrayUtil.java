@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -273,10 +273,10 @@ public abstract class ArrayUtil {
             return dest;
 
         int numToAdd = findFirstNull(source);
-        if (numToAdd <= 0) {
-        	if (numToAdd == 0) {
-        		return dest;
-        	}
+    	if (numToAdd == 0) {
+    		return dest;
+    	}
+        if (numToAdd < 0) {
         	numToAdd= source.length;
         }
 
@@ -295,7 +295,9 @@ public abstract class ArrayUtil {
             System.arraycopy(source, 0, dest, firstFree, numToAdd);
             return dest;
         }
-        dest = Arrays.copyOf(dest, firstFree + numToAdd);
+        T[] oldDest = dest;
+        dest = (T[]) Array.newInstance(c, firstFree + numToAdd);
+        System.arraycopy(oldDest, 0, dest, 0, firstFree);
         System.arraycopy(source, 0, dest, firstFree, numToAdd);
         return dest;
     }

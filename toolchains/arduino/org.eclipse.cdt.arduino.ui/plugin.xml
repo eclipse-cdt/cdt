@@ -122,4 +122,12 @@
             type="org.eclipse.remote.core.IRemoteConnection">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.arduino.ui.internal.launch.ArduinoLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.arduino.ui.launchConfigurationTabGroup"
+            type="org.eclipse.cdt.arduino.core.launchConfigurationType">
+      </launchConfigurationTabGroup>
+   </extension>
 </plugin>

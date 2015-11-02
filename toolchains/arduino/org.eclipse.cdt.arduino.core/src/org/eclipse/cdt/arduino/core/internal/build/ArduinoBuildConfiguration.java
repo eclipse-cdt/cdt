@@ -109,9 +109,11 @@ public class ArduinoBuildConfiguration {
 
 		// return it if it exists already
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
-			ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
-			if (arduinoConfig.matches(target)) {
-				return arduinoConfig;
+			if (!config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
+				ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
+				if (arduinoConfig.matches(target)) {
+					return arduinoConfig;
+				}
 			}
 		}
 
@@ -232,6 +234,17 @@ public class ArduinoBuildConfiguration {
 			String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
 			String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
 			board = ArduinoManager.instance.getBoard(boardName, platformName, packageName);
+
+			if (board == null) {
+				// Default to Uno or first one we find
+				board = ArduinoManager.instance.getBoard("Arduino/Genuino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (board == null) {
+					List<ArduinoBoard> boards = ArduinoManager.instance.getInstalledBoards();
+					if (!boards.isEmpty()) {
+						board = boards.get(0);
+					}
+				}
+			}
 		}
 		return board;
 	}
@@ -302,6 +315,7 @@ public class ArduinoBuildConfiguration {
 		IFolder buildFolder = getBuildFolder();
 		if (!buildFolder.exists()) {
 			buildFolder.create(true, true, monitor);
+			buildFolder.setDerived(true, monitor);
 			ICProject cproject = CoreModel.getDefault().create(project);
 			IOutputEntry output = CoreModel.newOutputEntry(buildFolder.getFullPath());
 			IPathEntry[] oldEntries = cproject.getRawPathEntries();

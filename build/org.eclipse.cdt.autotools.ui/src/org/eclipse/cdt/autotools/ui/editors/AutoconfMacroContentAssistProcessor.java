@@ -28,6 +28,9 @@ public class AutoconfMacroContentAssistProcessor implements
 	
 	protected AutoconfEditor editor;
 	
+	/**
+	 * @since 2.0
+	 */
 	public AutoconfMacroContentAssistProcessor(AutoconfEditor editor) {
 		this.editor = editor;
 	}

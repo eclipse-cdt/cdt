@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.parser.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+
+import junit.framework.TestCase;
 
 public class ArrayUtilTest extends TestCase {
 	private final Object o1= new Object();
@@ -134,6 +135,16 @@ public class ArrayUtilTest extends TestCase {
 		assertEquals(o1, result[0]);
 		assertEquals(o2, result[1]);
 		assertSame(array1, result);
+
+		// Check that mismatched array types don't cause an ArrayStoreException.
+		// See http://bugs.eclipse.org/481274
+		array1= new Integer[] {1, 2};
+		array2= new String[] {"s"};
+		result= ArrayUtil.addAll(Object.class, array1, array2);
+		assertEquals(3, result.length);
+		assertEquals(1, result[0]);
+		assertEquals(2, result[1]);
+		assertEquals("s", result[2]);
 	}
 	
 	public void testRemove() {

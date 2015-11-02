@@ -25,13 +25,13 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * For implementation sharing between PDOMCPPClassType and PDOMCPPClassSpecialization
  */
 class PDOMClassUtil {
 	static class FieldCollector implements IPDOMVisitor {
-		private final List<ICPPField> fields = new ArrayList<ICPPField>();
+		private final List<ICPPField> fields = new ArrayList<>();
+
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPField) {
@@ -42,16 +42,19 @@ class PDOMClassUtil {
 			}
 			return false;
 		}
+
 		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
+
 		public ICPPField[] getFields() {
 			return fields.toArray(new ICPPField[fields.size()]);
 		}
 	}
 	
 	static class ConstructorCollector implements IPDOMVisitor {
-		private final List<ICPPConstructor> fConstructors = new ArrayList<ICPPConstructor>();
+		private final List<ICPPConstructor> fConstructors = new ArrayList<>();
+
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPConstructor) {
@@ -68,9 +71,11 @@ class PDOMClassUtil {
 			}
 			return false;
 		}
+
 		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
+
 		public ICPPConstructor[] getConstructors() {
 			return fConstructors.toArray(new ICPPConstructor[fConstructors.size()]);
 		}
@@ -80,14 +85,17 @@ class PDOMClassUtil {
 		private final List<ICPPMethod> methods;
 		private final boolean acceptNonImplicit;
 		private final IndexFilter filter;
+
 		public MethodCollector(boolean acceptImplicit) {
 			this(acceptImplicit, true);
 		}
+
 		public MethodCollector(boolean acceptImplicit, boolean acceptNonImplicit) {
-			this.methods = new ArrayList<ICPPMethod>();
+			this.methods = new ArrayList<>();
 			this.acceptNonImplicit= acceptNonImplicit;
 			this.filter= acceptImplicit ? IndexFilter.ALL_DECLARED_OR_IMPLICIT : IndexFilter.ALL_DECLARED;
 		}
+
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPMethod) {
@@ -100,25 +108,30 @@ class PDOMClassUtil {
 			}
 			return false; // don't visit the method
 		}
+
 		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
+
 		public ICPPMethod[] getMethods() {
 			return methods.toArray(new ICPPMethod[methods.size()]); 
 		}
 	}
 	
 	static class NestedClassCollector implements IPDOMVisitor {
-		private final List<IPDOMNode> nestedClasses = new ArrayList<IPDOMNode>();
+		private final List<IPDOMNode> nestedClasses = new ArrayList<>();
+
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPClassType && !(node instanceof ICPPDeferredClassInstance))
 				nestedClasses.add(node);
 			return false;
 		}
+
 		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
+
 		public ICPPClassType[] getNestedClasses() {
 			return nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);
 		}

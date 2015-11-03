@@ -23,7 +23,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -57,9 +56,8 @@ import org.eclipse.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.launchbar.core.ProjectLaunchDescriptor;
 import org.eclipse.launchbar.core.ProjectPerTargetLaunchConfigProvider;
 import org.eclipse.launchbar.core.internal.LaunchBarManager.Listener;
-import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionType;
-import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -81,13 +79,12 @@ public class LaunchBarManager2Test {
 	IEclipsePreferences store = new EclipsePreferences();
 	private ArrayList<IConfigurationElement> elements;
 	private IExtension extension;
-	private static final String localTargetTypeId = "org.eclipse.remote.LocalServices";
 	private String descriptorTypeId;
-	private IRemoteConnection localTarget;
+	private ILaunchTargetManager targetManager;
+	private ILaunchTarget localTarget;
 	private String launchObject;
-	private IRemoteServicesManager remoteServiceManager;
-	private IRemoteConnection otherTarget;
-	private List<IRemoteConnection> targets;
+	private ILaunchTarget otherTarget;
+	private ILaunchTarget[] targets;
 
 	public class FixedLaunchBarManager extends LaunchBarManager {
 		public FixedLaunchBarManager() throws CoreException {
@@ -110,8 +107,8 @@ public class LaunchBarManager2Test {
 		}
 
 		@Override
-		IRemoteServicesManager getRemoteServicesManager() {
-			return remoteServiceManager;
+		ILaunchTargetManager getLaunchTargetManager() {
+			return targetManager;
 		}
 	};
 
@@ -129,7 +126,7 @@ public class LaunchBarManager2Test {
 	}
 
 	protected ILaunchConfigurationProvider mockConfigProviderElement(String descriptorTypeId, int priority,
-			ILaunchDescriptor descriptor, IRemoteConnection target, ILaunchConfiguration config, Object launchObj)
+			ILaunchDescriptor descriptor, ILaunchTarget target, ILaunchConfiguration config, Object launchObj)
 					throws CoreException {
 		ILaunchConfigurationProvider provider = mock(ILaunchConfigurationProvider.class);
 		mockProviderElement(descriptorTypeId, priority, provider);
@@ -166,7 +163,7 @@ public class LaunchBarManager2Test {
 
 	protected void init() throws CoreException {
 		doReturn(elements.toArray(new IConfigurationElement[0])).when(extension).getConfigurationElements();
-		doReturn(targets).when(remoteServiceManager).getAllRemoteConnections();
+		doReturn(targets).when(targetManager).getLaunchTargets();
 		manager.init();
 	}
 
@@ -219,13 +216,10 @@ public class LaunchBarManager2Test {
 	 * @param t2
 	 * @return
 	 */
-	private IRemoteConnection mockRemoteConnection(String t2) {
-		IRemoteConnection target = mock(IRemoteConnection.class);
-		IRemoteConnectionType type = mock(IRemoteConnectionType.class);
-		doReturn(t2).when(type).getName();
-		doReturn(t2).when(type).getId();
+	private ILaunchTarget mockRemoteConnection(String t2) {
+		ILaunchTarget target = mock(ILaunchTarget.class);
+		doReturn(t2).when(target).getTypeId();
 		doReturn(t2 + ".target").when(target).getName();
-		doReturn(type).when(target).getConnectionType();
 		return target;
 	}
 
@@ -270,17 +264,18 @@ public class LaunchBarManager2Test {
 		lman = mock(ILaunchManager.class);
 		doReturn(globalmodes.toArray(new ILaunchMode[globalmodes.size()])).when(lman).getLaunchModes();
 		doReturn(new ILaunchConfiguration[] {}).when(lman).getLaunchConfigurations();
-		remoteServiceManager = spy(Activator.getService(IRemoteServicesManager.class));
+		targetManager = mock(ILaunchTargetManager.class);
 		manager = new FixedLaunchBarManager();
-		localTarget = manager.getRemoteServicesManager().getLocalConnectionType().getConnections().get(0);
+		localTarget = mock(ILaunchTarget.class);
+		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
+		doReturn("Local").when(localTarget).getName();
 		// mock
 		launchObject = "test";
 		// remote connections
-		otherTarget = mock(IRemoteConnection.class);
-		IRemoteConnectionType rtype = mock(IRemoteConnectionType.class);
-		doReturn(rtype).when(otherTarget).getConnectionType();
-		doReturn("otherTargetType").when(rtype).getId();
-		targets = Arrays.asList(new IRemoteConnection[] { otherTarget, localTarget });
+		otherTarget = mock(ILaunchTarget.class);
+		doReturn("otherTargetType").when(otherTarget).getTypeId();
+		doReturn("otherTarget").when(otherTarget).getName();
+		targets = new ILaunchTarget[] { otherTarget, localTarget };
 		// lc
 		String launchConfigTypeId = "lctype1";
 		launchConfigType = mockLCType(launchConfigTypeId);
@@ -329,7 +324,7 @@ public class LaunchBarManager2Test {
 	@Test
 	public void testAddConfigMappingTwo() throws CoreException {
 		basicSetupOnly();
-		IRemoteConnection target = mockRemoteConnection("t2");
+		ILaunchTarget target = mockRemoteConnection("t2");
 		mockConfigProviderElement(descriptorTypeId, 10, descriptor, target, launchConfig, launchObject);
 		// now create another lc type, which is not registered in config type
 		ILaunchConfigurationType lctype2 = mockLCType("lctypeid2");
@@ -346,7 +341,7 @@ public class LaunchBarManager2Test {
 	@Test
 	public void testAddConfigProviderTwo2() throws CoreException {
 		basicSetupOnly();
-		IRemoteConnection target = mockRemoteConnection("t2");
+		ILaunchTarget target = mockRemoteConnection("t2");
 		mockConfigProviderElement(descriptorTypeId, 15, descriptor, target, launchConfig, launchObject);
 		ILaunchConfigurationType lctype2 = mockLCType("lctypeid2");
 		ILaunchConfiguration lc2 = mockLC("lc2", lctype2);
@@ -360,7 +355,7 @@ public class LaunchBarManager2Test {
 	public void testGetLaunchTargets() throws CoreException {
 		manager.launchObjectAdded(launchObject);
 		manager.setActiveLaunchDescriptor(descriptor);
-		List<IRemoteConnection> launchTargets = manager.getLaunchTargets(descriptor);
+		List<ILaunchTarget> launchTargets = manager.getLaunchTargets(descriptor);
 		assertEquals(1, launchTargets.size());
 		assertEquals(otherTarget, launchTargets.get(0));
 	}
@@ -374,7 +369,7 @@ public class LaunchBarManager2Test {
 		init();
 		manager.launchObjectAdded(launchObject);
 		ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
-		List<IRemoteConnection> launchTargets = manager.getLaunchTargets(desc);
+		List<ILaunchTarget> launchTargets = manager.getLaunchTargets(desc);
 		assertEquals(1, launchTargets.size());
 	}
 
@@ -387,7 +382,7 @@ public class LaunchBarManager2Test {
 		init();
 		manager.launchObjectAdded(launchObject);
 		ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
-		List<IRemoteConnection> launchTargets = manager.getLaunchTargets(desc);
+		List<ILaunchTarget> launchTargets = manager.getLaunchTargets(desc);
 		assertEquals(1, launchTargets.size());
 	}
 
@@ -577,7 +572,7 @@ public class LaunchBarManager2Test {
 		provider = new ProjectPerTargetLaunchConfigProvider() {
 			@Override
 			public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor,
-					IRemoteConnection target) throws CoreException {
+					ILaunchTarget target) throws CoreException {
 				return launchConfigType;
 			}
 
@@ -592,7 +587,7 @@ public class LaunchBarManager2Test {
 			}
 
 			@Override
-			protected IRemoteConnection getLaunchTarget(ILaunchConfiguration configuration) throws CoreException {
+			protected ILaunchTarget getLaunchTarget(ILaunchConfiguration configuration) throws CoreException {
 				return localTarget;
 			}
 		};
@@ -833,14 +828,6 @@ public class LaunchBarManager2Test {
 	public void testGetActiveLaunchTarget() throws CoreException {
 		manager.setActiveLaunchTarget(localTarget);
 		assertEquals(localTarget, manager.getActiveLaunchTarget());
-	}
-
-	@Test
-	public void testGetLaunchTarget() throws CoreException {
-		IRemoteConnectionType targetType = remoteServiceManager.getConnectionType(localTargetTypeId);
-		final List<IRemoteConnection> list = targetType.getConnections();
-		assertEquals(1, list.size());
-		assertEquals(localTarget, list.get(0));
 	}
 
 	@Test

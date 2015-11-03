@@ -24,6 +24,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.launchbar.ui.internal.target.LaunchTargetUIManager;
+import org.eclipse.launchbar.ui.target.ILaunchTargetUIManager;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
@@ -45,6 +47,7 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMG_BUTTON_BUILD = "build"; //$NON-NLS-1$
 	public static final String IMG_BUTTON_LAUNCH = "launch"; //$NON-NLS-1$
 	public static final String IMG_BUTTON_STOP = "stop"; //$NON-NLS-1$
+	public static final String IMG_LOCAL_TARGET = "localTarget"; //$NON-NLS-1$
 
 	// Command ids
 	public static final String CMD_BUILD = PLUGIN_ID + ".command.buildActive"; //$NON-NLS-1$
@@ -61,7 +64,7 @@ public class Activator extends AbstractUIPlugin {
 	private static Activator plugin;
 
 	// The cache of the Launch Bar UI Manager Object
-	private LaunchBarUIManager launchBarUIManager; 
+	private LaunchBarUIManager launchBarUIManager;
 
 	/**
 	 * The constructor
@@ -77,6 +80,9 @@ public class Activator extends AbstractUIPlugin {
 		imageRegistry.put(IMG_BUTTON_BUILD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build.png")); //$NON-NLS-1$
 		imageRegistry.put(IMG_BUTTON_LAUNCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch.png")); //$NON-NLS-1$
 		imageRegistry.put(IMG_BUTTON_STOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop.png")); //$NON-NLS-1$
+		imageRegistry.put(IMG_LOCAL_TARGET, imageDescriptorFromPlugin(PLUGIN_ID, "icons/localTarget.png")); //$NON-NLS-1$
+
+		context.registerService(ILaunchTargetUIManager.class, new LaunchTargetUIManager(), null);
 	}
 
 	public void stop(BundleContext context) throws Exception {

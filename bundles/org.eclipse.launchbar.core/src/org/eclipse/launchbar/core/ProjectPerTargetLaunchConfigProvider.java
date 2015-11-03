@@ -16,17 +16,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.launchbar.core.internal.Activator;
-import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 public abstract class ProjectPerTargetLaunchConfigProvider extends PerTargetLaunchConfigProvider {
 
 	@Override
-	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
+	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
 		return (descriptor.getAdapter(IProject.class) != null);
 	}
 
 	@Override
-	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
+	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target,
 			ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 		super.populateLaunchConfiguration(descriptor, target, workingCopy);
 

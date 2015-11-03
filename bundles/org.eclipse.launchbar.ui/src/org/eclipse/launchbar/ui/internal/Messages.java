@@ -58,8 +58,9 @@ public class Messages extends NLS {
 	public static String NewLaunchConfigWizard_0;
 	public static String StopActiveCommandHandler_0;
 	public static String StopActiveCommandHandler_1;
+	public static String TargetSelector_ToolTipPrefix;
 	public static String TargetSelector_CreateNewTarget;
-	
+
 	public static String DescriptorMustNotBeNull;
 	public static String DescriptorMustNotBeNullDesc;
 	public static String NoActiveTarget;
@@ -72,9 +73,7 @@ public class Messages extends NLS {
 	public static String LaunchConfigurationNotFoundDesc;
 	public static String NoLaunchTabsDefined;
 	public static String NoLaunchTabsDefinedDesc;
-	
-	
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

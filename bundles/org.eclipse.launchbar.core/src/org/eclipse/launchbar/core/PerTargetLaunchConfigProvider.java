@@ -20,10 +20,10 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.launchbar.core.internal.Activator;
-import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfigProvider {
-	private final Map<ILaunchDescriptor, Map<IRemoteConnection, ILaunchConfiguration>> configMap = new HashMap<>();
+	private final Map<ILaunchDescriptor, Map<ILaunchTarget, ILaunchConfiguration>> configMap = new HashMap<>();
 	private final Map<ILaunchDescriptor, ILaunchConfiguration> defaultConfigs = new HashMap<>();
 	private final Collection<ILaunchConfiguration> ownedConfigs = new LinkedHashSet<>();
 
@@ -32,10 +32,10 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 	}
 
 	@Override
-	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target)
+	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		if (target != null) {
-			Map<IRemoteConnection, ILaunchConfiguration> targetMap = configMap.get(descriptor);
+			Map<ILaunchTarget, ILaunchConfiguration> targetMap = configMap.get(descriptor);
 			if (targetMap != null) {
 				ILaunchConfiguration config = targetMap.get(target);
 				if (config != null) {
@@ -56,7 +56,7 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 
 	protected abstract ILaunchDescriptor getLaunchDescriptor(ILaunchConfiguration configuration) throws CoreException;
 
-	protected abstract IRemoteConnection getLaunchTarget(ILaunchConfiguration configuration) throws CoreException;
+	protected abstract ILaunchTarget getLaunchTarget(ILaunchConfiguration configuration) throws CoreException;
 
 	protected boolean providesForNullTarget() {
 		return false;
@@ -68,7 +68,7 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 			return false;
 		}
 
-		IRemoteConnection target = getLaunchTarget(configuration);
+		ILaunchTarget target = getLaunchTarget(configuration);
 		if (target == null) {
 			if (providesForNullTarget()) {
 				defaultConfigs.put(desc, configuration);
@@ -76,7 +76,7 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 				return false;
 			}
 		} else {
-			Map<IRemoteConnection, ILaunchConfiguration> targetMap = configMap.get(desc);
+			Map<ILaunchTarget, ILaunchConfiguration> targetMap = configMap.get(desc);
 			if (targetMap == null) {
 				targetMap = new HashMap<>();
 				configMap.put(desc, targetMap);
@@ -117,8 +117,8 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 	@Override
 	public boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException {
 		ownedConfigs.remove(configuration);
-		for (Entry<ILaunchDescriptor, Map<IRemoteConnection, ILaunchConfiguration>> descEntry : configMap.entrySet()) {
-			for (Entry<IRemoteConnection, ILaunchConfiguration> targetEntry : descEntry.getValue().entrySet()) {
+		for (Entry<ILaunchDescriptor, Map<ILaunchTarget, ILaunchConfiguration>> descEntry : configMap.entrySet()) {
+			for (Entry<ILaunchTarget, ILaunchConfiguration> targetEntry : descEntry.getValue().entrySet()) {
 				if (targetEntry.getValue().equals(configuration)) {
 					descEntry.getValue().remove(targetEntry.getKey());
 					if (descEntry.getValue().isEmpty()) {
@@ -133,7 +133,7 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 
 	@Override
 	public void launchDescriptorRemoved(ILaunchDescriptor descriptor) throws CoreException {
-		Map<IRemoteConnection, ILaunchConfiguration> map = configMap.remove(descriptor);
+		Map<ILaunchTarget, ILaunchConfiguration> map = configMap.remove(descriptor);
 		if (map != null) {
 			for (ILaunchConfiguration config : map.values()) {
 				ownedConfigs.remove(config);
@@ -150,11 +150,11 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 	}
 
 	@Override
-	public void launchTargetRemoved(IRemoteConnection target) throws CoreException {
-		for (Iterator<Entry<ILaunchDescriptor, Map<IRemoteConnection, ILaunchConfiguration>>> iterator = configMap
+	public void launchTargetRemoved(ILaunchTarget target) throws CoreException {
+		for (Iterator<Entry<ILaunchDescriptor, Map<ILaunchTarget, ILaunchConfiguration>>> iterator = configMap
 				.entrySet().iterator(); iterator.hasNext();) {
-			Entry<ILaunchDescriptor, Map<IRemoteConnection, ILaunchConfiguration>> descEntry = iterator.next();
-			Map<IRemoteConnection, ILaunchConfiguration> map = descEntry.getValue();
+			Entry<ILaunchDescriptor, Map<ILaunchTarget, ILaunchConfiguration>> descEntry = iterator.next();
+			Map<ILaunchTarget, ILaunchConfiguration> map = descEntry.getValue();
 			ILaunchConfiguration config = map.remove(target);
 			if (config != null) {
 				// remove all auto-configs associated with target

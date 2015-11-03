@@ -34,9 +34,8 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
-import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionType;
-import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -73,8 +72,18 @@ public class LaunchBarManagerTest {
 		doReturn(true).when(launchConfigType).supportsMode("run");
 		doReturn(true).when(launchConfigType).supportsMode("debug");
 
+		final ILaunchTargetManager targetManager = mock(ILaunchTargetManager.class);
+		ILaunchTarget localTarget = mock(ILaunchTarget.class);
+		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
+		doReturn("Local").when(localTarget).getName();
+		doReturn(new ILaunchTarget[] { localTarget }).when(targetManager).getLaunchTargets();
+
 		// Inject the launch config
 		LaunchBarManager manager = new LaunchBarManager(false) {
+			@Override
+			ILaunchTargetManager getLaunchTargetManager() {
+				return targetManager;
+			}
 		};
 		manager.init();
 		manager.launchConfigurationAdded(launchConfig);
@@ -83,11 +92,9 @@ public class LaunchBarManagerTest {
 		assertNotNull(manager.getActiveLaunchDescriptor());
 		assertEquals(launchConfig, manager.getActiveLaunchDescriptor().getAdapter(ILaunchConfiguration.class));
 
-		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
-		IRemoteConnectionType localServices = remoteManager.getLocalConnectionType();
-		IRemoteConnection localConnection = localServices.getConnections().get(0);
 		assertNotNull(manager.getActiveLaunchTarget());
-		assertEquals(localConnection, manager.getActiveLaunchTarget());
+		assertEquals(ILaunchTargetManager.localLaunchTargetTypeId, manager.getActiveLaunchTarget().getTypeId());
+		assertEquals("Local", manager.getActiveLaunchTarget().getName());
 
 		assertNotNull(manager.getActiveLaunchMode());
 		assertEquals("run", manager.getActiveLaunchMode().getIdentifier());
@@ -156,18 +163,23 @@ public class LaunchBarManagerTest {
 		ILaunchConfigurationProvider configProvider = mock(ILaunchConfigurationProvider.class);
 		doReturn(configProvider).when(element).createExecutableExtension("class");
 
+		final ILaunchTargetManager targetManager = mock(ILaunchTargetManager.class);
+		ILaunchTarget localTarget = mock(ILaunchTarget.class);
+		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
+		doReturn("Local").when(localTarget).getName();
+		doReturn(new ILaunchTarget[] { localTarget }).when(targetManager).getLaunchTargets();
+
 		ILaunchConfiguration launchConfig = mock(ILaunchConfiguration.class);
-		doReturn(launchConfig).when(configProvider).getLaunchConfiguration(eq(descriptor),
-				any(IRemoteConnection.class));
+		doReturn(launchConfig).when(configProvider).getLaunchConfiguration(eq(descriptor), any(ILaunchTarget.class));
 		doReturn(launchConfigType).when(configProvider).getLaunchConfigurationType(any(ILaunchDescriptor.class),
-				any(IRemoteConnection.class));
+				any(ILaunchTarget.class));
 		doAnswer(new Answer<Boolean>() {
 			@Override
 			public Boolean answer(InvocationOnMock invocation) throws Throwable {
-				IRemoteConnection target = (IRemoteConnection) invocation.getArguments()[1];
-				return target.getConnectionType().getId().equals("org.eclipse.remote.LocalServices");
+				ILaunchTarget target = (ILaunchTarget) invocation.getArguments()[1];
+				return target.getTypeId().equals(ILaunchTargetManager.localLaunchTargetTypeId);
 			}
-		}).when(configProvider).supports(eq(descriptor), any(IRemoteConnection.class));
+		}).when(configProvider).supports(eq(descriptor), any(ILaunchTarget.class));
 
 		doReturn(elements.toArray(new IConfigurationElement[0])).when(extension).getConfigurationElements();
 
@@ -182,17 +194,20 @@ public class LaunchBarManagerTest {
 			ILaunchManager getLaunchManager() {
 				return launchManager;
 			}
+
+			@Override
+			ILaunchTargetManager getLaunchTargetManager() {
+				return targetManager;
+			}
+
 		};
 		manager.init();
 		manager.launchObjectAdded(launchObject);
 
 		assertEquals(descriptor, manager.getActiveLaunchDescriptor());
 		assertEquals(runMode, manager.getActiveLaunchMode());
-		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
-		IRemoteConnectionType localServices = remoteManager.getLocalConnectionType();
-		IRemoteConnection localConnection = localServices.getConnections().get(0);
-		assertNotNull(localConnection);
-		assertEquals(localConnection, manager.getActiveLaunchTarget());
+		assertEquals(ILaunchTargetManager.localLaunchTargetTypeId, manager.getActiveLaunchTarget().getTypeId());
+		assertEquals("Local", manager.getActiveLaunchTarget().getName());
 		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
 	}
 

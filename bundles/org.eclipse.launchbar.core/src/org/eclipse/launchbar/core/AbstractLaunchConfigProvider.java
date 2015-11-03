@@ -17,7 +17,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.internal.Activator;
-import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * Common launch config provider. Manages creating launch configurations and
@@ -28,7 +28,7 @@ public abstract class AbstractLaunchConfigProvider implements ILaunchConfigurati
 	private static final String ATTR_ORIGINAL_NAME = Activator.PLUGIN_ID + ".originalName"; //$NON-NLS-1$
 	private static final String ATTR_PROVIDER_CLASS = Activator.PLUGIN_ID + ".providerClass"; //$NON-NLS-1$
 
-	protected ILaunchConfiguration createLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target)
+	protected ILaunchConfiguration createLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		String name = launchManager.generateLaunchConfigurationName(descriptor.getName());
@@ -40,7 +40,7 @@ public abstract class AbstractLaunchConfigProvider implements ILaunchConfigurati
 		return workingCopy.doSave();
 	}
 
-	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
+	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target,
 			ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 		// Leave our breadcrumb
 		workingCopy.setAttribute(ATTR_ORIGINAL_NAME, workingCopy.getName());

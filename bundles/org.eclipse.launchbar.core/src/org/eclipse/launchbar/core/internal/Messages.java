@@ -18,6 +18,8 @@ public class Messages extends NLS {
 	public static String LaunchBarManager_1;
 	public static String LaunchBarManager_2;
 	public static String LocalTarget_name;
+	public static String OK;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.launchbar.ui.IHoverProvider;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
@@ -32,7 +31,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -57,13 +55,10 @@ import org.eclipse.ui.PlatformUI;
 public abstract class CSelector extends Composite {
 	private IStructuredContentProvider contentProvider;
 	private ILabelProvider labelProvider;
-	private IHoverProvider hoverProvider;
 	private Comparator<?> sorter;
 	private Comparator<?> sorterTop;
 	private Object input;
 	private Composite buttonComposite;
-	private String toolTipText;
-	private boolean toolTipWasModified; // Used for the hover provider
 	private static final int arrowMax = 2;
 	private Transition arrowTransition;
 	private Object selection;
@@ -77,51 +72,7 @@ public abstract class CSelector extends Composite {
 	private Shell popup;
 	private LaunchBarListViewer listViewer;
 	private Job delayJob;
-	private MouseTrackListener mouseTrackListener = new MouseTrackListener() {
-		@Override
-		public void mouseEnter(MouseEvent e) {
-			if (!mouseOver) {
-				mouseOver = true;
-				redraw();
-				if (toolTipWasModified) {
-					buttonComposite.setToolTipText(toolTipText);
-					if (currentLabel != null) {
-						currentLabel.setToolTipText(toolTipText);
-					}
-					if (currentIcon != null) {
-						currentIcon.setToolTipText(toolTipText);
-					}
-				}
-			}
-		}
 
-		@Override
-		public void mouseHover(MouseEvent e) {
-			if (hoverProvider != null && (popup == null || popup.isDisposed())) {
-				final Object eventSource = e.getSource();
-				if ((eventSource == currentLabel || eventSource == buttonComposite || eventSource == currentIcon)) {
-					if (hoverProvider.displayHover(selection)) {
-						buttonComposite.setToolTipText(""); //$NON-NLS-1$
-						if (currentLabel != null) {
-							currentLabel.setToolTipText(""); //$NON-NLS-1$
-						}
-						if (currentIcon != null) {
-							currentIcon.setToolTipText(""); //$NON-NLS-1$
-						}
-						toolTipWasModified = true;
-					}
-				}
-			}
-		}
-
-		@Override
-		public void mouseExit(MouseEvent e) {
-			if (mouseOver) {
-				mouseOver = false;
-				redraw();
-			}
-		}
-	};
 	private MouseListener mouseListener = new MouseAdapter() {
 		@Override
 		public void mouseUp(MouseEvent event) {
@@ -159,8 +110,10 @@ public abstract class CSelector extends Composite {
 				break;
 			case SWT.FocusOut:
 				if (isPopUpInFocus()) {
-					// we about to loose focus from popup children, but it may go
-					// to another child, lets schedule a job to wait before we close
+					// we about to loose focus from popup children, but it may
+					// go
+					// to another child, lets schedule a job to wait before we
+					// close
 					if (closingJob != null)
 						closingJob.cancel();
 					closingJob = new Job(Messages.CSelector_0) {
@@ -212,7 +165,6 @@ public abstract class CSelector extends Composite {
 			}
 		});
 		addMouseListener(mouseListener);
-		addMouseTrackListener(mouseTrackListener);
 	}
 
 	private boolean isPopUpInFocus() {
@@ -260,7 +212,7 @@ public abstract class CSelector extends Composite {
 		this.selection = element;
 		if (buttonComposite != null)
 			buttonComposite.dispose();
-		toolTipText = getToolTipText();
+		String toolTipText = getToolTipText();
 		boolean editable = false;
 		int columns = 2;
 		Image image = labelProvider.getImage(element);
@@ -276,19 +228,16 @@ public abstract class CSelector extends Composite {
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		buttonComposite.setBackground(backgroundColor);
 		buttonComposite.addMouseListener(mouseListener);
-		buttonComposite.addMouseTrackListener(mouseTrackListener);
 		buttonComposite.setToolTipText(toolTipText);
 		if (element != null) {
 			if (image != null) {
 				Label icon = createImage(buttonComposite, image);
 				icon.addMouseListener(mouseListener);
-				icon.addMouseTrackListener(mouseTrackListener);
 				currentIcon = icon;
 				currentIcon.setToolTipText(toolTipText);
 			}
 			Label label = createLabel(buttonComposite, element);
 			label.addMouseListener(mouseListener);
-			label.addMouseTrackListener(mouseTrackListener);
 			currentLabel = label;
 			currentLabel.setToolTipText(toolTipText);
 		} else {
@@ -318,15 +267,11 @@ public abstract class CSelector extends Composite {
 				Rectangle bounds = arrow.getBounds();
 				int arrowWidth = bounds.width - hPadding * 2;
 				int current = arrowTransition.getCurrent();
-				gc.drawPolyline(new int[] { hPadding,
-						bounds.height / 2 - current,
-						hPadding + (arrowWidth / 2),
-						bounds.height / 2 + current, hPadding + arrowWidth,
-						bounds.height / 2 - current });
+				gc.drawPolyline(new int[] { hPadding, bounds.height / 2 - current, hPadding + (arrowWidth / 2),
+						bounds.height / 2 + current, hPadding + arrowWidth, bounds.height / 2 - current });
 			}
 		});
 		arrow.addMouseListener(mouseListener);
-		arrow.addMouseTrackListener(mouseTrackListener);
 		if (editable) {
 			final EditButton editButton = new EditButton(buttonComposite, SWT.NONE);
 			editButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
@@ -359,10 +304,6 @@ public abstract class CSelector extends Composite {
 		return mouseListener;
 	}
 
-	public MouseTrackListener getMouseTrackListener() {
-		return mouseTrackListener;
-	}
-
 	protected void openPopup() {
 		Object[] elements = contentProvider.getElements(input);
 		if (elements.length == 0 && !hasActionArea())
@@ -373,7 +314,6 @@ public abstract class CSelector extends Composite {
 		}
 		popup = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP | SWT.RESIZE);
 		popup.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
-
 
 		listViewer = new LaunchBarListViewer(popup);
 		initializeListViewer(listViewer);
@@ -395,8 +335,7 @@ public abstract class CSelector extends Composite {
 		if (hasActionArea())
 			createActionArea(popup);
 		Rectangle buttonBounds = getBounds();
-		Point popupLocation = popup.getDisplay().map(this, null, 0,
-				buttonBounds.height);
+		Point popupLocation = popup.getDisplay().map(this, null, 0, buttonBounds.height);
 		popup.setLocation(popupLocation.x, popupLocation.y + 5);
 
 		restoreShellSize();
@@ -415,9 +354,6 @@ public abstract class CSelector extends Composite {
 			}
 
 		});
-		if (hoverProvider != null) {
-			hoverProvider.dismissHover(selection != null ? selection : null, true);
-		}
 	}
 
 	protected String getDialogPreferencePrefix() {
@@ -432,8 +368,8 @@ public abstract class CSelector extends Composite {
 		try {
 			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 			String prefName = getDialogPreferencePrefix();
-			int w = store.getInt(prefName + ".shell.w");
-			int h = store.getInt(prefName + ".shell.h");
+			int w = store.getInt(prefName + ".shell.w"); //$NON-NLS-1$
+			int h = store.getInt(prefName + ".shell.h"); //$NON-NLS-1$
 			size.x = Math.max(size.x, w);
 			size.y = Math.max(size.y, h);
 		} catch (Exception e) {
@@ -446,8 +382,8 @@ public abstract class CSelector extends Composite {
 		Point size = popup.getSize();
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		String prefName = getDialogPreferencePrefix();
-		store.setValue(prefName + ".shell.w", size.x);
-		store.setValue(prefName + ".shell.h", size.y);
+		store.setValue(prefName + ".shell.w", size.x); //$NON-NLS-1$
+		store.setValue(prefName + ".shell.h", size.y); //$NON-NLS-1$
 	}
 
 	protected void initializeListViewer(LaunchBarListViewer listViewer) {
@@ -478,8 +414,7 @@ public abstract class CSelector extends Composite {
 			GC gc = new GC(buttonImage);
 			gc.setAntialias(SWT.ON);
 			gc.setInterpolation(SWT.HIGH);
-			gc.drawImage(image, 0, 0, image.getBounds().width,
-					image.getBounds().height, 0, 0, 16, 16);
+			gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height, 0, 0, 16, 16);
 			gc.dispose();
 			image = buttonImage;
 			disposeImage = true;
@@ -523,12 +458,18 @@ public abstract class CSelector extends Composite {
 		return labelProvider;
 	}
 
-	public void setHoverProvider(IHoverProvider hoverProvider) {
-		this.hoverProvider = hoverProvider;
-	}
-
-	public IHoverProvider getHoverProvider() {
-		return hoverProvider;
+	@Override
+	public void setToolTipText(String toolTipText) {
+		super.setToolTipText(toolTipText);
+		if (buttonComposite != null) {
+			buttonComposite.setToolTipText(toolTipText);
+		}
+		if (currentLabel != null) {
+			currentLabel.setToolTipText(toolTipText);
+		}
+		if (currentIcon != null) {
+			currentIcon.setToolTipText(toolTipText);
+		}
 	}
 
 	/**
@@ -561,7 +502,8 @@ public abstract class CSelector extends Composite {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				update(selection); // update current selection - name or icon may have changed
+				update(selection); // update current selection - name or icon
+									// may have changed
 				if (popup != null && !popup.isDisposed()) {
 					listViewer.refresh(true); // update all labels in the popup
 				}

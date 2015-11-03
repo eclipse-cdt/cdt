@@ -13,7 +13,7 @@ package org.eclipse.launchbar.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * The provider of launch configurations of a given type for a given descriptor
@@ -34,7 +34,7 @@ public interface ILaunchConfigurationProvider {
 	 * @param target
 	 * @return true if target is supported, false otherwise.
 	 */
-	boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException;
+	boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException;
 
 	/**
 	 * Return the launch configuation type for the descriptor and target.
@@ -45,7 +45,7 @@ public interface ILaunchConfigurationProvider {
 	 * @return
 	 * @throws CoreException
 	 */
-	ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, IRemoteConnection target)
+	ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException;
 
 	/**
@@ -58,7 +58,7 @@ public interface ILaunchConfigurationProvider {
 	 * @return launch configuration
 	 * @throws CoreException
 	 */
-	ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target)
+	ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException;
 
 	/**
@@ -108,6 +108,6 @@ public interface ILaunchConfigurationProvider {
 	 * @param target
 	 * @throws CoreException
 	 */
-	void launchTargetRemoved(IRemoteConnection target) throws CoreException;
+	void launchTargetRemoved(ILaunchTarget target) throws CoreException;
 
 }

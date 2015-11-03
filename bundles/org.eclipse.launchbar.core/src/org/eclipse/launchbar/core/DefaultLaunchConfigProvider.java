@@ -13,7 +13,8 @@ package org.eclipse.launchbar.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 /**
  * The launch config provider for the default descriptor which is the launch
@@ -25,23 +26,19 @@ import org.eclipse.remote.core.IRemoteConnection;
 public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider {
 
 	@Override
-	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
+	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
 		// Only supports Local connection
-		if (target != null && target.getConnectionType().getId().equals("org.eclipse.remote.LocalServices")) { //$NON-NLS-1$
-			return true;
-		} else {
-			return false;
-		}
+		return target != null && target.getTypeId().equals(ILaunchTargetManager.localLaunchTargetTypeId);
 	}
 
 	@Override
-	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, IRemoteConnection target)
+	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		return descriptor.getAdapter(ILaunchConfiguration.class).getType();
 	}
 
 	@Override
-	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target)
+	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		return descriptor.getAdapter(ILaunchConfiguration.class);
 	}
@@ -68,7 +65,7 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 	}
 
 	@Override
-	public void launchTargetRemoved(IRemoteConnection target) throws CoreException {
+	public void launchTargetRemoved(ILaunchTarget target) throws CoreException {
 		// nothing to do
 	}
 

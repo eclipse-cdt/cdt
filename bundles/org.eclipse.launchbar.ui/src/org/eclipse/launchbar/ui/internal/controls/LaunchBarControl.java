@@ -19,9 +19,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.core.internal.LaunchBarManager.Listener;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
-import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -36,7 +36,8 @@ import org.eclipse.swt.widgets.ToolItem;
 
 public class LaunchBarControl implements Listener {
 	public static final String ID = "org.eclipse.launchbar"; //$NON-NLS-1$
-	public static final String CLASS_URI = "bundleclass://" + Activator.PLUGIN_ID + "/" + LaunchBarControl.class.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String CLASS_URI = "bundleclass://" + Activator.PLUGIN_ID + "/" //$NON-NLS-1$ //$NON-NLS-2$
+			+ LaunchBarControl.class.getName();
 
 	private LaunchBarManager manager = Activator.getDefault().getLaunchBarUIManager().getManager();
 
@@ -82,7 +83,7 @@ public class LaunchBarControl implements Listener {
 			Label label = new Label(container, SWT.NONE);
 			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			label.setText(Messages.LaunchBarControl_0 + ":"); //$NON-NLS-1$
-	
+
 			targetSelector = new TargetSelector(container, SWT.NONE);
 			targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			targetSelector.setInput(manager);
@@ -107,9 +108,10 @@ public class LaunchBarControl implements Listener {
 
 	private void createButton(Composite parent, String imageName, String toolTipText, final String command) {
 		ToolItem button = new ToolItem((ToolBar) parent, SWT.FLAT);
-		//button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		// button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		Image srcImage = Activator.getDefault().getImage(imageName);
-		//Image image = new Image(parent.getDisplay(), srcImage, SWT.IMAGE_COPY);
+		// Image image = new Image(parent.getDisplay(), srcImage,
+		// SWT.IMAGE_COPY);
 		button.setImage(srcImage);
 		button.setToolTipText(toolTipText);
 		button.addSelectionListener(new SelectionAdapter() {
@@ -139,7 +141,7 @@ public class LaunchBarControl implements Listener {
 	@Override
 	public void activeLaunchTargetChanged() {
 		if (targetSelector != null) {
-			final IRemoteConnection target = manager.getActiveLaunchTarget();
+			final ILaunchTarget target = manager.getActiveLaunchTarget();
 			targetSelector.setDelayedSelection(target, SELECTION_DELAY);
 		}
 	}
@@ -152,7 +154,7 @@ public class LaunchBarControl implements Listener {
 
 	@Override
 	public void launchTargetsChanged() {
-		if (targetSelector!=null){
+		if (targetSelector != null) {
 			targetSelector.refresh();
 		}
 	}

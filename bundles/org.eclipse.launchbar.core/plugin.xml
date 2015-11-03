@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="launchBarContributions" name="Launch Bar Contributions" schema="schema/launchBarContributions.exsd"/>
+   <extension-point id="launchTargetTypes" name="Launch Target Types" schema="schema/launchTargetTypes.exsd"/>
    <extension
          point="org.eclipse.launchbar.core.launchBarContributions">
       <objectProvider
@@ -24,6 +25,13 @@
             <enablement>
             </enablement>
       </configProvider>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.launchbar.core.launchTargetType.local"
+            provider="org.eclipse.launchbar.core.internal.target.LocalLaunchTargetProvider">
+      </launchTargetType>
    </extension>
 
 </plugin>

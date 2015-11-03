@@ -70,19 +70,28 @@ public class LaunchConfigProviderInfo {
 		return priority;
 	}
 
-	public ILaunchConfigurationProvider getProvider() throws CoreException {
+	public ILaunchConfigurationProvider getProvider() {
 		if (provider == null) {
-			provider = (ILaunchConfigurationProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
-			element = null;
+			try {
+				provider = (ILaunchConfigurationProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
+				element = null;
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
 		}
 		return provider;
 	}
 
-	public boolean enabled(Object element) throws CoreException {
+	public boolean enabled(Object element) {
 		if (expression == null)
 			return true;
-		EvaluationResult result = expression.evaluate(new EvaluationContext(null, element));
-		return (result == EvaluationResult.TRUE);
+		try {
+			EvaluationResult result = expression.evaluate(new EvaluationContext(null, element));
+			return (result == EvaluationResult.TRUE);
+		} catch (CoreException e) {
+			Activator.log(e);
+			return false;
+		}
 	}
 
 }

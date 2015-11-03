@@ -11,6 +11,7 @@
 package org.eclipse.launchbar.core.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -40,31 +41,32 @@ import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.launchbar.core.ILaunchObjectProvider;
-import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionChangeListener;
-import org.eclipse.remote.core.IRemoteConnectionType;
-import org.eclipse.remote.core.IRemoteServicesManager;
-import org.eclipse.remote.core.RemoteConnectionChangeEvent;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetListener;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
  * The brains of the launch bar.
  */
-public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionChangeListener {
+public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListener {
 
-	// TODO make these more fine grained or break them into more focused
-	// listeners
 	public interface Listener {
-		void activeLaunchDescriptorChanged();
+		default void activeLaunchDescriptorChanged() {
+		}
 
-		void activeLaunchModeChanged();
+		default void activeLaunchModeChanged() {
+		}
 
-		void activeLaunchTargetChanged();
+		default void activeLaunchTargetChanged() {
+		}
 
-		void launchDescriptorRemoved(ILaunchDescriptor descriptor);
+		default void launchDescriptorRemoved(ILaunchDescriptor descriptor) {
+		}
 
-		void launchTargetsChanged();
+		default void launchTargetsChanged() {
+		}
 	}
 
 	private final List<Listener> listeners = new LinkedList<>();
@@ -88,11 +90,11 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 	// Map of launch objects to launch descriptors
 	private final Map<Object, ILaunchDescriptor> objectDescriptorMap = new HashMap<>();
 
-	private final IRemoteServicesManager remoteServicesManager = getRemoteServicesManager();
+	private ILaunchTargetManager launchTargetManager;
 
 	private ILaunchDescriptor activeLaunchDesc;
 	private ILaunchMode activeLaunchMode;
-	private IRemoteConnection activeLaunchTarget;
+	private ILaunchTarget activeLaunchTarget;
 
 	// private static final String PREF_ACTIVE_CONFIG_DESC = "activeConfigDesc";
 	private static final String PREF_ACTIVE_LAUNCH_MODE = "activeLaunchMode"; //$NON-NLS-1$
@@ -107,8 +109,8 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 
 	// called from unit tests to ensure everything is inited
 	LaunchBarManager(boolean doInit) {
-		remoteServicesManager.addRemoteConnectionChangeListener(this);
-
+		launchTargetManager = getLaunchTargetManager();
+		launchTargetManager.addListener(this);
 		if (doInit) {
 			new Job(Messages.LaunchBarManager_0) {
 				@Override
@@ -125,11 +127,6 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 	}
 
 	// To allow override by tests
-	IRemoteServicesManager getRemoteServicesManager() {
-		return Activator.getService(IRemoteServicesManager.class);
-	}
-
-	// To allow override by tests
 	IExtensionPoint getExtensionPoint() throws CoreException {
 		return Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID, "launchBarContributions"); //$NON-NLS-1$
 	}
@@ -137,6 +134,10 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 	// To allow override by tests
 	ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
+	}
+
+	ILaunchTargetManager getLaunchTargetManager() {
+		return Activator.getService(ILaunchTargetManager.class);
 	}
 
 	// When testing, call this after setting up the mocks.
@@ -293,8 +294,8 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		return new Pair<String, String>(getDescriptorTypeId(descriptor.getType()), descriptor.getName());
 	}
 
-	private Pair<String, String> getTargetId(IRemoteConnection target) {
-		return new Pair<String, String>(target.getConnectionType().getId(), target.getName());
+	private Pair<String, String> getTargetId(ILaunchTarget target) {
+		return new Pair<String, String>(target.getTypeId(), target.getName());
 	}
 
 	private void addDescriptor(Object launchObject, ILaunchDescriptor descriptor) throws CoreException {
@@ -303,7 +304,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		setActiveLaunchDescriptor(descriptor);
 	}
 
-	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, IRemoteConnection target)
+	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		if (descriptor == null)
 			return null;
@@ -478,13 +479,10 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		String activeTargetId = getPerDescriptorStore().get(PREF_ACTIVE_LAUNCH_TARGET, null);
 		if (activeTargetId != null) {
 			Pair<String, String> id = toId(activeTargetId);
-			IRemoteConnectionType remoteServices = remoteServicesManager.getConnectionType(id.getFirst());
-			if (remoteServices != null) {
-				IRemoteConnection storedTarget = remoteServices.getConnection(id.getSecond());
-				if (storedTarget != null && supportsTarget(activeLaunchDesc, storedTarget)) {
-					setActiveLaunchTarget(storedTarget);
-					return;
-				}
+			ILaunchTarget storedTarget = launchTargetManager.getLaunchTarget(id.getFirst(), id.getSecond());
+			if (storedTarget != null && supportsTarget(activeLaunchDesc, storedTarget)) {
+				setActiveLaunchTarget(storedTarget);
+				return;
 			}
 		}
 		// default target for descriptor
@@ -641,12 +639,12 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		}
 	}
 
-	public List<IRemoteConnection> getLaunchTargets(ILaunchDescriptor descriptor) throws CoreException {
+	public List<ILaunchTarget> getLaunchTargets(ILaunchDescriptor descriptor) {
 		if (descriptor == null)
-			return remoteServicesManager.getAllRemoteConnections();
+			return Arrays.asList(launchTargetManager.getLaunchTargets());
 
-		List<IRemoteConnection> targets = new ArrayList<>();
-		for (IRemoteConnection target : remoteServicesManager.getAllRemoteConnections()) {
+		List<ILaunchTarget> targets = new ArrayList<>();
+		for (ILaunchTarget target : launchTargetManager.getLaunchTargets()) {
 			if (supportsTarget(descriptor, target)) {
 				targets.add(target);
 			}
@@ -655,7 +653,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		return targets;
 	}
 
-	boolean supportsTarget(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
+	boolean supportsTarget(ILaunchDescriptor descriptor, ILaunchTarget target) {
 		String descriptorTypeId = getDescriptorTypeId(descriptor.getType());
 		for (LaunchConfigProviderInfo providerInfo : configProviders.get(descriptorTypeId)) {
 			try {
@@ -671,7 +669,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		return false;
 	}
 
-	public IRemoteConnection getActiveLaunchTarget() {
+	public ILaunchTarget getActiveLaunchTarget() {
 		return activeLaunchTarget;
 	}
 
@@ -682,7 +680,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 	 * @param target
 	 * @throws CoreException
 	 */
-	public void setLaunchTarget(ILaunchDescriptor desc, IRemoteConnection target) throws CoreException {
+	public void setLaunchTarget(ILaunchDescriptor desc, ILaunchTarget target) throws CoreException {
 		if (desc == activeLaunchDesc) {
 			setActiveLaunchTarget(target);
 		} else {
@@ -690,7 +688,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		}
 	}
 
-	public void setActiveLaunchTarget(IRemoteConnection target) throws CoreException {
+	public void setActiveLaunchTarget(ILaunchTarget target) throws CoreException {
 		if (activeLaunchTarget == target) {
 			return;
 		}
@@ -700,7 +698,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		fireActiveLaunchTargetChanged(); // notify listeners
 	}
 
-	private void storeLaunchTarget(ILaunchDescriptor desc, IRemoteConnection target) {
+	private void storeLaunchTarget(ILaunchDescriptor desc, ILaunchTarget target) {
 		if (target == null) {
 			// no point storing null, if stored id is invalid it won't be used
 			// anyway
@@ -722,8 +720,8 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		}
 	}
 
-	private IRemoteConnection getDefaultLaunchTarget(ILaunchDescriptor descriptor) throws CoreException {
-		List<IRemoteConnection> targets = getLaunchTargets(descriptor);
+	private ILaunchTarget getDefaultLaunchTarget(ILaunchDescriptor descriptor) {
+		List<ILaunchTarget> targets = getLaunchTargets(descriptor);
 		return targets.isEmpty() ? null : targets.get(0);
 	}
 
@@ -731,7 +729,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		return getLaunchConfiguration(activeLaunchDesc, activeLaunchTarget);
 	}
 
-	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target)
+	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		if (descriptor == null) {
 			return null;
@@ -847,32 +845,6 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		}
 	}
 
-	@Override
-	public void connectionChanged(RemoteConnectionChangeEvent event) {
-		switch (event.getType()) {
-		case RemoteConnectionChangeEvent.CONNECTION_ADDED:
-			try {
-				launchTargetAdded(event.getConnection());
-			} catch (CoreException e) {
-				Activator.log(e);
-			}
-			break;
-		case RemoteConnectionChangeEvent.CONNECTION_REMOVED:
-			try {
-				launchTargetRemoved(event.getConnection());
-			} catch (CoreException e) {
-				Activator.log(e);
-			}
-			break;
-		case RemoteConnectionChangeEvent.CONNECTION_RENAMED:
-			fireLaunchTargetsChanged();
-			break;
-		default:
-			fireLaunchTargetsChanged();
-			break;
-		}
-	}
-
 	private void fireLaunchTargetsChanged() {
 		if (!initialized)
 			return;
@@ -885,22 +857,32 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 		}
 	}
 
-	private void launchTargetAdded(IRemoteConnection target) throws CoreException {
+	@Override
+	public void launchTargetAdded(ILaunchTarget target) {
 		if (!initialized)
 			return;
 		fireLaunchTargetsChanged();
 		// if we added new target we probably want to use it
 		if (activeLaunchDesc == null || supportsTarget(activeLaunchDesc, target)) {
-			setActiveLaunchTarget(target);
+			try {
+				setActiveLaunchTarget(target);
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
 		}
 	}
 
-	private void launchTargetRemoved(IRemoteConnection target) throws CoreException {
+	@Override
+	public void launchTargetRemoved(ILaunchTarget target) {
 		if (!initialized)
 			return;
 		fireLaunchTargetsChanged();
 		if (activeLaunchTarget == target) {
-			setActiveLaunchTarget(getDefaultLaunchTarget(activeLaunchDesc));
+			try {
+				setActiveLaunchTarget(getDefaultLaunchTarget(activeLaunchDesc));
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
 		}
 	}
 

@@ -18,7 +18,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import org.eclipse.core.runtime.CoreException;
@@ -29,9 +28,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.launchbar.core.internal.LaunchBarManager2Test;
-import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionType;
-import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -41,10 +39,9 @@ import org.junit.runners.MethodSorters;
 @SuppressWarnings("nls")
 @FixMethodOrder(MethodSorters.JVM)
 public class PerTargetLaunchConfigProviderTest {
-	private IRemoteServicesManager remoteServiceManager;
-	private IRemoteConnection localTarget;
+	private ILaunchTarget localTarget;
 	private String launchName;
-	private IRemoteConnection otherTarget;
+	private ILaunchTarget otherTarget;
 	private ILaunchConfigurationType launchConfigType;
 	private ILaunchDescriptorType descriptorType;
 	private ILaunchDescriptor descriptor;
@@ -52,14 +49,24 @@ public class PerTargetLaunchConfigProviderTest {
 
 	@Before
 	public void basicSetupOnly() throws CoreException {
-		remoteServiceManager = spy(Activator.getService(IRemoteServicesManager.class));
-		localTarget = remoteServiceManager.getLocalConnectionType().getConnections().get(0);
+		ILaunchTargetManager targetManager = mock(ILaunchTargetManager.class);
+		Activator.getDefault().getBundle().getBundleContext().registerService(ILaunchTargetManager.class, targetManager,
+				null);
+
+		localTarget = mock(ILaunchTarget.class);
+		doReturn("Local").when(localTarget).getName();
+		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
+		doReturn(localTarget).when(targetManager).getLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
+				"Local");
+
 		// other mocked remote connections
-		otherTarget = mock(IRemoteConnection.class);
-		IRemoteConnectionType rtype = mock(IRemoteConnectionType.class);
-		doReturn(rtype).when(otherTarget).getConnectionType();
-		doReturn("otherTargetType").when(rtype).getId();
+		otherTarget = mock(ILaunchTarget.class);
+		doReturn("otherTargetType").when(otherTarget).getTypeId();
 		doReturn("otherTarget").when(otherTarget).getName();
+		doReturn(otherTarget).when(targetManager).getLaunchTarget("otherTargetType", "otherTarget");
+
+		doReturn(new ILaunchTarget[] { localTarget, otherTarget }).when(targetManager).getLaunchTargets();
+
 		// launch stuff
 		launchName = "test";
 		// launch config type
@@ -90,18 +97,18 @@ public class PerTargetLaunchConfigProviderTest {
 		private ILaunchBarManager manager;
 
 		@Override
-		public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
+		public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
 			return true;
 		}
 
 		@Override
-		public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor,
-				IRemoteConnection target) throws CoreException {
+		public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
+				throws CoreException {
 			return launchConfigType;
 		}
 
 		@Override
-		protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
+		protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target,
 				ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 			super.populateLaunchConfiguration(descriptor, target, workingCopy);
 			workingCopy.setAttribute(CONNECTION_NAME_ATTR, target.getName());
@@ -113,7 +120,7 @@ public class PerTargetLaunchConfigProviderTest {
 		}
 
 		@Override
-		protected IRemoteConnection getLaunchTarget(ILaunchConfiguration configuration) throws CoreException {
+		protected ILaunchTarget getLaunchTarget(ILaunchConfiguration configuration) throws CoreException {
 			String name = configuration.getAttribute(CONNECTION_NAME_ATTR, "");
 			if (localTarget.getName().equals(name)) {
 				return localTarget;
@@ -133,7 +140,7 @@ public class PerTargetLaunchConfigProviderTest {
 		}
 
 		@Override
-		public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target)
+		public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 				throws CoreException {
 			ILaunchConfiguration config = super.getLaunchConfiguration(descriptor, target);
 			// Since this provider isn't hooked in properly, need to manually

@@ -13,53 +13,48 @@ package org.eclipse.launchbar.ui.internal.controls;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetListener;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.launchbar.core.target.TargetStatus;
+import org.eclipse.launchbar.core.target.TargetStatus.Code;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.launchbar.ui.internal.Messages;
-import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.ui.IRemoteUIConnectionService;
-import org.eclipse.remote.ui.RemoteConnectionsLabelProvider;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseTrackAdapter;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.launchbar.ui.target.ILaunchTargetUIManager;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 
-public class TargetSelector extends CSelector {
+public class TargetSelector extends CSelector implements ILaunchTargetListener {
 
 	private final LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
+	private final ILaunchTargetUIManager targetUIManager = Activator.getService(ILaunchTargetUIManager.class);
+	private final ILaunchTargetManager targetManager = Activator.getService(ILaunchTargetManager.class);
 
 	private static final String[] noTargets = new String[] { "---" }; //$NON-NLS-1$
 
 	public TargetSelector(Composite parent, int style) {
 		super(parent, style);
+
+		targetManager.addListener(this);
 
 		setContentProvider(new IStructuredContentProvider() {
 			@Override
@@ -73,19 +68,69 @@ public class TargetSelector extends CSelector {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				LaunchBarManager manager = uiManager.getManager();
-				try {
-					List<IRemoteConnection> targets = manager.getLaunchTargets(manager.getActiveLaunchDescriptor());
-					if (!targets.isEmpty()) {
-						return targets.toArray();
-					}
-				} catch (CoreException e) {
-					Activator.log(e);
+				List<ILaunchTarget> targets = manager.getLaunchTargets(manager.getActiveLaunchDescriptor());
+				if (!targets.isEmpty()) {
+					return targets.toArray();
 				}
 				return noTargets;
 			}
 		});
 
-		setLabelProvider(new RemoteConnectionsLabelProvider());
+		setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ILaunchTarget) {
+					ILaunchTarget target = (ILaunchTarget) element;
+					ILabelProvider provider = targetUIManager.getLabelProvider(target);
+					return provider != null ? provider.getText(target) : target.getName();
+				}
+				return super.getText(element);
+			}
+
+			@Override
+			public Image getImage(Object element) {
+				if (element instanceof ILaunchTarget) {
+					// TODO apply a status overlay
+					ILaunchTarget target = (ILaunchTarget) element;
+					ILabelProvider provider = targetUIManager.getLabelProvider(target);
+					if (provider != null) {
+						final Image baseImage = provider.getImage(target);
+						final TargetStatus status = targetManager.getStatus(target);
+						if (status.getCode() == Code.OK) {
+							return baseImage;
+						} else {
+							String compId = target.getTypeId()
+									+ (status.getCode() == Code.ERROR ? ".error" : ".warning"); //$NON-NLS-1$ //$NON-NLS-2$
+							Image image = Activator.getDefault().getImageRegistry().get(compId);
+							if (image == null) {
+								ImageDescriptor desc = new CompositeImageDescriptor() {
+									@Override
+									protected Point getSize() {
+										Rectangle bounds = baseImage.getBounds();
+										return new Point(bounds.width, bounds.height);
+									}
+
+									@Override
+									protected void drawCompositeImage(int width, int height) {
+										Image overlay = PlatformUI.getWorkbench().getSharedImages()
+												.getImage(status.getCode() == Code.ERROR
+														? ISharedImages.IMG_DEC_FIELD_ERROR
+														: ISharedImages.IMG_DEC_FIELD_WARNING);
+										drawImage(baseImage.getImageData(), 0, 0);
+										int y = baseImage.getBounds().height - overlay.getBounds().height;
+										drawImage(overlay.getImageData(), 0, y);
+									}
+								};
+								image = desc.createImage();
+								Activator.getDefault().getImageRegistry().put(compId, image);
+							}
+							return image;
+						}
+					}
+				}
+				return super.getImage(element);
+			}
+		});
 
 		setSorter(new Comparator<Object>() {
 			@Override
@@ -100,11 +145,10 @@ public class TargetSelector extends CSelector {
 
 	@Override
 	public boolean isEditable(Object element) {
-
 		return true;
 	}
 
-	private ISelectionProvider getSelectionProvider(){
+	private ISelectionProvider getSelectionProvider() {
 		return new ISelectionProvider() {
 			@Override
 			public void setSelection(ISelection selection) {
@@ -127,89 +171,29 @@ public class TargetSelector extends CSelector {
 			}
 		};
 	}
+
 	@Override
 	public void handleEdit(Object element) {
 		// opens property dialog on a selected target
-		new PropertyDialogAction(new SameShellProvider(getShell()),	getSelectionProvider()).run();
-	}
-
-	@Override
-	public boolean hasActionArea() {
-		return true;
-	}
-
-	@Override
-	public void createActionArea(final Composite parent) {
-		Composite actionArea = new Composite(parent, SWT.NONE);
-		GridLayout actionLayout = new GridLayout();
-		actionLayout.marginWidth = actionLayout.marginHeight = 0;
-		actionArea.setLayout(actionLayout);
-		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-
-		final Composite createButton = new Composite(actionArea, SWT.NONE);
-		createButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		GridLayout buttonLayout = new GridLayout();
-		buttonLayout.marginWidth = buttonLayout.marginHeight = 7;
-		createButton.setLayout(buttonLayout);
-		createButton.setBackground(backgroundColor);
-		createButton.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				Point size = createButton.getSize();
-				GC gc = e.gc;
-				gc.setForeground(outlineColor);
-				gc.drawLine(0, 0, size.x, 0);
-			}
-		});
-
-		final Label createLabel = new Label(createButton, SWT.None);
-		createLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		createLabel.setText(Messages.TargetSelector_CreateNewTarget);
-		createLabel.setBackground(backgroundColor);
-
-		MouseListener mouseListener = new MouseAdapter() {
-			@Override
-			public void mouseUp(org.eclipse.swt.events.MouseEvent event) {
-				try {
-					ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
-					Command newConnectionCmd = commandService.getCommand(IRemoteUIConnectionService.NEW_CONNECTION_COMMAND);
-					newConnectionCmd.executeWithChecks(new ExecutionEvent());
-				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
-					Activator.log(e);
-				}
-			}
-		};
-
-		createButton.addMouseListener(mouseListener);
-		createLabel.addMouseListener(mouseListener);
-
-		MouseTrackListener mouseTrackListener = new MouseTrackAdapter() {
-			@Override
-			public void mouseEnter(MouseEvent e) {
-				createButton.setBackground(highlightColor);
-				createLabel.setBackground(highlightColor);
-			}
-			@Override
-			public void mouseExit(MouseEvent e) {
-				createButton.setBackground(white);
-				createLabel.setBackground(white);
-			}
-		};
-		createButton.addMouseTrackListener(mouseTrackListener);
-		createLabel.addMouseTrackListener(mouseTrackListener);
+		new PropertyDialogAction(new SameShellProvider(getShell()), getSelectionProvider()).run();
 	}
 
 	@Override
 	protected void fireSelectionChanged() {
 		Object selection = getSelection();
-		if (selection instanceof IRemoteConnection) {
-			IRemoteConnection target = (IRemoteConnection) selection;
+		if (selection instanceof ILaunchTarget) {
+			ILaunchTarget target = (ILaunchTarget) selection;
 			try {
 				uiManager.getManager().setActiveLaunchTarget(target);
 			} catch (CoreException e) {
 				Activator.log(e);
 			}
 		}
+	}
+
+	public void setToolTipText(ILaunchTarget target) {
+		String text = Messages.TargetSelector_ToolTipPrefix + ": " + targetManager.getStatus(target).getMessage(); //$NON-NLS-1$
+		setToolTipText(text);
 	}
 
 	@Override
@@ -219,9 +203,35 @@ public class TargetSelector extends CSelector {
 
 	@Override
 	public void setSelection(Object element) {
-		if (element == null)
+		if (element == null) {
 			element = noTargets[0];
+		} else if (element instanceof ILaunchTarget) {
+			setToolTipText((ILaunchTarget) element);
+		}
 		super.setSelection(element);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		targetManager.removeListener(this);
+	}
+
+	@Override
+	public void update(Object element) {
+		super.update(element);
+		if (element != null && element instanceof ILaunchTarget) {
+			setToolTipText((ILaunchTarget) element);
+		} else {
+			setToolTipText(Messages.TargetSelector_ToolTipPrefix);
+		}
+	}
+
+	@Override
+	public void launchTargetStatusChanged(ILaunchTarget target) {
+		if (target.equals(uiManager.getManager().getActiveLaunchTarget())) {
+			refresh();
+		}
 	}
 
 }

@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="launchBarUIContributions" name="launchBar UI Contributions" schema="schema/launchBarUIContributions.exsd"/>
+   <extension-point id="launchTargetTypeUI" name="Launch Target Type UI" schema="schema/launchTargetTypeUI.exsd"/>
    <extension
          id="launchBarInjector"
          point="org.eclipse.e4.workbench.model">

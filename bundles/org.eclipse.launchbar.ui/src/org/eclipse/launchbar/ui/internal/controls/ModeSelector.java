@@ -48,9 +48,11 @@ public class ModeSelector extends CSelector {
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
+
 			@Override
 			public void dispose() {
-			}			
+			}
+
 			@Override
 			public Object[] getElements(Object inputElement) {
 				try {
@@ -66,6 +68,7 @@ public class ModeSelector extends CSelector {
 
 		setLabelProvider(new LabelProvider() {
 			private Map<ImageDescriptor, Image> images = new HashMap<>();
+
 			@Override
 			public void dispose() {
 				super.dispose();
@@ -73,13 +76,14 @@ public class ModeSelector extends CSelector {
 					image.dispose();
 				}
 			}
+
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
 					try {
 						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
-						if( group == null ) {
+						if (group == null) {
 							group = getDefaultLaunchGroup(mode.getIdentifier());
 						}
 						if (group != null) {
@@ -99,13 +103,14 @@ public class ModeSelector extends CSelector {
 				}
 				return super.getImage(element);
 			}
+
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
 					try {
 						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
-						if( group == null ) {
+						if (group == null) {
 							group = getDefaultLaunchGroup(mode.getIdentifier());
 						}
 						if (group != null) {
@@ -123,8 +128,8 @@ public class ModeSelector extends CSelector {
 			@Override
 			public int compare(Object o1, Object o2) {
 				if (o1 instanceof ILaunchMode && o2 instanceof ILaunchMode) {
-					String mode1 = ((ILaunchMode)o1).getIdentifier();
-					String mode2 = ((ILaunchMode)o2).getIdentifier();
+					String mode1 = ((ILaunchMode) o1).getIdentifier();
+					String mode2 = ((ILaunchMode) o2).getIdentifier();
 					// run comes first, then debug, then the rest
 					if (mode1.equals("run")) { //$NON-NLS-1$
 						if (mode2.equals("run")) //$NON-NLS-1$
@@ -152,18 +157,19 @@ public class ModeSelector extends CSelector {
 		String groupId = null;
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			groupId = IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
-		} else if( mode.equals(ILaunchManager.PROFILE_MODE)) {
+		} else if (mode.equals(ILaunchManager.PROFILE_MODE)) {
 			groupId = IDebugUIConstants.ID_PROFILE_LAUNCH_GROUP;
 		} else {
 			groupId = IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
 		}
-		if( groupId != null )
+		if (groupId != null)
 			return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupId);
 		return null;
 	}
-	
+
 	protected ILaunchGroup getLaunchGroup(String mode) throws CoreException {
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(manager.getActiveLaunchDescriptor(), manager.getActiveLaunchTarget());
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(manager.getActiveLaunchDescriptor(),
+				manager.getActiveLaunchTarget());
 		if (type == null)
 			return null;
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(type, mode);
@@ -179,7 +185,8 @@ public class ModeSelector extends CSelector {
 			} catch (CoreException e) {
 				Activator.log(e.getStatus());
 			} catch (Exception e) {
-				// manager can throw illegal state exception hopefully we never get it
+				// manager can throw illegal state exception hopefully we never
+				// get it
 				Activator.log(e);
 			}
 		}

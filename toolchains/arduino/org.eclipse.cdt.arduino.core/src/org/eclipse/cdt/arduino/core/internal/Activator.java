@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
+import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnectionListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -43,9 +45,13 @@ public class Activator extends Plugin {
 
 	public void start(BundleContext bundleContext) throws Exception {
 		plugin = this;
+		IRemoteServicesManager remoteManager = getService(IRemoteServicesManager.class);
+		remoteManager.addRemoteConnectionChangeListener(ArduinoRemoteConnectionListener.INSTANCE);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
+		IRemoteServicesManager remoteManager = getService(IRemoteServicesManager.class);
+		remoteManager.removeRemoteConnectionChangeListener(ArduinoRemoteConnectionListener.INSTANCE);
 		plugin = null;
 	}
 

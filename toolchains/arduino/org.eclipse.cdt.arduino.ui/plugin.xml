@@ -90,4 +90,11 @@
             name="Boards">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.launchbar.ui.launchTargetTypeUI">
+      <launchTargetTypeUI
+            id="org.eclipse.cdt.arduino.core.connectionType"
+            labelProvider="org.eclipse.cdt.arduino.ui.internal.remote.ArduinoLaunchTargetLabelProvider">
+      </launchTargetTypeUI>
+   </extension>
 </plugin>

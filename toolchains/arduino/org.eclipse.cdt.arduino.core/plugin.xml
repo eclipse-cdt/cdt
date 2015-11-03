@@ -107,6 +107,13 @@
                type="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration">
          </adapter>
       </factory>
+      <factory
+            adaptableType="org.eclipse.launchbar.core.target.ILaunchTarget"
+            class="org.eclipse.cdt.arduino.core.internal.remote.ArduinoTargetAdapterFactory">
+         <adapter
+               type="org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.cdt.core.ToolChainFactory">
@@ -114,5 +121,12 @@
             class="org.eclipse.cdt.arduino.core.internal.build.ArduinoGCCToolChain$ArduinoFactory"
             family="Arduino GCC">
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.cdt.arduino.core.connectionType"
+            provider="org.eclipse.cdt.arduino.core.internal.remote.ArduinoLaunchTargetProvider">
+      </launchTargetType>
    </extension>
 </plugin>

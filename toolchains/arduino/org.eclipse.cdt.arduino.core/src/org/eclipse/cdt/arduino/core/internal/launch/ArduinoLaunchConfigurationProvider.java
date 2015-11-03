@@ -21,26 +21,25 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ProjectPerTargetLaunchConfigProvider;
-import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionType;
-import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 public class ArduinoLaunchConfigurationProvider extends ProjectPerTargetLaunchConfigProvider {
 
 	@Override
-	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, IRemoteConnection target)
+	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager()
 				.getLaunchConfigurationType(ArduinoLaunchConfigurationDelegate.TYPE_ID);
 	}
 
 	@Override
-	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
+	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
 		if (!super.supports(descriptor, target)) {
 			return false;
 		}
 
-		if (target != null && !target.getConnectionType().getId().equals(ArduinoRemoteConnection.TYPE_ID)) {
+		if (target != null && !target.getTypeId().equals(ArduinoRemoteConnection.TYPE_ID)) {
 			return false;
 		}
 
@@ -50,7 +49,7 @@ public class ArduinoLaunchConfigurationProvider extends ProjectPerTargetLaunchCo
 	}
 
 	@Override
-	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
+	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target,
 			ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 		super.populateLaunchConfiguration(descriptor, target, workingCopy);
 		if (target != null) {
@@ -59,14 +58,13 @@ public class ArduinoLaunchConfigurationProvider extends ProjectPerTargetLaunchCo
 	}
 
 	@Override
-	protected IRemoteConnection getLaunchTarget(ILaunchConfiguration configuration) throws CoreException {
+	protected ILaunchTarget getLaunchTarget(ILaunchConfiguration configuration) throws CoreException {
 		String name = configuration.getAttribute(ArduinoLaunchConfigurationDelegate.CONNECTION_NAME, ""); //$NON-NLS-1$
 		if (name.isEmpty()) {
 			return null;
 		}
-		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
-		IRemoteConnectionType type = manager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
-		return type.getConnection(name);
+		ILaunchTargetManager manager = Activator.getService(ILaunchTargetManager.class);
+		return manager.getLaunchTarget(ArduinoRemoteConnection.TYPE_ID, name);
 	}
 
 	@Override

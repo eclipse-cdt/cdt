@@ -75,7 +75,7 @@ outputStats("Total", total);
 groupEnd();
 
 if (total.failed && typeof process === "object") {
-	process.stdout.write("", function() {
+	process.stdout.write("", function () {
 		process.exit(1);
 	});
 }

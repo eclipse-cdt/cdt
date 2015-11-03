@@ -18,135 +18,137 @@ var testFixture = {
 	'qml-header-statements': {
 
 		// -------------------------- Import --------------------------
-		'import QtQuick 2.2': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 18],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 18 }
-				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 18],
+		'import QtQuick 2.2': {
+			type: "QMLHeaderStatements",
+			range: [0, 18],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 18 }
+			},
+			statements: [
+				{
+					type: "QMLImportStatement",
+					range: [0, 18],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 18 }
+					},
+					module: {
+						type: "QMLModule",
+						range: [7, 18],
 						loc: {
-							start: { line: 1, column: 0 },
+							start: { line: 1, column: 7 },
 							end: { line: 1, column: 18 }
 						},
-						module: {
-							type: "QMLModule",
-							range: [7, 18],
+						id: {
+							type: "QMLQualifiedID",
+							range: [7, 14],
 							loc: {
 								start: { line: 1, column: 7 },
-								end: { line: 1, column: 18 }
+								end: { line: 1, column: 14 }
 							},
-							qualifiedId: {
-								type: "QMLQualifiedID",
+							parts: [{
+								type: "Identifier",
 								range: [7, 14],
 								loc: {
 									start: { line: 1, column: 7 },
 									end: { line: 1, column: 14 }
 								},
-								parts: [ "QtQuick" ],
-								raw: "QtQuick"
+								name: "QtQuick"
+							}],
+							name: "QtQuick"
+						},
+						version: {
+							type: "QMLVersionLiteral",
+							range: [15, 18],
+							loc: {
+								start: { line: 1, column: 15 },
+								end: { line: 1, column: 18 }
 							},
-							version: {
-								type: "QMLVersionLiteral",
-								range: [15, 18],
-								loc: {
-									start: { line: 1, column: 15 },
-									end: { line: 1, column: 18 }
-								},
-								value: 2.2,
-								major: 2,
-								minor: 2,
-								raw: "2.2"
-							}
+							value: 2.2,
+							major: 2,
+							minor: 2,
+							raw: "2.2"
 						}
 					}
-				]
-			}
-		],
+				}
+			]
+		},
 
-		'import "./file.js"': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 18],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 18 }
-				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 18],
+		'import "./file.js"': {
+			type: "QMLHeaderStatements",
+			range: [0, 18],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 18 }
+			},
+			statements: [
+				{
+					type: "QMLImportStatement",
+					range: [0, 18],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 18 }
+					},
+					directory: {
+						type:"Literal",
+						range: [7, 18],
 						loc: {
-							start: { line: 1, column: 0 },
+							start: { line: 1, column: 7 },
 							end: { line: 1, column: 18 }
 						},
-						directoryPath: {
-							type:"Literal",
-							range: [7, 18],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 18 }
-							},
-							value: "./file.js",
-							raw: "\"./file.js\""
-						}
+						value: "./file.js",
+						raw: "\"./file.js\""
 					}
-				]
-			}
-		],
+				}
+			]
+		},
 
-		'import "./file.js" as MyModule': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 30],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 30 }
-				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 30],
+		'import "./file.js" as MyModule': {
+			type: "QMLHeaderStatements",
+			range: [0, 30],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 30 }
+			},
+			statements: [
+				{
+					type: "QMLImportStatement",
+					range: [0, 30],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 30 }
+					},
+					directory: {
+						type:"Literal",
+						range: [7, 18],
 						loc: {
-							start: { line: 1, column: 0 },
+							start: { line: 1, column: 7 },
+							end: { line: 1, column: 18 }
+						},
+						value: "./file.js",
+						raw: "\"./file.js\""
+					},
+					qualifier: {
+						type: "QMLQualifier",
+						range: [19, 30],
+						loc: {
+							start: { line: 1, column: 19 },
 							end: { line: 1, column: 30 }
 						},
-						directoryPath: {
-							type:"Literal",
-							range: [7, 18],
+						id: {
+							type:"Identifier",
+							range: [22, 30],
 							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 18 }
-							},
-							value: "./file.js",
-							raw: "\"./file.js\""
-						},
-						qualifier: {
-							type: "QMLQualifier",
-							range: [19, 30],
-							loc: {
-								start: { line: 1, column: 19 },
+								start: { line: 1, column: 22 },
 								end: { line: 1, column: 30 }
 							},
-							identifier: {
-								type:"Identifier",
-								range: [22, 30],
-								loc: {
-									start: { line: 1, column: 22 },
-									end: { line: 1, column: 30 }
-								},
-								name: "MyModule"
-							}
+							name: "MyModule"
 						}
 					}
-				]
-			}
-		],
+				}
+			]
+		},
 
 		'import QtQuick ver': "Unexpected token (1:15)",
 
@@ -154,270 +156,309 @@ var testFixture = {
 
 		'import QtQuick 1': "QML module must specify major and minor version (1:15)",
 
-		'import QtQuick 2.2\nimport "./file.js"': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 37],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 2, column: 18 }
-				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 18],
+		'import QtQuick 2.2\nimport "./file.js"': {
+			type: "QMLHeaderStatements",
+			range: [0, 37],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 2, column: 18 }
+			},
+			statements: [
+				{
+					type: "QMLImportStatement",
+					range: [0, 18],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 18 }
+					},
+					module: {
+						type: "QMLModule",
+						range: [7, 18],
 						loc: {
-							start: { line: 1, column: 0 },
+							start: { line: 1, column: 7 },
 							end: { line: 1, column: 18 }
 						},
-						module: {
-							type: "QMLModule",
-							range: [7, 18],
+						id: {
+							type: "QMLQualifiedID",
+							range: [7, 14],
 							loc: {
 								start: { line: 1, column: 7 },
-								end: { line: 1, column: 18 }
+								end: { line: 1, column: 14 }
 							},
-							qualifiedId: {
-								type: "QMLQualifiedID",
+							parts: [{
+								type: "Identifier",
 								range: [7, 14],
 								loc: {
 									start: { line: 1, column: 7 },
 									end: { line: 1, column: 14 }
 								},
-								parts: [ "QtQuick" ],
-								raw: "QtQuick"
+								name: "QtQuick"
+							}],
+							name: "QtQuick"
+						},
+						version: {
+							type: "QMLVersionLiteral",
+							range: [15, 18],
+							loc: {
+								start: { line: 1, column: 15 },
+								end: { line: 1, column: 18 }
 							},
-							version: {
-								type: "QMLVersionLiteral",
-								range: [15, 18],
-								loc: {
-									start: { line: 1, column: 15 },
-									end: { line: 1, column: 18 }
-								},
-								value: 2.2,
-								major: 2,
-								minor: 2,
-								raw: "2.2"
-							}
+							value: 2.2,
+							major: 2,
+							minor: 2,
+							raw: "2.2"
 						}
+					}
+				},
+				{
+					type: "QMLImportStatement",
+					range: [19, 37],
+					loc: {
+						start: { line: 2, column: 0 },
+						end: { line: 2, column: 18 }
 					},
-					{
-						type: "QMLImportStatement",
-						range: [19, 37],
+					directory: {
+						type:"Literal",
+						range: [26, 37],
 						loc: {
-							start: { line: 2, column: 0 },
+							start: { line: 2, column: 7 },
 							end: { line: 2, column: 18 }
 						},
-						directoryPath: {
-							type:"Literal",
-							range: [26, 37],
-							loc: {
-								start: { line: 2, column: 7 },
-								end: { line: 2, column: 18 }
-							},
-							value: "./file.js",
-							raw: "\"./file.js\""
-						}
+						value: "./file.js",
+						raw: "\"./file.js\""
 					}
-				]
-			}
-		],
+				}
+			]
+		},
 
-		'import QtQuick 2.2;import "./file.js"': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 37],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 37 }
-				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 19],
+		'import QtQuick 2.2;import "./file.js"': {
+			type: "QMLHeaderStatements",
+			range: [0, 37],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 37 }
+			},
+			statements: [
+				{
+					type: "QMLImportStatement",
+					range: [0, 19],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 19 }
+					},
+					module: {
+						type: "QMLModule",
+						range: [7, 18],
 						loc: {
-							start: { line: 1, column: 0 },
-							end: { line: 1, column: 19 }
+							start: { line: 1, column: 7 },
+							end: { line: 1, column: 18 }
 						},
-						module: {
-							type: "QMLModule",
-							range: [7, 18],
+						id: {
+							type: "QMLQualifiedID",
+							range: [7, 14],
 							loc: {
 								start: { line: 1, column: 7 },
-								end: { line: 1, column: 18 }
+								end: { line: 1, column: 14 }
 							},
-							qualifiedId: {
-								type: "QMLQualifiedID",
+							parts: [{
+								type: "Identifier",
 								range: [7, 14],
 								loc: {
 									start: { line: 1, column: 7 },
 									end: { line: 1, column: 14 }
 								},
-								parts: [ "QtQuick" ],
-								raw: "QtQuick"
-							},
-							version: {
-								type: "QMLVersionLiteral",
-								range: [15, 18],
-								loc: {
-									start: { line: 1, column: 15 },
-									end: { line: 1, column: 18 }
-								},
-								value: 2.2,
-								major: 2,
-								minor: 2,
-								raw: "2.2"
-							}
-						}
-					},
-					{
-						type: "QMLImportStatement",
-						range: [19, 37],
-						loc: {
-							start: { line: 1, column: 19 },
-							end: { line: 1, column: 37 }
+								name: "QtQuick"
+							}],
+							name: "QtQuick"
 						},
-						directoryPath: {
-							type:"Literal",
-							range: [26, 37],
+						version: {
+							type: "QMLVersionLiteral",
+							range: [15, 18],
 							loc: {
-								start: { line: 1, column: 26 },
-								end: { line: 1, column: 37 }
+								start: { line: 1, column: 15 },
+								end: { line: 1, column: 18 }
 							},
-							value: "./file.js",
-							raw: "\"./file.js\""
+							value: 2.2,
+							major: 2,
+							minor: 2,
+							raw: "2.2"
 						}
 					}
-				]
-			}
-		],
-
-		'import Module 1.0 as MyModule': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 29],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 29 }
 				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 29],
+				{
+					type: "QMLImportStatement",
+					range: [19, 37],
+					loc: {
+						start: { line: 1, column: 19 },
+						end: { line: 1, column: 37 }
+					},
+					directory: {
+						type:"Literal",
+						range: [26, 37],
 						loc: {
-							start: { line: 1, column: 0 },
-							end: { line: 1, column: 29 }
+							start: { line: 1, column: 26 },
+							end: { line: 1, column: 37 }
 						},
-						module: {
-							type: "QMLModule",
-							range: [7, 17],
+						value: "./file.js",
+						raw: "\"./file.js\""
+					}
+				}
+			]
+		},
+
+		'import Module 1.0 as MyModule': {
+			type: "QMLHeaderStatements",
+			range: [0, 29],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 29 }
+			},
+			statements: [
+				{
+					type: "QMLImportStatement",
+					range: [0, 29],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 29 }
+					},
+					module: {
+						type: "QMLModule",
+						range: [7, 17],
+						loc: {
+							start: { line: 1, column: 7 },
+							end: { line: 1, column: 17 }
+						},
+						id: {
+							type: "QMLQualifiedID",
+							range: [7, 13],
 							loc: {
 								start: { line: 1, column: 7 },
-								end: { line: 1, column: 17 }
+								end: { line: 1, column: 13 }
 							},
-							qualifiedId: {
-								type: "QMLQualifiedID",
+							parts: [{
+								type: "Identifier",
 								range: [7, 13],
 								loc: {
 									start: { line: 1, column: 7 },
 									end: { line: 1, column: 13 }
 								},
-								parts: [ "Module" ],
-								raw: "Module"
-							},
-							version: {
-								type: "QMLVersionLiteral",
-								range: [14, 17],
-								loc: {
-									start: { line: 1, column: 14 },
-									end: { line: 1, column: 17 }
-								},
-								value: 1,
-								major: 1,
-								minor: 0,
-								raw: "1.0"
-							}
+								name: "Module"
+							}],
+							name: "Module"
 						},
-						qualifier: {
-							type: "QMLQualifier",
-							range: [18, 29],
+						version: {
+							type: "QMLVersionLiteral",
+							range: [14, 17],
 							loc: {
-								start: { line: 1, column: 18 },
+								start: { line: 1, column: 14 },
+								end: { line: 1, column: 17 }
+							},
+							value: 1,
+							major: 1,
+							minor: 0,
+							raw: "1.0"
+						}
+					},
+					qualifier: {
+						type: "QMLQualifier",
+						range: [18, 29],
+						loc: {
+							start: { line: 1, column: 18 },
+							end: { line: 1, column: 29 }
+						},
+						id: {
+							type:"Identifier",
+							range: [21, 29],
+							loc: {
+								start: { line: 1, column: 21 },
 								end: { line: 1, column: 29 }
 							},
-							identifier: {
-								type:"Identifier",
-								range: [21, 29],
-								loc: {
-									start: { line: 1, column: 21 },
-									end: { line: 1, column: 29 }
-								},
-								name: "MyModule"
-							}
+							name: "MyModule"
 						}
 					}
-				]
-			}
-		],
+				}
+			]
+		},
 
-		'import Qualified.Id.Test 1.0': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 28],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 28 }
-				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 28],
+		'import Qualified.Id.Test 1.0': {
+			type: "QMLHeaderStatements",
+			range: [0, 28],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 28 }
+			},
+			statements: [
+				{
+					type: "QMLImportStatement",
+					range: [0, 28],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 28 }
+					},
+					module: {
+						type: "QMLModule",
+						range: [7, 28],
 						loc: {
-							start: { line: 1, column: 0 },
+							start: { line: 1, column: 7 },
 							end: { line: 1, column: 28 }
 						},
-						module: {
-							type: "QMLModule",
-							range: [7, 28],
+						id: {
+							type: "QMLQualifiedID",
+							range: [7, 24],
 							loc: {
 								start: { line: 1, column: 7 },
+								end: { line: 1, column: 24 }
+							},
+							parts: [
+								{
+									type: "Identifier",
+									range: [7, 16],
+									loc: {
+										start: { line: 1, column: 7 },
+										end: { line: 1, column: 16 }
+									},
+									name: "Qualified"
+								},
+								{
+									type: "Identifier",
+									range: [17, 19],
+									loc: {
+										start: { line: 1, column: 17 },
+										end: { line: 1, column: 19 }
+									},
+									name: "Id"
+								},
+								{
+									type: "Identifier",
+									range: [20, 24],
+									loc: {
+										start: { line: 1, column: 20 },
+										end: { line: 1, column: 24 }
+									},
+									name: "Test"
+								}
+							],
+							name: "Qualified.Id.Test"
+						},
+						version: {
+							type: "QMLVersionLiteral",
+							range: [25, 28],
+							loc: {
+								start: { line: 1, column: 25 },
 								end: { line: 1, column: 28 }
 							},
-							qualifiedId: {
-								type: "QMLQualifiedID",
-								range: [7, 24],
-								loc: {
-									start: { line: 1, column: 7 },
-									end: { line: 1, column: 24 }
-								},
-								parts: [
-									"Qualified",
-									"Id",
-									"Test"
-								],
-								raw: "Qualified.Id.Test"
-							},
-							version: {
-								type: "QMLVersionLiteral",
-								range: [25, 28],
-								loc: {
-									start: { line: 1, column: 25 },
-									end: { line: 1, column: 28 }
-								},
-								value: 1,
-								major: 1,
-								minor: 0,
-								raw: "1.0"
-							}
+							value: 1,
+							major: 1,
+							minor: 0,
+							raw: "1.0"
 						}
 					}
-				]
-			}
-		],
+				}
+			]
+		},
 
 		// -------------------------- Pragma --------------------------
-		'pragma Singleton': [
-			{
+		'pragma Singleton': {
 			type: "QMLHeaderStatements",
 			range: [0, 16],
 			loc: {
@@ -432,7 +473,7 @@ var testFixture = {
 						start: { line: 1, column: 0 },
 						end: { line: 1, column: 16 }
 					},
-					identifier: {
+					id: {
 						type: "Identifier",
 						range: [7, 16],
 						loc: {
@@ -443,301 +484,579 @@ var testFixture = {
 					}
 				}
 			]
-			}
-		],
+		},
 
-		'pragma Singleton\npragma Other': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 29],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 2, column: 12 }
-				},
-				statements: [
-					{
-						type: "QMLPragmaStatement",
-						range: [0, 16],
+		'pragma Singleton\npragma Other': {
+			type: "QMLHeaderStatements",
+			range: [0, 29],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 2, column: 12 }
+			},
+			statements: [
+				{
+					type: "QMLPragmaStatement",
+					range: [0, 16],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 16 }
+					},
+					id: {
+						type: "Identifier",
+						range: [7, 16],
 						loc: {
-							start: { line: 1, column: 0 },
+							start: { line: 1, column: 7 },
 							end: { line: 1, column: 16 }
 						},
-						identifier: {
-							type: "Identifier",
-							range: [7, 16],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 16 }
-							},
-							name: "Singleton"
-						}
+						name: "Singleton"
+					}
+				},
+				{
+					type: "QMLPragmaStatement",
+					range: [17, 29],
+					loc: {
+						start: { line: 2, column: 0 },
+						end: { line: 2, column: 12 }
 					},
-					{
-						type: "QMLPragmaStatement",
-						range: [17, 29],
+					id: {
+						type: "Identifier",
+						range: [24, 29],
 						loc: {
-							start: { line: 2, column: 0 },
+							start: { line: 2, column: 7 },
 							end: { line: 2, column: 12 }
 						},
-						identifier: {
-							type: "Identifier",
-							range: [24, 29],
-							loc: {
-								start: { line: 2, column: 7 },
-								end: { line: 2, column: 12 }
-							},
-							name: "Other"
-						}
+						name: "Other"
 					}
-				]
-			}
-		],
+				}
+			]
+		},
 
-		'pragma Singleton;pragma Other': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 29],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 29 }
-				},
-				statements: [
-					{
-						type: "QMLPragmaStatement",
-						range: [0, 17],
-						loc: {
-							start: { line: 1, column: 0 },
-							end: { line: 1, column: 17 }
-						},
-						identifier: {
-							type: "Identifier",
-							range: [7, 16],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 16 }
-							},
-							name: "Singleton"
-						}
+		'pragma Singleton;pragma Other': {
+			type: "QMLHeaderStatements",
+			range: [0, 29],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 29 }
+			},
+			statements: [
+				{
+					type: "QMLPragmaStatement",
+					range: [0, 17],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 17 }
 					},
-					{
-						type: "QMLPragmaStatement",
-						range: [17, 29],
+					id: {
+						type: "Identifier",
+						range: [7, 16],
 						loc: {
-							start: { line: 1, column: 17 },
+							start: { line: 1, column: 7 },
+							end: { line: 1, column: 16 }
+						},
+						name: "Singleton"
+					}
+				},
+				{
+					type: "QMLPragmaStatement",
+					range: [17, 29],
+					loc: {
+						start: { line: 1, column: 17 },
+						end: { line: 1, column: 29 }
+					},
+					id: {
+						type: "Identifier",
+						range: [24, 29],
+						loc: {
+							start: { line: 1, column: 24 },
 							end: { line: 1, column: 29 }
 						},
-						identifier: {
-							type: "Identifier",
-							range: [24, 29],
-							loc: {
-								start: { line: 1, column: 24 },
-								end: { line: 1, column: 29 }
-							},
-							name: "Other"
-						}
+						name: "Other"
 					}
-				]
-			}
-		],
+				}
+			]
+		}
 	},
 
 	// ---------------------- Object Literals ---------------------
 	'qml-object-literal': {
-		'Window {}': [
-			{
-				type: "QMLObjectLiteral",
-				range: [0, 9],
+		'Window {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 9],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 9 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 6],
 				loc: {
 					start: { line: 1, column: 0 },
+					end: { line: 1, column: 6 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 6],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 6 }
+					},
+					name: "Window"
+				}],
+				name: "Window"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [7, 9],
+				loc: {
+					start: { line: 1, column: 7 },
 					end: { line: 1, column: 9 }
 				},
-				qualifiedId: {
-					type: "QMLQualifiedID",
-					range: [0, 6],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 6 }
-					},
-					parts: [ "Window" ],
-					raw: "Window"
-				},
-				block: {
-					type: "QMLMemberBlock",
-					range: [7, 9],
-					loc: {
-						start: { line: 1, column: 7 },
-						end: { line: 1, column: 9 }
-					},
-					members: []
-				}
+				members: []
 			}
-		],
+		},
 
-		'QtQuick.Window {}': [
-			{
-				type: "QMLObjectLiteral",
-				range: [0, 17],
+		'QtQuick.Window {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 17],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 17 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 14],
 				loc: {
 					start: { line: 1, column: 0 },
+					end: { line: 1, column: 14 }
+				},
+				parts: [
+					{
+						type: "Identifier",
+						range: [0, 7],
+						loc: {
+							start: { line: 1, column: 0 },
+							end: { line: 1, column: 7 }
+						},
+						name: "QtQuick"
+					},
+					{
+						type: "Identifier",
+						range: [8, 14],
+						loc: {
+							start: { line: 1, column: 8 },
+							end: { line: 1, column: 14 }
+						},
+						name: "Window"
+					}
+				],
+				name: "QtQuick.Window"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [15, 17],
+				loc: {
+					start: { line: 1, column: 15 },
 					end: { line: 1, column: 17 }
 				},
-				qualifiedId: {
-					type: "QMLQualifiedID",
-					range: [0, 14],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 14 }
-					},
-					parts: [ "QtQuick", "Window" ],
-					raw: "QtQuick.Window"
-				},
-				block: {
-					type: "QMLMemberBlock",
-					range: [15, 17],
-					loc: {
-						start: { line: 1, column: 15 },
-						end: { line: 1, column: 17 }
-					},
-					members: []
-				}
+				members: []
 			}
-		],
+		},
 
-		'Window {Button {}}': [
-			{
-				type: "QMLObjectLiteral",
-				range: [0, 18],
+		'property {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 11],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 11 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 8],
 				loc: {
 					start: { line: 1, column: 0 },
-					end: { line: 1, column: 18 }
+					end: { line: 1, column: 8 }
 				},
-				qualifiedId: {
-					type: "QMLQualifiedID",
+				parts: [{
+					type: "Identifier",
+					range: [0, 8],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 8 }
+					},
+					name: "property"
+				}],
+				name: "property"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [9, 11],
+				loc: {
+					start: { line: 1, column: 9 },
+					end: { line: 1, column: 11 }
+				},
+				members: []
+			}
+		},
+
+		'readonly {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 11],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 11 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 8],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 8 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 8],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 8 }
+					},
+					name: "readonly"
+				}],
+				name: "readonly"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [9, 11],
+				loc: {
+					start: { line: 1, column: 9 },
+					end: { line: 1, column: 11 }
+				},
+				members: []
+			}
+		},
+
+		'signal {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 9],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 9 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 6],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 6 }
+				},
+				parts: [{
+					type: "Identifier",
 					range: [0, 6],
 					loc: {
 						start: { line: 1, column: 0 },
 						end: { line: 1, column: 6 }
 					},
-					parts: [ "Window" ],
-					raw: "Window"
+					name: "signal"
+				}],
+				name: "signal"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [7, 9],
+				loc: {
+					start: { line: 1, column: 7 },
+					end: { line: 1, column: 9 }
 				},
-				block: {
-					type: "QMLMemberBlock",
-					range: [7, 18],
+				members: []
+			}
+		},
+
+		'alias {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 8],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 8 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 5],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 5 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 5],
 					loc: {
-						start: { line: 1, column: 7 },
-						end: { line: 1, column: 18 }
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 5 }
 					},
-					members: [
-						{
-							type: "QMLObjectLiteral",
-							range: [8, 17],
+					name: "alias"
+				}],
+				name: "alias"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [6, 8],
+				loc: {
+					start: { line: 1, column: 6 },
+					end: { line: 1, column: 8 }
+				},
+				members: []
+			}
+		},
+
+		'list {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 7],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 7 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 4],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 4 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 4],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 4 }
+					},
+					name: "list"
+				}],
+				name: "list"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [5, 7],
+				loc: {
+					start: { line: 1, column: 5 },
+					end: { line: 1, column: 7 }
+				},
+				members: []
+			}
+		},
+
+		'color {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 8],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 8 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 5],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 5 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 5],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 5 }
+					},
+					name: "color"
+				}],
+				name: "color"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [6, 8],
+				loc: {
+					start: { line: 1, column: 6 },
+					end: { line: 1, column: 8 }
+				},
+				members: []
+			}
+		},
+
+		'real {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 7],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 7 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 4],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 4 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 4],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 4 }
+					},
+					name: "real"
+				}],
+				name: "real"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [5, 7],
+				loc: {
+					start: { line: 1, column: 5 },
+					end: { line: 1, column: 7 }
+				},
+				members: []
+			}
+		},
+
+		'string {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 9],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 9 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 6],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 6 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 6],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 6 }
+					},
+					name: "string"
+				}],
+				name: "string"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [7, 9],
+				loc: {
+					start: { line: 1, column: 7 },
+					end: { line: 1, column: 9 }
+				},
+				members: []
+			}
+		},
+
+		'url {}': {
+			type: "QMLObjectLiteral",
+			range: [0, 6],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 6 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 3],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 3 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 3],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 3 }
+					},
+					name: "url"
+				}],
+				name: "url"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [4, 6],
+				loc: {
+					start: { line: 1, column: 4 },
+					end: { line: 1, column: 6 }
+				},
+				members: []
+			}
+		},
+
+		'Window {Button {}}': {
+			type: "QMLObjectLiteral",
+			range: [0, 18],
+			loc: {
+				start: { line: 1, column: 0 },
+				end: { line: 1, column: 18 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				range: [0, 6],
+				loc: {
+					start: { line: 1, column: 0 },
+					end: { line: 1, column: 6 }
+				},
+				parts: [{
+					type: "Identifier",
+					range: [0, 6],
+					loc: {
+						start: { line: 1, column: 0 },
+						end: { line: 1, column: 6 }
+					},
+					name: "Window"
+				}],
+				name: "Window"
+			},
+			block: {
+				type: "QMLMemberBlock",
+				range: [7, 18],
+				loc: {
+					start: { line: 1, column: 7 },
+					end: { line: 1, column: 18 }
+				},
+				members: [
+					{
+						type: "QMLObjectLiteral",
+						range: [8, 17],
+						loc: {
+							start: { line: 1, column: 8 },
+							end: { line: 1, column: 17 }
+						},
+						id: {
+							type: "QMLQualifiedID",
+							range: [8, 14],
 							loc: {
 								start: { line: 1, column: 8 },
-								end: { line: 1, column: 17 }
+								end: { line: 1, column: 14 }
 							},
-							qualifiedId: {
-								type: "QMLQualifiedID",
+							parts: [{
+								type: "Identifier",
 								range: [8, 14],
 								loc: {
 									start: { line: 1, column: 8 },
 									end: { line: 1, column: 14 }
 								},
-								parts: [ "Button" ],
-								raw: "Button"
-							},
-							block: {
-								type: "QMLMemberBlock",
-								range: [15, 17],
-								loc: {
-									start: { line: 1, column: 15 },
-									end: { line: 1, column: 17 }
-								},
-								members: []
-							}
-						}
-					]
-				}
-			}
-		],
-
-		'import QtQuick 2.3;\nWindow {}': [
-			{
-				type: "QMLHeaderStatements",
-				range: [0, 19],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 19 }
-				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 19],
-						loc: {
-							start: { line: 1, column: 0 },
-							end: { line: 1, column: 19 }
+								name: "Button"
+							}],
+							name: "Button"
 						},
-						module: {
-							type: "QMLModule",
-							range: [7, 18],
+						block: {
+							type: "QMLMemberBlock",
+							range: [15, 17],
 							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 18 }
+								start: { line: 1, column: 15 },
+								end: { line: 1, column: 17 }
 							},
-							qualifiedId: {
-								type: "QMLQualifiedID",
-								range: [7, 14],
-								loc: {
-									start: { line: 1, column: 7 },
-									end: { line: 1, column: 14 }
-								},
-								parts: [ "QtQuick" ],
-								raw: "QtQuick"
-							},
-							version: {
-								type: "QMLVersionLiteral",
-								range: [15, 18],
-								loc: {
-									start: { line: 1, column: 15 },
-									end: { line: 1, column: 18 }
-								},
-								value: 2.3,
-								major: 2,
-								minor: 3,
-								raw: "2.3"
-							}
+							members: []
 						}
 					}
 				]
-			},
-			{
-				type: "QMLObjectLiteral",
-				range: [20, 29],
-				loc: {
-					start: { line: 2, column: 0 },
-					end: { line: 2, column: 9 }
-				},
-				qualifiedId: {
-					type: "QMLQualifiedID",
-					range: [20, 26],
-					loc: {
-						start: { line: 2, column: 0 },
-						end: { line: 2, column: 6 }
-					},
-					parts: [ "Window" ],
-					raw: "Window"
-				},
-				block: {
-					type: "QMLMemberBlock",
-					range: [27, 29],
-					loc: {
-						start: { line: 2, column: 7 },
-						end: { line: 2, column: 9 }
-					},
-					members: []
-				}
 			}
-		],
+		}
 	},
 
 	// ------------------ QML Root Object Members -----------------
@@ -754,17 +1073,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 15],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 15 }
-					},
-					isPrimitive: true,
-					primitive: "var"
-				},
-				identifier: {
+				kind: "var",
+				id: {
 					type: "Identifier",
 					range: [16, 17],
 					loc: {
@@ -773,23 +1083,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [17, 20],
+				init: {
+					type: "Literal",
+					range: [19, 20],
 					loc: {
-						start: { line: 1, column: 17 },
+						start: { line: 1, column: 19 },
 						end: { line: 1, column: 20 }
 					},
-					expr: {
-						type: "Literal",
-						range: [19, 20],
-						loc: {
-							start: { line: 1, column: 19 },
-							end: { line: 1, column: 20 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -804,17 +1106,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 19],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 19 }
-					},
-					isPrimitive: true,
-					primitive: "boolean"
-				},
-				identifier: {
+				kind: "boolean",
+				id: {
 					type: "Identifier",
 					range: [20, 21],
 					loc: {
@@ -823,23 +1116,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [21, 24],
+				init: {
+					type: "Literal",
+					range: [23, 24],
 					loc: {
-						start: { line: 1, column: 21 },
+						start: { line: 1, column: 23 },
 						end: { line: 1, column: 24 }
 					},
-					expr: {
-						type: "Literal",
-						range: [23, 24],
-						loc: {
-							start: { line: 1, column: 23 },
-							end: { line: 1, column: 24 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -854,17 +1139,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 18],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 18 }
-					},
-					isPrimitive: true,
-					primitive: "double"
-				},
-				identifier: {
+				kind: "double",
+				id: {
 					type: "Identifier",
 					range: [19, 20],
 					loc: {
@@ -873,23 +1149,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [20, 23],
+				init: {
+					type: "Literal",
+					range: [22, 23],
 					loc: {
-						start: { line: 1, column: 20 },
+						start: { line: 1, column: 22 },
 						end: { line: 1, column: 23 }
 					},
-					expr: {
-						type: "Literal",
-						range: [22, 23],
-						loc: {
-							start: { line: 1, column: 22 },
-							end: { line: 1, column: 23 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -904,17 +1172,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 15],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 15 }
-					},
-					isPrimitive: true,
-					primitive: "int"
-				},
-				identifier: {
+				kind: "int",
+				id: {
 					type: "Identifier",
 					range: [16, 17],
 					loc: {
@@ -923,23 +1182,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [17, 20],
+				init: {
+					type: "Literal",
+					range: [19, 20],
 					loc: {
-						start: { line: 1, column: 17 },
+						start: { line: 1, column: 19 },
 						end: { line: 1, column: 20 }
 					},
-					expr: {
-						type: "Literal",
-						range: [19, 20],
-						loc: {
-							start: { line: 1, column: 19 },
-							end: { line: 1, column: 20 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -954,17 +1205,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 16],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 16 }
-					},
-					isPrimitive: true,
-					primitive: "list"
-				},
-				identifier: {
+				kind: "list",
+				id: {
 					type: "Identifier",
 					range: [17, 18],
 					loc: {
@@ -973,23 +1215,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [18, 21],
+				init: {
+					type: "Literal",
+					range: [20, 21],
 					loc: {
-						start: { line: 1, column: 18 },
+						start: { line: 1, column: 20 },
 						end: { line: 1, column: 21 }
 					},
-					expr: {
-						type: "Literal",
-						range: [20, 21],
-						loc: {
-							start: { line: 1, column: 20 },
-							end: { line: 1, column: 21 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -1004,17 +1238,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 17],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 17 }
-					},
-					isPrimitive: true,
-					primitive: "color"
-				},
-				identifier: {
+				kind: "color",
+				id: {
 					type: "Identifier",
 					range: [18, 19],
 					loc: {
@@ -1023,23 +1248,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [19, 22],
+				init: {
+					type: "Literal",
+					range: [21, 22],
 					loc: {
-						start: { line: 1, column: 19 },
+						start: { line: 1, column: 21 },
 						end: { line: 1, column: 22 }
 					},
-					expr: {
-						type: "Literal",
-						range: [21, 22],
-						loc: {
-							start: { line: 1, column: 21 },
-							end: { line: 1, column: 22 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -1054,17 +1271,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 16],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 16 }
-					},
-					isPrimitive: true,
-					primitive: "real"
-				},
-				identifier: {
+				kind: "real",
+				id: {
 					type: "Identifier",
 					range: [17, 18],
 					loc: {
@@ -1073,23 +1281,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [18, 21],
+				init: {
+					type: "Literal",
+					range: [20, 21],
 					loc: {
-						start: { line: 1, column: 18 },
+						start: { line: 1, column: 20 },
 						end: { line: 1, column: 21 }
 					},
-					expr: {
-						type: "Literal",
-						range: [20, 21],
-						loc: {
-							start: { line: 1, column: 20 },
-							end: { line: 1, column: 21 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -1104,17 +1304,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 18],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 18 }
-					},
-					isPrimitive: true,
-					primitive: "string"
-				},
-				identifier: {
+				kind: "string",
+				id: {
 					type: "Identifier",
 					range: [19, 20],
 					loc: {
@@ -1123,23 +1314,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [20, 23],
+				init: {
+					type: "Literal",
+					range: [22, 23],
 					loc: {
-						start: { line: 1, column: 20 },
+						start: { line: 1, column: 22 },
 						end: { line: 1, column: 23 }
 					},
-					expr: {
-						type: "Literal",
-						range: [22, 23],
-						loc: {
-							start: { line: 1, column: 22 },
-							end: { line: 1, column: 23 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -1154,17 +1337,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
-					range: [12, 15],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 15 }
-					},
-					isPrimitive: true,
-					primitive: "url"
-				},
-				identifier: {
+				kind: "url",
+				id: {
 					type: "Identifier",
 					range: [16, 17],
 					loc: {
@@ -1173,23 +1347,15 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [17, 20],
+				init: {
+					type: "Literal",
+					range: [19, 20],
 					loc: {
-						start: { line: 1, column: 17 },
+						start: { line: 1, column: 19 },
 						end: { line: 1, column: 20 }
 					},
-					expr: {
-						type: "Literal",
-						range: [19, 20],
-						loc: {
-							start: { line: 1, column: 19 },
-							end: { line: 1, column: 20 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -1204,26 +1370,25 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				typeInfo: {
-					type: "QMLType",
+				kind: {
+					type: "QMLQualifiedID",
 					range: [12, 20],
 					loc: {
 						start: { line: 1, column: 12 },
 						end: { line: 1, column: 20 }
 					},
-					isPrimitive: false,
-					qualifiedId: {
-						type: "QMLQualifiedID",
+					parts: [{
+						type: "Identifier",
 						range: [12, 20],
 						loc: {
 							start: { line: 1, column: 12 },
 							end: { line: 1, column: 20 }
 						},
-						parts: [ "QtObject" ],
-						raw: "QtObject"
-					}
+						name: "QtObject"
+					}],
+					name: "QtObject"
 				},
-				identifier: {
+				id: {
 					type: "Identifier",
 					range: [21, 22],
 					loc: {
@@ -1232,30 +1397,22 @@ var testFixture = {
 					},
 					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [22, 25],
+				init: {
+					type: "Literal",
+					range: [24, 25],
 					loc: {
-						start: { line: 1, column: 22 },
+						start: { line: 1, column: 24 },
 						end: { line: 1, column: 25 }
 					},
-					expr: {
-						type: "Literal",
-						range: [24, 25],
-						loc: {
-							start: { line: 1, column: 24 },
-							end: { line: 1, column: 25 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
 
 		'a{ property alias c: color }': [
 			{
-				type: "QMLPropertyAlias",
+				type: "QMLPropertyDeclaration",
 				range: [3, 26],
 				loc: {
 					start: { line: 1, column: 3 },
@@ -1263,7 +1420,8 @@ var testFixture = {
 				},
 				default: false,
 				readonly: false,
-				identifier: {
+				kind: "alias",
+				id: {
 					type: "Identifier",
 					range: [18, 19],
 					loc: {
@@ -1272,22 +1430,14 @@ var testFixture = {
 					},
 					name: "c"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [19, 26],
+				init: {
+					type: "Identifier",
+					range: [21, 26],
 					loc: {
-						start: { line: 1, column: 19 },
+						start: { line: 1, column: 21 },
 						end: { line: 1, column: 26 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [21, 26],
-						loc: {
-							start: { line: 1, column: 21 },
-							end: { line: 1, column: 26 }
-						},
-						name: "color"
-					}
+					name: "color"
 				}
 			}
 		],
@@ -1298,78 +1448,98 @@ var testFixture = {
 		// --------------------- Property Bindings --------------------
 		'a{ w: 3 }': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [3, 7],
 				loc: {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 7 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [3, 4],
 					loc: {
 						start: { line: 1, column: 3 },
 						end: { line: 1, column: 4 }
 					},
-					parts: [ "w" ],
-					raw: "w"
+					parts: [{
+						type: "Identifier",
+						range: [3, 4],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 4 }
+						},
+						name: "w"
+					}],
+					name: "w"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [4, 7],
+				expr: {
+					type: "Literal",
+					range: [6, 7],
 					loc: {
-						start: { line: 1, column: 4 },
+						start: { line: 1, column: 6 },
 						end: { line: 1, column: 7 }
 					},
-					expr: {
-						type: "Literal",
-						range: [6, 7],
-						loc: {
-							start: { line: 1, column: 6 },
-							end: { line: 1, column: 7 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
 
 		'a{ x.y.z: 3 }': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [3, 11],
 				loc: {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 11 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [3, 8],
 					loc: {
 						start: { line: 1, column: 3 },
 						end: { line: 1, column: 8 }
 					},
-					parts: [ "x", "y", "z" ],
-					raw: "x.y.z"
+					parts: [
+						{
+							type: "Identifier",
+							range: [3, 4],
+							loc: {
+								start: { line: 1, column: 3 },
+								end: { line: 1, column: 4 }
+							},
+							name: "x"
+						},
+						{
+							type: "Identifier",
+							range: [5, 6],
+							loc: {
+								start: { line: 1, column: 5 },
+								end: { line: 1, column: 6 }
+							},
+							name: "y"
+						},
+						{
+							type: "Identifier",
+							range: [7, 8],
+							loc: {
+								start: { line: 1, column: 7 },
+								end: { line: 1, column: 8 }
+							},
+							name: "z"
+						}
+					],
+					name: "x.y.z"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [8, 11],
+				expr: {
+					type: "Literal",
+					range: [10, 11],
 					loc: {
-						start: { line: 1, column: 8 },
+						start: { line: 1, column: 10 },
 						end: { line: 1, column: 11 }
 					},
-					expr: {
-						type: "Literal",
-						range: [10, 11],
-						loc: {
-							start: { line: 1, column: 10 },
-							end: { line: 1, column: 11 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
@@ -1388,315 +1558,549 @@ var testFixture = {
 
 		'a{ alias: 3 }': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [3, 11],
 				loc: {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 11 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [3, 8],
 					loc: {
 						start: { line: 1, column: 3 },
 						end: { line: 1, column: 8 }
 					},
-					parts: [ "alias" ],
-					raw: "alias"
+					parts: [{
+						type: "Identifier",
+						range: [3, 8],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 8 }
+						},
+						name: "alias"
+					}],
+					name: "alias"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [8, 11],
+				expr: {
+					type: "Literal",
+					range: [10, 11],
 					loc: {
-						start: { line: 1, column: 8 },
+						start: { line: 1, column: 10 },
 						end: { line: 1, column: 11 }
 					},
-					expr: {
-						type: "Literal",
-						range: [10, 11],
-						loc: {
-							start: { line: 1, column: 10 },
-							end: { line: 1, column: 11 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
 
 		'a{ list: 3 }': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [3, 10],
 				loc: {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 10 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [3, 7],
 					loc: {
 						start: { line: 1, column: 3 },
 						end: { line: 1, column: 7 }
 					},
-					parts: [ "list" ],
-					raw: "list"
+					parts: [{
+						type: "Identifier",
+						range: [3, 7],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 7 }
+						},
+						name: "list"
+					}],
+					name: "list"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [7, 10],
+				expr: {
+					type: "Literal",
+					range: [9, 10],
 					loc: {
-						start: { line: 1, column: 7 },
+						start: { line: 1, column: 9 },
 						end: { line: 1, column: 10 }
 					},
-					expr: {
-						type: "Literal",
-						range: [9, 10],
-						loc: {
-							start: { line: 1, column: 9 },
-							end: { line: 1, column: 10 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
 
-		// TODO: solve ambiguity to properly pass these 3 tests
-		'a{ property: 3 }': "Unexpected token (1:11)",
-		'a{ readonly: 3 }': "Unexpected token (1:11)",
-		'a{ signal: 3 }': "Unexpected token (1:9)",
-
-		'a{ color: 3 }': [
+		'a{ property: 3 }': [
 			{
-				type: "QMLProperty",
-				range: [3, 11],
+				type: "QMLPropertyBinding",
+				range: [3, 14],
 				loc: {
 					start: { line: 1, column: 3 },
-					end: { line: 1, column: 11 }
+					end: { line: 1, column: 14 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
-					range: [3, 8],
+					range: [3, 11],
 					loc: {
 						start: { line: 1, column: 3 },
-						end: { line: 1, column: 8 }
-					},
-					parts: [ "color" ],
-					raw: "color"
-				},
-				binding: {
-					type: "QMLBinding",
-					range: [8, 11],
-					loc: {
-						start: { line: 1, column: 8 },
 						end: { line: 1, column: 11 }
 					},
-					expr: {
-						type: "Literal",
-						range: [10, 11],
+					parts: [{
+						type: "Identifier",
+						range: [3, 11],
 						loc: {
-							start: { line: 1, column: 10 },
+							start: { line: 1, column: 3 },
 							end: { line: 1, column: 11 }
 						},
-						value: 3,
-						raw: "3"
-					}
+						name: "property"
+					}],
+					name: "property"
+				},
+				expr: {
+					type: "Literal",
+					range: [13, 14],
+					loc: {
+						start: { line: 1, column: 13 },
+						end: { line: 1, column: 14 }
+					},
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
 
-		'a{ real: 3 }': [
+		'a{ readonly: 3 }': [
 			{
-				type: "QMLProperty",
-				range: [3, 10],
+				type: "QMLPropertyBinding",
+				range: [3, 14],
 				loc: {
 					start: { line: 1, column: 3 },
-					end: { line: 1, column: 10 }
+					end: { line: 1, column: 14 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
-					range: [3, 7],
+					range: [3, 11],
 					loc: {
 						start: { line: 1, column: 3 },
-						end: { line: 1, column: 7 }
+						end: { line: 1, column: 11 }
 					},
-					parts: [ "real" ],
-					raw: "real"
-				},
-				binding: {
-					type: "QMLBinding",
-					range: [7, 10],
-					loc: {
-						start: { line: 1, column: 7 },
-						end: { line: 1, column: 10 }
-					},
-					expr: {
-						type: "Literal",
-						range: [9, 10],
+					parts: [{
+						type: "Identifier",
+						range: [3, 11],
 						loc: {
-							start: { line: 1, column: 9 },
-							end: { line: 1, column: 10 }
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 11 }
 						},
-						value: 3,
-						raw: "3"
-					}
+						name: "readonly"
+					}],
+					name: "readonly"
+				},
+				expr: {
+					type: "Literal",
+					range: [13, 14],
+					loc: {
+						start: { line: 1, column: 13 },
+						end: { line: 1, column: 14 }
+					},
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
 
-		'a{ string: 3 }': [
+		'a{ signal: 3 }': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [3, 12],
 				loc: {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 12 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [3, 9],
 					loc: {
 						start: { line: 1, column: 3 },
 						end: { line: 1, column: 9 }
 					},
-					parts: [ "string" ],
-					raw: "string"
+					parts: [{
+						type: "Identifier",
+						range: [3, 9],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 9 }
+						},
+						name: "signal"
+					}],
+					name: "signal"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [9, 12],
+				expr: {
+					type: "Literal",
+					range: [11, 12],
 					loc: {
-						start: { line: 1, column: 9 },
+						start: { line: 1, column: 11 },
 						end: { line: 1, column: 12 }
 					},
-					expr: {
-						type: "Literal",
-						range: [11, 12],
+					value: 3,
+					raw: "3"
+				}
+			}
+		],
+
+		'a{ color: 3 }': [
+			{
+				type: "QMLPropertyBinding",
+				range: [3, 11],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 11 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					range: [3, 8],
+					loc: {
+						start: { line: 1, column: 3 },
+						end: { line: 1, column: 8 }
+					},
+					parts: [{
+						type: "Identifier",
+						range: [3, 8],
 						loc: {
-							start: { line: 1, column: 11 },
-							end: { line: 1, column: 12 }
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 8 }
 						},
-						value: 3,
-						raw: "3"
-					}
+						name: "color"
+					}],
+					name: "color"
+				},
+				expr: {
+					type: "Literal",
+					range: [10, 11],
+					loc: {
+						start: { line: 1, column: 10 },
+						end: { line: 1, column: 11 }
+					},
+					value: 3,
+					raw: "3"
+				}
+			}
+		],
+
+		'a{ real: 3 }': [
+			{
+				type: "QMLPropertyBinding",
+				range: [3, 10],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 10 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					range: [3, 7],
+					loc: {
+						start: { line: 1, column: 3 },
+						end: { line: 1, column: 7 }
+					},
+					parts: [{
+						type: "Identifier",
+						range: [3, 7],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 7 }
+						},
+						name: "real"
+					}],
+					name: "real"
+				},
+				expr: {
+					type: "Literal",
+					range: [9, 10],
+					loc: {
+						start: { line: 1, column: 9 },
+						end: { line: 1, column: 10 }
+					},
+					value: 3,
+					raw: "3"
+				}
+			}
+		],
+
+		'a{ string: 3 }': [
+			{
+				type: "QMLPropertyBinding",
+				range: [3, 12],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 12 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					range: [3, 9],
+					loc: {
+						start: { line: 1, column: 3 },
+						end: { line: 1, column: 9 }
+					},
+					parts: [{
+						type: "Identifier",
+						range: [3, 9],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 9 }
+						},
+						name: "string"
+					}],
+					name: "string"
+				},
+				expr: {
+					type: "Literal",
+					range: [11, 12],
+					loc: {
+						start: { line: 1, column: 11 },
+						end: { line: 1, column: 12 }
+					},
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
 
 		'a{ url: 3 }': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [3, 9],
 				loc: {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 9 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [3, 6],
 					loc: {
 						start: { line: 1, column: 3 },
 						end: { line: 1, column: 6 }
 					},
-					parts: [ "url" ],
-					raw: "url"
+					parts: [{
+						type: "Identifier",
+						range: [3, 6],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 6 }
+						},
+						name: "url"
+					}],
+					name: "url"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [6, 9],
+				expr: {
+					type: "Literal",
+					range: [8, 9],
 					loc: {
-						start: { line: 1, column: 6 },
+						start: { line: 1, column: 8 },
 						end: { line: 1, column: 9 }
 					},
-					expr: {
-						type: "Literal",
-						range: [8, 9],
-						loc: {
-							start: { line: 1, column: 8 },
-							end: { line: 1, column: 9 }
-						},
-						value: 3,
-						raw: "3"
-					}
+					value: 3,
+					raw: "3"
 				}
 			}
 		],
 
 		'a{ onClicked: Qt.quit(0) }': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [3, 24],
 				loc: {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 24 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [3, 12],
 					loc: {
 						start: { line: 1, column: 3 },
 						end: { line: 1, column: 12 }
 					},
-					parts: [ "onClicked" ],
-					raw: "onClicked"
+					parts: [{
+						type: "Identifier",
+						range: [3, 12],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 12 }
+						},
+						name: "onClicked"
+					}],
+					name: "onClicked"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [12, 24],
+				expr: {
+					type: "CallExpression",
+					range: [14, 24],
 					loc: {
-						start: { line: 1, column: 12 },
+						start: { line: 1, column: 14 },
 						end: { line: 1, column: 24 }
 					},
-					expr: {
-						type: "CallExpression",
-						range: [14, 24],
+					callee: {
+						type: "MemberExpression",
+						range: [14, 21],
 						loc: {
 							start: { line: 1, column: 14 },
-							end: { line: 1, column: 24 }
+							end: { line: 1, column: 21 }
 						},
-						callee: {
-							type: "MemberExpression",
-							range: [14, 21],
+						object: {
+							type: "Identifier",
+							range: [14, 16],
 							loc: {
 								start: { line: 1, column: 14 },
+								end: { line: 1, column: 16 }
+							},
+							name: "Qt"
+						},
+						property: {
+							type: "Identifier",
+							range: [17, 21],
+							loc: {
+								start: { line: 1, column: 17 },
 								end: { line: 1, column: 21 }
 							},
-							object: {
-								type: "Identifier",
-								range: [14, 16],
-								loc: {
-									start: { line: 1, column: 14 },
-									end: { line: 1, column: 16 }
-								},
-								name: "Qt"
-							},
-							property: {
-								type: "Identifier",
-								range: [17, 21],
-								loc: {
-									start: { line: 1, column: 17 },
-									end: { line: 1, column: 21 }
-								},
-								name: "quit"
-							},
-							computed: false
+							name: "quit"
 						},
-						arguments: [
-							{
-								type: "Literal",
-								range: [22, 23],
-								loc: {
-									start: { line: 1, column: 22 },
-									end: { line: 1, column: 23 }
-								},
-								value: 0,
-								raw: "0"
-							}
-						]
-					}
+						computed: false
+					},
+					arguments: [
+						{
+							type: "Literal",
+							range: [22, 23],
+							loc: {
+								start: { line: 1, column: 22 },
+								end: { line: 1, column: 23 }
+							},
+							value: 0,
+							raw: "0"
+						}
+					]
+				}
+			}
+		],
+
+		'a{ property {} }': [
+			{
+				type: "QMLObjectLiteral",
+				range: [3, 14],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 14 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					range: [3, 11],
+					loc: {
+						start: { line: 1, column: 3 },
+						end: { line: 1, column: 11 }
+					},
+					parts: [
+						{
+							type: "Identifier",
+							range: [3, 11],
+							loc: {
+								start: { line: 1, column: 3 },
+								end: { line: 1, column: 11 }
+							},
+							name: "property"
+						}
+					],
+					name: "property"
+				},
+				block: {
+					type: "QMLMemberBlock",
+					range: [12, 14],
+					loc: {
+						start: { line: 1, column: 12 },
+						end: { line: 1, column: 14 }
+					},
+					members: []
+				}
+			}
+		],
+
+		'a{ readonly {} }': [
+			{
+				type: "QMLObjectLiteral",
+				range: [3, 14],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 14 }
+				},
+				default: false,
+				readonly: false,
+				id: {
+					type: "QMLQualifiedID",
+					range: [3, 11],
+					loc: {
+						start: { line: 1, column: 3 },
+						end: { line: 1, column: 11 }
+					},
+					parts: [
+						{
+							type: "Identifier",
+							range: [3, 11],
+							loc: {
+								start: { line: 1, column: 3 },
+								end: { line: 1, column: 11 }
+							},
+							name: "readonly"
+						}
+					],
+					name: "readonly"
+				},
+				block: {
+					type: "QMLMemberBlock",
+					range: [12, 14],
+					loc: {
+						start: { line: 1, column: 12 },
+						end: { line: 1, column: 14 }
+					},
+					members: []
+				}
+			}
+		],
+
+		'a{ signal {} }': [
+			{
+				type: "QMLObjectLiteral",
+				range: [3, 12],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 12 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					range: [3, 9],
+					loc: {
+						start: { line: 1, column: 3 },
+						end: { line: 1, column: 9 }
+					},
+					parts: [
+						{
+							type: "Identifier",
+							range: [3, 9],
+							loc: {
+								start: { line: 1, column: 3 },
+								end: { line: 1, column: 9 }
+							},
+							name: "signal"
+						}
+					],
+					name: "signal"
+				},
+				block: {
+					type: "QMLMemberBlock",
+					range: [10, 12],
+					loc: {
+						start: { line: 1, column: 10 },
+						end: { line: 1, column: 12 }
+					},
+					members: []
 				}
 			}
 		],
@@ -1704,380 +2108,380 @@ var testFixture = {
 		// ------------------- Contextual Keywords --------------------
 		'a{b:pragma}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 10],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 10 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 10],
+				expr: {
+					type: "Identifier",
+					range: [4, 10],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 10 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 10],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 10 }
-						},
-						name: "pragma"
-					}
+					name: "pragma"
 				}
 			}
 		],
 
 		'a{b:property}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 12],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column:  12 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column:  3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
-				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 12],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column:  12 }
-					},
-					expr: {
+					parts: [{
 						type: "Identifier",
-						range: [4, 12],
+						range: [2, 3],
 						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 12 }
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
 						},
-						name: "property"
-					}
+						name: "b"
+					}],
+					name: "b"
+				},
+				expr: {
+					type: "Identifier",
+					range: [4, 12],
+					loc: {
+						start: { line: 1, column: 4 },
+						end: { line: 1, column: 12 }
+					},
+					name: "property"
 				}
 			}
 		],
 
 		'a{b:readonly}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 12],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 12 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 12],
+				expr: {
+					type: "Identifier",
+					range: [4, 12],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 12 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 12],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 12 }
-						},
-						name: "readonly"
-					}
+					name: "readonly"
 				}
 			}
 		],
 
 		'a{b:signal}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 10],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 10 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 10],
+				expr: {
+					type: "Identifier",
+					range: [4, 10],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 10 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 10],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 10 }
-						},
-						name: "signal"
-					}
+					name: "signal"
 				}
 			}
 		],
 
 		'a{b:alias}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 9],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 9 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 9],
+				expr: {
+					type: "Identifier",
+					range: [4, 9],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 9 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 9],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 9 }
-						},
-						name: "alias"
-					}
+					name: "alias"
 				}
 			}
 		],
 
 		'a{b:list}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 8],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 8 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 8],
+				expr: {
+					type: "Identifier",
+					range: [4, 8],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 8 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 8],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 8 }
-						},
-						name: "list"
-					}
+					name: "list"
 				}
 			}
 		],
 
 		'a{b:color}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 9],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 9 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 9],
+				expr: {
+					type: "Identifier",
+					range: [4, 9],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 9 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 9],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 9 }
-						},
-						name: "color"
-					}
+					name: "color"
 				}
 			}
 		],
 
 		'a{b:real}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 8],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 8 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 8],
+				expr: {
+					type: "Identifier",
+					range: [4, 8],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 8 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 8],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 8 }
-						},
-						name: "real"
-					}
+					name: "real"
 				}
 			}
 		],
 
 		'a{b:string}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 10],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 10 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 10],
+				expr: {
+					type: "Identifier",
+					range: [4, 10],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 10 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 10],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 10 }
-						},
-						name: "string"
-					}
+					name: "string"
 				}
 			}
 		],
 
 		'a{b:url}': [
 			{
-				type: "QMLProperty",
+				type: "QMLPropertyBinding",
 				range: [2, 7],
 				loc: {
 					start: { line: 1, column: 2 },
 					end: { line: 1, column: 7 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [2, 3],
 					loc: {
 						start: { line: 1, column: 2 },
 						end: { line: 1, column: 3 }
 					},
-					parts: [ "b" ],
-					raw: "b"
+					parts: [{
+						type: "Identifier",
+						range: [2, 3],
+						loc: {
+							start: { line: 1, column: 2 },
+							end: { line: 1, column: 3 }
+						},
+						name: "b"
+					}],
+					name: "b"
 				},
-				binding: {
-					type: "QMLBinding",
-					range: [3, 7],
+				expr: {
+					type: "Identifier",
+					range: [4, 7],
 					loc: {
-						start: { line: 1, column: 3 },
+						start: { line: 1, column: 4 },
 						end: { line: 1, column: 7 }
 					},
-					expr: {
-						type: "Identifier",
-						range: [4, 7],
-						loc: {
-							start: { line: 1, column: 4 },
-							end: { line: 1, column: 7 }
-						},
-						name: "url"
-					}
+					name: "url"
 				}
 			}
 		],
@@ -2091,7 +2495,7 @@ var testFixture = {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 11 }
 				},
-				identifier: {
+				id: {
 					type: "Identifier",
 					range: [10, 11],
 					loc: {
@@ -2100,7 +2504,7 @@ var testFixture = {
 					},
 					name: "b"
 				},
-				parameters: []
+				params: []
 			}
 		],
 
@@ -2112,7 +2516,7 @@ var testFixture = {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 14 }
 				},
-				identifier: {
+				id: {
 					type: "Identifier",
 					range: [10, 11],
 					loc: {
@@ -2121,7 +2525,7 @@ var testFixture = {
 					},
 					name: "b"
 				},
-				parameters: []
+				params: []
 			}
 		],
 
@@ -2133,7 +2537,7 @@ var testFixture = {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 24 }
 				},
-				identifier: {
+				id: {
 					type: "Identifier",
 					range: [10, 11],
 					loc: {
@@ -2142,9 +2546,15 @@ var testFixture = {
 					},
 					name: "b"
 				},
-				parameters: [
+				params: [
 					{
-						type: {
+						type: "QMLParameter",
+						range: [ 13, 23 ],
+						loc: {
+							start: { line: 1, column: 13 },
+							end: { line: 1, column: 23 }
+						},
+						kind: {
 							type: "Identifier",
 							range: [13, 17],
 							loc: {
@@ -2153,14 +2563,7 @@ var testFixture = {
 							},
 							name: "type"
 						},
-						range: [ 13, 0 ],
-						loc: {
-							start: {
-								line: 1,
-								column: 13
-							}
-						},
-						identifier: {
+						id: {
 							type: "Identifier",
 							range: [18, 23],
 							loc: {
@@ -2182,7 +2585,7 @@ var testFixture = {
 					start: { line: 1, column: 3 },
 					end: { line: 1, column: 54 }
 				},
-				identifier: {
+				id: {
 					type: "Identifier",
 					range: [10, 11],
 					loc: {
@@ -2191,9 +2594,15 @@ var testFixture = {
 					},
 					name: "b"
 				},
-				parameters: [
+				params: [
 					{
-						type: {
+						type: "QMLParameter",
+						range: [ 13, 25 ],
+						loc: {
+							start: { line: 1, column: 13 },
+							end: { line: 1, column: 25 }
+						},
+						kind: {
 							type: "Identifier",
 							range: [13, 18],
 							loc: {
@@ -2202,14 +2611,7 @@ var testFixture = {
 							},
 							name: "type1"
 						},
-						loc: {
-							start: {
-								line: 1,
-								column: 13
-							}
-						},
-						range: [ 13, 0 ],
-						identifier: {
+						id: {
 							type: "Identifier",
 							range: [19, 25],
 							loc: {
@@ -2220,7 +2622,13 @@ var testFixture = {
 						}
 					},
 					{
-						type: {
+						type: "QMLParameter",
+						range: [ 27, 39 ],
+						loc: {
+							start: { line: 1, column: 27 },
+							end: { line: 1, column: 39 }
+						},
+						kind: {
 							type: "Identifier",
 							range: [27, 32],
 							loc: {
@@ -2229,17 +2637,7 @@ var testFixture = {
 							},
 							name: "type2"
 						},
-						loc: {
-							start: {
-								line: 1,
-								column: 27
-							}
-						},
-						range: [
-							27,
-							0
-						],
-						identifier: {
+						id: {
 							type: "Identifier",
 							range: [33, 39],
 							loc: {
@@ -2250,7 +2648,13 @@ var testFixture = {
 						}
 					},
 					{
-						type: {
+						type: "QMLParameter",
+						range: [ 41, 53 ],
+						loc: {
+							start: { line: 1, column: 41 },
+							end: { line: 1, column: 53 }
+						},
+						kind: {
 							type: "Identifier",
 							range: [41, 46],
 							loc: {
@@ -2259,17 +2663,7 @@ var testFixture = {
 							},
 							name: "type3"
 						},
-						loc: {
-							start: {
-								line: 1,
-								column: 41
-							}
-						},
-						range: [
-							41,
-							0
-						],
-						identifier: {
+						id: {
 							type: "Identifier",
 							range: [47, 53],
 							loc: {
@@ -2282,6 +2676,82 @@ var testFixture = {
 				]
 			}
 		],
+
+		'a{ id: test }': [
+			{
+				type: "QMLPropertyBinding",
+				range: [3, 11],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 11 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					range: [3, 5],
+					loc: {
+						start: { line: 1, column: 3 },
+						end: { line: 1, column: 5 }
+					},
+					parts: [{
+						type: "Identifier",
+						range: [3, 5],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 5 }
+						},
+						name: "id"
+					}],
+					name: "id"
+				},
+				expr: {
+					type: "Identifier",
+					range: [7, 11],
+					loc: {
+						start: { line: 1, column: 7 },
+						end: { line: 1, column: 11 }
+					},
+					name: "test"
+				}
+			}
+		],
+
+		'a{ id: test; }': [
+			{
+				type: "QMLPropertyBinding",
+				range: [3, 12],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 12 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					range: [3, 5],
+					loc: {
+						start: { line: 1, column: 3 },
+						end: { line: 1, column: 5 }
+					},
+					parts: [{
+						type: "Identifier",
+						range: [3, 5],
+						loc: {
+							start: { line: 1, column: 3 },
+							end: { line: 1, column: 5 }
+						},
+						name: "id"
+					}],
+					name: "id"
+				},
+				expr: {
+					type: "Identifier",
+					range: [7, 11],
+					loc: {
+						start: { line: 1, column: 7 },
+						end: { line: 1, column: 11 }
+					},
+					name: "test"
+				}
+			}
+		]
 	},
 
 	// ----------------------- QML Examples -----------------------
@@ -2289,8 +2759,9 @@ var testFixture = {
 
 		// Hello World
 		'import QtQuick 2.3\nimport QtQuick.Window 2.2\n\tWindow {\n\tvisible: true\n\n\tMouseArea {\n\t\tanchors.fill: parent\n\t\tonClicked: {\n\t\t\tQt.quit();\n\t\t}\n\t}\n\t\tText {\n\t\t\ttext: qsTr("Hello World")\n\t\t\tanchors.centerIn: parent\n\t}\n}':
-		[
-			{
+		{
+			type: "Program",
+			headerStatements: {
 				type: "QMLHeaderStatements",
 				range: [0, 44],
 				loc: {
@@ -2312,15 +2783,25 @@ var testFixture = {
 								start: { line: 1, column: 7 },
 								end: { line: 1, column: 18 }
 							},
-							qualifiedId: {
+							id: {
 								type: "QMLQualifiedID",
 								range: [7, 14],
 								loc: {
 									start: { line: 1, column: 7 },
 									end: { line: 1, column: 14 }
 								},
-								parts: [ "QtQuick" ],
-								raw: "QtQuick"
+								parts: [
+									{
+										type: "Identifier",
+										range: [7, 14],
+										loc: {
+											start: { line: 1, column: 7 },
+											end: { line: 1, column: 14 }
+										},
+										name: "QtQuick"
+									}
+								],
+								name: "QtQuick"
 							},
 							version: {
 								type: "QMLVersionLiteral",
@@ -2350,15 +2831,34 @@ var testFixture = {
 								start: { line: 2, column: 7 },
 								end: { line: 2, column: 25 }
 							},
-							qualifiedId: {
+							id: {
 								type: "QMLQualifiedID",
 								range: [26, 40],
 								loc: {
 									start: { line: 2, column: 7 },
 									end: { line: 2, column: 21 }
 								},
-								parts: [ "QtQuick", "Window" ],
-								raw: "QtQuick.Window"
+								parts: [
+									{
+										type: "Identifier",
+										range: [26, 33],
+										loc: {
+											start: { line: 2, column: 7 },
+											end: { line: 2, column: 14 }
+										},
+										name: "QtQuick"
+									},
+									{
+										type: "Identifier",
+										range: [34, 40],
+										loc: {
+											start: { line: 2, column: 15 },
+											end: { line: 2, column: 21 }
+										},
+										name: "Window"
+									}
+								],
+								name: "QtQuick.Window"
 							},
 							version: {
 								type: "QMLVersionLiteral",
@@ -2376,22 +2876,32 @@ var testFixture = {
 					}
 				]
 			},
-			{
+			rootObject: {
 				type: "QMLObjectLiteral",
 				range: [46, 213],
 				loc: {
 					start: { line: 3, column: 1 },
 					end: { line: 16, column: 1 }
 				},
-				qualifiedId: {
+				id: {
 					type: "QMLQualifiedID",
 					range: [46, 52],
 					loc: {
 						start: { line: 3, column: 1 },
 						end: { line: 3, column: 7 }
 					},
-					parts: [ "Window" ],
-					raw: "Window"
+					parts: [
+						{
+							type: "Identifier",
+							range: [46, 52],
+							loc: {
+								start: { line: 3, column: 1 },
+								end: { line: 3, column: 7 }
+							},
+							name: "Window"
+						}
+					],
+					name: "Window"
 				},
 				block: {
 					type: "QMLMemberBlock",
@@ -2402,39 +2912,41 @@ var testFixture = {
 					},
 					members: [
 						{
-							type: "QMLProperty",
+							type: "QMLPropertyBinding",
 							range: [56, 69],
 							loc: {
 								start: { line: 4, column: 1 },
 								end: { line: 4, column: 14 }
 							},
-							qualifiedId: {
+							id: {
 								type: "QMLQualifiedID",
 								range: [56, 63],
 								loc: {
 									start: { line: 4, column: 1 },
 									end: { line: 4, column: 8 }
 								},
-								parts: [ "visible" ],
-								raw: "visible"
+								parts: [
+									{
+										type: "Identifier",
+										range: [56, 63],
+										loc: {
+											start: { line: 4, column: 1 },
+											end: { line: 4, column: 8 }
+										},
+										name: "visible"
+									}
+								],
+								name: "visible"
 							},
-							binding: {
-								type: "QMLBinding",
-								range: [63, 69],
+							expr: {
+								type: "Literal",
+								range: [65, 69],
 								loc: {
-									start: { line: 4, column: 8 },
+									start: { line: 4, column: 10 },
 									end: { line: 4, column: 14 }
 								},
-								expr: {
-									type: "Literal",
-									range: [65, 69],
-									loc: {
-										start: { line: 4, column: 10 },
-										end: { line: 4, column: 14 }
-									},
-									value: true,
-									raw: "true"
-								}
+								value: true,
+								raw: "true"
 							}
 						},
 						{
@@ -2444,15 +2956,25 @@ var testFixture = {
 								start: { line: 6, column: 1 },
 								end: { line: 11, column: 2 }
 							},
-							qualifiedId: {
+							id: {
 								type: "QMLQualifiedID",
 								range: [72, 81],
 								loc: {
 									start: { line: 6, column: 1 },
 									end: { line: 6, column: 10 }
 								},
-								parts: [ "MouseArea" ],
-								raw: "MouseArea"
+								parts: [
+									{
+										type: "Identifier",
+										range: [72, 81],
+										loc: {
+											start: { line: 6, column: 1 },
+											end: { line: 6, column: 10 }
+										},
+										name: "MouseArea"
+									}
+								],
+								name: "MouseArea"
 							},
 							block: {
 								type: "QMLMemberBlock",
@@ -2463,118 +2985,131 @@ var testFixture = {
 								},
 								members: [
 									{
-										type: "QMLProperty",
+										type: "QMLPropertyBinding",
 										range: [86, 106],
 										loc: {
 											start: { line: 7, column: 2 },
 											end: { line: 7, column: 22 }
 										},
-										qualifiedId: {
+										id: {
 											type: "QMLQualifiedID",
 											range: [86, 98],
 											loc: {
 												start: { line: 7, column: 2 },
 												end: { line: 7, column: 14 }
 											},
-											parts: [ "anchors", "fill" ],
-											raw: "anchors.fill"
+											parts: [
+												{
+													type: "Identifier",
+													range: [86, 93],
+													loc: {
+														start: { line: 7, column: 2 },
+														end: { line: 7, column: 9 }
+													},
+													name: "anchors"
+												},
+												{
+													type: "Identifier",
+													range: [94, 98],
+													loc: {
+														start: { line: 7, column: 10 },
+														end: { line: 7, column: 14 }
+													},
+													name: "fill"
+												}
+											],
+											name: "anchors.fill"
 										},
-										binding: {
-											type: "QMLBinding",
-											range: [98, 106],
+										expr: {
+											type: "Identifier",
+											range: [100, 106],
 											loc: {
-												start: { line: 7, column: 14 },
+												start: { line: 7, column: 16 },
 												end: { line: 7, column: 22 }
 											},
-											expr: {
-												type: "Identifier",
-												range: [100, 106],
-												loc: {
-													start: { line: 7, column: 16 },
-													end: { line: 7, column: 22 }
-												},
-												name: "parent"
-											}
+											name: "parent"
 										}
 									},
 									{
-										type: "QMLProperty",
+										type: "QMLPropertyBinding",
 										range: [109, 139],
 										loc: {
 											start: { line: 8, column: 2 },
 											end: { line: 10, column: 3 }
 										},
-										qualifiedId: {
+										id: {
 											type: "QMLQualifiedID",
 											range: [109, 118],
 											loc: {
 												start: { line: 8, column: 2 },
 												end: { line: 8, column: 11 }
 											},
-											parts: [ "onClicked" ],
-											raw: "onClicked"
+											parts: [
+												{
+													type: "Identifier",
+													range: [109, 118],
+													loc: {
+														start: { line: 8, column: 2 },
+														end: { line: 8, column: 11 }
+													},
+													name: "onClicked"
+												}
+											],
+											name: "onClicked"
 										},
-										binding: {
-											type: "QMLBinding",
-											range: [118, 139],
+										expr: {
+											type: "QMLStatementBlock",
+											range: [120, 139],
 											loc: {
-												start: { line: 8, column: 11 },
+												start: { line: 8, column: 13 },
 												end: { line: 10, column: 3 }
 											},
-											block: {
-												type: "QMLStatementBlock",
-												range: [120, 139],
-												loc: {
-													start: { line: 8, column: 13 },
-													end: { line: 10, column: 3 }
-												},
-												statements: [
-													{
-														type: "ExpressionStatement",
-														range: [125, 135],
+											statements: [
+												{
+													type: "ExpressionStatement",
+													range: [125, 135],
+													loc: {
+														start: { line: 9, column: 3 },
+														end: { line: 9, column: 13 }
+													},
+													expression: {
+														type: "CallExpression",
+														range: [125, 134],
 														loc: {
 															start: { line: 9, column: 3 },
-															end: { line: 9, column: 13 }
+															end: { line: 9, column: 12 }
 														},
-														expression: {
-															type: "CallExpression",
-															range: [125, 134],
+														callee: {
+															type: "MemberExpression",
+															range: [125, 132],
 															loc: {
 																start: { line: 9, column: 3 },
-																end: { line: 9, column: 12 }
+																end: { line: 9, column: 10 }
 															},
-															callee: {
-																type: "MemberExpression",
-																range: [125, 132],
+															object: {
+																type: "Identifier",
+																range: [125, 127],
 																loc: {
 																	start: { line: 9, column: 3 },
+																	end: { line: 9, column: 5 }
+																},
+																name: "Qt"
+															},
+															property: {
+																type: "Identifier",
+																range: [128, 132],
+																loc: {
+																	start: { line: 9, column: 6 },
 																	end: { line: 9, column: 10 }
 																},
-																object: {
-																	type: "Identifier",
-																	range: [125, 127],
-																	loc: {
-																		start: { line: 9, column: 3 },
-																		end: { line: 9, column: 5 }
-																	},
-																	name: "Qt"
-																},
-																property: {
-																	type: "Identifier",
-																	range: [128, 132],
-																	loc: {
-																		start: { line: 9, column: 6 },
-																		end: { line: 9, column: 10 }
-																	},
-																	name: "quit"
-																},
-																computed: false
+																name: "quit"
 															},
-															arguments: []
-														}
+															computed: false
+														},
+														arguments: []
 													}
-												]
-											}
+												}
+											]
 										}
 									}
 								]
@@ -2587,15 +3122,25 @@ var testFixture = {
 								start: { line: 12, column: 2 },
 								end: { line: 15, column: 2 }
 							},
-							qualifiedId: {
+							id: {
 								type: "QMLQualifiedID",
 								range: [145, 149],
 								loc: {
 									start: { line: 12, column: 2 },
 									end: { line: 12, column: 6 }
 								},
-								parts: [ "Text" ],
-								raw: "Text"
+								parts: [
+									{
+										type: "Identifier",
+										range: [145, 149],
+										loc: {
+											start: { line: 12, column: 2 },
+											end: { line: 12, column: 6 }
+										},
+										name: "Text"
+									}
+								],
+								name: "Text"
 							},
 							block: {
 								type: "QMLMemberBlock",
@@ -2606,93 +3151,106 @@ var testFixture = {
 								},
 								members: [
 									{
-										type: "QMLProperty",
+										type: "QMLPropertyBinding",
 										range: [155, 180],
 										loc: {
 											start: { line: 13, column: 3 },
 											end: { line: 13, column: 28 }
 										},
-										qualifiedId: {
+										id: {
 											type: "QMLQualifiedID",
 											range: [155, 159],
 											loc: {
 												start: { line: 13, column: 3 },
 												end: { line: 13, column: 7 }
 											},
-											parts: [ "text" ],
-											raw: "text"
+											parts: [
+												{
+													type: "Identifier",
+													range: [155, 159],
+													loc: {
+														start: { line: 13, column: 3 },
+														end: { line: 13, column: 7 }
+													},
+													name: "text"
+												}
+											],
+											name: "text"
 										},
-										binding: {
-											type: "QMLBinding",
-											range: [159, 180],
+										expr: {
+											type: "CallExpression",
+											range: [161, 180],
 											loc: {
-												start: { line: 13, column: 7 },
+												start: { line: 13, column: 9 },
 												end: { line: 13, column: 28 }
 											},
-											expr: {
-												type: "CallExpression",
-												range: [161, 180],
+											callee: {
+												type: "Identifier",
+												range: [161, 165],
 												loc: {
 													start: { line: 13, column: 9 },
-													end: { line: 13, column: 28 }
+													end: { line: 13, column: 13 }
 												},
-												callee: {
-													type: "Identifier",
-													range: [161, 165],
+												name: "qsTr"
+											},
+											arguments: [
+												{
+													type: "Literal",
+													range: [166, 179],
 													loc: {
-														start: { line: 13, column: 9 },
-														end: { line: 13, column: 13 }
+														start: { line: 13, column: 14 },
+														end: { line: 13, column: 27 }
 													},
-													name: "qsTr"
-												},
-												arguments: [
-													{
-														type: "Literal",
-														range: [166, 179],
-														loc: {
-															start: { line: 13, column: 14 },
-															end: { line: 13, column: 27 }
-														},
-														value: "Hello World",
-														raw: "\"Hello World\""
-													}
-												]
-											}
+													value: "Hello World",
+													raw: "\"Hello World\""
+												}
+											]
 										}
 									},
 									{
-										type: "QMLProperty",
+										type: "QMLPropertyBinding",
 										range: [184, 208],
 										loc: {
 											start: { line: 14, column: 3 },
 											end: { line: 14, column: 27 }
 										},
-										qualifiedId: {
+										id: {
 											type: "QMLQualifiedID",
 											range: [184, 200],
 											loc: {
 												start: { line: 14, column: 3 },
 												end: { line: 14, column: 19 }
 											},
-											parts: [ "anchors", "centerIn" ],
-											raw: "anchors.centerIn"
+											parts: [
+												{
+													type: "Identifier",
+													range: [184, 191],
+													loc: {
+														start: { line: 14, column: 3 },
+														end: { line: 14, column: 10 }
+													},
+													name: "anchors"
+												},
+												{
+													type: "Identifier",
+													range: [192, 200],
+													loc: {
+														start: { line: 14, column: 11 },
+														end: { line: 14, column: 19 }
+													},
+													name: "centerIn"
+												}
+											],
+											name: "anchors.centerIn"
 										},
-										binding: {
-											type: "QMLBinding",
-											range: [200, 208],
+										expr: {
+											type: "Identifier",
+											range: [202, 208],
 											loc: {
-												start: { line: 14, column: 19 },
+												start: { line: 14, column: 21 },
 												end: { line: 14, column: 27 }
 											},
-											expr: {
-												type: "Identifier",
-												range: [202, 208],
-												loc: {
-													start: { line: 14, column: 21 },
-													end: { line: 14, column: 27 }
-												},
-												name: "parent"
-											}
+											name: "parent"
 										}
 									}
 								]
@@ -2701,7 +3259,7 @@ var testFixture = {
 					]
 				}
 			}
-		]
+		}
 	}
 };
 
@@ -2723,18 +3281,45 @@ for (var heading in testFixture) {
 		} else {
 			// Expected test result holds an AST
 			switch (heading) {
+				case 'qml-header-statements':
+					test(code, {
+						type: "Program",
+						headerStatements: tst[code],
+						rootObject: null
+					}, {
+						ecmaVersion: 6,
+						locations: true,
+						ranges: true,
+					});
+					break;
+				case 'qml-object-literal':
+					test(code, {
+						type: "Program",
+						headerStatements: {
+							type: "QMLHeaderStatements",
+							range: [0, 0],
+						},
+						rootObject: tst[code]
+					}, {
+						ecmaVersion: 6,
+						locations: true,
+						ranges: true,
+					});
+					break;
 				case 'qml-root-obj-members':
 					test(code, {
 						type: "Program",
-						body: [
-							{
-								type: "QMLObjectLiteral",
-								block: {
-									type: "QMLMemberBlock",
-									members: tst[code]
-								}
+						headerStatements: {
+							type: "QMLHeaderStatements",
+							range: [0, 0],
+						},
+						rootObject: {
+							type: "QMLObjectLiteral",
+							block: {
+								type: "QMLMemberBlock",
+								members: tst[code]
 							}
-						]
+						}
 					}, {
 						ecmaVersion: 6,
 						locations: true,
@@ -2742,10 +3327,7 @@ for (var heading in testFixture) {
 					});
 					break;
 				default:
-					test(code, {
-						type: "Program",
-						body: tst[code]
-					}, {
+					test(code, tst[code], {
 						ecmaVersion: 6,
 						locations: true,
 						ranges: true,

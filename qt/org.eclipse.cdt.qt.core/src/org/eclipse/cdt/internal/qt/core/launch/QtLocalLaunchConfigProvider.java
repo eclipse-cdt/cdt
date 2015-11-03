@@ -20,32 +20,31 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.launchbar.core.AbstractLaunchConfigProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 /**
- * Launch config provider for Qt projects running on the Local connection. Simply uses the C++ Application launch config
- * type.
+ * Launch config provider for Qt projects running on the Local connection.
+ * Simply uses the C++ Application launch config type.
  */
 public class QtLocalLaunchConfigProvider extends AbstractLaunchConfigProvider {
-
-	private static final String localConnectionTypeId = "org.eclipse.remote.LocalServices"; //$NON-NLS-1$
 
 	private Map<IProject, ILaunchConfiguration> configs = new HashMap<>();
 
 	@Override
-	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
-		return localConnectionTypeId.equals(target.getConnectionType().getId());
+	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
+		return ILaunchTargetManager.localLaunchTargetTypeId.equals(target.getTypeId());
 	}
 
 	@Override
-	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, IRemoteConnection target)
+	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager()
 				.getLaunchConfigurationType(QtLocalRunLaunchConfigDelegate.TYPE_ID);
 	}
 
 	@Override
-	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target)
+	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		ILaunchConfiguration config = configs.get(descriptor);
 		if (config == null) {
@@ -56,7 +55,7 @@ public class QtLocalLaunchConfigProvider extends AbstractLaunchConfigProvider {
 	}
 
 	@Override
-	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
+	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target,
 			ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 		super.populateLaunchConfiguration(descriptor, target, workingCopy);
 
@@ -99,7 +98,7 @@ public class QtLocalLaunchConfigProvider extends AbstractLaunchConfigProvider {
 	}
 
 	@Override
-	public void launchTargetRemoved(IRemoteConnection target) throws CoreException {
+	public void launchTargetRemoved(ILaunchTarget target) throws CoreException {
 		// nothing to do since the Local connection can't be removed
 	}
 

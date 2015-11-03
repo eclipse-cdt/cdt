@@ -27,6 +27,8 @@ int main (int argc, char *argv[])
     envTest();
     reverseTest();
     stopAtOther();
-    return 0;
+    return 36;
+    // Return special value to allow
+    // testing exit code feature
 }
 

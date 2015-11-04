@@ -27,6 +27,7 @@
  *     Marc Dumais (Ericsson) - Bug 460837
  *     Marc Dumais (Ericsson) - Bug 460476
  *     Marc Khouzam (Ericsson) - Use DSF usual async pattern (Bug 459114)
+ *     Marc Dumais (Ericsson) - Bug 481322
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -71,6 +72,7 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DebugViewUtils
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.IDSFTargetDataProxy;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.PersistentSettingsManager;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.PersistentSettingsManager.PersistentParameter;
+import org.eclipse.cdt.dsf.gdb.service.IGDBGrouping.IGroupDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
@@ -992,6 +994,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 					if (item instanceof IDMVMContext)
 					{
 						IDMContext context = ((IDMVMContext) item).getDMContext();
+						
+						// skip "group" contexts for now
+						// TODO: revisit when the GDBGrouping service support sending detailed event notifications
+						if (context instanceof IGroupDMContext) {
+							continue;
+						}
 
 						IMIProcessDMContext processContext =
 								DMContexts.getAncestorOfType(context, IMIProcessDMContext.class);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,38 @@
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering.RegisterDataContainer;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 public class DataPane extends AbstractPane
 {
+    private Shell fToolTipShell;
+    private final Map<BigInteger, List<RegisterDataContainer>> fMapAddressToRegs = Collections.synchronizedMap(new HashMap<BigInteger, List<RegisterDataContainer>>());
+
     public DataPane(Rendering parent)
     {
         super(parent);
@@ -135,6 +158,13 @@ public class DataPane extends AbstractPane
             fRendering.getBytesPerColumn());
     }
 
+    private int getAddressWidth() {
+    	// derive the number of characters per address e.g. 2 * NumOfOctets
+    	int addressCharacterCount = fRendering.getAddressBytes() * 2;
+    	// derive width by multiplying by the size of a character
+    	return addressCharacterCount * getCellCharacterWidth();
+    }
+
     @Override
 	public Point computeSize(int wHint, int hHint)
     {
@@ -168,6 +198,7 @@ public class DataPane extends AbstractPane
         {
             BigInteger address = fRendering.getViewportStartAddress();
 
+            // cell offset from base address in octets
             int cellOffset = cellAddress.subtract(address).intValue();
             cellOffset *= fRendering.getAddressableSize();
 
@@ -264,7 +295,7 @@ public class DataPane extends AbstractPane
 
         try
         {
-            BigInteger start = fRendering.getViewportStartAddress();
+            BigInteger startAddress = fRendering.getViewportStartAddress();
 
             for(int i = 0; i < this.getBounds().height / cellHeight; i++)
             {
@@ -277,7 +308,7 @@ public class DataPane extends AbstractPane
                     else
                         gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
 
-                    BigInteger cellAddress = start.add(BigInteger.valueOf((i
+                    BigInteger cellAddress = startAddress.add(BigInteger.valueOf((i
                         * fRendering.getColumnCount() + col)
                         * fRendering.getAddressesPerColumn()));
 
@@ -344,6 +375,9 @@ public class DataPane extends AbstractPane
                             cellHeight);
                 }
             }
+
+            BigInteger endAddress = fRendering.getViewportEndAddress();
+            markAddressesWithAdditionalInfo(pe.display, startAddress, endAddress);
         }
         catch(Exception e)
         {
@@ -353,7 +387,119 @@ public class DataPane extends AbstractPane
 
     }
 
-    // Allow subclasses to override this method to do their own coloring
+    private void markAddressesWithAdditionalInfo(final Display display, final BigInteger startAddress, final BigInteger endAddress) {
+        DsfSession session = fRendering.getTraditionalRendering().fSession;
+        if (session == null || session.getExecutor() == null) {
+            return;
+        }
+        
+        // Find out Registers with values that are within the given start and end addresses
+        // Then mark these addresses to indicate that there is more information available
+        fRendering.getTraditionalRendering().registerValuesRequest(new DataRequestMonitor<RegisterDataContainer[]>(session.getExecutor(), null){
+            @Override
+            protected void handleSuccess() {
+                RegisterDataContainer[] regData = getData();
+                
+                final Map<BigInteger, List<RegisterDataContainer>> valueToRegisters = mapValueToRegisters(regData, startAddress, endAddress);
+                
+                // TODO: Remove this temporary tracing call and method
+                traceRegisterData(regData, valueToRegisters);
+                
+                // Check if there is additional information available
+                if (valueToRegisters.size() < 1) {
+                    return;
+                }
+                
+                display.asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (fRendering != null && fRendering.isVisible() && !isDisposed()) {
+                            // Mark addresses with additional info with a rectangle
+                            int addressWidth = getAddressWidth();
+                            
+                            if (addressWidth > 0) {
+                                // Resolve rectangle dimensions
+                                int cellHeight = getCellHeight();
+                                int cellWidth = getCellWidth();
+                                int paddingAdjustment = fRendering.getCellPadding();
+                                int width = cellWidth < addressWidth ? cellWidth - paddingAdjustment : addressWidth - paddingAdjustment;
+                                int height = cellHeight - paddingAdjustment;
+                                
+                                // Resolve Graphical context
+                                GC gc = new GC(DataPane.this);
+                                gc.setForeground(fRendering.getTraditionalRendering().getColorChanged());
+                                
+                                for (BigInteger regAddress : valueToRegisters.keySet()) {
+                                    // Resolve starting point
+                                    Point location = getCellLocation(regAddress);
+                                    // Draw a colored rectangle around the address
+                                    gc.drawRectangle(location.x, location.y, width, height);
+                                }
+                                gc.dispose();
+                            }
+                        }
+                    }
+                });
+                   
+                
+            }
+
+          //TODO: Remove this temporary tracing code block
+            private void traceRegisterData(RegisterDataContainer[] regData, final Map<BigInteger, List<RegisterDataContainer>> valueToRegisters) {
+                System.out.println("Got Register data, count: " + regData.length);
+                System.out.println("Register values found in memory range: " + valueToRegisters.size());
+                List<BigInteger> valList = new ArrayList<BigInteger>();
+                valList.addAll(valueToRegisters.keySet());
+                valList.sort(new Comparator<BigInteger>() {
+                    @Override
+                    public int compare(BigInteger o1, BigInteger o2) {
+                        return o1.compareTo(o2);
+                    }
+                });
+
+                for (BigInteger val : valList) {
+                    List<RegisterDataContainer> regNames = valueToRegisters.get(val);
+                    System.out.println("\nValue: " + val.toString() + "(0x" + val.toString(16) + ")" + " count: " + regNames.size());
+                    System.out.print("\t");
+
+                    for (RegisterDataContainer container : regNames) {
+                        System.out.print(container.getName() + ", ");
+                    }
+                }
+            }
+           
+        });
+    }
+    
+    private Map<BigInteger, List<RegisterDataContainer>> mapValueToRegisters(RegisterDataContainer[] registers, BigInteger startAddress, BigInteger endAddress) {
+        Map<BigInteger, List<RegisterDataContainer>> allValuesmap = new HashMap<>(registers.length);
+
+        synchronized (fMapAddressToRegs) {
+            // Refreshing the Address to register data map
+            fMapAddressToRegs.clear();
+            for (RegisterDataContainer reg : registers) {
+                List<RegisterDataContainer> containers = allValuesmap.get(reg.getValue());
+                if (containers == null) {
+                    containers = new ArrayList<RegisterDataContainer>();
+                    allValuesmap.put(reg.getValue(), containers);
+                }
+                containers.add(reg);
+                
+                // If the value is within start and end address we want it in the filtered result
+                if (reg.getValue().compareTo(startAddress) > -1 && reg.getValue().compareTo(endAddress) < 1) {
+                    fMapAddressToRegs.put(reg.getValue(), allValuesmap.get(reg.getValue()));
+                }
+            }            
+        }
+
+        return fMapAddressToRegs;
+    }
+    
+    private boolean isRegisterValue(BigInteger cellAddress) {
+        return fMapAddressToRegs.keySet().contains(cellAddress);
+	}
+
+	// Allow subclasses to override this method to do their own coloring
     protected void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col)
     {
         // TODO consider adding finer granularity?
@@ -401,4 +547,153 @@ public class DataPane extends AbstractPane
         }
     }
 
+    public void dispose() {
+        super.dispose();
+        if (fToolTipShell != null) {
+            fToolTipShell.dispose();
+            fToolTipShell = null;
+        }
+        
+        fMapAddressToRegs.clear();
+    }
+
+    protected MouseTrackAdapter createMouseHoverListener(){
+    	return new AbstractPaneMouseHoverListener();
+    }
+
+    class AbstractPaneMouseHoverListener extends MouseTrackAdapter {
+        private BigInteger fTooltipAddress = null;
+        private final Label fLabelContent;
+        
+        
+        AbstractPaneMouseHoverListener() {
+            fLabelContent = createToolTip();
+        }
+        
+        @Override
+        public void mouseExit(MouseEvent e) {
+            if (fToolTipShell != null && !fToolTipShell.isDisposed()) {
+                fToolTipShell.setVisible(false);
+                fTooltipAddress = null;
+            }
+        }
+        
+        @Override
+        public void mouseHover(MouseEvent e) {
+            if (e.widget == null || !(e.widget instanceof Control) || fToolTipShell == null || fToolTipShell.isDisposed()) {
+                return;
+            }
+
+            Control control = (Control) e.widget;
+
+            // Resolve the address associated to hovering location
+            BigInteger cellAddress = null;
+            try {
+                cellAddress = getCellAddressAt(e.x, e.y);
+            } catch (DebugException e1) {
+                fRendering
+                .logError(
+                    TraditionalRenderingMessages
+                        .getString("TraditionalRendering.FAILURE_DETERMINE_CELL_LOCATION"), e1); //$NON-NLS-1$
+                return;
+            }
+
+            if (cellAddress == null) {
+                // Invalid Address at location
+                return;
+            }
+            
+            // Display tooltip if there is a change in hover
+            Point hoverPoint = control.toDisplay(new Point(e.x, e.y));
+            if (!fToolTipShell.isVisible() || !cellAddress.equals(fTooltipAddress)) {
+                diplayToolTip(hoverPoint, cellAddress);
+            } else {
+                // Still pointing to the same cell
+                return;
+            }
+
+            // Keep Track of the latest visited address
+            fTooltipAddress = cellAddress;
+        }
+        
+        private int getAddressesPerColumn() {
+            // Prevent division by zero
+            assert (fRendering.getBytesPerColumn() > 0);
+            int octetsPerColum = (fRendering.getBytesPerColumn() > 0) ? fRendering.getBytesPerColumn() : 1;
+            return octetsPerColum / fRendering.getAddressableSize();
+        }
+
+        private void diplayToolTip(Point hoverPoint, BigInteger cellAddress) {
+            StringBuilder sb = new StringBuilder("Address: 0x").append(cellAddress.toString(16)).append("\n");
+            
+            int addressesPerColumn = getAddressesPerColumn();
+            BigInteger subAddress = cellAddress;
+            // Multiple addresses per column, accumulate the information for all addresses involved
+            // TODO: The hovering could be enhanced to detect single addresses even if there are multiple addresses per cell
+            for (int i=0; i < addressesPerColumn; i++) {
+                if (isRegisterValue(subAddress)) {
+                    String registerNames = buildRegistersListString(subAddress);
+                    if (registerNames.length() > 0) {
+                        if (i != 0) {
+                            sb.append("Address: 0x").append(subAddress.toString(16)).append("\n");
+                        }
+
+                        sb.append(buildRegistersListString(subAddress));
+                    }
+                }
+                
+                subAddress = subAddress.add(BigInteger.ONE);
+            }
+            
+
+            fLabelContent.setText(sb.toString());
+            
+            // Setting location of the tool tip
+            Rectangle shellBounds = fToolTipShell.getBounds();
+            shellBounds.x = hoverPoint.x;
+            shellBounds.y = hoverPoint.y + getCellWidth();
+            
+            fToolTipShell.setBounds(shellBounds);
+            fToolTipShell.pack();
+
+            fToolTipShell.setVisible(true);
+        }
+
+        private String buildRegistersListString(BigInteger cellAddress) {
+            List<RegisterDataContainer> registers = fMapAddressToRegs.get(cellAddress);
+            StringBuilder sb = new StringBuilder();
+            for (RegisterDataContainer regContainer : registers) {
+                sb.append(regContainer.getName()).append("\n");
+            }
+            return sb.toString();
+        }
+        
+        private Label createToolTip() {
+            fToolTipShell = new Shell(getShell(), SWT.ON_TOP | SWT.RESIZE);
+            GridLayout gridLayout = new GridLayout();
+            gridLayout.numColumns = 1;
+            gridLayout.marginWidth = 2;
+            gridLayout.marginHeight = 0;
+            fToolTipShell.setLayout(gridLayout);
+            fToolTipShell.setBackground(fToolTipShell.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+            createToolTipHeader(fToolTipShell);
+            return createToolTipContent(fToolTipShell);
+        }
+
+        private void createToolTipHeader(Composite composite) {
+            Label toolTipLabel = new Label(composite, SWT.NONE);
+            toolTipLabel.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+            toolTipLabel.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+            toolTipLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER));
+            toolTipLabel.setText("Address Cross Reference: ");
+        }
+        
+        private Label createToolTipContent(Composite composite) {
+            Label toolTipContent = new Label(composite, SWT.NONE);
+            toolTipContent.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+            toolTipContent.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+            toolTipContent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER));
+            return toolTipContent;
+        }
+    }
 }

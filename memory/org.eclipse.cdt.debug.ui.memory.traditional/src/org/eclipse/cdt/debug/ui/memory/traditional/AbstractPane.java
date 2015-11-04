@@ -26,6 +26,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Font;
@@ -322,6 +323,8 @@ public abstract class AbstractPane extends Canvas
         this.addMouseListener(createMouseListener());
 
         this.addMouseMoveListener(createMouseMoveListener());
+        
+        this.addMouseTrackListener(createMouseHoverListener());
 
         this.addKeyListener(createKeyListener());
 
@@ -336,6 +339,15 @@ public abstract class AbstractPane extends Canvas
     	return new AbstractPaneMouseMoveListener();
     }
     
+    /**
+     * @since 1.3
+     */
+    protected MouseTrackAdapter createMouseHoverListener() {
+        // Providing the implementation instance is left to subclasses
+        return new MouseTrackAdapter() {
+        };
+    }
+
     protected FocusListener createFocusListener() {
     	return new AbstractPaneFocusListener();
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
+import org.eclipse.cdt.dsf.debug.service.IRegisters2;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlock;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -38,7 +57,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedList
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -61,6 +84,9 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -98,7 +124,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 
 @SuppressWarnings("restriction")
-public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering, IResettableMemoryRendering, IMemoryRenderingViewportProvider, IModelChangedListener
+public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering, IResettableMemoryRendering, IMemoryRenderingViewportProvider, IModelChangedListener, IDebugContextListener
 {
 	protected Rendering fRendering;
     protected Action displayEndianBigAction;
@@ -106,6 +132,13 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     
     private IWorkbenchAdapter fWorkbenchAdapter;
 	private IMemoryBlockConnection fConnection;
+	private IFrameDMContext fLastSelectedFrame;
+	
+    /**
+     * @since 1.4
+     */
+    protected DsfSession fSession;
+    private IMemoryDMContext fMemContext;
     
     private final static int MAX_MENU_COLUMN_COUNT = 8;
     
@@ -179,6 +212,57 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
            
     }
     
+	class RegisterDataContainer {
+        private final IRegisterDMContext fRegDmc;
+        private final BigInteger fValue;
+        private final String fName;
+        
+        /**
+         * @param regDmc
+         *            - Register Context
+         * @param name
+         *            - Register Name
+         * @param value
+         *            - Register String value representation expected to use radix 16, 
+         *            using invalid radix 16 characters will not return an error, 
+         *            <br>However the value returned by the getter will be zero
+         */
+        RegisterDataContainer(IRegisterDMContext regDmc, String name, String value) {
+            fRegDmc = regDmc;
+            fName = name;
+            fValue = convertValue(value);
+        }
+
+        public IRegisterDMContext getRegDmc() {
+            return fRegDmc;
+        }
+
+        /**
+         * Provide a BigInteger value using Hex (radix 16) characters
+         */
+        public BigInteger getValue() {
+            return fValue;
+        }
+
+        public String getName() {
+            return fName;
+        }
+
+        public BigInteger convertValue(String inValue) {
+            // Make sure we provide a valid hex representation or zero
+            int radix = 16;
+            BigInteger hexValue = null;
+            String value = inValue.replaceAll("0x", "");
+            try {
+                hexValue = new BigInteger(value, radix);
+            } catch (NumberFormatException e) {
+                hexValue = BigInteger.ZERO;
+            }
+
+            return hexValue;
+        }
+	}
+	
     private void setRenderingPadding(String padding)
     {
     	if(padding == null || padding.length() == 0)
@@ -222,7 +306,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
      * We use the model proxy which is supplied by the TCF implementation to provide the knowledge of memory 
      * change notifications. The older backends ( the reference model, Wind River Systems Inc. ) are written
      * to generate the Debug Model events. TCF follows the "ModelDelta/IModelProxy" implementation  that the 
-     * platform renderers use. So this implementation acts as a shim. If the older Debug Events come in then
+     * platform renders use. So this implementation acts as a shim. If the older Debug Events come in then
      * fine. If the newer model deltas come in fine also.
      */
     private IModelProxy fModel;
@@ -246,14 +330,169 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             this.fRendering.dispose();
         disposeColors();
         disposeFonts();
+        
+        IWorkbenchPartSite site = getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+        IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+        contextService.removeDebugContextListener(this);
         super.dispose();
     }
 
+    /**
+     * Retrieve an array of Data for the registers if a corresponding stack frame is selected
+     * @since 1.4
+     */
+    public void registerValuesRequest(final DataRequestMonitor<RegisterDataContainer[]> rm) {
+        if (fSession == null || fSession.getExecutor() == null ) {
+            rm.done(new Status(IStatus.ERROR, TraditionalRenderingPlugin.getUniqueIdentifier(), "Initialization problem, invalid session"));
+            return;
+        }
+        
+        final DsfExecutor executor = fSession.getExecutor();
+        
+        executor.execute(new DsfRunnable() {
+            @Override
+            public void run() {
+                final IRegisters2 service = resolveService(IRegisters2.class);
+                // Resolve register values if the current debug context is a frame for the Process (container)
+                // associated to this memory context
+                if (service != null && fLastSelectedFrame != null) {
+                    // Getting all available register contexts
+                    service.getRegisters(fLastSelectedFrame, new DataRequestMonitor<IRegisterDMContext[]>(executor, rm) {
+                        @Override
+                        protected void handleSuccess() {
+                            final IRegisterDMContext[] registers = getData();
+                            if (registers != null && registers.length != 0) {
+                                getRegistersData(service, registers, new DataRequestMonitor<IRegisterDMData[]>(fSession.getExecutor(), rm) {
+                                    protected void handleSuccess() {
+                                        final IRegisterDMData[] regBaseData = getData();
+                                        getRegisterValues(service, registers, new DataRequestMonitor<FormattedValueDMData[]>(fSession.getExecutor(), rm) {
+                                            protected void handleSuccess() {
+                                                FormattedValueDMData[] regFormattedData = getData();
+
+                                                String[] regNames = extractRegNames(regBaseData);
+                                                String[] regValues = extractValues(regFormattedData);
+
+                                                // Consolidate the Register information in a container class
+                                                final RegisterDataContainer[] regDataContainers = createRegisterDataContainers(registers, regNames, regValues);
+
+                                                rm.setData(regDataContainers);
+                                                rm.done();
+                                            };
+                                        });
+
+                                    };
+                                });
+                            } else {
+                                // no valid registers
+                                rm.done(new Status(IStatus.ERROR, TraditionalRenderingPlugin.getUniqueIdentifier(),
+                                        "Successful request of register contexts but no registers received"));
+                            }
+                        }
+                    });
+                } else {
+                    rm.done(new Status(IStatus.INFO, TraditionalRenderingPlugin.getUniqueIdentifier(), "Unable to resolve registers for the currently selected context"));
+                }
+            }
+        });
+    }
+    
+    private String[] extractRegNames(IRegisterDMData[] regData) {
+        String[] names = new String[regData.length];
+        for (int i=0; i < regData.length; i++) {
+            names[i] = regData[i].getName();
+        }
+        return names;
+    }
+    
+    private String[] extractValues(FormattedValueDMData[] regValues) {
+        String[] values = new String[regValues.length];
+        for (int i=0; i < regValues.length; i++) {
+            values[i] = regValues[i].getEditableValue();
+        }
+        return values;
+    }
+    
+    private RegisterDataContainer[] createRegisterDataContainers(IRegisterDMContext[] regContext, String[] names, String[] values) {
+        // Expecting the three building arrays to be of the same length
+        assert(regContext.length > 0 && regContext.length == names.length && regContext.length == values.length);
+        RegisterDataContainer[] regContainers = new RegisterDataContainer[regContext.length];
+        for (int i=0; i < regContext.length; i++) {
+            regContainers[i] = new RegisterDataContainer(regContext[i], names[i], values[i]);
+        }
+        
+        return regContainers;
+    }
+    
+    private FormattedValueDMContext[] getFormatContexts(IRegisters2 service, IRegisterDMContext[] regDMCs) {
+        FormattedValueDMContext[] datas = new FormattedValueDMContext[regDMCs.length];
+        for (int i = 0; i < regDMCs.length; i++) {
+            datas[i] = service.getFormattedValueContext(regDMCs[i], IFormattedValues.HEX_FORMAT);
+        }
+        
+        return datas;
+    }
+    
+    private void getRegistersData(final IRegisters2 service, final IRegisterDMContext[] regDMCs, final DataRequestMonitor<IRegisterDMData[]> rm) {
+        final IRegisterDMData[] datas = new IRegisterDMData[regDMCs.length];
+        rm.setData(datas);
+        final CountingRequestMonitor countingRm = new CountingRequestMonitor(fSession.getExecutor(), rm);
+        for (int i = 0; i < regDMCs.length; i++) {
+            final int index = i;
+            service.getRegisterData(regDMCs[index], new DataRequestMonitor<IRegisterDMData>(fSession.getExecutor(), countingRm) {
+                @Override
+                protected void handleSuccess() {
+                    datas[index] = getData();
+                    countingRm.done();
+                }
+            });
+        }
+
+        countingRm.setDoneCount(regDMCs.length);
+    }
+    
+    private void getRegisterValues(final IRegisters2 service, final IRegisterDMContext[] regDMCs, final DataRequestMonitor<FormattedValueDMData[]> rm) {
+        FormattedValueDMContext[] fmtContexts = getFormatContexts(service, regDMCs);
+        
+        final FormattedValueDMData[] datas = new FormattedValueDMData[regDMCs.length];
+        rm.setData(datas);
+        final CountingRequestMonitor countingRm = new CountingRequestMonitor(fSession.getExecutor(), rm);
+        for (int i = 0; i < regDMCs.length; i++) {
+            final int index = i;
+            service.getFormattedExpressionValue(fmtContexts[index], new DataRequestMonitor<FormattedValueDMData>(fSession.getExecutor(), countingRm) {
+                @Override
+                protected void handleSuccess() {
+                    datas[index] = getData();
+                    countingRm.done();
+                }
+            });
+        }
+
+        countingRm.setDoneCount(regDMCs.length);
+    }
+    
+    private <V> V resolveService(Class<V> type) {
+        V service = null;
+        if (fSession != null) {
+            DsfServicesTracker tracker = new DsfServicesTracker(TraditionalRenderingPlugin.getDefault().getBundle().getBundleContext(), fSession.getId());
+            service = tracker.getService(type);
+            tracker.dispose();
+        }
+        return service;
+    }
+    
     @Override
 	public void init(final IMemoryRenderingContainer container, final IMemoryBlock block)
     {
     	super.init(container, block);
 
+        // resolve the debug session associated to the memory block
+        if (block instanceof GdbMemoryBlock) {
+            GdbMemoryBlock gMemBlock = (GdbMemoryBlock) block;
+            fMemContext = gMemBlock.getContext();
+            if (fMemContext != null) {
+                fSession = DsfSession.getSession(fMemContext.getSessionId());
+            }
+        }
     	/*
          * Working with the model proxy must be done on the UI dispatch thread.
          */
@@ -351,8 +590,41 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		// default to MAX_VALUE if we have trouble getting the end address
 		if (fEndAddress == null)
 			fEndAddress = BigInteger.valueOf(Integer.MAX_VALUE);
+		
+        IWorkbenchPartSite site = getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+        IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+        contextService.addDebugContextListener(this, site.getId());
+        ISelection selection = contextService.getActiveContext(site.getId());
+        if(selection instanceof StructuredSelection) {
+            handleDebugContextChanged(((StructuredSelection) selection).getFirstElement());
+        }
     }
     
+    private void handleDebugContextChanged(Object selection) {
+        if (fMemContext != null && selection instanceof IDMVMContext) {
+            IDMContext context = ((IDMVMContext) selection).getDMContext();
+            IFrameDMContext frameCtx = DMContexts.getAncestorOfType(context, IFrameDMContext.class);
+            if (frameCtx != null) {
+                IContainerDMContext selectedContainerCtx =  DMContexts.getAncestorOfType(frameCtx, IContainerDMContext.class);
+                IContainerDMContext memoryContainerCtx = DMContexts.getAncestorOfType(fMemContext, IContainerDMContext.class);
+                // Track the last selected frame on the context of this memory container (process)
+                if (memoryContainerCtx.equals(selectedContainerCtx)) {
+                    fLastSelectedFrame = frameCtx;
+                    System.out.println("Frame selected: " + fLastSelectedFrame.toString());
+                }
+            } else {
+                // Registers are not valid outside a frame context
+                // the next paint will not draw additional information
+                fLastSelectedFrame = null;
+            }
+
+            // Refresh the children panes
+            if (fRendering != null && !fRendering.isDisposed()) {
+                fRendering.redrawPanes();
+            }
+        }
+    }
+
     public BigInteger getBigBaseAddress()
     {
     	return fBigBaseAddress;
@@ -1452,7 +1724,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
         return super.getAdapter(adapter);
     }
-		
+
 	public void resetRendering() throws DebugException {
 		fRendering.gotoAddress(fRendering.fBaseAddress);
 	}
@@ -1463,6 +1735,30 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	public BigInteger getViewportAddress() {
 		return fRendering.getViewportStartAddress();
 	}
+
+    /**
+     * @since 1.4
+     */
+    @Override
+    public void debugContextChanged(DebugContextEvent event) {
+        // If process or frame context selected, update the
+        // register information on the memory binary pane
+        if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+            if (fRendering == null || fRendering.isDisposed()) {
+                return;
+            }
+            
+            ISelection selection = event.getContext();
+            if (!(selection instanceof IStructuredSelection)) {
+                return;
+            }
+
+            Object elem = ((IStructuredSelection) selection).getFirstElement();
+
+            handleDebugContextChanged(elem);
+        }
+        
+    }
 }
 
 class CopyBinaryAction extends CopyAction

@@ -41,7 +41,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
-<repository location="https://hudson.eclipse.org/cdt/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+<repository location="https://hudson.eclipse.org/cdt/job/launchbar-mars/lastSuccessfulBuild/artifact/repo/target/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.cdt.native.feature.group" version="0.0.0"/>

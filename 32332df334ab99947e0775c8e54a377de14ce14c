@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67ccbf7d_a2e5fec9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-11-05T01:54:47Z",
+      "side": 1,
+      "message": "Adjust indentation.",
+      "range": {
+        "startLine": 661,
+        "startChar": 5,
+        "endLine": 661,
+        "endChar": 24
+      },
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_c2e202bf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-11-05T01:54:47Z",
+      "side": 1,
+      "message": "current -\u003e the current",
+      "range": {
+        "startLine": 671,
+        "startChar": 63,
+        "endLine": 671,
+        "endChar": 70
+      },
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_82ac7a77",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-11-05T01:54:47Z",
+      "side": 1,
+      "message": "I don\u0027t understand why fields have to be declared in the current translation unit. Would that disqualify field \u0027x\u0027 in the following example? \n\nheader.h\n--------\nclass A {\npublic:\n  void foo();\n  void bar(int p);\n  int x;\n};\n\ntest.cpp\n--------\n#include \"header.h\"\n\nvoid A::foo() {\n  bar(?); \u003c- Is x proposed in this context?\n}",
+      "range": {
+        "startLine": 672,
+        "startChar": 31,
+        "endLine": 672,
+        "endChar": 40
+      },
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_e2438614",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-11-05T01:54:47Z",
+      "side": 1,
+      "message": "It would be more efficient to eliminate duplicates inside the evaluateVisibleMatches method by collecting matches in a set and converting that set into a list at the end.",
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_a297be19",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-11-05T01:54:47Z",
+      "side": 1,
+      "message": "The name of the method does not describe what it does. Consider getContainedString.",
+      "range": {
+        "startLine": 382,
+        "startChar": 23,
+        "endLine": 382,
+        "endChar": 38
+      },
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

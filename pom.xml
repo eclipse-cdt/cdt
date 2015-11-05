@@ -213,7 +213,7 @@
 		
 		<module>qt/org.eclipse.cdt.qt.core</module>
 		<module>qt/org.eclipse.cdt.qt.ui</module>
-		<module>qt/org.eclipse.cdt.qt.core.tests</module>
+		<!--module>qt/org.eclipse.cdt.qt.core.tests</module-->
 		<module>qt/org.eclipse.cdt.qt.ui.tests</module>
 		<module>qt/org.eclipse.cdt.qt-feature</module>
 

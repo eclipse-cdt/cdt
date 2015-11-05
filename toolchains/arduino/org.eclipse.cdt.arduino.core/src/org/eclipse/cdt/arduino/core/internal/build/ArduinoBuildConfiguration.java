@@ -391,6 +391,7 @@ public class ArduinoBuildConfiguration {
 		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("archive_file", "core.a"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("archive_file_path", "{build.path}/{archive_file}"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("object_files", "$(PROJECT_OBJS) $(LIBRARIES_OBJS)"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		buildModel.put("recipe_cpp_o_pattern", resolveProperty("recipe.cpp.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$

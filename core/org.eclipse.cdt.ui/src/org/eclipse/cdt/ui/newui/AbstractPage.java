@@ -841,6 +841,9 @@ implements
 	}
 
 	protected void handleResize(boolean visible) {
+		if (!getShell().isVisible()) {
+			return; // do not resize shell before its open, it will screw up shell positioning
+		}
 		if (visible && !isNewOpening) return; // do not duplicate
 		if (visible)
 			isNewOpening = false;
@@ -982,7 +985,7 @@ implements
 	protected void cfgChanged(ICConfigurationDescription _cfgd) {
 		CConfigurationStatus st = _cfgd.getConfigurationStatus();
 		if (st.getCode() == CConfigurationStatus.TOOLCHAIN_NOT_SUPPORTED) {
-			// Re-check, maybe user got the problem fixed 
+			// Re-check, maybe user got the problem fixed
 			st = _cfgd.getConfigurationData().getStatus();
 		}
 		if (errPane != null && errMessage != null) {

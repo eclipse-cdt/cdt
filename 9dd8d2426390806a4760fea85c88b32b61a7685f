@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67ccbf7d_c949423a",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/BinaryObjectAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-11-05T21:48:51Z",
+      "side": 1,
+      "message": "maybe static too?",
+      "range": {
+        "startLine": 26,
+        "startChar": 16,
+        "endLine": 26,
+        "endChar": 17
+      },
+      "revId": "9dd8d2426390806a4760fea85c88b32b61a7685f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

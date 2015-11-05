@@ -464,10 +464,10 @@ public abstract class CSelector extends Composite {
 		if (buttonComposite != null) {
 			buttonComposite.setToolTipText(toolTipText);
 		}
-		if (currentLabel != null) {
+		if (currentLabel != null && !currentLabel.isDisposed()) {
 			currentLabel.setToolTipText(toolTipText);
 		}
-		if (currentIcon != null) {
+		if (currentIcon != null && !currentIcon.isDisposed()) {
 			currentIcon.setToolTipText(toolTipText);
 		}
 	}

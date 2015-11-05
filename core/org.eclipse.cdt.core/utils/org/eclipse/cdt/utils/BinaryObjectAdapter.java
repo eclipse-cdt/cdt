@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryObject {
 
-	protected ISymbol[] NO_SYMBOLS = new ISymbol[0];
+	protected static final ISymbol[] NO_SYMBOLS = new ISymbol[0];
 
 	public class BinaryObjectInfo {
 		public long bss;

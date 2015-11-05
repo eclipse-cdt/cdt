@@ -37,7 +37,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	private Addr2line symbolLoadingAddr2line;
 	private CPPFilt symbolLoadingCPPFilt;
 	long starttime;
-	
+
 	/**
 	 * @param parser
 	 * @param path
@@ -103,7 +103,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 		}
 		return null;
 	}
- 
+
 	protected CPPFilt getCPPFilt() {
 		IGnuToolFactory factory = getBinaryParser().getAdapter(IGnuToolFactory.class);
 		if (factory != null) {
@@ -143,7 +143,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 		return stream;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#loadSymbols(org.eclipse.cdt.utils.elf.ElfHelper)
 	 */
@@ -151,20 +151,23 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	protected void loadSymbols(ElfHelper helper) throws IOException {
 		symbolLoadingAddr2line = getAddr2line(false);
 		symbolLoadingCPPFilt = getCPPFilt();
-		super.loadSymbols(helper);
-		if (symbolLoadingAddr2line != null) {
-			symbolLoadingAddr2line.dispose();
-			symbolLoadingAddr2line = null;
-		}
-		if (symbolLoadingCPPFilt != null) {
-			symbolLoadingCPPFilt.dispose();
-			symbolLoadingCPPFilt =  null;
+		try {
+			super.loadSymbols(helper);
+		} finally {
+			if (symbolLoadingAddr2line != null) {
+				symbolLoadingAddr2line.dispose();
+				symbolLoadingAddr2line = null;
+			}
+			if (symbolLoadingCPPFilt != null) {
+				symbolLoadingCPPFilt.dispose();
+				symbolLoadingCPPFilt = null;
+			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#addSymbols(org.eclipse.cdt.utils.elf.Elf.Symbol[],
 	 *      int, java.util.List)
 	 */
@@ -205,7 +208,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
 	@SuppressWarnings("rawtypes")

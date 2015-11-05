@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.core" version="2">
+    <resource path="utils/org/eclipse/cdt/utils/BinaryObjectAdapter.java" type="org.eclipse.cdt.utils.BinaryObjectAdapter">
+        <filter comment="NO_SYMBOLS array should be final" id="388100214">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.BinaryObjectAdapter"/>
+                <message_argument value="NO_SYMBOLS"/>
+            </message_arguments>
+        </filter>
+        <filter comment="NO_SYMBOLS array should be static" id="388108357">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.BinaryObjectAdapter"/>
+                <message_argument value="NO_SYMBOLS"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

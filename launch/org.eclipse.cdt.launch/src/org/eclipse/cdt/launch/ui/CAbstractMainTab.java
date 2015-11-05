@@ -9,7 +9,7 @@
  *     Ken Ryall (Nokia) - initial API and implementation
  *     IBM Corporation
  *     Alex Collins     (Broadcom Corp.)  - choose build config automatically
- *     Anna Dushistova  (Mentor Graphics) - [333504] [remote launch] NPE after switching to "Standard Launcher" in Remote Application debug configuration 
+ *     Anna Dushistova  (Mentor Graphics) - [333504] [remote launch] NPE after switching to "Standard Launcher" in Remote Application debug configuration
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -56,9 +58,11 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.internal.dialogs.PropertyDialog;
 
 /**
  * @since 6.1
@@ -75,19 +79,6 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 * @since 6.0
 	 */
 	protected Combo fBuildConfigCombo;
-	/**
-	 * @since 7.0
-	 * @deprecated This control won't be used anymore, combo will have addition item: Select Automatically
-	 * */
-	protected Button fBuildConfigAuto;
-	/**
-	 * Indicates whether the user has clicked on the build config auto button Prevents causing a delta to the underlying launch
-	 * configuration if the user hasn't touched this setting.
-	 * 
-	 * @since 7.0
-	 * @deprecated
-	 */
-	protected boolean fBuildConfigAutoChanged;
 	/** @since 6.1 */
 	protected Button fDisableBuildButton;
 	/** @since 6.1 */
@@ -250,7 +241,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 				return (ICProject) dialog.getFirstResult();
 			}
 		} catch (CModelException e) {
-			LaunchUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$			
+			LaunchUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -280,7 +271,6 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 				if (projDes != null) {
 					// Populate and select config
 					ICConfigurationDescription[] configurations = projDes.getConfigurations();
-
 					for (int i = 0; i < configurations.length; i++) {
 						String configName = configurations[i].getName();
 						String id = configurations[i].getId();
@@ -306,8 +296,14 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = colspan;
 		comboComp.setLayoutData(gd);
-		Label dlabel = new Label(comboComp, SWT.NONE);
-		dlabel.setText(LaunchMessages.CMainTab_Build_Config);
+		Link dlabel = new Link(comboComp, SWT.NONE);
+		dlabel.setText("<a>" + LaunchMessages.CMainTab_Build_Config + "</a>"); //$NON-NLS-1$//$NON-NLS-2$
+		dlabel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				openBuildConfigProperties();
+			}
+		});
 		fBuildConfigCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fBuildConfigCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fBuildConfigCombo.addSelectionListener(new SelectionListener() {
@@ -321,13 +317,23 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fBuildConfigAuto = new Button(comboComp, SWT.CHECK);
-		GridData gd1 = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
-		gd1.heightHint = 0;
-		gd1.horizontalSpan = 2;
-		fBuildConfigAuto.setLayoutData(gd1);
-		fBuildConfigAuto.setVisible(false);
-		fBuildConfigAuto.setText(LaunchMessages.CMainTab_Build_Config_Auto);
+	}
+
+	/**
+	 * @since 9.0
+	 */
+	protected void openBuildConfigProperties() {
+		IStructuredSelection sel;
+		ICProject cProject = getCProject();
+		if (cProject != null)
+			sel = new StructuredSelection(cProject.getProject());
+		else
+			sel = new StructuredSelection();
+		Shell shell = getShell();
+		String propertyPageId = "org.eclipse.cdt.managedbuilder.ui.properties.Page_head_build";//$NON-NLS-1$
+		PropertyDialog dialog = PropertyDialog.createDialogOn(shell, propertyPageId, sel);
+		if (dialog != null)
+			dialog.open();
 	}
 
 	/** @since 6.1 */
@@ -406,12 +412,13 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			fEnableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED);
 		if (fWorkspaceSettingsButton != null)
 			fWorkspaceSettingsButton
-					.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
+					.setSelection(
+							buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
 	}
 
 	/**
 	 * Show a dialog that lets the user select a file.
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	protected String handleBrowseButtonSelected() {
@@ -462,7 +469,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	/**
 	 * This method is deprecated since LaunchUtils#getBinary(IProject, IPath) is too slow to be called on the UI thread. See
 	 * "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
-	 * 
+	 *
 	 * @param project
 	 * @param exePath
 	 * @return
@@ -512,7 +519,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -540,7 +547,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 
 	/**
 	 * Calculate build config id based on selection of the binary. Subclasses may override.
-	 * 
+	 *
 	 * @return
 	 * @since 7.2
 	 */
@@ -560,13 +567,13 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 
 	/**
 	 * Either page wants Automatic selection in combo or not. Subclass should override
-	 * 
+	 *
 	 * @return true if panel support AUTO_CONFIG
 	 * @since 7.2
 	 */
 	protected boolean isAutoConfigSupported() {
 		// original behavior was if this button is null it won't be shown and "supported"
-		return fBuildConfigAuto != null;
+		return true;
 	}
 
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -597,7 +604,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
 	@Override
@@ -616,7 +623,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			String tooltip = EMPTY_STRING;
 			if (configId != null) {
 				if (configId.equals(AUTO_CONFIG)) {
-					tooltip =  LaunchMessages.CMainTab_Build_Config_Auto_tooltip;
+					tooltip = LaunchMessages.CMainTab_Build_Config_Auto_tooltip;
 				} else if (configId.equals(EMPTY_STRING)) {
 					tooltip = LaunchMessages.CMainTab_Build_Config_Active_tooltip;
 				}

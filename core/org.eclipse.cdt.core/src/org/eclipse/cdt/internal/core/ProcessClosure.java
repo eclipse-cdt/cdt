@@ -117,11 +117,9 @@ public class ProcessClosure {
 	 * console document.
 	 * 
 	 * @param outputStream
-	 *            prcess stdout is written to this stream. Can be
-	 *            <code>null</code>, if not interested in reading the output
+	 *            prcess stdout is written to this stream. Cannot be <code>null</code>.
 	 * @param errorStream
-	 *            prcess stderr is written to this stream. Can be
-	 *            <code>null</code>, if not interested in reading the output
+	 *            prcess stderr is written to this stream. Cannot be <code>null</code>.
 	 */
 	public ProcessClosure(Process process, OutputStream outputStream, OutputStream errorStream) {
 		fProcess = process;

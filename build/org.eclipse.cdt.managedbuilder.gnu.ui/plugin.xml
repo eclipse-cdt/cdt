@@ -1820,7 +1820,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.base"
 		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"
+		              binaryParser="org.eclipse.cdt.core.GNU_ELF"
 		              osList="linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>

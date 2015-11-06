@@ -47,12 +47,15 @@
 	};
 	base["QMLMember"] = skipThrough;
 	base["QMLPropertyDeclaration"] = function (node, st, c) {
-		c(node.binding, st);
+		if (node.init) {
+			c(node.init, st);
+		}
 	};
 	base["QMLSignalDefinition"] = ignore;
 	base["QMLPropertyBinding"] = function (node, st, c) {
-		c(node.binding, st);
+		c(node.expr, st);
 	};
+	base["QMLQualifiedID"] = ignore;
 	base["QMLStatementBlock"] = function (node, st, c) {
 		for (var i = 0; i < node.statements.length; i++) {
 			c(node.statements[i], st, "Statement");

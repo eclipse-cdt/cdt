@@ -38,7 +38,6 @@
 		<link rel="stylesheet" href="../node_modules/codemirror-javascript/addon/hint/tern/tern-extension.css">
 		<script src="../node_modules/codemirror-javascript/addon/hint/tern/tern-extension.js"></script>
 		<script src="defs/ecma5.json.js"></script>
-		<script src="defs/browser.json.js"></script>
 
 		<!-- CodeMirror Extension -->
 		<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hint/show-hint-eclipse.css">
@@ -58,7 +57,7 @@
 	</head>
 	<body>
 		<h1>Demo with QML Tern plugin </h1>
-		<form><textarea id="code" name="code">import QtQuick 2.3&#10;Window {&#10;&#09;prop: {&#10;&#09;&#09;Qt.quit();&#10;&#09;&#09;&#10;&#09;}&#10;}&#10;</textarea></form>
+		<form><textarea id="code" name="code">import QtQuick 2.3&#10;Window {&#10;&#09;prop: {&#10;&#09;&#09;Qt.quit();&#10;&#09;}&#10;}&#10;</textarea></form>
 		<script type="text/javascript">
 			function passAndHint(cm) {
 				setTimeout(function() {cm.execCommand("autocomplete");}, 100);
@@ -81,11 +80,13 @@
 				lineWrapping: true,
 				autoCloseBrackets: true,
 				matchBrackets: true,
+				indentWithTabs: true,
+				indentUnit: 4,
 				extraKeys: {
 					"'.'": passAndHint,
 					"Ctrl-Space": "autocomplete",
 					"Ctrl-I": function(cm) { CodeMirror.tern.showType(cm); },
-					"Ctrl-B": function(cm) { CodeMirror.tern.jumpToDef(cm); },
+					"Ctrl-J": function(cm) { CodeMirror.tern.jumpToDef(cm); },
 					"Alt-,": function(cm) { CodeMirror.tern.jumpBack(cm); },
 					"Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); }
 				},

@@ -248,9 +248,18 @@ var injectQML;
 			} else if (this.isContextual(qtt._signal)) {
 				return this.qml_parseSignalDefinition();
 			} else if (this.type === tt._function) {
-				return this.parseFunctionStatement();
+				return this.qml_parseFunctionMember();
 			}
 			return this.qml_parseObjectLiteralOrPropertyBinding();
+		}
+
+		/*
+		 * Parses a JavaScript function as a member of a QML Object Literal
+		 */
+		pp.qml_parseFunctionMember = function () {
+			var node = this.startNode();
+			this.expect(tt._function);
+			return this.parseFunction(node, true);
 		}
 
 		/*
@@ -329,7 +338,7 @@ var injectQML;
 				if (!this.eat(tt.parenR)) {
 					do {
 						var param = this.startNode();
-						param.kind = this.qml_parseIdent(false);
+						param.kind = this.qml_parseIdent(true);
 						param.id = this.qml_parseIdent(false);
 						node.params.push(this.finishNode(param, "QMLParameter"));
 					} while (this.eat(tt.comma));

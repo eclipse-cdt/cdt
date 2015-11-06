@@ -1983,6 +1983,7 @@ var testFixture = {
 			}
 		],
 
+		// --------------- Object Literals as Properties --------------
 		'a{ property {} }': [
 			{
 				type: "QMLObjectLiteral",
@@ -2485,6 +2486,128 @@ var testFixture = {
 				}
 			}
 		],
+
+		// ------------------- JavaScript Functions -------------------
+		'a{ function fn() {} }': [
+			{
+				type: "FunctionDeclaration",
+				range: [3, 19],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 19 }
+				},
+				id: {
+					type: "Identifier",
+					range: [12, 14],
+					loc: {
+						start: { line: 1, column: 12 },
+						end: { line: 1, column: 14 }
+					},
+					name: "fn"
+				},
+				generator: false,
+				expression: false,
+				params: [],
+				body: {
+					type: "BlockStatement",
+					range: [17, 19],
+					loc: {
+						start: { line: 1, column: 17 },
+						end: { line: 1, column: 19 }
+					},
+					body: []
+				}
+			}
+		],
+
+		'a{ function add(a, b) { return a + b } }': [
+			{
+				type: "FunctionDeclaration",
+				range: [3, 38],
+				loc: {
+					start: { line: 1, column: 3 },
+					end: { line: 1, column: 38 }
+				},
+				id: {
+					type: "Identifier",
+					range: [12, 15],
+					loc: {
+						start: { line: 1, column: 12 },
+						end: { line: 1, column: 15 }
+					},
+					name: "add"
+				},
+				generator: false,
+				expression: false,
+				params: [
+					{
+						type: "Identifier",
+						range: [16, 17],
+						loc: {
+							start: { line: 1, column: 16 },
+							end: { line: 1, column: 17 }
+						},
+						name: "a"
+					},
+					{
+						type: "Identifier",
+						range: [19, 20],
+						loc: {
+							start: { line: 1, column: 19 },
+							end: { line: 1, column: 20 }
+						},
+						name: "b"
+					}
+				],
+				body: {
+					type: "BlockStatement",
+					range: [22, 38],
+					loc: {
+						start: { line: 1, column: 22 },
+						end: { line: 1, column: 38 }
+					},
+					body: [
+						{
+							type: "ReturnStatement",
+							range: [24, 36],
+							loc: {
+								start: { line: 1, column: 24 },
+								end: { line: 1, column: 36 }
+							},
+							argument: {
+								type: "BinaryExpression",
+								range: [31, 36],
+								loc: {
+									start: { line: 1, column: 31 },
+									end: { line: 1, column: 36 }
+								},
+								left: {
+									type: "Identifier",
+									range: [31, 32],
+									loc: {
+										start: { line: 1, column: 31 },
+										end: { line: 1, column: 32 }
+									},
+									name: "a"
+								},
+								operator: "+",
+								right: {
+									type: "Identifier",
+									range: [35, 36],
+									loc: {
+										start: { line: 1, column: 35 },
+										end: { line: 1, column: 36 }
+									},
+									name: "b"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+
+		'a{ function () {} }': "Unexpected token (1:12)",
 
 		// -------------------- Signal Definitions --------------------
 		'a{ signal b }': [

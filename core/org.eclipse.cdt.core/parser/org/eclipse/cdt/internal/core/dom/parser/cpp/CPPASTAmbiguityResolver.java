@@ -30,9 +30,11 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
@@ -127,10 +129,16 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 
 			// Visit the declarator first, it may contain ambiguous template arguments needed 
 			// for associating the template declarations.
-			fSkipInitializers++;
-			ASTQueries.findOutermostDeclarator(fdef.getDeclarator()).accept(this);
+			ICPPASTFunctionDeclarator fdecl = (ICPPASTFunctionDeclarator) fdef.getDeclarator();
+			fSkipInitializers++; // Initializers may refer to class members declared later.
+			fdecl.accept(this);
 			fSkipInitializers--;
 			fdef.getDeclSpecifier().accept(this);
+			IASTTypeId trailingReturnType = fdecl.getTrailingReturnType();
+			if (trailingReturnType != null) {
+				// Visit initializers inside the trailing return type that were skipped earlier.
+				trailingReturnType.accept(this);
+			}
 			// Defer visiting the body of the function until the class body has been visited.
 			fDeferredNodes.getLast().add(decl);
 			return PROCESS_SKIP;

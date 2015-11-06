@@ -8866,6 +8866,56 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template<typename T>
+	//	struct remove_reference {
+	//	  typedef T type;
+	//	};
+	//
+	//	template<typename T>
+	//	struct remove_reference<T&> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template<typename T>
+	//	struct remove_reference<T&&> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template<typename T>
+	//	T&& waldo(typename remove_reference<T>::type& t);
+	//
+	//	template <class T>
+	//	struct D {
+	//	  T t;
+	//	};
+	//
+	//	template <class T, class U>
+	//	T f(U p);
+	//
+	//	template <class T, class U>
+	//	auto g(U&& t) -> decltype(f<T, D<U>>(D<U>{waldo<U>(t)})) {
+	//	  return f<T, D<U>>(D<U>{waldo<U>(t)});
+	//	}
+	//
+	//	struct A {};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	  A a;
+	//
+	//	  void method() {
+	//	    g<A>(a);
+	//	  }
+	//	};
+	//
+	//	void test() {
+	//	  B<int> b;
+	//	  b.method();
+	//	}
+	public void testAmbiguityResolution_469788() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template <typename>
 	//	struct Base {
 	//	    template <typename>

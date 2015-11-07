@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67ccbf7d_dd43bcc6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1006,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-07T00:12:05Z",
+      "side": 1,
+      "message": "I think it would be better to check if processContext is null to know if we should continue or not.  That way you don\u0027t need to explicitly check for IGroupDMContext which is not committed yet and could change.",
+      "revId": "2e7c4bdce88115c3b7b84e56a7bf740cae335a32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

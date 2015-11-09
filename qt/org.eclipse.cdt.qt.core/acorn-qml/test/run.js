@@ -31,7 +31,22 @@ function log(title, message) {
 var stats, modes = {
 	Normal: {
 		config: {
-			parse: require("..").parse
+			parse: require("..").parse,
+			normal: true,
+			filter: function (test) {
+				var opts = test.options || {};
+				return opts.normal !== false;
+			}
+		}
+	},
+	Loose: {
+		config: {
+			parse: require("../loose").parse_dammit,
+			loose: true,
+			filter: function (test) {
+				var opts = test.options || {};
+				return opts.loose !== false;
+			}
 		}
 	}
 };

@@ -11,82 +11,32 @@
 'use strict';
 
 // This will only be visible globally if we are in a browser environment
-var injectQML;
+var injectQMLLoose;
 
 (function (mod) {
 	if (typeof exports === "object" && typeof module === "object") // CommonJS
 		return module.exports = mod();
 	if (typeof define === "function" && define.amd) // AMD
 		return define([], mod);
-	injectQML = mod(); // Plain browser env
+	injectQMLLoose = mod(); // Plain browser env
 })(function () {
 	return function (acorn) {
 		// Acorn token types
 		var tt = acorn.tokTypes;
 
 		// QML token types
-		var qtt = acorn.qmlTokTypes = {};
-		var keywords = acorn.qmlKeywords = {};
-
-		/*
-		 * Shorthand for defining keywords in the 'keywords' variable with the following
-		 * format:
-		 *    keywords[name].isPrimitive     : if this is a primitive type
-		 *    keywords[name].isQMLContextual : if this is a contextual keyword for QML
-		 *
-		 * Also stores the token's name in qtt._<keyword> for easy referencing later. None
-		 * of these keywords will be tokenized and, as such, are allowed to be used in
-		 * JavaScript expressions by acorn.  The 'isQMLContextual' boolean in keywords refers
-		 * to those contextual keywords that are also contextual in QML's parser rules such
-		 * as 'color', 'list', 'alias', etc.
-		 */
-		function kw(name, options) {
-			if (options === undefined)
-				options = {};
-			qtt["_" + name] = name;
-			keywords[name] = {};
-			keywords[name].isPrimitive = options.isPrimitive ? true : false;
-			keywords[name].isQMLContextual = options.isQMLContextual ? true : false;
-		}
-
-		// QML keywords
-		kw("import");
-		kw("pragma");
-		kw("property", { isQMLContextual: true });
-		kw("readonly", { isQMLContextual: true });
-		kw("signal", { isQMLContextual: true });
-		kw("as");
-		kw("boolean", { isPrimitive: true });
-		kw("double", { isPrimitive: true });
-		kw("int", { isPrimitive: true });
-		kw("alias", { isPrimitive: true, isQMLContextual: true });
-		kw("list", { isPrimitive: true, isQMLContextual: true });
-		kw("color", { isPrimitive: true, isQMLContextual: true });
-		kw("real", { isPrimitive: true, isQMLContextual: true });
-		kw("string", { isPrimitive: true, isQMLContextual: true });
-		kw("url", { isPrimitive: true, isQMLContextual: true });
-
-		// Future reserved words
-		kw("transient");
-		kw("synchronized");
-		kw("abstract");
-		kw("volatile");
-		kw("native");
-		kw("goto");
-		kw("byte");
-		kw("long");
-		kw("char");
-		kw("short");
-		kw("float");
+		var qtt = acorn.qmlTokTypes;
+		var keywords = acorn.qmlKeywords;
 
 		// QML parser methods
+		var lp = acorn.LooseParser.prototype;
 		var pp = acorn.Parser.prototype;
 
 		/*
 		 * Parses a set of QML Header Statements which can either be of
 		 * the type import or pragma
 		 */
-		pp.qml_parseHeaderStatements = function () {
+		lp.qml_parseHeaderStatements = function () {
 			var node = this.startNode()
 			node.statements = [];
 
@@ -110,7 +60,7 @@ var injectQML;
 		 * Parses a QML Pragma statement of the form:
 		 *    'pragma' <Identifier>
 		 */
-		pp.qml_parsePragmaStatement = function () {
+		lp.qml_parsePragmaStatement = function () {
 			var node = this.startNode();
 			this.expectContextual(qtt._pragma);
 			node.id = this.parseIdent(false);
@@ -125,24 +75,19 @@ var injectQML;
 		 *
 		 * as specified by http://doc.qt.io/qt-5/qtqml-syntax-imports.html
 		 */
-		pp.qml_parseImportStatement = function () {
+		lp.qml_parseImportStatement = function () {
 			var node = this.startNode();
+			this.expectContextual(qtt._import);
 
-			if (!this.eatContextual(qtt._import)) {
-				this.unexpected();
-			}
-
-			switch (this.type) {
-			case tt.name:
+			switch (this.tok.type) {
+			case tt.string:
+				node.module = null;
+				node.directory = this.parseExprAtom();
+				break;
+			default:
 				node.module = this.qml_parseModule();
 				node.directory = null;
 				break;
-			case tt.string:
-				node.module = null;
-				node.directory = this.parseLiteral(this.value);
-				break;
-			default:
-				this.unexpected();
 			}
 
 			// Parse the qualifier, if any
@@ -158,15 +103,11 @@ var injectQML;
 		 * Parses a QML Module of the form:
 		 *    <QMLQualifiedId> <QMLVersionLiteral> ['as' <QMLQualifier>]?
 		 */
-		pp.qml_parseModule = function () {
+		lp.qml_parseModule = function () {
 			var node = this.startNode();
 
 			node.id = this.qml_parseQualifiedId(false);
-			if (this.type === tt.num) {
-				node.version = this.qml_parseVersionLiteral();
-			} else {
-				this.unexpected();
-			}
+			node.version = this.qml_parseVersionLiteral();
 
 			return this.finishNode(node, "QMLModule");
 		};
@@ -175,18 +116,27 @@ var injectQML;
 		 * Parses a QML Version Literal which consists of a major and minor
 		 * version separated by a '.'
 		 */
-		pp.qml_parseVersionLiteral = function () {
+		lp.qml_parseVersionLiteral = function () {
 			var node = this.startNode();
 
-			node.raw = this.input.slice(this.start, this.end);
-			node.value = this.value;
+			node.raw = this.input.slice(this.tok.start, this.tok.end);
+			node.value = this.tok.value;
 			var matches;
-			if (matches = /(\d+)\.(\d+)/.exec(node.raw)) {
-				node.major = parseInt(matches[1]);
-				node.minor = parseInt(matches[2]);
-				this.next();
+			if (this.tok.type === tt.num) {
+				if (matches = /(\d+)\.(\d+)/.exec(node.raw)) {
+					node.major = parseInt(matches[1]);
+					node.minor = parseInt(matches[2]);
+					this.next();
+				} else {
+					node.major = parseInt(node.raw);
+					node.minor = 0;
+					this.next();
+				}
 			} else {
-				this.raise(this.start, "QML module must specify major and minor version");
+				node.major = 0;
+				node.minor = 0;
+				node.value = 0;
+				node.raw = "0.0";
 			}
 
 			return this.finishNode(node, "QMLVersionLiteral");
@@ -196,7 +146,7 @@ var injectQML;
 		 * Parses a QML Qualifier of the form:
 		 *    'as' <Identifier>
 		 */
-		pp.qml_parseQualifier = function () {
+		lp.qml_parseQualifier = function () {
 			var node = this.startNode();
 			this.expectContextual(qtt._as);
 			node.id = this.qml_parseIdent(false);
@@ -209,13 +159,9 @@ var injectQML;
 		 *
 		 * http://doc.qt.io/qt-5/qtqml-syntax-basics.html#object-declarations
 		 */
-		pp.qml_parseObjectLiteral = function (node) {
-			if (!node) {
-				node = this.startNode();
-			}
-			if (!node.id) {
-				node.id = this.qml_parseQualifiedId(false);
-			}
+		lp.qml_parseObjectLiteral = function () {
+			var node = this.startNode();
+			node.id = this.qml_parseQualifiedId(false);
 			node.body = this.qml_parseMemberBlock();
 			return this.finishNode(node, "QMLObjectLiteral");
 		}
@@ -224,13 +170,20 @@ var injectQML;
 		 * Parses a QML Member Block of the form:
 		 *    { <QMLMember>* }
 		 */
-		pp.qml_parseMemberBlock = function () {
+		lp.qml_parseMemberBlock = function () {
 			var node = this.startNode();
+			this.pushCx();
 			this.expect(tt.braceL);
+			var blockIndent = this.curIndent, line = this.curLineStart;
 			node.members = [];
-			while (!this.eat(tt.braceR)) {
-				node.members.push(this.qml_parseMember());
+			while (!this.closes(tt.braceR, blockIndent, line, true)) {
+				var member = this.qml_parseMember();
+				if (member) {
+					node.members.push(member);
+				}
 			}
+			this.popCx();
+			this.eat(tt.braceR);
 			return this.finishNode(node, "QMLMemberBlock");
 		}
 
@@ -242,56 +195,103 @@ var injectQML;
 		 *    - a JavaScript Function Declaration
 		 *    - a Signal Definition
 		 */
-		pp.qml_parseMember = function () {
-			if (this.type === tt._default || this.isContextual(qtt._readonly) || this.isContextual(qtt._property)) {
+		lp.qml_parseMember = function () {
+			if (this.tok.type === tt._default || this.isContextual(qtt._readonly) || this.isContextual(qtt._property) || this.qml_isPrimitiveType(this.tok.type, this.tok.value)) {
 				return this.qml_parsePropertyDeclaration();
 			} else if (this.isContextual(qtt._signal)) {
 				return this.qml_parseSignalDefinition();
-			} else if (this.type === tt._function) {
+			} else if (this.tok.type === tt._function) {
 				return this.qml_parseFunctionMember();
+			} else if (this.qml_isIdent(this.tok.type, this.tok.value) || this.tok.type === tt.dot) {
+				var la = this.lookAhead(1);
+				if (this.qml_isIdent(la.type, la.value)) {
+					// Two identifiers in a row means this is most likely a property declaration
+					// with the 'property' token missing
+					return this.qml_parsePropertyDeclaration();
+				} else {
+					var node = this.qml_parseObjectLiteralOrPropertyBinding();
+					if (node) {
+						return node;
+					} else {
+						return this.qml_parsePropertyBinding();
+					}
+				}
+			} else if (this.tok.type === tt.colon) {
+				return this.qml_parsePropertyBinding();
+			} else if (this.tok.type === tt.braceL) {
+				return this.qml_parseObjectLiteral();
 			}
-			return this.qml_parseObjectLiteralOrPropertyBinding();
+			// ignore the current token if it didn't pass the previous tests
+			this.next();
 		}
 
 		/*
 		 * Parses a JavaScript function as a member of a QML Object Literal
 		 */
-		pp.qml_parseFunctionMember = function () {
+		lp.qml_parseFunctionMember = function () {
 			var node = this.startNode();
 			this.expect(tt._function);
-			return this.parseFunction(node, true);
+			return this.qml_parseFunction(node, true);
+		}
+
+		/*
+		* QML version of 'parseFunction' needed to have proper error tolerant parsing
+		* for QML member functions versus their JavaScript counterparts.  The main
+		* difference between the two functions is that this implementation will not
+		* forcefully insert '(' and '{' tokens for the body and parameters.  Instead,
+		* it will silently create an empty parameter list or body and let parsing
+		* continue normally.
+		*/
+		lp.qml_parseFunction = function(node, isStatement) {
+			this.initFunction(node);
+			if (this.tok.type === tt.name) node.id = this.parseIdent();
+			else if (isStatement) node.id = this.dummyIdent();
+			node.params = this.tok.type === tt.parenL ? this.parseFunctionParams() : [];
+			if (this.tok.type === tt.braceL) {
+				node.body = this.parseBlock();
+			} else {
+				if (this.options.locations) {
+					node.body = this.startNodeAt([ this.last.end, this.last.loc.end ])
+				} else {
+					node.body = this.startNodeAt(this.last.end);
+				}
+				node.body.body = [];
+				this.finishNode(node.body, "BlockStatement");
+			}
+			return this.finishNode(node, isStatement ? "FunctionDeclaration" : "FunctionExpression");
 		}
 
 		/*
 		 * Parses a QML Object Literal or Property Binding depending on the tokens found.
 		 */
-		pp.qml_parseObjectLiteralOrPropertyBinding = function (node) {
-			if (!node) {
-				node = this.startNode();
+		lp.qml_parseObjectLiteralOrPropertyBinding = function () {
+			var i = 1, la = this.tok;
+			if (this.qml_isIdent(la.type, la.value)) {
+				la = this.lookAhead(i++);
 			}
-			if (!node.id) {
-				node.id = this.qml_parseQualifiedId(false);
+			while (la.type === tt.dot) {
+				la = this.lookAhead(i++);
+				if (this.qml_isIdent(la.type, la.value)) {
+					la = this.lookAhead(i++);
+				}
 			}
-			switch (this.type) {
+
+			switch (la.type) {
 			case tt.braceL:
-				return this.qml_parseObjectLiteral(node);
+				return this.qml_parseObjectLiteral();
 			case tt.colon:
-				return this.qml_parsePropertyBinding(node);
+				return this.qml_parsePropertyBinding();
 			}
-			this.unexpected();
+			return null;
 		}
 
 		/*
 		 * Parses a QML Property of the form:
 		 *    <QMLQualifiedID> <QMLBinding>
 		 */
-		pp.qml_parsePropertyBinding = function (node) {
-			if (!node) {
-				node = this.startNode();
-			}
-			if (!node.id) {
-				node.id = this.qml_parseQualifiedId(false);
-			}
+		lp.qml_parsePropertyBinding = function () {
+			var node = this.startNode();
+			node.id = this.qml_parseQualifiedId(false);
 			this.expect(tt.colon);
 			node.expr = this.qml_parsePropertyAssignment();
 			return this.finishNode(node, "QMLPropertyBinding");
@@ -301,26 +301,15 @@ var injectQML;
 		 * Parses a QML Signal Definition of the form:
 		 *    'signal' <Identifier> [(<Type> <Identifier> [',' <Type> <Identifier>]* )]?
 		 */
-		pp.qml_parseSignalDefinition = function () {
+		lp.qml_parseSignalDefinition = function () {
 			var node = this.startNode();
 
-			// Parse as a qualified id in case this is not a signal definition
-			var signal = this.qml_parseQualifiedId(true);
-			if (signal.parts.length === 1) {
-				if (signal.name !== qtt._signal) {
-					this.unexpected();
-				}
-
-				if (this.type === tt.colon || this.type === tt.braceL) {
-					// This is a property binding or object literal
-					node.id = signal;
-					return this.qml_parseObjectLiteralOrPropertyBinding(node);
-				}
-			} else {
-				// Signal keyword is a qualified ID.  This is not a signal definition
-				node.id = signal;
-				return this.qml_parseObjectLiteralOrPropertyBinding(node);
+			// Check if this is an object literal or property binding first
+			var objOrBind = this.qml_parseObjectLiteralOrPropertyBinding();
+			if (objOrBind) {
+				return objOrBind;
 			}
+			this.expectContextual(qtt._signal);
 
 			node.id = this.qml_parseIdent(false);
 			this.qml_parseSignalParams(node);
@@ -329,20 +318,46 @@ var injectQML;
 		}
 
 		/*
+		* Checks if the given node is a dummy identifier
+		*/
+		function isDummy(node) {
+			return node.name === "✖"
+		}
+
+		/*
 		 * Parses QML Signal Parameters of the form:
 		 *    [(<Type> <Identifier> [',' <Type> <Identifier>]* )]?
 		 */
-		pp.qml_parseSignalParams = function (node) {
+		lp.qml_parseSignalParams = function (node) {
+			this.pushCx()
+			let indent = this.curIndent, line = this.curLineStart
 			node.params = [];
 			if (this.eat(tt.parenL)) {
+				while (!this.closes(tt.parenR, indent + 1, line)) {
+					var param = this.startNode();
+
+					param.kind = this.qml_parseIdent(true);
+
+					// Break out of an infinite loop where we continously consume dummy ids
+					if (isDummy(param.kind) && this.tok.type !== tt.comma) {
+						break;
+					}
+
+					param.id = this.qml_parseIdent(false);
+					node.params.push(this.finishNode(param, "QMLParameter"));
+
+					// Break out of an infinite loop where we continously consume dummy ids
+					if (isDummy(param.id) && this.tok.type !== tt.comma) {
+						break;
+					}
+					this.eat(tt.comma);
+				}
+				this.popCx()
 				if (!this.eat(tt.parenR)) {
-					do {
-						var param = this.startNode();
-						param.kind = this.qml_parseIdent(true);
-						param.id = this.qml_parseIdent(false);
-						node.params.push(this.finishNode(param, "QMLParameter"));
-					} while (this.eat(tt.comma));
-					this.expect(tt.parenR);
+					// If there is no closing brace, make the node span to the start
+					// of the next token (this is useful for Tern)
+					this.last.end = this.tok.start
+					if (this.options.locations) this.last.loc.end = this.tok.loc.start
 				}
 			}
 		}
@@ -351,7 +366,7 @@ var injectQML;
 		 * Parses a QML Property Declaration (or Alias) of the form:
 		 *    ['default'|'readonly'] 'property' <QMLType> <Identifier> [<QMLBinding>]
 		 */
-		pp.qml_parsePropertyDeclaration = function () {
+		lp.qml_parsePropertyDeclaration = function () {
 			var node = this.startNode();
 
 			// Parse 'default' or 'readonly'
@@ -360,43 +375,26 @@ var injectQML;
 			if (this.eat(tt._default)) {
 				node["default"] = true;
 			} else if (this.isContextual(qtt._readonly)) {
-				// Parse as a qualified id in case this is not a property declaration
-				var readonly = this.qml_parseQualifiedId(true);
-				if (readonly.parts.length === 1) {
-					if (this.type === tt.colon || this.type === tt.braceL) {
-						// This is a property binding or object literal.
-						node.id = readonly;
-						return this.qml_parseObjectLiteralOrPropertyBinding(node);
-					}
-					node["readonly"] = true;
-				} else {
-					// Readonly keyword is a qualified ID.  This is not a property declaration.
-					node.id = readonly;
-					return this.qml_parseObjectLiteralOrPropertyBinding(node);
+				var objOrBind = this.qml_parseObjectLiteralOrPropertyBinding();
+				if (objOrBind) {
+					objOrBind["default"] = undefined;
+					objOrBind["readonly"] = undefined;
+					return objOrBind;
 				}
+				this.expectContextual(qtt._readonly);
+				node["readonly"] = true;
 			}
 
-			// Parse as a qualified id in case this is not a property declaration
-			var property = this.qml_parseQualifiedId(true);
-			if (property.parts.length === 1 || node["default"] || node["readonly"]) {
-				if (property.name !== qtt._property) {
-					this.unexpected();
+			if (!node["default"] && !node["readonly"]) {
+				var objOrBind = this.qml_parseObjectLiteralOrPropertyBinding();
+				if (objOrBind) {
+					return objOrBind;
 				}
-
-				if (this.type === tt.colon || this.type === tt.braceL) {
-					// This is a property binding or object literal.
-					node["default"] = undefined;
-					node["readonly"] = undefined;
-					node.id = property;
-					return this.qml_parseObjectLiteralOrPropertyBinding(node);
-				}
+				this.expectContextual(qtt._property);
 			} else {
-				// Property keyword is a qualified ID.  This is not a property declaration.
-				node["default"] = undefined;
-				node["readonly"] = undefined;
-				node.id = property;
-				return this.qml_parseObjectLiteralOrPropertyBinding(node);
+				this.expectContextual(qtt._property);
 			}
+
 
 			node.kind = this.qml_parseKind();
 			node.id = this.qml_parseIdent(false);
@@ -416,19 +414,30 @@ var injectQML;
 		 *    - QML JavaScript Statement Block
 		 *    - QML Object Literal
 		 */
-		pp.qml_parsePropertyAssignment = function () {
-			// TODO: solve ambiguity where a QML Object Literal starts with a
-			// Qualified Id that looks very similar to a MemberExpression in
-			// JavaScript.  For now, we just won't parse statements like:
-			//      test: QMLObject {  }
-			//      test: QMLObject.QualifiedId {  }
-
-			if (this.type === tt.braceL) {
+		lp.qml_parsePropertyAssignment = function () {
+			if (this.tok.type === tt.braceL) {
 				return this.qml_parseStatementBlock();
 			} else {
-				var node = this.parseExpression(false);
-				this.semicolon();
-				return node;
+				// Perform look ahead to determine whether this is an expression or
+				// a QML Object Literal
+				var i = 1, la = this.tok;
+				if (this.qml_isIdent(la.type, la.value)) {
+					la = this.lookAhead(i++);
+				}
+				while (la.type === tt.dot) {
+					la = this.lookAhead(i++);
+					if (this.qml_isIdent(la.type, la.value)) {
+						la = this.lookAhead(i++);
+					}
+				}
+
+				if (la.type === tt.braceL) {
+					return this.qml_parseObjectLiteral();
+				} else {
+					var node = this.parseExpression(false);
+					this.semicolon();
+					return node;
+				}
 			}
 		}
 
@@ -436,28 +445,31 @@ var injectQML;
 		 * Parses a QML Statement Block of the form:
 		 *    { <JavaScript Statement>* }
 		 */
-		pp.qml_parseStatementBlock = function () {
+		lp.qml_parseStatementBlock = function () {
 			var node = this.startNode();
+			this.pushCx();
 			this.expect(tt.braceL);
+			var blockIndent = this.curIndent,
+				line = this.curLineStart;
 			node.statements = [];
-			while (!this.eat(tt.braceR)) {
+			while (!this.closes(tt.braceR, blockIndent, line, true)) {
 				node.statements.push(this.parseStatement(true, false));
 			}
+			this.popCx();
+			this.eat(tt.braceR);
 			return this.finishNode(node, "QMLStatementBlock");
 		}
 
 		/*
 		 * Parses a QML Type which can be either a Qualified ID or a primitive type keyword.
-		 * Returns a node of type qtt._alias if the type keyword parsed was "alias".
 		 */
-		pp.qml_parseKind = function () {
-			var value = this.value;
-			if (this.qml_eatPrimitiveType(this.type, value)) {
+		lp.qml_parseKind = function () {
+			var value = this.tok.value;
+			if (this.qml_eatPrimitiveType(this.tok.type, value)) {
 				return value;
 			} else {
 				return this.qml_parseQualifiedId(false);
 			}
-			this.unexpected();
 		}
 
 		/*
@@ -467,7 +479,7 @@ var injectQML;
 		 * If 'liberal' is true then this method will allow non-contextual QML keywords as
 		 * identifiers.
 		 */
-		pp.qml_parseQualifiedId = function (liberal) {
+		lp.qml_parseQualifiedId = function (liberal) {
 			var node = this.startNode();
 			node.parts = [];
 			node.parts.push(this.qml_parseIdent(liberal));
@@ -493,65 +505,41 @@ var injectQML;
 		 * If 'liberal' is true then this method will allow non-contextual QML keywords as
 		 * identifiers.
 		 */
-		pp.qml_parseIdent = function (liberal) {
+		lp.qml_parseIdent = function (liberal) {
 			// Check for non-contextual QML keywords
 			if (!liberal) {
-				if (!this.qml_isIdent(this.type, this.value)) {
-					this.unexpected();
+				if (!this.qml_isIdent(this.tok.type, this.tok.value)) {
+					return this.dummyIdent();
 				}
 			}
-			return this.parseIdent(liberal);
+			return this.parseIdent();
 		}
 
 		/*
-		 * Returns whether or not a given token type and name can be a QML Identifier.
-		 * Uses the 'isQMLContextual' boolean of 'keywords' to determine this.
-		 */
-		pp.qml_isIdent = function (type, name) {
-			if (type === tt.name) {
-				var key;
-				if (key = keywords[name]) {
-					return key.isQMLContextual
-				}
-				return true;
-			}
-			return false;
-		}
-
-		/*
-		 * Returns whether or not the current token is a QML primitive type and consumes
-		 * it as a side effect if it is.
-		 */
-		pp.qml_eatPrimitiveType = function (type, name) {
-			if (this.qml_isPrimitiveType(type, name)) {
-				this.next();
-				return true;
-			}
-			return false;
-		}
-
-		/*
-		 * Returns whether or not the current token is a QML primitive type.
-		 */
-		pp.qml_isPrimitiveType = function (type, name) {
-			if (name === "var") {
-				return true;
-			}
-
-			if (type === tt.name) {
-				var key;
-				if (key = keywords[name]) {
-					return key.isPrimitive;
+		* Checks the next token to see if it matches the given contextual keyword.  If the
+		* contextual keyword was not found, this function looks ahead at the next two tokens
+		* and jumps ahead if it was found there.  Returns whether or not the keyword was found.
+		*/
+		lp.expectContextual = function(name) {
+			if (this.eatContextual(name)) return true
+			for (let i = 1; i <= 2; i++) {
+				if (this.lookAhead(i).type == tt.name && this.lookAhead(i).value === name) {
+					for (let j = 0; j < i; j++) this.next()
+					return true
 				}
 			}
-			return false;
 		}
 
-		acorn.plugins.qml = function (instance) {
+		// Functions left un-changed from the main parser
+		lp.qml_isIdent = pp.qml_isIdent;
+		lp.qml_eatPrimitiveType = pp.qml_eatPrimitiveType;
+		lp.qml_isPrimitiveType = pp.qml_isPrimitiveType;
+
+		acorn.pluginsLoose.qml = function (instance) {
 
 			// Extend acorn's 'parseTopLevel' method
 			instance.extend("parseTopLevel", function (nextMethod) {
-				return function (node) {
+				return function () {
 					// Make parsing simpler by only allowing ECMA Version 5 or older ('import' is
 					// not a keyword in this version of ECMA Script).  Qt 5.5 runs with ECMA Script
 					// 5 anyway, so this makes sense.
@@ -559,21 +547,15 @@ var injectQML;
 						throw new Error("QML only supports ECMA Script Language Specification 5 or older");
 					}
 
-					// Force strict mode
-					this.strict = true;
-
 					// Most of QML's constructs sit at the top-level of the parse tree,
 					// replacing JavaScripts top-level.  Here we are parsing such things
 					// as the root object literal and header statements of QML.  Eventually,
 					// these rules will delegate down to JavaScript expressions.
+					var node = this.startNode();
 					node.headerStatements = this.qml_parseHeaderStatements();
 					node.rootObject = null;
-					if (this.type !== tt.eof) {
+					if (this.tok.type !== tt.eof) {
 						node.rootObject = this.qml_parseObjectLiteral();
-					}
-
-					if (!this.eat(tt.eof)) {
-						this.raise(this.pos, "Expected EOF after QML Root Object");
 					}
 
 					return this.finishNode(node, "Program");

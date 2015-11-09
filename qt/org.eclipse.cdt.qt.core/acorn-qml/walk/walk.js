@@ -38,7 +38,7 @@
 	base["QMLPragmaStatement"] = ignore;
 	base["QMLRootObject"] = skipThrough;
 	base["QMLObjectLiteral"] = function (node, st, c) {
-		c(node.block, st);
+		c(node.body, st);
 	};
 	base["QMLMemberBlock"] = function (node, st, c) {
 		for (var i = 0; i < node.members.length; i++) {

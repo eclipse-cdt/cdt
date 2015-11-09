@@ -13,3449 +13,3134 @@ var test = require("./driver.js").test;
 var testFail = require("./driver.js").testFail;
 var tokTypes = require("../").tokTypes;
 
-var testFixture = {
-	// ------------------- QML Header Statements ------------------
-	'qml-header-statements': {
+testFail('', "QML only supports ECMA Script Language Specification 5 or older",
+		{ locations: true, ecmaVersion: 6, allowReserved: false });
 
-		// -------------------------- Import --------------------------
-		'import QtQuick 2.2': {
-			type: "QMLHeaderStatements",
-			range: [0, 18],
+test('import QtQuick 2.2', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 18 }
+		},
+	module: {
+		type: "QMLModule",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 18 }
+		},
+		id: {
+			type: "QMLQualifiedID",
 			loc: {
-				start: { line: 1, column: 0 },
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 14 }
+			},
+			parts: [{ type: "Identifier", name: "QtQuick" }],
+			name: "QtQuick"
+		},
+		version: {
+			type: "QMLVersionLiteral",
+			loc: {
+				start: { line: 1, column: 15 },
 				end: { line: 1, column: 18 }
 			},
-			statements: [
-				{
-					type: "QMLImportStatement",
-					range: [0, 18],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 18 }
-					},
-					module: {
-						type: "QMLModule",
-						range: [7, 18],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 18 }
-						},
-						id: {
-							type: "QMLQualifiedID",
-							range: [7, 14],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 14 }
-							},
-							parts: [{
-								type: "Identifier",
-								range: [7, 14],
-								loc: {
-									start: { line: 1, column: 7 },
-									end: { line: 1, column: 14 }
-								},
-								name: "QtQuick"
-							}],
-							name: "QtQuick"
-						},
-						version: {
-							type: "QMLVersionLiteral",
-							range: [15, 18],
-							loc: {
-								start: { line: 1, column: 15 },
-								end: { line: 1, column: 18 }
-							},
-							value: 2.2,
-							major: 2,
-							minor: 2,
-							raw: "2.2"
-						}
-					}
-				}
-			]
-		},
+			value: 2.2,
+			major: 2,
+			minor: 2,
+			raw: "2.2"
+		}
+	}
+}]));
 
-		'import "./file.js"': {
-			type: "QMLHeaderStatements",
-			range: [0, 18],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 18 }
-			},
-			statements: [
-				{
-					type: "QMLImportStatement",
-					range: [0, 18],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 18 }
-					},
-					directory: {
-						type:"Literal",
-						range: [7, 18],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 18 }
-						},
-						value: "./file.js",
-						raw: "\"./file.js\""
-					}
-				}
-			]
+test('import "./file.js"', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 18 }
+	},
+	directory: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 18 }
 		},
+		value: "./file.js",
+		raw: "\"./file.js\""
+	}
+}]));
 
-		'import "./file.js" as MyModule': {
-			type: "QMLHeaderStatements",
-			range: [0, 30],
+test('import "./file.js" as MyModule', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 30 }
+	},
+	directory: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 18 }
+		},
+		value: "./file.js",
+		raw: "\"./file.js\""
+	},
+	qualifier: {
+		type: "QMLQualifier",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 30 }
+		},
+		id: {
+			type: "Identifier",
 			loc: {
-				start: { line: 1, column: 0 },
+				start: { line: 1, column: 22 },
 				end: { line: 1, column: 30 }
 			},
-			statements: [
-				{
-					type: "QMLImportStatement",
-					range: [0, 30],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 30 }
-					},
-					directory: {
-						type:"Literal",
-						range: [7, 18],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 18 }
-						},
-						value: "./file.js",
-						raw: "\"./file.js\""
-					},
-					qualifier: {
-						type: "QMLQualifier",
-						range: [19, 30],
-						loc: {
-							start: { line: 1, column: 19 },
-							end: { line: 1, column: 30 }
-						},
-						id: {
-							type:"Identifier",
-							range: [22, 30],
-							loc: {
-								start: { line: 1, column: 22 },
-								end: { line: 1, column: 30 }
-							},
-							name: "MyModule"
-						}
-					}
-				}
-			]
-		},
-
-		'import QtQuick ver': "Unexpected token (1:15)",
-
-		'import QtQuick 0x01': "QML module must specify major and minor version (1:15)",
-
-		'import QtQuick 1': "QML module must specify major and minor version (1:15)",
-
-		'import QtQuick 2.2\nimport "./file.js"': {
-			type: "QMLHeaderStatements",
-			range: [0, 37],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 2, column: 18 }
-			},
-			statements: [
-				{
-					type: "QMLImportStatement",
-					range: [0, 18],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 18 }
-					},
-					module: {
-						type: "QMLModule",
-						range: [7, 18],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 18 }
-						},
-						id: {
-							type: "QMLQualifiedID",
-							range: [7, 14],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 14 }
-							},
-							parts: [{
-								type: "Identifier",
-								range: [7, 14],
-								loc: {
-									start: { line: 1, column: 7 },
-									end: { line: 1, column: 14 }
-								},
-								name: "QtQuick"
-							}],
-							name: "QtQuick"
-						},
-						version: {
-							type: "QMLVersionLiteral",
-							range: [15, 18],
-							loc: {
-								start: { line: 1, column: 15 },
-								end: { line: 1, column: 18 }
-							},
-							value: 2.2,
-							major: 2,
-							minor: 2,
-							raw: "2.2"
-						}
-					}
-				},
-				{
-					type: "QMLImportStatement",
-					range: [19, 37],
-					loc: {
-						start: { line: 2, column: 0 },
-						end: { line: 2, column: 18 }
-					},
-					directory: {
-						type:"Literal",
-						range: [26, 37],
-						loc: {
-							start: { line: 2, column: 7 },
-							end: { line: 2, column: 18 }
-						},
-						value: "./file.js",
-						raw: "\"./file.js\""
-					}
-				}
-			]
-		},
-
-		'import QtQuick 2.2;import "./file.js"': {
-			type: "QMLHeaderStatements",
-			range: [0, 37],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 37 }
-			},
-			statements: [
-				{
-					type: "QMLImportStatement",
-					range: [0, 19],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 19 }
-					},
-					module: {
-						type: "QMLModule",
-						range: [7, 18],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 18 }
-						},
-						id: {
-							type: "QMLQualifiedID",
-							range: [7, 14],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 14 }
-							},
-							parts: [{
-								type: "Identifier",
-								range: [7, 14],
-								loc: {
-									start: { line: 1, column: 7 },
-									end: { line: 1, column: 14 }
-								},
-								name: "QtQuick"
-							}],
-							name: "QtQuick"
-						},
-						version: {
-							type: "QMLVersionLiteral",
-							range: [15, 18],
-							loc: {
-								start: { line: 1, column: 15 },
-								end: { line: 1, column: 18 }
-							},
-							value: 2.2,
-							major: 2,
-							minor: 2,
-							raw: "2.2"
-						}
-					}
-				},
-				{
-					type: "QMLImportStatement",
-					range: [19, 37],
-					loc: {
-						start: { line: 1, column: 19 },
-						end: { line: 1, column: 37 }
-					},
-					directory: {
-						type:"Literal",
-						range: [26, 37],
-						loc: {
-							start: { line: 1, column: 26 },
-							end: { line: 1, column: 37 }
-						},
-						value: "./file.js",
-						raw: "\"./file.js\""
-					}
-				}
-			]
-		},
-
-		'import Module 1.0 as MyModule': {
-			type: "QMLHeaderStatements",
-			range: [0, 29],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 29 }
-			},
-			statements: [
-				{
-					type: "QMLImportStatement",
-					range: [0, 29],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 29 }
-					},
-					module: {
-						type: "QMLModule",
-						range: [7, 17],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 17 }
-						},
-						id: {
-							type: "QMLQualifiedID",
-							range: [7, 13],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 13 }
-							},
-							parts: [{
-								type: "Identifier",
-								range: [7, 13],
-								loc: {
-									start: { line: 1, column: 7 },
-									end: { line: 1, column: 13 }
-								},
-								name: "Module"
-							}],
-							name: "Module"
-						},
-						version: {
-							type: "QMLVersionLiteral",
-							range: [14, 17],
-							loc: {
-								start: { line: 1, column: 14 },
-								end: { line: 1, column: 17 }
-							},
-							value: 1,
-							major: 1,
-							minor: 0,
-							raw: "1.0"
-						}
-					},
-					qualifier: {
-						type: "QMLQualifier",
-						range: [18, 29],
-						loc: {
-							start: { line: 1, column: 18 },
-							end: { line: 1, column: 29 }
-						},
-						id: {
-							type:"Identifier",
-							range: [21, 29],
-							loc: {
-								start: { line: 1, column: 21 },
-								end: { line: 1, column: 29 }
-							},
-							name: "MyModule"
-						}
-					}
-				}
-			]
-		},
-
-		'import Qualified.Id.Test 1.0': {
-			type: "QMLHeaderStatements",
-			range: [0, 28],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 28 }
-			},
-			statements: [
-				{
-					type: "QMLImportStatement",
-					range: [0, 28],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 28 }
-					},
-					module: {
-						type: "QMLModule",
-						range: [7, 28],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 28 }
-						},
-						id: {
-							type: "QMLQualifiedID",
-							range: [7, 24],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 24 }
-							},
-							parts: [
-								{
-									type: "Identifier",
-									range: [7, 16],
-									loc: {
-										start: { line: 1, column: 7 },
-										end: { line: 1, column: 16 }
-									},
-									name: "Qualified"
-								},
-								{
-									type: "Identifier",
-									range: [17, 19],
-									loc: {
-										start: { line: 1, column: 17 },
-										end: { line: 1, column: 19 }
-									},
-									name: "Id"
-								},
-								{
-									type: "Identifier",
-									range: [20, 24],
-									loc: {
-										start: { line: 1, column: 20 },
-										end: { line: 1, column: 24 }
-									},
-									name: "Test"
-								}
-							],
-							name: "Qualified.Id.Test"
-						},
-						version: {
-							type: "QMLVersionLiteral",
-							range: [25, 28],
-							loc: {
-								start: { line: 1, column: 25 },
-								end: { line: 1, column: 28 }
-							},
-							value: 1,
-							major: 1,
-							minor: 0,
-							raw: "1.0"
-						}
-					}
-				}
-			]
-		},
-
-		// -------------------------- Pragma --------------------------
-		'pragma Singleton': {
-			type: "QMLHeaderStatements",
-			range: [0, 16],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 16 }
-			},
-			statements: [
-				{
-					type: "QMLPragmaStatement",
-					range: [0, 16],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 16 }
-					},
-					id: {
-						type: "Identifier",
-						range: [7, 16],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 16 }
-						},
-						name: "Singleton"
-					}
-				}
-			]
-		},
-
-		'pragma Singleton\npragma Other': {
-			type: "QMLHeaderStatements",
-			range: [0, 29],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 2, column: 12 }
-			},
-			statements: [
-				{
-					type: "QMLPragmaStatement",
-					range: [0, 16],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 16 }
-					},
-					id: {
-						type: "Identifier",
-						range: [7, 16],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 16 }
-						},
-						name: "Singleton"
-					}
-				},
-				{
-					type: "QMLPragmaStatement",
-					range: [17, 29],
-					loc: {
-						start: { line: 2, column: 0 },
-						end: { line: 2, column: 12 }
-					},
-					id: {
-						type: "Identifier",
-						range: [24, 29],
-						loc: {
-							start: { line: 2, column: 7 },
-							end: { line: 2, column: 12 }
-						},
-						name: "Other"
-					}
-				}
-			]
-		},
-
-		'pragma Singleton;pragma Other': {
-			type: "QMLHeaderStatements",
-			range: [0, 29],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 29 }
-			},
-			statements: [
-				{
-					type: "QMLPragmaStatement",
-					range: [0, 17],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 17 }
-					},
-					id: {
-						type: "Identifier",
-						range: [7, 16],
-						loc: {
-							start: { line: 1, column: 7 },
-							end: { line: 1, column: 16 }
-						},
-						name: "Singleton"
-					}
-				},
-				{
-					type: "QMLPragmaStatement",
-					range: [17, 29],
-					loc: {
-						start: { line: 1, column: 17 },
-						end: { line: 1, column: 29 }
-					},
-					id: {
-						type: "Identifier",
-						range: [24, 29],
-						loc: {
-							start: { line: 1, column: 24 },
-							end: { line: 1, column: 29 }
-						},
-						name: "Other"
-					}
-				}
-			]
+			name: "MyModule"
 		}
-	},
+	}
+}]));
 
-	// ---------------------- Object Literals ---------------------
-	'qml-object-literal': {
-		'Window {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 9],
+testFail('import QtQuick ver',
+		"Unexpected token (1:15)",
+		{ locations: true, loose: false });
+
+testFail('import QtQuick 0x01',
+		"QML module must specify major and minor version (1:15)",
+		{ locations: true, loose: false });
+
+testFail('import QtQuick 1',
+		"QML module must specify major and minor version (1:15)",
+		{ locations: true, loose: false });
+
+test('import QtQuick 2.2\nimport "./file.js"', headerStatements([
+	{
+		type: "QMLImportStatement",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 18 }
+		},
+		module: {
+			type: "QMLModule",
 			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 9 }
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 18 }
 			},
 			id: {
 				type: "QMLQualifiedID",
-				range: [0, 6],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 6 }
-				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 6],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 6 }
-					},
-					name: "Window"
-				}],
-				name: "Window"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [7, 9],
 				loc: {
 					start: { line: 1, column: 7 },
-					end: { line: 1, column: 9 }
+					end: { line: 1, column: 14 }
 				},
-				members: []
+				parts: [{ type: "Identifier", name: "QtQuick" }],
+				name: "QtQuick"
+			},
+			version: {
+				type: "QMLVersionLiteral",
+				loc: {
+					start: { line: 1, column: 15 },
+					end: { line: 1, column: 18 }
+				},
+				value: 2.2,
+				major: 2,
+				minor: 2,
+				raw: "2.2"
 			}
+		}
+	},
+	{
+		type: "QMLImportStatement",
+		loc: {
+			start: { line: 2, column: 0 },
+			end: { line: 2, column: 18 }
 		},
-
-		'QtQuick.Window {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 17],
+		directory: {
+			type: "Literal",
 			loc: {
-				start: { line: 1, column: 0 },
+				start: { line: 2, column: 7 },
+				end: { line: 2, column: 18 }
+			},
+			value: "./file.js",
+			raw: "\"./file.js\""
+		}
+	}
+]));
+
+test('import QtQuick 2.2;import "./file.js"', headerStatements([
+	{
+		type: "QMLImportStatement",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 19 }
+		},
+		module: {
+			type: "QMLModule",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 18 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				loc: {
+					start: { line: 1, column: 7 },
+					end: { line: 1, column: 14 }
+				},
+				parts: [{ type: "Identifier", name: "QtQuick" }],
+				name: "QtQuick"
+			},
+			version: {
+				type: "QMLVersionLiteral",
+				loc: {
+					start: { line: 1, column: 15 },
+					end: { line: 1, column: 18 }
+				},
+				value: 2.2,
+				major: 2,
+				minor: 2,
+				raw: "2.2"
+			}
+		}
+	},
+	{
+		type: "QMLImportStatement",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 37 }
+		},
+		directory: {
+			type: "Literal",
+			loc: {
+				start: { line: 1, column: 26 },
+				end: { line: 1, column: 37 }
+			},
+			value: "./file.js",
+			raw: "\"./file.js\""
+		}
+	}
+]));
+
+test('import Module 1.0 as MyModule', headerStatements([
+	{
+		type: "QMLImportStatement",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 29 }
+		},
+		module: {
+			type: "QMLModule",
+			loc: {
+				start: { line: 1, column: 7 },
 				end: { line: 1, column: 17 }
 			},
 			id: {
 				type: "QMLQualifiedID",
-				range: [0, 14],
 				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 14 }
+					start: { line: 1, column: 7 },
+					end: { line: 1, column: 13 }
 				},
-				parts: [
-					{
-						type: "Identifier",
-						range: [0, 7],
-						loc: {
-							start: { line: 1, column: 0 },
-							end: { line: 1, column: 7 }
-						},
-						name: "QtQuick"
-					},
-					{
-						type: "Identifier",
-						range: [8, 14],
-						loc: {
-							start: { line: 1, column: 8 },
-							end: { line: 1, column: 14 }
-						},
-						name: "Window"
-					}
-				],
-				name: "QtQuick.Window"
+				parts: [{ type: "Identifier", name: "Module" }],
+				name: "Module"
 			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [15, 17],
+			version: {
+				type: "QMLVersionLiteral",
 				loc: {
-					start: { line: 1, column: 15 },
+					start: { line: 1, column: 14 },
 					end: { line: 1, column: 17 }
 				},
-				members: []
+				value: 1,
+				major: 1,
+				minor: 0,
+				raw: "1.0"
 			}
 		},
-
-		'property {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 11],
+		qualifier: {
+			type: "QMLQualifier",
 			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 11 }
+				start: { line: 1, column: 18 },
+				end: { line: 1, column: 29 }
+			},
+			id: {
+				type: "Identifier",
+				loc: {
+					start: { line: 1, column: 21 },
+					end: { line: 1, column: 29 }
+				},
+				name: "MyModule"
+			}
+		}
+	}
+]));
+
+test('import Qualified.Id.Test 1.0', headerStatements([
+	{
+		type: "QMLImportStatement",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 28 }
+		},
+		module: {
+			type: "QMLModule",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 28 }
 			},
 			id: {
 				type: "QMLQualifiedID",
-				range: [0, 8],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 8 }
-				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 8],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 8 }
-					},
-					name: "property"
-				}],
-				name: "property"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [9, 11],
-				loc: {
-					start: { line: 1, column: 9 },
-					end: { line: 1, column: 11 }
-				},
-				members: []
-			}
-		},
-
-		'readonly {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 11],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 11 }
-			},
-			id: {
-				type: "QMLQualifiedID",
-				range: [0, 8],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 8 }
-				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 8],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 8 }
-					},
-					name: "readonly"
-				}],
-				name: "readonly"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [9, 11],
-				loc: {
-					start: { line: 1, column: 9 },
-					end: { line: 1, column: 11 }
-				},
-				members: []
-			}
-		},
-
-		'signal {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 9],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 9 }
-			},
-			id: {
-				type: "QMLQualifiedID",
-				range: [0, 6],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 6 }
-				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 6],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 6 }
-					},
-					name: "signal"
-				}],
-				name: "signal"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [7, 9],
 				loc: {
 					start: { line: 1, column: 7 },
-					end: { line: 1, column: 9 }
+					end: { line: 1, column: 24 }
 				},
-				members: []
+				parts: [
+					{ type: "Identifier", name: "Qualified" },
+					{ type: "Identifier", name: "Id" },
+					{ type: "Identifier", name: "Test" }
+				],
+				name: "Qualified.Id.Test"
+			},
+			version: {
+				type: "QMLVersionLiteral",
+				loc: {
+					start: { line: 1, column: 25 },
+					end: { line: 1, column: 28 }
+				},
+				value: 1,
+				major: 1,
+				minor: 0,
+				raw: "1.0"
 			}
-		},
+		}
+	}
+]));
 
-		'alias {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 8],
+test('pragma Singleton', headerStatements([
+	{
+		type: "QMLPragmaStatement",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 16 }
+		},
+		id: {
+			type: "Identifier",
 			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 8 }
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 16 }
+			},
+			name: "Singleton"
+		}
+	}
+]));
+
+test('pragma Singleton\npragma Other', headerStatements([
+	{
+		type: "QMLPragmaStatement",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 16 }
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 16 }
+			},
+			name: "Singleton"
+		}
+	},
+	{
+		type: "QMLPragmaStatement",
+		loc: {
+			start: { line: 2, column: 0 },
+			end: { line: 2, column: 12 }
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 2, column: 7 },
+				end: { line: 2, column: 12 }
+			},
+			name: "Other"
+		}
+	}
+]));
+
+test('pragma Singleton;pragma Other', headerStatements([
+	{
+		type: "QMLPragmaStatement",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 17 }
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 16 }
+			},
+			name: "Singleton"
+		}
+	},
+	{
+		type: "QMLPragmaStatement",
+		loc: {
+			start: { line: 1, column: 17 },
+			end: { line: 1, column: 29 }
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 1, column: 24 },
+				end: { line: 1, column: 29 }
+			},
+			name: "Other"
+		}
+	}
+]));
+
+test('Window {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 9 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 6 }
+		},
+		parts: [{ type: "Identifier", name: "Window" }],
+		name: "Window"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 9 }
+		},
+		members: []
+	}
+}));
+
+test('QtQuick.Window {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 17 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 14 }
+		},
+		parts: [
+			{ type: "Identifier", name: "QtQuick" },
+			{ type: "Identifier", name: "Window" }
+		],
+		name: "QtQuick.Window"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 15 },
+			end: { line: 1, column: 17 }
+		},
+		members: []
+	}
+}));
+
+test('property {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 11 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 8 }
+		},
+		parts: [{ type: "Identifier", name: "property" }],
+		name: "property"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 9 },
+			end: { line: 1, column: 11 }
+		},
+		members: []
+	}
+}));
+
+test('readonly {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 11 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 8 }
+		},
+		parts: [{ type: "Identifier", name: "readonly" }],
+		name: "readonly"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 9 },
+			end: { line: 1, column: 11 }
+		},
+		members: []
+	}
+}));
+
+test('signal {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 9 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 6 }
+		},
+		parts: [{ type: "Identifier", name: "signal" }],
+		name: "signal"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 9 }
+		},
+		members: []
+	}
+}));
+
+test('alias {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 8 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 5 }
+		},
+		parts: [{ type: "Identifier", name: "alias" }],
+		name: "alias"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 8 }
+		},
+		members: []
+	}
+}));
+
+test('list {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 7 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "list" }],
+		name: "list"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 5 },
+			end: { line: 1, column: 7 }
+		},
+		members: []
+	}
+}));
+
+test('color {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 8 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 5 }
+		},
+		parts: [{ type: "Identifier", name: "color" }],
+		name: "color"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 8 }
+		},
+		members: []
+	}
+}));
+
+test('real {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 7 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "real" }],
+		name: "real"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 5 },
+			end: { line: 1, column: 7 }
+		},
+		members: []
+	}
+}));
+
+test('string {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 9 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 6 }
+		},
+		parts: [{ type: "Identifier", name: "string" }],
+		name: "string"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 9 }
+		},
+		members: []
+	}
+}));
+
+test('url {}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 6 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 3 }
+		},
+		parts: [{ type: "Identifier", name: "url" }],
+		name: "url"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 4 },
+			end: { line: 1, column: 6 }
+		},
+		members: []
+	}
+}));
+
+test('Window {Button {}}', rootObjectMembers([{
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 8 },
+		end: { line: 1, column: 17 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 8 },
+			end: { line: 1, column: 14 }
+		},
+		parts: [{ type: "Identifier", name: "Button" }],
+		name: "Button"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 15 },
+			end: { line: 1, column: 17 }
+		},
+		members: []
+	}
+}]));
+
+test('a{ property {} }', rootObjectMembers([{
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 14 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 11 }
+		},
+		parts: [{ type: "Identifier", name: "property" }],
+		name: "property"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 14 }
+		},
+		members: []
+	}
+}]));
+
+test('a{ readonly {} }', rootObjectMembers([{
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 14 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 11 }
+		},
+		parts: [{ type: "Identifier", name: "readonly" }],
+		name: "readonly"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 14 }
+		},
+		members: []
+	}
+}]));
+
+test('a{ signal {} }', rootObjectMembers([{
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 12 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 9 }
+		},
+		parts: [{ type: "Identifier", name: "signal" }],
+		name: "signal"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 12 }
+		},
+		members: []
+	}
+}]));
+
+//testFail('a{ readonly property var as: 3 }',
+//		 "Unexpected token (1:25)",
+//		{ locations: true, loose: false });
+
+test('a{ readonly property var w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 29 }
+	},
+	default: false,
+	readonly: true,
+	kind: "var",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 25 },
+			end: { line: 1, column: 26 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 28 },
+			end: { line: 1, column: 29 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ default property var w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 28 }
+	},
+	default: true,
+	readonly: false,
+	kind: "var",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 24 },
+			end: { line: 1, column: 25 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 27 },
+			end: { line: 1, column: 28 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+testFail('a{ property var public: 3 }',
+		"The keyword 'public' is reserved (1:16)",
+		{ locations: true, loose: false });
+
+testFail('a{ property var export: 3 }',
+		"The keyword 'export' is reserved (1:16)",
+		{ locations: true, loose: false });
+
+test('a{ property var w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 20 }
+	},
+	default: false,
+	readonly: false,
+	kind: "var",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 16 },
+			end: { line: 1, column: 17 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 20 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property boolean w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 24 }
+	},
+	default: false,
+	readonly: false,
+	kind: "boolean",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 20 },
+			end: { line: 1, column: 21 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 23 },
+			end: { line: 1, column: 24 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property double w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 23 }
+	},
+	default: false,
+	readonly: false,
+	kind: "double",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 20 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 22 },
+			end: { line: 1, column: 23 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property int w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 20 }
+	},
+	default: false,
+	readonly: false,
+	kind: "int",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 16 },
+			end: { line: 1, column: 17 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 20 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property list w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 21 }
+	},
+	default: false,
+	readonly: false,
+	kind: "list",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 17 },
+			end: { line: 1, column: 18 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 20 },
+			end: { line: 1, column: 21 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property color w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 22 }
+	},
+	default: false,
+	readonly: false,
+	kind: "color",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 18 },
+			end: { line: 1, column: 19 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 21 },
+			end: { line: 1, column: 22 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property real w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 21 }
+	},
+	default: false,
+	readonly: false,
+	kind: "real",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 17 },
+			end: { line: 1, column: 18 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 20 },
+			end: { line: 1, column: 21 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property string w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 23 }
+	},
+	default: false,
+	readonly: false,
+	kind: "string",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 20 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 22 },
+			end: { line: 1, column: 23 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property url w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 20 }
+	},
+	default: false,
+	readonly: false,
+	kind: "url",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 16 },
+			end: { line: 1, column: 17 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 20 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+
+test('a{ property QtObject w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 25 }
+	},
+	default: false,
+	readonly: false,
+	kind: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 20 }
+		},
+		parts: [{ type: "Identifier", name: "QtObject" }],
+		name: "QtObject"
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 21 },
+			end: { line: 1, column: 22 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 24 },
+			end: { line: 1, column: 25 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property alias w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 22 }
+	},
+	default: false,
+	readonly: false,
+	kind: "alias",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 18 },
+			end: { line: 1, column: 19 }
+		},
+		name: "w"
+	},
+	init: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 21 },
+			end: { line: 1, column: 22 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ w: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 7 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "w" }],
+		name: "w"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 7 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ x.y.z: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 11 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 8 }
+		},
+		parts: [
+			{ type: "Identifier", name: "x" },
+			{ type: "Identifier", name: "y" },
+			{ type: "Identifier", name: "z" }
+		],
+		name: "x.y.z"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 11 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+testFail('a{ import: 3 }',
+		 "Unexpected token (1:3)",
+		{ locations: true, loose: false });
+
+testFail('a{ pragma: 3 }',
+		 "Unexpected token (1:3)",
+		 { locations: true, loose: false });
+
+testFail('a{ as: 3 }',
+		 "Unexpected token (1:3)",
+		 { locations: true, loose: false });
+
+testFail('a{ boolean: 3 }',
+		 "Unexpected token (1:3)",
+		 { locations: true, loose: false });
+
+testFail('a{ double: 3 }',
+		 "Unexpected token (1:3)",
+		 { locations: true, loose: false });
+
+testFail('a{ int: 3 }',
+		 "Unexpected token (1:3)",
+		 { locations: true, loose: false });
+
+test('a{ alias: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 11 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 8 }
+		},
+		parts: [{ type: "Identifier", name: "alias" }],
+		name: "alias"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 11 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ list: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 10 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 7 }
+		},
+		parts: [{ type: "Identifier", name: "list" }],
+		name: "list"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 9 },
+			end: { line: 1, column: 10 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ property: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 14 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 11 }
+		},
+		parts: [{ type: "Identifier", name: "property" }],
+		name: "property"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 13 },
+			end: { line: 1, column: 14 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ readonly: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 14 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 11 }
+		},
+		parts: [{ type: "Identifier", name: "readonly" }],
+		name: "readonly"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 13 },
+			end: { line: 1, column: 14 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ signal: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 12 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 9 }
+		},
+		parts: [{ type: "Identifier", name: "signal" }],
+		name: "signal"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 11 },
+			end: { line: 1, column: 12 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ color: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 11 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 8 }
+		},
+		parts: [{ type: "Identifier", name: "color" }],
+		name: "color"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 11 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ real: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 10 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 7 }
+		},
+		parts: [{ type: "Identifier", name: "real" }],
+		name: "real"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 9 },
+			end: { line: 1, column: 10 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ string: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 12 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 9 }
+		},
+		parts: [{ type: "Identifier", name: "string" }],
+		name: "string"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 11 },
+			end: { line: 1, column: 12 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ url: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 9 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 6 }
+		},
+		parts: [{ type: "Identifier", name: "url" }],
+		name: "url"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 8 },
+			end: { line: 1, column: 9 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+test('a{ onClicked: Qt.quit(0) }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 24 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 12 }
+		},
+		parts: [{ type: "Identifier", name: "onClicked" }],
+		name: "onClicked"
+	},
+	expr: {
+		type: "CallExpression",
+		loc: {
+			start: { line: 1, column: 14 },
+			end: { line: 1, column: 24 }
+		},
+		callee: {
+			type: "MemberExpression",
+			loc: {
+				start: { line: 1, column: 14 },
+				end: { line: 1, column: 21 }
+			},
+			object: {
+				type: "Identifier",
+				loc: {
+					start: { line: 1, column: 14 },
+					end: { line: 1, column: 16 }
+				},
+				name: "Qt"
+			},
+			property: {
+				type: "Identifier",
+				loc: {
+					start: { line: 1, column: 17 },
+					end: { line: 1, column: 21 }
+				},
+				name: "quit"
+			},
+			computed: false
+		},
+		arguments: [{
+			type: "Literal",
+			loc: {
+				start: { line: 1, column: 22 },
+				end: { line: 1, column: 23 }
+			},
+			value: 0,
+			raw: "0"
+		}]
+	}
+}]));
+
+test('a{b:pragma}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 10 }
+	},
+	name: "pragma"
+}));
+
+test('a{b:property}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 12 }
+	},
+	name: "property"
+}));
+
+test('a{b:readonly}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 12 }
+	},
+	name: "readonly"
+}));
+
+test('a{b:signal}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 10 }
+	},
+	name: "signal"
+}));
+
+test('a{b:alias}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 9 }
+	},
+	name: "alias"
+}));
+
+test('a{b:list}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 8 }
+	},
+	name: "list"
+}));
+
+test('a{b:color}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 9 }
+	},
+	name: "color"
+}));
+
+test('a{b:real}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 8 }
+	},
+	name: "real"
+}));
+
+test('a{b:string}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 10 }
+	},
+	name: "string"
+}));
+
+test('a{b:url}', javaScript({
+	type: "Identifier",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 7 }
+	},
+	name: "url"
+}));
+
+test('a{ function fn() {} }', rootObjectMembers([{
+	type: "FunctionDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 19 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 14 }
+		},
+		name: "fn"
+	},
+	params: [],
+	body: {
+		type: "BlockStatement",
+		loc: {
+			start: { line: 1, column: 17 },
+			end: { line: 1, column: 19 }
+		},
+		body: []
+	}
+}]));
+
+test('a{ function add(a, b) { return a + b } }', rootObjectMembers([{
+	type: "FunctionDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 38 }
+	},
+	id: {
+		type: "Identifier",
+		name: "add"
+	},
+	params: [
+		{ type: "Identifier", name: "a" },
+		{ type: "Identifier", name: "b" }
+	],
+	body: {
+		type: "BlockStatement",
+		loc: {
+			start: { line: 1, column: 22 },
+			end: { line: 1, column: 38 }
+		},
+		body: [{
+			type: "ReturnStatement",
+			argument: {
+				type: "BinaryExpression",
+				left: { type: "Identifier", name: "a" },
+				operator: "+",
+				right: { type: "Identifier", name: "b" }
+			}
+		}]
+	}
+}]));
+
+testFail('a{ function () {} }',
+		"Unexpected token (1:12)",
+		{ locations: true, loose: false });
+
+test('a{ signal b }', rootObjectMembers([{
+	type: "QMLSignalDefinition",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 11 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 11 }
+		},
+		name: "b"
+	},
+	params: []
+}]));
+
+test('a{ signal b () }', rootObjectMembers([{
+	type: "QMLSignalDefinition",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 14 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 11 }
+		},
+		name: "b"
+	},
+	params: []
+}]));
+
+test('a{ signal b (type param)}', rootObjectMembers([{
+	type: "QMLSignalDefinition",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 24 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 11 }
+		},
+		name: "b"
+	},
+	params: [{
+		type: "QMLParameter",
+		loc: {
+			start: { line: 1, column: 13 },
+			end: { line: 1, column: 23 }
+		},
+		kind: {
+			type: "Identifier",
+			loc: {
+				start: { line: 1, column: 13 },
+				end: { line: 1, column: 17 }
+			},
+			name: "type"
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 1, column: 18 },
+				end: { line: 1, column: 23 }
+			},
+			name: "param"
+		}
+	}]
+}]));
+
+test('a{ signal b (type1 param1, type2 param2, type3 param3)}', rootObjectMembers([{
+	type: "QMLSignalDefinition",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 54 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 11 }
+		},
+		name: "b"
+	},
+	params: [
+		{
+			type: "QMLParameter",
+			loc: {
+				start: { line: 1, column: 13 },
+				end: { line: 1, column: 25 }
+			},
+			kind: {
+				type: "Identifier",
+				loc: {
+					start: { line: 1, column: 13 },
+					end: { line: 1, column: 18 }
+				},
+				name: "type1"
 			},
 			id: {
-				type: "QMLQualifiedID",
-				range: [0, 5],
+				type: "Identifier",
 				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 5 }
+					start: { line: 1, column: 19 },
+					end: { line: 1, column: 25 }
 				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 5],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 5 }
-					},
-					name: "alias"
-				}],
-				name: "alias"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [6, 8],
-				loc: {
-					start: { line: 1, column: 6 },
-					end: { line: 1, column: 8 }
-				},
-				members: []
+				name: "param1"
 			}
 		},
-
-		'list {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 7],
+		{
+			type: "QMLParameter",
 			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 7 }
+				start: { line: 1, column: 27 },
+				end: { line: 1, column: 39 }
+			},
+			kind: {
+				type: "Identifier",
+				loc: {
+					start: { line: 1, column: 27 },
+					end: { line: 1, column: 32 }
+				},
+				name: "type2"
 			},
 			id: {
-				type: "QMLQualifiedID",
-				range: [0, 4],
+				type: "Identifier",
 				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 4 }
+					start: { line: 1, column: 33 },
+					end: { line: 1, column: 39 }
 				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 4],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 4 }
-					},
-					name: "list"
-				}],
-				name: "list"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [5, 7],
-				loc: {
-					start: { line: 1, column: 5 },
-					end: { line: 1, column: 7 }
-				},
-				members: []
+				name: "param2"
 			}
 		},
-
-		'color {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 8],
+		{
+			type: "QMLParameter",
 			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 8 }
+				start: { line: 1, column: 41 },
+				end: { line: 1, column: 53 }
+			},
+			kind: {
+				type: "Identifier",
+				loc: {
+					start: { line: 1, column: 41 },
+					end: { line: 1, column: 46 }
+				},
+				name: "type3"
 			},
 			id: {
-				type: "QMLQualifiedID",
-				range: [0, 5],
+				type: "Identifier",
 				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 5 }
+					start: { line: 1, column: 47 },
+					end: { line: 1, column: 53 }
 				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 5],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 5 }
-					},
-					name: "color"
-				}],
-				name: "color"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [6, 8],
-				loc: {
-					start: { line: 1, column: 6 },
-					end: { line: 1, column: 8 }
-				},
-				members: []
+				name: "param3"
 			}
-		},
+		}
+	]
+}]));
 
-		'real {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 7],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 7 }
-			},
-			id: {
-				type: "QMLQualifiedID",
-				range: [0, 4],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 4 }
-				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 4],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 4 }
-					},
-					name: "real"
-				}],
-				name: "real"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [5, 7],
-				loc: {
-					start: { line: 1, column: 5 },
-					end: { line: 1, column: 7 }
-				},
-				members: []
-			}
+test('a{ id: test }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 11 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 5 }
 		},
-
-		'string {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 9],
+		parts: [{
+			type: "Identifier",
 			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 9 }
+				start: { line: 1, column: 3 },
+				end: { line: 1, column: 5 }
 			},
-			id: {
-				type: "QMLQualifiedID",
-				range: [0, 6],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 6 }
-				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 6],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 6 }
-					},
-					name: "string"
-				}],
-				name: "string"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [7, 9],
-				loc: {
-					start: { line: 1, column: 7 },
-					end: { line: 1, column: 9 }
-				},
-				members: []
-			}
+			name: "id"
+		}],
+		name: "id"
+	},
+	expr: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 11 }
 		},
+		name: "test"
+	}
+}]));
 
-		'url {}': {
-			type: "QMLObjectLiteral",
-			range: [0, 6],
-			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 6 }
+/*
+* Test the base QML Hello World program created by Eclipse CDT.
+*/
+test('import QtQuick 2.3\nimport QtQuick.Window 2.2\n\tWindow {\n\tvisible: true\n\n\tMouseArea {\n\t\tanchors.fill: parent\n\t\tonClicked: {\n\t\t\tQt.quit();\n\t\t}\n\t}\n\t\tText {\n\t\t\ttext: qsTr("Hello World")\n\t\t\tanchors.centerIn: parent\n\t}\n}',
+	program([{
+		type: "QMLImportStatement",
+		loc: {
+			start: { line: 1, column: 0
 			},
-			id: {
-				type: "QMLQualifiedID",
-				range: [0, 3],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 3 }
-				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 3],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 3 }
-					},
-					name: "url"
-				}],
-				name: "url"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [4, 6],
-				loc: {
-					start: { line: 1, column: 4 },
-					end: { line: 1, column: 6 }
-				},
-				members: []
-			}
+			end: { line: 1, column: 18 }
 		},
-
-		'Window {Button {}}': {
-			type: "QMLObjectLiteral",
-			range: [0, 18],
+		module: {
+			type: "QMLModule",
 			loc: {
-				start: { line: 1, column: 0 },
+				start: { line: 1, column: 7 },
 				end: { line: 1, column: 18 }
 			},
 			id: {
 				type: "QMLQualifiedID",
-				range: [0, 6],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 1, column: 6 }
-				},
-				parts: [{
-					type: "Identifier",
-					range: [0, 6],
-					loc: {
-						start: { line: 1, column: 0 },
-						end: { line: 1, column: 6 }
-					},
-					name: "Window"
-				}],
-				name: "Window"
-			},
-			block: {
-				type: "QMLMemberBlock",
-				range: [7, 18],
 				loc: {
 					start: { line: 1, column: 7 },
+					end: { line: 1, column: 14 }
+				},
+				parts: [{ type: "Identifier", name: "QtQuick" }],
+				name: "QtQuick"
+			},
+			version: {
+				type: "QMLVersionLiteral",
+				loc: {
+					start: { line: 1, column: 15 },
 					end: { line: 1, column: 18 }
 				},
-				members: [
-					{
-						type: "QMLObjectLiteral",
-						range: [8, 17],
+				raw: "2.3",
+				value: 2.3,
+				major: 2,
+				minor: 3
+			}
+		}
+	},
+	{
+		type: "QMLImportStatement",
+		loc: {
+			start: { line: 2, column: 0 },
+			end: { line: 2, column: 25 }
+		},
+		module: {
+			type: "QMLModule",
+			loc: {
+				start: { line: 2, column: 7 },
+				end: { line: 2, column: 25 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				loc: {
+					start: { line: 2, column: 7 },
+					end: { line: 2, column: 21 }
+				},
+				parts: [
+					{ type: "Identifier", name: "QtQuick" },
+					{ type: "Identifier", name: "Window" }
+				],
+				name: "QtQuick.Window"
+			},
+			version: {
+				type: "QMLVersionLiteral",
+				loc: {
+					start: { line: 2, column: 22 },
+					end: { line: 2, column: 25 }
+				},
+				raw: "2.2",
+				value: 2.2,
+				major: 2,
+				minor: 2
+			}
+		}
+	}],{
+		type: "QMLObjectLiteral",
+		loc: {
+			start: { line: 3, column: 1 },
+			end: { line: 16, column: 1 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 3, column: 1 },
+				end: { line: 3, column: 7 }
+			},
+			parts: [{ type: "Identifier", name: "Window" }],
+			name: "Window"
+		},
+		body: {
+			type: "QMLMemberBlock",
+			loc: {
+				start: { line: 3, column: 8 },
+				end: { line: 16, column: 1 }
+			},
+			members: [
+				{
+					type: "QMLPropertyBinding",
+					loc: {
+						start: { line: 4, column: 1 },
+						end: { line: 4, column: 14 }
+					},
+					id: {
+						type: "QMLQualifiedID",
 						loc: {
-							start: { line: 1, column: 8 },
-							end: { line: 1, column: 17 }
+							start: { line: 4, column: 1 },
+							end: { line: 4, column: 8 }
+						},
+						parts: [{ type: "Identifier", name: "visible" }],
+						name: "visible"
+					},
+					expr: {
+						type: "Literal",
+						loc: {
+							start: { line: 4, column: 10 },
+							end: { line: 4, column: 14 }
+						},
+						value: true,
+						raw: "true"
+					}
+				},
+				{
+					type: "QMLObjectLiteral",
+					loc: {
+						start: { line: 6, column: 1 },
+						end: { line: 11, column: 2 }
+					},
+					id: {
+						type: "QMLQualifiedID",
+						loc: {
+							start: { line: 6, column: 1 },
+							end: { line: 6, column: 10 }
+						},
+						parts: [{ type: "Identifier", name: "MouseArea" }],
+						name: "MouseArea"
+					},
+					body: {
+						type: "QMLMemberBlock",
+						loc: {
+							start: { line: 6, column: 11 },
+							end: { line: 11, column: 2 }
+						},
+						members: [
+							{
+								type: "QMLPropertyBinding",
+								loc: {
+									start: { line: 7, column: 2 },
+									end: { line: 7, column: 22 }
+								},
+								id: {
+									type: "QMLQualifiedID",
+									loc: {
+										start: { line: 7, column: 2 },
+										end: { line: 7, column: 14 }
+									},
+									parts: [
+										{ type: "Identifier", name: "anchors" },
+										{ type: "Identifier", name: "fill" }
+									],
+									name: "anchors.fill"
+								},
+								expr: {
+									type: "Identifier",
+									loc: {
+										start: { line: 7, column: 16 },
+										end: { line: 7, column: 22 }
+									},
+									name: "parent"
+								}
+							},
+							{
+								type: "QMLPropertyBinding",
+								loc: {
+									start: { line: 8, column: 2 },
+									end: { line: 10, column: 3 }
+								},
+								id: {
+									type: "QMLQualifiedID",
+									loc: {
+										start: { line: 8, column: 2 },
+										end: { line: 8, column: 11 }
+									},
+									parts: [{ type: "Identifier", name: "onClicked" }],
+									name: "onClicked"
+								},
+								expr: {
+									type: "QMLStatementBlock",
+									loc: {
+										start: { line: 8, column: 13 },
+										end: { line: 10, column: 3 }
+									},
+									statements: [{
+										type: "ExpressionStatement",
+										expression: {
+											type: "CallExpression",
+											callee: {
+												type: "MemberExpression",
+												object: {
+													type: "Identifier",
+													name: "Qt"
+												},
+												property: {
+													type: "Identifier",
+													name: "quit"
+												},
+												computed: false
+											},
+											arguments: []
+										}
+									}]
+								}
+							}
+						]
+					}
+				},
+				{
+					type: "QMLObjectLiteral",
+					loc: {
+						start: { line: 12, column: 2 },
+						end: { line: 15, column: 2 }
+					},
+					id: {
+						type: "QMLQualifiedID",
+						loc: {
+							start: { line: 12, column: 2 },
+							end: { line: 12, column: 6 }
+						},
+						parts: [{ type: "Identifier", name: "Text" }],
+						name: "Text"
+					},
+					body: {
+						type: "QMLMemberBlock",
+						loc: {
+							start: { line: 12, column: 7 },
+							end: { line: 15, column: 2 }
+						},
+						members: [
+							{
+								type: "QMLPropertyBinding",
+								loc: {
+									start: { line: 13, column: 3 },
+									end: { line: 13, column: 28 }
+								},
+								id: {
+									type: "QMLQualifiedID",
+									loc: {
+										start: { line: 13, column: 3 },
+										end: { line: 13, column: 7 }
+									},
+									parts: [{ type: "Identifier", name: "text" }],
+									name: "text"
+								},
+								expr: {
+									type: "CallExpression",
+									loc: {
+										start: { line: 13, column: 9 },
+										end: { line: 13, column: 28 }
+									},
+									callee: {
+										type: "Identifier",
+										name: "qsTr"
+									},
+									arguments: [{
+										type: "Literal",
+										value: "Hello World",
+										raw: "\"Hello World\""
+									}]
+								}
+							},
+							{
+								type: "QMLPropertyBinding",
+								loc: {
+									start: { line: 14, column: 3 },
+									end: { line: 14, column: 27 }
+								},
+								id: {
+									type: "QMLQualifiedID",
+									loc: {
+										start: { line: 14, column: 3 },
+										end: { line: 14, column: 19 }
+									},
+									parts: [
+										{ type: "Identifier", name: "anchors" },
+										{ type: "Identifier", name: "centerIn" }
+									],
+									name: "anchors.centerIn"
+								},
+								expr: {
+									type: "Identifier",
+									name: "parent"
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	}
+));
+
+/***************************************************************************
+*                            Loose Parser Tests                            *
+****************************************************************************/
+function testLoose(code, ast, options) {
+	var opts = options || {};
+	opts.loose = true;
+	opts.normal = false;
+	opts.locations = true;
+	test(code, ast, opts);
+}
+
+testLoose('import QtQuick', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 14 }
+		},
+	module: {
+		type: "QMLModule",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 14 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 14 }
+			},
+			parts: [{ type: "Identifier", name: "QtQuick" }],
+			name: "QtQuick"
+		},
+		version: {
+			type: "QMLVersionLiteral",
+			loc: {
+				start: { line: 1, column: 14 },
+				end: { line: 1, column: 14 }
+			},
+			value: 0,
+			major: 0,
+			minor: 0,
+			raw: "0.0"
+		}
+	}
+}]));
+
+testLoose('import ', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 7 }
+		},
+	module: {
+		type: "QMLModule",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 7 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 7 }
+			},
+			parts: [{ type: "Identifier", name: "✖" }],
+			name: "✖"
+		},
+		version: {
+			type: "QMLVersionLiteral",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 7 }
+			},
+			value: 0,
+			major: 0,
+			minor: 0,
+			raw: "0.0"
+		}
+	}
+}]));
+
+testLoose('import QtQuick 0x01', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 19 }
+		},
+	module: {
+		type: "QMLModule",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 19 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 14 }
+			},
+			parts: [{ type: "Identifier", name: "QtQuick" }],
+			name: "QtQuick"
+		},
+		version: {
+			type: "QMLVersionLiteral",
+			loc: {
+				start: { line: 1, column: 15 },
+				end: { line: 1, column: 19 }
+			},
+			value: 1,
+			major: 1,
+			minor: 0,
+			raw: "0x01"
+		}
+	}
+}]));
+
+testLoose('import QtQuick 1', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 16 }
+		},
+	module: {
+		type: "QMLModule",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 16 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 14 }
+			},
+			parts: [{ type: "Identifier", name: "QtQuick" }],
+			name: "QtQuick"
+		},
+		version: {
+			type: "QMLVersionLiteral",
+			loc: {
+				start: { line: 1, column: 15 },
+				end: { line: 1, column: 16 }
+			},
+			value: 1,
+			major: 1,
+			minor: 0,
+			raw: "1"
+		}
+	}
+}]));
+
+testLoose('import "./file.js', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 17 }
+	},
+	directory: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 17 }
+		},
+		value: "./file.js",
+		raw: "\"./file.js"
+	}
+}]));
+
+testLoose('import QtQuick 2.2 as ', headerStatements([{
+	type: "QMLImportStatement",
+	loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 22 }
+		},
+	module: {
+		type: "QMLModule",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 18 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 14 }
+			},
+			parts: [{ type: "Identifier", name: "QtQuick" }],
+			name: "QtQuick"
+		},
+		version: {
+			type: "QMLVersionLiteral",
+			loc: {
+				start: { line: 1, column: 15 },
+				end: { line: 1, column: 18 }
+			},
+			value: 2.2,
+			major: 2,
+			minor: 2,
+			raw: "2.2"
+		}
+	},
+	qualifier: {
+		type: "QMLQualifier",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 22 }
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 1, column: 22 },
+				end: { line: 1, column: 22 }
+			},
+			name: "✖"
+		}
+	}
+}]));
+
+testLoose('Window {', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 1, column: 8 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 6 }
+		},
+		parts: [{ type: "Identifier", name: "Window" }],
+		name: "Window"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 8 }
+		},
+		members: []
+	}
+}));
+
+testLoose('Window {\n\tprop: 3', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 2, column: 8 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 6 }
+		},
+		parts: [{ type: "Identifier", name: "Window" }],
+		name: "Window"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 2, column: 8 }
+		},
+		members: [{
+			type: "QMLPropertyBinding",
+			loc: {
+				start: { line: 2, column: 1 },
+				end: { line: 2, column: 8 }
+			},
+			id: {
+				type: "QMLQualifiedID",
+				loc: {
+					start: { line: 2, column: 1 },
+					end: { line: 2, column: 5 }
+				},
+				parts: [{ type: "Identifier", name: "prop" }],
+				name: "prop"
+			}
+		}]
+	}
+}));
+
+testLoose('a {\n\tb {\n\n\tc {\n}', rootObject({
+	type: "QMLObjectLiteral",
+	loc: {
+		start: { line: 1, column: 0 },
+		end: { line: 5, column: 1 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 0 },
+			end: { line: 1, column: 1 }
+		},
+		parts: [{ type: "Identifier", name: "a" }],
+		name: "a"
+	},
+	body: {
+		type: "QMLMemberBlock",
+		loc: {
+			start: { line: 1, column: 2 },
+			end: { line: 5, column: 1 }
+		},
+		members: [
+			{
+				type: "QMLObjectLiteral",
+				loc: {
+					start: { line: 2, column: 1 },
+					end: { line: 5, column: 1 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					loc: {
+						start: { line: 2, column: 1 },
+						end: { line: 2, column: 2 }
+					},
+					parts: [{ type: "Identifier", name: "b" }],
+					name: "b"
+				},
+				body: {
+					type: "QMLMemberBlock",
+					loc: {
+						start: { line: 2, column: 3 },
+						end: { line: 5, column: 1 }
+					},
+					members: [{
+						type: "QMLObjectLiteral",
+						loc: {
+							start: { line: 4, column: 1 },
+							end: { line: 5, column: 1 }
 						},
 						id: {
 							type: "QMLQualifiedID",
-							range: [8, 14],
 							loc: {
-								start: { line: 1, column: 8 },
-								end: { line: 1, column: 14 }
+								start: { line: 4, column: 1 },
+								end: { line: 4, column: 2 }
 							},
-							parts: [{
-								type: "Identifier",
-								range: [8, 14],
-								loc: {
-									start: { line: 1, column: 8 },
-									end: { line: 1, column: 14 }
-								},
-								name: "Button"
-							}],
-							name: "Button"
+							parts: [{ type: "Identifier", name: "c" }],
+							name: "c"
 						},
-						block: {
+						body: {
 							type: "QMLMemberBlock",
-							range: [15, 17],
 							loc: {
-								start: { line: 1, column: 15 },
-								end: { line: 1, column: 17 }
+								start: { line: 4, column: 3 },
+								end: { line: 5, column: 1 }
 							},
 							members: []
 						}
-					}
-				]
-			}
-		}
-	},
-
-	// ------------------ QML Root Object Members -----------------
-	'qml-root-obj-members': {
-
-		// ------------------- Property Declarations ------------------
-		'a{ property var w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 20],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 20 }
-				},
-				default: false,
-				readonly: false,
-				kind: "var",
-				id: {
-					type: "Identifier",
-					range: [16, 17],
-					loc: {
-						start: { line: 1, column: 16 },
-						end: { line: 1, column: 17 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [19, 20],
-					loc: {
-						start: { line: 1, column: 19 },
-						end: { line: 1, column: 20 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property boolean w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 24],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 24 }
-				},
-				default: false,
-				readonly: false,
-				kind: "boolean",
-				id: {
-					type: "Identifier",
-					range: [20, 21],
-					loc: {
-						start: { line: 1, column: 20 },
-						end: { line: 1, column: 21 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [23, 24],
-					loc: {
-						start: { line: 1, column: 23 },
-						end: { line: 1, column: 24 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property double w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 23],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 23 }
-				},
-				default: false,
-				readonly: false,
-				kind: "double",
-				id: {
-					type: "Identifier",
-					range: [19, 20],
-					loc: {
-						start: { line: 1, column: 19 },
-						end: { line: 1, column: 20 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [22, 23],
-					loc: {
-						start: { line: 1, column: 22 },
-						end: { line: 1, column: 23 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property int w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 20],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 20 }
-				},
-				default: false,
-				readonly: false,
-				kind: "int",
-				id: {
-					type: "Identifier",
-					range: [16, 17],
-					loc: {
-						start: { line: 1, column: 16 },
-						end: { line: 1, column: 17 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [19, 20],
-					loc: {
-						start: { line: 1, column: 19 },
-						end: { line: 1, column: 20 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property list w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 21],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 21 }
-				},
-				default: false,
-				readonly: false,
-				kind: "list",
-				id: {
-					type: "Identifier",
-					range: [17, 18],
-					loc: {
-						start: { line: 1, column: 17 },
-						end: { line: 1, column: 18 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [20, 21],
-					loc: {
-						start: { line: 1, column: 20 },
-						end: { line: 1, column: 21 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property color w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 22],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 22 }
-				},
-				default: false,
-				readonly: false,
-				kind: "color",
-				id: {
-					type: "Identifier",
-					range: [18, 19],
-					loc: {
-						start: { line: 1, column: 18 },
-						end: { line: 1, column: 19 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [21, 22],
-					loc: {
-						start: { line: 1, column: 21 },
-						end: { line: 1, column: 22 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property real w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 21],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 21 }
-				},
-				default: false,
-				readonly: false,
-				kind: "real",
-				id: {
-					type: "Identifier",
-					range: [17, 18],
-					loc: {
-						start: { line: 1, column: 17 },
-						end: { line: 1, column: 18 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [20, 21],
-					loc: {
-						start: { line: 1, column: 20 },
-						end: { line: 1, column: 21 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property string w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 23],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 23 }
-				},
-				default: false,
-				readonly: false,
-				kind: "string",
-				id: {
-					type: "Identifier",
-					range: [19, 20],
-					loc: {
-						start: { line: 1, column: 19 },
-						end: { line: 1, column: 20 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [22, 23],
-					loc: {
-						start: { line: 1, column: 22 },
-						end: { line: 1, column: 23 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property url w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 20],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 20 }
-				},
-				default: false,
-				readonly: false,
-				kind: "url",
-				id: {
-					type: "Identifier",
-					range: [16, 17],
-					loc: {
-						start: { line: 1, column: 16 },
-						end: { line: 1, column: 17 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [19, 20],
-					loc: {
-						start: { line: 1, column: 19 },
-						end: { line: 1, column: 20 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property QtObject w: 3 }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 25],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 25 }
-				},
-				default: false,
-				readonly: false,
-				kind: {
-					type: "QMLQualifiedID",
-					range: [12, 20],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 20 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [12, 20],
-						loc: {
-							start: { line: 1, column: 12 },
-							end: { line: 1, column: 20 }
-						},
-						name: "QtObject"
-					}],
-					name: "QtObject"
-				},
-				id: {
-					type: "Identifier",
-					range: [21, 22],
-					loc: {
-						start: { line: 1, column: 21 },
-						end: { line: 1, column: 22 }
-					},
-					name: "w"
-				},
-				init: {
-					type: "Literal",
-					range: [24, 25],
-					loc: {
-						start: { line: 1, column: 24 },
-						end: { line: 1, column: 25 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property alias c: color }': [
-			{
-				type: "QMLPropertyDeclaration",
-				range: [3, 26],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 26 }
-				},
-				default: false,
-				readonly: false,
-				kind: "alias",
-				id: {
-					type: "Identifier",
-					range: [18, 19],
-					loc: {
-						start: { line: 1, column: 18 },
-						end: { line: 1, column: 19 }
-					},
-					name: "c"
-				},
-				init: {
-					type: "Identifier",
-					range: [21, 26],
-					loc: {
-						start: { line: 1, column: 21 },
-						end: { line: 1, column: 26 }
-					},
-					name: "color"
-				}
-			}
-		],
-
-		// TODO: Solve ambiguity to allow QML Object Literals in bindings
-		'a{ property var b: Window {}}': "Unexpected token (1:26)",
-
-		// --------------------- Property Bindings --------------------
-		'a{ w: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 7],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 7 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 4],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 4 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 4],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 4 }
-						},
-						name: "w"
-					}],
-					name: "w"
-				},
-				expr: {
-					type: "Literal",
-					range: [6, 7],
-					loc: {
-						start: { line: 1, column: 6 },
-						end: { line: 1, column: 7 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ x.y.z: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 11],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 11 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 8],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 8 }
-					},
-					parts: [
-						{
-							type: "Identifier",
-							range: [3, 4],
-							loc: {
-								start: { line: 1, column: 3 },
-								end: { line: 1, column: 4 }
-							},
-							name: "x"
-						},
-						{
-							type: "Identifier",
-							range: [5, 6],
-							loc: {
-								start: { line: 1, column: 5 },
-								end: { line: 1, column: 6 }
-							},
-							name: "y"
-						},
-						{
-							type: "Identifier",
-							range: [7, 8],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 8 }
-							},
-							name: "z"
-						}
-					],
-					name: "x.y.z"
-				},
-				expr: {
-					type: "Literal",
-					range: [10, 11],
-					loc: {
-						start: { line: 1, column: 10 },
-						end: { line: 1, column: 11 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ import: 3 }': "Unexpected token (1:3)",
-
-		'a{ pragma: 3 }': "Unexpected token (1:3)",
-
-		'a{ as: 3 }': "Unexpected token (1:3)",
-
-		'a{ boolean: 3 }': "Unexpected token (1:3)",
-
-		'a{ double: 3 }': "Unexpected token (1:3)",
-
-		'a{ int: 3 }': "Unexpected token (1:3)",
-
-		'a{ alias: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 11],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 11 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 8],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 8 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 8],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 8 }
-						},
-						name: "alias"
-					}],
-					name: "alias"
-				},
-				expr: {
-					type: "Literal",
-					range: [10, 11],
-					loc: {
-						start: { line: 1, column: 10 },
-						end: { line: 1, column: 11 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ list: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 10],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 10 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 7],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 7 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 7],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 7 }
-						},
-						name: "list"
-					}],
-					name: "list"
-				},
-				expr: {
-					type: "Literal",
-					range: [9, 10],
-					loc: {
-						start: { line: 1, column: 9 },
-						end: { line: 1, column: 10 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ property: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 14],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 14 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 11],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 11 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 11],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 11 }
-						},
-						name: "property"
-					}],
-					name: "property"
-				},
-				expr: {
-					type: "Literal",
-					range: [13, 14],
-					loc: {
-						start: { line: 1, column: 13 },
-						end: { line: 1, column: 14 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ readonly: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 14],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 14 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 11],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 11 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 11],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 11 }
-						},
-						name: "readonly"
-					}],
-					name: "readonly"
-				},
-				expr: {
-					type: "Literal",
-					range: [13, 14],
-					loc: {
-						start: { line: 1, column: 13 },
-						end: { line: 1, column: 14 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ signal: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 12],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 12 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 9],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 9 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 9],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 9 }
-						},
-						name: "signal"
-					}],
-					name: "signal"
-				},
-				expr: {
-					type: "Literal",
-					range: [11, 12],
-					loc: {
-						start: { line: 1, column: 11 },
-						end: { line: 1, column: 12 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ color: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 11],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 11 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 8],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 8 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 8],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 8 }
-						},
-						name: "color"
-					}],
-					name: "color"
-				},
-				expr: {
-					type: "Literal",
-					range: [10, 11],
-					loc: {
-						start: { line: 1, column: 10 },
-						end: { line: 1, column: 11 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ real: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 10],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 10 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 7],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 7 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 7],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 7 }
-						},
-						name: "real"
-					}],
-					name: "real"
-				},
-				expr: {
-					type: "Literal",
-					range: [9, 10],
-					loc: {
-						start: { line: 1, column: 9 },
-						end: { line: 1, column: 10 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ string: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 12],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 12 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 9],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 9 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 9],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 9 }
-						},
-						name: "string"
-					}],
-					name: "string"
-				},
-				expr: {
-					type: "Literal",
-					range: [11, 12],
-					loc: {
-						start: { line: 1, column: 11 },
-						end: { line: 1, column: 12 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ url: 3 }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 9],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 9 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 6],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 6 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 6],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 6 }
-						},
-						name: "url"
-					}],
-					name: "url"
-				},
-				expr: {
-					type: "Literal",
-					range: [8, 9],
-					loc: {
-						start: { line: 1, column: 8 },
-						end: { line: 1, column: 9 }
-					},
-					value: 3,
-					raw: "3"
-				}
-			}
-		],
-
-		'a{ onClicked: Qt.quit(0) }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 24],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 24 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 12],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 12 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 12],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 12 }
-						},
-						name: "onClicked"
-					}],
-					name: "onClicked"
-				},
-				expr: {
-					type: "CallExpression",
-					range: [14, 24],
-					loc: {
-						start: { line: 1, column: 14 },
-						end: { line: 1, column: 24 }
-					},
-					callee: {
-						type: "MemberExpression",
-						range: [14, 21],
-						loc: {
-							start: { line: 1, column: 14 },
-							end: { line: 1, column: 21 }
-						},
-						object: {
-							type: "Identifier",
-							range: [14, 16],
-							loc: {
-								start: { line: 1, column: 14 },
-								end: { line: 1, column: 16 }
-							},
-							name: "Qt"
-						},
-						property: {
-							type: "Identifier",
-							range: [17, 21],
-							loc: {
-								start: { line: 1, column: 17 },
-								end: { line: 1, column: 21 }
-							},
-							name: "quit"
-						},
-						computed: false
-					},
-					arguments: [
-						{
-							type: "Literal",
-							range: [22, 23],
-							loc: {
-								start: { line: 1, column: 22 },
-								end: { line: 1, column: 23 }
-							},
-							value: 0,
-							raw: "0"
-						}
-					]
-				}
-			}
-		],
-
-		// --------------- Object Literals as Properties --------------
-		'a{ property {} }': [
-			{
-				type: "QMLObjectLiteral",
-				range: [3, 14],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 14 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 11],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 11 }
-					},
-					parts: [
-						{
-							type: "Identifier",
-							range: [3, 11],
-							loc: {
-								start: { line: 1, column: 3 },
-								end: { line: 1, column: 11 }
-							},
-							name: "property"
-						}
-					],
-					name: "property"
-				},
-				block: {
-					type: "QMLMemberBlock",
-					range: [12, 14],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 14 }
-					},
-					members: []
-				}
-			}
-		],
-
-		'a{ readonly {} }': [
-			{
-				type: "QMLObjectLiteral",
-				range: [3, 14],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 14 }
-				},
-				default: false,
-				readonly: false,
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 11],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 11 }
-					},
-					parts: [
-						{
-							type: "Identifier",
-							range: [3, 11],
-							loc: {
-								start: { line: 1, column: 3 },
-								end: { line: 1, column: 11 }
-							},
-							name: "readonly"
-						}
-					],
-					name: "readonly"
-				},
-				block: {
-					type: "QMLMemberBlock",
-					range: [12, 14],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 14 }
-					},
-					members: []
-				}
-			}
-		],
-
-		'a{ signal {} }': [
-			{
-				type: "QMLObjectLiteral",
-				range: [3, 12],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 12 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 9],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 9 }
-					},
-					parts: [
-						{
-							type: "Identifier",
-							range: [3, 9],
-							loc: {
-								start: { line: 1, column: 3 },
-								end: { line: 1, column: 9 }
-							},
-							name: "signal"
-						}
-					],
-					name: "signal"
-				},
-				block: {
-					type: "QMLMemberBlock",
-					range: [10, 12],
-					loc: {
-						start: { line: 1, column: 10 },
-						end: { line: 1, column: 12 }
-					},
-					members: []
-				}
-			}
-		],
-
-		// ------------------- Contextual Keywords --------------------
-		'a{b:pragma}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 10],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 10 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 10],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 10 }
-					},
-					name: "pragma"
-				}
-			}
-		],
-
-		'a{b:property}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 12],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column:  12 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column:  3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 12],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 12 }
-					},
-					name: "property"
-				}
-			}
-		],
-
-		'a{b:readonly}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 12],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 12 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 12],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 12 }
-					},
-					name: "readonly"
-				}
-			}
-		],
-
-		'a{b:signal}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 10],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 10 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 10],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 10 }
-					},
-					name: "signal"
-				}
-			}
-		],
-
-		'a{b:alias}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 9],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 9 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 9],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 9 }
-					},
-					name: "alias"
-				}
-			}
-		],
-
-		'a{b:list}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 8],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 8 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 8],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 8 }
-					},
-					name: "list"
-				}
-			}
-		],
-
-		'a{b:color}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 9],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 9 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 9],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 9 }
-					},
-					name: "color"
-				}
-			}
-		],
-
-		'a{b:real}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 8],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 8 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 8],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 8 }
-					},
-					name: "real"
-				}
-			}
-		],
-
-		'a{b:string}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 10],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 10 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 10],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 10 }
-					},
-					name: "string"
-				}
-			}
-		],
-
-		'a{b:url}': [
-			{
-				type: "QMLPropertyBinding",
-				range: [2, 7],
-				loc: {
-					start: { line: 1, column: 2 },
-					end: { line: 1, column: 7 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [2, 3],
-					loc: {
-						start: { line: 1, column: 2 },
-						end: { line: 1, column: 3 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [2, 3],
-						loc: {
-							start: { line: 1, column: 2 },
-							end: { line: 1, column: 3 }
-						},
-						name: "b"
-					}],
-					name: "b"
-				},
-				expr: {
-					type: "Identifier",
-					range: [4, 7],
-					loc: {
-						start: { line: 1, column: 4 },
-						end: { line: 1, column: 7 }
-					},
-					name: "url"
-				}
-			}
-		],
-
-		// ------------------- JavaScript Functions -------------------
-		'a{ function fn() {} }': [
-			{
-				type: "FunctionDeclaration",
-				range: [3, 19],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 19 }
-				},
-				id: {
-					type: "Identifier",
-					range: [12, 14],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 14 }
-					},
-					name: "fn"
-				},
-				generator: false,
-				expression: false,
-				params: [],
-				body: {
-					type: "BlockStatement",
-					range: [17, 19],
-					loc: {
-						start: { line: 1, column: 17 },
-						end: { line: 1, column: 19 }
-					},
-					body: []
-				}
-			}
-		],
-
-		'a{ function add(a, b) { return a + b } }': [
-			{
-				type: "FunctionDeclaration",
-				range: [3, 38],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 38 }
-				},
-				id: {
-					type: "Identifier",
-					range: [12, 15],
-					loc: {
-						start: { line: 1, column: 12 },
-						end: { line: 1, column: 15 }
-					},
-					name: "add"
-				},
-				generator: false,
-				expression: false,
-				params: [
-					{
-						type: "Identifier",
-						range: [16, 17],
-						loc: {
-							start: { line: 1, column: 16 },
-							end: { line: 1, column: 17 }
-						},
-						name: "a"
-					},
-					{
-						type: "Identifier",
-						range: [19, 20],
-						loc: {
-							start: { line: 1, column: 19 },
-							end: { line: 1, column: 20 }
-						},
-						name: "b"
-					}
-				],
-				body: {
-					type: "BlockStatement",
-					range: [22, 38],
-					loc: {
-						start: { line: 1, column: 22 },
-						end: { line: 1, column: 38 }
-					},
-					body: [
-						{
-							type: "ReturnStatement",
-							range: [24, 36],
-							loc: {
-								start: { line: 1, column: 24 },
-								end: { line: 1, column: 36 }
-							},
-							argument: {
-								type: "BinaryExpression",
-								range: [31, 36],
-								loc: {
-									start: { line: 1, column: 31 },
-									end: { line: 1, column: 36 }
-								},
-								left: {
-									type: "Identifier",
-									range: [31, 32],
-									loc: {
-										start: { line: 1, column: 31 },
-										end: { line: 1, column: 32 }
-									},
-									name: "a"
-								},
-								operator: "+",
-								right: {
-									type: "Identifier",
-									range: [35, 36],
-									loc: {
-										start: { line: 1, column: 35 },
-										end: { line: 1, column: 36 }
-									},
-									name: "b"
-								}
-							}
-						}
-					]
-				}
-			}
-		],
-
-		'a{ function () {} }': "Unexpected token (1:12)",
-
-		// -------------------- Signal Definitions --------------------
-		'a{ signal b }': [
-			{
-				type: "QMLSignalDefinition",
-				range: [3, 11],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 11 }
-				},
-				id: {
-					type: "Identifier",
-					range: [10, 11],
-					loc: {
-						start: { line: 1, column: 10 },
-						end: { line: 1, column: 11 }
-					},
-					name: "b"
-				},
-				params: []
-			}
-		],
-
-		'a{ signal b () }': [
-			{
-				type: "QMLSignalDefinition",
-				range: [3, 14],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 14 }
-				},
-				id: {
-					type: "Identifier",
-					range: [10, 11],
-					loc: {
-						start: { line: 1, column: 10 },
-						end: { line: 1, column: 11 }
-					},
-					name: "b"
-				},
-				params: []
-			}
-		],
-
-		'a{ signal b (type param)}': [
-			{
-				type: "QMLSignalDefinition",
-				range: [3, 24],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 24 }
-				},
-				id: {
-					type: "Identifier",
-					range: [10, 11],
-					loc: {
-						start: { line: 1, column: 10 },
-						end: { line: 1, column: 11 }
-					},
-					name: "b"
-				},
-				params: [
-					{
-						type: "QMLParameter",
-						range: [ 13, 23 ],
-						loc: {
-							start: { line: 1, column: 13 },
-							end: { line: 1, column: 23 }
-						},
-						kind: {
-							type: "Identifier",
-							range: [13, 17],
-							loc: {
-								start: { line: 1, column: 13 },
-								end: { line: 1, column: 17 }
-							},
-							name: "type"
-						},
-						id: {
-							type: "Identifier",
-							range: [18, 23],
-							loc: {
-								start: { line: 1, column: 18 },
-								end: { line: 1, column: 23 }
-							},
-							name: "param"
-						}
-					}
-				]
-			}
-		],
-
-		'a{ signal b (type1 param1, type2 param2, type3 param3)}': [
-			{
-				type: "QMLSignalDefinition",
-				range: [3, 54],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 54 }
-				},
-				id: {
-					type: "Identifier",
-					range: [10, 11],
-					loc: {
-						start: { line: 1, column: 10 },
-						end: { line: 1, column: 11 }
-					},
-					name: "b"
-				},
-				params: [
-					{
-						type: "QMLParameter",
-						range: [ 13, 25 ],
-						loc: {
-							start: { line: 1, column: 13 },
-							end: { line: 1, column: 25 }
-						},
-						kind: {
-							type: "Identifier",
-							range: [13, 18],
-							loc: {
-								start: { line: 1, column: 13 },
-								end: { line: 1, column: 18 }
-							},
-							name: "type1"
-						},
-						id: {
-							type: "Identifier",
-							range: [19, 25],
-							loc: {
-								start: { line: 1, column: 19 },
-								end: { line: 1, column: 25 }
-							},
-							name: "param1"
-						}
-					},
-					{
-						type: "QMLParameter",
-						range: [ 27, 39 ],
-						loc: {
-							start: { line: 1, column: 27 },
-							end: { line: 1, column: 39 }
-						},
-						kind: {
-							type: "Identifier",
-							range: [27, 32],
-							loc: {
-								start: { line: 1, column: 27 },
-								end: { line: 1, column: 32 }
-							},
-							name: "type2"
-						},
-						id: {
-							type: "Identifier",
-							range: [33, 39],
-							loc: {
-								start: { line: 1, column: 33 },
-								end: { line: 1, column: 39 }
-							},
-							name: "param2"
-						}
-					},
-					{
-						type: "QMLParameter",
-						range: [ 41, 53 ],
-						loc: {
-							start: { line: 1, column: 41 },
-							end: { line: 1, column: 53 }
-						},
-						kind: {
-							type: "Identifier",
-							range: [41, 46],
-							loc: {
-								start: { line: 1, column: 41 },
-								end: { line: 1, column: 46 }
-							},
-							name: "type3"
-						},
-						id: {
-							type: "Identifier",
-							range: [47, 53],
-							loc: {
-								start: { line: 1, column: 47 },
-								end: { line: 1, column: 53 }
-							},
-							name: "param3"
-						}
-					}
-				]
-			}
-		],
-
-		'a{ id: test }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 11],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 11 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 5],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 5 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 5],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 5 }
-						},
-						name: "id"
-					}],
-					name: "id"
-				},
-				expr: {
-					type: "Identifier",
-					range: [7, 11],
-					loc: {
-						start: { line: 1, column: 7 },
-						end: { line: 1, column: 11 }
-					},
-					name: "test"
-				}
-			}
-		],
-
-		'a{ id: test; }': [
-			{
-				type: "QMLPropertyBinding",
-				range: [3, 12],
-				loc: {
-					start: { line: 1, column: 3 },
-					end: { line: 1, column: 12 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [3, 5],
-					loc: {
-						start: { line: 1, column: 3 },
-						end: { line: 1, column: 5 }
-					},
-					parts: [{
-						type: "Identifier",
-						range: [3, 5],
-						loc: {
-							start: { line: 1, column: 3 },
-							end: { line: 1, column: 5 }
-						},
-						name: "id"
-					}],
-					name: "id"
-				},
-				expr: {
-					type: "Identifier",
-					range: [7, 11],
-					loc: {
-						start: { line: 1, column: 7 },
-						end: { line: 1, column: 11 }
-					},
-					name: "test"
+					}]
 				}
 			}
 		]
+	}
+}));
+
+testLoose('a{ property var  }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 17 }
 	},
+	default: false,
+	readonly: false,
+	kind: "var",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 17 },
+			end: { line: 1, column: 17 }
+		},
+		name: "✖"
+	}
+}]));
 
-	// ----------------------- QML Examples -----------------------
-	'qml-examples': {
+testLoose('a{ w }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 5 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "w" }],
+		name: "w"
+	},
+	expr: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 5 },
+			end: { line: 1, column: 5 }
+		},
+		name: "✖"
+	}
+}]));
 
-		// Hello World
-		'import QtQuick 2.3\nimport QtQuick.Window 2.2\n\tWindow {\n\tvisible: true\n\n\tMouseArea {\n\t\tanchors.fill: parent\n\t\tonClicked: {\n\t\t\tQt.quit();\n\t\t}\n\t}\n\t\tText {\n\t\t\ttext: qsTr("Hello World")\n\t\t\tanchors.centerIn: parent\n\t}\n}':
-		{
-			type: "Program",
-			headerStatements: {
-				type: "QMLHeaderStatements",
-				range: [0, 44],
-				loc: {
-					start: { line: 1, column: 0 },
-					end: { line: 2, column: 25 }
-				},
-				statements: [
-					{
-						type: "QMLImportStatement",
-						range: [0, 18],
-						loc: {
-							start: { line: 1, column: 0 },
-							end: { line: 1, column: 18 }
-						},
-						module: {
-							type: "QMLModule",
-							range: [7, 18],
-							loc: {
-								start: { line: 1, column: 7 },
-								end: { line: 1, column: 18 }
-							},
-							id: {
-								type: "QMLQualifiedID",
-								range: [7, 14],
-								loc: {
-									start: { line: 1, column: 7 },
-									end: { line: 1, column: 14 }
-								},
-								parts: [
-									{
-										type: "Identifier",
-										range: [7, 14],
-										loc: {
-											start: { line: 1, column: 7 },
-											end: { line: 1, column: 14 }
-										},
-										name: "QtQuick"
-									}
-								],
-								name: "QtQuick"
-							},
-							version: {
-								type: "QMLVersionLiteral",
-								range: [15, 18],
-								loc: {
-									start: { line: 1, column: 15 },
-									end: { line: 1, column: 18 }
-								},
-								raw: "2.3",
-								value: 2.3,
-								major: 2,
-								minor: 3
-							}
-						}
-					},
-					{
-						type: "QMLImportStatement",
-						range: [19, 44],
-						loc: {
-							start: { line: 2, column: 0 },
-							end: { line: 2, column: 25 }
-						},
-						module: {
-							type: "QMLModule",
-							range: [26, 44],
-							loc: {
-								start: { line: 2, column: 7 },
-								end: { line: 2, column: 25 }
-							},
-							id: {
-								type: "QMLQualifiedID",
-								range: [26, 40],
-								loc: {
-									start: { line: 2, column: 7 },
-									end: { line: 2, column: 21 }
-								},
-								parts: [
-									{
-										type: "Identifier",
-										range: [26, 33],
-										loc: {
-											start: { line: 2, column: 7 },
-											end: { line: 2, column: 14 }
-										},
-										name: "QtQuick"
-									},
-									{
-										type: "Identifier",
-										range: [34, 40],
-										loc: {
-											start: { line: 2, column: 15 },
-											end: { line: 2, column: 21 }
-										},
-										name: "Window"
-									}
-								],
-								name: "QtQuick.Window"
-							},
-							version: {
-								type: "QMLVersionLiteral",
-								range: [41, 44],
-								loc: {
-									start: { line: 2, column: 22 },
-									end: { line: 2, column: 25 }
-								},
-								raw: "2.2",
-								value: 2.2,
-								major: 2,
-								minor: 2
-							}
-						}
-					}
-				]
+testLoose('a{ : 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 6 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 3 }
+		},
+		parts: [{ type: "Identifier", name: "✖" }],
+		name: "✖"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 5 },
+			end: { line: 1, column: 6 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+testLoose('a{ anchors.: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 14 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 11 }
+		},
+		parts: [
+			{ type: "Identifier", name: "anchors" },
+			{ type: "Identifier", name: "✖" }
+		],
+		name: "anchors.✖"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 13 },
+			end: { line: 1, column: 14 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+testLoose('a{ anchors..: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 15 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 12 }
+		},
+		parts: [
+			{ type: "Identifier", name: "anchors" },
+			{ type: "Identifier", name: "✖" },
+			{ type: "Identifier", name: "✖" }
+		],
+		name: "anchors.✖.✖"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 14 },
+			end: { line: 1, column: 15 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+testLoose('a{ ..: 3 }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 8 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 5 }
+		},
+		parts: [
+			{ type: "Identifier", name: "✖" },
+			{ type: "Identifier", name: "✖" },
+			{ type: "Identifier", name: "✖" }
+		],
+		name: "✖.✖.✖"
+	},
+	expr: {
+		type: "Literal",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 8 }
+		},
+		value: 3,
+		raw: "3"
+	}
+}]));
+
+testLoose('a{ var }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 7 }
+	},
+	default: false,
+	readonly: false,
+	kind: "var",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 7 }
+		},
+		name: "✖"
+	},
+	init: null
+}]));
+
+testLoose('a{ var w }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 8 }
+	},
+	default: false,
+	readonly: false,
+	kind: "var",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 8 }
+		},
+		name: "w"
+	},
+	init: null
+}]));
+
+testLoose('a{ obj w }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 8 }
+	},
+	default: false,
+	readonly: false,
+	kind: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 6 }
+		},
+		parts: [{ type: "Identifier", name: "obj" }],
+		name: "obj"
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 8 }
+		},
+		name: "w"
+	},
+	init: null
+}]));
+
+// TODO: Allow this to run with the normal parser once the ambiguity is solved
+testLoose('a{ property var b: Window {} }', rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 28 }
+	},
+	default: false,
+	readonly: false,
+	kind: "var",
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 16 },
+			end: { line: 1, column: 17 }
+		},
+		name: "b"
+	},
+	init: {
+		type: "QMLObjectLiteral",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 28 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 1, column: 19 },
+				end: { line: 1, column: 25 }
 			},
-			rootObject: {
-				type: "QMLObjectLiteral",
-				range: [46, 213],
-				loc: {
-					start: { line: 3, column: 1 },
-					end: { line: 16, column: 1 }
-				},
-				id: {
-					type: "QMLQualifiedID",
-					range: [46, 52],
-					loc: {
-						start: { line: 3, column: 1 },
-						end: { line: 3, column: 7 }
-					},
-					parts: [
-						{
-							type: "Identifier",
-							range: [46, 52],
-							loc: {
-								start: { line: 3, column: 1 },
-								end: { line: 3, column: 7 }
-							},
-							name: "Window"
-						}
-					],
-					name: "Window"
-				},
-				block: {
-					type: "QMLMemberBlock",
-					range: [53, 213],
-					loc: {
-						start: { line: 3, column: 8 },
-						end: { line: 16, column: 1 }
-					},
-					members: [
-						{
-							type: "QMLPropertyBinding",
-							range: [56, 69],
-							loc: {
-								start: { line: 4, column: 1 },
-								end: { line: 4, column: 14 }
-							},
-							id: {
-								type: "QMLQualifiedID",
-								range: [56, 63],
-								loc: {
-									start: { line: 4, column: 1 },
-									end: { line: 4, column: 8 }
-								},
-								parts: [
-									{
-										type: "Identifier",
-										range: [56, 63],
-										loc: {
-											start: { line: 4, column: 1 },
-											end: { line: 4, column: 8 }
-										},
-										name: "visible"
-									}
-								],
-								name: "visible"
-							},
-							expr: {
-								type: "Literal",
-								range: [65, 69],
-								loc: {
-									start: { line: 4, column: 10 },
-									end: { line: 4, column: 14 }
-								},
-								value: true,
-								raw: "true"
-							}
-						},
-						{
-							type: "QMLObjectLiteral",
-							range: [72, 142],
-							loc: {
-								start: { line: 6, column: 1 },
-								end: { line: 11, column: 2 }
-							},
-							id: {
-								type: "QMLQualifiedID",
-								range: [72, 81],
-								loc: {
-									start: { line: 6, column: 1 },
-									end: { line: 6, column: 10 }
-								},
-								parts: [
-									{
-										type: "Identifier",
-										range: [72, 81],
-										loc: {
-											start: { line: 6, column: 1 },
-											end: { line: 6, column: 10 }
-										},
-										name: "MouseArea"
-									}
-								],
-								name: "MouseArea"
-							},
-							block: {
-								type: "QMLMemberBlock",
-								range: [82, 142],
-								loc: {
-									start: { line: 6, column: 11 },
-									end: { line: 11, column: 2 }
-								},
-								members: [
-									{
-										type: "QMLPropertyBinding",
-										range: [86, 106],
-										loc: {
-											start: { line: 7, column: 2 },
-											end: { line: 7, column: 22 }
-										},
-										id: {
-											type: "QMLQualifiedID",
-											range: [86, 98],
-											loc: {
-												start: { line: 7, column: 2 },
-												end: { line: 7, column: 14 }
-											},
-											parts: [
-												{
-													type: "Identifier",
-													range: [86, 93],
-													loc: {
-														start: { line: 7, column: 2 },
-														end: { line: 7, column: 9 }
-													},
-													name: "anchors"
-												},
-												{
-													type: "Identifier",
-													range: [94, 98],
-													loc: {
-														start: { line: 7, column: 10 },
-														end: { line: 7, column: 14 }
-													},
-													name: "fill"
-												}
-											],
-											name: "anchors.fill"
-										},
-										expr: {
-											type: "Identifier",
-											range: [100, 106],
-											loc: {
-												start: { line: 7, column: 16 },
-												end: { line: 7, column: 22 }
-											},
-											name: "parent"
-										}
-									},
-									{
-										type: "QMLPropertyBinding",
-										range: [109, 139],
-										loc: {
-											start: { line: 8, column: 2 },
-											end: { line: 10, column: 3 }
-										},
-										id: {
-											type: "QMLQualifiedID",
-											range: [109, 118],
-											loc: {
-												start: { line: 8, column: 2 },
-												end: { line: 8, column: 11 }
-											},
-											parts: [
-												{
-													type: "Identifier",
-													range: [109, 118],
-													loc: {
-														start: { line: 8, column: 2 },
-														end: { line: 8, column: 11 }
-													},
-													name: "onClicked"
-												}
-											],
-											name: "onClicked"
-										},
-										expr: {
-											type: "QMLStatementBlock",
-											range: [120, 139],
-											loc: {
-												start: { line: 8, column: 13 },
-												end: { line: 10, column: 3 }
-											},
-											statements: [
-												{
-													type: "ExpressionStatement",
-													range: [125, 135],
-													loc: {
-														start: { line: 9, column: 3 },
-														end: { line: 9, column: 13 }
-													},
-													expression: {
-														type: "CallExpression",
-														range: [125, 134],
-														loc: {
-															start: { line: 9, column: 3 },
-															end: { line: 9, column: 12 }
-														},
-														callee: {
-															type: "MemberExpression",
-															range: [125, 132],
-															loc: {
-																start: { line: 9, column: 3 },
-																end: { line: 9, column: 10 }
-															},
-															object: {
-																type: "Identifier",
-																range: [125, 127],
-																loc: {
-																	start: { line: 9, column: 3 },
-																	end: { line: 9, column: 5 }
-																},
-																name: "Qt"
-															},
-															property: {
-																type: "Identifier",
-																range: [128, 132],
-																loc: {
-																	start: { line: 9, column: 6 },
-																	end: { line: 9, column: 10 }
-																},
-																name: "quit"
-															},
-															computed: false
-														},
-														arguments: []
-													}
-												}
-											]
-										}
-									}
-								]
-							}
-						},
-						{
-							type: "QMLObjectLiteral",
-							range: [145, 211],
-							loc: {
-								start: { line: 12, column: 2 },
-								end: { line: 15, column: 2 }
-							},
-							id: {
-								type: "QMLQualifiedID",
-								range: [145, 149],
-								loc: {
-									start: { line: 12, column: 2 },
-									end: { line: 12, column: 6 }
-								},
-								parts: [
-									{
-										type: "Identifier",
-										range: [145, 149],
-										loc: {
-											start: { line: 12, column: 2 },
-											end: { line: 12, column: 6 }
-										},
-										name: "Text"
-									}
-								],
-								name: "Text"
-							},
-							block: {
-								type: "QMLMemberBlock",
-								range: [150, 211],
-								loc: {
-									start: { line: 12, column: 7 },
-									end: { line: 15, column: 2 }
-								},
-								members: [
-									{
-										type: "QMLPropertyBinding",
-										range: [155, 180],
-										loc: {
-											start: { line: 13, column: 3 },
-											end: { line: 13, column: 28 }
-										},
-										id: {
-											type: "QMLQualifiedID",
-											range: [155, 159],
-											loc: {
-												start: { line: 13, column: 3 },
-												end: { line: 13, column: 7 }
-											},
-											parts: [
-												{
-													type: "Identifier",
-													range: [155, 159],
-													loc: {
-														start: { line: 13, column: 3 },
-														end: { line: 13, column: 7 }
-													},
-													name: "text"
-												}
-											],
-											name: "text"
-										},
-										expr: {
-											type: "CallExpression",
-											range: [161, 180],
-											loc: {
-												start: { line: 13, column: 9 },
-												end: { line: 13, column: 28 }
-											},
-											callee: {
-												type: "Identifier",
-												range: [161, 165],
-												loc: {
-													start: { line: 13, column: 9 },
-													end: { line: 13, column: 13 }
-												},
-												name: "qsTr"
-											},
-											arguments: [
-												{
-													type: "Literal",
-													range: [166, 179],
-													loc: {
-														start: { line: 13, column: 14 },
-														end: { line: 13, column: 27 }
-													},
-													value: "Hello World",
-													raw: "\"Hello World\""
-												}
-											]
-										}
-									},
-									{
-										type: "QMLPropertyBinding",
-										range: [184, 208],
-										loc: {
-											start: { line: 14, column: 3 },
-											end: { line: 14, column: 27 }
-										},
-										id: {
-											type: "QMLQualifiedID",
-											range: [184, 200],
-											loc: {
-												start: { line: 14, column: 3 },
-												end: { line: 14, column: 19 }
-											},
-											parts: [
-												{
-													type: "Identifier",
-													range: [184, 191],
-													loc: {
-														start: { line: 14, column: 3 },
-														end: { line: 14, column: 10 }
-													},
-													name: "anchors"
-												},
-												{
-													type: "Identifier",
-													range: [192, 200],
-													loc: {
-														start: { line: 14, column: 11 },
-														end: { line: 14, column: 19 }
-													},
-													name: "centerIn"
-												}
-											],
-											name: "anchors.centerIn"
-										},
-										expr: {
-											type: "Identifier",
-											range: [202, 208],
-											loc: {
-												start: { line: 14, column: 21 },
-												end: { line: 14, column: 27 }
-											},
-											name: "parent"
-										}
-									}
-								]
-							}
-						}
-					]
-				}
-			}
+			parts: [{ type: "Identifier", name: "Window" }],
+			name: "Window"
+		},
+		body: {
+			type: "QMLMemberBlock",
+			loc: {
+				start: { line: 1, column: 26 },
+				end: { line: 1, column: 28 }
+			},
+			members: []
 		}
 	}
-};
+}]));
+
+// TODO: Allow this to run with the normal parser once the ambiguity is solved
+testLoose('a{ b: Window {} }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 15 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "b" }],
+		name: "b"
+	},
+	expr: {
+		type: "QMLObjectLiteral",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 15 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 1, column: 6 },
+				end: { line: 1, column: 12 }
+			},
+			parts: [{ type: "Identifier", name: "Window" }],
+			name: "Window"
+		},
+		body: {
+			type: "QMLMemberBlock",
+			loc: {
+				start: { line: 1, column: 13 },
+				end: { line: 1, column: 15 }
+			},
+			members: []
+		}
+	}
+}]));
+
+testLoose('a{ signal }', rootObjectMembers([{
+	type: "QMLSignalDefinition",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 10 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 10 }
+		},
+		name: "✖"
+	},
+	params: []
+}]));
+
+testLoose('a{ signal () }', rootObjectMembers([{
+	type: "QMLSignalDefinition",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 12 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 10 }
+		},
+		name: "✖"
+	},
+	params: []
+}]));
+
+testLoose('a{ signal test( }', rootObjectMembers([{
+	type: "QMLSignalDefinition",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 16 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 14 }
+		},
+		name: "test"
+	},
+	params: []
+}]));
+
+testLoose('a{ signal test(int test }', rootObjectMembers([{
+	type: "QMLSignalDefinition",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 24 }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 10 },
+			end: { line: 1, column: 14 }
+		},
+		name: "test"
+	},
+	params: [{
+		type: "QMLParameter",
+		loc: {
+			start: { line: 1, column: 15 },
+			end: { line: 1, column: 23 }
+		},
+		kind: {
+			type: "Identifier",
+			loc: {
+				start: { line: 1, column: 15 },
+				end: { line: 1, column: 18 }
+			},
+			name: "int"
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 1, column: 19 },
+				end: { line: 1, column: 23 }
+			},
+			name: "test"
+		}
+	}]
+}]));
+
+testLoose('Window {\n\tfunction\n\tproperty var prop\n}', rootObjectMembers([
+	{
+		type: "FunctionDeclaration",
+		loc: {
+			start: { line: 2, column: 1 },
+			end: { line: 3, column: 9 }
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 3, column: 1 },
+				end: { line: 3, column: 9 }
+			},
+			name: "property"
+		},
+		params: [],
+		body: {
+			type: "BlockStatement",
+			loc: {
+				start: { line: 3, column: 9 },
+				end: { line: 3, column: 9 }
+			},
+			body: []
+		}
+	},
+	{
+		type: "QMLPropertyDeclaration",
+		loc: {
+			start: { line: 3, column: 10 },
+			end: { line: 3, column: 18 }
+		},
+		default: false,
+		readonly: false,
+		kind: "var",
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 3, column: 14 },
+				end: { line: 3, column: 18 }
+			},
+			name: "prop"
+		},
+		init: null
+	}
+]));
+
+testLoose('Window {\n\tfunction (something)\n\tproperty var prop\n}', rootObjectMembers([
+	{
+		type: "FunctionDeclaration",
+		loc: {
+			start: { line: 2, column: 1 },
+			end: { line: 2, column: 21 }
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 2, column: 10 },
+				end: { line: 2, column: 10 }
+			},
+			name: "✖"
+		},
+		params: [
+			{
+				type: "Identifier",
+				loc: {
+					start: { line: 2, column: 11 },
+					end: { line: 2, column: 20 }
+				},
+				name: "something"
+			}
+		],
+		body: {
+			type: "BlockStatement",
+			loc: {
+				start: { line: 2, column: 21 },
+				end: { line: 2, column: 21 }
+			},
+			body: []
+		}
+	},
+	{
+		type: "QMLPropertyDeclaration",
+		loc: {
+			start: { line: 3, column: 1 },
+			end: { line: 3, column: 18 }
+		},
+		default: false,
+		readonly: false,
+		kind: "var",
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 3, column: 14 },
+				end: { line: 3, column: 18 }
+			},
+			name: "prop"
+		},
+		init: null
+	}
+]));
+
+testLoose('Window {\n\tfunction (\n\tproperty var prop\n}', rootObjectMembers([
+	{
+		type: "FunctionDeclaration",
+		loc: {
+			start: { line: 2, column: 1 },
+			end: { line: 3, column: 1 }
+		},
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 2, column: 10 },
+				end: { line: 2, column: 10 }
+			},
+			name: "✖"
+		},
+		params: [],
+		body: {
+			type: "BlockStatement",
+			loc: {
+				start: { line: 3, column: 1 },
+				end: { line: 3, column: 1 }
+			},
+			body: []
+		}
+	},
+	{
+		type: "QMLPropertyDeclaration",
+		loc: {
+			start: { line: 3, column: 1 },
+			end: { line: 3, column: 18 }
+		},
+		default: false,
+		readonly: false,
+		kind: "var",
+		id: {
+			type: "Identifier",
+			loc: {
+				start: { line: 3, column: 14 },
+				end: { line: 3, column: 18 }
+			},
+			name: "prop"
+		},
+		init: null
+	}
+]));
 
 /*
-* Create the tests that will be run.  In order to avoid copying redundant
-* code between tests, this for loop uses the heading to determine how it
-* will build the expected AST.  For example, if the test fixture heading
-* is 'qml-root-obj-members', the given code will be appended to the
-* 'members' section of the Root Object's AST.  Test fixture headings that
-* are not matched will have their code appended to the 'body' section of
-* the main Program's AST.
+* Creates a Program with 'headerStatements' and 'rootObject' as the program's expected
+* body.
 */
-for (var heading in testFixture) {
-	var tst = testFixture[heading];
-	for (var code in tst) {
-		if (typeof tst[code] === "string") {
-			// Expected test result holds an error message
-			testFail(code, tst[code], { ecmaVersion: 6 });
-		} else {
-			// Expected test result holds an AST
-			switch (heading) {
-				case 'qml-header-statements':
-					test(code, {
-						type: "Program",
-						headerStatements: tst[code],
-						rootObject: null
-					}, {
-						ecmaVersion: 6,
-						locations: true,
-						ranges: true,
-					});
-					break;
-				case 'qml-object-literal':
-					test(code, {
-						type: "Program",
-						headerStatements: {
-							type: "QMLHeaderStatements",
-							range: [0, 0],
-						},
-						rootObject: tst[code]
-					}, {
-						ecmaVersion: 6,
-						locations: true,
-						ranges: true,
-					});
-					break;
-				case 'qml-root-obj-members':
-					test(code, {
-						type: "Program",
-						headerStatements: {
-							type: "QMLHeaderStatements",
-							range: [0, 0],
-						},
-						rootObject: {
-							type: "QMLObjectLiteral",
-							block: {
-								type: "QMLMemberBlock",
-								members: tst[code]
-							}
-						}
-					}, {
-						ecmaVersion: 6,
-						locations: true,
-						ranges: true,
-					});
-					break;
-				default:
-					test(code, tst[code], {
-						ecmaVersion: 6,
-						locations: true,
-						ranges: true,
-					});
-			}
-		}
+function program(headerStatements, rootObject) {
+	return {
+		type: "Program",
+		headerStatements: {
+			type: "QMLHeaderStatements",
+			statements: headerStatements || []
+		},
+		rootObject: rootObject || null
 	}
+}
+
+/*
+* Creates a QMLHeaderStatements with 'stmts' as the expected statements and 'prog' as the
+* parent Program.  A value of null for 'prog' will append the QMLHeaderStatements AST to
+* the Program returned by program().
+*/
+function headerStatements(stmts, prog) {
+	prog = prog || program();
+	prog.headerStatements.statements = stmts;
+	return prog;
+}
+
+/*
+* Creates a QMLObjectLiteral with 'stmts' as the expected statements and 'prog' as the parent
+* Program.  A value of null for 'prog' will append the QMLObjectLiteral AST to the Program
+* returned by program().
+*/
+function rootObject(obj, prog) {
+	prog = prog || program();
+	prog.rootObject = obj;
+	return prog;
+}
+
+/*
+* Creates a QMLMemberBlock with 'members' as the expected members and 'obj' as the parent
+* QMLObjectLiteral.  A value of null for 'obj' will append the QMLMemberBlock AST to the
+* QMLObjectLiteral returned by rootObject().
+*/
+function rootObjectMembers(members, obj) {
+	var rootObj = obj || rootObject({
+		type: "QMLObjectLiteral",
+		body: {
+			type: "QMLMemberBlock",
+			members: members
+		}
+	});
+	return rootObj;
+}
+
+/*
+* Creates a JavaScript Expression with 'expr' as the expected expression and 'objMembers' as
+* the parent QMLMemberBlock.  A value of null for 'objMembers' will append the JavaScript
+* Expression to the QMLMemberBlock returned by rootObjectMembers().
+*/
+function javaScript(expr, objMembers) {
+	objMembers = objMembers || rootObjectMembers([{
+		type: "QMLPropertyBinding",
+		expr: expr
+	}]);
+	return objMembers;
 }

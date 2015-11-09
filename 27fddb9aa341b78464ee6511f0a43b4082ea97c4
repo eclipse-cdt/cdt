@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67ccbf7d_935f6345",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IChangeTraceMethodHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "This should probably be 7.8 and you will need to change MANIFEST.MF and pom.xml of this plugin to change the version from 7.7 to 7.8.",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_b33b87f3",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IChangeTraceMethodHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "I think we should keep the word \u0027reverse\u0027 in this class\u0027s name.",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_d82d8a4a",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IChangeTraceMethodHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "update comment since the param is not an int",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_9834e295",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IChangeTraceMethodHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "Remove since tag",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_f82a4e2f",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IChangeTraceMethodHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "I see you created string constants in CLIRecord, which is hard to know looking at the current interface.  \nAnother option to define in this file something like this:\n  interface IReverseTraceMethod {}\nand then in CLIRecord:\n  enum ReverseTraceMethod extends IReverseTraceMethod { FULL_TRACE, BRANCH_TRACE, PROCESSOR_TRACE }\nThis should allow someone to extend the list by creating a new enum that implments IReverseTraceMethod,\nwhile still using a named type instead of just a generic String.",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_b839a68d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IChangeTraceMethodHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "Remove since tag",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_58133a1a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/CDebugUIPreferenceInitializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "Please create a constant for \u0027UseGdbTrace\u0027",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_7818fe35",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "The string needs to be made translatable in a messages.properties file",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_d8066ad8",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "Please remove above",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_f8032ec5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "The string needs to be made translatable in a messages.properties file",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_1811b20b",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "The string needs to be made translatable in a messages.properties file",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_583a5a84",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "Please create constants for second column of strings",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_380e76ef",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "The first column of strings needs to be made translatable in a messages.properties file",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_783f1e73",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "Please remove above",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_986f8273",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbReverseToggleCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "remove",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_9336830b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIRecord.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-09T03:01:22Z",
+      "side": 1,
+      "message": "I assume you are using String as a type instead of an enum to allow someone to use new values.\nI think we could use an enum still as long as we make it implements an empty interface which we\u0027d use a type to the methods.\nPlease see comment in IChangeTraceMethodHandler.",
+      "revId": "27fddb9aa341b78464ee6511f0a43b4082ea97c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

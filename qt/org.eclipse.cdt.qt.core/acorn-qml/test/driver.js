@@ -37,6 +37,7 @@ exports.runTests = function(config, callback) {
 				testOpts.onToken = [];
 			}
 			testOpts.plugins = { qml: true };
+			testOpts.pluginsLoose = { qml: true };
 			var ast = parse(test.code, testOpts);
 			if (test.error) {
 				if (config.loose) {
@@ -63,7 +64,7 @@ exports.runTests = function(config, callback) {
 				else callback("ok", test.code);
 			}
 		} catch(e) {
-			if (!(e instanceof SyntaxError)) {
+			if (!(e instanceof SyntaxError || e instanceof Error)) {
 				throw e;
 			}
 			if (test.error) {

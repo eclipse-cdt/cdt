@@ -8,26 +8,28 @@
 package org.eclipse.launchbar.core.target;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.launchbar.core.internal.target.LaunchTarget;
 
 /**
  * A launch target is a thing that a launch will run on. Launch targets are
  * simple objects with the intention that the launch delegates and launches will
  * adapt this object to an object that will assist in performing the launch.
- * 
+ *
  * @noimplement not to be implemented by clients
  */
 public interface ILaunchTarget extends IAdaptable {
+	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---");
 
 	/**
 	 * The name of the target.
-	 * 
+	 *
 	 * @return name of the target
 	 */
 	String getName();
 
 	/**
 	 * The type of the target.
-	 * 
+	 *
 	 * @return type of the target
 	 */
 	String getTypeId();

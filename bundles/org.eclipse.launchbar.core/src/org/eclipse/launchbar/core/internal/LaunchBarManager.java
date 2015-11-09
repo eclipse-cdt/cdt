@@ -490,7 +490,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	private void syncActiveMode() throws CoreException {
-		if (activeLaunchDesc == null || activeLaunchTarget == null) {
+		if (activeLaunchDesc == null) {
 			setActiveLaunchMode(null);
 			return;
 		}
@@ -574,9 +574,6 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	public ILaunchMode[] getLaunchModes() throws CoreException {
-		if (activeLaunchTarget == null) {
-			return new ILaunchMode[0];
-		}
 		ILaunchConfigurationType configType = getLaunchConfigurationType(activeLaunchDesc, activeLaunchTarget);
 		if (configType == null)
 			return new ILaunchMode[0];
@@ -689,6 +686,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	public void setActiveLaunchTarget(ILaunchTarget target) throws CoreException {
+		if (target == null)
+			target = ILaunchTarget.NULL_TARGET;
 		if (activeLaunchTarget == target) {
 			return;
 		}
@@ -699,7 +698,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	private void storeLaunchTarget(ILaunchDescriptor desc, ILaunchTarget target) {
-		if (target == null) {
+		if (target == null || target == ILaunchTarget.NULL_TARGET) {
 			// no point storing null, if stored id is invalid it won't be used
 			// anyway
 			return;
@@ -722,7 +721,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 
 	private ILaunchTarget getDefaultLaunchTarget(ILaunchDescriptor descriptor) {
 		List<ILaunchTarget> targets = getLaunchTargets(descriptor);
-		return targets.isEmpty() ? null : targets.get(0);
+		return targets.isEmpty() ? ILaunchTarget.NULL_TARGET : targets.get(0);
 	}
 
 	public ILaunchConfiguration getActiveLaunchConfiguration() throws CoreException {

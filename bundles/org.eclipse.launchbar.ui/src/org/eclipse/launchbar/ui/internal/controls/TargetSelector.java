@@ -49,7 +49,7 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 	private final ILaunchTargetUIManager targetUIManager = Activator.getService(ILaunchTargetUIManager.class);
 	private final ILaunchTargetManager targetManager = Activator.getService(ILaunchTargetManager.class);
 
-	private static final String[] noTargets = new String[] { "---" }; //$NON-NLS-1$
+	private static final ILaunchTarget[] noTargets = new ILaunchTarget[] { ILaunchTarget.NULL_TARGET };
 
 	public TargetSelector(Composite parent, int style) {
 		super(parent, style);
@@ -89,6 +89,9 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 
 			@Override
 			public Image getImage(Object element) {
+				if (element == ILaunchTarget.NULL_TARGET) {
+					return null;
+				}
 				if (element instanceof ILaunchTarget) {
 					// TODO apply a status overlay
 					ILaunchTarget target = (ILaunchTarget) element;

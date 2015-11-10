@@ -379,7 +379,7 @@
       </tool>
       <targetPlatform
             archList="all"
-            binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.GNU_ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE;org.eclipse.cdt.core.Cygwin_PE"
+            binaryParser="org.eclipse.cdt.core.GNU_ELF;org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO64;org.eclipse.cdt.core.PE;org.eclipse.cdt.core.Cygwin_PE"
             id="org.eclipse.linuxtools.cdt.autotools.core.targetPlatform"
             isAbstract="false"
             name="%Autotools.targetplatform.name"/>

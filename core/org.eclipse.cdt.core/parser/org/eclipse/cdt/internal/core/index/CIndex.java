@@ -51,7 +51,7 @@ import org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 public class CIndex implements IIndex {
 	/**
@@ -454,14 +454,15 @@ public class CIndex implements IIndex {
 			}
 			List<IIndexBinding[]> result = new ArrayList<>();
 			ILinkage[] linkages = Linkage.getIndexerLinkages();
-			monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length * linkages.length);
+			SubMonitor loopMonitor =
+					SubMonitor.convert(monitor, Messages.CIndex_FindBindingsTask_label, fFragments.length * linkages.length);
 			for (ILinkage linkage : linkages) {
 				if (filter.acceptLinkage(linkage)) {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fFragments.length][];
 					for (int i = 0; i < fFragments.length; i++) {
 						try {
 							IBinding[] part = fFragments[i].findBindings(names,
-									retargetFilter(linkage, filter), new SubProgressMonitor(monitor, 1));
+									retargetFilter(linkage, filter), loopMonitor.newChild(1));
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {
@@ -685,12 +686,13 @@ public class CIndex implements IIndex {
 		}
 		List<IIndexMacro> result = new ArrayList<>();
 		HashSet<IIndexFileLocation> handledIFLs= new HashSet<>();
-		monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length);
+		SubMonitor loopMonitor =
+				SubMonitor.convert(monitor, Messages.CIndex_FindBindingsTask_label, fFragments.length);
 		for (IIndexFragment fragment : fFragments) {
 			HashSet<IIndexFile> allowedFiles= new HashSet<>();
 			try {
-				IIndexMacro[] macros= fragment.findMacros(name, isPrefix, caseSensitive, filter,
-						new SubProgressMonitor(monitor, 1));
+				IIndexMacro[] macros=
+						fragment.findMacros(name, isPrefix, caseSensitive, filter, loopMonitor.newChild(1));
 				for (IIndexMacro indexMacro : macros) {
 					IIndexFile file= indexMacro.getFile();
 					if (!allowedFiles.contains(file)) {

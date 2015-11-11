@@ -3447,7 +3447,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
 
 			if (isScoped || LT(1) == IToken.tIDENTIFIER) {
-				name= identifier();
+				// A qualified-name can appear here if an enumeration declared at class scope is
+				// being defined out of line.
+				name= qualifiedName();
 				endOffset= calculateEndOffset(name);
 			}
 

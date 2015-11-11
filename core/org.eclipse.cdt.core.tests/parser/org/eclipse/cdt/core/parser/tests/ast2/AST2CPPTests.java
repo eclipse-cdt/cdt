@@ -9042,6 +9042,18 @@ public class AST2CPPTests extends AST2TestBase {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}
+	
+	//	typedef int Int;
+	//	struct S {
+	//	    enum waldo1 : int;
+	//	    enum waldo2 : Int;
+	//	};
+	//	enum S::waldo1 : int {
+	//		someConstant = 1508
+	//	};
+	public void testForwardDeclaringEnumAtClassScope_475894() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	struct S {
 	//	  int m;

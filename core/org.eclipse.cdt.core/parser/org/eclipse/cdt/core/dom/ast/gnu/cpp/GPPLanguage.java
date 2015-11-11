@@ -53,10 +53,10 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	}
 	
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adapter) {
-		if (adapter == IPDOMLinkageFactory.class) {
-			return new PDOMCPPLinkageFactory();
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.isAssignableFrom(IPDOMLinkageFactory.class)) {
+			return (T) new PDOMCPPLinkageFactory();
 		}
 		return super.getAdapter(adapter);
 	}

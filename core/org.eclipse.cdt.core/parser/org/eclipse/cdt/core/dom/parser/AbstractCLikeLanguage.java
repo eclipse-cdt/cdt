@@ -313,10 +313,10 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adapter) {
-		if (ICLanguageKeywords.class.equals(adapter))
-			return getCLanguageKeywords();
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.isAssignableFrom(ICLanguageKeywords.class))
+			return (T) getCLanguageKeywords();
 		
 		return super.getAdapter(adapter);
 	}

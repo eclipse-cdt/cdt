@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67ccbf7d_3a76604a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/GCCBuiltinSpecsDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-11-11T23:25:09Z",
+      "side": 1,
+      "message": "this mean this will be applied to the MinGW (non-cross) toolchain as well. Is this really desirable?",
+      "range": {
+        "startLine": 171,
+        "startChar": 7,
+        "endLine": 171,
+        "endChar": 48
+      },
+      "revId": "a4b4f40b8bbe956496b820efc71c5233576fc39d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

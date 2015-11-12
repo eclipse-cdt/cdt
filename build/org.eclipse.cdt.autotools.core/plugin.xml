@@ -573,7 +573,7 @@
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
             id="org.eclipse.cdt.autotools.core.LibtoolGCCBuildCommandParser"
             name="%LibtoolGCCBuildOutputParser.name"
-            parameter="(libtool:\s+compile:\s+)?((gcc)|([gc]\+\+)|(clang))"
+            parameter="(libtool:\s+compile:\s+)?((g?cc)|([gc]\+\+)|(clang))"
             prefer-non-shared="true">
       </provider>
    </extension>

@@ -5,33 +5,43 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.internal.qt.core.build;
+package org.eclipse.cdt.internal.qt.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.core.runtime.Platform;
 
-public class QtInstall {
+public class QtInstall implements IQtInstall {
 
+	private final String name;
 	private final Path qmakePath;
 	private String spec;
 
-	public QtInstall(Path qmakePath) {
+	public QtInstall(String name, Path qmakePath) {
+		this.name = name;
 		this.qmakePath = qmakePath;
 	}
 
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public Path getQmakePath() {
 		return qmakePath;
 	}
 
+	@Override
 	public Path getLibPath() {
 		return qmakePath.resolve("../lib"); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean supports(String os, String arch) {
 		switch (getSpec()) {
 		case "macx-clang": //$NON-NLS-1$
@@ -42,16 +52,22 @@ public class QtInstall {
 		return false;
 	}
 
+	public static String getSpec(String qmakePath) throws IOException {
+		Process proc = new ProcessBuilder(qmakePath, "-query", "QMAKE_XSPEC").start(); //$NON-NLS-1$ //$NON-NLS-2$
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+			String line = reader.readLine();
+			if (line != null) {
+				return line.trim();
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public String getSpec() {
 		if (spec == null) {
 			try {
-				Process proc = new ProcessBuilder(getQmakePath().toString(), "-query", "QMAKE_XSPEC").start(); //$NON-NLS-1$ //$NON-NLS-2$
-				try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-					String line = reader.readLine();
-					if (line != null) {
-						spec = line.trim();
-					}
-				}
+				spec = getSpec(getQmakePath().toString());
 			} catch (IOException e) {
 				QtPlugin.log(e);
 			}

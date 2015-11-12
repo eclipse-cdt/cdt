@@ -24,4 +24,5 @@ Export-Package: org.eclipse.cdt.internal.qt.core;x-friends:="org.eclipse.cdt.qt.
  org.eclipse.cdt.internal.qt.core.build;x-friends:="org.eclipse.cdt.qt.ui",
  org.eclipse.cdt.internal.qt.core.index;x-friends:="org.eclipse.cdt.qt.ui.tests",
  org.eclipse.cdt.internal.qt.core.parser;x-friends:="org.eclipse.cdt.qt.ui",
- org.eclipse.cdt.internal.qt.core.project;x-friends:="org.eclipse.cdt.qt.ui"
+ org.eclipse.cdt.internal.qt.core.project;x-friends:="org.eclipse.cdt.qt.ui",
+ org.eclipse.cdt.qt.core

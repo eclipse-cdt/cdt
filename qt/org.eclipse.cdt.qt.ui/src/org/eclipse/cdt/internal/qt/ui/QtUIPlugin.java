@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -50,10 +51,12 @@ public class QtUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 
-		// Use a save participant to grab any changed resources while this plugin was inactive
+		// Use a save participant to grab any changed resources while this
+		// plugin was inactive
 		QtResourceChangeListener resourceManager = new QtResourceChangeListener();
 		ISaveParticipant saveParticipant = new QtWorkspaceSaveParticipant();
-		ISavedState lastState = ResourcesPlugin.getWorkspace().addSaveParticipant(QtUIPlugin.PLUGIN_ID, saveParticipant);
+		ISavedState lastState = ResourcesPlugin.getWorkspace().addSaveParticipant(QtUIPlugin.PLUGIN_ID,
+				saveParticipant);
 		if (lastState != null) {
 			lastState.processResourceChangeEvents(resourceManager);
 		}
@@ -115,4 +118,11 @@ public class QtUIPlugin extends AbstractUIPlugin {
 	public static void log(int code, String msg, Throwable e) {
 		getDefault().getLog().log(new Status(code, PLUGIN_ID, msg, e));
 	}
+
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
+	}
+
 }

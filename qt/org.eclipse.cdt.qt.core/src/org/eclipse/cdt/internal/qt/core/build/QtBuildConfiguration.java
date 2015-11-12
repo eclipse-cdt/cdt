@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.qt.core.IQtInstall;
+import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -37,7 +39,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class QtBuildConfiguration extends CBuildConfiguration {
 
-	private QtInstall qtInstall;
+	private IQtInstall qtInstall;
 	private String launchMode;
 	private Map<String, String> properties;
 
@@ -76,14 +78,14 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 		// return it if it exists already
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
 			QtBuildConfiguration qtConfig = config.getAdapter(QtBuildConfiguration.class);
-			QtInstall qtInstall = qtConfig.getQtInstall();
+			IQtInstall qtInstall = qtConfig.getQtInstall();
 			if (qtInstall != null && qtInstall.supports(os, arch) && launchMode.equals(qtConfig.getLaunchMode())) {
 				return qtConfig;
 			}
 		}
 
 		// Nope, create it
-		for (QtInstall qtInstall : QtInstallManager.instance.getInstalls()) {
+		for (IQtInstall qtInstall : QtPlugin.getService(IQtInstallManager.class).getInstalls()) {
 			if (qtInstall.supports(os, arch)) {
 				Set<String> configNames = new HashSet<>();
 				for (IBuildConfiguration config : project.getBuildConfigs()) {
@@ -108,7 +110,7 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 		return null;
 	}
 
-	public QtInstall getQtInstall() {
+	public IQtInstall getQtInstall() {
 		if (qtInstall == null) {
 			// TODO set based on settings
 		}
@@ -122,7 +124,7 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 		return launchMode;
 	}
 
-	private void setup(QtInstall qtInstall, String launchMode) {
+	private void setup(IQtInstall qtInstall, String launchMode) {
 		this.qtInstall = qtInstall;
 		this.launchMode = launchMode;
 		// TODO save settings

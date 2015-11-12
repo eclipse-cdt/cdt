@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.internal.qt.core.index.QMakeProjectInfoManager;
+import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -23,8 +24,8 @@ import org.osgi.framework.ServiceReference;
 
 public class QtPlugin extends Plugin {
 
-	public static final String ID = "org.eclipse.cdt.qt.core";
-	public static final String SIGNAL_SLOT_TAGGER_ID = ID + ".signalslot.tagger";
+	public static final String ID = "org.eclipse.cdt.qt.core"; //$NON-NLS-1$
+	public static final String SIGNAL_SLOT_TAGGER_ID = ID + ".signalslot.tagger"; //$NON-NLS-1$
 
 	public static final int SignalSlot_Mask_signal = 1;
 	public static final int SignalSlot_Mask_slot = 2;
@@ -39,7 +40,7 @@ public class QtPlugin extends Plugin {
 	 * project from which they are created. This name is used to store the
 	 * property.
 	 */
-	public static final QualifiedName QTINDEX_PROP_NAME = new QualifiedName(ID, "qtindex");
+	public static final QualifiedName QTINDEX_PROP_NAME = new QualifiedName(ID, "qtindex"); //$NON-NLS-1$
 
 	private static QtPlugin instance;
 
@@ -69,6 +70,9 @@ public class QtPlugin extends Plugin {
 			}
 		};
 		context.addBundleListener(bundleListener);
+
+		context.registerService(IQtInstallManager.class, new QtInstallManager(), null);
+
 		super.start(context);
 	}
 

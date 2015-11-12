@@ -2829,7 +2829,12 @@
 			commandId="org.eclipse.debug.ui.commands.StepReturn"
 			contextId="org.eclipse.debug.ui.debugging"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+		<!-- MSVS Resume -->
+		<key
+			sequence="F5"
+			commandId="org.eclipse.debug.ui.commands.Resume"
+			contextId="org.eclipse.debug.ui.debugging"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 		<!-- MSVS ToggleBreakpoint -->
 		<key
 			sequence="F9"

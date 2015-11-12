@@ -61,6 +61,7 @@ public class LibtoolGCCBuildCommandParserTest extends BaseTestCase {
 
 		IFile file1=ResourceHelper.createFile(project, "file1.cpp");
 		IFile file2=ResourceHelper.createFile(project, "file2.cpp");
+		IFile file3=ResourceHelper.createFile(project, "file3.cpp");
 		@SuppressWarnings("deprecation")
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file1.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
@@ -72,6 +73,7 @@ public class LibtoolGCCBuildCommandParserTest extends BaseTestCase {
 		parser.startup(cfgDescription, null);
 		parser.processLine("libtool: compile:  gcc -I/path0 file1.cpp");
 		parser.processLine("libtool: compile:  g++ -I/path0 file2.cpp");
+		parser.processLine("libtool: compile:  cc -I/path0 file3.cpp");
 		parser.shutdown();
 		{
 			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file1, languageId);
@@ -79,6 +81,10 @@ public class LibtoolGCCBuildCommandParserTest extends BaseTestCase {
 		}
 		{
 			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file2, languageId);
+			assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
+		}
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file3, languageId);
 			assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
 		}
 	}

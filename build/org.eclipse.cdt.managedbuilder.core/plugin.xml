@@ -639,7 +639,7 @@
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"
             name="%GCCBuildOutputParser.name"
-            parameter="(gcc)|([gc]\+\+)|(clang)"
+            parameter="(g?cc)|([gc]\+\+)|(clang)"
             prefer-non-shared="true">
       </provider>
    </extension>

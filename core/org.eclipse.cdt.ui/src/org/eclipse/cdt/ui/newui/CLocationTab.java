@@ -377,8 +377,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		}
 
 		@Override
-		@SuppressWarnings("rawtypes")
-		public Object getAdapter(Class adapter) {
+		public <T> T getAdapter(Class<T> adapter) {
 			return f.getAdapter(adapter);
 		}
 		public boolean isRoot() {

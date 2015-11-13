@@ -25,14 +25,11 @@ public class CProjectAdapterFactory implements IAdapterFactory {
 
 	private static final Class<?>[] ADAPTERS = { IProject.class };
 
-	/*
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (IProject.class.equals(adapterType)) {
-			return ((ICProject)adaptableObject).getProject();
+			return (T) ((ICProject)adaptableObject).getProject();
 		}
 		return null;
 	}

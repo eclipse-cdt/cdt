@@ -74,14 +74,11 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 		return super.getImageDescriptor(object);
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
-	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class clas) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> clas) {
 		if (clas == IWorkbenchAdapter.class)
-			return this;
+			return (T) this;
 		return null;
 	}
 

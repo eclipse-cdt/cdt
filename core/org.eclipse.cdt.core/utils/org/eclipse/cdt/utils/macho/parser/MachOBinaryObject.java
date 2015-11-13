@@ -394,22 +394,19 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(MachO.class)) {
 			try {
-				return new MachO(getPath().toOSString());
+				return (T) new MachO(getPath().toOSString());
 			} catch (IOException e) {
 			}
 		}
 		if (adapter.equals(ISymbolReader.class)) {
-			MachO macho = (MachO)getAdapter(MachO.class);
+			MachO macho = getAdapter(MachO.class);
 			if (macho != null) {
-				return macho.getSymbolReader();
+				return (T) macho.getSymbolReader();
 			}
 		}
 		return super.getAdapter(adapter);

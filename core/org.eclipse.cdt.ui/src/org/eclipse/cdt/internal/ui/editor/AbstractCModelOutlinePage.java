@@ -316,17 +316,14 @@ public abstract class AbstractCModelOutlinePage extends Page
 		fOpenIncludeAction= new OpenIncludeAction(this);
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class key) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> key) {
 		if (key == IShowInSource.class) {
-			return getShowInSource();
+			return (T) getShowInSource();
 		}
 		if (key == IShowInTargetList.class) {
-			return new IShowInTargetList() {
+			return (T) new IShowInTargetList() {
 				@Override
 				public String[] getShowInTargetIds() {
 					return new String[] { ProjectExplorer.VIEW_ID };
@@ -334,7 +331,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 			};
 		}
 		if (key == IShowInTarget.class) {
-			return getShowInTarget();
+			return (T) getShowInTarget();
 		}
 		return null;
 	}

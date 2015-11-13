@@ -102,22 +102,22 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		return info;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(PE.class)) {
 			try {
 				if (header != null) {
-					return new PE(getPath().toOSString(), header.getObjectDataOffset());
+					return (T) new PE(getPath().toOSString(), header.getObjectDataOffset());
 				}
-				return new PE(getPath().toOSString());
+				return (T) new PE(getPath().toOSString());
 			} catch (IOException e) {
 			}
 		}
 		if (adapter.equals(ISymbolReader.class)) {
-			PE pe = (PE)getAdapter(PE.class);
+			PE pe = getAdapter(PE.class);
 			if (pe != null) {
-				return pe.getSymbolReader();
+				return (T) pe.getSymbolReader();
 			}
 		}
 		return super.getAdapter(adapter);

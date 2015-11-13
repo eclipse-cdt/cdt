@@ -62,10 +62,10 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.isInstance(rbinding)) {
-			return rbinding;
+			return (T) rbinding;
 		}
 		return null;
 	}

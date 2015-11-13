@@ -157,17 +157,14 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 		return new DefaultGnuToolFactory(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(IGnuToolFactory.class)) {
 			if (toolFactory == null) {
 				toolFactory = createGNUToolFactory();
 			}
-			return toolFactory;
+			return (T) toolFactory;
 		}
 		return super.getAdapter(adapter);
 	}

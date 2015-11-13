@@ -305,8 +305,7 @@ public class PDOMASTAdapter {
 		}
 
 		@Override
-		@SuppressWarnings("rawtypes")
-		public Object getAdapter(Class adapter) {
+		public <T> T getAdapter(Class<T> adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
 
@@ -376,8 +375,7 @@ public class PDOMASTAdapter {
 		}
 
 		@Override
-		@SuppressWarnings("rawtypes")
-		public Object getAdapter(Class adapter) {
+		public <T> T getAdapter(Class<T> adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
 
@@ -477,8 +475,7 @@ public class PDOMASTAdapter {
 		}
 
 		@Override
-		@SuppressWarnings("rawtypes")
-		public Object getAdapter(Class adapter) {
+		public <T> T getAdapter(Class<T> adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
 

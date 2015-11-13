@@ -185,7 +185,7 @@ public class Checks {
 	}
 
 	public static void addModifiedFilesToChecker(IFile[] filesToModify, CheckConditionsContext context) {
-		ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
+		ResourceChangeChecker checker= context.getChecker(ResourceChangeChecker.class);
 		IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 
 		for (int i= 0; i < filesToModify.length; i++) {

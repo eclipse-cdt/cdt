@@ -310,18 +310,13 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == Addr2line.class) {
-			return getAddr2line(false);
+			return (T) getAddr2line(false);
 		} else if (adapter == CPPFilt.class) {
-			return getCPPFilt();
+			return (T) getCPPFilt();
 		}
 		return super.getAdapter(adapter);
 	}

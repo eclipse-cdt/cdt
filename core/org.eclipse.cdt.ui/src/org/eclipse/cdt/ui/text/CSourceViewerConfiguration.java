@@ -204,7 +204,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			scanner = new CPreprocessorScanner(getTokenStoreFactory(), keywords);
 		}
 		if (scanner == null) {
-			keywords = (ICLanguageKeywords) GPPLanguage.getDefault().getAdapter(ICLanguageKeywords.class);
+			keywords = GPPLanguage.getDefault().getAdapter(ICLanguageKeywords.class);
 			scanner= new CPreprocessorScanner(getTokenStoreFactory(), keywords);
 		}
 		fPreprocessorScanner= scanner;

@@ -36,17 +36,14 @@ public class IncludeRefContainer extends CElementGrouping {
 		fCProject = cproject;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
-			return this;
+			return (T) this;
 		}
 		if (adapter == ICProject.class) {
-			return fCProject;
+			return (T) fCProject;
 		}
 		return null;
 	}

@@ -76,8 +76,7 @@ abstract class PreprocessorMacro implements IMacroBinding {
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class clazz) {
+	public <T> T getAdapter(Class<T> clazz) {
 		return null;
 	}
 

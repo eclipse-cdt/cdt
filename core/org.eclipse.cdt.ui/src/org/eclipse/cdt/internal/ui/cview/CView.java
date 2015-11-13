@@ -320,15 +320,15 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	/**
 	 * Answer the property defined by key.
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class key) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> key) {
 		if (key.equals(ISelectionProvider.class)) {
-			return viewer;
+			return (T) viewer;
 		} else if (key == IShowInSource.class) {
-			return getShowInSource();
+			return (T) getShowInSource();
 		} else if (key == IShowInTarget.class) {
-			return this;
+			return (T) this;
 		}
 		return super.getAdapter(key);
 	}

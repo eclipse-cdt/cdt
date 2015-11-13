@@ -22,7 +22,7 @@ public class BuildConsolePageParticipant implements IConsolePageParticipant {
 	private BuildConsole console;
 
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
 

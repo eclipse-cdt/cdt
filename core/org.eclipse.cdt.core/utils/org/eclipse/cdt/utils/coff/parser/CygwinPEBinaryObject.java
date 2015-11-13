@@ -322,20 +322,15 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == Addr2line.class) {
-			return getAddr2line(false);
+			return (T) getAddr2line(false);
 		} else if (adapter == CPPFilt.class) {
-			return getCPPFilt();
+			return (T) getCPPFilt();
 		} else if (adapter == CygPath.class) {
-			return getCygPath();
+			return (T) getCygPath();
 		}
 		return super.getAdapter(adapter);
 	}

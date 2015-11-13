@@ -38,24 +38,21 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 		return PROPERTIES;
 	}
 
-	/**
-	 * @see IAdapterFactory#getAdapter
-	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Object element, Class key) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object element, Class<T> key) {
 		if (ICElement.class.equals(key)) {
 			//try {
 				if (element instanceof IFile) {
-					return celementFactory.create((IFile)element);
+					return (T) celementFactory.create((IFile)element);
 				} else if (element instanceof IFolder) {
-					return celementFactory.create((IFolder)element);
+					return (T) celementFactory.create((IFolder)element);
 				} else if (element instanceof IProject) {
-					return celementFactory.create((IProject)element);
+					return (T) celementFactory.create((IProject)element);
 				} else if (element instanceof IWorkspaceRoot) {
-					return CoreModel.create((IWorkspaceRoot)element);
+					return (T) CoreModel.create((IWorkspaceRoot)element);
 				} else if (element instanceof IResource) {
-					return celementFactory.create((IResource)element);
+					return (T) celementFactory.create((IResource)element);
 				}
 			//} catch (CoreException e) {
 			//	CUIPlugin.getDefault().getLog().log(e.getStatus());

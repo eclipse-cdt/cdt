@@ -286,10 +286,9 @@ public abstract class CRenameProcessorDelegate {
             result.addWarning(msg);
         }
         if (context != null) {
-			ResourceChangeChecker checker = (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
+			ResourceChangeChecker checker = context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory = checker.getDeltaFactory();
-            ValidateEditChecker editChecker=
-            		(ValidateEditChecker) context.getChecker(ValidateEditChecker.class);
+            ValidateEditChecker editChecker = context.getChecker(ValidateEditChecker.class);
 			for (IFile changedFile : fileset) {
 				deltaFactory.change(changedFile);
 				editChecker.addFile(changedFile);

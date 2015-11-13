@@ -48,7 +48,7 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 	public void run(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
 			Object selectedObject= selection.getFirstElement();
-			ICElement elem= (ICElement) getAdapter(selectedObject, ICElement.class);
+			ICElement elem= getAdapter(selectedObject, ICElement.class);
 			if (elem != null) {
 				TypeHierarchyUI.open(elem, getSite().getWorkbenchWindow());
 			}
@@ -67,7 +67,7 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 		}
 		
 		Object selectedObject= selection.getFirstElement();
-		ICElement elem= (ICElement) getAdapter(selectedObject, ICElement.class);
+		ICElement elem= getAdapter(selectedObject, ICElement.class);
 		if (elem != null) {
 			setEnabled(TypeHierarchyUI.isValidInput(elem));
 		}
@@ -76,10 +76,10 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	private Object getAdapter(Object object, Class desiredClass) {
+	@SuppressWarnings("unchecked")
+	private <T> T getAdapter(Object object, Class<T> desiredClass) {
 		if (desiredClass.isInstance(object)) {
-			return object;
+			return (T) object;
 		}
 		if (object instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) object;

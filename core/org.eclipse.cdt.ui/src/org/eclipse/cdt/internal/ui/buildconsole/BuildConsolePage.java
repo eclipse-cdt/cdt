@@ -531,17 +531,14 @@ public class BuildConsolePage extends Page
 		getViewer().refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class required) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> required) {
 		if (IFindReplaceTarget.class.equals(required)) {
-			return getViewer().getFindReplaceTarget();
+			return (T) getViewer().getFindReplaceTarget();
 		}
 		if (Widget.class.equals(required)) {
-			return getViewer().getTextWidget();
+			return (T) getViewer().getTextWidget();
 		}
 //		if (IShowInSource.class.equals(required)) {
 //			return this;

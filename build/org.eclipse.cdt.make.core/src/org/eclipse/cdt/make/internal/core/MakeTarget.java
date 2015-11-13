@@ -372,13 +372,13 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(IProject.class)) {
-			return getProject();
+			return (T) getProject();
 		} else if (adapter.equals(IResource.class)) {
-			return container;
+			return (T) container;
 		}
 		return super.getAdapter(adapter);
 	}

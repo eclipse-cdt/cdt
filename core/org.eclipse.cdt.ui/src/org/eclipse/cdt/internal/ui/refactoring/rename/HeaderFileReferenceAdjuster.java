@@ -170,7 +170,7 @@ public class HeaderFileReferenceAdjuster {
 			progress = SubMonitor.convert(progress.newChild(9), workingCopies.length + affectedFiles.size());
 
 			List<Change> changes = new ArrayList<>();
-			ValidateEditChecker checker= (ValidateEditChecker) context.getChecker(ValidateEditChecker.class);
+			ValidateEditChecker checker= context.getChecker(ValidateEditChecker.class);
 			for (ITranslationUnit tu : workingCopies) {
 				addFileChange(tu, changes, checker, progress.newChild(1));
 			}

@@ -75,19 +75,15 @@ public class GNUElfParser extends ElfParser {
 		return new DefaultGnuToolFactory(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(IGnuToolFactory.class)) {
 			if (toolFactory == null) {
 				toolFactory = createGNUToolFactory();
 			}
-			return toolFactory;
+			return (T) toolFactory;
 		}
-		// TODO Auto-generated method stub
 		return super.getAdapter(adapter);
 	}
 }

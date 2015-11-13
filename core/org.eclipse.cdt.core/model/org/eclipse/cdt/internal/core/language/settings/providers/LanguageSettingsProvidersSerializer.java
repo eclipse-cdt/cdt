@@ -46,6 +46,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -874,6 +875,7 @@ public class LanguageSettingsProvidersSerializer {
 						fileStorePrj.delete(true, null);
 					}
 				} else {
+					project.getWorkspace().validateEdit(new IFile[] { fileStorePrj }, IWorkspace.VALIDATE_PROMPT);
 					IContainer folder = fileStorePrj.getParent();
 					if (folder instanceof IFolder && !folder.exists()) {
 						((IFolder) folder).create(true, true, null);

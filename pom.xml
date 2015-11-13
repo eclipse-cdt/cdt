@@ -26,7 +26,7 @@
 		<target-platform>cdt-e4.6</target-platform>
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.5</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
-		<base.test.vmargs>-Xms256m -Xmx512m -XX:MaxPermSize=256m -ea</base.test.vmargs>
+		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
 	</properties>
 
 	<licenses>

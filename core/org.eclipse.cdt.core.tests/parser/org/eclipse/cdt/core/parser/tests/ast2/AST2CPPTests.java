@@ -10747,6 +10747,17 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testBasePointerConverstionInConditional_462705() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct S {};
+	//	typedef S* S_ptr;
+	//	void waldo(S*);
+	//	S_ptr s;
+	//	int main() {
+	//	    waldo(false ? s : 0);
+	//	}
+	public void testTypedefOfPointerInConditional_481078() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <bool>
 	//	struct enable_if {

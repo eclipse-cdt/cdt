@@ -1170,6 +1170,8 @@ public class Conversions {
 	 * the pointer is not possible, the method returns {@code null}.
 	 */
 	public static IType compositePointerType(IType t1, IType t2, IASTNode point) {
+		t1 = SemanticUtil.getNestedType(t1, TDEF);
+		t2 = SemanticUtil.getNestedType(t2, TDEF);
 		final boolean isPtr1 = t1 instanceof IPointerType;
 		if (isPtr1 || isNullPtr(t1)) {
 			if (isNullPointerConstant(t2)) {

@@ -12,7 +12,7 @@
 
 (function (mod) {
 	if (typeof exports == "object" && typeof module == "object") // CommonJS
-		return mod(require("acorn/walk"));
+		return mod(require("acorn/dist/walk"));
 	if (typeof define == "function" && define.amd) // AMD
 		return define(["acorn/dist/walk"], mod);
 	mod(acorn.walk); // Plain browser env
@@ -26,7 +26,9 @@
 	var base = walk.base;
 	base["Program"] = function (node, st, c) {
 		c(node.headerStatements, st);
-		c(node.rootObject, st, "QMLRootObject");
+		if (node.rootObject) {
+			c(node.rootObject, st, "QMLRootObject");
+		}
 	};
 	base["QMLHeaderStatements"] = function (node, st, c) {
 		for (var i = 0; i < node.statements.length; i++) {

@@ -3,9 +3,12 @@
 	"description": "Tern Qt Plugin",
 	"version": "0.0.0",
 	"license": "EPL-1.0",
+	"scripts": {
+		"test": "node test/run.js"
+	},
 	"dependencies": {
 		"tern": "^0.16.0",
-		"acorn": "^2.4.0",
+		"acorn": "^2.6.4",
 		"acorn-qml": "../acorn-qml"
 	},
 	"devDependencies": {

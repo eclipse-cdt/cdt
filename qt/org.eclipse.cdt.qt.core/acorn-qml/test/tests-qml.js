@@ -2573,6 +2573,31 @@ testLoose('a{ w }', rootObjectMembers([{
 	}
 }]));
 
+testLoose('a{ w:  }', rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 7 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "w" }],
+		name: "w"
+	},
+	expr: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 7 },
+			end: { line: 1, column: 7 }
+		},
+		name: "✖"
+	}
+}]));
+
 testLoose('a{ : 3 }', rootObjectMembers([{
 	type: "QMLPropertyBinding",
 	loc: {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
+ *     Synopsys Inc.
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
@@ -49,7 +50,10 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
-	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
+	//<CUSTOMIZATION>
+//	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
+	private static final Pattern OPTIONS_PATTERN = Pattern.compile("[-@][^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-@\\s][^\\s]+)))?"); //$NON-NLS-1$
+	//</CUSTOMIZATION>
 	private static final int OPTION_GROUP = 0;
 
 	public enum ResourceScope {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Ericsson and others.
+ * Copyright (c) 2011, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,8 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
@@ -27,7 +25,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
-import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -119,60 +116,16 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	// Now that the flag --thread-group is globally supported
 	// by GDB 7.2, we have to make sure not to use it twice.
 	// Bug 340262
+	/** @since 4.9 */
 	@Override
-	public void resume(final IExecutionDMContext context, final RequestMonitor rm) {
-		assert context != null;
-
-		final IMIExecutionDMContext thread = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-		final IMIContainerDMContext container = DMContexts.getAncestorOfType(context, IMIContainerDMContext.class);
-		if (thread == null && container == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
+	protected void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
+		if (!doCanResume(context)) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+				"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
 		}
 
-		canResume(context, new ImmediateDataRequestMonitor<Boolean>(rm) {
-			@Override
-			protected void handleSuccess() {
-				if (getData()) {
-					if (thread != null) {
-						doResume(thread, rm);
-						return;
-					}
-
-					if (container != null) {
-						doResume(container, rm);
-						return;
-					}
-				} else {
-					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
-							"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-					rm.done();
-				}
-			}
-		});
-	}
-
-	private void doResume(IMIExecutionDMContext context, final RequestMonitor rm) {
-		final MIThreadRunState threadState = fThreadRunStates.get(context);
-		if (threadState == null) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
-                "Given context: " + context + " can't be found.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-			rm.done();
-			return;
-		}
-		
-		threadState.fResumePending = true;
-		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-			@Override
-			protected void handleFailure() {
-				threadState.fResumePending = false;
-				super.handleFailure();
-			}
-		});
-	}
-
-	private void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
 		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 	

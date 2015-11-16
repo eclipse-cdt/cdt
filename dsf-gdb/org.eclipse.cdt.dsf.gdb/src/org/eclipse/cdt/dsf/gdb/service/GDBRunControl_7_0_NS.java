@@ -701,7 +701,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		rm.done(doCanResume(context));
 	}
 
-	private boolean doCanResume(IExecutionDMContext context) {
+	/** @since 4.9 */
+	protected boolean doCanResume(IExecutionDMContext context) {
 		// Thread case
 		if (context instanceof IMIExecutionDMContext) {
 			MIThreadRunState threadState = fThreadRunStates.get(context);
@@ -774,7 +775,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		});
 	}
 
-	private void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
+	/** @since 4.9 */
+	protected void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
 		if (!doCanResume(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$

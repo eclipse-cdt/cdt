@@ -398,11 +398,12 @@ var injectQMLLoose;
 
 			node.kind = this.qml_parseKind();
 			node.id = this.qml_parseIdent(false);
-			if (!this.eat(tt.colon)) {
+
+			if (this.eat(tt.colon)) {
+				node.init = this.qml_parsePropertyAssignment();
+			} else {
 				node.init = null;
 				this.semicolon();
-			} else {
-				node.init = this.qml_parsePropertyAssignment();
 			}
 
 			return this.finishNode(node, "QMLPropertyDeclaration");

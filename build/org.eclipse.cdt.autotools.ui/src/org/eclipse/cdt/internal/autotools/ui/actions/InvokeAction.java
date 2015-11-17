@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.actions;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
@@ -48,36 +44,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class InvokeAction extends AbstractTargetAction {
 
 	public final String SHELL_COMMAND = "sh"; //$NON-NLS-1$
 
-	protected void showInformation(String title, String content) {
-		MessageDialog.openInformation(new Shell(), title, content);
-	}
-
 	protected void showError(String title, String content) {
 		MessageDialog.openError(new Shell(), title, content);
-	}
-
-	protected void showSuccess(String title) {
-		MessageDialog.openInformation(new Shell(), title, 
-				InvokeMessages.getString("InvokeAction.success")); //$NON-NLS-1$
-	}
-	
-	protected String showInput(String title, String content, String defaultTxt) {
-		InputDialog getOptionDialog = new InputDialog(new Shell(), title,
-				content, defaultTxt, null);
-
-		getOptionDialog.open();
-
-		return getOptionDialog.getValue();
 	}
 
 	/**
@@ -227,93 +202,6 @@ public abstract class InvokeAction extends AbstractTargetAction {
 		return cwd;
 	}
 	
-	private static class ExecuteProgressDialog implements IRunnableWithProgress {
-		private final IPath command;
-		private final String[] argumentList;
-		private final String[] envList;
-		private final IPath execDir;
-		private int status;
-		private Map<String, String> outputs = null;
-		
-		public ExecuteProgressDialog(IPath command, String[] argumentList,
-				String[] envList, IPath execDir) {
-			this.command = command;
-			this.argumentList = argumentList;
-			this.envList = envList;
-			this.execDir = execDir;
-		}
-
-		@Override
-		public void run(IProgressMonitor monitor) throws InvocationTargetException {
-
-			RemoteCommandLauncher cmdL = new RemoteCommandLauncher();
-			outputs = new HashMap<>();
-
-			// invoke command
-			try (ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-					ByteArrayOutputStream stderr = new ByteArrayOutputStream()) {
-				monitor.beginTask(InvokeMessages.getFormattedString("InvokeAction.progress.message", // $NON-NLS-1$
-						new String[] { command.toOSString() }), IProgressMonitor.UNKNOWN);
-				monitor.worked(1);
-				Process process = cmdL.execute(command, argumentList, envList, execDir, new NullProgressMonitor());
-
-				if (cmdL.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
-					try {
-						status = 0;
-						monitor.done();
-						process.getOutputStream().close();
-					} catch (IOException e) {
-						// ignore
-					}
-				} else {
-					// failed to execute command
-					status = -1;
-					monitor.done();
-					return;
-				}
-
-				outputs.put("stdout", stdout.toString()); //$NON-NLS-1$
-				outputs.put("stderr", stderr.toString()); //$NON-NLS-1$
-			} catch (CoreException | IOException e) {
-				monitor.done();
-				throw new InvocationTargetException(e);
-			}
-		}
-
-		public Map<String, String> getOutputs() {
-			return outputs;
-		}
-		
-		public int getStatus() {
-			return status;
-		}
-	}
-	
-	
-	protected Map<String, String> executeCommand(IPath command,
-			String[] argumentList, String[] envList, IPath execDir) {
-		try {
-			ExecuteProgressDialog d = new ExecuteProgressDialog(command,
-					argumentList, envList, execDir);
-			new ProgressMonitorDialog(new Shell()).run(false, false, d);
-			if (d.getStatus() == -1)
-				showError(InvokeMessages
-					.getString("InvokeAction.execute.windowTitle.error"), InvokeMessages //$NON-NLS-1$
-					.getString("InvokeAction.execute.message") //$NON-NLS-1$
-					+ command.toOSString()); //$NON-NLS-1$
-			return d.getOutputs();
-		} catch (InvocationTargetException e) {
-			showError(InvokeMessages
-					.getString("InvokeAction.execute.windowTitle.error"), InvokeMessages //$NON-NLS-1$
-					.getString("InvokeAction.execute.message") //$NON-NLS-1$
-					+ command.toOSString()); //$NON-NLS-1$
-			AutotoolsUIPlugin.logException(e);
-			return null;
-		} catch (InterruptedException e) {
-		    return null;
-		}
-	}
-
 	protected void executeConsoleCommand(final String actionName, final String command,
 			final String[] argumentList, final IPath execDir) {
 		// We need to use a workspace root scheduling rule because adding MakeTargets

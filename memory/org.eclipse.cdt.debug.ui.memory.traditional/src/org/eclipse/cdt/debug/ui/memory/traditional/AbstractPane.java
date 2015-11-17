@@ -26,6 +26,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Font;
@@ -323,6 +324,8 @@ public abstract class AbstractPane extends Canvas
 
         this.addMouseMoveListener(createMouseMoveListener());
 
+        this.addMouseTrackListener(createMouseHoverListener());
+
         this.addKeyListener(createKeyListener());
 
         this.addFocusListener(createFocusListener());
@@ -336,6 +339,15 @@ public abstract class AbstractPane extends Canvas
     	return new AbstractPaneMouseMoveListener();
     }
     
+    /**
+     * @since 1.4
+     */
+    protected MouseTrackAdapter createMouseHoverListener() {
+        // Providing the implementation instance is left to subclasses
+        return new MouseTrackAdapter() {
+        };
+    }
+
     protected FocusListener createFocusListener() {
     	return new AbstractPaneFocusListener();
     }
@@ -836,6 +848,8 @@ public abstract class AbstractPane extends Canvas
     		fRendering.setDirty(false);
     		fRendering.refresh();
         }
+
+        refreshHeight();
     }
 
     abstract protected BigInteger getViewportAddress(int col, int row)
@@ -868,16 +882,21 @@ public abstract class AbstractPane extends Canvas
 
     protected int getCellHeight()
     {
-        if(fCellHeight == -1)
-        {
-            fCellHeight = getCellTextHeight()
-                + (fRendering.getCellPadding() * 2);
+        if (fCellHeight == -1) {
+            refreshHeight();
         }
 
         return fCellHeight;
     }
 
     private int fCharacterWidth = -1; // called often, cache
+
+    private void refreshHeight() {
+        // If additional information is to be inserted between lines
+        // double the height
+        int multiplier = fRendering.isExtraInfo() == true ? 2 : 1;
+        fCellHeight = getCellTextHeight() * multiplier + (fRendering.getCellPadding() * 2);
+    }
 
     protected int getCellCharacterWidth()
     {

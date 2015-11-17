@@ -155,6 +155,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public final static int UPDATE_ON_BREAKPOINT = 2;
     public final static int UPDATE_MANUAL = 3;
     public int fUpdateMode = UPDATE_ALWAYS;
+    private boolean fExtraInfo = true;
 
     public Rendering(Composite parent, TraditionalRendering renderingParent)
     {
@@ -2291,5 +2292,26 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public AbstractPane incrPane(AbstractPane currentPane, int offset) {
         final List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
         return panes.get((panes.indexOf(currentPane) + offset) % panes.size());
+    }
+
+    /**
+     * Indicates if additional address information shall be resolved and displayed in the binary data pane
+     * 
+     * @since 1.4
+     */
+    public boolean isExtraInfo() {
+        return fExtraInfo;
+    }
+
+    /**
+     * Sets the option which will activate/ de-activate the resolution of additional address information and if available represent it in the binary data pane
+     * 
+     * @since 1.4
+     */
+    public void setExtraInfo(boolean extraInfo) {
+        if (extraInfo != fExtraInfo) {
+            fExtraInfo = extraInfo;
+            redrawPanes();
+        }
     }
 }

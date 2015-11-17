@@ -569,7 +569,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 			EnvironmentVariable existingVariable = (EnvironmentVariable)items[i].getData();
 			if (existingVariable.getName().equals(name)) {
 				boolean overWrite = MessageDialog.openQuestion(getShell(), MakeUIPlugin.getResourceString("MakeEnvironmentBlock.12"), MessageFormat.format( //$NON-NLS-1$
-						MakeUIPlugin.getResourceString("MakeEnvironmentBlock.13"), new String[]{name})); //$NON-NLS-1$
+						MakeUIPlugin.getResourceString("MakeEnvironmentBlock.13"), name)); //$NON-NLS-1$
 				if (!overWrite) {
 					return false;
 				}

@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.swt.widgets.Shell;
 
 
 public class InvokeAutoheaderAction extends InvokeAction {
@@ -35,7 +34,7 @@ public class InvokeAutoheaderAction extends InvokeAction {
 		IPath execDir = getExecDir(container);
 		String cwd = InvokeMessages.getString("CWD") + getCWD(container); //$NON-NLS-1$
 
-		InputDialog optionDialog = new SingleInputDialog(new Shell(), cwd,
+		InputDialog optionDialog = new SingleInputDialog(getShell(), cwd,
 				InvokeMessages.getString("InvokeAutoheaderAction.windowTitle.options"), //$NON-NLS-1$
 				InvokeMessages.getString("InvokeAutoheaderAction.message.options.otherOptions"), //$NON-NLS-1$
 				DEFAULT_OPTION, null);

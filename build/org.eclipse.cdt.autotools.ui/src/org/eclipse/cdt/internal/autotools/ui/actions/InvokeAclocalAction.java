@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.widgets.Shell;
 
 
 public class InvokeAclocalAction extends InvokeAction {
@@ -35,15 +34,10 @@ public class InvokeAclocalAction extends InvokeAction {
 		IPath execDir = getExecDir(container);
 		String cwd = InvokeMessages.getString("CWD") + getCWD(container); //$NON-NLS-1$
 
-		TwoInputDialog optionDialog = new TwoInputDialog(
-				new Shell(),
-				cwd,
-				InvokeMessages
-						.getString("InvokeAclocalAction.windowTitle.options"), //$NON-NLS-1$
-				InvokeMessages
-						.getString("InvokeAclocalAction.message.options.otherOptions"), //$NON-NLS-1$
-				InvokeMessages
-						.getString("InvokeAclocalAction.message.options.includeDir"), DEFAULT_OPTION, null); //$NON-NLS-1$
+		TwoInputDialog optionDialog = new TwoInputDialog(getShell(), cwd,
+				InvokeMessages.getString("InvokeAclocalAction.windowTitle.options"), //$NON-NLS-1$
+				InvokeMessages.getString("InvokeAclocalAction.message.options.otherOptions"), //$NON-NLS-1$
+				InvokeMessages.getString("InvokeAclocalAction.message.options.includeDir"), DEFAULT_OPTION, null); //$NON-NLS-1$
 
 		optionDialog.open();
 

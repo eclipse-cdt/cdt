@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.swt.widgets.Shell;
 
 
 public class InvokeLibtoolizeAction extends InvokeAction {
@@ -36,7 +35,7 @@ public class InvokeLibtoolizeAction extends InvokeAction {
 		IPath execDir = getExecDir(container);
 		String cwd = InvokeMessages.getString("CWD") + getCWD(container); //$NON-NLS-1$
 
-		InputDialog optionDialog = new SingleInputDialog(new Shell(), cwd,
+		InputDialog optionDialog = new SingleInputDialog(getShell(), cwd,
 				InvokeMessages.getString("InvokeLibtoolizeAction.windowTitle.options"), //$NON-NLS-1$
 				InvokeMessages.getString("InvokeLibtoolizeAction.message.options.otherOptions"), //$NON-NLS-1$
 				DEFAULT_OPTION, null);

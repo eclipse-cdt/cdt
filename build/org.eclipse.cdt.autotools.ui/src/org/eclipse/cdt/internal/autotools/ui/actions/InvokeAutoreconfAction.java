@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.swt.widgets.Shell;
 
 
 public class InvokeAutoreconfAction extends InvokeAction {
@@ -36,13 +35,9 @@ public class InvokeAutoreconfAction extends InvokeAction {
 		IPath execDir = getExecDir(container);
 		String cwd = InvokeMessages.getString("CWD") + getCWD(container); //$NON-NLS-1$
 
-		InputDialog optionDialog = new SingleInputDialog(
-				new Shell(),
-				cwd,
-				InvokeMessages
-						.getString("InvokeAutoreconfAction.windowTitle.options"), //$NON-NLS-1$
-				InvokeMessages
-						.getString("InvokeAutoreconfAction.message.options.otherOptions"), //$NON-NLS-1$
+		InputDialog optionDialog = new SingleInputDialog(getShell(), cwd,
+				InvokeMessages.getString("InvokeAutoreconfAction.windowTitle.options"), //$NON-NLS-1$
+				InvokeMessages.getString("InvokeAutoreconfAction.message.options.otherOptions"), //$NON-NLS-1$
 				DEFAULT_OPTION, null);
 		optionDialog.open();
 

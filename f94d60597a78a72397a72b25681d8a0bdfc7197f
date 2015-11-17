@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67ccbf7d_8f80f699",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-11-17T23:04:16Z",
+      "side": 1,
+      "message": "Can we add a link to some documentation explaining the response files? I don\u0027t think it\u0027s very common knowledge. I\u0027ve seen it before to handle long command-line options. I found this link:\nhttps://gcc.gnu.org/wiki/Response_Files\n\nIs there a better page for documentation that you know?",
+      "revId": "f94d60597a78a72397a72b25681d8a0bdfc7197f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_2f60ca76",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-11-17T23:04:16Z",
+      "side": 1,
+      "message": "You can update 2011 -\u003e 2015 at the same time.",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 27
+      },
+      "revId": "f94d60597a78a72397a72b25681d8a0bdfc7197f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_ef46e2f9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-11-17T23:04:16Z",
+      "side": 1,
+      "message": "The commented code can be removed.",
+      "range": {
+        "startLine": 53,
+        "startChar": 1,
+        "endLine": 54,
+        "endChar": 17
+      },
+      "revId": "f94d60597a78a72397a72b25681d8a0bdfc7197f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_8f3b964f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-11-17T23:04:16Z",
+      "side": 1,
+      "message": "can be removed",
+      "range": {
+        "startLine": 464,
+        "startChar": 2,
+        "endLine": 464,
+        "endChar": 20
+      },
+      "revId": "f94d60597a78a72397a72b25681d8a0bdfc7197f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_8f57169f",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsScannerInfoProvider.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-11-17T23:04:16Z",
+      "side": 1,
+      "message": "comment can be removed",
+      "range": {
+        "startLine": 246,
+        "startChar": 3,
+        "endLine": 246,
+        "endChar": 16
+      },
+      "revId": "f94d60597a78a72397a72b25681d8a0bdfc7197f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

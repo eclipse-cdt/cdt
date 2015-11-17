@@ -17,8 +17,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -83,6 +81,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 /**
  * @author jcamelon
@@ -1172,7 +1172,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testBug43503() throws Exception {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 
 		buff.append("class SD_02 {                ");
 		buff.append("	public:                    ");
@@ -1276,7 +1276,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testCDesignatedInitializers() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct Inner { int a,b,c; };");
 		buffer.append("struct A { int x; int y[]; struct Inner innerArray[]; int z[]; };");
 		buffer.append("struct A myA = { .x = 4, .y[3] = 4, .y[4] = 3, .innerArray[0].a = 3, .innerArray[1].b = 5, .innerArray[2].c=6, .z = { 1,4,5} };");
@@ -1325,7 +1325,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testBug44925() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("class MyClass { };");
 		buffer.append("class MyClass myObj1;");
 		buffer.append("enum MyEnum { Item1 };");
@@ -1350,7 +1350,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testBug44838() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("class A { int myX; A(int x); };\n");
 		buffer.append("A::A(int x) : myX(x) { if (x == 5) myX++; }\n");
 		IASTTranslationUnit tu = parse(buffer.toString());
@@ -1371,14 +1371,14 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testBug46165() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("class A { int myX; A(int x); };\n");
 		buffer.append("A::A(int x) : myX(x) { if (x == 5) myX++; }\n");
 		parse(buffer.toString());
 	}
 
 	public void testBug47624() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct s { }; \n");
 		buffer.append("void f (int s) { \n");
 		buffer.append("   struct s sInstance; \n");
@@ -1401,7 +1401,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	public void testQualifiedLookup() throws Exception {
 		//this is meant to test that on a->f, the lookup for f is qualified
 		//the namespace is necessary because of bug 47926
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("namespace N {");
 		buffer.append("   void f () {} \n");
 		buffer.append("   class A { }; \n");
@@ -1429,7 +1429,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testBug43110() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void x(int y, ...);\n");
 		buffer.append("void y(int x...);\n");
 		buffer.append("void z(...);");
@@ -1448,7 +1448,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testBug43110_XRef() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void foo(...) {}\n");
 		buffer.append("void main(){ foo(1); }\n");
 

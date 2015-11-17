@@ -224,9 +224,9 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 			try {
 				int value= Integer.parseInt(number);
 				if (value < 0)
-					status.setError(MessageFormat.format(errorMessages[1], new String[]{number}));
+					status.setError(MessageFormat.format(errorMessages[1], number));
 			} catch (NumberFormatException e) {
-				status.setError(MessageFormat.format(errorMessages[1], new String[]{number}));
+				status.setError(MessageFormat.format(errorMessages[1], number));
 			}
 		}
 		return status;

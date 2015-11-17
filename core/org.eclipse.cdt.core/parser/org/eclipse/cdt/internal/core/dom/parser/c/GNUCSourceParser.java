@@ -238,7 +238,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     ICASTFieldDesignator fieldDesignator = getNodeFactory().newFieldDesignator(n);
                 	setRange(fieldDesignator, offset, calculateEndOffset(n));
                     if (designatorList == null)
-                        designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
+                        designatorList = new ArrayList<>(DEFAULT_DESIGNATOR_LIST_SIZE);
                     designatorList.add(fieldDesignator);
                     break;
                     
@@ -252,14 +252,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     	IGCCASTArrayRangeDesignator designator = getNodeFactory().newArrayRangeDesignatorGCC(constantExpression, constantExpression2);
                     	setRange(designator, offset, lastOffset);
                     	if (designatorList == null)
-                    		designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
+                    		designatorList = new ArrayList<>(DEFAULT_DESIGNATOR_LIST_SIZE);
                     	designatorList.add(designator);
                     } else {
                         int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
                         ICASTArrayDesignator designator = getNodeFactory().newArrayDesignator(constantExpression);
                     	setRange(designator, offset, lastOffset);
                         if (designatorList == null)
-                            designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
+                            designatorList = new ArrayList<>(DEFAULT_DESIGNATOR_LIST_SIZE);
                         designatorList.add(designator);
                     }
                     break;
@@ -700,7 +700,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 	
                 	IASTExpression expr= expression(ExprKind.eAssignment);
                 	if (argList == null) {
-                		argList= new ArrayList<IASTExpression>();
+                		argList= new ArrayList<>();
                 	}
                 	argList.add(expr);
                 }
@@ -1379,7 +1379,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         final int startingOffset = LA(1).getOffset();
         int endOffset = startingOffset;
 
-        List<IASTPointerOperator> pointerOps = new ArrayList<IASTPointerOperator>(DEFAULT_POINTEROPS_LIST_SIZE);
+        List<IASTPointerOperator> pointerOps = new ArrayList<>(DEFAULT_POINTEROPS_LIST_SIZE);
         consumePointerOperators(pointerOps);
         if (!pointerOps.isEmpty()) {
         	endOffset = calculateEndOffset(pointerOps.get(pointerOps.size() - 1));
@@ -1643,7 +1643,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				IASTParameterDeclaration pd = parameterDeclaration(paramOption);
 				endOffset = calculateEndOffset(pd);
 				if (parameters == null)
-					parameters = new ArrayList<IASTParameterDeclaration>(DEFAULT_PARAMETERS_LIST_SIZE);
+					parameters = new ArrayList<>(DEFAULT_PARAMETERS_LIST_SIZE);
 				parameters.add(pd);
 				seenParameter = true;
 				break;
@@ -1685,7 +1685,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	 * Parse an array declarator starting at the square bracket.
 	 */
 	private IASTArrayDeclarator arrayDeclarator() throws EndOfFileException, BacktrackException {
-		ArrayList<IASTArrayModifier> arrayMods = new ArrayList<IASTArrayModifier>(DEFAULT_POINTEROPS_LIST_SIZE);
+		ArrayList<IASTArrayModifier> arrayMods = new ArrayList<>(DEFAULT_POINTEROPS_LIST_SIZE);
 		int start= LA(1).getOffset();
 		consumeArrayModifiers(arrayMods);
 		if (arrayMods.isEmpty())

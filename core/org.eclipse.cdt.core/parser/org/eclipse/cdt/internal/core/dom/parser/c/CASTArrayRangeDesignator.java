@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -20,12 +20,12 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * Implementation of array range designators.
+ * Implementation of array range designator.
  */
-public class CASTArrayRangeDesignator extends ASTNode implements
-        IGCCASTArrayRangeDesignator, IASTAmbiguityParent {
-
-    private IASTExpression floor, ceiling;
+public class CASTArrayRangeDesignator extends ASTNode
+		implements IGCCASTArrayRangeDesignator, IASTAmbiguityParent {
+    private IASTExpression floor;
+    private IASTExpression ceiling;
 
     public CASTArrayRangeDesignator() {
 	}
@@ -57,7 +57,7 @@ public class CASTArrayRangeDesignator extends ASTNode implements
 	public void setRangeFloor(IASTExpression expression) {
         assertNotFrozen();
         floor = expression;
-        if(expression != null) {
+        if (expression != null) {
         	expression.setParent(this);
         	expression.setPropertyInParent(SUBSCRIPT_FLOOR_EXPRESSION);
         }
@@ -72,19 +72,19 @@ public class CASTArrayRangeDesignator extends ASTNode implements
 	public void setRangeCeiling(IASTExpression expression) {
         assertNotFrozen();
         ceiling = expression;
-        if(expression != null) {
+        if (expression != null) {
         	expression.setParent(this);
         	expression.setPropertyInParent(SUBSCRIPT_CEILING_EXPRESSION);
         }
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if (action.shouldVisitDesignators ) {
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 		if (floor != null && !floor.accept(action))
@@ -100,18 +100,15 @@ public class CASTArrayRangeDesignator extends ASTNode implements
     
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == floor )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == floor) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             floor = (IASTExpression) other;
         }
-        if( child == ceiling)
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == ceiling) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             ceiling = (IASTExpression) other;
         }
     }
-
 }

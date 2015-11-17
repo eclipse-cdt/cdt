@@ -17,6 +17,7 @@
  *     Anders Dahlberg (Ericsson) - bug 84144
  *     Nathan Ridge
  *     Richard Eames
+ *     Alexander Nyßen (itemis AG) - bug 475908
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -169,18 +170,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Bra
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Variant;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-/*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     John Camelon (IBM Rational Software) - Initial API and implementation
- *     Alexander Nyßen (itemis AG) - bug 475908
- *******************************************************************************/
-
 /**
  * This is our implementation of the IParser interface, serving as a parser for
  * GNU C and C++. From time to time we will make reference to the ANSI ISO
@@ -246,7 +235,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     
     private Map<String, ContextSensitiveTokenType> createContextSensitiveTokenMap(
     		ICPPParserExtensionConfiguration config) {
-    	Map<String, ContextSensitiveTokenType> result = new HashMap<String, ContextSensitiveTokenType>();
+    	Map<String, ContextSensitiveTokenType> result = new HashMap<>();
     	result.put(Keywords.OVERRIDE, ContextSensitiveTokenType.OVERRIDE);
     	result.put(Keywords.FINAL, ContextSensitiveTokenType.FINAL);
     	result.putAll(config.getAdditionalContextSensitiveKeywords());
@@ -438,7 +427,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		} else {
 			char[] nchars= nt.getCharImage();
 			final int len= nchars.length;
-			char[] image = new char[len+1];
+			char[] image = new char[len + 1];
 			image[0]= '~';
 			System.arraycopy(nchars, 0, image, 1, len);
 			name= getNodeFactory().newName(image);
@@ -702,7 +691,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 			IASTNode node= templateArgument(strat);
 			if (list == null) {
-				 list= new ArrayList<IASTNode>();
+				 list= new ArrayList<>();
 			}
 			list.add(node);
     		lt1= LT(1);
@@ -2309,7 +2298,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected List<ICPPASTTemplateParameter> outerTemplateParameterList() throws BacktrackException, EndOfFileException {
     	fTemplateParameterListStrategy= new TemplateIdStrategy();
     	try {
-    		List<ICPPASTTemplateParameter> result = new ArrayList<ICPPASTTemplateParameter>(DEFAULT_PARM_LIST_SIZE);
+    		List<ICPPASTTemplateParameter> result = new ArrayList<>(DEFAULT_PARM_LIST_SIZE);
     		IToken m= mark();
     		while (true) {
     			try {
@@ -2400,7 +2389,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		    consume();
 		    consume(IToken.tLT);
-		    List<ICPPASTTemplateParameter> tparList = templateParameterList(new ArrayList<ICPPASTTemplateParameter>());
+		    List<ICPPASTTemplateParameter> tparList = templateParameterList(new ArrayList<>());
 		    consume(IToken.tGT, IToken.tGT_in_SHIFTR);
 		    int endOffset = consume(IToken.t_class).getEndOffset();
 
@@ -2583,7 +2572,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		while (LTcatchEOF(1) == IToken.tLBRACKET && LTcatchEOF(2) == IToken.tLBRACKET) {
 			if (specifiers == null)
-				specifiers = new ArrayList<IASTAttributeSpecifier>();
+				specifiers = new ArrayList<>();
 			int offset = consumeOrEOC(IToken.tLBRACKET).getOffset();
 			consumeOrEOC(IToken.tLBRACKET);
 			ICPPASTAttributeSpecifier attributeSpecifier = getNodeFactory().newAttributeSpecifier();
@@ -2691,7 +2680,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         IASTDeclarator[] declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
         if (dtor != null) {
-        	declarators= new IASTDeclarator[]{dtor};
+        	declarators= new IASTDeclarator[] { dtor };
         	if (!declOption.fSingleDtor) {
         		while (LTcatchEOF(1) == IToken.tCOMMA) {
         			consume();
@@ -2842,7 +2831,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		if (fdef instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock tryblock= (ICPPASTFunctionWithTryBlock) fdef;
-		    List<ICPPASTCatchHandler> handlers = new ArrayList<ICPPASTCatchHandler>(DEFAULT_CATCH_HANDLER_LIST_SIZE);
+		    List<ICPPASTCatchHandler> handlers = new ArrayList<>(DEFAULT_CATCH_HANDLER_LIST_SIZE);
 		    catchHandlerSequence(handlers);
 		    ICPPASTCatchHandler last= null;
 		    for (ICPPASTCatchHandler catchHandler : handlers) {
@@ -3925,7 +3914,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 */
 	private List<IASTInitializerClause> initializerList(boolean allowSkipping) throws EndOfFileException,
 			BacktrackException {
-		List<IASTInitializerClause> result= new ArrayList<IASTInitializerClause>();
+		List<IASTInitializerClause> result= new ArrayList<>();
 		// List of initializer clauses
 		loop: while (true) {
 			// Clause may be null, add to initializer anyways, such that the size can be computed.
@@ -4207,7 +4196,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             pointer.setRestrict(isRestrict);
             setRange(pointer, startOffset, endOffset);
             if (result == null) {
-            	result= new ArrayList<IASTPointerOperator>(4);
+            	result= new ArrayList<>(4);
             }
 
             attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
@@ -4470,7 +4459,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 * Parse an array declarator starting at the square bracket.
 	 */
 	private ICPPASTArrayDeclarator arrayDeclarator(DeclarationOptions option) throws EndOfFileException, BacktrackException {
-		ArrayList<IASTArrayModifier> arrayMods = new ArrayList<IASTArrayModifier>(4);
+		ArrayList<IASTArrayModifier> arrayMods = new ArrayList<>(4);
 		int start= LA(1).getOffset();
 		consumeArrayModifiers(option, arrayMods);
 		if (arrayMods.isEmpty())
@@ -4890,7 +4879,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTStatement parseTryStatement() throws EndOfFileException, BacktrackException {
         int startO = consume().getOffset();
         IASTStatement tryBlock = compoundStatement();
-        List<ICPPASTCatchHandler> catchHandlers = new ArrayList<ICPPASTCatchHandler>(DEFAULT_CATCH_HANDLER_LIST_SIZE);
+        List<ICPPASTCatchHandler> catchHandlers = new ArrayList<>(DEFAULT_CATCH_HANDLER_LIST_SIZE);
         catchHandlerSequence(catchHandlers);
         ICPPASTTryBlockStatement tryStatement = getNodeFactory().newTryBlockStatement(tryBlock);
         ((ASTNode) tryStatement).setOffset(startO);

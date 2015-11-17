@@ -20,10 +20,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * Implementation of array designators
+ * Implementation of array designator.
  */
 public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator, IASTAmbiguityParent {
-    private IASTExpression exp;
+    private IASTExpression expression;
 
     public CASTArrayDesignator() {
 	}
@@ -39,19 +39,20 @@ public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator
 
 	@Override
 	public CASTArrayDesignator copy(CopyStyle style) {
-		CASTArrayDesignator copy = new CASTArrayDesignator(exp == null ? null : exp.copy(style));
+		CASTArrayDesignator copy =
+				new CASTArrayDesignator(expression == null ? null : expression.copy(style));
 		return copy(copy, style);
 	}
 	
     @Override
 	public IASTExpression getSubscriptExpression() {
-        return exp;
+        return expression;
     }
 
     @Override
 	public void setSubscriptExpression(IASTExpression value) {
         assertNotFrozen();
-        exp = value;
+        expression = value;
         if (value != null) {
         	value.setParent(this);
         	value.setPropertyInParent(SUBSCRIPT_EXPRESSION);
@@ -67,7 +68,7 @@ public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator
 	            default: break;
 	        }
 		}
-		if (exp != null && !exp.accept(action))
+		if (expression != null && !expression.accept(action))
 			return false;
 
 		if (action.shouldVisitDesignators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
@@ -78,10 +79,10 @@ public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == exp) {
+        if (child == expression) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
-            exp = (IASTExpression) other;
+            expression = (IASTExpression) other;
         }
     }
 }

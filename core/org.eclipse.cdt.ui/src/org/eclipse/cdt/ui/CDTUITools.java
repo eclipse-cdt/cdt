@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.IColorManager;
+
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -46,7 +47,6 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * @since 5.1
  */
 public final class CDTUITools {
-
 	private CDTUITools() {
 		// prevent instantiation
 	}

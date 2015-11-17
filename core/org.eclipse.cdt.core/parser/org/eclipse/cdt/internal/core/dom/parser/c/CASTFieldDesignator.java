@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -20,12 +20,10 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * Implementation of field designators
+ * Implementation of field designator.
  */
 public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator, IASTCompletionContext {
-
     private IASTName name;
-
 
     public CASTFieldDesignator() {
 	}
@@ -61,12 +59,12 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if (action.shouldVisitDesignators ) {
+	public boolean accept( ASTVisitor action) {
+        if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 		if (name != null && !name.accept(action))

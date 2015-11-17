@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTArrayDesignator extends ICASTDesignator {
-
 	/**
 	 * <code>SUBSCRIPT_EXPRESSION</code> represents the relationship between
 	 * the designator and the subscript expression.

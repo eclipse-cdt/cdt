@@ -243,7 +243,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	 * @param cfgDescription - configuration description for resolving entries.
 	 * @return array of the locations.
 	 */
-	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath, ICConfigurationDescription cfgDescription) {
+	public String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath, ICConfigurationDescription cfgDescription) {
 		List<String> locations = new ArrayList<String>(entriesPath.size());
 		for (ICLanguageSettingEntry entry : entriesPath) {
 			ICPathEntry entryPath = (ICPathEntry)entry;

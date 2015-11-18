@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2015 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
+ *     Synopsys Inc.
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
@@ -49,7 +50,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
-	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
+	private static final Pattern OPTIONS_PATTERN = Pattern.compile("[-@][^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-@\\s][^\\s]+)))?"); //$NON-NLS-1$
 	private static final int OPTION_GROUP = 0;
 
 	public enum ResourceScope {

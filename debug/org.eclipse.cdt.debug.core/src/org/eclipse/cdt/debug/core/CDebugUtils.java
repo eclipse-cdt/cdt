@@ -626,10 +626,14 @@ public class CDebugUtils {
 	 */
 	public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
 		String path = getProgramName(configuration);
-		if (path == null || path.trim().length() == 0) {
+		if (path == null) {
 			return null;
 		}
-		return new Path(path);
+		String trimmed = path.trim();
+		if (trimmed.length() == 0) {
+			return null;
+		}
+		return new Path(trimmed);
 	}
 
 	/**

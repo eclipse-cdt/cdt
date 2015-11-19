@@ -20,9 +20,14 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -48,6 +53,8 @@ public class InitializerWriter extends NodeWriter{
 			writeConstructorInitializer((ICPPASTConstructorInitializer) initializer);
 		} else if (initializer instanceof ICASTDesignatedInitializer) {
 			writeDesignatedInitializer((ICASTDesignatedInitializer) initializer);
+		} else if (initializer instanceof ICPPASTDesignatedInitializer) {
+			writeDesignatedInitializer((ICPPASTDesignatedInitializer) initializer);
 		} else if (initializer instanceof ICPPASTConstructorChainInitializer) {
 			writeConstructorChainInitializer((ICPPASTConstructorChainInitializer) initializer);
 		}
@@ -90,20 +97,52 @@ public class InitializerWriter extends NodeWriter{
 		desigInit.getOperand().accept(visitor);
 	}
 
+	private void writeDesignatedInitializer(ICPPASTDesignatedInitializer desigInit) {
+		ICPPASTDesignator[] designators =  desigInit.getDesignators();
+		for (ICPPASTDesignator designator : designators) {
+			writeDesignator(designator);
+		}
+		scribe.print(EQUALS);
+		desigInit.getOperand().accept(visitor);
+	}
+
 	private void writeDesignator(ICASTDesignator designator) {
 		if (designator instanceof ICASTFieldDesignator) {
-			ICASTFieldDesignator fieldDes = (ICASTFieldDesignator) designator;
 			scribe.print('.');
+			ICASTFieldDesignator fieldDes = (ICASTFieldDesignator) designator;
 			fieldDes.getName().accept(visitor);
 		} else if (designator instanceof ICASTArrayDesignator) {
-			ICASTArrayDesignator arrDes = (ICASTArrayDesignator) designator;
 			scribe.print('[');
+			ICASTArrayDesignator arrDes = (ICASTArrayDesignator) designator;
 			arrDes.getSubscriptExpression().accept(visitor);
 			scribe.print(']');
 		} else if (designator instanceof IGCCASTArrayRangeDesignator) {
-			//IGCCASTArrayRangeDesignator new_name = (IGCCASTArrayRangeDesignator) designator;
-			//TODO IGCCASTArrayRangeDesignator Bespiel zu parsen bringen
-			throw new UnsupportedOperationException("Writing of GCC ArrayRangeDesignator is not yet implemented"); //$NON-NLS-1$
+			scribe.print('[');
+			IGCCASTArrayRangeDesignator arrDes = (IGCCASTArrayRangeDesignator) designator;
+			arrDes.getRangeFloor().accept(visitor);
+			scribe.print(" ... "); //$NON-NLS-1$
+			arrDes.getRangeCeiling().accept(visitor);
+			scribe.print(']');
+		}
+	}
+
+	private void writeDesignator(ICPPASTDesignator designator) {
+		if (designator instanceof ICPPASTFieldDesignator) {
+			scribe.print('.');
+			ICPPASTFieldDesignator fieldDes = (ICPPASTFieldDesignator) designator;
+			fieldDes.getName().accept(visitor);
+		} else if (designator instanceof ICPPASTArrayDesignator) {
+			scribe.print('[');
+			ICPPASTArrayDesignator arrDes = (ICPPASTArrayDesignator) designator;
+			arrDes.getSubscriptExpression().accept(visitor);
+			scribe.print(']');
+		} else if (designator instanceof IGPPASTArrayRangeDesignator) {
+			scribe.print('[');
+			IGPPASTArrayRangeDesignator arrDes = (IGPPASTArrayRangeDesignator) designator;
+			arrDes.getRangeFloor().accept(visitor);
+			scribe.print(" ... "); //$NON-NLS-1$
+			arrDes.getRangeCeiling().accept(visitor);
+			scribe.print(']');
 		}
 	}
 }

@@ -10,6 +10,7 @@
  *     Ed Swartz (Nokia)
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
@@ -151,6 +152,15 @@ public interface ICPPParserExtensionConfiguration {
 	 */
 	public Map<String, ContextSensitiveTokenType> getAdditionalContextSensitiveKeywords();
 	
+	/**
+	 * Support for GNU extension "Designated Initializers".
+	 * 
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html"
+	 * @return {@code true} if support for the extension should be enabled
+	 * @since 5.12
+	 */
+	public boolean supportGCCStyleDesignators();
+
 	/**
 	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
 	 */

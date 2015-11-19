@@ -110,6 +110,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
@@ -322,6 +323,8 @@ public class CPPVisitor extends ASTQueries {
 		    return createBinding((IASTLabelStatement) parent);
 		} else if (parent instanceof ICPPASTTemplateParameter) {
 			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
+		} else if (parent instanceof ICPPASTFieldDesignator) {
+			binding = resolveBinding(parent);
 		}
 
 		if (name.getLookupKey().length > 0)
@@ -1310,6 +1313,17 @@ public class CPPVisitor extends ASTQueries {
 				} else {
 					return new CPPScope.CPPScopeProblem(name, ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 				}
+			} else if (parent instanceof ICPPASTFieldDesignator) {
+				ICPPASTDeclarator declarator = findAncestorWithType(parent, ICPPASTDeclarator.class);
+				if (declarator != null) {
+					IType type = createType(declarator);
+					type= getNestedType(type, TDEF | CVTYPE);
+					if (type instanceof ICPPClassType) {
+						type= SemanticUtil.mapToAST(type, name);
+						return ((ICPPClassType) type).getCompositeScope();
+					}
+				}
+				return new CPPScope.CPPScopeProblem(name, ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 			} else if (parent instanceof IASTGotoStatement || parent instanceof IASTLabelStatement) {
 			    while (!(parent instanceof IASTFunctionDefinition)) {
 			        parent = parent.getParent();
@@ -1397,6 +1411,9 @@ public class CPPVisitor extends ASTQueries {
 				break;
 			} else if (node instanceof ICPPASTFieldReference) {
 				name = ((ICPPASTFieldReference) node).getFieldName();
+				break;
+			} else if (node instanceof ICPPASTFieldDesignator) {
+				name = ((ICPPASTFieldDesignator) node).getName();
 				break;
 			} else if (node instanceof IASTFunctionCallExpression) {
 				node = ((IASTFunctionCallExpression) node).getFunctionNameExpression();

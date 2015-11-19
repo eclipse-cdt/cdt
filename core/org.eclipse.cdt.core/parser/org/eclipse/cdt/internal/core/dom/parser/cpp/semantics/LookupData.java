@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
@@ -245,6 +246,7 @@ public class LookupData extends ScopeLookupData {
     	if (nameProp == IASTIdExpression.ID_NAME ||
     			nameProp == IASTFieldReference.FIELD_NAME ||
     			nameProp == ICASTFieldDesignator.FIELD_NAME ||
+    			nameProp == ICPPASTFieldDesignator.FIELD_NAME ||
     			nameProp == ICPPASTUsingDirective.QUALIFIED_NAME ||
     			nameProp == ICPPASTUsingDeclaration.NAME ||
     			nameProp == IASTFunctionCallExpression.FUNCTION_NAME ||

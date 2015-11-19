@@ -111,6 +111,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -749,6 +751,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			visit((IASTInitializerList) node);
 		} else if (node instanceof ICASTDesignatedInitializer) {
 			visit((ICASTDesignatedInitializer) node);
+		} else if (node instanceof ICPPASTDesignatedInitializer) {
+			visit((ICPPASTDesignatedInitializer) node);
 		} else {
 			formatRaw(node);
 		}
@@ -2460,6 +2464,47 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		scribe.printComment();
 		ICASTDesignator[] designators = node.getDesignators();
 		for (ICASTDesignator designator : designators) {
+			designator.accept(this);
+			if (scribe.printComment()) {
+				scribe.space();
+			}
+		}
+
+		if (peekNextToken() == Token.tASSIGN) {
+			scribe.printNextToken(Token.tASSIGN, preferences.insert_space_before_assignment_operator);
+			if (preferences.insert_space_after_assignment_operator) {
+				scribe.space();
+			}
+		}
+
+    	Alignment expressionAlignment= scribe.createAlignment(
+    			Alignment.DESIGNATED_INITIALIZER,
+    			preferences.alignment_for_assignment,
+    			1,
+    			getCurrentPosition());
+
+    	scribe.enterAlignment(expressionAlignment);
+    	boolean ok = false;
+    	do {
+    		try {
+    			scribe.alignFragment(expressionAlignment, 0);
+
+    			IASTInitializerClause initializer = node.getOperand();
+    			initializer.accept(this);
+
+    			ok = true;
+    		} catch (AlignmentException e) {
+    			scribe.redoAlignment(e);
+    		}
+    	} while (!ok);
+    	scribe.exitAlignment(expressionAlignment, true);
+		return PROCESS_SKIP;
+	}
+
+	private int visit(ICPPASTDesignatedInitializer node) {
+		scribe.printComment();
+		ICPPASTDesignator[] designators = node.getDesignators();
+		for (ICPPASTDesignator designator : designators) {
 			designator.accept(this);
 			if (scribe.printComment()) {
 				scribe.space();

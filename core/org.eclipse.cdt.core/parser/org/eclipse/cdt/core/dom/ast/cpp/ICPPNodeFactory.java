@@ -9,6 +9,7 @@
  *     Mike Kucera (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
 import org.eclipse.cdt.core.parser.IScanner;
 
@@ -42,11 +44,26 @@ import org.eclipse.cdt.core.parser.IScanner;
  */
 public interface ICPPNodeFactory extends INodeFactory {
 	/**
+	 * @since 5.5
+	 */
+	public ICPPASTAliasDeclaration newAliasDeclaration(IASTName aliasName, ICPPASTTypeId aliasedType);
+
+	/**
 	 * @since 5.2
 	 */
 	@Override
 	public ICPPASTArrayDeclarator newArrayDeclarator(IASTName name);
-	
+
+	/**
+	 * @since 5.12
+	 */
+	public ICPPASTArrayDesignator newArrayDesignator(ICPPASTExpression exp);
+
+	/**
+	 * @since 5.12
+	 */
+	public IGPPASTArrayRangeDesignator newArrayRangeDesignatorGPP(ICPPASTExpression floor, ICPPASTExpression ceiling);
+
 	@Override
 	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript);
 	
@@ -67,15 +84,15 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	@Deprecated
 	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual);
-	
+
 	/**
 	 * @since 5.8
 	 */
 	public ICPPASTBaseSpecifier newBaseSpecifier(ICPPASTNameSpecifier nameSpecifier, int visibility, boolean isVirtual);
-	
+
 	@Override
 	public ICPPASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2);
-	
+
 	/**
 	 * @since 5.2
 	 */
@@ -141,6 +158,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
 
+	/**
+	 * @since 5.12
+	 */
+	public ICPPASTDesignatedInitializer newDesignatedInitializer(ICPPASTInitializerClause initializer);
+
 	@Override
 	public ICPPASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
 
@@ -166,6 +188,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Override
 	public ICPPASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize);
 	
+	/**
+	 * @since 5.12
+	 */
+	public ICPPASTFieldDesignator newFieldDesignator(IASTName name);
+
 	@Override
 	public ICPPASTFieldReference newFieldReference(IASTName name, IASTExpression owner);
 	
@@ -429,9 +456,4 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	@Override
 	public ICPPASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body);
-
-	/**
-	 * @since 5.5
-	 */
-	public ICPPASTAliasDeclaration newAliasDeclaration(IASTName aliasName, ICPPASTTypeId aliasedType);
 }

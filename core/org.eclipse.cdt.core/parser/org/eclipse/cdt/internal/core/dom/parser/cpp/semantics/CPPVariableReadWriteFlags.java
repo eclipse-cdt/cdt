@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,8 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Patrick Hofer - [Bug 328528]
- *******************************************************************************/ 
+ *     Sergey Prigogin (Google)
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -47,16 +49,19 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	public static int getReadWriteFlags(IASTName variable) {
 		return INSTANCE.rwAnyNode(variable, 0);
 	}
-	
+
 	@Override
 	protected int rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent = node.getParent();
 		if (parent instanceof ICPPASTConstructorInitializer) {
 			return rwInCtorInitializer(node, indirection, (ICPPASTConstructorInitializer) parent);
 		}
+		if (parent instanceof ICPPASTFieldDesignator) {
+			return WRITE;	// Field is initialized via a designated initializer.
+		}
 		return super.rwAnyNode(node, indirection);
 	}
-	
+
 	@Override
 	protected int rwInDeclarator(IASTDeclarator parent, int indirection) {
 		IType type = CPPVisitor.createType(parent);
@@ -99,7 +104,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		}
 		return READ | WRITE;  // fallback
 	}
-	
+
 	@Override
 	protected int rwInUnaryExpression(IASTNode node, IASTUnaryExpression expr, int indirection) {
 		switch (expr.getOperator()) {

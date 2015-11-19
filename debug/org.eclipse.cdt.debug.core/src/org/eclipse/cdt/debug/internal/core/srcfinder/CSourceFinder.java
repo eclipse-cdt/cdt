@@ -278,6 +278,9 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 				if (project != null && project.getName().equals(projectNameConfig)) {
 					programNameConfig = VariablesPlugin.getDefault().getStringVariableManager()
 							.performStringSubstitution(programNameConfig);
+					if (programNameConfig != null) {
+						programNameConfig = programNameConfig.trim();
+					}
 					Path path = new Path(programNameConfig);
 					if (!path.isEmpty()) {
 						IFile file = project.getFile(path);

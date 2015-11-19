@@ -168,6 +168,9 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer 
 			}
 			programName = VariablesPlugin.getDefault().getStringVariableManager()
 					.performStringSubstitution(programName);
+			if (programName != null) {
+				programName = programName.trim();
+			}
 
 			// get executable file
 			IFile exeFile = null;

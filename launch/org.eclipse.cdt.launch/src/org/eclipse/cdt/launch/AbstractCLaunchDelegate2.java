@@ -277,6 +277,9 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				String programPath = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
 				programPath = VariablesPlugin.getDefault().getStringVariableManager()
 						.performStringSubstitution(programPath);
+				if (programPath != null) {
+					programPath = programPath.trim();
+				}
 				ICConfigurationDescription buildConfig = LaunchUtils.getBuildConfigByProgramPath(project, programPath);
 				if (buildConfig != null)
 					buildConfigID = buildConfig.getId();
@@ -685,7 +688,9 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 		programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
-
+		if (programName != null) {
+			programName = programName.trim();
+		}
 		IPath programPath = new Path(programName);
 		if (programPath.isEmpty()) {
 			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist, null,

@@ -411,6 +411,9 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		}
 		String progPathName = CDebugUtils.getAttribute(fAttributes, ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
 				defaultPathName);
+		if (progPathName != null) {
+			progPathName = progPathName.trim();
+		}
 		final String pathLabel = new Path(progPathName).lastSegment();
 
 		// Adds the inferior to the launch which will also create the console

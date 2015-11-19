@@ -418,6 +418,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					String oldBuildLog = ""; //$NON-NLS-1$
 					if (config != null) {
 						oldExecutable = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
+						if (oldExecutable != null) {
+							oldExecutable = oldExecutable.trim();
+						}
 						oldArguments = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 						oldBuildLog = config.getAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION, ""); //$NON-NLS-1$
 					}

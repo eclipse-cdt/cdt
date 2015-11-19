@@ -60,6 +60,9 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			if (programName != null) {
 				programName = VariablesPlugin.getDefault().getStringVariableManager()
 						.performStringSubstitution(programName);
+				if (programName != null) {
+					programName = programName.trim();
+				}
 			}
 		} catch (CoreException e) {
 		}

@@ -820,6 +820,9 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 		programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+		if (programName != null) {
+			programName = programName.trim();
+		}
 		IPath programPath = new Path(programName);
 		if (programPath.isEmpty()) {
 			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), null, //$NON-NLS-1$

@@ -126,6 +126,9 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 		// Update the program name if it corresponds to the project name
 		IPath pathProgName = new Path(
 				launchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "")); //$NON-NLS-1$
+		if (pathProgName != null) {
+			pathProgName = pathProgName.trim();
+		}
 		String progExtension = pathProgName.getFileExtension();
 		String progName = pathProgName.removeFileExtension().lastSegment();
 		if (oldName.equals(progName)) {

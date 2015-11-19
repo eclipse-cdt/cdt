@@ -627,6 +627,9 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 						EMPTY_STR);
 				programPath = VariablesPlugin.getDefault().getStringVariableManager()
 						.performStringSubstitution(programPath);
+				if (programPath != null) {
+					programPath = programPath.trim();
+				}
 				ICConfigurationDescription buildConfig = LaunchUtils.getBuildConfigByProgramPath(buildProject,
 						programPath);
 				if (buildConfig != null)

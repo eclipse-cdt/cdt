@@ -698,6 +698,62 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		assertEquals(new CMacroEntry("MACRO7", "'single-quoted value'", 0), entries.get(7));
 	}
 
+	
+	/**
+	 * Parse variations of -D options in responsive file @file
+	 * reuse the content of the testcase testCMacroEntry
+	 */
+	public void testCMacroEntryInResponsiveFile() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+
+		IFile file=ResourceHelper.createFile(project, "file.cpp");
+		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
+		String languageId = ls.getLanguageId();
+
+		// create GCCBuildCommandParser
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
+
+		//create responsive file
+		IFile arg =ResourceHelper.createFile(project, "macros.arg", " -DMACRO0"
+															+ " -DMACRO1=value"
+															+ " -DMACRO2=\"value with spaces\""
+															+ " -DMACRO3='value with spaces'"
+															+ " -DMACRO4='\"quoted value\"'"
+															+ " -D'MACRO5=\"quoted value\"'"
+															+ " -DMACRO6=\\\"escape-quoted value\\\""
+															+ " -DMACRO7=\"'single-quoted value'\"");
+		
+		// parse line
+		parser.startup(cfgDescription, null);
+		parser.processLine("gcc "
+				+ " @macros.arg"
+				+ " file.cpp");
+		parser.shutdown();
+
+		// check populated entries
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
+		CMacroEntry expected = new CMacroEntry("MACRO0", "", 0);
+		CMacroEntry entry = (CMacroEntry)entries.get(0);
+		assertEquals(expected.getName(), entry.getName());
+		assertEquals(expected.getValue(), entry.getValue());
+		assertEquals(expected.getKind(), entry.getKind());
+		assertEquals(expected.getFlags(), entry.getFlags());
+		assertEquals(expected, entry);
+
+		assertEquals(new CMacroEntry("MACRO1", "value", 0), entries.get(1));
+		assertEquals(new CMacroEntry("MACRO2", "value with spaces", 0), entries.get(2));
+		assertEquals(new CMacroEntry("MACRO3", "value with spaces", 0), entries.get(3));
+		assertEquals(new CMacroEntry("MACRO4", "\"quoted value\"", 0), entries.get(4));
+		assertEquals(new CMacroEntry("MACRO5", "\"quoted value\"", 0), entries.get(5));
+		assertEquals(new CMacroEntry("MACRO6", "\"escape-quoted value\"", 0), entries.get(6));
+		assertEquals(new CMacroEntry("MACRO7", "'single-quoted value'", 0), entries.get(7));
+	}
+
+	
 	/**
 	 * Parse -U option.
 	 */

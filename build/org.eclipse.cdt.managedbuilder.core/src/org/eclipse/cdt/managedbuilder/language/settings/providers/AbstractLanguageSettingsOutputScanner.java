@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2015 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,21 @@
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +44,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
@@ -455,9 +462,20 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 
 		List<String> options = parseOptions(line);
-		if (options != null) {
+		Queue<String> optionsQueue = null;
+		if(options != null) {
+			optionsQueue = new LinkedList<String>(options);
+		}
+		
+		//use optionsQueue to process the options to support nesting @argFile syntax (argument file or response file)
+		//if options is not @argFile, it remove option from optionsQueue and the processing behavior is same as before.
+		//if option is @argFile, it read content of argFile line by line and parse out options and add it into optionsQueue.
+		//in the end, loop terminate when optionsQueue isEmpty
+		if ( (optionsQueue != null) && (!optionsQueue.isEmpty()) ) {
 			AbstractOptionParser[] optionParsers = getOptionParsers();
-			for (String option : options) {
+			while( !optionsQueue.isEmpty() ) { //loop terminate when optionsQueue isEmpty
+				String option = optionsQueue.remove();
+				
 				for (AbstractOptionParser optionParser : optionParsers) {
 					try {
 						if (optionParser.parseOption(option)) {
@@ -476,9 +494,57 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 								entry = optionParser.createEntry(optionParser.parsedName, optionParser.parsedValue, 0);
 							}
 
-							if (entry != null && !entries.contains(entry)) {
-								entries.add(entry);
-								break;
+							if(!option.startsWith("@")) { //if option doesn't start with @, it will be same as before.
+								if (entry != null && !entries.contains(entry)) {
+									entries.add(entry);
+									break;
+								}
+							} else { 
+								//if option start with @, it parse content of argFile line by line and add parsed options into optionsQueue
+								//I have to hack it in this way because CDT use very complex logic to resolve path to deal with
+								//macro expansion, symbolic link and remote system mapping etc.
+								
+								if (entry != null ) {
+									//recognize @argFile as same as -include, resolve the path and store it into the entry as above.
+									//right now, reuse complex code logic to retrieve argFile's absolute path.
+									LanguageSettingsScannerInfoProvider provider = new LanguageSettingsScannerInfoProvider();
+									LinkedHashSet<ICLanguageSettingEntry> includeFileEntries = new LinkedHashSet<ICLanguageSettingEntry>();
+									includeFileEntries.add(entry);
+									String[] includeFiles = provider.convertToLocations(includeFileEntries, currentCfgDescription);
+									
+									if( includeFiles.length == 1 && includeFiles[0] != null ) {
+										String argFileLocation = includeFiles[0];
+										File argFile = new File(argFileLocation);
+
+										InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(argFile), "UTF-8");
+										BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+										String argLine;
+										try {
+											while ((argLine = bufferedReader.readLine()) != null) {
+												// An exclamation point (!) in the first column
+												// denote a comment line.
+												if (argLine.startsWith("!") || argLine.startsWith("#"))
+													continue;
+												
+												List<String> argOptions = parseOptions(argLine);
+												if(argOptions != null) {
+													for(String argOption : argOptions) 
+														optionsQueue.add(argOption); //support nesting @argFile.
+												}
+											}
+											bufferedReader.close();
+											inputStreamReader.close();
+										} catch (IOException e) {
+											@SuppressWarnings("nls")
+											String msg = "[Scanner Discovery for @argFile] Exception trying to find the file "
+													+ argFileLocation;
+											ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR,
+													ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
+										}
+									}
+									
+									break;
+								}
 							}
 						}
 					} catch (Throwable e) {
@@ -487,7 +553,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 						ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
 					}
 				}
-			}
+			} //end while loop
 			if (entries.size() > 0) {
 				setSettingEntries(entries);
 			} else {

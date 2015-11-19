@@ -296,6 +296,23 @@ public class ResourceHelper {
 	}
 
 	/**
+	 * Creates new file from project root with empty content. The filename
+	 * can include relative path as a part of the name but the the path
+	 * has to be present on disk.
+	 *
+	 * @param project - project where to create the file.
+	 * @param name - filename.
+	 * @param content - the content of specified file.
+	 * @return file handle.
+	 * @throws CoreException if something goes wrong.
+	 */
+	public static IFile createFile(IProject project, String name, String content) throws CoreException {
+		if (new Path(name).segmentCount() > 1)
+			createFolder(project, new Path(name).removeLastSegments(1).toString());
+		return createFile(project.getFile(name), content);
+	}
+
+	/**
 	 * Creates new file from workspace root with empty content. The filename
 	 * can include relative path as a part of the name but the the path
 	 * has to be present on disk.

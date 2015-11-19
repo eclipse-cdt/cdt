@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
@@ -345,14 +346,21 @@ public abstract class ASTVisitor {
 	public int visit(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;
 	}
-	
+
+	/**
+	 * @since 5.12
+	 */
+	public int visit(ICPPASTDesignator designator) {
+		return PROCESS_CONTINUE;
+	}
+
 	/**
 	 * @since 5.7
 	 */
 	public int visit(ICPPASTVirtSpecifier virtSpecifier) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	/**
 	 * @since 5.7
 	 */
@@ -475,7 +483,14 @@ public abstract class ASTVisitor {
 	public int leave(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;
 	}
-	
+
+	/**
+	 * @since 5.12
+	 */
+	public int leave(ICPPASTDesignator designator) {
+		return PROCESS_CONTINUE;
+	}
+
 	/**
 	 * @since 5.7
 	 */

@@ -33,7 +33,7 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 	public static int getReadWriteFlags(IASTName variable) {
 		return INSTANCE.rwAnyNode(variable, 0);
 	}
-	
+
 	@Override
 	protected int rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent= node.getParent();

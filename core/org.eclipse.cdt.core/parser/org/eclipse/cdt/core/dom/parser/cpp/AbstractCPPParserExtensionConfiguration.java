@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Richard Eames
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
@@ -61,6 +62,14 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 		return false;
 	}
 
+	/**
+	 * @since 5.12
+	 */
+	@Override
+	public boolean supportGCCStyleDesignators() {
+		return false;
+	}
+
 	@Override
 	public boolean supportKnRC() {
 		return false;
@@ -92,7 +101,6 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	}
 
 	/**
-	 * {@inheritDoc}
 	 * @since 5.1
 	 */
 	@Override
@@ -101,7 +109,6 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	}
 
 	/**
-	 * {@inheritDoc}
 	 * @since 5.1
 	 */
 	@Override
@@ -110,31 +117,26 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	}
 
 	/**
-	 * {@inheritDoc}
 	 * @since 5.1
 	 */
 	@Override
 	public boolean supportFunctionStyleAssembler() {
 		return false;
 	}
-	
+
 	/**
-	 * {@inheritDoc}
 	 * @since 5.11
 	 */
 	@Override
 	public boolean supportUserDefinedLiterals() {
 		return true;
 	}
-	
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#getBuiltinBindingsProvider()
-	 */
+
 	@Override
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GCCBuiltinSymbolProvider(ParserLanguage.CPP, supportGCCOtherBuiltinSymbols());
 	}
-	
+
 	/**
 	 * @since 5.9
 	 */

@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+
+import junit.framework.TestSuite;
 
 /**
  * For testing resolution of bindings in C++ code with GNU extensions.
@@ -71,17 +72,28 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 		public SingleProject() { setStrategy(new GPPSinglePDOMTestStrategy()); }
 		public static TestSuite suite() { return suite(SingleProject.class); }
 	}
-	
+
 	public static class ProjectWithDepProj extends IndexGPPBindingResolutionTest {
 		public ProjectWithDepProj() { setStrategy(new GPPReferencedProject()); }
 		public static TestSuite suite() { return suite(ProjectWithDepProj.class); }
 	}
-	
+
 	public static void addTests(TestSuite suite) {
 		suite.addTest(SingleProject.suite());
 		suite.addTest(ProjectWithDepProj.suite());
 	}
-	
+
+	//	struct B {
+	//	  float f;
+	//	};
+
+	//	struct B b = {
+	//	  .f = 3.1
+	//	};
+	public void testDesignatedInitializer() throws Exception {
+		IField f= getBindingFromASTName("f", 0);
+	}
+
 	//	template <typename T>
 	//	struct underlying_type {
 	//	    typedef __underlying_type(T) type;

@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
@@ -378,7 +379,7 @@ public class ASTStringUtil {
 			}
 			trimRight(buffer);
 			buffer.append(Keywords.cpRBRACE);
-		} else if (initializer instanceof ICASTDesignatedInitializer) {
+		} else if (initializer instanceof ICASTDesignatedInitializer || initializer instanceof ICPPASTDesignatedInitializer) {
 			//TODO handle ICASTDesignatedInitializer?
 //			final ICASTDesignatedInitializer designatedInitializer= (ICASTDesignatedInitializer) initializer;
 //			final ICASTDesignator[] designator= designatedInitializer.getDesignators();

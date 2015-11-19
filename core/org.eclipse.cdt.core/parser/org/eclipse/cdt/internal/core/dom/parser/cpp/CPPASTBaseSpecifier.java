@@ -148,7 +148,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
-		List<IBinding> filtered = new ArrayList<IBinding>();
+		List<IBinding> filtered = new ArrayList<>();
 
 		ICPPClassType classType = null;
 		if (getParent() instanceof CPPASTCompositeTypeSpecifier) {
@@ -185,6 +185,11 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	}
 
 	@Override
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
+	}
+
+	@Override
 	public boolean isPackExpansion() {
 		return fIsPackExpansion;
 	}
@@ -193,10 +198,5 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	public void setIsPackExpansion(boolean val) {
 		assertNotFrozen();
 		fIsPackExpansion= val;
-	}
-
-	@Override
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		return findBindings(n, isPrefix, null);
 	}
 }

@@ -284,7 +284,7 @@ public class SourceUtils {
 			// The file is not already in the workspace so try to create an external translation unit for it.
 			if (lcProject != null) {
 				ICProject project = CoreModel.getDefault().create(lcProject);
-				if (project != null) {
+				if (project != null && project.exists()) {
 					return new ITranslationUnit[] { CoreModel.getDefault().createTranslationUnitFrom(project, URIUtil.toURI(file.getCanonicalPath(), true)) };
 				}
 			}

@@ -8516,6 +8516,18 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(2, bh.getTranslationUnit().getReferences(foo1).length);
 	}
 
+	//	template<typename T>
+	//	void f(T p);
+	//
+	//	class A {
+	//	  void m() {
+	//	    f([this] (int x) {});
+	//	  }
+	//	};
+	public void testLambdaWithCapture() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	typedef int TInt;
 	//	void test() {
 	//		int a1= {}, a2{};		// Initializer for declarator

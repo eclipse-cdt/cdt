@@ -3867,7 +3867,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 	private List<ICPPASTInitializerClause> expressionList() throws EndOfFileException, BacktrackException {
-		return initializerList(false);
+		return initializerList(false, false);
 	}
 
 	/**
@@ -3902,7 +3902,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		// { initializer-list ,opt }
-		List<ICPPASTInitializerClause> initList= initializerList(allowSkipping);
+		List<ICPPASTInitializerClause> initList= initializerList(allowSkipping, true);
 		if (LT(1) == IToken.tCOMMA)
 			consume();
 
@@ -3919,12 +3919,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 *	initializer-clause ...opt
 	 *	initializer-list , initializer-clause ...opt
 	 */
-	private List<ICPPASTInitializerClause> initializerList(boolean allowSkipping) throws EndOfFileException,
-			BacktrackException {
+	private List<ICPPASTInitializerClause> initializerList(boolean allowSkipping, boolean allowDesignators)
+			throws EndOfFileException, BacktrackException {
 		List<ICPPASTInitializerClause> result= new ArrayList<>();
 		// List of initializer clauses
 		loop: while (true) {
-			List<ICPPASTDesignator> designators= designatorList();
+			List<ICPPASTDesignator> designators= allowDesignators ? designatorList() : null;
 			if (designators == null) {
 				// Clause may be null, add to initializer anyways, so that the size can be computed.
 				ICPPASTInitializerClause clause = initClause(allowSkipping);

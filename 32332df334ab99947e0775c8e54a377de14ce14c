@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "67ccbf7d_58506829",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-11-22T10:35:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67ccbf7d_a2e5fec9",
+      "range": {
+        "startLine": 661,
+        "startChar": 5,
+        "endLine": 661,
+        "endChar": 24
+      },
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67ccbf7d_c2e202bf",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
         "patchSetId": 13
@@ -36,6 +60,30 @@
       "writtenOn": "2015-11-05T01:54:47Z",
       "side": 1,
       "message": "current -\u003e the current",
+      "range": {
+        "startLine": 671,
+        "startChar": 63,
+        "endLine": 671,
+        "endChar": 70
+      },
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_784d2c93",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-11-22T10:35:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67ccbf7d_c2e202bf",
       "range": {
         "startLine": 671,
         "startChar": 63,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "67ccbf7d_984af079",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-11-22T10:35:01Z",
+      "side": 1,
+      "message": "Right,, That is behavior is wrong.\nI changed it as following:\n* If the element is a field, it doesn\u0027t matter if it is part of current tu.\n* Otherwise it has to be part of the tu.",
+      "parentUuid": "67ccbf7d_82ac7a77",
+      "range": {
+        "startLine": 672,
+        "startChar": 31,
+        "endLine": 672,
+        "endChar": 40
+      },
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67ccbf7d_e2438614",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 13
@@ -88,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "67ccbf7d_b847b470",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-11-22T10:35:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67ccbf7d_e2438614",
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67ccbf7d_a297be19",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 13
@@ -99,6 +189,30 @@
       "writtenOn": "2015-11-05T01:54:47Z",
       "side": 1,
       "message": "The name of the method does not describe what it does. Consider getContainedString.",
+      "range": {
+        "startLine": 382,
+        "startChar": 23,
+        "endLine": 382,
+        "endChar": 38
+      },
+      "revId": "32332df334ab99947e0775c8e54a377de14ce14c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_d8a718c3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-11-22T10:35:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67ccbf7d_a297be19",
       "range": {
         "startLine": 382,
         "startChar": 23,

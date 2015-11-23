@@ -514,6 +514,16 @@ public abstract class CSelector extends Composite {
 		}
 	}
 
+	/**
+	 * Returns the text currently visible in the selector
+	 */
+	public String getText() {
+		if (currentLabel != null) {
+			currentLabel.getText();
+		}
+		return "";
+	}
+
 	protected boolean hasActionArea() {
 		return false;
 	}

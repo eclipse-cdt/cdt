@@ -172,9 +172,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 		private Label label;
 		protected EditButton editButton;
 		private int index;
-		private Color backgroundColor = getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		private Color outlineColor = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		private Color highlightColor = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		private ILabelProvider labelProvider;
 
 		@Override
@@ -187,12 +184,13 @@ public class LaunchBarListViewer extends StructuredViewer {
 			this.index = index;
 			this.labelProvider = labelProvider;
 			setData(element);
+			setBackground(getParent().getBackground());
 			addPaintListener(new PaintListener() {
 				@Override
 				public void paintControl(PaintEvent e) {
 					Point size = getSize();
 					GC gc = e.gc;
-					gc.setForeground(outlineColor);
+					gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 					gc.drawLine(0, size.y - 1, size.x, size.y - 1);
 					if (label == null)
 						lazyInit();
@@ -240,17 +238,17 @@ public class LaunchBarListViewer extends StructuredViewer {
 			addTraverseListener(listItemTraverseListener);
 			addKeyListener(lisItemKeyListener);
 
-			setBackground(backgroundColor);
+
 			layout(true);
 		}
 
 		public void setSelected(boolean selected) {
 			if (selected) {
-				setBackground(highlightColor);
+				setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 				int idx = getIndex();
 				if (idx != selIndex) {
 					if (selIndex >= 0) {
-						listItems[selIndex].setBackground(backgroundColor);
+						listItems[selIndex].setBackground(getParent().getBackground());
 						scrollBucket = Math.max(Math.min(scrollBucket + idx - selIndex, maxScrollBucket), 0);
 					} else { // initially
 						scrollBucket = Math.min(idx, maxScrollBucket);
@@ -258,7 +256,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 				}
 				selIndex = idx;
 			} else {
-				setBackground(backgroundColor);
+				setBackground(getParent().getBackground());
 			}
 			if (editButton != null) {
 				editButton.setSelected(selected);
@@ -340,10 +338,13 @@ public class LaunchBarListViewer extends StructuredViewer {
 
 	public LaunchBarListViewer(Composite parent) {
 		filterControl = new FilterControl(parent);
+		filterControl.setBackground(parent.getBackground());
 		listScrolled = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.NO_BACKGROUND);
 		listScrolled.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		listScrolled.setExpandHorizontal(true);
+		listScrolled.setBackground(parent.getBackground());
 		listComposite = new Composite(listScrolled, SWT.NONE);
+		listComposite.setBackground(parent.getBackground());
 		listScrolled.setContent(listComposite);
 		listComposite.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
 		selIndex = -1;
@@ -394,8 +395,8 @@ public class LaunchBarListViewer extends StructuredViewer {
 			public void mouseDoubleClick(MouseEvent e) {
 				// ignore
 			}
-			
-		
+
+
 		});
 		sash.setToolTipText(Messages.LaunchBarListViewer_0);
 	}
@@ -577,7 +578,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 
 	/**
 	 * Returns top element (provider element) in the begging on non-history list
-	 * 
+	 *
 	 * @return
 	 */
 	public Object getTopFilteredElement() {
@@ -603,7 +604,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 
 	/**
 	 * ViewerComparator comparator labels of elements by default
-	 * 
+	 *
 	 * @param comp
 	 */
 	public void setHistoryComparator(ViewerComparator comp) {

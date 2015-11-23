@@ -38,6 +38,7 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -49,9 +50,9 @@ import org.eclipse.swt.widgets.Label;
 public class ConfigSelector extends CSelector {
 	private LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
 	private DefaultDescriptorLabelProvider defaultProvider;
-	
+
 	private static final String[] noConfigs = new String[] { Messages.ConfigSelector_0 };
-	
+
 	public ConfigSelector(Composite parent, int style) {
 		super(parent, style);
 
@@ -173,13 +174,13 @@ public class ConfigSelector extends CSelector {
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.marginWidth = buttonLayout.marginHeight = 7;
 		createButton.setLayout(buttonLayout);
-		createButton.setBackground(backgroundColor);
+		createButton.setBackground(getBackground());
 		createButton.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
 				Point size = createButton.getSize();
 				GC gc = e.gc;
-				gc.setForeground(outlineColor);
+				gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 				gc.drawLine(0, 0, size.x, 0);
 			}
 		});
@@ -187,14 +188,16 @@ public class ConfigSelector extends CSelector {
 		final Label createLabel = new Label(createButton, SWT.None);
 		createLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createLabel.setText(Messages.ConfigSelector_2);
-		createLabel.setBackground(backgroundColor);
+		createLabel.setBackground(getBackground());
 
 		MouseListener mouseListener = new MouseAdapter() {
+			@Override
 			public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
 				final NewLaunchConfigWizard wizard = new NewLaunchConfigWizard();
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
 					new Job(Messages.ConfigSelector_3) {
+						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 							try {
 								wizard.getWorkingCopy().doSave();
@@ -214,11 +217,13 @@ public class ConfigSelector extends CSelector {
 		MouseTrackListener mouseTrackListener = new MouseTrackAdapter() {
 			@Override
 			public void mouseEnter(MouseEvent e) {
+				Color highlightColor = getHighlightColor();
 				createButton.setBackground(highlightColor);
 				createLabel.setBackground(highlightColor);
 			}
 			@Override
 			public void mouseExit(MouseEvent e) {
+				Color backgroundColor = getBackground();
 				createButton.setBackground(backgroundColor);
 				createLabel.setBackground(backgroundColor);
 			}
@@ -238,9 +243,10 @@ public class ConfigSelector extends CSelector {
 			element = noConfigs[0];
 		super.setSelection(element);
 	}
-	
+
+	@Override
 	public void openPopup() {
 		super.openPopup();
 	}
-	
+
 }

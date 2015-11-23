@@ -62,17 +62,12 @@ public abstract class CSelector extends Composite {
 	private static final int arrowMax = 2;
 	private Transition arrowTransition;
 	private Object selection;
-	protected final Color backgroundColor;
-	protected final Color outlineColor;
-	protected final Color highlightColor;
-	protected final Color white;
 	private boolean mouseOver;
 	private Label currentIcon;
 	private Label currentLabel;
 	private Shell popup;
 	private LaunchBarListViewer listViewer;
 	private Job delayJob;
-
 	private MouseListener mouseListener = new MouseAdapter() {
 		@Override
 		public void mouseUp(MouseEvent event) {
@@ -91,7 +86,6 @@ public abstract class CSelector extends Composite {
 		}
 		return control == this;
 	}
-
 	private Listener focusOutListener = new Listener() {
 		private Job closingJob;
 
@@ -121,7 +115,6 @@ public abstract class CSelector extends Composite {
 						protected IStatus run(IProgressMonitor monitor) {
 							if (monitor.isCanceled())
 								return Status.CANCEL_STATUS;
-
 							closePopup();
 							closingJob = null;
 							return Status.OK_STATUS;
@@ -141,23 +134,20 @@ public abstract class CSelector extends Composite {
 			}
 			}
 		}
-
 	};
 
 	public CSelector(Composite parent, int style) {
 		super(parent, style);
-		backgroundColor = getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		outlineColor = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		highlightColor = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
-		white = getDisplay().getSystemColor(SWT.COLOR_WHITE);
+		setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
 		GridLayout mainButtonLayout = new GridLayout();
 		setLayout(mainButtonLayout);
 		addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
 				GC gc = e.gc;
-				gc.setBackground(backgroundColor);
-				gc.setForeground(outlineColor);
+				gc.setBackground(getBackground());
+				gc.setForeground(getOutlineColor());
 				Point size = getSize();
 				final int arc = 3;
 				gc.fillRoundRectangle(0, 0, size.x - 1, size.y - 1, arc, arc);
@@ -226,7 +216,7 @@ public abstract class CSelector extends Composite {
 		buttonLayout.marginHeight = buttonLayout.marginWidth = 0;
 		buttonComposite.setLayout(buttonLayout);
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		buttonComposite.setBackground(backgroundColor);
+		buttonComposite.setBackground(getBackground());
 		buttonComposite.addMouseListener(mouseListener);
 		buttonComposite.setToolTipText(toolTipText);
 		if (element != null) {
@@ -253,7 +243,8 @@ public abstract class CSelector extends Composite {
 			}
 		};
 		arrow.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		arrow.setBackground(backgroundColor);
+		arrow.setBackground(getBackground());
+		arrow.setForeground(getForeground());
 		arrowTransition = new Transition(arrow, arrowMax, 80);
 		arrow.addPaintListener(new PaintListener() {
 			@Override
@@ -275,7 +266,7 @@ public abstract class CSelector extends Composite {
 		if (editable) {
 			final EditButton editButton = new EditButton(buttonComposite, SWT.NONE);
 			editButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
-			editButton.setBackground(backgroundColor);
+			editButton.setBackground(getBackground());
 			editButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -314,7 +305,7 @@ public abstract class CSelector extends Composite {
 		}
 		popup = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP | SWT.RESIZE);
 		popup.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
-
+		popup.setBackground(getBackground());
 		listViewer = new LaunchBarListViewer(popup);
 		initializeListViewer(listViewer);
 		listViewer.setFilterVisible(elements.length > 7);
@@ -337,7 +328,6 @@ public abstract class CSelector extends Composite {
 		Rectangle buttonBounds = getBounds();
 		Point popupLocation = popup.getDisplay().map(this, null, 0, buttonBounds.height);
 		popup.setLocation(popupLocation.x, popupLocation.y + 5);
-
 		restoreShellSize();
 		popup.setVisible(true);
 		popup.setFocus();
@@ -352,7 +342,6 @@ public abstract class CSelector extends Composite {
 				getDisplay().removeFilter(SWT.MouseUp, focusOutListener);
 				saveShellSize();
 			}
-
 		});
 	}
 
@@ -541,4 +530,11 @@ public abstract class CSelector extends Composite {
 		// nothing to do here
 	}
 
+	public Color getOutlineColor() {
+		return getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+	}
+
+	public Color getHighlightColor() {
+		return getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+	}
 }

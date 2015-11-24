@@ -15,7 +15,6 @@ Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.internal.ui;x-friends:="org.eclipse.cdt.debug.edc.tests",
  org.eclipse.cdt.internal.ui.actions;x-internal:=true,
  org.eclipse.cdt.internal.ui.browser.opentype;x-internal:=true,
- org.eclipse.cdt.internal.ui.build;x-internal:=true,
  org.eclipse.cdt.internal.ui.buildconsole;x-internal:=true,
  org.eclipse.cdt.internal.ui.callhierarchy;x-internal:=true,
  org.eclipse.cdt.internal.ui.compare;x-internal:=true,
@@ -126,4 +125,3 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="[5.2.0,6.0.0)",
  org.eclipse.e4.ui.css.swt.theme
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Service-Component: OSGI-INF/consoleservice.xml

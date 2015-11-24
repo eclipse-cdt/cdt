@@ -9,7 +9,7 @@ package org.eclipse.cdt.internal.qt.core.index;
 
 import java.util.Collection;
 
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
@@ -37,11 +37,11 @@ public abstract class QtIndex {
 			return null;
 
 		try {
-			Object index = project.getSessionProperty(QtPlugin.QTINDEX_PROP_NAME);
+			Object index = project.getSessionProperty(Activator.QTINDEX_PROP_NAME);
 			if (index instanceof QtIndex)
 				return (QtIndex)index;
 		} catch(CoreException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 		}
 
 		// create and store a new instance when needed
@@ -50,9 +50,9 @@ public abstract class QtIndex {
 			return null;
 
 		try {
-			project.setSessionProperty(QtPlugin.QTINDEX_PROP_NAME, index);
+			project.setSessionProperty(Activator.QTINDEX_PROP_NAME, index);
 		} catch( CoreException e ) {
-			QtPlugin.log(e);
+			Activator.log(e);
 		}
 
 		return index;

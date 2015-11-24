@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.index.IQMakeEnvProvider.IController;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -49,7 +49,7 @@ public final class QMakeEnvProviderDescriptor implements Comparable<QMakeEnvProv
 			try {
 				prio = Integer.parseInt(priorityString);
 			} catch (NumberFormatException e) {
-				QtPlugin.log("Invalid priority value of " + id, e); //$NON-NLS-1$
+				Activator.log("Invalid priority value of " + id, e); //$NON-NLS-1$
 			}
 		}
 		this.priority = prio;
@@ -66,11 +66,11 @@ public final class QMakeEnvProviderDescriptor implements Comparable<QMakeEnvProv
 				ExpressionConverter parser = ExpressionConverter.getDefault();
 				expr = parser.perform(children[0]);
 			} catch (CoreException e) {
-				QtPlugin.log("Error in enablement expression of " + id, e); //$NON-NLS-1$
+				Activator.log("Error in enablement expression of " + id, e); //$NON-NLS-1$
 			}
 			break;
 		default:
-			QtPlugin.log("Too many enablement expressions for " + id); //$NON-NLS-1$
+			Activator.log("Too many enablement expressions for " + id); //$NON-NLS-1$
 			evaluation.set(Boolean.FALSE);
 			break;
 		}
@@ -99,7 +99,7 @@ public final class QMakeEnvProviderDescriptor implements Comparable<QMakeEnvProv
 		try {
 			provider = (IQMakeEnvProvider) element.createExecutableExtension(ATTR_CLASS);
 		} catch (CoreException e) {
-			QtPlugin.log("Error in class attribute of " + id, e); //$NON-NLS-1$
+			Activator.log("Error in class attribute of " + id, e); //$NON-NLS-1$
 			return null;
 		}
 		return provider.createEnv(controller);
@@ -127,7 +127,7 @@ public final class QMakeEnvProviderDescriptor implements Comparable<QMakeEnvProv
 				}
 				return enablementExpression.evaluate(evalContext) == EvaluationResult.TRUE;
 			} catch (CoreException e) {
-				QtPlugin.log("Error while evaluating enablement expression for " + id, e); //$NON-NLS-1$
+				Activator.log("Error while evaluating enablement expression for " + id, e); //$NON-NLS-1$
 			}
 		}
 		evaluation.set(Boolean.FALSE);

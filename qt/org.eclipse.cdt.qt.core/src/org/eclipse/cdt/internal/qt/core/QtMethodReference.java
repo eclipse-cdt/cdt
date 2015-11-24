@@ -173,7 +173,7 @@ public class QtMethodReference extends ASTNameReference {
 		try {
 			qualName = cls.getQualifiedName();
 		} catch(DOMException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 		}
 
 		IProject project = ASTUtil.getProject(delegate);

@@ -14,7 +14,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.native.serial;bundle-version="1.0.0",
  org.eclipse.remote.serial.core;bundle-version="1.0.0",
  com.google.gson;bundle-version="2.2.4",
- org.apache.commons.compress;bundle-version="1.6.0"
+ org.apache.commons.compress;bundle-version="1.6.0",
+ org.eclipse.cdt.build.core;bundle-version="1.0.0",
+ org.eclipse.cdt.build.gcc.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: libs/freemarker-2.3.22.jar,

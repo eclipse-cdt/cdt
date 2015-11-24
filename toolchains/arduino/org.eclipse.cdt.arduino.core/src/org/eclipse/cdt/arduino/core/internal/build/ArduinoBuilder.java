@@ -15,7 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
-import org.eclipse.cdt.core.build.IConsoleService;
+import org.eclipse.cdt.build.core.CConsoleParser;
+import org.eclipse.cdt.build.core.IConsoleService;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -50,7 +51,8 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			config.setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			consoleService.monitor(process, config.getConsoleParsers(), config.getBuildFolder());
+			consoleService.monitor(process, config.getConsoleParsers().toArray(new CConsoleParser[0]),
+					config.getBuildDirectory().toPath());
 
 			if (process.exitValue() == 0) {
 				showSizes(config, consoleService);
@@ -82,7 +84,8 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			config.setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			consoleService.monitor(process, config.getConsoleParsers(), config.getBuildFolder());
+			consoleService.monitor(process, config.getConsoleParsers().toArray(new CConsoleParser[0]),
+					config.getBuildDirectory().toPath());
 
 			config.getBuildFolder().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			consoleService.writeOutput("\n"); //$NON-NLS-1$

@@ -24,8 +24,9 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Detects the addition or removal of a file to a Qt project. If one of these resource changes is found, it triggers an update of
- * the project's *.pro file to reflect the change.
+ * Detects the addition or removal of a file to a Qt project. If one of these
+ * resource changes is found, it triggers an update of the project's *.pro file
+ * to reflect the change.
  */
 public class QtResourceChangeListener implements IResourceChangeListener {
 
@@ -50,7 +51,7 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 					// Only traverse children of Qt Projects
 					try {
 						IProject project = (IProject) resource;
-						if (project.hasNature(QtNature.ID)) {
+						if (project.exists() && project.hasNature(QtNature.ID)) {
 							return true;
 						}
 					} catch (CoreException e) {
@@ -65,7 +66,8 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 						}
 					}
 
-					// Then check to make sure that the folder lies in a Qt Project
+					// Then check to make sure that the folder lies in a Qt
+					// Project
 					try {
 						IProject project = resource.getProject();
 						if (project != null && project.hasNature(QtNature.ID)) {
@@ -84,12 +86,15 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 
 				if ("cpp".equals(resource.getFileExtension()) //$NON-NLS-1$
 						|| "h".equals(resource.getFileExtension())) { //$NON-NLS-1$
-					// If we make it to this point, then we have a .cpp or .h file that's been added to or removed from a Qt
-					// Project. Add it to the list of deltas so we can update the project file later.
+					// If we make it to this point, then we have a .cpp or .h
+					// file that's been added to or removed from a Qt
+					// Project. Add it to the list of deltas so we can update
+					// the project file later.
 					deltaList.add(delta);
 				}
 
-				// Doesn't really matter since this line can only be reached if we're dealing with a file that shouldn't have
+				// Doesn't really matter since this line can only be reached if
+				// we're dealing with a file that shouldn't have
 				// children anyway
 				return false;
 			}

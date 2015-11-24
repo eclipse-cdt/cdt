@@ -8,7 +8,7 @@
 package org.eclipse.cdt.internal.qt.core.index;
 
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -52,7 +52,7 @@ public class CDTIndex {
 		try {
 			return accessor.access(index);
 		} catch(CoreException e) {
-			QtPlugin.log( e );
+			Activator.log( e );
 		} finally {
 			index.releaseReadLock();
 		}

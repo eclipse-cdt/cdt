@@ -725,7 +725,14 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	public ILaunchConfiguration getActiveLaunchConfiguration() throws CoreException {
-		return getLaunchConfiguration(activeLaunchDesc, activeLaunchTarget);
+		ILaunchConfiguration configuration = getLaunchConfiguration(activeLaunchDesc, activeLaunchTarget);
+
+		// This is the only concrete time we have the mapping from launch
+		// configuration to launch target. Record it in the target manager for
+		// the launch delegates to use.
+		launchTargetManager.setDefaultLaunchTarget(configuration, activeLaunchTarget);
+
+		return configuration;
 	}
 
 	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)

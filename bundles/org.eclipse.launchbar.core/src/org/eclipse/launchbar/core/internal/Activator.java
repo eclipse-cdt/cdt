@@ -26,20 +26,37 @@ public class Activator extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.launchbar.core"; //$NON-NLS-1$
 	private static Activator plugin;
 
+	private static LaunchTargetManager launchTargetManager;
+	private static LaunchBarManager launchBarManager;
+
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		plugin = this;
-		bundleContext.registerService(ILaunchTargetManager.class, new LaunchTargetManager(), null);
-		bundleContext.registerService(ILaunchBarManager.class, new LaunchBarManager(), null);
+
+		launchTargetManager = new LaunchTargetManager();
+		bundleContext.registerService(ILaunchTargetManager.class, launchTargetManager, null);
+
+		launchBarManager = new LaunchBarManager();
+		bundleContext.registerService(ILaunchBarManager.class, launchBarManager, null);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
 		plugin = null;
+		launchTargetManager = null;
+		launchBarManager = null;
 	}
 
 	public static Activator getDefault() {
 		return plugin;
+	}
+
+	public static LaunchBarManager getLaunchBarManager() {
+		return launchBarManager;
+	}
+
+	public static LaunchTargetManager getLaunchTargetManager() {
+		return launchTargetManager;
 	}
 
 	/**

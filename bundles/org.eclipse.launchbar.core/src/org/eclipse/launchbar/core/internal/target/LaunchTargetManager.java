@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetListener;
@@ -195,6 +196,29 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	public void targetStatusChanged(ILaunchTarget target) {
 		for (ILaunchTargetListener listener : listeners) {
 			listener.launchTargetStatusChanged(target);
+		}
+	}
+
+	@Override
+	public ILaunchTarget getDefaultLaunchTarget(ILaunchConfiguration configuration) {
+		Preferences prefs = getTargetsPref().node("configs"); //$NON-NLS-1$
+		String targetId = prefs.get(configuration.getName(), null);
+		if (targetId != null) {
+			String[] parts = targetId.split(":"); //$NON-NLS-1$
+			return getLaunchTarget(parts[0], parts[1]);
+		}
+		return null;
+	}
+
+	@Override
+	public void setDefaultLaunchTarget(ILaunchConfiguration configuration, ILaunchTarget target) {
+		Preferences prefs = getTargetsPref().node("configs"); //$NON-NLS-1$
+		String targetId = String.join(":", target.getTypeId(), target.getName()); //$NON-NLS-1$
+		prefs.put(configuration.getName(), targetId);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
 		}
 	}
 

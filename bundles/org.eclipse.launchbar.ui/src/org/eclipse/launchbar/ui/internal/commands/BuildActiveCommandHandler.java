@@ -35,6 +35,8 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.launch.ILaunchConfigurationTargetedDelegate;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.widgets.Display;
@@ -55,8 +57,9 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
-			final ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
-			final ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
+			ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
+			ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
+			ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
 
 			new UIJob(Display.getDefault(), Messages.BuildActiveCommandHandler_0) {
 				@Override
@@ -72,11 +75,17 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 
 					new Job(Messages.BuildActiveCommandHandler_1) {
 						@Override
+						public boolean belongsTo(Object family) {
+							return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
+						}
+
+						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 							try {
 								if (config == null) {
 									// Default, build the workspace
-									ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+									ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
+											monitor);
 									return Status.OK_STATUS;
 								}
 
@@ -87,8 +96,18 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 								if (delegate == null)
 									delegate = config.getType().getDelegates(modes)[0];
 								ILaunchConfigurationDelegate configDel = delegate.getDelegate();
-								if (configDel instanceof ILaunchConfigurationDelegate2) {
-									ILaunchConfigurationDelegate2 configDel2 = (ILaunchConfigurationDelegate2)configDel;
+								if (configDel instanceof ILaunchConfigurationTargetedDelegate) {
+									ILaunchConfigurationTargetedDelegate configDel2 = (ILaunchConfigurationTargetedDelegate) configDel;
+									boolean ret;
+									ret = configDel2.preLaunchCheck(config, mode, target, monitor);
+									if (!ret) {
+										return Status.CANCEL_STATUS;
+									}
+									if (!configDel2.buildForLaunch(config, mode, target, monitor)) {
+										return Status.OK_STATUS;
+									}
+								} else if (configDel instanceof ILaunchConfigurationDelegate2) {
+									ILaunchConfigurationDelegate2 configDel2 = (ILaunchConfigurationDelegate2) configDel;
 									boolean ret;
 									ret = configDel2.preLaunchCheck(config, mode, monitor);
 									if (!ret) {
@@ -101,12 +120,15 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 
 								// Fall through, do a normal build
 								if (projects.isEmpty()) {
-									ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+									ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
+											monitor);
 								} else {
 									Collection<IBuildConfiguration> buildConfigs = getBuildConfigs(projects);
-									ResourcesPlugin.getWorkspace().build(buildConfigs.toArray(new IBuildConfiguration[buildConfigs.size()]),
+									ResourcesPlugin.getWorkspace().build(
+											buildConfigs.toArray(new IBuildConfiguration[buildConfigs.size()]),
 											IncrementalProjectBuilder.INCREMENTAL_BUILD, true, monitor);
-									// TODO, may need to get the buildReferences argument from the descriptor
+									// TODO, may need to get the buildReferences
+									// argument from the descriptor
 								}
 								return Status.OK_STATUS;
 							} catch (CoreException e) {

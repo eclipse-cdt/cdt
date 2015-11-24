@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eclipse.launchbar.core.target;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
+
 /**
  * The manager for the launch targets. It is registered as an OSGi service.
  * 
@@ -83,6 +85,25 @@ public interface ILaunchTargetManager {
 	 * @param target
 	 */
 	void targetStatusChanged(ILaunchTarget target);
+
+	/**
+	 * What is the default target to use for this launch configuration.
+	 * 
+	 * @param configuration
+	 *            launch configuration or null if not set
+	 * @return default target for this launch configuration
+	 */
+	ILaunchTarget getDefaultLaunchTarget(ILaunchConfiguration configuration);
+
+	/**
+	 * Set the default target for the given launch configuraiton.
+	 * 
+	 * @param configuration
+	 *            launch configuration
+	 * @param target
+	 *            default target for this launch configuration
+	 */
+	void setDefaultLaunchTarget(ILaunchConfiguration configuration, ILaunchTarget target);
 
 	/**
 	 * Add a listener.

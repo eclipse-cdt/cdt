@@ -683,7 +683,6 @@
    <extension-point id="LanguageSettingsProvider" name="%LanguageSettingsProvider.name" schema="schema/LanguageSettingsProvider.exsd"/>
    <extension-point id="UNCPathConverter" name="%uncPathConverter.name" schema="schema/UNCPathConverter.exsd"/>
    <extension-point id="ProblemMarkerFilter" name="%problemMarkerFilter.name" schema="schema/ProblemMarkerFilter.exsd"/>
-   <extension-point id="ToolChainFactory" name="Tool Chain Factory" schema="schema/ToolChainFactory.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">
@@ -856,13 +855,6 @@
             name="Export Index File Info Matcher"
             ordering="first">
       </filterMatcher>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.ToolChainFactory">
-      <factory
-            class="org.eclipse.cdt.core.build.gcc.GCCToolChainFactory"
-            family="GCC">
-      </factory>
    </extension>
 
 </plugin>

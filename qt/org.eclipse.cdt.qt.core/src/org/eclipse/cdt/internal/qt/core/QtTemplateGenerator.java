@@ -26,11 +26,11 @@ public class QtTemplateGenerator {
 
 	public QtTemplateGenerator() throws CoreException {
 		config = new Configuration(Configuration.VERSION_2_3_22);
-		URL templateDirURL = FileLocator.find(QtPlugin.getDefault().getBundle(), new Path("/templates"), null); //$NON-NLS-1$
+		URL templateDirURL = FileLocator.find(Activator.getDefault().getBundle(), new Path("/templates"), null); //$NON-NLS-1$
 		try {
 			config.setDirectoryForTemplateLoading(new File(FileLocator.toFileURL(templateDirURL).toURI()));
 		} catch (IOException | URISyntaxException e) {
-			throw new CoreException(new Status(IStatus.ERROR, QtPlugin.ID, "Template configuration", e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Template configuration", e));
 		}
 	}
 
@@ -50,7 +50,7 @@ public class QtTemplateGenerator {
 				}
 			}
 		} catch (IOException | TemplateException e) {
-			throw new CoreException(new Status(IStatus.ERROR, QtPlugin.ID, "Processing template " + templateFile, e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Processing template " + templateFile, e));
 		}
 	}
 

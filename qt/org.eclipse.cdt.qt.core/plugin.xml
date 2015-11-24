@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="qmakeEnvProvider" name="%qmakeEnvProvider.name" schema="schema/qmakeEnvProvider.exsd"/>
+   <extension-point id="qtInstallTargetMapper" name="Qt Install Target Mapper" schema="schema/qtInstallTargetMapper.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templates">
@@ -124,6 +124,7 @@
     </extension>
     <extension
           id="qtBuilder"
+          name="Qt Builder"
           point="org.eclipse.core.resources.builders">
        <builder
              callOnEmptyDelta="true"
@@ -178,10 +179,17 @@
           point="org.eclipse.core.runtime.adapters">
        <factory
              adaptableType="org.eclipse.core.resources.IBuildConfiguration"
-             class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration$Factory">
+             class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory">
           <adapter
                 type="org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration">
           </adapter>
        </factory>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.qt.core.qtInstallTargetMapper">
+       <mapper
+             class="org.eclipse.cdt.internal.qt.core.LocalQtInstallTargetMapper"
+             targetTypeId="org.eclipse.launchbar.core.launchTargetType.local">
+       </mapper>
     </extension>
 </plugin>

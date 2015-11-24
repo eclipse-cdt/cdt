@@ -108,7 +108,7 @@ public class QtKeywords {
 			try {
 				return ((ICPPFunction) binding).getQualifiedName();
 			} catch (DOMException e) {
-				QtPlugin.log(e);
+				Activator.log(e);
 			}
 		return null;
 	}

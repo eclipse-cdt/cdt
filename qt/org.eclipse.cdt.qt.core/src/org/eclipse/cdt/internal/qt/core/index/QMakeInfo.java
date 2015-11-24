@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 /**
@@ -176,7 +176,7 @@ public final class QMakeInfo implements IQMakeInfo {
 	 */
     private static Map<String, String> exec(Pattern regex, String[] extraEnv, String...command) {
 		if (command.length < 1 || ! new File(command[0]).exists()) {
-			QtPlugin.log("qmake: cannot run command: " + (command.length > 0 ? command[0] : ""));
+			Activator.log("qmake: cannot run command: " + (command.length > 0 ? command[0] : ""));
 			return null;
 		}
 		BufferedReader reader = null;
@@ -190,7 +190,7 @@ public final class QMakeInfo implements IQMakeInfo {
 			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			return QMakeParser.parse(regex, reader);
 		} catch(IOException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 			return null;
 		} finally {
 			if (reader != null)

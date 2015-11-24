@@ -50,7 +50,6 @@ import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CdtVarPathEntryVariableManager;
 import org.eclipse.cdt.internal.core.ICConsole;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
-import org.eclipse.cdt.internal.core.build.ScannerInfoSaveParticipant;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.UserVarSupplier;
 import org.eclipse.cdt.internal.core.dom.ast.tag.TagService;
@@ -391,9 +390,6 @@ public class CCorePlugin extends Plugin {
 		// job.
 		post1.schedule();
 		post2.schedule();
-
-		// Save participant for toolchain data
-		ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, new ScannerInfoSaveParticipant());
 	}
 
 	/**

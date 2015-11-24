@@ -1,0 +1,6 @@
+<component name="NewConsoleService">
+    <implementation class="org.eclipse.cdt.build.ui.internal.CConsoleService"/>
+    <service>
+        <provide interface="org.eclipse.cdt.build.core.IConsoleService"/>
+    </service>
+</component>

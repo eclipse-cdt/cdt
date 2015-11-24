@@ -61,6 +61,8 @@
 
 		<module>releng/org.eclipse.cdt</module>
 		<module>core/org.eclipse.cdt.core</module>
+		<module>build/org.eclipse.cdt.build.core</module>
+		<module>build/org.eclipse.cdt.build.ui</module>
 		<module>codan/org.eclipse.cdt.codan.core</module>
 		<module>codan/org.eclipse.cdt.codan.ui</module>
 		<module>codan/org.eclipse.cdt.codan.core.cxx</module>
@@ -80,6 +82,7 @@
 		<module>releng/org.eclipse.cdt.platform-feature</module>
 		<module>releng/org.eclipse.cdt.platform.source-feature</module>
 
+		<module>build/org.eclipse.cdt.build.gcc.core</module>
 		<module>build/org.eclipse.cdt.managedbuilder.gnu.ui</module>
 		<module>build/org.eclipse.cdt.gnu.build-feature</module>
 		<module>build/org.eclipse.cdt.gnu.build.source-feature</module>

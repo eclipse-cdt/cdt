@@ -7,12 +7,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.project.QtProjectGenerator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewQtProjectWizard extends BasicNewProjectResourceWizard {
@@ -23,19 +25,25 @@ public class NewQtProjectWizard extends BasicNewProjectResourceWizard {
 			return false;
 		}
 
-		new Job("Creating Qt Project") {
+		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
+					monitor.beginTask("Generating project", 1);
 					QtProjectGenerator generator = new QtProjectGenerator(getNewProject());
 					generator.generate(monitor);
+					monitor.done();
 				} catch (CoreException e) {
-					return e.getStatus();
+					Activator.log(e);
 				}
-				return Status.OK_STATUS;
 			}
-		}.schedule();
+		});
 
+		try {
+			getContainer().run(false, true, op);
+		} catch (InvocationTargetException | InterruptedException e) {
+			return false;
+		}
 		return true;
 	}
 

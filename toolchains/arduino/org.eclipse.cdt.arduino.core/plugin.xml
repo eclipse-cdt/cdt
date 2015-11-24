@@ -116,13 +116,6 @@
       </factory>
    </extension>
    <extension
-         point="org.eclipse.cdt.core.ToolChainFactory">
-      <factory
-            class="org.eclipse.cdt.arduino.core.internal.build.ArduinoGCCToolChain$ArduinoFactory"
-            family="Arduino GCC">
-      </factory>
-   </extension>
-   <extension
          point="org.eclipse.launchbar.core.launchTargetTypes">
       <launchTargetType
             id="org.eclipse.cdt.arduino.core.connectionType"

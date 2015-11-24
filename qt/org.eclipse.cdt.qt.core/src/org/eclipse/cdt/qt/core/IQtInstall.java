@@ -23,8 +23,6 @@ public interface IQtInstall {
 
 	String getSpec();
 
-	boolean supports(String os, String arch);
-
 	Path getLibPath();
 
 }

@@ -9,6 +9,7 @@ package org.eclipse.cdt.arduino.core.internal.build;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -31,10 +32,10 @@ import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoTool;
 import org.eclipse.cdt.arduino.core.internal.board.ToolDependency;
+import org.eclipse.cdt.build.core.CBuildConfiguration;
+import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.cdt.build.core.IToolChainManager;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.build.CBuildConfiguration;
-import org.eclipse.cdt.core.build.CToolChain;
-import org.eclipse.cdt.core.build.CToolChainManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOutputEntry;
@@ -55,8 +56,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class ArduinoBuildConfiguration extends CBuildConfiguration {
 
@@ -138,7 +139,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration {
 		ArduinoPlatform platform = board.getPlatform();
 		ArduinoPackage pkg = platform.getPackage();
 
-		IEclipsePreferences settings = getSettings();
+		Preferences settings = getSettings();
 		settings.put(PACKAGE_NAME, pkg.getName());
 		settings.put(PLATFORM_NAME, platform.getName());
 		settings.put(BOARD_NAME, board.getName());
@@ -151,7 +152,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration {
 
 	public ArduinoBoard getBoard() throws CoreException {
 		if (board == null) {
-			IEclipsePreferences settings = getSettings();
+			Preferences settings = getSettings();
 			String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
 			String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
 			String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
@@ -424,48 +425,39 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration {
 
 		String command = resolveProperty("tools." + toolName + ".upload.pattern", properties); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isWindows) {
-			return CToolChain.splitCommand(command);
+			return command.split(" "); //$NON-NLS-1$
 		} else {
 			return new String[] { "sh", "-c", command }; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
-	@Override
-	public CToolChain getToolChain() throws CoreException {
-		CToolChain toolChain = super.getToolChain();
-		if (toolChain == null) {
-			// figure out which one it is
-			ArduinoPlatform platform = board.getPlatform();
-			String compilerPath = resolveProperty("compiler.path", platform.getPlatformProperties()); //$NON-NLS-1$
-			if (compilerPath != null) {
-				// TODO what if it is null?
-				Path path = Paths.get(compilerPath);
-				for (ToolDependency toolDep : platform.getToolsDependencies()) {
-					ArduinoTool tool = toolDep.getTool();
-					if (path.startsWith(tool.getInstallPath())) {
-						// this is it, find the matching
-						for (CToolChain tc : CToolChainManager.instance.getToolChains()) {
-							if (tc instanceof ArduinoGCCToolChain) {
-								if (((ArduinoGCCToolChain) tc).getTool().equals(tool)) {
-									setToolChain(tc);
-									toolChain = tc;
-									break;
-								}
-							}
+	public IToolChain getToolChainx() {
+		try {
+			IToolChain toolChain = super.getToolChain();
+			if (toolChain == null) {
+				// figure out which one it is
+				IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
+				ArduinoPlatform platform = board.getPlatform();
+				String compilerPath = resolveProperty("compiler.path", platform.getPlatformProperties()); //$NON-NLS-1$
+				if (compilerPath != null) {
+					// TODO what if it is null?
+					Path path = Paths.get(compilerPath);
+					for (ToolDependency toolDep : platform.getToolsDependencies()) {
+						ArduinoTool tool = toolDep.getTool();
+						if (path.startsWith(tool.getInstallPath())) {
 						}
-						// not found, create
-						toolChain = new ArduinoGCCToolChain(tool);
-						CToolChainManager.instance.addToolChain(toolChain);
-						setToolChain(toolChain);
-						break;
 					}
 				}
 			}
+			return toolChain;
+		} catch (CoreException e) {
+			Activator.log(e);
+			return null;
 		}
-		return toolChain;
 	}
 
-	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
+	@Override
+	public IScannerInfo getScannerInfo(IResource resource) throws IOException {
 		IScannerInfo info = super.getScannerInfo(resource);
 		if (info == null) {
 			// what language is this resource and pick the right recipe
@@ -479,29 +471,34 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration {
 				recipe = "recipe.c.o.pattern"; //$NON-NLS-1$
 			}
 
-			ArduinoPlatform platform = getBoard().getPlatform();
-			Properties properties = new Properties();
-			properties.putAll(getProperties());
+			try {
+				ArduinoPlatform platform = getBoard().getPlatform();
+				Properties properties = new Properties();
+				properties.putAll(getProperties());
 
-			Path resourcePath = new File(resource.getLocationURI()).toPath();
-			Path sourcePath = getBuildDirectory().toPath().relativize(resourcePath);
-			properties.put("source_file", pathString(sourcePath)); //$NON-NLS-1$
-			properties.put("object_file", "-"); //$NON-NLS-1$ //$NON-NLS-2$
+				Path resourcePath = new File(resource.getLocationURI()).toPath();
+				Path sourcePath = getBuildDirectory().toPath().relativize(resourcePath);
+				properties.put("source_file", pathString(sourcePath)); //$NON-NLS-1$
+				properties.put("object_file", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			String includes = ""; //$NON-NLS-1$
-			for (Path include : platform.getIncludePath()) {
-				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
-			}
-			Collection<ArduinoLibrary> libs = ArduinoManager.instance.getLibraries(getProject());
-			for (ArduinoLibrary lib : libs) {
-				for (Path path : lib.getIncludePath()) {
-					includes += " -I\"" + pathString(path) + '"'; //$NON-NLS-1$
+				String includes = ""; //$NON-NLS-1$
+				for (Path include : platform.getIncludePath()) {
+					includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
 				}
-			}
-			properties.put("includes", includes); //$NON-NLS-1$
+				Collection<ArduinoLibrary> libs = ArduinoManager.instance.getLibraries(getProject());
+				for (ArduinoLibrary lib : libs) {
+					for (Path path : lib.getIncludePath()) {
+						includes += " -I\"" + pathString(path) + '"'; //$NON-NLS-1$
+					}
+				}
+				properties.put("includes", includes); //$NON-NLS-1$
 
-			List<String> cmd = Arrays.asList(resolveProperty(recipe, properties).split(" ")); //$NON-NLS-1$
-			info = getToolChain().getScannerInfo(getBuildFolder(), cmd);
+				List<String> cmd = Arrays.asList(resolveProperty(recipe, properties).split(" ")); //$NON-NLS-1$
+				// TODO for reals
+				info = getToolChain().getScannerInfo(cmd.get(0), cmd.subList(1, cmd.size()), null, resource, null);
+			} catch (CoreException e) {
+				throw new IOException(e);
+			}
 		}
 		return info;
 	}

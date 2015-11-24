@@ -200,7 +200,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 		try {
 			return Long.parseLong(value);
 		} catch(NumberFormatException e) {
-			QtPlugin.log("attribute name:" + attr + " value:" + value, e);
+			Activator.log("attribute name:" + attr + " value:" + value, e);
 			return 0;
 		}
 	}
@@ -230,7 +230,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			qtInstallHeadersPath = reader.readLine();
 		} catch(IOException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 		} finally {
 			try {
 				if (reader != null)
@@ -275,7 +275,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 		try {
 			entries.add(new CIncludePathEntry(file.getCanonicalPath(), ICSettingEntry.READONLY | ICSettingEntry.RESOLVED));
 		} catch(IOException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 		}
 	}
 }

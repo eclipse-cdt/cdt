@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.pro.parser;
 
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
@@ -151,7 +151,7 @@ public class QtProjectFileModifier {
 			document.replace(offset, length, newValue);
 			return true;
 		} catch (BadLocationException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 		}
 		return false;
 	}
@@ -182,7 +182,7 @@ public class QtProjectFileModifier {
 				try {
 					document.replace(offset, 0, "\n" + indent + value); //$NON-NLS-1$
 				} catch (BadLocationException e) {
-					QtPlugin.log(e);
+					Activator.log(e);
 				}
 
 				try {
@@ -191,7 +191,7 @@ public class QtProjectFileModifier {
 
 					document.replace(offset, 0, lineEscape);
 				} catch (BadLocationException e) {
-					QtPlugin.log(e);
+					Activator.log(e);
 				}
 			}
 		} else {
@@ -203,19 +203,19 @@ public class QtProjectFileModifier {
 				try {
 					document.replace(0, document.getLength(), baseVariable);
 				} catch (BadLocationException e) {
-					QtPlugin.log(e);
+					Activator.log(e);
 				}
 			} else if (document.get().endsWith("\n")) { //$NON-NLS-1$
 				try {
 					document.replace(document.getLength(), 0, "\n" + baseVariable); //$NON-NLS-1$
 				} catch (BadLocationException e) {
-					QtPlugin.log(e);
+					Activator.log(e);
 				}
 			} else {
 				try {
 					document.replace(document.getLength(), 0, "\n\n" + baseVariable); //$NON-NLS-1$
 				} catch (BadLocationException e) {
-					QtPlugin.log(e);
+					Activator.log(e);
 				}
 			}
 		}
@@ -243,7 +243,7 @@ public class QtProjectFileModifier {
 				try {
 					document.replace(offset, end - offset, ""); //$NON-NLS-1$
 				} catch (BadLocationException e) {
-					QtPlugin.log(e);
+					Activator.log(e);
 				}
 			} else if (line >= 0) {
 				int offset = var.getLineOffset(line);
@@ -257,7 +257,7 @@ public class QtProjectFileModifier {
 				try {
 					document.replace(offset, length, ""); //$NON-NLS-1$
 				} catch (BadLocationException e) {
-					QtPlugin.log(e);
+					Activator.log(e);
 				}
 
 				// Remove the previous line's line escape character if necessary
@@ -268,7 +268,7 @@ public class QtProjectFileModifier {
 
 						document.replace(offset, length, ""); //$NON-NLS-1$
 					} catch (BadLocationException e) {
-						QtPlugin.log(e);
+						Activator.log(e);
 					}
 				}
 			}

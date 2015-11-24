@@ -13,15 +13,11 @@ package org.eclipse.cdt.arduino.core.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
-import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuilder;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -57,15 +53,7 @@ public class ArduinoProjectGenerator {
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 		projDesc.setBuildSpec(new ICommand[] { command });
 
-		// Create the default config - uno
-		projDesc.setBuildConfigs(new String[] { "uno" }); //$NON-NLS-1$
-
 		project.setDescription(projDesc, monitor);
-
-		IBuildConfiguration config = project.getBuildConfig("uno"); //$NON-NLS-1$
-		ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
-		ArduinoBoard board = ArduinoManager.instance.getBoard("Arduino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		arduinoConfig.setBoard(board);
 
 		// Generate files
 		ArduinoTemplateGenerator templateGen = new ArduinoTemplateGenerator();

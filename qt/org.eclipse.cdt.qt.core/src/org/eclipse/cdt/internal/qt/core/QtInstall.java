@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 
 import org.eclipse.cdt.qt.core.IQtInstall;
-import org.eclipse.core.runtime.Platform;
 
 public class QtInstall implements IQtInstall {
 
@@ -41,17 +40,6 @@ public class QtInstall implements IQtInstall {
 		return qmakePath.resolve("../lib"); //$NON-NLS-1$
 	}
 
-	@Override
-	public boolean supports(String os, String arch) {
-		switch (getSpec()) {
-		case "macx-clang": //$NON-NLS-1$
-			return Platform.OS_MACOSX.equals(os) && Platform.ARCH_X86_64.equals(arch);
-		case "win32-g++": //$NON-NLS-1$
-			return Platform.OS_WIN32.equals(os);
-		}
-		return false;
-	}
-
 	public static String getSpec(String qmakePath) throws IOException {
 		Process proc = new ProcessBuilder(qmakePath, "-query", "QMAKE_XSPEC").start(); //$NON-NLS-1$ //$NON-NLS-2$
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
@@ -69,7 +57,7 @@ public class QtInstall implements IQtInstall {
 			try {
 				spec = getSpec(getQmakePath().toString());
 			} catch (IOException e) {
-				QtPlugin.log(e);
+				Activator.log(e);
 			}
 		}
 		return spec;

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.build.core.toolChainType">
+      <toolChainType
+            class="org.eclipse.cdt.build.gcc.core.GCCToolChainType"
+            id="org.eclipse.cdt.build.gcc">
+      </toolChainType>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.build.core.toolChainProvider">
+      <provider
+            class="org.eclipse.cdt.build.gcc.core.GCCPathToolChainProvider">
+      </provider>
+   </extension>
+
+</plugin>

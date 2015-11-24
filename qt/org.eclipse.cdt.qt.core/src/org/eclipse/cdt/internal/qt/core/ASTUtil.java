@@ -85,7 +85,7 @@ public class ASTUtil {
 			try {
 				return getFullyQualifiedName(((ICPPBinding) binding).getQualifiedName());
 			} catch(DOMException e) {
-				QtPlugin.log(e);
+				Activator.log(e);
 				return null;
 			}
 
@@ -165,7 +165,7 @@ public class ASTUtil {
 				if (scope instanceof ICPPClassScope)
 					return ((ICPPClassScope) scope).getClassType();
 		} catch (DOMException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 		}
 
 		return null;

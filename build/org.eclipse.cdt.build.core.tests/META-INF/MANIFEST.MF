@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: org.eclipse.cdt.build.core.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.cdt.build.core.tests.Activator
+Bundle-Vendor: Eclipse CDT
+Require-Bundle: org.eclipse.core.runtime,
+ org.junit;bundle-version="4.12.0",
+ org.eclipse.cdt.build.core;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy

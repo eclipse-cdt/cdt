@@ -8,15 +8,15 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-'use strict';
-
 (function (mod) {
 	if (typeof exports == "object" && typeof module == "object") // CommonJS
-		return mod(require("acorn/dist/walk"));
+		return module.exports = mod(require("acorn/dist/walk"));
 	if (typeof define == "function" && define.amd) // AMD
 		return define(["acorn/dist/walk"], mod);
 	mod(acorn.walk); // Plain browser env
 })(function (walk) {
+	"use strict";
+
 	function skipThrough(node, st, c) {
 		c(node, st)
 	}
@@ -24,7 +24,7 @@
 	function ignore(node, st, c) {}
 
 	var base = walk.base;
-	base["Program"] = function (node, st, c) {
+	base["QMLProgram"] = function (node, st, c) {
 		c(node.headerStatements, st);
 		if (node.rootObject) {
 			c(node.rootObject, st, "QMLRootObject");
@@ -49,18 +49,22 @@
 	};
 	base["QMLMember"] = skipThrough;
 	base["QMLPropertyDeclaration"] = function (node, st, c) {
-		if (node.init) {
-			c(node.init, st);
+		if (node.binding) {
+			c(node.binding, st);
 		}
 	};
 	base["QMLSignalDefinition"] = ignore;
 	base["QMLPropertyBinding"] = function (node, st, c) {
-		c(node.expr, st);
+		c(node.binding, st);
 	};
+	base["QMLScriptBinding"] = function (node, st, c) {
+		c(node.script, st);
+	}
 	base["QMLQualifiedID"] = ignore;
 	base["QMLStatementBlock"] = function (node, st, c) {
 		for (var i = 0; i < node.statements.length; i++) {
 			c(node.statements[i], st, "Statement");
 		}
 	};
+	return walk;
 })

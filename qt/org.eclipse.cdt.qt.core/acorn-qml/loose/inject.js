@@ -8,7 +8,6 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-'use strict';
 
 // This will only be visible globally if we are in a browser environment
 var injectQMLLoose;
@@ -20,6 +19,8 @@ var injectQMLLoose;
 		return define([], mod);
 	injectQMLLoose = mod(); // Plain browser env
 })(function () {
+	"use strict";
+
 	return function (acorn) {
 		// Acorn token types
 		var tt = acorn.tokTypes;
@@ -43,11 +44,9 @@ var injectQMLLoose;
 			var loop = true;
 			while (loop) {
 				if (this.isContextual(qtt._import)) {
-					var qmlImport = this.qml_parseImportStatement();
-					node.statements.push(qmlImport);
+					node.statements.push(this.qml_parseImportStatement());
 				} else if (this.isContextual(qtt._pragma)) {
-					var qmlPragma = this.qml_parsePragmaStatement();
-					node.statements.push(qmlPragma);
+					node.statements.push(this.qml_parsePragmaStatement());
 				} else {
 					loop = false;
 				}
@@ -292,8 +291,9 @@ var injectQMLLoose;
 		lp.qml_parsePropertyBinding = function () {
 			var node = this.startNode();
 			node.id = this.qml_parseQualifiedId(false);
+			var start = this.storeCurrentPos();
 			this.expect(tt.colon);
-			node.expr = this.qml_parsePropertyAssignment();
+			node.binding = this.qml_parseBinding(start);
 			return this.finishNode(node, "QMLPropertyBinding");
 		}
 
@@ -399,10 +399,11 @@ var injectQMLLoose;
 			node.kind = this.qml_parseKind();
 			node.id = this.qml_parseIdent(false);
 
+			var start = this.storeCurrentPos();
 			if (this.eat(tt.colon)) {
-				node.init = this.qml_parsePropertyAssignment();
+				node.binding = this.qml_parseBinding(start);
 			} else {
-				node.init = null;
+				node.binding = null;
 				this.semicolon();
 			}
 
@@ -411,35 +412,64 @@ var injectQMLLoose;
 
 		/*
 		 * Parses one of the following possibilities for a QML Property assignment:
-		 *    - JavaScript Expression
-		 *    - QML JavaScript Statement Block
 		 *    - QML Object Literal
+		 *    - QML Script Binding
 		 */
-		lp.qml_parsePropertyAssignment = function () {
+		lp.qml_parseBinding = function (start) {
 			if (this.tok.type === tt.braceL) {
-				return this.qml_parseStatementBlock();
-			} else {
-				// Perform look ahead to determine whether this is an expression or
-				// a QML Object Literal
-				var i = 1, la = this.tok;
+				return this.qml_parseScriptBinding(start);
+			}
+			// Perform look ahead to determine whether this is an expression or
+			// a QML Object Literal
+			var i = 1, la = this.tok;
+			if (this.qml_isIdent(la.type, la.value)) {
+				la = this.lookAhead(i++);
+			}
+			while (la.type === tt.dot) {
+				la = this.lookAhead(i++);
 				if (this.qml_isIdent(la.type, la.value)) {
 					la = this.lookAhead(i++);
 				}
-				while (la.type === tt.dot) {
-					la = this.lookAhead(i++);
-					if (this.qml_isIdent(la.type, la.value)) {
-						la = this.lookAhead(i++);
-					}
-				}
-
-				if (la.type === tt.braceL) {
-					return this.qml_parseObjectLiteral();
-				} else {
-					var node = this.parseExpression(false);
-					this.semicolon();
-					return node;
-				}
 			}
+
+			if (la.type === tt.braceL) {
+				return this.qml_parseObjectLiteral();
+			} else {
+				return this.qml_parseScriptBinding(start);
+			}
+		}
+
+		/*
+		 * Parses one of the following Script Bindings:
+		 *    - Single JavaScript Expression
+		 *    - QML Statement Block (A block of JavaScript statements)
+		 */
+		lp.qml_parseScriptBinding = function (start) {
+			// Help out Tern a little by starting the Script Binding at the end of
+			// the colon token (only if we consume invalid syntax).
+			var node = this.startNodeAt(start);
+			node.block = false;
+			if (this.tok.type === tt.braceL) {
+				node.block = true;
+				node.script = this.qml_parseStatementBlock();
+			} else {
+				node.script = this.parseExpression(false);
+				this.semicolon();
+			}
+
+			// If this node consumed valid syntax, reset its start position
+			if (!node.script.type === "Identifier" || node.script.name !== "✖") {
+				if (node.loc) {
+					node.loc.start = node.script.loc.start;
+				}
+				if (node.range) {
+					node.range = node.script.range;
+				}
+				node.start = node.script.start;
+				node.end = node.script.end;
+			}
+
+			return this.finishNode(node, "QMLScriptBinding");
 		}
 
 		/*
@@ -559,7 +589,7 @@ var injectQMLLoose;
 						node.rootObject = this.qml_parseObjectLiteral();
 					}
 
-					return this.finishNode(node, "Program");
+					return this.finishNode(node, "QMLProgram");
 				};
 			});
 		}

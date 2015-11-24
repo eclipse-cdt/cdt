@@ -10,7 +10,7 @@ package org.eclipse.cdt.internal.qt.core.pdom;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
@@ -21,7 +21,7 @@ public class PDOMQtLinkageFactory implements IPDOMLinkageFactory {
 		try {
 			return new QtPDOMLinkage(pdom, record);
 		} catch(CoreException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 		}
 		return null;
 	}

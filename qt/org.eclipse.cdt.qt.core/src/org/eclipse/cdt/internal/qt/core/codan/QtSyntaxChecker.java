@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.qt.core.ASTUtil;
 import org.eclipse.cdt.internal.qt.core.QtFunctionCall;
 import org.eclipse.cdt.internal.qt.core.QtMethodReference;
 import org.eclipse.cdt.internal.qt.core.QtNature;
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.index.IQMethod;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -94,9 +94,9 @@ public class QtSyntaxChecker extends AbstractIndexAstChecker implements IChecker
 
 		private void report(IASTNode node, String message, Object... args) {
 			if (args.length <= 0)
-				reportProblem(QtPlugin.QT_SYNTAX_ERR_ID, node, message);
+				reportProblem(Activator.QT_SYNTAX_ERR_ID, node, message);
 			else
-				reportProblem(QtPlugin.QT_SYNTAX_ERR_ID, node, NLS.bind(message, args));
+				reportProblem(Activator.QT_SYNTAX_ERR_ID, node, NLS.bind(message, args));
 		}
 	};
 }

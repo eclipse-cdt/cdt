@@ -7,10 +7,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core.build;
 
+import java.io.IOException;
+
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -24,11 +26,13 @@ public class QtScannerInfoProvider implements IScannerInfoProvider {
 			IProject project = resource.getProject();
 			IBuildConfiguration config = project.getActiveBuildConfig();
 			QtBuildConfiguration qtConfig = config.getAdapter(QtBuildConfiguration.class);
-			return qtConfig.getScannerInfo(resource);
-		} catch (CoreException e) {
-			QtPlugin.log(e);
-			return null;
+			if (qtConfig != null) {
+				return qtConfig.getScannerInfo(resource);
+			}
+		} catch (CoreException | IOException e) {
+			Activator.log(e);
 		}
+		return null;
 	}
 
 	@Override

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
@@ -29,13 +29,13 @@ public class QtFactory {
 	public static QtIndex create(IProject project) {
 		CDTIndex cdtIndex = getCDTIndex(project);
 		if (cdtIndex == null) {
-			QtPlugin.log("could not get CDT index from project " + project.getName());
+			Activator.log("could not get CDT index from project " + project.getName());
 			return null;
 		}
 
 		QtVersion qtVersion = cdtIndex.get(QtVersionAccessor);
 		if (qtVersion == null) {
-			QtPlugin.log("could not find Qt version in CDT index from project " + project.getName());
+			Activator.log("could not find Qt version in CDT index from project " + project.getName());
 			return null;
 		}
 
@@ -58,7 +58,7 @@ public class QtFactory {
 		try {
 			index = CCorePlugin.getIndexManager().getIndex(cProject);
 		} catch( CoreException e ) {
-			QtPlugin.log(e);
+			Activator.log(e);
 			return null;
 		}
 
@@ -88,7 +88,7 @@ public class QtFactory {
 				int patch = Integer.parseInt(m.group(3), 16);
 				return new QtVersion(major, minor, patch);
 			} catch(NumberFormatException e) {
-				QtPlugin.log(e);
+				Activator.log(e);
 			}
 			return null;
 		}

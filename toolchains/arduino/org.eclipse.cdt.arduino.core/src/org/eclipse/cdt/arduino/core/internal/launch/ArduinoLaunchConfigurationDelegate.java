@@ -17,7 +17,7 @@ import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
-import org.eclipse.cdt.core.build.IConsoleService;
+import org.eclipse.cdt.build.core.IConsoleService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

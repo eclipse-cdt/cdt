@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
@@ -17,29 +17,36 @@ import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-/** 
+/**
  * Represents an entry of the include search path
  */
 public final class IncludeSearchPathElement {
 	private static final boolean NON_SLASH_SEPARATOR = File.separatorChar != '/';
 	public static final String FRAMEWORK_VAR = "__framework__"; //$NON-NLS-1$
 	public static final String FILE_VAR = "__header__"; //$NON-NLS-1$
+	private static final String FRAMEWORK_HEADERS = ".framework/Headers"; //$NON-NLS-1$
 
 	private final String fPath;
 	private final boolean fForQuoteIncludesOnly;
-	private final boolean fIsFrameworkDirectory;   
-	
+	private final boolean fIsFrameworkDirectory;
+	private final boolean fIsNewFrameworkDirectory;
+
 	IncludeSearchPathElement(String path, boolean forQuoteIncludesOnly) {
-		fPath= path;
-		fForQuoteIncludesOnly= forQuoteIncludesOnly;
-		
+		fPath = path;
+		fForQuoteIncludesOnly = forQuoteIncludesOnly;
+
 		if (path.indexOf('_') != -1 && path.indexOf(FRAMEWORK_VAR) != -1 && path.indexOf(FILE_VAR) != -1) {
-			fIsFrameworkDirectory= true;
+			fIsFrameworkDirectory = true;
+			fIsNewFrameworkDirectory = false;
+		} else if (path.endsWith(FRAMEWORK_HEADERS)) {
+			fIsFrameworkDirectory = false;
+			fIsNewFrameworkDirectory = true;
 		} else {
-			fIsFrameworkDirectory= false;
+			fIsFrameworkDirectory = false;
+			fIsNewFrameworkDirectory = false;
 		}
 	}
-	
+
 	public boolean isForQuoteIncludesOnly() {
 		return fForQuoteIncludesOnly;
 	}
@@ -51,22 +58,33 @@ public final class IncludeSearchPathElement {
 				return null;
 			}
 			String framework = includeDirective.substring(0, firstSep);
-			String file= includeDirective.substring(firstSep + 1);
+			String file = includeDirective.substring(firstSep + 1);
 			if (file.length() == 0)
 				return null;
 
-			StringBuilder buf= new StringBuilder(fPath);
+			StringBuilder buf = new StringBuilder(fPath);
 			replace(buf, FRAMEWORK_VAR, framework);
 			replace(buf, FILE_VAR, file);
 			return ScannerUtility.reconcilePath(buf.toString());
+		} else if (fIsNewFrameworkDirectory) {
+			int firstSep = firstSeparator(includeDirective);
+			if (firstSep > 0) {
+				String framework = includeDirective.substring(0, firstSep);
+				String file = includeDirective.substring(firstSep + 1);
+				if (file.length() > 0) {
+					if (fPath.endsWith(framework + FRAMEWORK_HEADERS)) { // $NON-NLS-1$
+						return ScannerUtility.createReconciledPath(fPath, file);
+					}
+				}
+			}
 		}
 		return ScannerUtility.createReconciledPath(fPath, includeDirective);
 	}
 
 	/**
-	 * Returns the include directive for the given location satisfying the condition
-	 * {@code getLocation(getIncludeDirective(location) == location}. If no such include directive
-	 * without ".." exists, returns {@code null}.
+	 * Returns the include directive for the given location satisfying the
+	 * condition {@code getLocation(getIncludeDirective(location) == location}.
+	 * If no such include directive without ".." exists, returns {@code null}.
 	 */
 	public String getIncludeDirective(String location) {
 		IPath dirPath = new Path(fPath);
@@ -95,20 +113,20 @@ public final class IncludeSearchPathElement {
 		}
 
 		if (!PathUtil.isPrefix(dirPath, locationPath))
-        	return null;
-        return locationPath.removeFirstSegments(dirPath.segmentCount()).setDevice(null).toPortableString();
+			return null;
+		return locationPath.removeFirstSegments(dirPath.segmentCount()).setDevice(null).toPortableString();
 	}
 
 	private int firstSeparator(String path) {
-		int firstSep= path.indexOf('/');
+		int firstSep = path.indexOf('/');
 		if (NON_SLASH_SEPARATOR) {
-			firstSep= Math.max(firstSep, path.indexOf(File.separatorChar));
+			firstSep = Math.max(firstSep, path.indexOf(File.separatorChar));
 		}
 		return firstSep;
 	}
 
 	private void replace(StringBuilder buf, String find, final String replace) {
-		int idx= buf.indexOf(find);
+		int idx = buf.indexOf(find);
 		if (idx >= 0) {
 			buf.replace(idx, idx + find.length(), replace);
 		}

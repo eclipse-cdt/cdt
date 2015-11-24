@@ -113,8 +113,7 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		removeButton.setText(Messages.QtPreferencePage_4);
 		removeButton.setEnabled(false);
 		removeButton.addListener(SWT.Selection, e -> {
-			if (MessageDialog.openConfirm(getShell(), Messages.QtPreferencePage_5,
-					Messages.QtPreferencePage_6)) {
+			if (MessageDialog.openConfirm(getShell(), Messages.QtPreferencePage_5, Messages.QtPreferencePage_6)) {
 				for (TableItem item : installTable.getSelection()) {
 					IQtInstall install = (IQtInstall) item.getData();
 					installsToRemove.put(install.getName(), install);
@@ -149,7 +148,7 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		List<IQtInstall> sorted = new ArrayList<>(getInstalls().values());
 		Collections.sort(sorted, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
-		installTable.clearAll();
+		installTable.removeAll();
 		for (IQtInstall install : sorted) {
 			TableItem item = new TableItem(installTable, SWT.NONE);
 			item.setText(0, install.getName());

@@ -1,18 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2015 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
 "use strict";
 
 var fs = require("fs"), path = require("path");
-
-// Acorn and Acorn-QML
-var acorn = require("acorn"),
-	acorn_loose = require("acorn/dist/acorn_loose"),
-	walk = require("acorn/dist/walk"),
-	acornQML = require("acorn-qml"),
-	acornQML_loose = require("acorn-qml/loose"),
-	acornQML_walk = require("acorn-qml/walk");
-
-// Tern and Tern-QML
-var tern = require("tern"),
-	ternQML = require("../qml.js");
+var ternQML = require("../qml.js");
+var tern = require("tern");
 
 var projectDir = path.resolve(__dirname, "..");
 var resolve = function(pth) {
@@ -22,17 +22,28 @@ var testCases = [];
 var groupName;
 
 function TestCase(group, code, run) {
+	this.code = code;
 	this.group = group;
 	this.runTest = run || function (server, callback) {
 		callback("fail", code, "runTest function was not provided.");
 	};
 }
 
-exports.groupStart = function(group) {
+exports.isolate = function (code) {
+	for (var i = 0; i < testCases.length; i++) {
+		var test = testCases[i];
+		if (test.group === groupName && test.code !== code) {
+			testCases.splice(i, 1);
+			i--;
+		}
+	}
+}
+
+exports.groupStart = function (group) {
 	groupName = group;
 }
 
-exports.groupEnd = function() {
+exports.groupEnd = function () {
 	groupName = undefined;
 }
 
@@ -82,7 +93,7 @@ exports.testDefinition = function (code, expected, beforeTest) {
 	}, beforeTest));
 }
 
-exports.runTests = function(config, callback) {
+exports.runTests = function (config, callback) {
 	for (var i = 0; i < testCases.length; ++i) {
 		var test = testCases[i];
 		if (test.group === config.group) {
@@ -103,7 +114,7 @@ function createServer(defs) {
 	return server;
 }
 
-function assertCompletion (server, code, expected, pos, callback) {
+function assertCompletion(server, code, expected, pos, callback) {
 	server.addFile("test1.qml", code);
 	server.request({
 		query : {
@@ -128,7 +139,7 @@ function assertCompletion (server, code, expected, pos, callback) {
 	});
 };
 
-function assertDefinition (server, code, expected, pos, callback) {
+function assertDefinition(server, code, expected, pos, callback) {
 	server.addFile("test1.qml", code);
 	server.request({
 		query : {
@@ -163,7 +174,7 @@ function addPath(str, pt) {
 	return str + " (" + pt + ")";
 }
 
-var misMatch = exports.misMatch = function(exp, act) {
+var misMatch = exports.misMatch = function (exp, act) {
 	if (!exp || !act || (typeof exp != "object") || (typeof act != "object")) {
 		if (exp !== act) return ppJSON(exp) + " !== " + ppJSON(act);
 	} else if (exp instanceof RegExp || act instanceof RegExp) {

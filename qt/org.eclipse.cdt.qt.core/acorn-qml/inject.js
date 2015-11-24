@@ -8,7 +8,6 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-'use strict';
 
 // This will only be visible globally if we are in a browser environment
 var injectQML;
@@ -20,6 +19,8 @@ var injectQML;
 		return define([], mod);
 	injectQML = mod(); // Plain browser env
 })(function () {
+	'use strict';
+
 	return function (acorn) {
 		// Acorn token types
 		var tt = acorn.tokTypes;
@@ -93,11 +94,9 @@ var injectQML;
 			var loop = true;
 			while (loop) {
 				if (this.isContextual(qtt._import)) {
-					var qmlImport = this.qml_parseImportStatement();
-					node.statements.push(qmlImport);
+					node.statements.push(this.qml_parseImportStatement());
 				} else if (this.isContextual(qtt._pragma)) {
-					var qmlPragma = this.qml_parsePragmaStatement();
-					node.statements.push(qmlPragma);
+					node.statements.push(this.qml_parsePragmaStatement());
 				} else {
 					loop = false;
 				}
@@ -293,7 +292,7 @@ var injectQML;
 				node.id = this.qml_parseQualifiedId(false);
 			}
 			this.expect(tt.colon);
-			node.expr = this.qml_parsePropertyAssignment();
+			node.binding = this.qml_parseBinding();
 			return this.finishNode(node, "QMLPropertyBinding");
 		}
 
@@ -401,10 +400,10 @@ var injectQML;
 			node.kind = this.qml_parseKind();
 			node.id = this.qml_parseIdent(false);
 			if (!this.eat(tt.colon)) {
-				node.init = null;
+				node.binding = null;
 				this.semicolon();
 			} else {
-				node.init = this.qml_parsePropertyAssignment();
+				node.binding = this.qml_parseBinding();
 			}
 
 			return this.finishNode(node, "QMLPropertyDeclaration");
@@ -412,24 +411,35 @@ var injectQML;
 
 		/*
 		 * Parses one of the following possibilities for a QML Property assignment:
-		 *    - JavaScript Expression
-		 *    - QML JavaScript Statement Block
 		 *    - QML Object Literal
+		 *    - QML Script Binding
 		 */
-		pp.qml_parsePropertyAssignment = function () {
+		pp.qml_parseBinding = function () {
 			// TODO: solve ambiguity where a QML Object Literal starts with a
 			// Qualified Id that looks very similar to a MemberExpression in
 			// JavaScript.  For now, we just won't parse statements like:
 			//      test: QMLObject {  }
 			//      test: QMLObject.QualifiedId {  }
 
+			return this.qml_parseScriptBinding();
+		}
+
+		/*
+		 * Parses one of the following Script Bindings:
+		 *    - Single JavaScript Expression
+		 *    - QML Statement Block (A block of JavaScript statements)
+		 */
+		pp.qml_parseScriptBinding = function () {
+			var node = this.startNode();
+			node.block = false;
 			if (this.type === tt.braceL) {
-				return this.qml_parseStatementBlock();
+				node.block = true;
+				node.script = this.qml_parseStatementBlock();
 			} else {
-				var node = this.parseExpression(false);
+				node.script = this.parseExpression(false);
 				this.semicolon();
-				return node;
 			}
+			return this.finishNode(node, "QMLScriptBinding");
 		}
 
 		/*
@@ -576,7 +586,7 @@ var injectQML;
 						this.raise(this.pos, "Expected EOF after QML Root Object");
 					}
 
-					return this.finishNode(node, "Program");
+					return this.finishNode(node, "QMLProgram");
 				};
 			});
 		}

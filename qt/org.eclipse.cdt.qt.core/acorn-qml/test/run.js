@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
+"use-strict";
 
 var driver = require("./driver.js");
 require("./tests-qml.js");
@@ -48,7 +49,7 @@ var stats, modes = {
 				return opts.loose !== false;
 			}
 		}
-	}
+	},
 };
 
 function report(state, code, message) {

@@ -8,7 +8,6 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-'use strict';
 
 // This will only be visible globally if we are in a browser environment
 var acornQMLLoose;
@@ -20,5 +19,7 @@ var acornQMLLoose;
 		return define(["./inject.js", "acorn", "acorn/dist/acorn_loose"], mod);
 	acornQMLLoose = mod(injectQMLLoose, acorn, acorn); // Plain browser env
 })(function (injectQMLLoose, acorn, acorn_loose) {
+	"use strict";
+
 	return injectQMLLoose(acorn);
 })

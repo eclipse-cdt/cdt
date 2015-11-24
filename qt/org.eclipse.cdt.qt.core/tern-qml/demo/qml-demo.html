@@ -21,7 +21,9 @@
 		<script src="../node_modules/acorn/dist/walk.js"></script>
         <script src="../node_modules/acorn-qml/inject.js"></script>
         <script src="../node_modules/acorn-qml/index.js"></script>
-        <script src="../node_modules/acorn-qml/walk/walk.js"></script>
+		<script src="../node_modules/acorn-qml/loose/inject.js"></script>
+        <script src="../node_modules/acorn-qml/loose/index.js"></script>
+        <script src="../node_modules/acorn-qml/walk/index.js"></script>
 
 		<!-- Tern JS -->
 		<script src="../node_modules/tern/lib/signal.js"></script>
@@ -57,7 +59,9 @@
 	</head>
 	<body>
 		<h1>Demo with QML Tern plugin </h1>
+		<div style="border: solid 1px #AAAAAA;">
 		<form><textarea id="code" name="code">import QtQuick 2.3&#10;Window {&#10;&#09;prop: {&#10;&#09;&#09;Qt.quit();&#10;&#09;}&#10;}&#10;</textarea></form>
+		</div>
 		<script type="text/javascript">
 			function passAndHint(cm) {
 				setTimeout(function() {cm.execCommand("autocomplete");}, 100);

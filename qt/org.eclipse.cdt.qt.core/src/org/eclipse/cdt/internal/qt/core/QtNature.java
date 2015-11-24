@@ -36,7 +36,7 @@ public class QtNature implements IProjectNature {
 		try {
 			return project.hasNature(ID);
 		} catch (CoreException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 			return false;
 		}
 	}
@@ -57,6 +57,9 @@ public class QtNature implements IProjectNature {
 
 	@Override
 	public void configure() throws CoreException {
+	}
+
+	public void configurex() throws CoreException {
 		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
 		if (cProject == null)
 			return;

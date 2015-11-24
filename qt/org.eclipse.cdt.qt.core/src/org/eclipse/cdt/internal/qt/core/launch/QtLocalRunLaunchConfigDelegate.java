@@ -12,10 +12,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -27,11 +26,21 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
+import org.eclipse.launchbar.core.target.launch.LaunchConfigurationTargetedDelegate;
+import org.eclipse.launchbar.core.target.launch.TargetedLaunch;
 
-public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationDelegate {
+public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationTargetedDelegate {
 
-	public static final String TYPE_ID = QtPlugin.ID + ".launchConfigurationType"; //$NON-NLS-1$
+	public static final String TYPE_ID = Activator.ID + ".launchConfigurationType"; //$NON-NLS-1$
+
+	@Override
+	public ITargetedLaunch getLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target)
+			throws CoreException {
+		// TODO sourcelocator?
+		return new TargetedLaunch(configuration, mode, target, null);
+	}
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
@@ -40,29 +49,32 @@ public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationDelegate 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, monitor);
+					ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
+					QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
 					// get the executable
-					IFolder buildFolder = qtBuildConfig.getBuildFolder();
-					IFile exeFile;
+					Path buildFolder = qtBuildConfig.getBuildDirectory();
+					Path exeFile;
 					switch (Platform.getOS()) {
 					case Platform.OS_MACOSX:
-						// TODO this is mac local specific and really should be in the config
-						// TODO also need to pull the app name out of the pro file name
-						IFolder appFolder = buildFolder.getFolder("main.app");
-						IFolder contentsFolder = appFolder.getFolder("Contents");
-						IFolder macosFolder = contentsFolder.getFolder("MacOS");
-						exeFile = macosFolder.getFile("main");
+						// TODO this is mac local specific and really should be
+						// in the config
+						// TODO also need to pull the app name out of the pro
+						// file name
+						Path appFolder = buildFolder.resolve("main.app");
+						Path contentsFolder = appFolder.resolve("Contents");
+						Path macosFolder = contentsFolder.resolve("MacOS");
+						exeFile = macosFolder.resolve("main");
 						break;
 					case Platform.OS_WIN32:
-						IFolder releaseFolder = buildFolder.getFolder("release");
-						exeFile = releaseFolder.getFile("main.exe");
+						Path releaseFolder = buildFolder.resolve("release");
+						exeFile = releaseFolder.resolve("main.exe");
 						break;
 					default:
-						return new Status(IStatus.ERROR, QtPlugin.ID, "platform not supported: " + Platform.getOS());
+						return new Status(IStatus.ERROR, Activator.ID, "platform not supported: " + Platform.getOS());
 					}
 
-					ProcessBuilder builder = new ProcessBuilder(exeFile.getLocation().toFile().getAbsolutePath())
+					ProcessBuilder builder = new ProcessBuilder(exeFile.toString())
 							.directory(qtBuildConfig.getProject().getLocation().toFile());
 
 					// need to add the Qt libraries to the env
@@ -90,7 +102,7 @@ public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationDelegate 
 					Process process = builder.start();
 					DebugPlugin.newProcess(launch, process, "main");
 				} catch (IOException e) {
-					return new Status(IStatus.ERROR, QtPlugin.ID, "running", e);
+					return new Status(IStatus.ERROR, Activator.ID, "running", e);
 				} catch (CoreException e) {
 					return e.getStatus();
 				}
@@ -100,9 +112,9 @@ public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationDelegate 
 	}
 
 	@Override
-	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
-			throws CoreException {
-		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, monitor);
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target,
+			IProgressMonitor monitor) throws CoreException {
+		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
 		// Set it as active
 		IProject project = qtBuildConfig.getProject();
@@ -111,7 +123,7 @@ public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationDelegate 
 		project.setDescription(desc, monitor);
 
 		// And build
-		return super.buildForLaunch(configuration, mode, monitor);
+		return superBuildForLaunch(configuration, mode, monitor);
 	}
 
 	@Override
@@ -123,12 +135,10 @@ public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationDelegate 
 	}
 
 	private QtBuildConfiguration getQtBuildConfiguration(ILaunchConfiguration configuration, String mode,
-			IProgressMonitor monitor) throws CoreException {
+			ILaunchTarget target, IProgressMonitor monitor) throws CoreException {
 		// Find the Qt build config
 		IProject project = configuration.getMappedResources()[0].getProject();
-		String os = Platform.getOS();
-		String arch = Platform.getOSArch();
-		return QtBuildConfiguration.getConfig(project, os, arch, mode, monitor);
+		return QtBuildConfigurationFactory.getConfig(project, mode, target, monitor);
 	}
 
 }

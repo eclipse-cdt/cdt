@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -106,7 +106,7 @@ public abstract class AbstractQtPDOMClass extends QtPDOMBinding {
 		try {
 			children.accept(collector);
 		} catch(CoreException e) {
-			QtPlugin.log(e);
+			Activator.log(e);
 			return Collections.emptyList();
 		}
 

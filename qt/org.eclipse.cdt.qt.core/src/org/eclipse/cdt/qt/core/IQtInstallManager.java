@@ -9,6 +9,9 @@ package org.eclipse.cdt.qt.core;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+
 /**
  * The manager for Qt installs.
  * 
@@ -23,5 +26,9 @@ public interface IQtInstallManager {
 	public IQtInstall getInstall(String name);
 
 	public void removeInstall(IQtInstall install);
+
+	public boolean supports(IQtInstall install, ILaunchTarget target);
+
+	public boolean supports(IQtInstall install, IToolChain toolChain);
 
 }

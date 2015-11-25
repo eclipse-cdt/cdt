@@ -246,7 +246,7 @@ public class CPPSemantics {
 	/**
 	 * The maximum depth to search ancestors before assuming infinite looping.
 	 */
-	public static final int MAX_INHERITANCE_DEPTH= 16;
+	public static final int MAX_INHERITANCE_DEPTH= 40;
 
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};

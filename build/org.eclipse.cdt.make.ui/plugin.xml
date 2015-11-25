@@ -89,17 +89,12 @@
             commandId="org.eclipse.cdt.make.ui.edit.text.makefile.opendecl"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
       <key
-            sequence="Ctrl+/"
+            sequence="M1+/"
             contextId="org.eclipse.cdt.make.ui.makefileEditorScope"
-            commandId="org.eclipse.cdt.make.ui.edit.text.makefile.comment"
+            commandId="org.eclipse.cdt.make.ui.edit.text.makefile.toggle.comment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>  
       <key
-            sequence="Ctrl+\"
-            contextId="org.eclipse.cdt.make.ui.makefileEditorScope"
-            commandId="org.eclipse.cdt.make.ui.edit.text.makefile.uncomment"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-      <key
-            sequence="Shift+F9"
+            sequence="M2+F9"
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.cdt.make.ui.targetBuildCommand"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>             
@@ -137,16 +132,10 @@
             id="org.eclipse.cdt.make.ui.category.source">
       </category>
       <command
-            name="%ActionDefinition.comment.name"
-            description="%ActionDefinition.comment.description"
+            name="%ActionDefinition.toggle.comment.name"
+            description="%ActionDefinition.toggle.comment.description"
             categoryId="org.eclipse.cdt.make.ui.category.source"
-            id="org.eclipse.cdt.make.ui.edit.text.makefile.comment">
-      </command>
-      <command
-            name="%ActionDefinition.uncomment.name"
-            description="%ActionDefinition.uncomment.description"
-            categoryId="org.eclipse.cdt.make.ui.category.source"
-            id="org.eclipse.cdt.make.ui.edit.text.makefile.uncomment">
+            id="org.eclipse.cdt.make.ui.edit.text.makefile.toggle.comment">
       </command>
       <command
             name="%ActionDefinition.opendecl.name"

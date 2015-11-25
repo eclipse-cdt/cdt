@@ -11,12 +11,10 @@
 
 package org.eclipse.cdt.make.internal.ui.editor;
 
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
 /**
+ * Custom definitions IDs extending ITextEditorActionDefinitionIds
  */
-public interface IMakefileEditorActionDefinitionIds extends ITextEditorActionDefinitionIds {
-	final String UNCOMMENT = "org.eclipse.cdt.make.ui.edit.text.makefile.uncomment"; //$NON-NLS-1$
-	final String COMMENT = "org.eclipse.cdt.make.ui.edit.text.makefile.comment"; //$NON-NLS-1$
+public interface IMakefileEditorActionDefinitionIds {
+	final String TOGGLE_COMMENT = "org.eclipse.cdt.make.ui.edit.text.makefile.toggle.comment"; //$NON-NLS-1$
 	final String OPEN_DECLARATION = "org.eclipse.cdt.make.ui.edit.text.makefile.opendecl"; //$NON-NLS-1$
 }

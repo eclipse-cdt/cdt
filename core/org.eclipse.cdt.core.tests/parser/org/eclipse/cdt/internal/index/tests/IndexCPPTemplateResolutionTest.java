@@ -2213,6 +2213,68 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}
+	
+	//	template<typename T>
+	//	struct meta {
+	//	  enum { 
+	//	      a = T::value,
+	//	      b = a
+	//	  };
+	//	};
+	
+	//	struct S {
+	//	    static const int value = 42;
+	//	};
+	//
+	//	template <int> struct waldo;
+	//
+	//	template <>
+	//	struct waldo<42> {
+	//	    double operator()();
+	//	};
+	//
+	//	template <typename>
+	//	struct C : public waldo<meta<S>::b> {};
+	//
+	//	void bar(double);
+	//
+	//	void foo(C<S> x){
+	//	    bar(x());
+	//	}
+	public void testDependentEnumerator_482421a() throws Exception {
+		checkBindings();
+	}
+
+	//	template<typename T>
+	//	struct meta {
+	//	  enum { 
+	//	      b = T::value,
+	//	      a = b
+	//	  };
+	//	};
+	
+	//	struct S {
+	//	    static const int value = 42;
+	//	};
+	//
+	//	template <int> struct waldo;
+	//
+	//	template <>
+	//	struct waldo<42> {
+	//	    double operator()();
+	//	};
+	//
+	//	template <typename>
+	//	struct C : public waldo<meta<S>::a> {};
+	//
+	//	void bar(double);
+	//
+	//	void foo(C<S> x){
+	//	    bar(x());
+	//	}
+	public void testDependentEnumerator_482421b() throws Exception {
+		checkBindings();
+	}
 
 	//	template<typename U>
 	//	struct A {

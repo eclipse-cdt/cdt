@@ -11,11 +11,12 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 
@@ -33,6 +34,7 @@ public interface IPDOMCPPEnumType extends ICPPEnumeration, IPDOMBinding, IIndexT
 
 	/**
 	 * Called by the scope to access the enumerators.
+	 * Returns the enumerators in the order of declaration.
 	 */
-	void loadEnumerators(CharArrayMap<IPDOMCPPEnumerator> map);
+	void loadEnumerators(List<IPDOMCPPEnumerator> enumerators);
 }

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
@@ -23,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -217,15 +218,14 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	}
 
 	@Override
-	public void loadEnumerators(final CharArrayMap<IPDOMCPPEnumerator> map) {
+	public void loadEnumerators(final List<IPDOMCPPEnumerator> enumerators) {
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
 			list.accept(new IPDOMVisitor() {
 				@Override
 				public boolean visit(IPDOMNode node) throws CoreException {
 					if (node instanceof IPDOMCPPEnumerator) {
-						final IPDOMCPPEnumerator item = (IPDOMCPPEnumerator) node;
-						map.put(item.getNameCharArray(), item);
+						enumerators.add((IPDOMCPPEnumerator) node);
 					}
 					return true;
 				}

@@ -188,7 +188,7 @@ public class SourceUtils {
 					MappingSourceContainer mapping = new MappingSourceContainer(InternalSourceLookupMessages.SourceUtils_0 + (++mappingCount));
 					mapping.addMapEntries(new MapEntrySourceContainer[] { new MapEntrySourceContainer(a, d.getDirectory()) });
 					containers.add(mapping);
-					
+
 				}
 				containers.add(new DirectorySourceContainer(d.getDirectory(), d.searchSubfolders()));
 			}
@@ -200,7 +200,7 @@ public class SourceUtils {
 		if (container instanceof IMappingSourceContainer) {
 			return ((IMappingSourceContainer) container).getCompilationPath(sourceName);
 		}
-	
+
 		try {
 			for (ISourceContainer cont : container.getSourceContainers()) {
 				IPath path = getCompilationPath(cont, sourceName);
@@ -266,7 +266,7 @@ public class SourceUtils {
 		if (director != null) {
 			lcProject = getLaunchConfigurationProject(director);
 		}
-			
+
 		if (wfiles.length > 0) {
 			ResourceLookup.sortFilesByRelevance(wfiles, lcProject);
 			return updateUnavailableResources(wfiles, lcProject);
@@ -280,12 +280,15 @@ public class SourceUtils {
 				ResourceLookup.sortFilesByRelevance(wfiles, lcProject);
 				return updateUnavailableResources(wfiles, lcProject);
 			}
-			
+
 			// The file is not already in the workspace so try to create an external translation unit for it.
 			if (lcProject != null) {
 				ICProject project = CoreModel.getDefault().create(lcProject);
 				if (project != null) {
-					return new ITranslationUnit[] { CoreModel.getDefault().createTranslationUnitFrom(project, URIUtil.toURI(file.getCanonicalPath(), true)) };
+					ITranslationUnit translationUnit = CoreModel.getDefault().createTranslationUnitFrom(project,
+							URIUtil.toURI(file.getCanonicalPath(), true));
+					if (translationUnit != null) // if we failed do not return array with null in it
+						return new ITranslationUnit[] { translationUnit };
 				}
 			}
 		} catch (IOException e) { // ignore if getCanonicalPath throws
@@ -294,24 +297,24 @@ public class SourceUtils {
 		// If we can't create an ETU then fall back on LocalFileStorage.
 		return new LocalFileStorage[] { new LocalFileStorage(file) };
 	}
-	
+
 	/**
-	 * Check for IFile to be available in workspace ( see {@link IFile#isAccessible()} ). 
-	 * Unavailable resources are replaced with  {@link ITranslationUnit}  
+	 * Check for IFile to be available in workspace ( see {@link IFile#isAccessible()} ).
+	 * Unavailable resources are replaced with  {@link ITranslationUnit}
 	 * @param wfiles
 	 * @param project
 	 * @return
 	 */
 	private static Object[] updateUnavailableResources(IFile[] wfiles, IProject project){
-		// with no projects context we will not be able to create ITranslationUnits  
+		// with no projects context we will not be able to create ITranslationUnits
 		if (project == null) {
 			return wfiles;
 		}
-		
+
 		ICProject cProject = CoreModel.getDefault().create(project);
 		Object[] result = new Object[wfiles.length];
 		for (int i=0; i< wfiles.length; ++i) {
-			IFile wkspFile = wfiles[i]; 
+			IFile wkspFile = wfiles[i];
 			if (wkspFile.isAccessible()) {
 				result[i] = wkspFile;
 			} else {

@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -151,8 +150,12 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 
 		if (map == null) {
 			// there is no cache, build it:
-			map= new CharArrayMap<IPDOMCPPEnumerator>();
-			enumeration.loadEnumerators(map);
+			List<IPDOMCPPEnumerator> enumerators = new ArrayList<>();
+			enumeration.loadEnumerators(enumerators);
+			map = new CharArrayMap<IPDOMCPPEnumerator>();
+			for (IPDOMCPPEnumerator enumerator : enumerators) {
+				map.put(enumerator.getNameCharArray(), enumerator);
+			}
 			pdom.putCachedResult(key, new SoftReference<CharArrayMap<?>>(map));
 		}
 		return map;
@@ -171,14 +174,17 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 
 	public static IEnumerator[] getEnumerators(IPDOMCPPEnumType enumType) {
 		try {
-			CharArrayMap<IPDOMCPPEnumerator> map = getBindingMap(enumType);
+			// We want to return the enumerators in order of declaration, so we don't
+			// use the cache (getBindingsMap()) which stores them in a hash map and thus
+			// loses the order.
+			List<IPDOMCPPEnumerator> enumerators = new ArrayList<>();
+			enumType.loadEnumerators(enumerators);
 			List<IEnumerator> result= new ArrayList<IEnumerator>();
-			for (IEnumerator value : map.values()) {
+			for (IEnumerator value : enumerators) {
 				if (IndexFilter.ALL_DECLARED.acceptBinding(value)) {
 					result.add(value);
 				}
 			}
-			Collections.reverse(result);
 			return result.toArray(new IEnumerator[result.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67ccbf7d_305f2df4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIRegisters.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-11-25T21:34:23Z",
+      "side": 1,
+      "message": "Using commandDone() is a good idea but using the CommandCache to do it does not seem appropriate.  The processing of CLI commands is unrelated to the cache; it just happens that the cache is notified of any command being sent.\n\nNotice that CLIEventProcessor_7_0 also uses commandDone() to process CLI commands.\n\nI still feel all CLI processing should be in CLIEventProcessor_7_0.  But I understand that you may need to Register information to finalize your feature.  Normally, you should be able to call the IRegisters service from CLIEventProcessor_7_0 to do what you need.  If the IRegisters API is not sufficient, we can do a couple of things:\n\n1- create a new API in the registers service that can be called to do what is needed\n\n2- create a \u0027fake\u0027 MI event that CLIEventProcessor_7_0 will send out and that GdbRegisters will listen to and take action on",
+      "revId": "3ecb88278f4be975e743c0a0a83f8d671d161615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

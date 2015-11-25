@@ -15,6 +15,8 @@ import org.eclipse.osgi.util.NLS;
 
 public final class MakefileEditorMessages extends NLS {
 	public static String MakefileEditor_menu_folding;
+	public static String ToggleComment_error_title;
+	public static String ToggleComment_error_message;
 
 	static {
 		NLS.initializeMessages(MakefileEditorMessages.class.getName(), MakefileEditorMessages.class);

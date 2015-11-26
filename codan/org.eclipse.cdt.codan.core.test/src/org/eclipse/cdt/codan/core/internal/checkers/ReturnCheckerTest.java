@@ -417,7 +417,17 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	}
 	public void testSelfReferencingVariable_452325() throws Exception {
 		// Just check that codan runs without any exceptions being thrown.
-		checkSampleAbove();
+		checkSampleAboveCpp();
+	}
+
+	//	int bar(int x) { return x; }
+	//	int foo() { // error
+	//	    int waldo = bar(waldo);
+	//	    if (bar(waldo));
+	//	}
+	public void testSelfReferencingVariable_479638() throws Exception {
+		// Just check that codan runs without any exceptions being thrown.
+		checkSampleAboveCpp();
 	}
 
 	//	int foo(int x) {  // error

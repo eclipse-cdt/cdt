@@ -70,8 +70,10 @@ public class EvalBinding extends CPPDependentEvaluation {
 	private IType fType;
 	private boolean fCheckedIsValueDependent;
 	private boolean fIsValueDependent;
-	private boolean fIsTypeDependent;
 	private boolean fCheckedIsTypeDependent;
+	private boolean fIsTypeDependent;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalBinding(IBinding binding, IType type, IASTNode pointOfDefinition) {
 		this(binding, type, findEnclosingTemplate(pointOfDefinition));
@@ -240,6 +242,14 @@ public class EvalBinding extends CPPDependentEvaluation {
  	
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+	
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return fBinding instanceof IEnumerator
 			|| fBinding instanceof ICPPFunction
 			|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue(), point)); 

@@ -35,6 +35,12 @@ public abstract class LaunchConfigurationTargetedDelegate extends LaunchConfigur
 	}
 
 	@Override
+	public ITargetedLaunch getLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target)
+			throws CoreException {
+		return new TargetedLaunch(configuration, mode, target, null);
+	}
+
+	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
 			throws CoreException {
 		ILaunchTarget target = Activator.getLaunchTargetManager().getDefaultLaunchTarget(configuration);

@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.build.core.IConsoleService;
+import org.eclipse.cdt.build.core.IToolChain;
 import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.cdt.qt.core.QtBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -35,6 +37,7 @@ public class QtBuilder extends IncrementalProjectBuilder {
 		try {
 			IConsoleService console = Activator.getService(IConsoleService.class);
 			QtBuildConfiguration qtConfig = getBuildConfig().getAdapter(QtBuildConfiguration.class);
+			IToolChain toolChain = qtConfig.getToolChain();
 
 			Path buildDir = qtConfig.getBuildDirectory();
 			if (!buildDir.resolve("Makefile").toFile().exists()) { //$NON-NLS-1$
@@ -50,7 +53,9 @@ public class QtBuilder extends IncrementalProjectBuilder {
 				IFile projectFile = qtConfig.getProject().getFile("main.pro");
 				command.add(projectFile.getLocation().toOSString());
 
-				Process process = new ProcessBuilder(command).directory(buildDir.toFile()).start();
+				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
+				toolChain.setEnvironment(processBuilder.environment());
+				Process process = processBuilder.start();
 				StringBuffer msg = new StringBuffer();
 				for (String arg : command) {
 					msg.append(arg).append(' ');
@@ -72,6 +77,7 @@ public class QtBuilder extends IncrementalProjectBuilder {
 				path = "C:/Qt/Tools/mingw492_32/bin;" + path;
 				env.put("PATH", path);
 			}
+			toolChain.setEnvironment(procBuilder.environment());
 			Process process = procBuilder.start();
 			console.writeOutput("make\n"); //$NON-NLS-1$
 			console.monitor(process, null, buildDir);

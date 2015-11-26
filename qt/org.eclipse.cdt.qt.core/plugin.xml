@@ -153,7 +153,7 @@
           </enablement>
        </descriptorType>
        <configProvider
-             class="org.eclipse.cdt.internal.qt.core.launch.QtLocalLaunchConfigProvider"
+             class="org.eclipse.cdt.internal.qt.core.launch.QtLocalLaunchConfigationProvider"
              descriptorType="org.eclipse.cdt.qt.core.launchDescriptorType"
              priority="10">
        </configProvider>
@@ -181,7 +181,7 @@
              adaptableType="org.eclipse.core.resources.IBuildConfiguration"
              class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory">
           <adapter
-                type="org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration">
+                type="org.eclipse.cdt.qt.core.QtBuildConfiguration">
           </adapter>
        </factory>
     </extension>

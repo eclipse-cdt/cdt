@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.internal.qt.core.build;
+package org.eclipse.cdt.qt.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,8 +27,6 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.qt.core.IQtInstall;
-import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -154,7 +152,9 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 			cmd.add(getProjectFile().toString());
 
 			try {
-				Process proc = new ProcessBuilder(cmd).directory(getBuildDirectory().toFile()).start();
+				ProcessBuilder procBuilder = new ProcessBuilder(cmd).directory(getProjectFile().getParent().toFile());
+				getToolChain().setEnvironment(procBuilder.environment());
+				Process proc = procBuilder.start();
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
 					properties = new HashMap<>();
 					for (String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -179,6 +179,10 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 		IScannerInfo info = super.getScannerInfo(resource);
 		if (info == null) {
 			String cxx = getProperty("QMAKE_CXX"); //$NON-NLS-1$
+			if (cxx == null) {
+				Activator.log("No QMAKE_CXX for " + qtInstall.getSpec()); //$NON-NLS-1$
+				return null;
+			}
 			String[] cxxSplit = cxx.split(" "); //$NON-NLS-1$
 			String command = cxxSplit[0];
 

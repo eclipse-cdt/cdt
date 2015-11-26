@@ -80,4 +80,12 @@
              name="%preferences.qt.name">
        </page>
     </extension>
+    <extension
+          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+       <launchConfigurationTabGroup
+             class="org.eclipse.cdt.internal.qt.ui.launch.QtLocalLaunchConfigurationTabGroup"
+             id="org.eclipse.cdt.qt.ui.launchConfigurationTabGroup"
+             type="org.eclipse.cdt.qt.core.launchConfigurationType">
+       </launchConfigurationTabGroup>
+    </extension>
 </plugin>

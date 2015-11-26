@@ -17,6 +17,7 @@ import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.QtNature;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
+import org.eclipse.cdt.qt.core.QtBuildConfiguration;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;

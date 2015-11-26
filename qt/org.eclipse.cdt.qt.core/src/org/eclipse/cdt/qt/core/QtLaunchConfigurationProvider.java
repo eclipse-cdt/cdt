@@ -1,55 +1,35 @@
-/*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-package org.eclipse.cdt.internal.qt.core.launch;
+package org.eclipse.cdt.qt.core;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.internal.qt.core.launch.QtLaunchDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.launchbar.core.AbstractLaunchConfigProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
-import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
-/**
- * Launch config provider for Qt projects running on the Local connection.
- * Simply uses the C++ Application launch config type.
- */
-public class QtLocalLaunchConfigProvider extends AbstractLaunchConfigProvider {
+public abstract class QtLaunchConfigurationProvider extends AbstractLaunchConfigProvider {
 
 	private Map<IProject, ILaunchConfiguration> configs = new HashMap<>();
 
 	@Override
-	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
-		return ILaunchTargetManager.localLaunchTargetTypeId.equals(target.getTypeId());
-	}
-
-	@Override
-	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
-			throws CoreException {
-		return DebugPlugin.getDefault().getLaunchManager()
-				.getLaunchConfigurationType(QtLocalRunLaunchConfigDelegate.TYPE_ID);
-	}
-
-	@Override
 	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
-		ILaunchConfiguration config = configs.get(descriptor);
-		if (config == null) {
-			config = createLaunchConfiguration(descriptor, target);
-			configs.put(descriptor.getAdapter(IProject.class), config);
+		ILaunchConfiguration config = null;
+		IProject project = descriptor.getAdapter(IProject.class);
+		if (project != null) {
+			config = configs.get(project);
+			if (config == null) {
+				config = createLaunchConfiguration(descriptor, target);
+				// launch config added will get called below to add it to the
+				// configs map
+			}
 		}
 		return config;
 	}
@@ -67,7 +47,9 @@ public class QtLocalLaunchConfigProvider extends AbstractLaunchConfigProvider {
 	@Override
 	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
 		if (ownsLaunchConfiguration(configuration)) {
-
+			IProject project = configuration.getMappedResources()[0].getProject();
+			configs.put(project, configuration);
+			return true;
 		}
 		return false;
 	}

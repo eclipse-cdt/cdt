@@ -13,10 +13,8 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration;
-import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.cdt.qt.core.QtBuildConfiguration;
+import org.eclipse.cdt.qt.core.QtLaunchConfigurationDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,19 +26,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
-import org.eclipse.launchbar.core.target.launch.LaunchConfigurationTargetedDelegate;
-import org.eclipse.launchbar.core.target.launch.TargetedLaunch;
 
-public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationTargetedDelegate {
+public class QtLocalRunLaunchConfigDelegate extends QtLaunchConfigurationDelegate {
 
 	public static final String TYPE_ID = Activator.ID + ".launchConfigurationType"; //$NON-NLS-1$
-
-	@Override
-	public ITargetedLaunch getLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target)
-			throws CoreException {
-		// TODO sourcelocator?
-		return new TargetedLaunch(configuration, mode, target, null);
-	}
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
@@ -109,36 +98,6 @@ public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationTargetedD
 				return Status.OK_STATUS;
 			}
 		}.schedule();
-	}
-
-	@Override
-	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target,
-			IProgressMonitor monitor) throws CoreException {
-		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
-
-		// Set it as active
-		IProject project = qtBuildConfig.getProject();
-		IProjectDescription desc = project.getDescription();
-		desc.setActiveBuildConfig(qtBuildConfig.getBuildConfiguration().getName());
-		project.setDescription(desc, monitor);
-
-		// And build
-		return superBuildForLaunch(configuration, mode, monitor);
-	}
-
-	@Override
-	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
-		// 1. Extract project from configuration
-		// TODO dependencies too.
-		IProject project = configuration.getMappedResources()[0].getProject();
-		return new IProject[] { project };
-	}
-
-	private QtBuildConfiguration getQtBuildConfiguration(ILaunchConfiguration configuration, String mode,
-			ILaunchTarget target, IProgressMonitor monitor) throws CoreException {
-		// Find the Qt build config
-		IProject project = configuration.getMappedResources()[0].getProject();
-		return QtBuildConfigurationFactory.getConfig(project, mode, target, monitor);
 	}
 
 }

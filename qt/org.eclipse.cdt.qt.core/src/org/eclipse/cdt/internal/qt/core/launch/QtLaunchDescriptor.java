@@ -7,12 +7,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core.launch;
 
+import org.eclipse.cdt.qt.core.IQtLaunchDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
 
-public class QtLaunchDescriptor extends PlatformObject implements ILaunchDescriptor {
+public class QtLaunchDescriptor extends PlatformObject implements IQtLaunchDescriptor {
 
 	private final QtLaunchDescriptorType type;
 	private final IProject project;
@@ -32,6 +32,7 @@ public class QtLaunchDescriptor extends PlatformObject implements ILaunchDescrip
 		return type;
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}

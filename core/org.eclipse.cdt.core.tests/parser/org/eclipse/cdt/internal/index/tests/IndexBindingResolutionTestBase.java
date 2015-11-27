@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.pdom.tests.PDOMPrettyPrinter;
@@ -378,8 +379,23 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public ICProject getCProject();
 		public boolean isCompositeIndex();
 	}
+	
+	private abstract class BaseTestStrategy implements ITestStrategy {
+		// This method allows tests to specify test-specific flags by including special strings
+		// in the test source (presumably in a comment).
+		// Note that it would be insufficient for the tests to do the corresponding actions
+		// in the test body, because they may need to be done before the indexer runs.
+		protected void setTestSpecificFlags(String sourceContents) {
+			// Allow tests to specify that the code contained in the test is allowed to produce
+			// recursion resolving bidings.
+			if (sourceContents.contains("special:allowRecursionBindings")) {
+				System.out.println("setting sAllowRecursionBindings = true");
+				CPPASTNameBase.sAllowRecursionBindings = true;
+			}
+		}
+	}
 
-	class SinglePDOMTestFirstASTStrategy implements ITestStrategy {
+	class SinglePDOMTestFirstASTStrategy extends BaseTestStrategy {
 		private IIndex index;
 		private ICProject cproject;
 		private StringBuilder[] testData;
@@ -430,8 +446,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			if (testData.length < 2)
 				fail("Insufficient test data");
 			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
+			
+			String headerContents = testData[0].toString();
+			String sourceContents = testData[1].toString();
+			
+			setTestSpecificFlags(sourceContents);
 
-			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
+			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), headerContents);
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 	        waitForIndexer(cproject);
 
@@ -443,7 +464,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 
 			index.acquireReadLock();
-			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), testData[1].toString());
+			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), sourceContents);
 			ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
 		}
 
@@ -468,7 +489,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 	}
 
-	class SinglePDOMTestStrategy implements ITestStrategy {
+	class SinglePDOMTestStrategy extends BaseTestStrategy {
 		private IIndex index;
 		private ICProject cproject;
 		private StringBuilder[] testData;
@@ -520,11 +541,16 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 				fail("Insufficient test data");
 			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
 
-			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
+			String headerContents = testData[0].toString();
+			String sourceContents = testData[1].toString();
+			
+			setTestSpecificFlags(sourceContents);
+			
+			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), headerContents);
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 	        waitForIndexer(cproject);
 
-			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), testData[1].toString());
+			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), sourceContents);
 	        waitForIndexer(cproject);
 
 			if (DEBUG) {
@@ -689,7 +715,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 	}
 
-	class ReferencedProject implements ITestStrategy {
+	class ReferencedProject extends BaseTestStrategy {
 		private IIndex index;
 		private ICProject cproject, referenced;
 		private StringBuilder[] testData;
@@ -729,10 +755,14 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 				fail("Insufficient test data");
 			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
 
+			String sourceContents = testData[1].toString();
+			
+			setTestSpecificFlags(sourceContents);
+
 			referenced = createReferencedContent();
 
 			TestScannerProvider.sIncludes= new String[] {referenced.getProject().getLocation().toOSString()};
-			IFile references= TestSourceReader.createFile(cproject.getProject(), new Path("refs.c" + (cpp ? "pp" : "")), testData[1].toString());
+			IFile references= TestSourceReader.createFile(cproject.getProject(), new Path("refs.c" + (cpp ? "pp" : "")), sourceContents);
 
 			IProject[] refs = new IProject[] {referenced.getProject()};
 			IProjectDescription pd = cproject.getProject().getDescription();

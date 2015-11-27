@@ -121,6 +121,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization.RecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplateSpecialization;
@@ -195,6 +196,15 @@ public class CPPTemplates {
 	static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
 
 	static enum TypeSelection { PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE }
+	
+	// Infrastructure to protect against rogue template metaprograms that don't terminate.
+	private static final int TEMPLATE_INSTANTIATION_DEPTH_LIMIT = 256;
+	private static final ThreadLocal<Integer> fTemplateInstantiationDepth = new ThreadLocal<Integer>() {
+		@Override
+		protected Integer initialValue() { 
+			return 0; 
+		}
+	};
 
 	/**
 	 * Instantiates a class template with the given arguments. May return {@code null}.
@@ -901,6 +911,13 @@ public class CPPTemplates {
 	public static IBinding createSpecialization(ICPPClassSpecialization owner, IBinding decl, IASTNode point) {
 		IBinding spec = null;
 		final ICPPTemplateParameterMap tpMap= owner.getTemplateParameterMap();
+		// Guard against infinite recursion during template instantiation with a depth limit.
+		int instantiationDepth = fTemplateInstantiationDepth.get();
+		if (instantiationDepth > TEMPLATE_INSTANTIATION_DEPTH_LIMIT) {
+			return RecursionResolvingBinding.createFor(decl, point);
+		}
+		// Increment the instantiation depth for the duration of this call.
+		fTemplateInstantiationDepth.set(instantiationDepth + 1);
 		try {
 			if (decl instanceof ICPPClassTemplatePartialSpecialization) {
 				try {
@@ -1007,6 +1024,9 @@ public class CPPTemplates {
 			}
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
+		} finally {
+			// Restore original instantiation depth.
+			fTemplateInstantiationDepth.set(instantiationDepth);
 		}
 		return spec;
 	}

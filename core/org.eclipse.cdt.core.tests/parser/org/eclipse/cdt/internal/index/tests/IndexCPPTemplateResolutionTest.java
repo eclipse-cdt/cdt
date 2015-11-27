@@ -2847,4 +2847,27 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		// intermediate results cannot be collapsed into a single value.
 		checkBindings();
 	}
+	
+	//	template<long _Ax> struct _GcdX {	
+	//		static const long value = _GcdX<_Ax - 1>::value;
+	//	};
+	//	
+	//	template<long _Ax> struct R {
+	//		static const long value = _Ax;
+	//	};
+	//	
+	//	template<class _R1>	struct Operation {	
+	//		static const long _N1 = _R1::value;
+	//		typedef R<_GcdX<_N1>::value> value;
+	//	};
+	//	
+	//	typedef Operation< R<1> >::value MYTYPE;
+	
+	//	// empty file
+	//	// special:allowRecursionBindings
+	public void testRecursiveTemplateInstantiation_479138c() throws Exception {
+		// This tests that a template metaprogram that doesn't terminate at all
+		// (e.g. because the author omitted a base case) doesn't cause a stack overflow.
+		checkBindings();
+	}
 }

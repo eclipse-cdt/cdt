@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -608,6 +609,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	}
 	public void testInstanceInheritance_258745() throws Exception {
 		getBindingFromFirstIdentifier("a", ICPPField.class);
+	}
+	
+	//	template <typename>
+	//	struct Base {
+	//	    virtual void foo() = 0;
+	//	};
+	//
+	//	struct Derived : Base<int> {
+	//	    virtual void foo();
+	//	};
+	
+	//	Derived waldo;
+	public void testMethodOveriddenFromTemplateInstanceBase_480892() throws Exception {
+		IVariable waldo = getBindingFromFirstIdentifier("waldo");
+		IType derived = waldo.getType();
+		assertInstance(derived, ICPPClassType.class);
+		ICPPClassType derivedClass = (ICPPClassType) derived;
+		ICPPMethod[] pureVirtualMethods = SemanticQueries.getPureVirtualMethods(derivedClass, null);
+		assertEquals(0, pureVirtualMethods.length);
 	}
 
 	// class A {}; class B {}; class C {};

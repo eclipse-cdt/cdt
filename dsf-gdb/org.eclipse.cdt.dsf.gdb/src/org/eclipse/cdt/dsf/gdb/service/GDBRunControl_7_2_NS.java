@@ -116,7 +116,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	// Now that the flag --thread-group is globally supported
 	// by GDB 7.2, we have to make sure not to use it twice.
 	// Bug 340262
-	/** @since 4.9 */
+	/** @since 5.0 */
 	@Override
 	protected void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
 		if (!doCanResume(context)) {

@@ -701,7 +701,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		rm.done(doCanResume(context));
 	}
 
-	/** @since 4.9 */
+	/** @since 5.0 */
 	protected boolean doCanResume(IExecutionDMContext context) {
 		// Thread case
 		if (context instanceof IMIExecutionDMContext) {
@@ -775,7 +775,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		});
 	}
 
-	/** @since 4.9 */
+	/** @since 5.0 */
 	protected void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
 		if (!doCanResume(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,

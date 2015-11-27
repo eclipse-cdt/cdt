@@ -2784,4 +2784,67 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testRedeclarationWithUnnamedTemplateParameter_472199() throws Exception {
 		checkBindings();
 	}
+
+	//	template<long _Ax> struct _GcdX {	
+	//		static const long value = _GcdX<_Ax - 1>::value;
+	//	};
+	//	
+	//	template<> struct _GcdX<0> {
+	//		static const long value = 0;
+	//	};
+	//	
+	//	template<long _Ax> struct R {
+	//	// static const long value = _Ax;
+	//	};
+	//	
+	//	template<class _R1>	struct Operation {	
+	//		static const long _N1 = _R1::value;
+	//		typedef R<_GcdX<_N1>::value> value;
+	//	};
+	//	
+	//	typedef Operation< R<1> >::value MYTYPE;
+	
+	//	// empty file
+	public void testRecursiveTemplateInstantiation_479138a() throws Exception {
+		// This tests that a template metaprogram whose termination depends on
+		// its inputs being known, doesn't cause a stack overflow when its
+		// inputs are not known.
+		checkBindings();
+	}
+	
+	//	template<long _Ax, long _Bx> struct _GcdX {	
+	//		static const long value = _GcdX<_Bx, _Ax % _Bx>::value;
+	//	};
+	//	
+	//	template<long _Ax> struct _GcdX<_Ax, 0> {
+	//		static const long value = _Ax;
+	//	};
+	//	
+	//	template<long _Ax, long _Bx> struct _Gcd {
+	//		static const long value = _GcdX<_Ax, _Bx>::value;
+	//	};
+	//	
+	//	template<> struct _Gcd<0, 0> {	
+	//		static const long value = 1;
+	//	};
+	//	
+	//	template<long _Ax> struct R {
+	//	// static const long value = _Ax;
+	//	};
+	//	
+	//	template<class _R1>	struct Operation {	
+	//		static const long _N1 = _R1::value;
+	//		typedef R<_Gcd<_N1, _N1>::value> value;
+	//	};
+	//	
+	//	
+	//	typedef Operation< R<1> >::value MYTYPE;
+ 
+	//	// empty file
+	public void testRecursiveTemplateInstantiation_479138b() throws Exception {
+		// This is similar to 479138a, but the metaprogram additionally has
+		// exponential memory usage when the inputs are unknown and thus
+		// intermediate results cannot be collapsed into a single value.
+		checkBindings();
+	}
 }

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
@@ -36,8 +37,10 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 			fEvaluation= evaluation;
 		} else {
 			IValue value = evaluation.getValue(point);
-			// Avoid nesting EvalFixed's as nesting causes the signature to be different.
-			if (value.getEvaluation() instanceof EvalFixed) {
+			if (value == Value.ERROR) {
+				fEvaluation = EvalFixed.INCOMPLETE; 
+			} else if (value.getEvaluation() instanceof EvalFixed) {
+				// Avoid nesting EvalFixed's as nesting causes the signature to be different.
 				fEvaluation = value.getEvaluation();
 			} else {
 				fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(point),

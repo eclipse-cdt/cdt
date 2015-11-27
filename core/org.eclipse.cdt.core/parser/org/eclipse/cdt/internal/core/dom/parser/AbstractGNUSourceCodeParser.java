@@ -2462,6 +2462,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		IToken t;
 		while ((t = LA(1)).getType() != endType) {
 			t = consume();
+			
+			if (t.getType() == IToken.tCOMPLETION || t.getType() == IToken.tEOC) {
+				break;
+			}
+			
 			result.addToken(createASTToken(t));
 
 			IASTToken token;

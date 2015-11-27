@@ -1722,4 +1722,10 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected = { "A", "C", "foo(void)" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
+
+	//	int [[f(./*cursor*/)]] i;
+	public void testCompletionInsideAttribute_bug477359() throws Exception {
+		final String[] expected = {};
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
 }

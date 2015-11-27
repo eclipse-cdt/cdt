@@ -113,7 +113,9 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	
 	@Override
 	public final void addChild(PDOMNode member) throws CoreException {
-		throw new UnsupportedOperationException("addMember method should be called instead."); //$NON-NLS-1$
+		throw new UnsupportedOperationException("addMember should be called instead to add " +  //$NON-NLS-1$
+				(member instanceof IBinding ? ((IBinding) member).getName() : member.toString()) + 
+				" to " + getName()); //$NON-NLS-1$
 	}
 	
 	@Override

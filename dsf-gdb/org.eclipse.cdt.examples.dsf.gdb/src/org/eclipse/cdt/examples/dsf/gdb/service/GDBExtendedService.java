@@ -118,4 +118,9 @@ public class GDBExtendedService extends AbstractDsfService implements IGDBExtend
 					NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		}
 	}
+
+	@Override
+	public void canGetVersion(ICommandControlDMContext ctx, DataRequestMonitor<Boolean> rm) {
+		rm.done(fCommandFactory instanceof GdbExtendedCommandFactory_6_8);
+	}
 }

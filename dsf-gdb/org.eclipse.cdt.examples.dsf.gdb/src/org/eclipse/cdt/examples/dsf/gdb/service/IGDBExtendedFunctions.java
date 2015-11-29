@@ -27,4 +27,9 @@ public interface IGDBExtendedFunctions extends IDsfService {
 	 */
 	void getVersion(ICommandControlDMContext ctx, DataRequestMonitor<String> rm);
 
+	/**
+	 * Can get the version of the debugger
+	 */
+	void canGetVersion(ICommandControlDMContext ctx, DataRequestMonitor<Boolean> rm);
+
 }

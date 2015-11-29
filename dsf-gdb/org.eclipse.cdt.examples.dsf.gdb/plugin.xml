@@ -81,6 +81,86 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
+         <adapter type="org.eclipse.cdt.examples.dsf.gdb.commands.IShowVersionHandler"/>
 	  </factory>         
+   </extension>
+
+   <!-- Example showing how to add a custom command with toolbar/menu contributions with DSF.
+        The example command id is org.eclipse.cdt.examples.dsf.gdb.command.showVersion.
+        In this example, when run it will display the version of GDB that is connected. -->
+   <extension point="org.eclipse.ui.commands">
+      <command
+          categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+          description="Show the GDB Version in a pop-up"
+          id="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+          name="Show GDB Version">
+      </command>
+   </extension>
+
+   <!-- Contribute Show GDB Version command to various places in the UI -->
+   <extension
+       point="org.eclipse.ui.menus">
+
+      <!-- Contribute Show GDB Version to the toolbar at the top of the Debug View -->
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.DebugView?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen checkEnabled="false">
+               <systemTest property="org.eclipse.debug.ui.debugViewToolbarVisible" value="true"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+
+      <!-- Contribute Show GDB Version to the popup menu of the Debug View -->
+      <menuContribution
+          locationURI="popup:org.eclipse.debug.ui.DebugView?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+         </command>
+      </menuContribution>
+
+      <!-- Contribute Show GDB Version to the Main toolbar -->
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.cdt.debug.ui.testIsDebugActionSetActive">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+
+   </extension>
+
+   <!-- Connect the Show GDB Version command ID to its handler -->
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.examples.dsf.gdb.commands.ShowVersionHandler"
+            commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion">
+         <enabledWhen>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+               </test>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
 </plugin>

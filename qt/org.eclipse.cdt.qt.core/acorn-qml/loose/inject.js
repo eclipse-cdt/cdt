@@ -330,7 +330,7 @@ var injectQMLLoose;
 		 */
 		lp.qml_parseSignalParams = function (node) {
 			this.pushCx()
-			let indent = this.curIndent, line = this.curLineStart
+			var indent = this.curIndent, line = this.curLineStart
 			node.params = [];
 			if (this.eat(tt.parenL)) {
 				while (!this.closes(tt.parenR, indent + 1, line)) {
@@ -553,9 +553,9 @@ var injectQMLLoose;
 		*/
 		lp.expectContextual = function(name) {
 			if (this.eatContextual(name)) return true
-			for (let i = 1; i <= 2; i++) {
+			for (var i = 1; i <= 2; i++) {
 				if (this.lookAhead(i).type == tt.name && this.lookAhead(i).value === name) {
-					for (let j = 0; j < i; j++) this.next()
+					for (var j = 0; j < i; j++) this.next()
 					return true
 				}
 			}

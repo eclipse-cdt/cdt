@@ -26,14 +26,6 @@ public class Console implements IConsole {
 				contextId);
 	}
 	
-//	/**
-//	 * Constructor for ConfigureConsole.
-//	 */
-//	public CConfigureConsole() {
-//		fConsoleManager = AutotoolsPlugin.getDefault().getConsoleManager();
-//	}
-//
-
 	@Override
 	public void start(IProject project ) {
 		this.project = project;

@@ -44,18 +44,12 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * Compute the result and return it.
 	 */
 	protected abstract void computeResult();
-	/* (non-Javadoc)
-	 * Method declared in Window.
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fImage != null)
 			shell.setImage(fImage);
 	}
-	/* (non-Javadoc)
-	 * Method declared in Dialog.
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NULL);
@@ -77,9 +71,6 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		super.createButtonBar(composite);
 		return composite;
 	}
-	/* (non-Javadoc)
-	 * Method declared in Dialog.
-	 */
 	@Override
 	public void create() {
 		super.create();

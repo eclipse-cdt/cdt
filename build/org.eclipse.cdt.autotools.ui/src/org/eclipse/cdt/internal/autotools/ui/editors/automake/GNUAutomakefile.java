@@ -174,7 +174,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 				}
 				line = line.substring(0, pound);
 				// If all we have left are spaces continue
-				if (Util.isEmptyLine(line)) {
+				if (line.trim().isEmpty()) {
 					continue;
 				}
 				// The rest of the line maybe a valid directives.
@@ -182,7 +182,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 			}
 
 			// 3- Empty lines ?
-			if (Util.isEmptyLine(line)) {
+			if (line.trim().isEmpty()) {
 				Directive empty = new EmptyLine(this);
 				empty.setLines(startLine, endLine);
 				if (rules != null) {

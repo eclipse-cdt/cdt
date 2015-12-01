@@ -111,13 +111,4 @@ public class OpenDeclarationAction extends TextEditorAction {
 		}
 		return null;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.ui.actions.SelectionDispatchAction#selectionChanged(org.eclipse.jface.text.ITextSelection)
-	 */
-	//public void selectionChanged(ITextSelection selection) {
-		//setEnabled(fEditor != null);
-	//}
 }

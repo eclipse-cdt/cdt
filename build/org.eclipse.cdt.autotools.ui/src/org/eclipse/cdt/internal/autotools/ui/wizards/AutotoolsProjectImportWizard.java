@@ -162,9 +162,7 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 
 		try {
 			getContainer().run(true, true, op);
-		} catch (InvocationTargetException e) {
-			return false;
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			return false;
 		}
 		return true;

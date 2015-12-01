@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -101,17 +100,12 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fCleanMakeTarget.setLayoutData(gd);
 		
-		fCleanDelete.addSelectionListener(new SelectionListener() {
+		fCleanDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCleanMake.setSelection(false);
 				fCleanDelete.setSelection(true);
 				fCleanMakeTarget.setEnabled(false);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
 			}
 		});
 		

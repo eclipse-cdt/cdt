@@ -12,7 +12,6 @@ package org.eclipse.cdt.autotools.ui.editors;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
@@ -23,15 +22,6 @@ public class AutoconfDocumentProvider extends TextFileDocumentProvider {
 		Iterator e= getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
-	}
-	
-	@Override
-	public void connect(Object element) throws CoreException {
-		super.connect(element);
-		// Remove all error markers for file as we will parse
-		// from scratch.
-//		AutoconfErrorHandler h = new AutoconfErrorHandler(getDocument(element));
-//		h.removeAllExistingMarkers();
 	}
 	
 	@Override

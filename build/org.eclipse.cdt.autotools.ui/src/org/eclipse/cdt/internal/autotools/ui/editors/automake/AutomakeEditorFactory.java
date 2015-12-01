@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Color;
 
 public class AutomakeEditorFactory {
 	private IWorkingCopyManager workingCopyManager;
-	private IMakefileDocumentProvider automakeFileDocumentProvider;
+	private AutomakeDocumentProvider automakeFileDocumentProvider;
 	private static volatile AutomakeEditorFactory factory;
 
 	/**
@@ -28,7 +28,7 @@ public class AutomakeEditorFactory {
 		factory = this;
 	}
 	
-	public synchronized IMakefileDocumentProvider getAutomakefileDocumentProvider() {
+	public synchronized AutomakeDocumentProvider getAutomakefileDocumentProvider() {
 		if (automakeFileDocumentProvider == null) {
 			automakeFileDocumentProvider=  new AutomakeDocumentProvider();
 		}

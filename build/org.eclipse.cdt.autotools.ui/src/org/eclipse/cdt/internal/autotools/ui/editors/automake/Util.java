@@ -26,10 +26,6 @@ public class Util {
 		return (line.endsWith("\\") && !line.endsWith("\\\\")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public static boolean isEmptyLine(String line) {
-		return line.trim().length() == 0;
-	}
-
 	public static int indexOfComment(String line) {
 		boolean escaped = false;
 		for (int i = 0; i < line.length(); i++) {

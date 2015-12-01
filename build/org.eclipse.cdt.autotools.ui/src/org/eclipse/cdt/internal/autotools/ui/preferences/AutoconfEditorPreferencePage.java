@@ -28,8 +28,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -399,11 +399,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 
 		fHighlightingColorListViewer.addSelectionChangedListener(event -> handleSyntaxColorListSelection());
 
-		foregroundColorButton.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
+		foregroundColorButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
@@ -411,11 +407,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 			}
 		});
 
-		fBoldCheckBox.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
+		fBoldCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
@@ -423,11 +415,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 			}
 		});
 				
-		fItalicCheckBox.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
+		fItalicCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
@@ -456,15 +444,11 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 		fFoldingCheckbox.setText(AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.foldingenable")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fFoldingCheckbox.setLayoutData(gd);
-		fFoldingCheckbox.addSelectionListener(new SelectionListener() {
+		fFoldingCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled= fFoldingCheckbox.getSelection(); 
 				getOverlayStore().setValue(AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, enabled);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 		
@@ -489,15 +473,11 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 		fACVersionCombo.select(fACVersions.length - 1);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fACVersionCombo.setLayoutData(gd);
-		fACVersionCombo.addSelectionListener(new SelectionListener() {
+		fACVersionCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = fACVersionCombo.getSelectionIndex(); 
 				getOverlayStore().setValue(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION, fACVersionCombo.getItem(index));
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 		
@@ -513,15 +493,11 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 		fAMVersionCombo.select(fAMVersions.length - 1);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fAMVersionCombo.setLayoutData(gd);
-		fAMVersionCombo.addSelectionListener(new SelectionListener() {
+		fAMVersionCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = fAMVersionCombo.getSelectionIndex(); 
 				getOverlayStore().setValue(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION, fAMVersionCombo.getItem(index));
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 		

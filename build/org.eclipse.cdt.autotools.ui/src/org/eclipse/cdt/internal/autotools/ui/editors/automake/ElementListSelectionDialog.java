@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -79,12 +78,6 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 	 */
 	public ElementListSelectionDialog(Shell parent, ILabelProvider renderer, boolean ignoreCase, boolean multipleSelection) {
 		this(parent, "", null, renderer, ignoreCase, multipleSelection); //$NON-NLS-1$
-	}
-	public int open(Object[] elements) {
-		return open(Arrays.asList(elements));
-	}
-	public int open(Object[] elements, String initialSelection) {
-		return open(Arrays.asList(elements), initialSelection);
 	}
 	/**
 	 * Open the dialog.

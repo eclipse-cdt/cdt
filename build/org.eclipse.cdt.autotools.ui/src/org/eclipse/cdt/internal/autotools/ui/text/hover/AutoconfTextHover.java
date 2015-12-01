@@ -67,7 +67,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 
 public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
@@ -170,23 +169,13 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 					try {
 						DocumentBuilder builder = factory.newDocumentBuilder();
 						doc = builder.parse(docStream);
-					} catch (SAXParseException saxException) {
-						doc = null;
-					} catch (SAXException saxEx) {
-						doc = null;
-					} catch (ParserConfigurationException pce) {
-						doc = null;
-					} catch (IOException ioe) {
+					} catch (SAXException | ParserConfigurationException | IOException saxEx) {
 						doc = null;
 					} finally {
 						if (docStream != null)
 							docStream.close();
 					}
-				} catch (FileNotFoundException e) {
-					AutotoolsPlugin.log(e);
-				} catch (MalformedURLException e) {
-					AutotoolsPlugin.log(e);
-				} catch (URISyntaxException e) {
+				} catch (FileNotFoundException|MalformedURLException|URISyntaxException e) {
 					AutotoolsPlugin.log(e);
 				}
 				acDocument = doc;
@@ -231,23 +220,13 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 					try {
 						DocumentBuilder builder = factory.newDocumentBuilder();
 						doc = builder.parse(docStream);
-					} catch (SAXParseException saxException) {
-						doc = null;
-					} catch (SAXException saxEx) {
-						doc = null;
-					} catch (ParserConfigurationException pce) {
-						doc = null;
-					} catch (IOException ioe) {
+					} catch (SAXException | ParserConfigurationException | IOException ex) {
 						doc = null;
 					} finally {
 						if (docStream != null)
 							docStream.close();
 					}
-				} catch (FileNotFoundException e) {
-					AutotoolsPlugin.log(e);
-				} catch (MalformedURLException e) {
-					AutotoolsPlugin.log(e);
-				} catch (URISyntaxException e) {
+				} catch (FileNotFoundException|MalformedURLException|URISyntaxException e) {
 					AutotoolsPlugin.log(e);
 				}
 				amDocument = doc;
@@ -496,7 +475,6 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 		} catch (BadLocationException e) {
 			// do nothing
 		}
-		// TODO Auto-generated method stub
 		return hoverInfo;
 	}
 

@@ -207,9 +207,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 			{
 				try {
 				operations[k].run(monitor);
-				} catch(InvocationTargetException e) {
-					//TODO: what should we do?
-				} catch(InterruptedException e) {
+				} catch(InvocationTargetException |InterruptedException e) {
 					//TODO: what should we do?
 				}
 			}

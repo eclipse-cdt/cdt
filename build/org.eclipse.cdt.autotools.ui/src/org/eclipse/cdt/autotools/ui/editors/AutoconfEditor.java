@@ -362,10 +362,6 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
     		return fHoverInfo.toString();
     	}
     	
-    	/*
-    	 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-    	 * @since 3.2
-    	 */
     	@Override
 		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
     		return fHoverInfo;

@@ -50,8 +50,7 @@ public class AutomakeEditor extends MakefileEditor {
     }
 
     @Override
-	protected void doSetInput(IEditorInput newInput) throws CoreException
-	{
+	protected void doSetInput(IEditorInput newInput) throws CoreException {
 		super.doSetInput(newInput);
 		this.input = newInput;
 
@@ -78,7 +77,7 @@ public class AutomakeEditor extends MakefileEditor {
 	}
 	
 	public AutomakeDocumentProvider getAutomakefileDocumentProvider() {
-		return (AutomakeDocumentProvider) AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider();
+		return AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider();
 	}
 	
 	public AutomakefileContentOutlinePage getAutomakeOutlinePage() {

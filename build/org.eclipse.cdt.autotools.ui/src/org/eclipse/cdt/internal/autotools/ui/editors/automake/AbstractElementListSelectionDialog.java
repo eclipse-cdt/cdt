@@ -46,9 +46,6 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	
 	private StatusInfo fCurrStatus;
 	
-	/*
-	 * @private
-	 */
 	protected void access$superOpen() {
 		super.open();
 	}
@@ -107,10 +104,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		text.setLayoutData(spec);
 		return text;
 	}
-	/*
-	 * @private
-	 * @see Window#create(Shell)
-	 */
+
 	@Override
 	public void create() {
 		super.create();
@@ -188,9 +182,6 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	protected AbstractElementListSelectionDialog(Shell parent, ILabelProvider renderer, boolean ignoreCase, boolean multipleSelection) {
 		this(parent, "", null, renderer, ignoreCase, multipleSelection); //$NON-NLS-1$
 	}
-	/*
-	 * @private
-	 */
 	@Override
 	public int open() {
 		BusyIndicator.showWhile(null, () -> access$superOpen());

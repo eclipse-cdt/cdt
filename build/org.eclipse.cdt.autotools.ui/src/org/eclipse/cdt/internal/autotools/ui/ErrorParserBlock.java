@@ -96,7 +96,6 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 			} catch (CoreException e) {
 			}
 			useBuildInfo = true; 
-		} else {
 		}
 	}
 

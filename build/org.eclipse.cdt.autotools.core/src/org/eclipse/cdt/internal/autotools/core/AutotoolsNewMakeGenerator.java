@@ -127,10 +127,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private IBuilder builder;
 	
 
-	public void generateDependencies() {
-
-	}
-
 	/**
 	 * @since 2.0
 	 */
@@ -766,7 +762,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	
 	private IPath getSourcePath(){
 		IPath sourcePath;
-		if (srcDir.equals(""))
+		if (srcDir.isEmpty())
 			sourcePath = getProjectLocation();
 		else { // find location of source directory which may be a virtual folder
 			IResource sourceResource = project.findMember(srcDir);
@@ -946,7 +942,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						try {
 							proc.waitFor();
 						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 						exitValue = proc.exitValue();
@@ -1028,7 +1023,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 	// Method to get the Win OS Type to distinguish between Cygwin and MingW
 	private String getWinOSType() {
-		if (winOSType.equals("")) {
+		if (winOSType.isEmpty()) {
 			try {
 				RemoteCommandLauncher launcher = new RemoteCommandLauncher();
 				launcher.setProject(getProject());
@@ -1285,7 +1280,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						try {
 							proc.waitFor();
 						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 						exitValue = proc.exitValue();

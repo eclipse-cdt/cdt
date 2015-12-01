@@ -93,7 +93,6 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 					cos.flush();
 					cos.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					AutotoolsPlugin.log(e);
 				}
 			}

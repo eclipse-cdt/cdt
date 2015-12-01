@@ -71,7 +71,7 @@ public class NewAutotoolsProject extends ProcessRunner {
 				}
 
 				List<?> configs = template.getTemplateInfo().getConfigurations();
-				if (configs == null || configs.size() == 0) {
+				if (configs == null || configs.isEmpty()) {
 					throw new ProcessFailureException(Messages.getString("NewManagedProject.4") + projectName); //$NON-NLS-1$
 				}
 
@@ -98,14 +98,10 @@ public class NewAutotoolsProject extends ProcessRunner {
 
 				restoreAutoBuild(workspace);
 
-			}
-			else {
+			} else {
 				AutotoolsNewProjectNature.addAutotoolsNature(project, monitor);
-				//			throw new ProcessFailureException(Messages.getString("NewAutotoolsProject.5") + projectName); //$NON-NLS-1$
 			}
-		} catch (CoreException e) {
-			throw new ProcessFailureException(Messages.getString("NewManagedProject.3") + e.getMessage(), e); //$NON-NLS-1$
-		} catch (BuildException e) {
+		} catch (CoreException | BuildException e) {
 			throw new ProcessFailureException(Messages.getString("NewManagedProject.3") + e.getMessage(), e); //$NON-NLS-1$
 		}
 	}

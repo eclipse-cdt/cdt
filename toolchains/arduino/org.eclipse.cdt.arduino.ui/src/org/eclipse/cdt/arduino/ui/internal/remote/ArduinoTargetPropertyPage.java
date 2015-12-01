@@ -76,7 +76,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 
 		try {
 			ArduinoBoard currentBoard = arduinoRemote.getBoard();
-			Collection<ArduinoBoard> boardList = ArduinoManager.instance.getBoards();
+			Collection<ArduinoBoard> boardList = Activator.getService(ArduinoManager.class).getInstalledBoards();
 			boards = new ArduinoBoard[boardList.size()];
 			i = 0;
 			int boardSel = 0;

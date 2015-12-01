@@ -38,7 +38,7 @@ public class LibraryIndex {
 
 			ArduinoLibrary current = latestLibs.get(name);
 			if (current != null) {
-				if (ArduinoPackage.compareVersions(library.getVersion(), current.getVersion()) > 0) {
+				if (ArduinoManager.compareVersions(library.getVersion(), current.getVersion()) > 0) {
 					latestLibs.put(name, library);
 				}
 			} else {

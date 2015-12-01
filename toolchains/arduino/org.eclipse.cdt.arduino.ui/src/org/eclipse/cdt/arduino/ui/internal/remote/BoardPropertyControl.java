@@ -80,7 +80,7 @@ public class BoardPropertyControl extends Composite {
 		boardCombo = new Combo(this, SWT.READ_ONLY);
 		boardCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		try {
-			List<ArduinoBoard> boardList = ArduinoManager.instance.getInstalledBoards();
+			List<ArduinoBoard> boardList = Activator.getService(ArduinoManager.class).getInstalledBoards();
 			Collections.sort(boardList, new Comparator<ArduinoBoard>() {
 				@Override
 				public int compare(ArduinoBoard o1, ArduinoBoard o2) {

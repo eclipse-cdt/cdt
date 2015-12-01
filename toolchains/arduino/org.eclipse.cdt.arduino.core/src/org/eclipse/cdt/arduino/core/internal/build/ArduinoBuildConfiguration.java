@@ -66,6 +66,8 @@ public class ArduinoBuildConfiguration {
 
 	private final IBuildConfiguration config;
 
+	private static ArduinoManager manager = Activator.getService(ArduinoManager.class);
+
 	private ArduinoBoard board;
 	private Properties properties;
 
@@ -233,13 +235,13 @@ public class ArduinoBuildConfiguration {
 			String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
 			String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
 			String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
-			board = ArduinoManager.instance.getBoard(boardName, platformName, packageName);
+			board = manager.getBoard(boardName, platformName, packageName);
 
 			if (board == null) {
 				// Default to Uno or first one we find
-				board = ArduinoManager.instance.getBoard("Arduino/Genuino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				board = manager.getBoard("Arduino/Genuino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (board == null) {
-					List<ArduinoBoard> boards = ArduinoManager.instance.getInstalledBoards();
+					List<ArduinoBoard> boards = manager.getInstalledBoards();
 					if (!boards.isEmpty()) {
 						board = boards.get(0);
 					}
@@ -355,7 +357,7 @@ public class ArduinoBuildConfiguration {
 
 		// The list of library sources
 		List<String> librarySources = new ArrayList<>();
-		for (ArduinoLibrary lib : ArduinoManager.instance.getLibraries(project)) {
+		for (ArduinoLibrary lib : manager.getLibraries(project)) {
 			librarySources.addAll(lib.getSources());
 		}
 		buildModel.put("libraries_srcs", librarySources); //$NON-NLS-1$
@@ -376,7 +378,7 @@ public class ArduinoBuildConfiguration {
 			}
 			includes += '"' + pathString(include) + '"';
 		}
-		for (ArduinoLibrary lib : ArduinoManager.instance.getLibraries(project)) {
+		for (ArduinoLibrary lib : manager.getLibraries(project)) {
 			for (Path include : lib.getIncludePath()) {
 				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
 			}
@@ -572,7 +574,7 @@ public class ArduinoBuildConfiguration {
 			for (Path include : platform.getIncludePath()) {
 				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
 			}
-			Collection<ArduinoLibrary> libs = ArduinoManager.instance.getLibraries(config.getProject());
+			Collection<ArduinoLibrary> libs = manager.getLibraries(config.getProject());
 			for (ArduinoLibrary lib : libs) {
 				for (Path path : lib.getIncludePath()) {
 					includes += " -I\"" + pathString(path) + '"'; //$NON-NLS-1$

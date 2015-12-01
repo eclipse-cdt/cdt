@@ -974,23 +974,29 @@ public class VT100Emulator implements ControlListener {
 
 	/**
 	 * This method responds to an ANSI Device Status Report (DSR) command from
-	 * the remote endpoint requesting the cursor position. Requests for other
-	 * kinds of status are ignored.
+	 * the remote endpoint requesting the ready status or the cursor position.
+	 * Requests for other kinds of status are ignored.
 	 */
 	private void processAnsiCommand_n() {
-		// Do nothing if the numeric parameter was not 6 (which means report cursor
-		// position).
+		String reply;
 
-		if (getAnsiParameter(0) != 6)
+		if (getAnsiParameter(0) == 5) {
+			// Report that the terminal is ready and has no malfunctions.
+			reply = "\u001b[0n"; //$NON-NLS-1$
+
+		} else if (getAnsiParameter(0) == 6) {
+			// Send the ANSI cursor position (which is 1-based) to the remote
+			// endpoint.
+			reply = "\u001b[" + (relativeCursorLine() + 1) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+					(getCursorColumn() + 1) + "R"; //$NON-NLS-1$
+
+		} else {
+			// Do nothing if the numeric parameter was not 5 or 6.
 			return;
-
-		// Send the ANSI cursor position (which is 1-based) to the remote endpoint.
-
-		String positionReport = "\u001b[" + (relativeCursorLine() + 1) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
-				(getCursorColumn() + 1) + "R"; //$NON-NLS-1$
+		}
 
 		try {
-			terminal.getOutputStream().write(positionReport.getBytes("ISO-8859-1")); //$NON-NLS-1$
+			terminal.getOutputStream().write(reply.getBytes("ISO-8859-1")); //$NON-NLS-1$
 			terminal.getOutputStream().flush();
 		} catch (IOException ex) {
 			Logger.log("Caught IOException!"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Red Hat, Inc.
+ * Copyright (c) 2015 Red Hat, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *    Red Hat Inc. - initial API and implementation
+ *    Ericsson AB. - Bug 483410: Use GDB to resolve source files when parsing the Elf
+ *    				 binary does not succeed
  *******************************************************************************/
 package org.eclipse.cdt.internal.debug.application;
 
@@ -147,6 +149,8 @@ public class DebugExecutable {
 					cProject = CoreModel.getDefault().getCModel().getCProject(exec.getProject().getName());
 			}
 			
+			config = createConfiguration(executable, arguments, buildLog, true);
+
 			if (cProject.exists()) {
 				File buildLogFile = null;
 				final IProject project = cProject.getProject();
@@ -238,7 +242,7 @@ public class DebugExecutable {
 					// We need to parse the macro compile options if they exist.  We need to lock the
 					// workspace when we do this so we don't have multiple copies of our GCCCompilerOptionsParser
 					// LanguageSettingsProvider and we end up filling in the wrong one.
-					project.getWorkspace().run(new CompilerOptionParser(project, executable), 
+					project.getWorkspace().run(new CompilerOptionParser(project, config), 
 							ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
 
 				if (buildLogFile != null)	
@@ -258,8 +262,6 @@ public class DebugExecutable {
 						activePage.closeAllEditors(false);
 				}
 			}
-
-			config = createConfiguration(executable, arguments, buildLog, true);
 			// If we are starting up the debugger, save the executable as the default executable to use
 			if (startup) {
 				String memento = config.getMemento();

@@ -7,6 +7,8 @@
  *
  * Contributors:
  *    Red Hat Inc. - initial API and implementation
+ *    Ericsson AB. - Bug 483410: Use GDB to resolve source files when parsing the Elf
+ *    				 binary does not succeed
  *******************************************************************************/
 package org.eclipse.cdt.internal.debug.application;
 
@@ -24,8 +26,11 @@ import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.debug.application.Activator;
 import org.eclipse.cdt.debug.application.GCCCompileOptionsParser;
 import org.eclipse.cdt.debug.application.Messages;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.utils.coff.parser.PEParser;
 import org.eclipse.cdt.utils.elf.parser.GNUElfParser;
 import org.eclipse.core.resources.IContainer;
@@ -37,18 +42,23 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class CompilerOptionParser implements IWorkspaceRunnable {
 	
 	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$ 
 	private final IProject project;
 	private final String executable;
+	private final ILaunchConfiguration fLConfiguration;
 	
-	public CompilerOptionParser (IProject project, String executable) {
+	public CompilerOptionParser (IProject project, ILaunchConfiguration config) throws CoreException {
 		this.project = project;
-		this.executable = executable;
+		this.executable = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
+		this.fLConfiguration = config;
 	}
 
 	private class CWDTracker implements IWorkingDirectoryTracker {
@@ -73,8 +83,23 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 				bf = new PEParser().getBinary(new Path(executable));
 			}
 			ISymbolReader reader = bf.getAdapter(ISymbolReader.class);
-			String[] sourceFiles = reader
-					.getSourceFiles();
+			String[] sourceFiles = null;
+			if (reader != null) {
+				sourceFiles = reader.getSourceFiles();
+			}
+
+			if (sourceFiles == null || sourceFiles.length < 1) {
+				// Fall back to GDB's mechanism to resolve the source files from the binary
+				sourceFiles = LaunchUtils.getSourceFiles(fLConfiguration);
+			}
+
+			if (sourceFiles == null) {
+				// Failed to resolve source files
+				sourceFiles = new String[0];
+				Activator.getDefault().getLog().log(new Status(IStatus.WARNING, Activator.PLUGIN_ID,
+						"Failed to resolve source files from executable: " + executable)); //$NON-NLS-1$
+			}
+
 			monitor.beginTask(Messages.GetCompilerOptions, sourceFiles.length * 2 + 1);
 			
 			for (String sourceFile : sourceFiles) {
@@ -120,19 +145,19 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 					}
 				}
 			}
-			// Start up the parser and process lines generated from the .debug_macro section.
-			parser.startup(ccdesc, cwdTracker);
-			// Get compile options for each source file and process via the parser
-			// to generate LanguageSettingsEntries.
-			if (reader instanceof
-					ICompileOptionsFinder) {
-				ICompileOptionsFinder f =
-						(ICompileOptionsFinder) reader;
-				for (String fileName : sourceFiles) {
-					parser.setCurrentResourceName(fileName);
-					parser.processLine(f
-							.getCompileOptions(fileName));
-					monitor.worked(1);
+
+			if (parser != null) {
+				// Start up the parser and process lines generated from the .debug_macro section.
+				parser.startup(ccdesc, cwdTracker);
+				// Get compile options for each source file and process via the parser
+				// to generate LanguageSettingsEntries.
+				if (reader instanceof ICompileOptionsFinder) {
+					ICompileOptionsFinder f = (ICompileOptionsFinder) reader;
+					for (String fileName : sourceFiles) {
+						parser.setCurrentResourceName(fileName);
+						parser.processLine(f.getCompileOptions(fileName));
+						monitor.worked(1);
+					}
 				}
 				parser.shutdown(); // this will serialize the data to an xml file and create an event.
 				monitor.worked(1);

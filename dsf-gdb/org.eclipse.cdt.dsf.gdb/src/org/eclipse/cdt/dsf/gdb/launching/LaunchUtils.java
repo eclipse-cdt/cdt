@@ -12,10 +12,13 @@
  *     Marc Khouzam (Ericsson) - Add timer when fetching GDB version (Bug 376203)
  *     Marc Khouzam (Ericsson) - Better error reporting when obtaining GDB version (Bug 424996)
  *     Iulia Vasii (Freescale Semiconductor) - Separate GDB command from its arguments (Bug 445360)
+ *     Ericsson   - Use GDB to resolve source files when parsing the Elf binary does not succeed 
+ *     				(Bug 483410)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +26,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -275,69 +280,157 @@ public class LaunchUtils {
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 */
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
-        String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$
-        
-        // Parse cmd to properly handle spaces and such things (bug 458499)
-		String[] args = CommandLineUtil.argumentsToArray(cmd);
-        
-        Process process = null;
-        Job timeoutJob = null;
-        try {
-        	process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment(configuration));
+		String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$
 
-            // Start a timeout job to make sure we don't get stuck waiting for
-            // an answer from a gdb that is hanging
-            // Bug 376203
-        	final Process finalProc = process;
-            timeoutJob = new Job("GDB version timeout job") { //$NON-NLS-1$
-    			{ setSystem(true); }
-    			@Override
-    			protected IStatus run(IProgressMonitor arg) {
-    				// Took too long.  Kill the gdb process and 
-    				// let things clean up.
-    	        	finalProc.destroy();
-    				return Status.OK_STATUS;
-    			}
-    		};
-    		timeoutJob.schedule(10000);
+		String streamOutput = getCmdOutput(configuration, cmd);
+		assert(streamOutput != null && streamOutput.length() > 0);
 
-        	String streamOutput = readStream(process.getInputStream());
+		String gdbVersion = getGDBVersionFromText(streamOutput);
+		if (gdbVersion == null || gdbVersion.isEmpty()) {
+			// We got some output but couldn't parse it. Make that output visible to the user in the error
+			// dialog.
+			Exception detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$
 
-        	String gdbVersion = getGDBVersionFromText(streamOutput);
-        	if (gdbVersion == null || gdbVersion.isEmpty()) {
-        		Exception detailedException = null;
-        		if (!streamOutput.isEmpty()) {
-        			// We got some output but couldn't parse it.  Make that output visible to the user in the error dialog.
-        			detailedException = new Exception("Unexpected output format: \n\n" + streamOutput);  //$NON-NLS-1$        		
-        		} else {
-        			// We got no output.  Check if we got something on the error stream.
-        			streamOutput = readStream(process.getErrorStream());
-        			if (!streamOutput.isEmpty()) {
-        				detailedException = new Exception(streamOutput);
-        			}
-        		}
-        		
-        		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        				"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$ 
-        				detailedException));
-        	}
-        	return gdbVersion;
-        } catch (IOException e) {
-        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        			"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
-        } finally {
-        	// If we get here we are obviously not stuck reading the stream so we can cancel the timeout job.
-        	// Note that it may already have executed, but that is not a problem.
-        	if (timeoutJob != null) {
-        		timeoutJob.cancel();
-        	}
-
-        	if (process != null) {
-        		process.destroy();
-        	}
-        }
+			throw new DebugException(
+					new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+							"Could not determine GDB version using command: " + cmd, //$NON-NLS-1$
+							detailedException));
+		}
+		return gdbVersion;
 	}
 	
+	/**
+	 * This method actually launches 'gdb -ex "info sources" -batch /path/executable' 
+	 * to resolve the source files from the binary file.  This method should ideally be called
+	 * only once per session
+	 * 
+	 * A timeout is scheduled which will kill the process if it takes too long.
+	 * @since 5.0
+	 */
+	public static String[] getSourceFiles(final ILaunchConfiguration configuration) throws CoreException {
+		String executable = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+				""); //$NON-NLS-1$
+		String cmd = getGDBPath(configuration).toOSString() + " -ex \"info sources\" --batch " + executable; //$NON-NLS-1$
+
+		String streamOutput = getCmdOutput(configuration, cmd);
+		assert(streamOutput != null && streamOutput.length() > 0);
+
+		String[] sourceFiles = getSourceFilesFromText(streamOutput);
+		if (sourceFiles == null || sourceFiles.length < 1) {
+			Exception detailedException = null;
+			// We got some output but couldn't parse it. Make that output visible to the user in the error
+			// dialog.
+			detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$
+
+			throw new DebugException(
+					new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+							"Could not determine Source File information from executable using command: " //$NON-NLS-1$
+									+ cmd, // $NON-NLS-1$
+							detailedException));
+		}
+		return sourceFiles;
+	}
+	
+	private static String getCmdOutput(final ILaunchConfiguration configuration, String cmd) throws CoreException {
+		// Parse cmd to properly handle spaces and such things (bug 458499)
+		String[] args = CommandLineUtil.argumentsToArray(cmd);
+
+	    Process process = null;
+	    Job timeoutJob = null;
+	    try {
+	    	process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment(configuration));
+
+	        // Start a timeout job to make sure we don't get stuck waiting for
+	        // an answer from a gdb that is hanging
+	        // Bug 376203
+	    	final Process finalProc = process;
+	        timeoutJob = new Job("GDB pre-launch info job") { //$NON-NLS-1$
+				{ setSystem(true); }
+				@Override
+				protected IStatus run(IProgressMonitor arg) {
+					// Took too long.  Kill the gdb process and 
+					// let things clean up.
+		        	finalProc.destroy();
+					return Status.OK_STATUS;
+				}
+			};
+			timeoutJob.schedule(10000);
+
+			String streamOutput = readStream(process.getInputStream());
+			
+        	if (streamOutput == null || streamOutput.isEmpty()) {
+    			// We got no output.  Check if we got something on the error stream.
+        		Exception detailedException = null;
+    			String message = readStream(process.getErrorStream());
+    			if (!message.isEmpty()) {
+    				detailedException = new Exception(message);
+    			}
+
+				throw new DebugException(
+						new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+								"Error detected while trying GDB command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
+								detailedException));
+        	}
+
+	    	return streamOutput;
+	    } catch (IOException e) {
+	    	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
+	    			"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
+	    } finally {
+	    	// If we get here we are obviously not stuck reading the stream so we can cancel the timeout job.
+	    	// Note that it may already have executed, but that is not a problem.
+	    	if (timeoutJob != null) {
+	    		timeoutJob.cancel();
+	    	}
+	
+	    	if (process != null) {
+	    		process.destroy();
+	    	}
+	    }
+	}
+	
+
+	private static String[] getSourceFilesFromText(String streamOutput) {
+		// We expect lines with comma separated file paths
+		// 1 - Separate by lines
+		String[] lines = streamOutput.split("\\r?\\n"); //$NON-NLS-1$
+		Set<String> fileList = new HashSet<>();
+		StringBuilder notFound = new StringBuilder();
+		for (String line : lines) {
+			if (line.length() > 0) {
+				// 2 - Split each line by comma and space to separate file paths
+				// Note: Not currently supporting corner case of comma and space combinations included in the file path
+				String[] files = line.split(",\\s"); //$NON-NLS-1$
+				String separator = ""; //$NON-NLS-1$
+				for (String file : files) {
+					if (file.length() > 0) {
+						File aFile = new File(file);
+						if (aFile.exists()) {
+							// 3. Gather valid source files found on host
+							fileList.add(file);
+						} else {
+							// Ignore output headers for this command
+							if (file.contains("Source files for which symbols")) { //$NON-NLS-1$
+								continue;
+							}
+
+							notFound.append(separator).append(file);
+							if (separator.length() == 0) {
+								separator = ", "; //$NON-NLS-1$
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (notFound.length() > 0) {
+			GdbPlugin.getDefault().getLog().log(new Status(IStatus.INFO, GdbPlugin.PLUGIN_ID,
+					"Unable to locate the following source files on this host: " + notFound.toString())); //$NON-NLS-1$
+		}
+		return fileList.toArray(new String[fileList.size()]);
+	}
+
 	/**
 	 * Compares two version numbers.
 	 * Returns -1, 0, or 1 if v1 is less than, equal to, or greater than v2, respectively.

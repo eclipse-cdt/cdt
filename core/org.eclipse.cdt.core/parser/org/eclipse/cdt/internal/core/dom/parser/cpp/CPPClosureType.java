@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Binding for a class type.
+ * Binding for a closure type.
  */
 public class CPPClosureType extends PlatformObject implements ICPPClassType, ICPPInternalBinding {
 	private final ICPPASTLambdaExpression fLambdaExpression;
@@ -350,7 +350,8 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 	@Override
 	public int getVisibility(IBinding member) {
-		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
+		throw new IllegalArgumentException(member.getName() + " is not a member of closure type " //$NON-NLS-1$
+				+ fLambdaExpression.getRawSignature());
 	}
 
 	private final class ClassScope implements ICPPClassScope {

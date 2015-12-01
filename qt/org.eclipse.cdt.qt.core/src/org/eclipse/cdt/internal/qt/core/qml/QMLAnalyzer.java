@@ -1,6 +1,7 @@
 package org.eclipse.cdt.internal.qt.core.qml;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -50,6 +51,10 @@ public class QMLAnalyzer {
 
 	public Object load(String file) throws ScriptException, IOException {
 		URL scriptURL = Activator.getDefault().getBundle().getEntry(file);
+		if (scriptURL == null) {
+			throw new FileNotFoundException(file);
+		}
+		engine.getContext().setAttribute(ScriptEngine.FILENAME, file, ScriptContext.ENGINE_SCOPE);
 		return engine.eval(new BufferedReader(new InputStreamReader(scriptURL.openStream())));
 	}
 
@@ -61,12 +66,12 @@ public class QMLAnalyzer {
 		return (Invocable) engine;
 	}
 
-	public Bindings createTernServer() throws ScriptException {
-		return (Bindings) engine.eval("new tern.Server({ ecmaVersion: 5, plugins: { qml: {} }, defs: []});");
+	public Object createTernServer(Object options) throws NoSuchMethodException, ScriptException {
+		return getInvocable().invokeFunction("newTernServer", options);
 	}
 
-	public Bindings createTernServer(Bindings options) throws NoSuchMethodException, ScriptException {
-		return (Bindings) getInvocable().invokeFunction("newTernServer", options);
+	public interface RequestCallback {
+		void callback(Bindings err, Bindings data);
 	}
 
 }

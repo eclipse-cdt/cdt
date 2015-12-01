@@ -2,6 +2,8 @@ function newTernServer(options) {
 	return new tern.Server(options);
 }
 
-function toArray(array) {
-	return array.toArray();
+function requestCallback(obj) {
+	return function(err, data) {
+		obj.callback(err, data);
+	}
 }

@@ -1,4 +1,4 @@
-var x = {
+ecma5defs = {
 	"!name": "ecma5",
 	"!define": {
 		"Error.prototype": "Error.prototype"
@@ -966,5 +966,3 @@ var x = {
 		"!doc": "JSON (JavaScript Object Notation) is a data-interchange format.  It closely resembles a subset of JavaScript syntax, although it is not a strict subset. (See JSON in the JavaScript Reference for full details.)  It is useful when writing any kind of JavaScript-based application, including websites and browser extensions.  For example, you might store user information in JSON format in a cookie, or you might store extension preferences in JSON in a string-valued browser preference."
 	}
 };
-
-x;

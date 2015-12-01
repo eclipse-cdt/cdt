@@ -79,9 +79,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
-			} catch (SecurityException e) {
-				return false;
-			} catch (NoSuchMethodException e) {
+			} catch (SecurityException | NoSuchMethodException e) {
 				return false;
 			}
 		}

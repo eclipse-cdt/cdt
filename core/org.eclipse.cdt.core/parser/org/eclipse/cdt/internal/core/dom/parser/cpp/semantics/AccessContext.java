@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
@@ -115,6 +116,8 @@ public class AccessContext {
 	        	binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
 	        }
 			IBinding owner = binding.getOwner();
+			if (owner instanceof CPPClosureType)
+				return true;
 			if (owner instanceof ICPPClassType) {
 				bindingVisibility = ((ICPPClassType) owner).getVisibility(binding);
 			} else {

@@ -37,7 +37,7 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		// Load up the Arduino indices
-		ArduinoManager.instance.loadIndices();
+		getService(ArduinoManager.class).loadIndices();
 	}
 
 	public void stop(BundleContext context) throws Exception {

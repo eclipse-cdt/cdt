@@ -95,7 +95,7 @@ public class ArduinoRemoteConnection
 	}
 
 	public ArduinoBoard getBoard() throws CoreException {
-		return ArduinoManager.instance.getBoard(remoteConnection.getAttribute(BOARD_NAME),
+		return Activator.getService(ArduinoManager.class).getBoard(remoteConnection.getAttribute(BOARD_NAME),
 				remoteConnection.getAttribute(PLATFORM_NAME), remoteConnection.getAttribute(PACKAGE_NAME));
 	}
 

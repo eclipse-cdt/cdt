@@ -37,6 +37,8 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class LibrariesPropertyPage extends PropertyPage {
 
+	private static ArduinoManager manager = Activator.getService(ArduinoManager.class);
+
 	private class ContentProvider implements ITreeContentProvider {
 		private LibraryIndex index;
 
@@ -187,20 +189,20 @@ public class LibrariesPropertyPage extends PropertyPage {
 		Tree tree = viewer.getTree();
 		tree.setHeaderVisible(true);
 		TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
-		column1.setText("Name");
+		column1.setText(Messages.LibrariesPropertyPage_0);
 		column1.setWidth(200);
 		TreeColumn column2 = new TreeColumn(tree, SWT.LEFT);
-		column2.setText("Description");
+		column2.setText(Messages.LibrariesPropertyPage_1);
 		column2.setWidth(200);
 
 		viewer.setContentProvider(new ContentProvider());
 		viewer.setLabelProvider(new LabelProvider());
 
 		try {
-			viewer.setInput(ArduinoManager.instance.getLibraryIndex());
+			viewer.setInput(manager.getLibraryIndex());
 			// Set the check states for currently selected libraries
 			IProject project = getElement().getAdapter(IProject.class);
-			Collection<ArduinoLibrary> libraries = ArduinoManager.instance.getLibraries(project);
+			Collection<ArduinoLibrary> libraries = manager.getLibraries(project);
 			for (ArduinoLibrary lib : libraries) {
 				viewer.setChecked(lib, true);
 			}
@@ -231,7 +233,7 @@ public class LibrariesPropertyPage extends PropertyPage {
 			}
 		}
 		try {
-			ArduinoManager.instance.setLibraries(getProject(), libs);
+			manager.setLibraries(getProject(), libs);
 		} catch (CoreException e) {
 			Activator.log(e);
 		}

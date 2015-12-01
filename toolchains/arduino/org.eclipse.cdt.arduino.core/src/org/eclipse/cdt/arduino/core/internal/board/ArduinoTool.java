@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
@@ -50,8 +52,26 @@ public class ArduinoTool {
 	}
 
 	public Path getInstallPath() {
-		return ArduinoPreferences.getArduinoHome().resolve("tools").resolve(pkg.getName()).resolve(name) //$NON-NLS-1$
+		// TODO remove migration in Neon
+		Path oldPath = ArduinoPreferences.getArduinoHome().resolve("tools").resolve(pkg.getName()).resolve(name) //$NON-NLS-1$
 				.resolve(version);
+		Path newPath = getPackage().getInstallPath().resolve("tools").resolve(name).resolve(version); //$NON-NLS-1$
+		if (Files.exists(oldPath)) {
+			try {
+				Files.createDirectories(newPath.getParent());
+				Files.move(oldPath, newPath);
+				for (Path parent = oldPath.getParent(); parent != null; parent = parent.getParent()) {
+					if (Files.newDirectoryStream(parent).iterator().hasNext()) {
+						break;
+					} else {
+						Files.delete(parent);
+					}
+				}
+			} catch (IOException e) {
+				Activator.log(e);
+			}
+		}
+		return newPath;
 	}
 
 	public boolean isInstalled() {

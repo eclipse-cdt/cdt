@@ -20,10 +20,13 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,8 +62,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class ArduinoManager {
-
-	public static final ArduinoManager instance = new ArduinoManager();
 
 	// Build tool ids
 	public static final String BOARD_OPTION_ID = "org.eclipse.cdt.arduino.option.board"; //$NON-NLS-1$
@@ -168,23 +169,11 @@ public class ArduinoManager {
 		return null;
 	}
 
-	public List<ArduinoBoard> getBoards() throws CoreException {
-		List<ArduinoBoard> boards = new ArrayList<>();
-		for (PackageIndex index : getPackageIndices()) {
-			for (ArduinoPackage pkg : index.getPackages()) {
-				for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {
-					boards.addAll(platform.getBoards());
-				}
-			}
-		}
-		return boards;
-	}
-
 	public List<ArduinoBoard> getInstalledBoards() throws CoreException {
 		List<ArduinoBoard> boards = new ArrayList<>();
 		for (PackageIndex index : getPackageIndices()) {
 			for (ArduinoPackage pkg : index.getPackages()) {
-				for (ArduinoPlatform platform : pkg.getInstalledPlatforms()) {
+				for (ArduinoPlatform platform : pkg.getInstalledPlatforms().values()) {
 					boards.addAll(platform.getBoards());
 				}
 			}
@@ -227,7 +216,7 @@ public class ArduinoManager {
 		Type stringSet = new TypeToken<Set<String>>() {
 		}.getType();
 		Set<String> libraryNames = new Gson().fromJson(librarySetting, stringSet);
-		LibraryIndex index = ArduinoManager.instance.getLibraryIndex();
+		LibraryIndex index = Activator.getService(ArduinoManager.class).getLibraryIndex();
 
 		ArduinoPlatform platform = project.getActiveBuildConfig().getAdapter(ArduinoBuildConfiguration.class).getBoard()
 				.getPlatform();
@@ -257,9 +246,9 @@ public class ArduinoManager {
 			Activator.log(e);
 		}
 
-		new Job("Install libraries") {
+		new Job(Messages.ArduinoManager_0) {
 			protected IStatus run(IProgressMonitor monitor) {
-				MultiStatus mstatus = new MultiStatus(Activator.getId(), 0, "Installing libraries", null);
+				MultiStatus mstatus = new MultiStatus(Activator.getId(), 0, Messages.ArduinoManager_1, null);
 				for (ArduinoLibrary library : libraries) {
 					IStatus status = library.install(monitor);
 					if (!status.isOK()) {
@@ -373,7 +362,52 @@ public class ArduinoManager {
 			}
 		}
 		// out of retries
-		return new Status(IStatus.ERROR, Activator.getId(), "Download failed, please try again.", error);
+		return new Status(IStatus.ERROR, Activator.getId(), Messages.ArduinoManager_2, error);
+	}
+
+	public static int compareVersions(String version1, String version2) {
+		if (version1 == null) {
+			return version2 == null ? 0 : -1;
+		}
+
+		if (version2 == null) {
+			return 1;
+		}
+
+		String[] v1 = version1.split("\\."); //$NON-NLS-1$
+		String[] v2 = version2.split("\\."); //$NON-NLS-1$
+		for (int i = 0; i < Math.max(v1.length, v2.length); ++i) {
+			if (v1.length <= i) {
+				return v2.length < i ? 0 : -1;
+			}
+
+			if (v2.length <= i) {
+				return 1;
+			}
+
+			try {
+				int vi1 = Integer.parseInt(v1[i]);
+				int vi2 = Integer.parseInt(v2[i]);
+				if (vi1 < vi2) {
+					return -1;
+				}
+
+				if (vi1 > vi2) {
+					return 1;
+				}
+			} catch (NumberFormatException e) {
+				// not numbers, do string compares
+				int c = v1[i].compareTo(v2[i]);
+				if (c < 0) {
+					return -1;
+				}
+				if (c > 0) {
+					return 1;
+				}
+			}
+		}
+
+		return 0;
 	}
 
 	private static Set<PosixFilePermission> toPerms(int mode) {
@@ -408,4 +442,20 @@ public class ArduinoManager {
 		return perms;
 	}
 
+	public static void recursiveDelete(Path directory) throws IOException {
+		Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.delete(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				Files.delete(dir);
+				return FileVisitResult.CONTINUE;
+			}
+
+		});
+	}
 }

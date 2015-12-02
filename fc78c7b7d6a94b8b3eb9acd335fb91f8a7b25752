@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47cfbb72_2a47fe72",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/internal/debug/application/CompilerOptionParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-02T18:46:46Z",
+      "side": 1,
+      "message": "Is reader null in the case you are fixing?  Were we getting an NPE before your change?",
+      "revId": "fc78c7b7d6a94b8b3eb9acd335fb91f8a7b25752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47cfbb72_2d25585d",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/internal/debug/application/CompilerOptionParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-02T18:46:46Z",
+      "side": 1,
+      "message": "This introduces a direct dependency to dsf.gdb, which would be nice to avoid.  I believe the standalone debugger could work with\nanother debugger integration than dsf-gdb.  We could move this the other LaunchUtils which is in the launch plugin, but I\u0027m thinking\nthat this functionality is not related to the launch; it could go into debug.core; I\u0027m even wondering if we could implement\na full binary parser using GDB as an external tool instead of doing it in CDT.  Until we have a clear idea of where this should\ngo, I recommend putting in somewhere internal where it is not API.  You can even put it in this file as an option.",
+      "revId": "fc78c7b7d6a94b8b3eb9acd335fb91f8a7b25752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47cfbb72_ea099638",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/internal/debug/application/CompilerOptionParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-02T18:46:46Z",
+      "side": 1,
+      "message": "The below is now done all the time as long as parser is not null.  This makes sense to me but I wanted to make sure this was something you did on purpose.",
+      "revId": "fc78c7b7d6a94b8b3eb9acd335fb91f8a7b25752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47cfbb72_8a1d6a27",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-02T18:46:46Z",
+      "side": 1,
+      "message": "So there was no MI command for \u0027info sources\u0027 right?",
+      "revId": "fc78c7b7d6a94b8b3eb9acd335fb91f8a7b25752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47cfbb72_aa222e5f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-02T18:46:46Z",
+      "side": 1,
+      "message": "This does not work perfectly if there is other ouput when launching GDB, like warnings and such, which are sometimes shown at the top.\nIn that case there is an extra log printed.  How about only adding to notFound if we have seen the above output at least once?\nThat way we avoid complaining about any warnings at the top of the output.",
+      "revId": "fc78c7b7d6a94b8b3eb9acd335fb91f8a7b25752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

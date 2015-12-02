@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.autotools.ui.actions;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
+import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -40,7 +41,7 @@ public abstract class AbstractTargetAction
 		} else if (fWindow != null) {
 			return fWindow.getShell();
 		}
-		return AutotoolsPlugin.getActiveWorkbenchShell();
+		return AutotoolsUIPlugin.getActiveWorkbenchShell();
 	}
 
 	protected IContainer getSelectedContainer() {

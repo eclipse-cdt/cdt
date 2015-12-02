@@ -86,7 +86,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	private AutotoolsConfigurationManager() {
 		configs = new HashMap<>();
 		tmpConfigs = new HashMap<>();
-		AutotoolsPlugin.getWorkspace().addResourceChangeListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
 	public static AutotoolsConfigurationManager getInstance() {

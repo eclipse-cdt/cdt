@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
+import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.internal.autotools.ui.MakeUIMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
@@ -216,8 +217,8 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		if (selection.isEmpty()) {
 			resetHighlightRange();
 		} else if (selection instanceof IStructuredSelection){                                                                                                                         
-			if (!isActivePart() && AutotoolsPlugin.getActivePage() != null) {
-				AutotoolsPlugin.getActivePage().bringToTop(this);
+			if (!isActivePart() && AutotoolsUIPlugin.getActivePage() != null) {
+				AutotoolsUIPlugin.getActivePage().bringToTop(this);
 			}                                                                                                                 
 			Object element =  ((IStructuredSelection) selection).getFirstElement();
 			if (element instanceof IDirective) {

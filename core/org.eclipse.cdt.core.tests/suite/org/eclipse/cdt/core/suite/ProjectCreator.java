@@ -44,41 +44,41 @@ public class ProjectCreator extends TestCase {
 	private static final IProgressMonitor monitor = new NullProgressMonitor();
 
 	public static IProject createProject(IPath zipPath,	String projectName) throws Exception {
-		ZipFile zipFile = new ZipFile(CTestPlugin.getDefault().getFileInPlugin(zipPath));
-		
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IPath rootPath = root.getLocation();
-		String zipProjectName = null;
+		try (ZipFile zipFile = new ZipFile(CTestPlugin.getDefault().getFileInPlugin(zipPath))) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IPath rootPath = root.getLocation();
+			String zipProjectName = null;
 
-		Enumeration entries = zipFile.entries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry)entries.nextElement();
-			if (!entry.isDirectory()) {
-				IPath entryPath = rootPath.append(entry.getName());
-				IPath entryDir = entryPath.removeLastSegments(1);
-				entryDir.toFile().mkdirs();
-				InputStream in = zipFile.getInputStream(entry);
-				OutputStream out = new FileOutputStream(entryPath.toFile());
-				for (int n = in.read(buffer); n >= 0; n = in.read(buffer))
-					out.write(buffer, 0, n);
-				in.close();
-				out.close();
-				
-				// Is this the .project file?
-				if (".project".equals(entryPath.lastSegment())) {
-					IProjectDescription desc = workspace.loadProjectDescription(entryPath);
-					zipProjectName = desc.getName();
+			Enumeration entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) entries.nextElement();
+				if (!entry.isDirectory()) {
+					IPath entryPath = rootPath.append(entry.getName());
+					IPath entryDir = entryPath.removeLastSegments(1);
+					entryDir.toFile().mkdirs();
+					try (InputStream in = zipFile.getInputStream(entry);
+							OutputStream out = new FileOutputStream(entryPath.toFile())) {
+						for (int n = in.read(buffer); n >= 0; n = in.read(buffer)) {
+							out.write(buffer, 0, n);
+						}
+					}
+
+					// Is this the .project file?
+					if (".project".equals(entryPath.lastSegment())) {
+						IProjectDescription desc = workspace.loadProjectDescription(entryPath);
+						zipProjectName = desc.getName();
+					}
 				}
 			}
-		}
-		
-		IProject project = root.getProject(zipProjectName);
-		project.create(monitor);
-		project.open(monitor);
-		project.move(new Path(projectName), true, monitor);
 
-		return project;
+			IProject project = root.getProject(zipProjectName);
+			project.create(monitor);
+			project.open(monitor);
+			project.move(new Path(projectName), true, monitor);
+
+			return project;
+		}
 	}
 
 	public static IProject createCManagedProject(String projectName) throws Exception {

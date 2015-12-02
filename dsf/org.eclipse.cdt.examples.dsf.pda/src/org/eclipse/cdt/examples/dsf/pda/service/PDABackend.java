@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Nokia Corporation.
+ * Copyright (c) 2008, 2015 Nokia Corporation and others.
  * All rights reserved. This fProgram and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,31 +17,33 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
-import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.pda.PDAPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.Launch;
 import org.osgi.framework.BundleContext;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Service that manages the backend process: starting the process
@@ -239,12 +241,24 @@ public class PDABackend extends AbstractDsfService {
         commandList.add(javaVMExec);
         
         commandList.add("-cp");
+        
+        URL u = null;
         try {
+        	URL bundleURL = PDAPlugin.getDefault().getBundle().getEntry("/");
+        	if (bundleURL != null) {
+        		u = FileLocator.resolve(bundleURL);
+        	}
+        	else {
+        		abort("Error - Can't resolve plugin's root folder", null);
+        	}
+			
+		} catch (IOException e1) {
+			abort("Error - Bundle has been un-unstalled", null);
+		}
+        
         commandList.add(
-            File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")) + 
-            File.pathSeparator + new File(Platform.asLocalURL(PDAPlugin.getDefault().getDescriptor().getInstallURL()).getFile()));
-        } catch (IOException e) {
-        }
+        	File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")) + 
+        	File.pathSeparator + u.getPath());
         
         commandList.add("org.eclipse.cdt.examples.pdavm.PDAVirtualMachine");
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.examples.dsf.pda.launch.PDALaunch;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -147,17 +148,18 @@ public class PDAPlugin extends Plugin {
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
 	 * <code>IPath</code> in the plugin directory, or <code>null</code> if none.
-	 */
+	 */	
 	public static File getFileInPlugin(IPath path) {
+		URL absoluteURL = null;
 		try {
-			URL installURL =
-				new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
-			URL localURL = Platform.asLocalURL(installURL);
-			return new File(localURL.getFile());
-		} catch (IOException ioe) {
-			return null;
+			absoluteURL = FileLocator.toFileURL(getDefault().getBundle().
+					getEntry("/" + path));
+		} catch (IOException e) {
+			// path not found
 		}
-	}	
+		return absoluteURL == null ? null : new File(absoluteURL.getFile());
+	}
+	
 	
 	/** 
 	 * Shuts down any active launches.  We must shutdown any active sessions 

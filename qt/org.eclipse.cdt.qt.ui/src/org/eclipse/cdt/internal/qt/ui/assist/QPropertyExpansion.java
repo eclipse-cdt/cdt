@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.qt.core.QtKeywords;
 import org.eclipse.cdt.internal.qt.core.index.IQProperty;
 import org.eclipse.cdt.internal.qt.core.parser.QtParser;
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
@@ -143,7 +143,7 @@ public class QPropertyExpansion {
 		try {
 			identifier = doc.get(begin, openingParen - begin);
 		} catch (BadLocationException e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 		}
 
 		if (!QtKeywords.Q_PROPERTY.equals(identifier))
@@ -166,7 +166,7 @@ public class QPropertyExpansion {
 			else
 				expansion = doc.get(openingParen, context.getInvocationOffset() - openingParen );
 		} catch (BadLocationException e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 		}
 
 		if (expansion == null)
@@ -262,7 +262,7 @@ public class QPropertyExpansion {
 
 			// Attributes without values propose only their own identifier.
 			if (!attribute.hasValue)
-				return new CCompletionProposal(attribute.identifier, context.getInvocationOffset(), 0, QtUIPlugin.getQtLogo(), attribute.identifier + " - Q_PROPERTY declaration parameter", relevance);
+				return new CCompletionProposal(attribute.identifier, context.getInvocationOffset(), 0, Activator.getQtLogo(), attribute.identifier + " - Q_PROPERTY declaration parameter", relevance);
 
 			// Otherwise create a template where the content depends on the type of the attribute's parameter.
 			String display = attribute.identifier + ' ' + attribute.paramName;
@@ -377,7 +377,7 @@ public class QPropertyExpansion {
 
 			return new Identifier(begin,  doc.get(begin, end - begin));
 		} catch(BadLocationException e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 		}
 		return null;
 	}

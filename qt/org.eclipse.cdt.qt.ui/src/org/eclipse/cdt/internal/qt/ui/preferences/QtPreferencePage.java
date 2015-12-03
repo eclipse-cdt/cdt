@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.qt.ui.Messages;
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -52,7 +52,7 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 
 	@Override
 	public void init(IWorkbench workbench) {
-		manager = QtUIPlugin.getService(IQtInstallManager.class);
+		manager = Activator.getService(IQtInstallManager.class);
 	}
 
 	@Override

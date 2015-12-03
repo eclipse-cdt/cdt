@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.qt.core.index.IQMethod;
 import org.eclipse.cdt.internal.qt.core.index.IQObject;
 import org.eclipse.cdt.internal.qt.core.index.IQProperty;
 import org.eclipse.cdt.internal.qt.core.index.QtIndex;
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
 import org.eclipse.core.runtime.CoreException;
@@ -64,7 +64,7 @@ public class QPropertyAttributeProposal {
 		int prefixLen = prefix == null ? 0 : prefix.length();
 
 		String disp = identifier.equals(display) ? display : ( identifier + " - " + display );
-		return new CCompletionProposal(identifier.substring(prefixLen), offset, prefixLen, QtUIPlugin.getQtLogo(), disp, relevance);
+		return new CCompletionProposal(identifier.substring(prefixLen), offset, prefixLen, Activator.getQtLogo(), disp, relevance);
 	}
 
 	private QPropertyAttributeProposal(String identifier, String display, int relevance) {
@@ -145,7 +145,7 @@ public class QPropertyAttributeProposal {
 		try {
 			qobj = qtIndex.findQObject(cls.getQualifiedName());
 		} catch(DOMException e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 		}
 
 		if (qobj == null)
@@ -468,7 +468,7 @@ public class QPropertyAttributeProposal {
 
 			return (ICPPClassType) binding.getAdapter(ICPPClassType.class);
 		} catch(CoreException e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 		}
 
 		return null;

@@ -98,7 +98,7 @@ public class QObjectConnectCompletion {
 			int repLength = replacement.length();
 			int repOffset = context.getInvocationOffset();
 			CCompletionProposal p
-				= new CCompletionProposal(replacement, repOffset, repLength, QtUIPlugin.getQtLogo(), display, relevance, context.getViewer());
+				= new CCompletionProposal(replacement, repOffset, repLength, Activator.getQtLogo(), display, relevance, context.getViewer());
 			p.setCursorPosition(repLength + cursorOffset);
 			return p;
 		}

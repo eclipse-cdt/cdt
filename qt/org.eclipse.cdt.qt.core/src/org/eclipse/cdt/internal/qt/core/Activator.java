@@ -7,15 +7,22 @@
  */
 package org.eclipse.cdt.internal.qt.core;
 
+import java.io.IOException;
+
+import javax.script.ScriptException;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
+import org.eclipse.cdt.qt.core.QMLAnalyzer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -55,6 +62,20 @@ public class Activator extends Plugin {
 		super.start(context);
 
 		context.registerService(IQtInstallManager.class, new QtInstallManager(), null);
+
+		QMLAnalyzer qmlAnalyzer = new QMLAnalyzer();
+		context.registerService(QMLAnalyzer.class, qmlAnalyzer, null);
+		new Job("Load QML Analyzer") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					qmlAnalyzer.load();
+					return Status.OK_STATUS;
+				} catch (NoSuchMethodException | ScriptException | IOException e) {
+					return new Status(IStatus.ERROR, ID, "loading QML analyzer", e);
+				}
+			}
+		}.schedule();
 
 		configCleanup = new QtBuildConfigurationFactory.Cleanup();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(configCleanup);

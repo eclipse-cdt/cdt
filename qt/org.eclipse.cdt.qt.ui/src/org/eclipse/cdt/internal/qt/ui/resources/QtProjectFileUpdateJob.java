@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.qt.ui.editor.QtProjectFileKeyword;
 import org.eclipse.cdt.internal.qt.ui.pro.parser.QtProjectFileModifier;
 import org.eclipse.core.resources.IFile;
@@ -71,7 +71,7 @@ public class QtProjectFileUpdateJob extends Job {
 				try {
 					proFile = findQtProjectFile(project);
 				} catch (CoreException e) {
-					QtUIPlugin.log("Unable to find Qt Project File", e); //$NON-NLS-1$
+					Activator.log("Unable to find Qt Project File", e); //$NON-NLS-1$
 				}
 
 				// We can't update a project file if it doesn't exist
@@ -91,10 +91,10 @@ public class QtProjectFileUpdateJob extends Job {
 					modifier = new QtProjectFileModifier(document);
 					modifierMap.put(project, modifier);
 				} catch (IOException e) {
-					QtUIPlugin.log(e);
+					Activator.log(e);
 					break;
 				} catch (CoreException e) {
-					QtUIPlugin.log(e);
+					Activator.log(e);
 					break;
 				}
 			}
@@ -149,7 +149,7 @@ public class QtProjectFileUpdateJob extends Job {
 			try {
 				file.setContents(new ByteArrayInputStream(document.get().getBytes()), 0, null);
 			} catch (CoreException e) {
-				QtUIPlugin.log(e);
+				Activator.log(e);
 			}
 		}
 		return Status.OK_STATUS;

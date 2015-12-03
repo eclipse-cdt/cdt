@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.editor;
 
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.qt.ui.text.QMLSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentExtension3;
@@ -20,7 +20,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 /**
- * Basic editor for QML.  Thus far has only syntax highlighting capabilities.
+ * Basic editor for QML. Thus far has only syntax highlighting capabilities.
  */
 public class QMLEditor extends TextEditor {
 	public static final String EDITOR_ID = "org.eclipse.cdt.qt.ui.QMLEditor"; //$NON-NLS-1$
@@ -32,8 +32,8 @@ public class QMLEditor extends TextEditor {
 
 	@Override
 	protected void initializeEditor() {
-		setPreferenceStore(QtUIPlugin.getDefault().getPreferenceStore());
-		setSourceViewerConfiguration(new QMLSourceViewerConfiguration());
+		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setSourceViewerConfiguration(new QMLSourceViewerConfiguration(this));
 	}
 
 	@Override
@@ -41,12 +41,15 @@ public class QMLEditor extends TextEditor {
 		super.configureSourceViewerDecorationSupport(support);
 
 		// Setup bracket matching with default color being gray
-		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(BRACKETS, IDocumentExtension3.DEFAULT_PARTITIONING);
+		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(BRACKETS,
+				IDocumentExtension3.DEFAULT_PARTITIONING);
 		support.setCharacterPairMatcher(matcher);
-		support.setMatchingCharacterPainterPreferenceKeys(BRACKET_MATCHING_PREFERENCE, BRACKET_MATCHING_COLOR_PREFERENCE);
+		support.setMatchingCharacterPainterPreferenceKeys(BRACKET_MATCHING_PREFERENCE,
+				BRACKET_MATCHING_COLOR_PREFERENCE);
 
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(BRACKET_MATCHING_PREFERENCE, true);
 		store.setDefault(BRACKET_MATCHING_COLOR_PREFERENCE, "155,155,155"); //$NON-NLS-1$
 	}
+
 }

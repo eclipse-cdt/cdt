@@ -14,6 +14,9 @@ import org.eclipse.cdt.internal.qt.ui.editor.QMLEditor;
 import org.eclipse.cdt.internal.qt.ui.editor.QMLKeywords;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -44,14 +47,18 @@ public class QMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 
 	// Just using Qt Creator defaults-ish for now
 	// TODO: Add preference page for syntax highlighting
-	private static final IToken[] allTokens = new IToken[] {
-			new Token(null),
+	private static final IToken[] allTokens = new IToken[] { new Token(null),
 			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(0, 155, 200)))),
 			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(0, 155, 200)))),
 			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(155, 155, 0)), null, SWT.BOLD)),
 			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(0, 155, 0)), null, SWT.ITALIC)),
-			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(0, 100, 155)), null, SWT.BOLD))
-	};
+			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(0, 100, 155)), null, SWT.BOLD)) };
+
+	private final QMLEditor editor;
+
+	public QMLSourceViewerConfiguration(QMLEditor editor) {
+		this.editor = editor;
+	}
 
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer viewer) {
@@ -112,7 +119,8 @@ public class QMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 			}
 		}, allTokens[TOKEN_DEFAULT]);
 
-		// Works decently well for now. However, some keywords like 'color' can also be used as identifiers. Can only fix this with
+		// Works decently well for now. However, some keywords like 'color' can
+		// also be used as identifiers. Can only fix this with
 		// semantic highlighting after the parser is completed.
 		for (String keyword : QMLKeywords.getKeywords(true)) {
 			wordRule.addWord(keyword, allTokens[TOKEN_KEYWORD]);
@@ -142,4 +150,14 @@ public class QMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 
 		return wordRule;
 	}
+
+	@Override
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		ContentAssistant contentAssistant = new ContentAssistant();
+		IContentAssistProcessor processor = new QMLContentAssistProcessor(editor);
+		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
+		return contentAssistant;
+	}
+
 }

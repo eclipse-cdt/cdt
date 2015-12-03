@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.qt.ui.text;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.qt.ui.editor.QtProjectFileKeyword;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -24,7 +24,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
-public class ContentAssistProcessor implements IContentAssistProcessor {
+public class QtProjectFileContentAssistProcessor implements IContentAssistProcessor {
 	private final IContextInformation[] NO_CONTEXTS = {};
 	private final ICompletionProposal[] NO_COMPLETIONS = {};
 
@@ -38,28 +38,27 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			String prefix = lastWord(document, offset).toLowerCase(Locale.ROOT);
 			for (QtProjectFileKeyword keyword : QtProjectFileKeyword.values()) {
 				if (prefix.isEmpty() || keyword.getKeyword().toLowerCase(Locale.ROOT).startsWith(prefix)) {
-					result.add(new CompletionProposal(
-							keyword.getKeyword(),
-							offset - prefix.length(),
-							prefix.length(),
+					result.add(new CompletionProposal(keyword.getKeyword(), offset - prefix.length(), prefix.length(),
 							keyword.getKeyword().length()));
 				}
 			}
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 			return NO_COMPLETIONS;
 		}
 	}
 
 	/**
-	 * Returns the valid Java identifier in a document immediately before the given offset.
+	 * Returns the valid Java identifier in a document immediately before the
+	 * given offset.
 	 *
 	 * @param document
 	 *            the document
 	 * @param offset
 	 *            the offset at which to start looking
-	 * @return the Java identifier preceding this location or a blank string if none
+	 * @return the Java identifier preceding this location or a blank string if
+	 *         none
 	 */
 	private String lastWord(IDocument document, int offset) {
 		try {
@@ -71,7 +70,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			}
 			return document.get(0, offset);
 		} catch (BadLocationException e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 		}
 		return ""; //$NON-NLS-1$
 	}

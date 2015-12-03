@@ -24,18 +24,18 @@ import org.osgi.framework.ServiceReference;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class QtUIPlugin extends AbstractUIPlugin {
+public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.qt.ui"; //$NON-NLS-1$
 
 	// The shared instance
-	private static QtUIPlugin plugin;
+	private static Activator plugin;
 
 	/**
 	 * The constructor
 	 */
-	public QtUIPlugin() {
+	public Activator() {
 	}
 
 	public static Image getQtLogo() {
@@ -55,7 +55,7 @@ public class QtUIPlugin extends AbstractUIPlugin {
 		// plugin was inactive
 		QtResourceChangeListener resourceManager = new QtResourceChangeListener();
 		ISaveParticipant saveParticipant = new QtWorkspaceSaveParticipant();
-		ISavedState lastState = ResourcesPlugin.getWorkspace().addSaveParticipant(QtUIPlugin.PLUGIN_ID,
+		ISavedState lastState = ResourcesPlugin.getWorkspace().addSaveParticipant(Activator.PLUGIN_ID,
 				saveParticipant);
 		if (lastState != null) {
 			lastState.processResourceChangeEvents(resourceManager);
@@ -74,7 +74,7 @@ public class QtUIPlugin extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static QtUIPlugin getDefault() {
+	public static Activator getDefault() {
 		return plugin;
 	}
 

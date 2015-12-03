@@ -51,7 +51,7 @@ public class QtCompletionProposalComputer extends ParsingBasedProposalComputer {
 				return computeCompletionProposals(cContext, completionNode, prefix);
 			}
 		} catch (Exception e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 		}
 
 		return Collections.emptyList();

@@ -116,16 +116,12 @@ public class AutotoolsCategoryPropertyOptionPage extends
 				fieldEditors.add(b);
 				break;
 			case IConfigureOption.FLAG:
-				FieldEditor l = createLabelEditor(area, option.getDescription());
+				FieldEditor l = new LabelFieldEditor(area, option.getDescription());
 				addField(l);
 				fieldEditors.add(l);
 				break;
 			}
 		}
-	}
-
-	protected FieldEditor createLabelEditor( Composite parent, String title ) {
-		return new LabelFieldEditor( parent, title );
 	}
 
 	/**

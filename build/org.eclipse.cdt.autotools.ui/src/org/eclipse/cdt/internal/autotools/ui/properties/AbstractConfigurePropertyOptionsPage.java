@@ -38,15 +38,8 @@ public abstract class AbstractConfigurePropertyOptionsPage extends
 	@Override
 	protected void createFieldEditors() {
 		// Get the preference store for the build settings
-		IPreferenceStore settings = getConfigurePrefStore();
+		IPreferenceStore settings = AutotoolsConfigurePrefStore.getInstance();
 		setPreferenceStore(settings);
-	}
-
-	/**
-	 * Return the tool settings preference store
-	 */
-	protected AutotoolsConfigurePrefStore getConfigurePrefStore() {
-		return AutotoolsConfigurePrefStore.getInstance();	
 	}
 
 	/**

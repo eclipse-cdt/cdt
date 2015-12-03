@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.autotools.ui.properties;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.internal.autotools.core.AutotoolsPropertyConstants;
-import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfiguration;
 import org.eclipse.cdt.internal.autotools.ui.AbstractAutotoolsCPropertyTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -50,13 +49,8 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		return true;
 	}
 
-	public void cfgChanged(AutotoolsConfiguration cfg) {
-		// Nothing to do
-	}
-	
 	@Override
 	public void createControls(Composite parent) {
-		// TODO Auto-generated method stub
 		super.createControls(parent);
 		Composite composite= usercomp;
 		

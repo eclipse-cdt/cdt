@@ -55,10 +55,6 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 
 	private Map<String, List<AbstractConfigurePropertyOptionsPage>> configToPageListMap;
 
-	private IProject getProject() {
-		return page.getProject();
-	}
-	
 	@Override
 	public boolean canBeVisible() {
 		if (page.isForProject() || page.isForPrefs()) {
@@ -67,7 +63,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		return false;
 	}
 
-	public IAConfiguration getAutotoolsCfg() {
+	private IAConfiguration getAutotoolsCfg() {
 		AutotoolsConfigurePropertyPage ap = (AutotoolsConfigurePropertyPage)page;
 		// We call getConfigurationData() to get the name because if the configuration has been renamed,
 		// it will cause the option value handler to clone the IAConfiguration
@@ -88,7 +84,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 	
 	@Override
 	public void createControls(Composite parent) {
-		AutotoolsConfigurationManager.getInstance().clearTmpConfigurations(getProject());
+		AutotoolsConfigurationManager.getInstance().clearTmpConfigurations(page.getProject());
 		syncClones();
 		
 		super.createControls(parent);
@@ -102,9 +98,6 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 				| GridData.FILL_VERTICAL);
 		composite.setLayoutData(gd);
 		GridLayout layout= new GridLayout();
-//		layout.numColumns= 2;
-		//PixelConverter pc= new PixelConverter(composite);
-		//layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
 		
 		// Create the sash form
@@ -117,25 +110,19 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		sashForm.setLayout(layout);
 		createSelectionArea(sashForm);
 		createEditArea(sashForm);
-
-//		usercomp.addControlListener(new ControlAdapter() {
-//			@Override
-//			public void controlResized(ControlEvent e) {
-//				specificResize();
-//			}});
-		
 	}
 
-	protected void createSelectionArea (Composite parent) {
+	private void createSelectionArea(Composite parent) {
 		fTree = new TreeViewer(parent, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
 		fTree.addSelectionChangedListener(event -> handleOptionSelection());
 		fTree.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		// Create a temporary default AutotoolsConfiguration to use for label info
-		IAConfiguration tmp = AutotoolsConfigurationManager.getInstance().createDefaultConfiguration(getProject(), "");
+		IAConfiguration tmp = AutotoolsConfigurationManager.getInstance().createDefaultConfiguration(page.getProject(),
+				"");
 		fTree.setLabelProvider(new ToolListLabelProvider(tmp));
 	}
 
-	protected void createEditArea(Composite parent) {
+	private void createEditArea(Composite parent) {
 		containerSC = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		containerSC.setExpandHorizontal(true);
 		containerSC.setExpandVertical(true);
@@ -149,7 +136,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		settingsPageContainer.layout();
 	}
 	
-	protected void setValues() {
+	private void setValues() {
 		/*
 		 *  This method updates the context of the build property pages
 		 *   - Which configuration/resource configuration is selected
@@ -189,32 +176,6 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		selectedElement = newElements[0];
 		fTree.setSelection(new StructuredSelection(selectedElement), true);
 		
-//		//  Determine what the selection in the tree should be
-//		//  If the saved selection is not null, try to match the saved selection
-//		//  with an object in the new element list.
-//		//  Otherwise, select the first tool in the tree
-//		Object primaryObject = null;
-//		if (selectedElement != null) {
-//			selectedElement = matchSelectionElement(selectedElement, newElements);
-//		}
-//			
-//		if (selectedElement == null) {
-//			selectedElement = (newElements != null && newElements.length > 0 ? newElements[0] : null);
-//		}
-//			
-//		if (selectedElement != null) {
-//			primaryObject = selectedElement.getTool();
-//			if (primaryObject == null) {
-//				primaryObject = selectedElement.getOptionCategory();
-//			}
-//			if (primaryObject != null) {
-//				if (primaryObject instanceof IOptionCategory) {
-//					((ToolSettingsPrefStore)settingsStore).setSelection(getResDesc(), selectedElement, (IOptionCategory)primaryObject);
-//				}
-//				optionList.setSelection(new StructuredSelection(selectedElement), true);
-//			}
-//		}
-//		specificResize();
 	}
 
 	private void handleOptionSelection() {
@@ -287,8 +248,8 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 	
 	}
 
-	/* (non-Javadoc)
-	 * Answers the list of settings pages for the selected configuration 
+	/**
+	 * Answers the list of settings pages for the selected configuration
 	 */
 	private List<AbstractConfigurePropertyOptionsPage> getPagesForConfig() {
 		if (getCfg() == null) return null;
@@ -298,26 +259,6 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 			configToPageListMap.put(getCfg().getName(), pages);	
 		}
 		return pages;
-	}
-	
-	/**
-	 * Returns the "dirty" state
-	 */
-	public boolean isDirty() {
-		// Check each settings page
-		List<AbstractConfigurePropertyOptionsPage> pages = getPagesForConfig();
-		// Make sure we have something to work on
-		if (pages == null) {
-			// Nothing to do
-			return false;
-		}
-		ListIterator<AbstractConfigurePropertyOptionsPage> iter = pages.listIterator();
-		while (iter.hasNext()) {
-			AbstractConfigurePropertyOptionsPage page = iter.next();
-			if (page == null) continue;
-			if (page.isDirty()) return true;
-		}
-		return false;
 	}
 	
 	@Override
@@ -330,19 +271,19 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 			IAConfiguration acfg = ap.getConfiguration(cd);
 			cfgList.put(cd.getId(), acfg);
 		}
-		IProject project = getProject();
+		IProject project = page.getProject();
 		AutotoolsConfigurationManager.getInstance().replaceProjectConfigurations(project, cfgList, cfgs);
 		AutotoolsConfigurationManager.getInstance().clearTmpConfigurations(project);
 	}
 	
 	@Override
 	protected void performCancel() {
-		AutotoolsConfigurationManager.getInstance().clearTmpConfigurations(getProject());
+		AutotoolsConfigurationManager.getInstance().clearTmpConfigurations(page.getProject());
 	}
 	
 	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
-		IProject project = getProject();
+		IProject project = page.getProject();
 		ICConfigurationDescription[] cfgs = page.getCfgsEditable();
 		// Apply all changes to existing saved configurations and new configurations, but do not perform
 		// deletions.

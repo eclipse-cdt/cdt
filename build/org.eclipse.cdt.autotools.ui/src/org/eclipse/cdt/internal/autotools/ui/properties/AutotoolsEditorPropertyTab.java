@@ -31,10 +31,6 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 	protected Combo fAMVersionCombo;
 	IProject project;
 
-	private IProject getProject() {
-		return page.getProject();
-	}
-	
 	@Override
 	public boolean canBeVisible() {
 		return true;
@@ -42,7 +38,6 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 
 	@Override
 	public void createControls(Composite parent) {
-		// TODO Auto-generated method stub
 		super.createControls(parent);
 		Composite composite= usercomp;
 		
@@ -55,7 +50,7 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 		//layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
 		
-		project = getProject();
+		project = page.getProject();
 		
 		/* check box for new editors */
 		fACVersionCombo= new Combo(composite, SWT.CHECK | SWT.DROP_DOWN | SWT.READ_ONLY);

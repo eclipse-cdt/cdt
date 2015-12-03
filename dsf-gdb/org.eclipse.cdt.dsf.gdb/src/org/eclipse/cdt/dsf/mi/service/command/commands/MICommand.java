@@ -166,11 +166,11 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
         }
 
         String opt = optionsToString();
-        if (!opt.isEmpty()) {
+        if (opt.length() > 0) {
             command.append(' ').append(opt);
         }
         String p = parametersToString();
-        if (!p.isEmpty()) {
+        if (p.length() > 0) {
             command.append(' ').append(p);
         }
         command.append('\n');
@@ -212,7 +212,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     
     protected String optionsToString() {
 		StringBuffer sb = new StringBuffer();
-		if (fOptions != null && !fOptions.isEmpty()) {
+		if (fOptions != null && fOptions.size() > 0) {
 			for (Adjustable option : fOptions) {
 				sb.append(option.getAdjustedValue());
 			}
@@ -223,7 +223,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     protected String parametersToString() {
 		String[] options = getOptions();
 		StringBuffer buffer = new StringBuffer();
-		if (fParameters != null && !fParameters.isEmpty()) {
+		if (fParameters != null && fParameters.size() > 0) {
 			// According to GDB/MI spec
 			// Add a "--" separator if any parameters start with "-"
 			if (options != null && options.length > 0) {

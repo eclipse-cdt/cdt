@@ -95,7 +95,7 @@ public class QtProjectFileSourceViewerConfiguration extends TextSourceViewerConf
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 	    ContentAssistant contentAssistant = new ContentAssistant();
-	    IContentAssistProcessor processor = new ContentAssistProcessor();
+	    IContentAssistProcessor processor = new QtProjectFileContentAssistProcessor();
 	    contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 	    contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 	    return contentAssistant;

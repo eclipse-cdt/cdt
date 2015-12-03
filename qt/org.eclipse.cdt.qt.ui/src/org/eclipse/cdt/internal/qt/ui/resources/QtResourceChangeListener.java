@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.internal.qt.core.QtNature;
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -55,7 +55,7 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 							return true;
 						}
 					} catch (CoreException e) {
-						QtUIPlugin.log(e);
+						Activator.log(e);
 					}
 					return false;
 				} else if (resource.getType() == IResource.FOLDER) {
@@ -74,7 +74,7 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 							return true;
 						}
 					} catch (CoreException e) {
-						QtUIPlugin.log(e);
+						Activator.log(e);
 					}
 					return false;
 				}
@@ -104,7 +104,7 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 			// Check all projects starting at the workspace root
 			event.getDelta().accept(visitor);
 		} catch (CoreException e) {
-			QtUIPlugin.log(e);
+			Activator.log(e);
 		}
 
 		// Schedule the job to update the .pro files

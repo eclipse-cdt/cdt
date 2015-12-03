@@ -7,7 +7,7 @@
  */
 package org.eclipse.cdt.internal.qt.ui.assist;
 
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.templates.Template;
@@ -24,7 +24,7 @@ public class QtTemplateProposal extends TemplateProposal implements ICCompletion
 	}
 
 	public QtTemplateProposal(Template template, TemplateContext context, IRegion region, int relevance) {
-		super(template, context, region, QtUIPlugin.getQtLogo(), BASE_RELEVANCE + relevance);
+		super(template, context, region, Activator.getQtLogo(), BASE_RELEVANCE + relevance);
 	}
 
 	@Override

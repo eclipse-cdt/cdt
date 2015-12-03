@@ -52,7 +52,7 @@ public class QObjectDeclarationCompletion {
 		IRegion region = new Region(position.getOffset(), position.getLength());
 
 		Template template = new Template( "class", "QObject declaration", CContextType.ID, TEMPLATE, true);
-		return Collections.<ICompletionProposal>singletonList(new CTemplateProposal(template, tuCtx, region, QtUIPlugin.getQtLogo()));
+		return Collections.<ICompletionProposal>singletonList(new CTemplateProposal(template, tuCtx, region, Activator.getQtLogo()));
 	}
 
 	private static Position getPosition(ICEditorContentAssistInvocationContext context) {

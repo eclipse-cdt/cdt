@@ -27,7 +27,7 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 @SuppressWarnings("restriction")
 public class QPropertyCompletion {
 
-	private static final String CONTEXT_ID = QtUIPlugin.PLUGIN_ID + ".proposal.Q_PROPERTY";
+	private static final String CONTEXT_ID = Activator.PLUGIN_ID + ".proposal.Q_PROPERTY";
 
 	private static final Template QPropertyTemplate
 		= new Template("Q_PROPERTY", "Q_PROPERTY declaration", CONTEXT_ID, "Q_PROPERTY( ${type} ${name} READ ${accessor} ${cursor} )", true);

@@ -3,6 +3,7 @@ package org.eclipse.cdt.qt.core.tests;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public class Activator implements BundleActivator {
 
@@ -20,6 +21,11 @@ public class Activator implements BundleActivator {
 
 	public static Bundle getBundle() {
 		return context != null ? context.getBundle() : null;
+	}
+
+	public static <T> T getService(Class<T> service) {
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
 	}
 
 }

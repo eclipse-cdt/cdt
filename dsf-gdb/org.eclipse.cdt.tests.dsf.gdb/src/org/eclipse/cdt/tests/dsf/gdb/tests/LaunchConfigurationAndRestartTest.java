@@ -552,20 +552,12 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     					fExpService.getFormattedValueContext(argcDmc, MIExpressions.DETAILS_FORMAT), rm);
     		}
     	};
-    	try {
-    		fExpService.getExecutor().execute(query);
-    		FormattedValueDMData value = query.get(500, TimeUnit.MILLISECONDS);
+   		fExpService.getExecutor().execute(query);
+   		FormattedValueDMData value = query.get(500, TimeUnit.MILLISECONDS);
     		
-    		// Argc should be 2: the program name and the one arguments
-    		assertTrue("Expected 2 but got " + value.getFormattedValue(),
-    				value.getFormattedValue().trim().equals("2"));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
-    	}
+   		// Argc should be 2: the program name and the one arguments
+   		assertTrue("Expected 2 but got " + value.getFormattedValue(),
+   				value.getFormattedValue().trim().equals("2"));
     	
     	// Check that argv is also correct.
     	final IExpressionDMContext argvDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argv[argc-1]");
@@ -576,18 +568,64 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     					fExpService.getFormattedValueContext(argvDmc, MIExpressions.DETAILS_FORMAT), rm);
     		}
     	};
-    	try {
-    		fExpService.getExecutor().execute(query2);
-    		FormattedValueDMData value = query2.get(500, TimeUnit.MILLISECONDS);
-    		assertTrue("Expected \"" + argumentUsedByGDB + "\" but got " + value.getFormattedValue(),
-    				value.getFormattedValue().trim().endsWith(argumentUsedByGDB));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
-    	}
+    	fExpService.getExecutor().execute(query2);
+    	value = query2.get(500, TimeUnit.MILLISECONDS);
+   		assertTrue("Expected \"" + argumentUsedByGDB + "\" but got " + value.getFormattedValue(),
+   				value.getFormattedValue().trim().endsWith(argumentUsedByGDB));
+    }
+    
+    /**
+     * This test will tell the launch to set some more arguments for the program.  We will
+     * then check that the program has the same arguments.
+     * See bug 474648
+     */
+    @Test
+    public void testSettingArgumentsWithSpecialSymbols() throws Throwable {
+    	// Test that arguments are parsed correctly:
+    	// The string provided by the user is split into arguments on spaces
+    	// except for those inside quotation marks, double or single.
+    	// Any character within quotation marks or after the backslash character
+    	// is treated literally, whilst these special characters have to be
+    	// escaped explicitly to be recorded.
+    	// All other characters including semicolons, backticks, pipes, dollars and newlines
+    	// must be treated literally.
+    	String argumentToPreserveSpaces = "--abc=\"x;y;z\nsecondline: \"`date`$PS1\"`date | wc`\"";
+    	String argumentUsedByGDB = "\"--abc=x;y;z\\nsecondline: `date`$PS1`date | wc`\"";
+
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, argumentToPreserveSpaces);
+    	doLaunch();
+
+    	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+
+    	// Check that argc is correct
+    	final IExpressionDMContext argcDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argc");
+    	Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+    		@Override
+    		protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
+    			fExpService.getFormattedExpressionValue(
+    					fExpService.getFormattedValueContext(argcDmc, MIExpressions.DETAILS_FORMAT), rm);
+    		}
+    	};
+    	fExpService.getExecutor().execute(query);
+    	FormattedValueDMData value = query.get(500, TimeUnit.MILLISECONDS);
+    		
+    	// Argc should be 2: the program name and the four arguments.
+    	assertTrue("Expected 2 but got " + value.getFormattedValue(),
+    			value.getFormattedValue().trim().equals("2"));
+    	
+    	// Check that argv is also correct.
+    	final IExpressionDMContext argvDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argv[argc-1]");
+    	Query<FormattedValueDMData> query2 = new Query<FormattedValueDMData>() {
+    		@Override
+    		protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
+    			fExpService.getFormattedExpressionValue(
+    					fExpService.getFormattedValueContext(argvDmc, MIExpressions.DETAILS_FORMAT), rm);
+    		}
+    	};
+    	fExpService.getExecutor().execute(query2);
+    	value = query2.get(500, TimeUnit.MILLISECONDS);
+   		assertTrue("Expected \"" + argumentUsedByGDB + "\" but got " + value.getFormattedValue(),
+   				value.getFormattedValue().endsWith(argumentUsedByGDB));
     }
     
     /**

@@ -13,6 +13,7 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
+import java.util.ArrayList;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 
 /**
@@ -31,17 +32,52 @@ public class MIGDBSetArgs extends MIGDBSet {
     /** @since 4.0 */
     public MIGDBSetArgs(IMIContainerDMContext dmc, String[] arguments) {
         super(dmc, null);
-
-    	String[] cmdArray = new String[arguments.length + 1];
-    	cmdArray[0] = "args"; //$NON-NLS-1$
+        fParameters = new ArrayList<Adjustable>();
+        fParameters.add(new MIStandardParameterAdjustable("args")); //$NON-NLS-1$
     	for (int i = 0; i < arguments.length; i++) {
-    		if (arguments[i].isEmpty()) {
-    			// An empty parameter can be passed with two single quotes
-    			cmdArray[i + 1] = "''"; //$NON-NLS-1$
-    		} else {
-    			cmdArray[i + 1] = arguments[i];
-    		}
+    		fParameters.add(new MIArgumentAdjustable(arguments[i]));
     	}
-    	setParameters(cmdArray);
     }
+    
+    /**
+	 * @since 5.0
+	 */
+    public static class MIArgumentAdjustable extends MICommandAdjustable {
+
+    	public MIArgumentAdjustable(String value) {
+    		super(value);
+    	}
+    	
+    	@Override
+    	public String getAdjustedValue() {
+    		// Replace and concatenate all occurrences of:
+    		// ' with "'"
+    		//   (as ' is used to surround everything else
+    		//    it has to be quoted or escaped)
+    		// newline character with $'\n'
+    		//   (\n is treated literally within quotes or
+    		//    as just 'n' otherwise, whilst supplying
+    		//    the newline character literally ends the command)
+    		// Anything in between and around these occurrences
+    		// is surrounded by single quotes.
+    		//   (to prevent bash from carrying out substitutions
+    		//    or running arbitrary code with backticks or $())
+    		StringBuilder builder = new StringBuilder();
+    		builder.append('\'');
+    		for (int j = 0; j < value.length(); j++) {
+    			char c = value.charAt(j);
+    			if (c == '\'') {
+    				builder.append("'\"'\"'"); //$NON-NLS-1$
+    			} else if (c == '\n') {
+    				builder.append("'$'\\n''"); //$NON-NLS-1$
+    			} else {
+    				builder.append(c);
+    			}
+    		}
+    		builder.append('\'');
+    		return builder.toString();
+    	}
+    }
+
 }
+

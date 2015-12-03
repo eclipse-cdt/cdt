@@ -8,20 +8,16 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
-// This will only be visible globally if we are in a browser environment
-var injectQML;
-
-(function (mod) {
+(function (root, mod) {
 	if (typeof exports === "object" && typeof module === "object") // CommonJS
-		return module.exports = mod();
+		return mod(exports);
 	if (typeof define === "function" && define.amd) // AMD
-		return define([], mod);
-	injectQML = mod(); // Plain browser env
-})(function () {
+		return define(["exports"], mod);
+	mod(root.acornQMLInjector || (root.acornQMLInjector = {})); // Plain browser env
+})(this, function (exports) {
 	'use strict';
 
-	return function (acorn) {
+	exports.inject = function (acorn) {
 		// Acorn token types
 		var tt = acorn.tokTypes;
 
@@ -88,7 +84,7 @@ var injectQML;
 		 * the type import or pragma
 		 */
 		pp.qml_parseHeaderStatements = function () {
-			var node = this.startNode()
+			var node = this.startNode();
 			node.statements = [];
 
 			var loop = true;
@@ -103,7 +99,7 @@ var injectQML;
 			}
 
 			return this.finishNode(node, "QMLHeaderStatements");
-		}
+		};
 
 		/*
 		 * Parses a QML Pragma statement of the form:
@@ -115,7 +111,7 @@ var injectQML;
 			node.id = this.parseIdent(false);
 			this.semicolon();
 			return this.finishNode(node, "QMLPragmaStatement");
-		}
+		};
 
 		/*
 		 * Parses a QML Import statement of the form:
@@ -180,7 +176,7 @@ var injectQML;
 			node.raw = this.input.slice(this.start, this.end);
 			node.value = this.value;
 			var matches;
-			if (matches = /(\d+)\.(\d+)/.exec(node.raw)) {
+			if ((matches = /(\d+)\.(\d+)/.exec(node.raw))) {
 				node.major = parseInt(matches[1]);
 				node.minor = parseInt(matches[2]);
 				this.next();
@@ -189,7 +185,7 @@ var injectQML;
 			}
 
 			return this.finishNode(node, "QMLVersionLiteral");
-		}
+		};
 
 		/*
 		 * Parses a QML Qualifier of the form:
@@ -200,7 +196,7 @@ var injectQML;
 			this.expectContextual(qtt._as);
 			node.id = this.qml_parseIdent(false);
 			return this.finishNode(node, "QMLQualifier");
-		}
+		};
 
 		/*
 		 * Parses a QML Object Literal of the form:
@@ -217,7 +213,7 @@ var injectQML;
 			}
 			node.body = this.qml_parseMemberBlock();
 			return this.finishNode(node, "QMLObjectLiteral");
-		}
+		};
 
 		/*
 		 * Parses a QML Member Block of the form:
@@ -231,7 +227,7 @@ var injectQML;
 				node.members.push(this.qml_parseMember());
 			}
 			return this.finishNode(node, "QMLMemberBlock");
-		}
+		};
 
 		/*
 		 * Parses a QML Member which can be one of the following:
@@ -250,7 +246,7 @@ var injectQML;
 				return this.qml_parseFunctionMember();
 			}
 			return this.qml_parseObjectLiteralOrPropertyBinding();
-		}
+		};
 
 		/*
 		 * Parses a JavaScript function as a member of a QML Object Literal
@@ -259,7 +255,7 @@ var injectQML;
 			var node = this.startNode();
 			this.expect(tt._function);
 			return this.parseFunction(node, true);
-		}
+		};
 
 		/*
 		 * Parses a QML Object Literal or Property Binding depending on the tokens found.
@@ -278,7 +274,7 @@ var injectQML;
 				return this.qml_parsePropertyBinding(node);
 			}
 			this.unexpected();
-		}
+		};
 
 		/*
 		 * Parses a QML Property of the form:
@@ -294,7 +290,7 @@ var injectQML;
 			this.expect(tt.colon);
 			node.binding = this.qml_parseBinding();
 			return this.finishNode(node, "QMLPropertyBinding");
-		}
+		};
 
 		/*
 		 * Parses a QML Signal Definition of the form:
@@ -325,7 +321,7 @@ var injectQML;
 			this.qml_parseSignalParams(node);
 			this.semicolon();
 			return this.finishNode(node, "QMLSignalDefinition");
-		}
+		};
 
 		/*
 		 * Parses QML Signal Parameters of the form:
@@ -344,7 +340,7 @@ var injectQML;
 					this.expect(tt.parenR);
 				}
 			}
-		}
+		};
 
 		/*
 		 * Parses a QML Property Declaration (or Alias) of the form:
@@ -354,10 +350,10 @@ var injectQML;
 			var node = this.startNode();
 
 			// Parse 'default' or 'readonly'
-			node["default"] = false;
-			node["readonly"] = false;
+			node.default = false;
+			node.readonly = false;
 			if (this.eat(tt._default)) {
-				node["default"] = true;
+				node.default = true;
 			} else if (this.isContextual(qtt._readonly)) {
 				// Parse as a qualified id in case this is not a property declaration
 				var readonly = this.qml_parseQualifiedId(true);
@@ -367,7 +363,7 @@ var injectQML;
 						node.id = readonly;
 						return this.qml_parseObjectLiteralOrPropertyBinding(node);
 					}
-					node["readonly"] = true;
+					node.readonly = true;
 				} else {
 					// Readonly keyword is a qualified ID.  This is not a property declaration.
 					node.id = readonly;
@@ -377,22 +373,22 @@ var injectQML;
 
 			// Parse as a qualified id in case this is not a property declaration
 			var property = this.qml_parseQualifiedId(true);
-			if (property.parts.length === 1 || node["default"] || node["readonly"]) {
+			if (property.parts.length === 1 || node.default || node.readonly) {
 				if (property.name !== qtt._property) {
 					this.unexpected();
 				}
 
 				if (this.type === tt.colon || this.type === tt.braceL) {
 					// This is a property binding or object literal.
-					node["default"] = undefined;
-					node["readonly"] = undefined;
+					node.default = undefined;
+					node.readonly = undefined;
 					node.id = property;
 					return this.qml_parseObjectLiteralOrPropertyBinding(node);
 				}
 			} else {
 				// Property keyword is a qualified ID.  This is not a property declaration.
-				node["default"] = undefined;
-				node["readonly"] = undefined;
+				node.default = undefined;
+				node.readonly = undefined;
 				node.id = property;
 				return this.qml_parseObjectLiteralOrPropertyBinding(node);
 			}
@@ -407,7 +403,7 @@ var injectQML;
 			}
 
 			return this.finishNode(node, "QMLPropertyDeclaration");
-		}
+		};
 
 		/*
 		 * Parses one of the following possibilities for a QML Property assignment:
@@ -422,7 +418,7 @@ var injectQML;
 			//      test: QMLObject.QualifiedId {  }
 
 			return this.qml_parseScriptBinding();
-		}
+		};
 
 		/*
 		 * Parses one of the following Script Bindings:
@@ -440,7 +436,7 @@ var injectQML;
 				this.semicolon();
 			}
 			return this.finishNode(node, "QMLScriptBinding");
-		}
+		};
 
 		/*
 		 * Parses a QML Statement Block of the form:
@@ -454,7 +450,7 @@ var injectQML;
 				node.statements.push(this.parseStatement(true, false));
 			}
 			return this.finishNode(node, "QMLStatementBlock");
-		}
+		};
 
 		/*
 		 * Parses a QML Type which can be either a Qualified ID or a primitive type keyword.
@@ -468,7 +464,7 @@ var injectQML;
 				return this.qml_parseQualifiedId(false);
 			}
 			this.unexpected();
-		}
+		};
 
 		/*
 		 * Parses a Qualified ID of the form:
@@ -494,7 +490,7 @@ var injectQML;
 			}
 
 			return this.finishNode(node, "QMLQualifiedID");
-		}
+		};
 
 		/*
 		 * Parses an Identifier in a QML Context.  That is, this method uses 'isQMLContextual'
@@ -511,7 +507,7 @@ var injectQML;
 				}
 			}
 			return this.parseIdent(liberal);
-		}
+		};
 
 		/*
 		 * Returns whether or not a given token type and name can be a QML Identifier.
@@ -520,13 +516,13 @@ var injectQML;
 		pp.qml_isIdent = function (type, name) {
 			if (type === tt.name) {
 				var key;
-				if (key = keywords[name]) {
-					return key.isQMLContextual
+				if ((key = keywords[name])) {
+					return key.isQMLContextual;
 				}
 				return true;
 			}
 			return false;
-		}
+		};
 
 		/*
 		 * Returns whether or not the current token is a QML primitive type and consumes
@@ -538,7 +534,7 @@ var injectQML;
 				return true;
 			}
 			return false;
-		}
+		};
 
 		/*
 		 * Returns whether or not the current token is a QML primitive type.
@@ -550,12 +546,12 @@ var injectQML;
 
 			if (type === tt.name) {
 				var key;
-				if (key = keywords[name]) {
+				if ((key = keywords[name])) {
 					return key.isPrimitive;
 				}
 			}
 			return false;
-		}
+		};
 
 		acorn.plugins.qml = function (instance) {
 
@@ -589,8 +585,8 @@ var injectQML;
 					return this.finishNode(node, "QMLProgram");
 				};
 			});
-		}
+		};
 
 		return acorn;
 	};
-})
+});

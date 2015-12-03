@@ -8,18 +8,14 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
-// This will only be visible globally if we are in a browser environment
-var acornQML;
-
 (function (mod) {
 	if (typeof exports == "object" && typeof module == "object") // CommonJS
-		return module.exports = mod(require("./inject.js"), require("acorn"));
+		return mod(require("./inject.js"), require("acorn"));
 	if (typeof define == "function" && define.amd) // AMD
 		return define(["./inject.js", "acorn/dist/acorn"], mod);
-	acornQML = mod(injectQML, acorn); // Plain browser env
-})(function (injectQML, acorn) {
+	mod(acornQMLInjector, acorn); // Plain browser env
+})(function (acornQMLInjector, acorn) {
 	'use strict';
 
-	return injectQML(acorn);
-})
+	acornQMLInjector.inject(acorn);
+});

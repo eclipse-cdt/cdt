@@ -12,16 +12,16 @@
 // This will only be visible globally if we are in a browser environment
 var injectQMLLoose;
 
-(function (mod) {
+(function (root, mod) {
 	if (typeof exports === "object" && typeof module === "object") // CommonJS
-		return module.exports = mod();
+		return mod(module.exports);
 	if (typeof define === "function" && define.amd) // AMD
-		return define([], mod);
-	injectQMLLoose = mod(); // Plain browser env
-})(function () {
+		return define(["exports"], mod);
+	mod(root.acornQMLLooseInjector || (root.acornQMLLooseInjector = {})); // Plain browser env
+})(this, function (exports) {
 	"use strict";
 
-	return function (acorn) {
+	exports.inject = function (acorn) {
 		// Acorn token types
 		var tt = acorn.tokTypes;
 
@@ -38,7 +38,7 @@ var injectQMLLoose;
 		 * the type import or pragma
 		 */
 		lp.qml_parseHeaderStatements = function () {
-			var node = this.startNode()
+			var node = this.startNode();
 			node.statements = [];
 
 			var loop = true;
@@ -53,7 +53,7 @@ var injectQMLLoose;
 			}
 
 			return this.finishNode(node, "QMLHeaderStatements");
-		}
+		};
 
 		/*
 		 * Parses a QML Pragma statement of the form:
@@ -65,7 +65,7 @@ var injectQMLLoose;
 			node.id = this.parseIdent(false);
 			this.semicolon();
 			return this.finishNode(node, "QMLPragmaStatement");
-		}
+		};
 
 		/*
 		 * Parses a QML Import statement of the form:
@@ -122,7 +122,7 @@ var injectQMLLoose;
 			node.value = this.tok.value;
 			var matches;
 			if (this.tok.type === tt.num) {
-				if (matches = /(\d+)\.(\d+)/.exec(node.raw)) {
+				if ((matches = /(\d+)\.(\d+)/.exec(node.raw))) {
 					node.major = parseInt(matches[1]);
 					node.minor = parseInt(matches[2]);
 					this.next();
@@ -139,7 +139,7 @@ var injectQMLLoose;
 			}
 
 			return this.finishNode(node, "QMLVersionLiteral");
-		}
+		};
 
 		/*
 		 * Parses a QML Qualifier of the form:
@@ -150,7 +150,7 @@ var injectQMLLoose;
 			this.expectContextual(qtt._as);
 			node.id = this.qml_parseIdent(false);
 			return this.finishNode(node, "QMLQualifier");
-		}
+		};
 
 		/*
 		 * Parses a QML Object Literal of the form:
@@ -163,7 +163,7 @@ var injectQMLLoose;
 			node.id = this.qml_parseQualifiedId(false);
 			node.body = this.qml_parseMemberBlock();
 			return this.finishNode(node, "QMLObjectLiteral");
-		}
+		};
 
 		/*
 		 * Parses a QML Member Block of the form:
@@ -184,7 +184,7 @@ var injectQMLLoose;
 			this.popCx();
 			this.eat(tt.braceR);
 			return this.finishNode(node, "QMLMemberBlock");
-		}
+		};
 
 		/*
 		 * Parses a QML Member which can be one of the following:
@@ -222,7 +222,7 @@ var injectQMLLoose;
 			}
 			// ignore the current token if it didn't pass the previous tests
 			this.next();
-		}
+		};
 
 		/*
 		 * Parses a JavaScript function as a member of a QML Object Literal
@@ -231,7 +231,7 @@ var injectQMLLoose;
 			var node = this.startNode();
 			this.expect(tt._function);
 			return this.qml_parseFunction(node, true);
-		}
+		};
 
 		/*
 		* QML version of 'parseFunction' needed to have proper error tolerant parsing
@@ -250,7 +250,7 @@ var injectQMLLoose;
 				node.body = this.parseBlock();
 			} else {
 				if (this.options.locations) {
-					node.body = this.startNodeAt([ this.last.end, this.last.loc.end ])
+					node.body = this.startNodeAt([ this.last.end, this.last.loc.end ]);
 				} else {
 					node.body = this.startNodeAt(this.last.end);
 				}
@@ -258,7 +258,7 @@ var injectQMLLoose;
 				this.finishNode(node.body, "BlockStatement");
 			}
 			return this.finishNode(node, isStatement ? "FunctionDeclaration" : "FunctionExpression");
-		}
+		};
 
 		/*
 		 * Parses a QML Object Literal or Property Binding depending on the tokens found.
@@ -282,7 +282,7 @@ var injectQMLLoose;
 				return this.qml_parsePropertyBinding();
 			}
 			return null;
-		}
+		};
 
 		/*
 		 * Parses a QML Property of the form:
@@ -295,7 +295,7 @@ var injectQMLLoose;
 			this.expect(tt.colon);
 			node.binding = this.qml_parseBinding(start);
 			return this.finishNode(node, "QMLPropertyBinding");
-		}
+		};
 
 		/*
 		 * Parses a QML Signal Definition of the form:
@@ -315,13 +315,13 @@ var injectQMLLoose;
 			this.qml_parseSignalParams(node);
 			this.semicolon();
 			return this.finishNode(node, "QMLSignalDefinition");
-		}
+		};
 
 		/*
 		* Checks if the given node is a dummy identifier
 		*/
 		function isDummy(node) {
-			return node.name === "✖"
+			return node.name === "✖";
 		}
 
 		/*
@@ -329,8 +329,8 @@ var injectQMLLoose;
 		 *    [(<Type> <Identifier> [',' <Type> <Identifier>]* )]?
 		 */
 		lp.qml_parseSignalParams = function (node) {
-			this.pushCx()
-			var indent = this.curIndent, line = this.curLineStart
+			this.pushCx();
+			var indent = this.curIndent, line = this.curLineStart;
 			node.params = [];
 			if (this.eat(tt.parenL)) {
 				while (!this.closes(tt.parenR, indent + 1, line)) {
@@ -352,15 +352,15 @@ var injectQMLLoose;
 					}
 					this.eat(tt.comma);
 				}
-				this.popCx()
+				this.popCx();
 				if (!this.eat(tt.parenR)) {
 					// If there is no closing brace, make the node span to the start
 					// of the next token (this is useful for Tern)
-					this.last.end = this.tok.start
-					if (this.options.locations) this.last.loc.end = this.tok.loc.start
+					this.last.end = this.tok.start;
+					if (this.options.locations) this.last.loc.end = this.tok.loc.start;
 				}
 			}
-		}
+		};
 
 		/*
 		 * Parses a QML Property Declaration (or Alias) of the form:
@@ -368,25 +368,26 @@ var injectQMLLoose;
 		 */
 		lp.qml_parsePropertyDeclaration = function () {
 			var node = this.startNode();
+			var objOrBind = null;
 
 			// Parse 'default' or 'readonly'
-			node["default"] = false;
-			node["readonly"] = false;
+			node.default = false;
+			node.readonly = false;
 			if (this.eat(tt._default)) {
-				node["default"] = true;
+				node.default = true;
 			} else if (this.isContextual(qtt._readonly)) {
-				var objOrBind = this.qml_parseObjectLiteralOrPropertyBinding();
+				objOrBind = this.qml_parseObjectLiteralOrPropertyBinding();
 				if (objOrBind) {
-					objOrBind["default"] = undefined;
-					objOrBind["readonly"] = undefined;
+					objOrBind.default = undefined;
+					objOrBind.readonly = undefined;
 					return objOrBind;
 				}
 				this.expectContextual(qtt._readonly);
-				node["readonly"] = true;
+				node.readonly = true;
 			}
 
-			if (!node["default"] && !node["readonly"]) {
-				var objOrBind = this.qml_parseObjectLiteralOrPropertyBinding();
+			if (!node.default && !node.readonly) {
+				objOrBind = this.qml_parseObjectLiteralOrPropertyBinding();
 				if (objOrBind) {
 					return objOrBind;
 				}
@@ -408,7 +409,7 @@ var injectQMLLoose;
 			}
 
 			return this.finishNode(node, "QMLPropertyDeclaration");
-		}
+		};
 
 		/*
 		 * Parses one of the following possibilities for a QML Property assignment:
@@ -437,7 +438,7 @@ var injectQMLLoose;
 			} else {
 				return this.qml_parseScriptBinding(start);
 			}
-		}
+		};
 
 		/*
 		 * Parses one of the following Script Bindings:
@@ -458,7 +459,7 @@ var injectQMLLoose;
 			}
 
 			// If this node consumed valid syntax, reset its start position
-			if (!node.script.type === "Identifier" || node.script.name !== "✖") {
+			if (node.script.type !== "Identifier" || node.script.name !== "✖") {
 				if (node.loc) {
 					node.loc.start = node.script.loc.start;
 				}
@@ -470,7 +471,7 @@ var injectQMLLoose;
 			}
 
 			return this.finishNode(node, "QMLScriptBinding");
-		}
+		};
 
 		/*
 		 * Parses a QML Statement Block of the form:
@@ -489,7 +490,7 @@ var injectQMLLoose;
 			this.popCx();
 			this.eat(tt.braceR);
 			return this.finishNode(node, "QMLStatementBlock");
-		}
+		};
 
 		/*
 		 * Parses a QML Type which can be either a Qualified ID or a primitive type keyword.
@@ -501,7 +502,7 @@ var injectQMLLoose;
 			} else {
 				return this.qml_parseQualifiedId(false);
 			}
-		}
+		};
 
 		/*
 		 * Parses a Qualified ID of the form:
@@ -527,7 +528,7 @@ var injectQMLLoose;
 			}
 
 			return this.finishNode(node, "QMLQualifiedID");
-		}
+		};
 
 		/*
 		 * Parses an Identifier in a QML Context.  That is, this method uses 'isQMLContextual'
@@ -544,7 +545,7 @@ var injectQMLLoose;
 				}
 			}
 			return this.parseIdent();
-		}
+		};
 
 		/*
 		* Checks the next token to see if it matches the given contextual keyword.  If the
@@ -552,14 +553,14 @@ var injectQMLLoose;
 		* and jumps ahead if it was found there.  Returns whether or not the keyword was found.
 		*/
 		lp.expectContextual = function(name) {
-			if (this.eatContextual(name)) return true
+			if (this.eatContextual(name)) return true;
 			for (var i = 1; i <= 2; i++) {
 				if (this.lookAhead(i).type == tt.name && this.lookAhead(i).value === name) {
-					for (var j = 0; j < i; j++) this.next()
-					return true
+					for (var j = 0; j < i; j++) this.next();
+					return true;
 				}
 			}
-		}
+		};
 
 		// Functions left un-changed from the main parser
 		lp.qml_isIdent = pp.qml_isIdent;
@@ -592,8 +593,8 @@ var injectQMLLoose;
 					return this.finishNode(node, "QMLProgram");
 				};
 			});
-		}
+		};
 
 		return acorn;
 	};
-})
+});

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27d6470d_29947599",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/PDAPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-03T16:16:20Z",
+      "side": 0,
+      "message": "is this what returned null? which version of the platform did you use?",
+      "range": {
+        "startLine": 155,
+        "startChar": 18,
+        "endLine": 155,
+        "endChar": 37
+      },
+      "revId": "e061d9788178d2d7648165cf8d10d4570f32f606",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

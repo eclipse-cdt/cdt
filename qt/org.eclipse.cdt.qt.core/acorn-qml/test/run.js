@@ -8,10 +8,17 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-"use-strict";
+"use strict";
 
+// Get the driver and test code
 var driver = require("./driver.js");
 require("./tests-qml.js");
+
+// Get and inject the QML plugin into Acorn
+var acorn = require("acorn");
+require("acorn/dist/acorn_loose");
+require("..");
+require("../loose");
 
 function group(name) {
 	if (typeof console === "object" && console.group) {
@@ -32,7 +39,7 @@ function log(title, message) {
 var stats, modes = {
 	Normal: {
 		config: {
-			parse: require("..").parse,
+			parse: acorn.parse,
 			normal: true,
 			filter: function (test) {
 				var opts = test.options || {};
@@ -42,7 +49,7 @@ var stats, modes = {
 	},
 	Loose: {
 		config: {
-			parse: require("../loose").parse_dammit,
+			parse: acorn.parse_dammit,
 			loose: true,
 			filter: function (test) {
 				var opts = test.options || {};
@@ -63,9 +70,9 @@ for (var name in modes) {
 	group(name);
 	var mode = modes[name];
 	stats = mode.stats = {testsRun: 0, failed: 0};
-	var t0 = +new Date;
+	var t0 = +new Date();
 	driver.runTests(mode.config, report);
-	mode.stats.duration = +new Date - t0;
+	mode.stats.duration = +new Date() - t0;
 	groupEnd();
 }
 

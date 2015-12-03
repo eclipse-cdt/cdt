@@ -24,8 +24,8 @@ var groupName;
 function TestCase(group, code, run) {
 	this.code = code;
 	this.group = group;
-	this.runTest = run || function (server, callback) {
-		callback("fail", code, "runTest function was not provided.");
+	this.runTest = run || function (server, callback, code) {
+		callback("fail", this.code, "runTest function was not provided.");
 	};
 }
 
@@ -37,19 +37,19 @@ exports.isolate = function (code) {
 			i--;
 		}
 	}
-}
+};
 
 exports.groupStart = function (group) {
 	groupName = group;
-}
+};
 
 exports.groupEnd = function () {
 	groupName = undefined;
-}
+};
 
 exports.test = function (code, runTest) {
 	testCases.push(new TestCase(groupName || "Default", code, runTest));
-}
+};
 
 exports.testCompletion = function (code, expected, beforeTest) {
 	testCases.push(new TestCase(groupName || "Default", code, function (server, callback) {
@@ -70,7 +70,7 @@ exports.testCompletion = function (code, expected, beforeTest) {
 			}
 		});
 	}, beforeTest));
-}
+};
 
 exports.testDefinition = function (code, expected, beforeTest) {
 	testCases.push(new TestCase(groupName || "Default", code, function (server, callback) {
@@ -91,21 +91,21 @@ exports.testDefinition = function (code, expected, beforeTest) {
 			}
 		});
 	}, beforeTest));
-}
+};
 
 exports.runTests = function (config, callback) {
 	for (var i = 0; i < testCases.length; ++i) {
 		var test = testCases[i];
 		if (test.group === config.group) {
 			var server = createServer();
-			test.runTest(server, callback);
+			test.runTest(server, callback, test.code);
 		}
 	}
 };
 
 function createServer(defs) {
 	var plugins = {};
-	plugins["qml"] = {};
+	plugins.qml = true;
 	var server = new tern.Server({
 		ecmaVersion: 5,
 		plugins : plugins,
@@ -114,12 +114,12 @@ function createServer(defs) {
 	return server;
 }
 
-function assertCompletion(server, code, expected, pos, callback) {
-	server.addFile("test1.qml", code);
+var assertCompletion = exports.assertCompletion = function (server, code, expected, pos, callback) {
+	server.addFile("main.qml", code);
 	server.request({
 		query : {
 			type: "completions",
-			file: "test1.qml",
+			file: "main.qml",
 			end: pos,
 			types: true,
 			docs: false,
@@ -139,12 +139,12 @@ function assertCompletion(server, code, expected, pos, callback) {
 	});
 };
 
-function assertDefinition(server, code, expected, pos, callback) {
-	server.addFile("test1.qml", code);
+var assertDefinition = exports.assertDefinition = function (server, code, expected, pos, callback) {
+	server.addFile("main.qml", code);
 	server.request({
 		query : {
 			type: "definition",
-			file: "test1.qml",
+			file: "main.qml",
 			end: pos,
 			types: true,
 			docs: false,
@@ -175,6 +175,7 @@ function addPath(str, pt) {
 }
 
 var misMatch = exports.misMatch = function (exp, act) {
+	var mis = null;
 	if (!exp || !act || (typeof exp != "object") || (typeof act != "object")) {
 		if (exp !== act) return ppJSON(exp) + " !== " + ppJSON(act);
 	} else if (exp instanceof RegExp || act instanceof RegExp) {
@@ -184,12 +185,12 @@ var misMatch = exports.misMatch = function (exp, act) {
 		if (!act.slice) return ppJSON(exp) + " != " + ppJSON(act);
 		if (act.length != exp.length) return "array length mismatch " + exp.length + " != " + act.length;
 		for (var i = 0; i < act.length; ++i) {
-			var mis = misMatch(exp[i], act[i]);
+			mis = misMatch(exp[i], act[i]);
 			if (mis) return addPath(mis, i);
 		}
 	} else {
 		for (var prop in exp) {
-			var mis = misMatch(exp[prop], act[prop]);
+			mis = misMatch(exp[prop], act[prop]);
 			if (mis) return addPath(mis, prop);
 		}
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-"use-strict";
+"use strict";
 
 var tests = [];
 
@@ -31,10 +31,10 @@ exports.runTests = function(config, callback) {
 		try {
 			var testOpts = test.options || {locations: true};
 			var expected = {};
-			if (expected.onComment = testOpts.onComment) {
-				testOpts.onComment = []
+			if ((expected.onComment = testOpts.onComment)) {
+				testOpts.onComment = [];
 			}
-			if (expected.onToken = testOpts.onToken) {
+			if ((expected.onToken = testOpts.onToken)) {
 				testOpts.onToken = [];
 			}
 			testOpts.plugins = { qml: true };
@@ -87,6 +87,7 @@ function addPath(str, pt) {
 }
 
 var misMatch = exports.misMatch = function(exp, act) {
+	var mis = null;
 	if (!exp || !act || (typeof exp != "object") || (typeof act != "object")) {
 		if (exp !== act) return ppJSON(exp) + " !== " + ppJSON(act);
 	} else if (exp instanceof RegExp || act instanceof RegExp) {
@@ -96,12 +97,12 @@ var misMatch = exports.misMatch = function(exp, act) {
 		if (!act.slice) return ppJSON(exp) + " != " + ppJSON(act);
 		if (act.length != exp.length) return "array length mismatch " + exp.length + " != " + act.length;
 		for (var i = 0; i < act.length; ++i) {
-			var mis = misMatch(exp[i], act[i]);
+			mis = misMatch(exp[i], act[i]);
 			if (mis) return addPath(mis, i);
 		}
 	} else {
 		for (var prop in exp) {
-			var mis = misMatch(exp[prop], act[prop]);
+			mis = misMatch(exp[prop], act[prop]);
 			if (mis) return addPath(mis, prop);
 		}
 	}

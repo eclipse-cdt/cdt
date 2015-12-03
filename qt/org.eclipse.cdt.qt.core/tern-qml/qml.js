@@ -8,130 +8,507 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-(function (mod) {
+(function (root, mod) {
 	if (typeof exports === "object" && typeof module === "object") // CommonJS
-		return mod(require("acorn"), require("acorn/dist/acorn_loose"), require("acorn/dist/walk"), require("acorn-qml"),
-				   require("acorn-qml/loose"), require("acorn-qml/walk"), require("tern/lib/infer"), require("tern"));
+		return mod(exports, require("acorn"), require("acorn/dist/acorn_loose"), require("acorn/dist/walk"),
+		require("acorn-qml"), require("acorn-qml/loose"), require("acorn-qml/walk"), require("tern"),
+		require("tern/lib/infer"), require("tern/lib/signal"));
 	if (typeof define === "function" && define.amd) // AMD
-		return define([ "acorn", "acorn/dist/acorn_loose", "acorn/dist/walk", "acorn-qml", "acorn-qml/loose", "acorn-qml/walk",
-					   "tern/lib/infer", "tern"], mod);
-	mod(acorn, acorn, acorn.walk, acorn, acorn, acorn.walk, tern, tern, tern.def); // Plain browser env
-})(function (acorn, acornLoose, walk, acornQML, acornQMLLoose, acornQMLWalk, infer, tern, def) {
+		return define(["exports", "acorn/dist/acorn", "acorn/dist/acorn_loose", "acorn/dist/walk", "acorn-qml",
+			"acorn-qml/loose", "acorn-qml/walk", "tern", "tern/lib/infer", "tern/lib/signal"], mod);
+	mod(root.ternQML || (root.ternQML = {}), acorn, acorn, acorn.walk, acorn, acorn, acorn.walk, tern, tern, tern.signal); // Plain browser env
+})(this, function (exports, acorn, acornLoose, walk, acornQML, acornQMLLoose, acornQMLWalk, tern, infer, signal) {
 	'use strict';
 
-	// Outside of the browser environment we have to grab 'def' from 'infer'
-	if (!def) {
-		def = infer.def;
+	// Grab 'def' from 'infer' (used for jsDefs)
+	var def = infer.def;
+
+	// 'extend' taken from infer.js
+	function extend(proto, props) {
+		var obj = Object.create(proto);
+		if (props) {
+			for (var prop in props) obj[prop] = props[prop];
+		}
+		return obj;
 	}
 
-	// QML Scope Builder
-	var ScopeBuilder = function (file, jsDefs) {
-		this.file = file;
-		this.file.qmlIDScope = new infer.Scope();
-		this.file.qmlIDScope.name = "<qml-id>";
-		this.jsDefs = jsDefs;
-		this.scopes = [];
-		this.jsScopes = [];
-		this.propScopes = [];
-		this.sigScopes = [];
+	// QML Import Handler
+	var qmlImportHandler = exports.importHandler = null;
+	var ImportHandler = function (server) {
+		this.server = server;
+		this.imports = null;
 	};
-
-	ScopeBuilder.prototype.getRootScope = function () {
-		return this.scopes.length > 0 ? this.scopes[0] : null;
-	};
-
-	ScopeBuilder.prototype.isRootScope = function (scope) {
-		return scope === this.rootScope();
-	};
-
-	ScopeBuilder.prototype.newObjScope = function (node) {
-		var rootScope = this.getRootScope(), scope;
-		if (!rootScope) {
-			scope = new infer.Scope(this.file.scope, node);
-		} else {
-			scope = new infer.Scope(rootScope, node);
-		}
-		scope.name = "<qml-obj>";
-		this.scopes.push(scope);
-		return scope;
-	};
-
-	ScopeBuilder.prototype.forEachObjScope = function (callback) {
-		for (var i = 0; i < this.scopes.length; i++) {
-			var scope = this.scopes[i];
-			if (scope.name === "<qml-obj>") {
-				callback(scope);
+	ImportHandler.prototype = {
+		reset: function () {
+			this.imports = null;
+		},
+		resolveDirectory: function (file, path) {
+			var impl = this.server.options.resolveDirectory;
+			if (impl) {
+				return impl(file, path);
 			}
-		}
-	};
-
-	ScopeBuilder.prototype.getObjScope = function (scope) {
-		while (scope && scope.name != "<qml-obj>") {
-			scope = scope.prev;
-		}
-		return scope;
-	};
-
-	ScopeBuilder.prototype.getIDScope = function () {
-		return this.file.qmlIDScope;
-	};
-
-	ScopeBuilder.prototype.newPropertyScope = function (objScope, node) {
-		var propScope = new infer.Scope(null, node);
-		propScope.name = "<qml-prop>";
-		propScope.objScope = objScope;
-		this.propScopes.push(propScope);
-		return propScope;
-	};
-
-	ScopeBuilder.prototype.forEachPropertyScope = function (callback) {
-		for (var i = 0; i < this.propScopes.length; i++) {
-			callback(this.propScopes[i], this.propScopes[i].objScope);
-		}
-	};
-
-	ScopeBuilder.prototype.newJSScope = function (scope, node) {
-		var jsScope = new infer.Scope(scope, node);
-		jsScope.name = "<qml-js>";
-		var curOrigin = infer.cx().curOrigin;
-		for (var i = 0; i < this.jsDefs.length; ++i)
-			def.load(this.jsDefs[i], jsScope);
-		infer.cx().curOrigin = curOrigin;
-		this.jsScopes.push(jsScope);
-		return jsScope;
-	};
-
-	ScopeBuilder.prototype.forEachJSScope = function (callback) {
-		for (var i = 0; i < this.jsScopes.length; i++) {
-			callback(this.jsScopes[i]);
-		}
-	};
-
-	ScopeBuilder.prototype.newSignalScope = function (scope, node) {
-		var sigScope = new infer.Scope(scope, node);
-		sigScope.name = "<qml-signal>";
-		this.sigScopes.push(sigScope);
-		return sigScope
-	};
-
-	ScopeBuilder.prototype.hasFunctionScope = function (objScope) {
-		var found = null;
-		this.forEachFunctionScope(function (scope) {
-			if (scope.objScope == objScope) {
-				found = scope;
+			// Getting to this point means that we were unable to find an implementation of
+			// the 'resolveDirectory' method.  The only time this should happen is during
+			// a test case which we expect to have an import of the style "./ ..." and nothing
+			// else.  This method will simply remove the './', add the file's base, and return.
+			if (!path) {
+				// If no path was specified, return the base directory of the file
+				var dir = file.name;
+				dir = dir.substring(0, dir.lastIndexOf("/") + 1);
+				return dir;
 			}
-		});
+			if (path.startsWith("./")) {
+				path = file.directory + path.substring(2);
+			}
+			if (path.substr(path.length - 1, 1) !== "/") {
+				path = path + "/";
+			}
+			return path;
+		},
+		updateDirectoryImportList: function () {
+			if (!this.imports) {
+				this.imports = {};
+			}
+			var dir, f;
+			var seenDirs = {};
+			for (var i = 0; i < this.server.files.length; i++) {
+				var file = this.server.files[i];
+				dir = file.directory;
+				f = file.nameExt;
+				if (!dir) {
+					// Resolve the directory name and file name/extension
+					dir = file.directory = this.resolveDirectory(file, null);
+					f = file.nameExt = this.getFileNameAndExtension(file);
+				}
+				seenDirs[dir] = true;
+				// No file scope means the file was recently added/changed and we should
+				// update its import reference
+				if (!file.scope) {
+					// Check for a valid QML Object Identifier
+					if (f.extension === "qml") {
+						var ch = f.name.charAt(0);
+						if (ch.toUpperCase() === ch && f.name.indexOf(".") === -1) {
+							// Create the array for this directory if necessary
+							if (!this.imports[dir]) {
+								this.imports[dir] = {};
+							}
+
+							// Create an Obj to represent this import
+							var obj = new infer.Obj(null, f.name);
+							obj.origin = file.name;
+							this.imports[dir][f.name] = obj;
+						}
+					}
+				}
+			}
+			for (dir in this.imports) {
+				if (!(dir in seenDirs)) {
+					this.imports[dir] = undefined;
+				}
+			}
+		},
+		getFileNameAndExtension: function (file) {
+			var fileName = file.name.substring(file.name.lastIndexOf("/") + 1);
+			var dot = fileName.lastIndexOf(".");
+			return {
+				name: dot >= 0 ? fileName.substring(0, dot) : fileName,
+				extension: fileName.substring(dot + 1)
+			};
+		},
+		resolveObject: function (loc, name) {
+			return loc[name];
+		},
+		defineImport: function (scope, loc, name, obj) {
+			var prop = scope.defProp(name);
+			var objRef = new ObjRef(loc, name, this);
+			prop.objType = objRef;
+			objRef.propagate(prop);
+		},
+		defineImports: function (file, scope) {
+			scope = scope || file.scope;
+
+			// Add any imports from the current directory
+			var imports = this.imports[file.directory];
+			var f = file.nameExt;
+			if (imports) {
+				for (var name in imports) {
+					if (f.name !== name) {
+						this.defineImport(scope, imports, name, imports[name]);
+					}
+				}
+			}
+
+			// Walk the AST for any imports
+			var ih = this;
+			walk.simple(file.ast, {
+				QMLImportStatement: function (node) {
+					var prop = null;
+					var scope = file.scope;
+					if (node.qualifier) {
+						prop = file.scope.defProp(node.qualifier.id.name, node.qualifier.id);
+						prop.origin = file.name;
+						var obj = new infer.Obj(null, node.qualifier.id.name);
+						obj.propagate(prop);
+						prop.objType = obj;
+						scope = obj;
+					}
+					if (node.directory) {
+						var dir = ih.resolveDirectory(file, node.directory.value);
+						var imports = ih.imports[dir];
+						if (imports) {
+							for (var name in imports) {
+								ih.defineImport(scope, imports, name, imports[name]);
+							}
+						}
+					}
+				}
+			});
+		},
+		createQMLObjectType: function (file, node, isRoot) {
+			// Find the imported object
+			var obj = this.getQMLObjectType(file, node.id);
+			// If this is the root, connect the imported object to the root object
+			if (isRoot) {
+				var tmp = this.getRootQMLObjectType(file, node.id);
+				if (tmp) {
+					// Hook up the Obj Reference
+					tmp.proto = obj;
+					obj = tmp;
+					obj.originNode = node.id;
+
+					// Break any cyclic dependencies
+					while ((tmp = tmp.proto)) {
+						if (tmp.resolve() == obj.resolve()) {
+							tmp.proto = null;
+						}
+					}
+				}
+			}
+			return obj;
+		},
+		getQMLObjectType: function (file, qid) {
+			var prop = findProp(qid, file.scope);
+			if (prop) {
+				return prop.objType;
+			}
+			return new infer.Obj(null, qid.name);
+		},
+		getRootQMLObjectType: function (file, qid) {
+			var f = file.nameExt;
+			var imports = this.imports[file.directory];
+			if (imports && imports[f.name]) {
+				return imports[f.name];
+			}
+			return new infer.Obj(null, qid.name);
+		}
+	};
+
+	// 'isInteger' taken from infer.js
+	function isInteger(str) {
+		var c0 = str.charCodeAt(0);
+		if (c0 >= 48 && c0 <= 57) return !/\D/.test(str);
+		else return false;
+	}
+
+	/*
+	 * We have to redefine 'hasProp' to make it work with our scoping.  The original 'hasProp'
+	 * function checked proto.props instead of using proto.hasProp.
+	 */
+	infer.Obj.prototype.hasProp = function (prop, searchProto) {
+		if (isInteger(prop)) prop = this.normalizeIntegerProp(prop);
+		var found = this.props[prop];
+		if (searchProto !== false && this.proto && !found)
+			found = this.proto.hasProp(prop, true);
 		return found;
 	};
 
-	// Helper for adding a property to a scope.
+	// Creating a resolve function on 'infer.Obj' so we can simplify some of our 'ObjRef' logic
+	infer.Obj.prototype.resolve = function () {
+		return this;
+	};
+
+	/*
+	 * QML Object Reference
+	 *
+	 * An ObjRef behaves exactly the same as an ordinary 'infer.Obj' object, except that it
+	 * mirrors its internal state to a referenced object.  This object is resolved by the QML
+	 * Import Handler each time the ObjRef is accessed (including getting and setting internal
+	 * variables).  In theory this means we don't have to know at runtime whether or not an
+	 * object is an ObjRef or an infer.Obj.
+	 */
+	var ObjRef = function (loc, lookup, ih) {
+		// Using underscores for property names so we don't accidentally collide with any
+		// 'infer.Obj' property names (which would cause a stack overflow if we were to
+		// try to access them here).
+		this._loc = loc;
+		this._objLookup = lookup;
+		this._ih = ih;
+		var obj = this.resolve();
+		// Use Object.defineProperty to setup getter and setter methods that delegate
+		// to the resolved object's properties.  We only need to do this once since all
+		// 'infer.Obj' objects should have the same set of property names.
+		for (var propertyName in obj) {
+			if (!(obj[propertyName] instanceof Function)) {
+				(function () {
+					var prop = propertyName;
+					Object.defineProperty(this, prop, {
+						enumerable: true,
+						get: function () {
+							return this.resolve()[prop];
+						},
+						set: function (value) {
+							this.resolve()[prop] = value;
+						}
+					});
+				}).call(this);
+			}
+		}
+	};
+	ObjRef.prototype = extend(infer.Type.prototype, {
+		resolve: function () {
+			return this._ih.resolveObject(this._loc, this._objLookup);
+		}
+	});
+	(function () {
+		// Wire up all base functions to use the resolved object's implementation
+		for (var _func in infer.Obj.prototype) {
+			if (_func !== "resolve") {
+				(function () {
+					var fn = _func;
+					ObjRef.prototype[fn] = function () {
+						return this.resolve()[fn](arguments[0], arguments[1], arguments[2], arguments[3]);
+					};
+				})();
+			}
+		}
+	})();
+
+	/*
+	 * QML Object Scope (inherits methods from infer.Scope)
+	 *
+	 * A QML Object Scope does not contain its own properties.  Instead, its properties
+	 * are defined in its given Object Type and resolved from there.  Any properties
+	 * defined within the Object Type are visible without qualifier to any downstream
+	 * scopes.
+	 */
+	var QMLObjScope = exports.QMLObjScope = function (prev, originNode, objType) {
+		infer.Scope.call(this, prev, originNode, false);
+		this.objType = objType;
+	};
+	QMLObjScope.prototype = extend(infer.Scope.prototype, {
+		hasProp: function (prop, searchProto) {
+			// Search for a property in the Object type.
+			// Always search the Object Type's prototype as well
+			var found = this.objType.hasProp(prop, true);
+			if (found) {
+				return found;
+			}
+
+			// Search for a property in the prototype (previous scope)
+			if (this.proto && searchProto !== false) {
+				return this.proto.hasProp(prop, searchProto);
+			}
+		},
+		defProp: function (prop, originNode) {
+			return this.objType.defProp(prop, originNode);
+		},
+		removeProp: function (prop) {
+			return this.objType.removeProp(prop);
+		},
+		gatherProperties: function (f, depth) {
+			// Gather properties from the Object Type and its prototype(s)
+			var obj = this.objType;
+			var callback = function (prop, obj, d) {
+				f(prop, obj, depth);
+			};
+			while (obj) {
+				obj.gatherProperties(callback, depth);
+				obj = obj.proto;
+			}
+			// gather properties from the prototype (previous scope)
+			if (this.proto) {
+				this.proto.gatherProperties(f, depth + 1);
+			}
+		}
+	});
+
+	/*
+	 * QML Member Scope (inherits methods from infer.Scope)
+	 *
+	 * A QML Member Scope is a bit of a special case when it comes to QML scoping.  Like
+	 * the QML Object Scope, it does not contain any properties of its own.  The reason
+	 * that it is special is it only gathers properties from its immediate predecessor
+	 * that aren't functions (i.e. They don't have the 'isFunction' flag set.  The
+	 * 'isFunction' flag is created by QML signal properties and JavaScript functions
+	 * that are QML Members.)
+	 */
+	var QMLMemScope = exports.QMLMemScope = function (prev, originNode, fileScope) {
+		infer.Scope.call(this, prev, originNode, false);
+		this.fileScope = fileScope;
+	};
+	QMLMemScope.prototype = extend(infer.Scope.prototype, {
+		hasProp: function (prop, searchProto) {
+			// Search for a property in the prototype
+			var found = null;
+			if (this.proto) {
+				// Don't continue searching after the previous scope
+				found = this.proto.hasProp(prop, false);
+				if (found && !found.isFunction) {
+					return found;
+				}
+			}
+
+			// Search for a property in the file Scope
+			if (this.fileScope) {
+				return this.fileScope.hasProp(prop, searchProto);
+			}
+		},
+		defProp: function (prop, originNode) {
+			return this.prev.defProp(prop, originNode);
+		},
+		removeProp: function (prop) {
+			return this.prev.removeProp(prop);
+		},
+		gatherProperties: function (f, depth) {
+			// Gather properties from the prototype (previous scope)
+			var found = null;
+			if (this.proto) {
+				this.proto.gatherProperties(function (prop, obj, d) {
+					// Don't continue passed the predecessor by checking depth
+					if (d === depth) {
+						var propObj = obj.hasProp(prop);
+						if (propObj && !propObj.isFunction) {
+							f(prop, obj, d);
+						}
+					}
+				}, depth);
+			}
+			// Gather properties from the file Scope
+			this.fileScope.gatherProperties(f, depth);
+		}
+	});
+
+	/*
+	 * QML JavaScript Scope (inherits methods from infer.Scope)
+	 *
+	 * A QML JavaScript Scope also contains references to the file's ID Scope, the global
+	 * JavaScript Scope, and a possible function parameter scope.  Most likely, this
+	 * scope will not contain its own properties.  The resolution order for 'getProp' and
+	 * 'hasProp' are:
+	 *    1. The ID Scope
+	 *    2. This Scope's properties
+	 *    3. The Function Scope (if it exists)
+	 *    4. The JavaScript Scope
+	 *    5. The Previous Scope in the chain
+	 */
+	var QMLJSScope = exports.QMLJSScope = function (prev, originNode, idScope, jsScope, fnScope) {
+		infer.Scope.call(this, prev, originNode, false);
+		this.idScope = idScope;
+		this.jsScope = jsScope;
+		this.fnScope = fnScope;
+	};
+	QMLJSScope.prototype = extend(infer.Scope.prototype, {
+		hasProp: function (prop, searchProto) {
+			if (isInteger(prop)) {
+				prop = this.normalizeIntegerProp(prop);
+			}
+			// Search the ID scope
+			var found = null;
+			if (this.idScope) {
+				found = this.idScope.hasProp(prop, searchProto);
+			}
+			// Search the current scope
+			if (!found) {
+				found = this.props[prop];
+			}
+			// Search the Function Scope
+			if (!found && this.fnScope) {
+				found = this.fnScope.hasProp(prop, searchProto);
+			}
+			// Search the JavaScript Scope
+			if (!found && this.jsScope) {
+				found = this.jsScope.hasProp(prop, searchProto);
+			}
+			// Search the prototype (previous scope)
+			if (!found && this.proto && searchProto !== false) {
+				found = this.proto.hasProp(prop, searchProto);
+			}
+			return found;
+		},
+		gatherProperties: function (f, depth) {
+			// Gather from the ID Scope
+			if (this.idScope) {
+				this.idScope.gatherProperties(f, depth);
+			}
+			// Gather from the current scope
+			for (var prop in this.props) {
+				f(prop, this, depth);
+			}
+			// Gather from the Function Scope
+			if (this.fnScope) {
+				this.fnScope.gatherProperties(f, depth);
+			}
+			// Gather from the JS Scope
+			if (this.jsScope) {
+				this.jsScope.gatherProperties(f, depth);
+			}
+			// Gather from the prototype (previous scope)
+			if (this.proto) {
+				this.proto.gatherProperties(f, depth + 1);
+			}
+		}
+	});
+
+	// QML Scope Builder
+	var ScopeBuilder = function (file, jsDefs) {
+		// File Scope
+		this.scope = file.scope;
+		this.file = file;
+		// ID Scope
+		this.idScope = new infer.Scope();
+		this.idScope.name = "<qml-id>";
+		// JavaScript Scope
+		this.jsScope = new infer.Scope();
+		this.jsScope.name = "<qml-js>";
+		var curOrigin = infer.cx().curOrigin;
+		for (var i = 0; i < jsDefs.length; ++i) {
+			def.load(jsDefs[i], this.jsScope);
+		}
+		infer.cx().curOrigin = curOrigin;
+	};
+	ScopeBuilder.prototype = {
+		newObjScope: function (node) {
+			var obj = qmlImportHandler.createQMLObjectType(this.file, node, !this.rootScope);
+			var scope = new QMLObjScope(this.rootScope || this.scope, node, obj);
+			scope.name = "<qml-obj>";
+			if (!this.rootScope) {
+				this.rootScope = scope;
+			}
+			return scope;
+		},
+		getIDScope: function () {
+			return this.idScope;
+		},
+		newMemberScope: function (objScope, node) {
+			var memScope = new QMLMemScope(objScope, node, this.scope);
+			memScope.name = "<qml-member>";
+			return memScope;
+		},
+		newJSScope: function (scope, node, fnScope) {
+			var jsScope = new QMLJSScope(scope, node, this.idScope, this.jsScope, fnScope);
+			jsScope.name = "<qml-js>";
+			return jsScope;
+		},
+	};
+
+	// Helper for adding a variable to a scope.
 	function addVar(scope, node) {
 		return scope.defProp(node.name, node);
 	}
 
 	// Helper for finding a property in a scope.
 	function findProp(node, scope, pos) {
-		if (pos == null || pos < 0) {
+		if (pos === null || pos === undefined || pos < 0) {
 			pos = Number.MAX_VALUE;
 		}
 		if (node.type === "QMLQualifiedID") {
@@ -161,122 +538,9 @@
 		return null;
 	}
 
-	// Helper for getting the server from the current context
-	function getServer() {
-		var parent = infer.cx().parent;
-		return parent instanceof tern.Server ? parent : null;
-	}
-
-	// Helper for getting the current file's scope builder
+	// Helper for getting the current context's scope builder
 	function getScopeBuilder() {
 		return infer.cx().qmlScopeBuilder;
-	}
-
-	// Object which holds two scopes
-	function Scopes(object, property) {
-		this.object = object;
-		this.property = property || object;
-	}
-
-	function extendTernScopeGatherer(scopeGatherer) {
-		// Build up the scopes in the QML document using the scopeGatherer.  A second
-		// pass will be done after the scopeGatherer executes in order to finalize a
-		// few of the extra scopes such as the JavaScript, ID, Property, and Signal
-		// Handler scopes.
-		scopeGatherer["QMLObjectLiteral"] = function (node, scope, c) {
-			var inner = node.scope = getScopeBuilder().newObjScope(node);
-			c(node.body, inner);
-		};
-		scopeGatherer["QMLMemberBlock"] = function (node, scope, c) {
-			var s = infer.cx().curOrigin;
-			var propertyScope = node.scope = getScopeBuilder().newPropertyScope(scope, node);
-			var scopes = new Scopes(scope, propertyScope);
-			for (var i = 0; i < node.members.length; i++) {
-				var member = node.members[i];
-				if (member.type === "FunctionDeclaration") {
-					c(member, scope);
-
-					// Insert the JavaScript scope after the Function has had a chance to build it's own scope
-					var jsScope = getScopeBuilder().newJSScope(scope, member);
-					member.scope.prev = member.scope.proto = jsScope;
-
-					// Indicate that the property is a function
-					var prop = scope.hasProp(member.id.name);
-					if (prop) {
-						prop.isFunction = true;
-					}
-				} else if (member.type === "QMLPropertyDeclaration" || member.type === "QMLPropertyBinding") {
-					c(member, scopes);
-				} else {
-					c(member, scope);
-				}
-			}
-		};
-		scopeGatherer["QMLPropertyDeclaration"] = function (node, scopes, c) {
-			var inner = scopes.object;
-			var prop = addVar(inner, node.id);
-			if (node.binding) {
-				node.binding.scope = inner;
-				c(node.binding, inner);
-			}
-		};
-		scopeGatherer["QMLPropertyBinding"] = function (node, scopes, c) {
-			// Create a JavaScript scope if init is a JavaScript environment
-			var inner = node.binding.scope = scopes.object;
-			// Check for the 'id' property being set
-			if (node.id.name == "id") {
-				if (node.binding.type === "QMLScriptBinding") {
-					var binding = node.binding;
-					if (!binding.block && binding.script.type === "Identifier") {
-						node.prop = addVar(getScopeBuilder().getIDScope(), binding.script);
-					}
-				}
-			} else {
-				// If this appears to be a signal handler, pre-emptively create a new scope that
-				// will store references to the signal's arguments
-				if (node.id.name.startsWith("on")) {
-					inner = node.binding.scope = new infer.Scope(inner, node);
-				}
-			}
-
-			// Delegate down to the expression
-			c(node.binding, inner);
-		};
-		scopeGatherer["QMLScriptBinding"] = function (node, scope, c) {
-			var inner = node.scope = getScopeBuilder().newJSScope(node.scope || scope, node);
-			c(node.script, inner);
-		};
-		scopeGatherer["QMLStatementBlock"] = function (node, scope, c) {
-			var inner = getScopeBuilder().newJSScope(node.scope || scope, node);
-			node.scope = inner;
-			for (var i = 0; i < node.statements.length; i++) {
-				c(node.statements[i], inner, "Statement");
-			}
-		};
-		scopeGatherer["QMLSignalDefinition"] = function (node, scope, c) {
-			// Scope Builder
-			var sb = getScopeBuilder();
-
-			// Define the signal arguments in their own separate scope
-			var argNames = [],
-				argVals = [];
-			var sigScope = sb.newSignalScope(scope, node);
-			for (var i = 0; i < node.params.length; i++) {
-				var param = node.params[i];
-				argNames.push(param.id.name);
-				argVals.push(addVar(sigScope, param.id));
-			}
-
-			// Define the signal function type which can be referenced from JavaScript
-			var sig = addVar(scope, node.id);
-			sig.isFunction = true;
-			sig.sigType = new infer.Fn(node.id.name, new infer.AVal, argVals, argNames, infer.ANull);
-			sig.sigType.sigScope = sigScope;
-
-			// Define the signal handler property
-			var handler = scope.defProp(getSignalHandlerName(node.id.name), node.id);
-			handler.sig = sig.sigType;
-		}
 	}
 
 	// 'infer' taken from infer.js
@@ -288,19 +552,19 @@
 	// Infers the property's type from its given primitive value
 	function infKind(kind, out) {
 		switch (kind) {
-			case "int":
-			case "double":
-			case "real":
-				infer.cx().num.propagate(out);
-				break;
-			case "string":
-			case "color":
-				infer.cx().str.propagate(out);
-				break;
-			case "boolean":
-				infer.cx().bool.propagate(out);
-				break;
-			}
+		case "int":
+		case "double":
+		case "real":
+			infer.cx().num.propagate(out);
+			break;
+		case "string":
+		case "color":
+			infer.cx().str.propagate(out);
+			break;
+		case "boolean":
+			infer.cx().bool.propagate(out);
+			break;
+		}
 	}
 
 	// 'ret' taken from infer.js
@@ -314,199 +578,306 @@
 
 	// 'fill' taken from infer.js
 	function fill(f) {
-		return function(node, scope, out, name) {
-			if (!out) out = new AVal;
+		return function (node, scope, out, name) {
+			if (!out) out = new infer.AVal();
 			f(node, scope, out, name);
 			return out;
 		};
 	}
 
-	function extendTernInferExprVisitor(inferExprVisitor) {
-		// Extend the inferExprVisitor methods
-		inferExprVisitor["QMLStatementBlock"] = ret(function (node, scope, name) {
-			return infer.ANull; // Statement blocks have no type
-		});
-		inferExprVisitor["QMLScriptBinding"] = fill(function (node, scope, out, name) {
-			return inf(node.script, node.scope || scope, out, name);
-		});
-		inferExprVisitor["QMLObjectLiteral"] = ret(function (node, scope, name) {
-			return node.scope.objType;
-		});
-	}
-
+	// Helper method to get the last index of an array
 	function getLastIndex(arr) {
 		return arr[arr.length - 1];
 	}
 
+	// Helper method to get the signal handler name of a signal function
 	function getSignalHandlerName(str) {
 		return "on" + str.charAt(0).toUpperCase() + str.slice(1);
 	}
 
-	function extendTernInferWrapper(inferWrapper) {
-		// Extend the inferWrapper methods
-		inferWrapper["QMLObjectLiteral"] = function (node, scope, c) {
-			// Define a new Obj which represents this Object Literal
-			var obj = node.scope.objType = new infer.Obj(true, node.id.name);
-			// node.scope will contain all object properties so we don't have to walk the AST to find them
-			node.scope.forAllProps(function (name, prop, curr) {
-				if (curr) {
-					// Copy the property into the new type so that references to both of them
-					// will update the same object.
-					obj.props[name] = prop;
+	// Object which holds two scopes.  Used to store both the Member Scope and Object
+	// Scope for QML Property Bindings and Declarations.
+	function Scopes(obj, mem) {
+		this.object = obj;
+		this.member = mem;
+	}
+
+	// Helper to add functionality to a set of walk methods
+	function extendWalk(walker, funcs) {
+		for (var prop in funcs) {
+			walker[prop] = funcs[prop];
+		}
+	}
+
+	function extendTernScopeGatherer(scopeGatherer) {
+		// Extend the Tern scopeGatherer to build up our custom QML scoping
+		extendWalk(scopeGatherer, {
+			QMLObjectLiteral: function (node, scope, c) {
+				var inner = node.scope = getScopeBuilder().newObjScope(node);
+				c(node.body, inner);
+			},
+			QMLMemberBlock: function (node, scope, c) {
+				var memScope = node.scope = getScopeBuilder().newMemberScope(scope, node);
+				for (var i = 0; i < node.members.length; i++) {
+					var member = node.members[i];
+					if (member.type === "FunctionDeclaration") {
+						c(member, scope);
+
+						// Insert the JavaScript scope after the Function has had a chance to build it's own scope
+						var jsScope = getScopeBuilder().newJSScope(scope, member, member.scope);
+						jsScope.fnType = member.scope.fnType;
+						member.scope.prev = member.scope.proto = null;
+						member.scope = jsScope;
+
+						// Indicate that the property is a function
+						var prop = scope.hasProp(member.id.name);
+						if (prop) {
+							prop.isFunction = true;
+						}
+					} else if (member.type === "QMLPropertyDeclaration" || member.type === "QMLPropertyBinding") {
+						c(member, new Scopes(scope, memScope));
+					} else {
+						c(member, scope);
+					}
 				}
-			});
-			c(node.body, node.scope);
-		};
-		inferWrapper["QMLMemberBlock"] = function (node, scope, c) {
-			var scopes = new Scopes(scope, node.scope);
-			for (var i = 0; i < node.members.length; i++) {
-				var member = node.members[i];
-				if (member.type === "QMLPropertyDeclaration" || member.type === "QMLPropertyBinding") {
-					c(member, scopes);
-				} else {
-					c(member, scope);
-				}
-			}
-		};
-		inferWrapper["QMLPropertyDeclaration"] = function (node, scopes, c) {
-			var prop = findProp(node.id, scopes.property);
-			if (prop) {
-				infKind(node.kind, prop);
+			},
+			QMLPropertyDeclaration: function (node, scopes, c) {
+				var prop = addVar(scopes.member, node.id);
 				if (node.binding) {
 					c(node.binding, scopes.object);
-					inf(node.binding, scopes.object, prop, node.id.name);
 				}
-			}
-		};
-		inferWrapper["QMLPropertyBinding"] = function (node, scopes, c) {
-			c(node.binding, scopes.object);
-			// Check for the 'id' property being set
-			if (node.id.name === "id") {
-				if (node.binding.type === "QMLScriptBinding") {
-					var binding = node.binding;
-					if (binding.script.type === "Identifier") {
-						scopes.object.objType.propagate(node.prop);
+			},
+			QMLPropertyBinding: function (node, scopes, c) {
+				// Check for the 'id' property being set
+				if (node.id.name == "id") {
+					if (node.binding.type === "QMLScriptBinding") {
+						var binding = node.binding;
+						if (!binding.block && binding.script.type === "Identifier") {
+							node.prop = addVar(getScopeBuilder().getIDScope(), binding.script);
+						}
 					}
 				}
-			} else {
-				var prop = findProp(node.id, scopes.property);
-				if (prop) {
-					if (prop.sig) {
-						// This is a signal handler and we should populate its scope with
-						// the arguments from its parent function.
-						prop.sig.sigScope.forAllProps(function (name, prop, curr) {
-							if (curr) {
-								node.binding.scope.props[name] = prop;
-							}
-						});
-					} else {
-						inf(node.binding, node.binding.scope, prop, getLastIndex(node.id.parts));
-					}
+				// Delegate down to the expression
+				c(node.binding, scopes.object);
+			},
+			QMLScriptBinding: function (node, scope, c) {
+				var inner = node.scope = getScopeBuilder().newJSScope(scope, node);
+				c(node.script, inner);
+			},
+			QMLStatementBlock: function (node, scope, c) {
+				var inner = getScopeBuilder().newJSScope(scope, node);
+				node.scope = inner;
+				for (var i = 0; i < node.statements.length; i++) {
+					c(node.statements[i], inner, "Statement");
 				}
-			}
-		};
-		inferWrapper["QMLStatementBlock"] = function (node, scope, c) {
-			for (var i = 0; i < node.statements.length; i++) {
-				c(node.statements[i], node.scope, "Statement");
-			}
-		};
-		inferWrapper["QMLSignalDefinition"] = function (node, scope, c) {
-			var sig = scope.getProp(node.id.name);
-			for (var i = 0; i < node.params.length; i++) {
-				var param = node.params[i];
-				infKind(param.kind.name, sig.sigType.args[i]);
-			}
-			sig.sigType.retval = infer.ANull;
-			sig.sigType.propagate(sig);
+			},
+			QMLSignalDefinition: function (node, scope, c) {
+				// Scope Builder
+				var sb = getScopeBuilder();
 
-			var handler = scope.getProp(getSignalHandlerName(node.id.name));
-			var obj = new infer.Obj(true, "Signal Handler");
-			obj.propagate(handler);
-		}
+				// Define the signal arguments in their own separate scope
+				var argNames = [];
+				var argVals = [];
+				var sigScope = new infer.Scope(null, node);
+				for (var i = 0; i < node.params.length; i++) {
+					var param = node.params[i];
+					argNames.push(param.id.name);
+					argVals.push(addVar(sigScope, param.id));
+				}
+
+				// Define the signal function type which can be referenced from JavaScript
+				var sig = addVar(scope, node.id);
+				sig.isFunction = true;
+				sig.sigType = new infer.Fn(node.id.name, new infer.AVal(), argVals, argNames, infer.ANull);
+				sig.sigType.sigScope = sigScope;
+
+				// Define the signal handler property
+				var handler = scope.defProp(getSignalHandlerName(node.id.name), node.id);
+				handler.sig = sig.sigType;
+			}
+		});
+	}
+
+	function extendTernInferExprVisitor(inferExprVisitor) {
+		// Extend the inferExprVisitor methods
+		extendWalk(inferExprVisitor, {
+			QMLStatementBlock: ret(function (node, scope, name) {
+				return infer.ANull; // TODO: check return statements
+			}),
+			QMLScriptBinding: fill(function (node, scope, out, name) {
+				return inf(node.script, node.scope, out, name);
+			}),
+			QMLObjectLiteral: ret(function (node, scope, name) {
+				return node.scope.objType;
+			})
+		});
+	}
+
+	function extendTernInferWrapper(inferWrapper) {
+		// Extend the inferWrapper methods
+		extendWalk(inferWrapper, {
+			QMLObjectLiteral: function (node, scope, c) {
+				c(node.body, node.scope);
+			},
+			QMLMemberBlock: function (node, scope, c) {
+				for (var i = 0; i < node.members.length; i++) {
+					var member = node.members[i];
+					if (member.type === "QMLPropertyDeclaration" || member.type === "QMLPropertyBinding") {
+						c(member, new Scopes(scope, node.scope));
+					} else {
+						c(member, scope);
+					}
+				}
+			},
+			QMLPropertyDeclaration: function (node, scopes, c) {
+				var prop = findProp(node.id, scopes.member);
+				if (prop) {
+					infKind(node.kind, prop);
+					if (node.binding) {
+						c(node.binding, scopes.object);
+						inf(node.binding, scopes.object, prop, node.id.name);
+					}
+				}
+			},
+			QMLPropertyBinding: function (node, scopes, c) {
+				c(node.binding, scopes.object);
+				// Check for the 'id' property being set
+				if (node.id.name === "id") {
+					if (node.binding.type === "QMLScriptBinding") {
+						var binding = node.binding;
+						if (binding.script.type === "Identifier") {
+							scopes.object.objType.propagate(node.prop);
+						}
+					}
+				} else {
+					var prop = findProp(node.id, scopes.member);
+					if (prop) {
+						if (prop.sig) {
+							// This is a signal handler
+							node.binding.scope.fnScope = prop.sig.sigScope;
+						} else {
+							inf(node.binding, scopes.object, prop, getLastIndex(node.id.parts));
+						}
+					}
+				}
+			},
+			QMLScriptBinding: function (node, scope, c) {
+				c(node.script, node.scope);
+			},
+			QMLStatementBlock: function (node, scope, c) {
+				for (var i = 0; i < node.statements.length; i++) {
+					c(node.statements[i], node.scope, "Statement");
+				}
+			},
+			QMLSignalDefinition: function (node, scope, c) {
+				var sig = scope.getProp(node.id.name);
+				for (var i = 0; i < node.params.length; i++) {
+					var param = node.params[i];
+					infKind(param.kind.name, sig.sigType.args[i]);
+				}
+				sig.sigType.retval = infer.ANull;
+				sig.sigType.propagate(sig);
+
+				var handler = scope.getProp(getSignalHandlerName(node.id.name));
+				var obj = new infer.Obj(true, "Signal Handler");
+				obj.propagate(handler);
+			}
+		});
 	}
 
 	function extendTernTypeFinder(typeFinder) {
 		// Extend the type finder to return valid types for QML AST elements
-		typeFinder["QMLObjectLiteral"] = function (node, scope) {
-			return node.scope.objType;
-		};
-		typeFinder["QMLMemberBlock"] = function (node, scope) {
-			return infer.ANull;
-		};
-		typeFinder["FunctionDeclaration"] = function (node, scope) {
-			return scope.name === "<qml-obj>" ? infer.ANull : undefined;
-		};
-		typeFinder["QMLScriptBinding"] = function (node, scope) {
-			// Trick Tern into thinking this node is a type so that it will use
-			// this node's scope when handling improperly written script bindings
-			return infer.ANull;
-		};
-		typeFinder["QMLQualifiedID"] = function (node, scope) {
-			return findProp(node, scope) || infer.ANull;
-		};
-		typeFinder["QML_ID"] = function (node, scope) {
-			// Reverse the hack from search visitor before finding the property in
-			// the id scope
-			node.type = "Identifier";
-			return findProp(node, getScopeBuilder().getIDScope());
-		};
+		extendWalk(typeFinder, {
+			QMLObjectLiteral: function (node, scope) {
+				return node.scope.objType;
+			},
+			QMLMemberBlock: function (node, scope) {
+				return infer.ANull;
+			},
+			FunctionDeclaration: function (node, scope) {
+				// Quick little hack to get 'findExprAt' to find a Function Declaration which
+				// is a QML Object Member.  All other Function Declarations are ignored.
+				return scope.name === "<qml-obj>" ? infer.ANull : undefined;
+			},
+			QMLScriptBinding: function (node, scope) {
+				// Trick Tern into thinking this node is a type so that it will use
+				// this node's scope when handling improperly written script bindings
+				return infer.ANull;
+			},
+			QMLQualifiedID: function (node, scope) {
+				return findProp(node, scope) || infer.ANull;
+			},
+			QML_ID: function (node, scope) {
+				// Reverse the hack from search visitor before finding the property in
+				// the id scope
+				node.type = "Identifier";
+				return findProp(node, getScopeBuilder().getIDScope());
+			}
+		});
 	}
 
 	function extendTernSearchVisitor(searchVisitor) {
 		// Extend the search visitor to traverse the scope properly
-		searchVisitor["QMLObjectLiteral"] = function (node, scope, c) {
-			c(node.body, node.scope);
-		};
-		searchVisitor["QMLMemberBlock"] = function (node, scope, c) {
-			var scopes = new Scopes(scope, node.scope);
-			for (var i = 0; i < node.members.length; i++) {
-				var member = node.members[i];
-				if (member.type === "QMLPropertyDeclaration" || member.type === "QMLPropertyBinding") {
-					c(member, scopes);
-				} else {
-					c(member, scope);
-				}
-			}
-		};
-		searchVisitor["QMLSignalDefinition"] = function (node, scope, c) {
-			c(node.id, scope);
-		};
-		searchVisitor["QMLPropertyDeclaration"] = function (node, scopes, c) {
-			if (node.binding) {
-				c(node.binding, node.binding.scope);
-			}
-		};
-		searchVisitor["QMLPropertyBinding"] = function (node, scopes, c) {
-			if (node.id.name === "id") {
-				if (node.binding.type === "QMLScriptBinding") {
-					var binding = node.binding;
-					if (binding.script.type === "Identifier") {
-						// Hack to bypass Tern's type finding algorithm which uses node.type instead
-						// of the overriden type.
-						binding.script.type = "QML_ID";
-						c(binding.script, binding.scope, "QML_ID");
-						binding.script.type = "Identifier";
+		extendWalk(searchVisitor, {
+			QMLObjectLiteral: function (node, scope, c) {
+				c(node.body, node.scope);
+			},
+			QMLMemberBlock: function (node, scope, c) {
+				for (var i = 0; i < node.members.length; i++) {
+					var member = node.members[i];
+					if (member.type === "QMLPropertyDeclaration" || member.type === "QMLPropertyBinding") {
+						c(member, new Scopes(scope, node.scope));
+					} else {
+						c(member, scope);
 					}
 				}
-				var prop = findProp(node.id, scopes.property);
-				if (!prop) {
-					return;
+			},
+			QMLSignalDefinition: function (node, scope, c) {
+				c(node.id, scope);
+			},
+			QMLPropertyDeclaration: function (node, scopes, c) {
+				c(node.id, scopes.member);
+				if (node.binding) {
+					c(node.binding, scopes.object);
+				}
+			},
+			QMLPropertyBinding: function (node, scopes, c) {
+				if (node.id.name === "id") {
+					if (node.binding.type === "QMLScriptBinding") {
+						var binding = node.binding;
+						if (binding.script.type === "Identifier") {
+							// Hack to bypass Tern's type finding algorithm which uses node.type instead
+							// of the overriden type.
+							binding.script.type = "QML_ID";
+							c(binding.script, binding.scope, "QML_ID");
+							binding.script.type = "Identifier";
+						}
+					}
+					var prop = findProp(node.id, scopes.member);
+					if (!prop) {
+						return;
+					}
+				}
+				c(node.id, scopes.member);
+				c(node.binding, scopes.object);
+			},
+			QMLScriptBinding: function (node, scope, c) {
+				c(node.script, node.scope);
+			},
+			QML_ID: function (node, st, c) {
+				// Ignore
+			},
+			QMLStatementBlock: function (node, scope, c) {
+				for (var i = 0; i < node.statements.length; i++) {
+					c(node.statements[i], node.scope, "Statement");
 				}
 			}
-			c(node.id, scopes.property);
-			c(node.binding, node.binding.scope);
-		};
-		searchVisitor["QML_ID"] = function(node, st, c) {};
-		searchVisitor["QMLStatementBlock"] = function (node, scope, c) {
-			for (var i = 0; i < node.statements.length; i++) {
-				c(node.statements[i], node.scope, "Statement");
-			}
-		};
+		});
 	}
 
 	/*
-	* Prepares acorn to consume QML syntax rather than standard JavaScript
-	*/
+	 * Prepares acorn to consume QML syntax rather than standard JavaScript
+	 */
 	function preParse(text, options) {
 		// Force ECMA Version to 5
 		options.ecmaVersion = 5;
@@ -514,45 +885,58 @@
 		// Register qml plugin with main parser
 		var plugins = options.plugins;
 		if (!plugins) plugins = options.plugins = {};
-		plugins["qml"] = true;
+		plugins.qml = true;
 
 		// Register qml plugin with loose parser
 		var pluginsLoose = options.pluginsLoose;
 		if (!pluginsLoose) pluginsLoose = options.pluginsLoose = {};
-		pluginsLoose["qml"] = true;
+		pluginsLoose.qml = true;
 	}
 
 	/*
-	* Performs a second pass over the generated scopes directly after the scopeGatherer
-	* executes and before type inferral begins.  This pass is used to finalize any
-	* scopes that require information from other scopes created during the scope
-	* gatherer's pass.  This includes the JavaScript scopes which require information
-	* from the QML ID scope, as well as the Property scopes which require information
-	* from their respective Object Literal scopes.
-	*/
-	function scopeGatheringSecondPass(ast, scope) {
-		var scopeBuilder = getScopeBuilder();
+	 * Initializes the file's top level scope and creates a ScopeBuilder to facilitate
+	 * the creation of QML scopes.
+	 */
+	function beforeLoad(file) {
+		// We dont care for the Context's top scope
+		file.scope = null;
 
-		// Aggregate IDs and Signal Handlers for the JavaScript scopes
-		scopeBuilder.forEachJSScope(function (scope) {
-			// Merge any QML IDs into all JavaScript scopes
-			scopeBuilder.getIDScope().forAllProps(function (name, prop, curr) {
-				if (curr) {
-					// Since QML checks the idScope before all others, we can safely over-write
-					// conflicting property names as they will be hidden anyway.
-					scope.props[name] = prop;
-				}
-			});
-		});
+		// Update the ImportHandler
+		qmlImportHandler.updateDirectoryImportList();
 
-		// Aggregate properties for the property scopes
-		scopeBuilder.forEachPropertyScope(function (scope, objScope) {
-			objScope.forAllProps(function (name, prop, curr) {
-				if (curr && !prop.isFunction) {
-					scope.props[name] = prop;
-				}
-			});
-		});
+		// Create the file's top scope
+		file.scope = new infer.Scope(infer.cx().topScope);
+		var name = file.name;
+		var end = file.name.lastIndexOf(".qml");
+		file.scope.name = end > 0 ? name.substring(0, end) : name;
+
+		// Get the ImportHandler to define imports for us
+		qmlImportHandler.defineImports(file, file.scope);
+
+		// Create the ScopeBuilder
+		var sb = new ScopeBuilder(file, infer.cx().parent.jsDefs);
+		infer.cx().qmlScopeBuilder = sb;
+	}
+
+	/*
+	 * Helper to reset some of the internal state of the QML plugin when the server
+	 * resets
+	 */
+	function reset() {
+		qmlImportHandler.reset();
+	}
+
+	function completions(file, query) {
+		// We can get relatively simple completions on QML Object Types for free if we
+		// update the Context.paths variable.  Tern uses this variable to complete
+		// non Member Expressions that contain a '.' character.  Will be much more
+		// accurate if we just roll our own completions for this in the future, but it
+		// works relatively well for now.
+		var cx = infer.cx();
+		cx.paths = {};
+		for (var prop in file.scope.props) {
+			cx.paths[prop] = file.scope[prop];
+		}
 	}
 
 	// Register the QML plugin in Tern
@@ -566,22 +950,16 @@
 			if (toFront) this.jsDefs.unshift(defs);
 			else this.jsDefs.push(defs);
 			if (this.cx) this.reset();
-		}
+		};
+
+		// Create the QML Import Handler
+		qmlImportHandler = exports.importHandler = new ImportHandler(server);
 
 		// Hook into server signals
 		server.on("preParse", preParse);
-		server.on("preInfer", scopeGatheringSecondPass);
-		server.on("beforeLoad", function(file) {
-			// Create the file's top scope
-			file.scope = new infer.Scope(infer.cx().topScope);
-			var name = file.name;
-			var end = file.name.lastIndexOf(".qml");
-			file.scope.name = end > 0 ? name.substring(0, end) : name;
-
-			// Create the ScopeBuilder
-			var sb = new ScopeBuilder(file, server.jsDefs);
-			infer.cx().qmlScopeBuilder = sb;
-		});
+		server.on("beforeLoad", beforeLoad);
+		server.on("postReset", reset);
+		server.on("completion", completions);
 
 		// Extend Tern's inferencing system to include QML syntax
 		extendTernScopeGatherer(infer.scopeGatherer);
@@ -590,4 +968,4 @@
 		extendTernTypeFinder(infer.typeFinder);
 		extendTernSearchVisitor(infer.searchVisitor);
 	});
-})
+});

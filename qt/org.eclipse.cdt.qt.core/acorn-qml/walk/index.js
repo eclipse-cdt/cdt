@@ -10,7 +10,7 @@
  *******************************************************************************/
 (function (mod) {
 	if (typeof exports == "object" && typeof module == "object") // CommonJS
-		return module.exports = mod(require("acorn/dist/walk"));
+		return mod(require("acorn/dist/walk"));
 	if (typeof define == "function" && define.amd) // AMD
 		return define(["acorn/dist/walk"], mod);
 	mod(acorn.walk); // Plain browser env
@@ -18,53 +18,59 @@
 	"use strict";
 
 	function skipThrough(node, st, c) {
-		c(node, st)
+		c(node, st);
 	}
 
 	function ignore(node, st, c) {}
 
-	var base = walk.base;
-	base["QMLProgram"] = function (node, st, c) {
-		c(node.headerStatements, st);
-		if (node.rootObject) {
-			c(node.rootObject, st, "QMLRootObject");
+	function extendWalk(walker, funcs) {
+		for (var prop in funcs) {
+			walker[prop] = funcs[prop];
 		}
-	};
-	base["QMLHeaderStatements"] = function (node, st, c) {
-		for (var i = 0; i < node.statements.length; i++) {
-			c(node.statements[i], st, "QMLHeaderStatement");
-		}
-	};
-	base["QMLHeaderStatement"] = skipThrough;
-	base["QMLImportStatement"] = ignore;
-	base["QMLPragmaStatement"] = ignore;
-	base["QMLRootObject"] = skipThrough;
-	base["QMLObjectLiteral"] = function (node, st, c) {
-		c(node.body, st);
-	};
-	base["QMLMemberBlock"] = function (node, st, c) {
-		for (var i = 0; i < node.members.length; i++) {
-			c(node.members[i], st, "QMLMember");
-		}
-	};
-	base["QMLMember"] = skipThrough;
-	base["QMLPropertyDeclaration"] = function (node, st, c) {
-		if (node.binding) {
-			c(node.binding, st);
-		}
-	};
-	base["QMLSignalDefinition"] = ignore;
-	base["QMLPropertyBinding"] = function (node, st, c) {
-		c(node.binding, st);
-	};
-	base["QMLScriptBinding"] = function (node, st, c) {
-		c(node.script, st);
 	}
-	base["QMLQualifiedID"] = ignore;
-	base["QMLStatementBlock"] = function (node, st, c) {
-		for (var i = 0; i < node.statements.length; i++) {
-			c(node.statements[i], st, "Statement");
+
+	extendWalk(walk.base, {
+		QMLProgram: function (node, st, c) {
+			c(node.headerStatements, st);
+			if (node.rootObject) {
+				c(node.rootObject, st, "QMLRootObject");
+			}
+		},
+		QMLHeaderStatements: function (node, st, c) {
+			for (var i = 0; i < node.statements.length; i++) {
+				c(node.statements[i], st, "QMLHeaderStatement");
+			}
+		},
+		QMLHeaderStatement: skipThrough,
+		QMLImportStatement: ignore,
+		QMLPragmaStatement: ignore,
+		QMLRootObject: skipThrough,
+		QMLObjectLiteral: function (node, st, c) {
+			c(node.body, st);
+		},
+		QMLMemberBlock: function (node, st, c) {
+			for (var i = 0; i < node.members.length; i++) {
+				c(node.members[i], st, "QMLMember");
+			}
+		},
+		QMLMember: skipThrough,
+		QMLPropertyDeclaration: function (node, st, c) {
+			if (node.binding) {
+				c(node.binding, st);
+			}
+		},
+		QMLSignalDefinition: ignore,
+		QMLPropertyBinding: function (node, st, c) {
+			c(node.binding, st);
+		},
+		QMLScriptBinding: function (node, st, c) {
+			c(node.script, st);
+		},
+		QMLQualifiedID: ignore,
+		QMLStatementBlock: function (node, st, c) {
+			for (var i = 0; i < node.statements.length; i++) {
+				c(node.statements[i], st, "Statement");
+			}
 		}
-	};
-	return walk;
-})
+	});
+});

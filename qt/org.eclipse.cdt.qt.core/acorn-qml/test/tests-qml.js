@@ -8,11 +8,12 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-"use-strict";
+"use strict";
 
-var test = require("./driver.js").test;
-var testFail = require("./driver.js").testFail;
-var tokTypes = require("../").tokTypes;
+var driver = require("./driver.js");
+var test = driver.test;
+var testFail = driver.testFail;
+var tokTypes = driver.tokTypes;
 
 testFail('', "QML only supports ECMA Script Language Specification 5 or older",
 		{ locations: true, ecmaVersion: 6, allowReserved: false });
@@ -3241,7 +3242,7 @@ function program(headerStatements, rootObject) {
 			statements: headerStatements || []
 		},
 		rootObject: rootObject || null
-	}
+	};
 }
 
 /*

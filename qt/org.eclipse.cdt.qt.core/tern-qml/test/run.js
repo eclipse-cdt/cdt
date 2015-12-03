@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-"use-strict";
+"use strict";
 
 var driver = require("./driver.js");
 
@@ -20,7 +20,7 @@ function group(name) {
 
 function groupEnd() {
 	if (typeof console === "object" && console.groupEnd) {
-		console.groupEnd(name);
+		console.groupEnd();
 	}
 }
 
@@ -29,8 +29,9 @@ function log(title, message) {
 }
 
 var stats, tests = [];
-tests.push(require("./test-completions.js"));
+tests.push(require("./test-scoping.js"));
 tests.push(require("./test-finddef.js"));
+tests.push(require("./test-completions.js"));
 
 function report(state, code, message) {
 	if (state != "ok") {++stats.failed; log(code, message);}
@@ -45,9 +46,9 @@ for (var i = 0; i < tests.length; i++) {
 	stats = test.stats = {testsRun: 0, failed: 0};
 	var config = test.config || {};
 	config.group = test.group;
-	var t0 = +new Date;
+	var t0 = +new Date();
 	driver.runTests(config, report);
-	test.stats.duration = +new Date - t0;
+	test.stats.duration = +new Date() - t0;
 	groupEnd();
 }
 

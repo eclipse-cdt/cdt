@@ -34,6 +34,24 @@
       "revId": "472317446187aebba82fdc43ed9a62b7f41a0656",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_aada3012",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-04T20:55:34Z",
+      "side": 1,
+      "message": "I\u0027m not looking for a conversation in the commit message. Just something like \"This allows creating a new CMake project and build it\". Having to read through Bugzilla to know what a commit does is not great.",
+      "parentUuid": "27d6470d_6afe6878",
+      "revId": "472317446187aebba82fdc43ed9a62b7f41a0656",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

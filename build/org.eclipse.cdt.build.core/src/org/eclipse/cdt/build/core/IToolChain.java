@@ -27,6 +27,8 @@ public interface IToolChain {
 
 	String getName();
 
+	String getCommand();
+
 	boolean supports(ILaunchTarget target);
 
 	IExtendedScannerInfo getScannerInfo(String command, List<String> args, List<String> includePaths,

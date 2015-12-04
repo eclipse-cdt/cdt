@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.eclipse.cdt.ui.newCWizards"
+            class="org.eclipse.cdt.cmake.ui.internal.NewCMakeProjectWizard"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            icon="icons/newcc_app.gif"
+            id="org.eclipse.cdt.cmake.ui.newProjectWizard"
+            name="CMake Project"
+            project="true">
+      </wizard>
+   </extension>
+
+</plugin>

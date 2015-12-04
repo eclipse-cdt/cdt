@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *     Ericsson 		  	- Modified for additional features in DSF Reference implementation and bug 219920
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *******************************************************************************/
-
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import java.util.ArrayList;
@@ -30,14 +29,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * Represents any MI command.
  */
 public class MICommand<V extends MIInfo> implements ICommand<V> {
-    
     /*
      *  Variables.
      */
-    final static String[] empty = new String[0];
+    final static String[] empty = {};
     
-    List<Adjustable> fOptions = new ArrayList<Adjustable>();
-    List<Adjustable> fParameters = new ArrayList<Adjustable>();
+    List<Adjustable> fOptions = new ArrayList<>();
+    List<Adjustable> fParameters = new ArrayList<>();
     String   fOperation = new String();
     IDMContext fCtx;
     
@@ -62,7 +60,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     }
 
 	private final List<Adjustable> optionsToAdjustables(String[] options) {
-		List<Adjustable> result = new ArrayList<Adjustable>();
+		List<Adjustable> result = new ArrayList<>();
 		if (options != null) {
 			for (String option : options) {
 				result.add(new MIStandardOptionAdjustable(option));
@@ -72,7 +70,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 	}
     
 	private final List<Adjustable> parametersToAdjustables(String[] parameters) {
-		List<Adjustable> result = new ArrayList<Adjustable>();
+		List<Adjustable> result = new ArrayList<>();
 		if (parameters != null) {
 			for (String parameter : parameters) {
 				result.add(new MIStandardParameterAdjustable(parameter));
@@ -98,7 +96,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * returned if there are no options.
      */
     public String[] getOptions() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (Adjustable option : fOptions) {
 			result.add(option.getValue());
 		}
@@ -114,7 +112,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * returned if there are no parameters.
      */
     public String[] getParameters() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (Adjustable parameter : fParameters) {
 			result.add(parameter.getValue());
 		}
@@ -150,17 +148,17 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * @since 4.0
      */
     public String constructCommand(String groupId, String threadId, int frameId) {
-        StringBuffer command = new StringBuffer(getOperation());
+        StringBuilder command = new StringBuilder(getOperation());
         
         // Add the --thread option
-        if (supportsThreadAndFrameOptions() && threadId != null && threadId.trim().length() > 0) {
+        if (supportsThreadAndFrameOptions() && threadId != null && !threadId.trim().isEmpty()) {
         	command.append(" --thread " + threadId); //$NON-NLS-1$
 
         	// Add the --frame option, but only if we are using the --thread option
         	if (frameId >= 0) {
         		command.append(" --frame " + frameId); //$NON-NLS-1$
         	}
-        } else if (supportsThreadGroupOption() && groupId != null && groupId.trim().length() > 0) {
+        } else if (supportsThreadGroupOption() && groupId != null && !groupId.trim().isEmpty()) {
         	// The --thread-group option is only allowed if we are not using the --thread option
         	command.append(" --thread-group " + groupId); //$NON-NLS-1$
         }
@@ -181,8 +179,8 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 //     * Checks to see if the current command can be coalesced with the 
 //     * supplied command.
 //     */
-//    public boolean canCoalesce( ICommand<? extends ICommandResult> command ) {
-//        return false ;
+//    public boolean canCoalesce(ICommand<? extends ICommandResult> command) {
+//        return false;
 //    }
     
     /*
@@ -191,13 +189,13 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * original command.
      */
 	@Override
-    public ICommand<? extends ICommandResult> coalesceWith( ICommand<? extends ICommandResult> command ) {
-        return null ;
+    public ICommand<? extends ICommandResult> coalesceWith(ICommand<? extends ICommandResult> command) {
+        return null;
     }
     
 
 	@Override
-    public IDMContext getContext(){
+    public IDMContext getContext() {
     	return fCtx;
     }
     /**
@@ -207,11 +205,11 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * @return result for this command
      */
     public MIInfo getResult(MIOutput MIresult) {
-        return ( new MIInfo(MIresult) );
+        return new MIInfo(MIresult);
     }
     
     protected String optionsToString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (fOptions != null && !fOptions.isEmpty()) {
 			for (Adjustable option : fOptions) {
 				sb.append(option.getAdjustedValue());
@@ -222,7 +220,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 
     protected String parametersToString() {
 		String[] options = getOptions();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (fParameters != null && !fParameters.isEmpty()) {
 			// According to GDB/MI spec
 			// Add a "--" separator if any parameters start with "-"
@@ -267,8 +265,8 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      */
     @Override
     public boolean equals(Object obj) {
-    	if(obj instanceof MICommand<?>){
-    	    MICommand<?> otherCmd = (MICommand<?>)obj;
+    	if (obj instanceof MICommand<?>) {
+    	    MICommand<?> otherCmd = (MICommand<?>) obj;
         	return ((fCtx == null && otherCmd.fCtx == null) || (fCtx != null && fCtx.equals(otherCmd.fCtx))) &&   
         	       constructCommand().equals(otherCmd.constructCommand());
     	}
@@ -344,7 +342,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 			}
 			
 // Although this change makes sense, it could have impacts on many
-// different commands we send to GDB.  The risk outways the benefits,
+// different commands we send to GDB.  The risk outweighs the benefits,
 // so we comment it out.  See bugs 412471 and 414959 for details.
 //			
 //			// an empty parameter can be passed with two single quotes
@@ -357,7 +355,6 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 	}
 
 	public static abstract class MICommandAdjustable implements Adjustable {
-
 		protected final String value;
 
 		/**

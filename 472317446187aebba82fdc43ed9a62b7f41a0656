@@ -52,6 +52,24 @@
       "revId": "472317446187aebba82fdc43ed9a62b7f41a0656",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_4a8444ec",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-12-04T21:10:50Z",
+      "side": 1,
+      "message": "There\u0027s a whole document to write that describes what this does and, more importantly, how it does it. Probably send that to the mailing list once the verify job passes and I check this in. But it\u0027s really feeling like a Friday afternoon of a very busy week.",
+      "parentUuid": "27d6470d_aada3012",
+      "revId": "472317446187aebba82fdc43ed9a62b7f41a0656",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

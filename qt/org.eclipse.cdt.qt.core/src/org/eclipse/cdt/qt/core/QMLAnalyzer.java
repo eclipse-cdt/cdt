@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,13 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 @SuppressWarnings("nls")
 public class QMLAnalyzer {
@@ -65,10 +73,42 @@ public class QMLAnalyzer {
 		invoke.invokeMethod(defs, "push", engine.get("ecma5defs"));
 		options.put("defs", defs);
 
+		ResolveDirectory resolveDirectory = (file, pathString) -> {
+			String filename = (String) file.get("name");
+			int slash = filename.lastIndexOf('/');
+			String fileDirectory = slash >= 0 ? filename.substring(0, slash + 1) : filename;
+			if (pathString == null) {
+				return fileDirectory;
+			}
+			IPath path = Path.fromOSString(pathString);
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			if (!path.isAbsolute()) {
+				IResource res = root.findMember(fileDirectory);
+				if (res instanceof IContainer) {
+					IContainer dir = (IContainer) res;
+					res = dir.findMember(path);
+					if (res != null) {
+						String p = res.getFullPath().toString().substring(1);
+						if (!p.isEmpty() && !p.endsWith("/")) {
+							p += "/";
+						}
+						return p;
+					}
+				}
+			}
+			return pathString;
+		};
+		options.put("resolveDirectory", invoke.invokeFunction("resolveDirectory", resolveDirectory));
+
 		synchronized (this) {
 			tern = invoke.invokeFunction("newTernServer", options);
 			notifyAll();
 		}
+	}
+
+	@FunctionalInterface
+	public interface ResolveDirectory {
+		public String resolveDirectory(Bindings file, String path);
 	}
 
 	private Object load(String file) throws ScriptException, IOException {
@@ -77,7 +117,7 @@ public class QMLAnalyzer {
 			throw new FileNotFoundException(file);
 		}
 		engine.getContext().setAttribute(ScriptEngine.FILENAME, file, ScriptContext.ENGINE_SCOPE);
-		return engine.eval(new BufferedReader(new InputStreamReader(scriptURL.openStream())));
+		return engine.eval(new BufferedReader(new InputStreamReader(scriptURL.openStream(), StandardCharsets.UTF_8)));
 	}
 
 	private void waitUntilLoaded() {
@@ -93,8 +133,9 @@ public class QMLAnalyzer {
 		}
 	}
 
+	@FunctionalInterface
 	public interface RequestCallback {
-		void callback(Object err, Object data);
+		void callback(Object err, Bindings data);
 	}
 
 	public void addFile(String fileName, String code) throws NoSuchMethodException, ScriptException {
@@ -102,9 +143,21 @@ public class QMLAnalyzer {
 		invoke.invokeMethod(tern, "addFile", fileName, code);
 	}
 
-	public Collection<QMLTernCompletion> getCompletions(String fileName, int pos)
+	public void deleteFile(String fileName) throws NoSuchMethodException, ScriptException {
+		waitUntilLoaded();
+		invoke.invokeMethod(tern, "delFile", fileName);
+	}
+
+	public Collection<QMLTernCompletion> getCompletions(String fileName, String text, int pos)
 			throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
+		Bindings file = engine.createBindings();
+		file.put("type", "full");
+		file.put("name", fileName);
+		file.put("text", text);
+		Bindings files = (Bindings) engine.eval("new Array()");
+		invoke.invokeMethod(files, "push", file);
+
 		Bindings query = engine.createBindings();
 		query.put("type", "completions");
 		query.put("file", fileName);
@@ -119,6 +172,7 @@ public class QMLAnalyzer {
 		query.put("includeKeywords", true);
 		query.put("guess", false);
 		Bindings request = engine.createBindings();
+		request.put("files", files);
 		request.put("query", query);
 
 		List<QMLTernCompletion> completions = new ArrayList<>();
@@ -129,7 +183,7 @@ public class QMLAnalyzer {
 			} else {
 				try {
 					for (Bindings completion : (Bindings[]) invoke.invokeMethod(engine.get("Java"), "to",
-							((Bindings) data).get("completions"), "javax.script.Bindings[]")) {
+							data.get("completions"), "javax.script.Bindings[]")) {
 						completions.add(new QMLTernCompletion((String) completion.get("name"),
 								(String) completion.get("type"), (String) completion.get("origin")));
 					}

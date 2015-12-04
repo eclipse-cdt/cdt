@@ -26,10 +26,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
+import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfigurationManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
@@ -80,13 +80,13 @@ public class UpdateConfigureTest {
 		ICConfigurationDescription cfgDes = CoreModel.getDefault().getProjectDescription(testProject).getActiveConfiguration();
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
 		assertTrue(cfg.getName().equals("Build (GNU)"));
-		Map<String, IAutotoolsOption> opts = AutotoolsConfigurationManager.getInstance().getAutotoolsCfgOptions(testProject, cfg.getId());
+		Map<String, IAutotoolsOption> opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
 		
 		IAutotoolsOption k = opts.get(AutotoolsOptionConstants.OPT_CFLAGS_GPROF);
 		k.setValue("true");
 		
 		// Now update the options we changed
-		AutotoolsConfigurationManager.getInstance().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
+		AutotoolsPlugin.getDefault().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
 		
 		// Rebuild project
 		assertTrue(ProjectTools.build());
@@ -106,7 +106,7 @@ public class UpdateConfigureTest {
 		}
 		
 		// Reset gprof opt and set gcov opt
-		opts = AutotoolsConfigurationManager.getInstance().getAutotoolsCfgOptions(testProject, cfg.getId());
+		opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
 		k = opts.get(AutotoolsOptionConstants.OPT_CFLAGS_GPROF);
 		k.setValue("false");
 		
@@ -114,7 +114,7 @@ public class UpdateConfigureTest {
 		k.setValue("true");
 		
 		// Now update the options we changed
-		AutotoolsConfigurationManager.getInstance().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
+		AutotoolsPlugin.getDefault().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
 		
 		// Rebuild project
 		assertTrue(ProjectTools.build());
@@ -130,7 +130,7 @@ public class UpdateConfigureTest {
 		}
 		
 		// Reset gcov opt and set debug opt
-		opts = AutotoolsConfigurationManager.getInstance().getAutotoolsCfgOptions(testProject, cfg.getId());
+		opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
 		k = opts.get(AutotoolsOptionConstants.OPT_CFLAGS_GCOV);
 		k.setValue("false");
 		
@@ -138,7 +138,7 @@ public class UpdateConfigureTest {
 		k.setValue("true");
 		
 		// Now update the options we changed
-		AutotoolsConfigurationManager.getInstance().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
+		AutotoolsPlugin.getDefault().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
 		
 		// Rebuild project
 		assertTrue(ProjectTools.build());
@@ -168,7 +168,7 @@ public class UpdateConfigureTest {
 		ICConfigurationDescription cfgDes = CoreModel.getDefault().getProjectDescription(testProject).getActiveConfiguration();
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
 		assertTrue(cfg.getName().equals("Build (GNU)"));
-		Map<String, IAutotoolsOption> opts = AutotoolsConfigurationManager.getInstance().getAutotoolsCfgOptions(testProject, cfg.getId());
+		Map<String, IAutotoolsOption> opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
 		IAutotoolsOption configdir = opts.get(AutotoolsOptionConstants.OPT_CONFIGDIR);
 		assertEquals(configdir.getType(), IAutotoolsOption.INTERNAL);
 		assertTrue(configdir.getValue().equals("src"));
@@ -412,13 +412,13 @@ public class UpdateConfigureTest {
 		// Verify last option changed has changed in our copy, but not
 		// in the actual options
 		assertEquals(k.getValue(), "true");
-		Map<String, IAutotoolsOption> opts2 = AutotoolsConfigurationManager.getInstance().getAutotoolsCfgOptions(testProject, cfg.getId());
+		Map<String, IAutotoolsOption> opts2 = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
 		IAutotoolsOption k2 = opts2.get(AutotoolsOptionConstants.OPT_VERSION);
 		assertEquals(k2.getValue(), "false");
 		
 		// Now update the options we changed
-		AutotoolsConfigurationManager.getInstance().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
-		opts2 = AutotoolsConfigurationManager.getInstance().getAutotoolsCfgOptions(testProject, cfg.getId());
+		AutotoolsPlugin.getDefault().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
+		opts2 = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
 		
 		// Verify new option values
 		k = opts2.get(AutotoolsOptionConstants.TOOL_AUTOGEN);

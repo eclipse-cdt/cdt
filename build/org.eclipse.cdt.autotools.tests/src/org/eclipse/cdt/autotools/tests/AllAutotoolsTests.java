@@ -24,6 +24,7 @@ import org.junit.runners.Suite;
 	AutotoolsProjectTest2.class,
 	AutotoolsVirtualFolderTest.class,
 	AutotoolsEnvironmentVarTest.class,
+	LibtoolGCCBuildCommandParserTest.class,
 	UpdateConfigureTest.class,
 	AutoconfTests.class,
 	EditorTests.class

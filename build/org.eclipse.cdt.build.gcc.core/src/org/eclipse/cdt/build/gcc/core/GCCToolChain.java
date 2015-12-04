@@ -46,8 +46,9 @@ import org.osgi.service.prefs.Preferences;
  */
 public class GCCToolChain implements IToolChain {
 
-	private IToolChainType type;
+	private final IToolChainType type;
 	private final String name;
+	private String command;
 	private String version;
 	private String target;
 
@@ -55,11 +56,13 @@ public class GCCToolChain implements IToolChain {
 		this.type = type;
 		getVersion(path.resolve(command).toString());
 		this.name = command + '-' + version;
+		this.command = command;
 	}
 
 	protected GCCToolChain(IToolChainType type, String name) {
 		this.type = type;
 		this.name = name;
+		// TODO need to pull the other info out of preferences
 	}
 
 	@Override
@@ -70,6 +73,11 @@ public class GCCToolChain implements IToolChain {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getCommand() {
+		return command;
 	}
 
 	private static Pattern versionPattern = Pattern.compile(".*(gcc|LLVM) version .*"); //$NON-NLS-1$

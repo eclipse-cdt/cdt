@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27d6470d_4a2a84b6",
+        "filename": "build/org.eclipse.cdt.cmake-feature/feature.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-04T19:54:42Z",
+      "side": 1,
+      "message": "QNX?",
+      "range": {
+        "startLine": 8,
+        "startChar": 2,
+        "endLine": 10,
+        "endChar": 21
+      },
+      "revId": "3dc28757c1428aef11cc57803dad293b1fe13b2a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_6a2f48c5",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeLocalLaunchConfigurationProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-04T19:54:42Z",
+      "side": 1,
+      "message": "??",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 25
+      },
+      "revId": "3dc28757c1428aef11cc57803dad293b1fe13b2a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

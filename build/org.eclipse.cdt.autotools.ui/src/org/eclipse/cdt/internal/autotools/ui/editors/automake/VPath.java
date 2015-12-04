@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.gnu.IVPath;
+
 public class VPath extends Directive implements IVPath {
 
 	String pattern;

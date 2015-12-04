@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.gnu.IUnExport;
+
 public class UnExport extends Directive implements IUnExport {
 
 	String variable;

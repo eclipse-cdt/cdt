@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.internal.autotools.ui.preferences.AutomakeEditorPreferencePage;
 import org.eclipse.cdt.internal.autotools.ui.preferences.AutotoolsEditorPreferenceConstants;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.ISourceViewer;

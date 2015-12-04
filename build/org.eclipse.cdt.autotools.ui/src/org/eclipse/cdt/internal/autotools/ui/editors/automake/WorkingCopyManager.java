@@ -15,6 +15,9 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.ui.IWorkingCopyManager;
+import org.eclipse.cdt.make.ui.IWorkingCopyManagerExtension;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;

@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.IEmptyLine;
+
 public class EmptyLine extends Directive implements IEmptyLine {
 
 	final public static char NL = '\n';

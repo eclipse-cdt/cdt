@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.gnu.IExportAllVariablesRule;
+
 /**
  * .EXPORT_ALL_VARIABLES
  *  Simply by being mentioned as a target, this tells `make' to export

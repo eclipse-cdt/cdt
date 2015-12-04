@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.ISilentRule;
+
 /**
  * .SILENT
  * Prerequisties of this special target are targets themselves; this shall cause

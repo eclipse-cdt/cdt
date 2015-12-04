@@ -12,6 +12,7 @@
  */
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.IPreciousRule;
+
 /**
  * .PRECIOUS
  * Prerequisites of this special target shall not be removed if make recieves an

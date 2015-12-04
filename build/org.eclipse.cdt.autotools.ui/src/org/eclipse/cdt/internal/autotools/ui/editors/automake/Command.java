@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.cdt.make.core.makefile.ICommand;
+
 /**
  * Makefile : ( statement ) *
  * statement : command | ..  

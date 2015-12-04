@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.internal.autotools.ui.preferences.ColorManager;
+import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
 

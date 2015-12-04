@@ -27,6 +27,11 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.makefile.IAutomaticVariable;
+import org.eclipse.cdt.make.core.makefile.IBuiltinFunction;
+import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.gnu.IGNUMakefile;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -893,9 +898,6 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		return list.toArray(new IDirective[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.AbstractMakefile#getBuiltins()
-	 */
 	@Override
 	public IDirective[] getBuiltins() {
 		if (builtins == null) {
@@ -983,6 +985,16 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		} catch (IOException e) {
 			System.out.println(e);
 		}
+	}
+
+	@Override
+	public IBuiltinFunction[] getBuiltinFunctions() {
+		return new IBuiltinFunction[0];
+	}
+
+	@Override
+	public IAutomaticVariable[] getAutomaticVariables() {
+		return new IAutomaticVariable[0];
 	}
 
 }

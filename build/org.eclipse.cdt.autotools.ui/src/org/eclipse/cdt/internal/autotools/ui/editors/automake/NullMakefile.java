@@ -13,6 +13,10 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import java.io.Reader;
 import java.net.URI;
 
+import org.eclipse.cdt.make.core.makefile.IAutomaticVariable;
+import org.eclipse.cdt.make.core.makefile.IBuiltinFunction;
+import org.eclipse.cdt.make.core.makefile.IDirective;
+
 /**
  * Makefile : ( statement ) *
  * statement :   rule | macro_definition | comments | empty
@@ -64,5 +68,15 @@ public class NullMakefile extends AbstractMakefile {
 	}
 	
 	protected void parse(URI fileURI, MakefileReader reader) {
+	}
+
+	@Override
+	public IBuiltinFunction[] getBuiltinFunctions() {
+		return new IBuiltinFunction[0];
+	}
+
+	@Override
+	public IAutomaticVariable[] getAutomaticVariables() {
+		return new IAutomaticVariable[0];
 	}
 }

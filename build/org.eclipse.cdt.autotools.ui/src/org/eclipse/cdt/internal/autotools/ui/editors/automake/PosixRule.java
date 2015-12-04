@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.IPosixRule;
+
 /**
  * .POSIX
  * The appliation shall ensure that this special target is specified without

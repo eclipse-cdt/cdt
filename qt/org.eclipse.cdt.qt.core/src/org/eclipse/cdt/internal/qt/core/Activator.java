@@ -70,10 +70,10 @@ public class Activator extends Plugin {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					qmlAnalyzer.load();
-					return Status.OK_STATUS;
 				} catch (NoSuchMethodException | ScriptException | IOException e) {
-					return new Status(IStatus.ERROR, ID, "loading QML analyzer", e);
+					log(e);
 				}
+				return Status.OK_STATUS;
 			}
 		}.schedule();
 

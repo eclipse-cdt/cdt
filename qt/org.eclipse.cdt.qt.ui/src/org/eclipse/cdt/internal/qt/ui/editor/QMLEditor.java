@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.editor;
 
+import javax.script.ScriptException;
+
 import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.qt.ui.text.QMLSourceViewerConfiguration;
+import org.eclipse.cdt.qt.core.QMLAnalyzer;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
@@ -29,11 +35,29 @@ public class QMLEditor extends TextEditor {
 	private static final String BRACKET_MATCHING_PREFERENCE = "org.eclipse.cdt.qt.ui.qmlMatchingBrackets"; //$NON-NLS-1$
 
 	private static final char[] BRACKETS = { '{', '}', '(', ')', '[', ']' };
+	private final QMLAnalyzer analyzer = Activator.getService(QMLAnalyzer.class);
 
 	@Override
 	protected void initializeEditor() {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		setSourceViewerConfiguration(new QMLSourceViewerConfiguration(this));
+	}
+
+	@Override
+	public void doSave(IProgressMonitor progressMonitor) {
+		IFileEditorInput fileInput = (IFileEditorInput) getEditorInput();
+		String fileName = fileInput.getFile().getFullPath().toString().substring(1);
+		IDocument document = getSourceViewer().getDocument();
+
+		try {
+			analyzer.deleteFile(fileName);
+			analyzer.addFile(fileName, document.get());
+		} catch (NoSuchMethodException e) {
+			Activator.log(e);
+		} catch (ScriptException e) {
+			Activator.log(e);
+		}
+		super.doSave(progressMonitor);
 	}
 
 	@Override

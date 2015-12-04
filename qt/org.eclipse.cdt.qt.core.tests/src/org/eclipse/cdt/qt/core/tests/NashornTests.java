@@ -28,9 +28,7 @@ public class NashornTests {
 		int pos = code.indexOf('|');
 		code = code.substring(0, pos) + code.substring(pos + 1);
 
-		analyzer.addFile("test1.qml", code);
-
-		Collection<QMLTernCompletion> QMLTernCompletions = analyzer.getCompletions("test1.qml", pos);
+		Collection<QMLTernCompletion> QMLTernCompletions = analyzer.getCompletions("test1.qml", code, pos);
 
 		Map<String, QMLTernCompletion> set = new HashMap<>();
 		Set<String> unexpected = new HashSet<>();

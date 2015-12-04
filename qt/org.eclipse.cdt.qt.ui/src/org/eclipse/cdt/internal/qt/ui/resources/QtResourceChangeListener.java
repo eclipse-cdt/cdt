@@ -38,6 +38,7 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 		}
 
 		final List<IResourceDelta> deltaList = new ArrayList<>();
+		final List<IResourceDelta> qmlDeltaList = new ArrayList<>();
 		IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
 
 			@Override
@@ -79,8 +80,13 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 					return false;
 				}
 
+				// We don't care about resources that have simply been updated
+				if ((delta.getKind() & IResourceDelta.CHANGED) > 0) {
+					return false;
+				}
+
 				// We only care about added and removed resources at this point
-				if ((delta.getKind() & (IResourceDelta.ADDED | IResourceDelta.REMOVED)) == 0) {
+				if ((delta.getKind() & IResourceDelta.ADDED | IResourceDelta.REMOVED) == 0) {
 					return false;
 				}
 
@@ -91,6 +97,8 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 					// Project. Add it to the list of deltas so we can update
 					// the project file later.
 					deltaList.add(delta);
+				} else if ("qml".equals(resource.getFileExtension())) { //$NON-NLS-1$
+					qmlDeltaList.add(delta);
 				}
 
 				// Doesn't really matter since this line can only be reached if
@@ -110,6 +118,10 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 		// Schedule the job to update the .pro files
 		if (!deltaList.isEmpty()) {
 			new QtProjectFileUpdateJob(deltaList).schedule();
+		}
+		// Schedule the job to update the tern server with added/deleted qml files
+		if (!qmlDeltaList.isEmpty()) {
+			new QMLTernFileUpdateJob(qmlDeltaList).schedule();
 		}
 	}
 }

@@ -42,12 +42,11 @@ public class QMLContentAssistProcessor implements IContentAssistProcessor {
 		String prefix = lastWord(document, offset);
 		// Save the file
 		IFileEditorInput fileInput = (IFileEditorInput) editor.getEditorInput();
-		String fileName = fileInput.getFile().getName();// getLocation().toOSString().substring(1);
+		String fileName = fileInput.getFile().getFullPath().toString().substring(1);// getLocation().toOSString().substring(1);
 
 		try {
 			String contents = document.get();
-			analyzer.addFile(fileName, contents);
-			Collection<QMLTernCompletion> completions = analyzer.getCompletions(fileName, offset);
+			Collection<QMLTernCompletion> completions = analyzer.getCompletions(fileName, contents, offset);
 			if (!completions.isEmpty()) {
 				ICompletionProposal[] proposals = new ICompletionProposal[completions.size()];
 				int i = 0;
@@ -64,8 +63,7 @@ public class QMLContentAssistProcessor implements IContentAssistProcessor {
 				return proposals;
 			}
 		} catch (NoSuchMethodException | ScriptException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Activator.log(e);
 		}
 		return NO_COMPLETIONS;
 	}

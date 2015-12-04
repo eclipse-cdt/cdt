@@ -57,7 +57,7 @@
 				dir = dir.substring(0, dir.lastIndexOf("/") + 1);
 				return dir;
 			}
-			if (path.startsWith("./")) {
+			if (path.substring(0, 2) === "./") {
 				path = file.directory + path.substring(2);
 			}
 			if (path.substr(path.length - 1, 1) !== "/") {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2015 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		super.tearDown();
 	}
 
-	protected IASTName findName(String section, int len, boolean preferImplicitName) {
+	protected IASTName findName(String section, int offset, int len,
+			boolean preferImplicitName) {
 		if (len <= 0)
 			len += section.length();
 
@@ -97,21 +98,21 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
 			String source = ast.getRawSignature();
 			// Skip the automatically added code.
-			int offset = source.indexOf(END_OF_ADDED_CODE_MARKER);
-			if (offset >= 0) {
-				offset += END_OF_ADDED_CODE_MARKER.length();
-				if (source.charAt(offset) == '\n')
-					offset++;
+			int sectionOffset = source.indexOf(END_OF_ADDED_CODE_MARKER);
+			if (sectionOffset >= 0) {
+				sectionOffset += END_OF_ADDED_CODE_MARKER.length();
+				if (source.charAt(sectionOffset) == '\n')
+					sectionOffset++;
 			} else {
-				offset = 0;
+				sectionOffset = 0;
 			}
-			offset = source.indexOf(section, offset);
-			if (offset >= 0) {
+			sectionOffset = source.indexOf(section, sectionOffset);
+			if (sectionOffset >= 0) {
 				IASTName name= null;
 				if (!preferImplicitName)
-					name= nodeSelector.findName(offset, len);
+					name= nodeSelector.findName(sectionOffset + offset, len);
 				if (name == null)
-					name= nodeSelector.findImplicitName(offset, len);
+					name= nodeSelector.findImplicitName(sectionOffset + offset, len);
 				return name;
 			}
 		}
@@ -119,12 +120,20 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		return null;
 	}
 	
-	protected IASTName findName(String section, int len) {
-		return findName(section, len, false);
+	protected IASTName findName(String section, int offset, int len) {
+		return findName(section, offset, len, false);
 	}
 	
+	protected IASTName findName(String section, int len) {
+		return findName(section, 0, len);
+	}
+
+	protected IASTName findImplicitName(String section, int offset, int len) {
+		return findName(section, offset, len, true);
+	}
+
 	protected IASTName findImplicitName(String section, int len) {
-		return findName(section, len, true);
+		return findName(section, 0, len);
 	}
 
 	/**
@@ -135,17 +144,19 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 *  <li> The binding associated with the name is null or a problem binding
      *  <li> The binding is not an instance of the specified class
 	 * </ul>
-	 * @param section the code fragment to search for in the AST. The first occurrence of an identical section is used.
-	 * @param len the length of the specified section to use as a name. This can also be useful for distinguishing between
-	 * template names, and template ids.
+	 * @param section the code fragment to search for in the AST. The first occurrence of an identical
+	 *     section is used.
+	 * @param offset the offset of the name within the section 
+	 * @param len the length of the name. This can also be useful for distinguishing between template names
+	 *     and template ids.
 	 * @param clazz an expected class type or interface that the binding should extend/implement
 	 * @return the associated name's binding
 	 */
-	protected <T> T getBindingFromASTName(String section, int len, Class<T> clazz, Class... cs) {
+	protected <T> T getBindingFromASTName(String section, int offset, int len, Class<T> clazz, Class... cs) {
 		if (len <= 0)
-			len += section.length();
+			len += section.length() - offset;
 
-		IASTName name= findName(section, len);
+		IASTName name= findName(section, offset, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
@@ -156,6 +167,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		return clazz.cast(binding);
 	}
 	
+	protected <T> T getBindingFromASTName(String section, int len, Class<T> clazz, Class... cs) {
+		return getBindingFromASTName(section, 0, len, clazz, cs);
+	}
+
 	/**
 	 * Attempts to get an IBinding attached to an implicit name from the initial specified 
 	 * number of characters from the specified code fragment. Fails the test if
@@ -164,18 +179,20 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 *  <li> The binding associated with the implicit name is null or a problem binding
      *  <li> The binding is not an instance of the specified class
 	 * </ul>
-	 * @param section the code fragment to search for in the AST. The first occurrence of an identical section is used.
-	 * @param len the length of the specified section to use as a name
+	 * @param section the code fragment to search for in the AST. The first occurrence of an identical
+	 *     section is used.
+	 * @param offset the offset of the name within the section 
+	 * @param len the length of the name
 	 * @param clazz an expected class type or interface that the binding should extend/implement
 	 * @return the associated implicit name's binding
 	 */
-	protected <T> T getBindingFromImplicitASTName(String section, int len, Class<T> clazz, Class... cs) {
+	protected <T> T getBindingFromImplicitASTName(String section, int offset, int len, Class<T> clazz, Class... cs) {
 		if (len <= 0)
-			len += section.length();
+			len += section.length() - offset;
 
-		IASTName name= findImplicitName(section, len);
+		IASTName name= findImplicitName(section, offset, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
-		assertEquals(section.substring(0, len), name.getRawSignature());
+		assertEquals(section.substring(offset, offset + len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
@@ -184,16 +201,27 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		return clazz.cast(binding);
 	}
 
-	/*
+	protected <T> T getBindingFromImplicitASTName(String section, int len, Class<T> clazz, Class... cs) {
+		return getBindingFromImplicitASTName(section, 0, len, clazz, cs);
+	}
+
+	/**
 	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(String, int, Class<T>, Class...)
 	 */
 	protected <T extends IBinding> T getBindingFromASTName(String section, int len) {
-		if (len <= 0)
-			len += section.length();
+		return getBindingFromASTName(section, 0, len);
+	}
 
-		IASTName name= findName(section, len);
+	/**
+	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(String, int, Class<T>, Class...)
+	 */
+	protected <T extends IBinding> T getBindingFromASTName(String section, int offset, int len) {
+		if (len <= 0)
+			len += section.length() - offset;
+
+		IASTName name= findName(section, offset, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
-		assertEquals(section.substring(0, len), name.getRawSignature());
+		assertEquals(section.substring(offset, offset + len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
@@ -202,11 +230,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 
 	protected <T extends IBinding> T getBindingFromFirstIdentifier(String section) {
-		return getBindingFromASTName(section, getIdentifierLength(section));
+		int offset = getIdentifierOffset(section);
+		return getBindingFromASTName(section, offset, getIdentifierLength(section, offset));
 	}
 
 	protected <T extends IBinding> T getBindingFromFirstIdentifier(String section, Class<T> clazz, Class... cs) {
-		return getBindingFromASTName(section, getIdentifierLength(section), clazz, cs);
+		int offset = getIdentifierOffset(section);
+		return getBindingFromASTName(section, offset, getIdentifierLength(section, offset), clazz, cs);
 	}
 
 	/*
@@ -216,7 +246,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		if (len <= 0)
 			len += section.length();
 
-		IASTName name= findImplicitName(section, len);
+		IASTName name= findImplicitName(section, 0, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
@@ -234,7 +264,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * @return the associated name's binding
 	 */
 	protected IBinding getProblemFromASTName(String section, int len) {
-		IASTName name= findName(section, len);
+		IASTName name= findName(section, 0, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
@@ -246,7 +276,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 
 	protected IBinding getProblemFromFirstIdentifier(String section) {
-		return getProblemFromASTName(section, getIdentifierLength(section));
+		int offset = getIdentifierOffset(section);
+		return getProblemFromASTName(section, getIdentifierLength(section, offset));
 	}
 
 	protected static void assertQNEquals(String expectedQN, IBinding b) {
@@ -338,11 +369,20 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 	}
 
-	protected int getIdentifierLength(String str) {
-		int i;
-		for (i = 0; i < str.length() && Character.isJavaIdentifierPart(str.charAt(i)); ++i) {
+	private int getIdentifierOffset(String str) {
+		for (int i = 0; i < str.length(); ++i) {
+			if (Character.isJavaIdentifierPart(str.charAt(i)))
+				return i;
 		}
-		return i;
+		fail("Didn't find identifier in \"" + str + "\"");
+		return -1;
+	}
+
+	private int getIdentifierLength(String str, int offset) {
+		int i;
+		for (i = offset; i < str.length() && Character.isJavaIdentifierPart(str.charAt(i)); ++i) {
+		}
+		return i - offset;
 	}
 
 	static protected class NameCollector extends ASTVisitor {

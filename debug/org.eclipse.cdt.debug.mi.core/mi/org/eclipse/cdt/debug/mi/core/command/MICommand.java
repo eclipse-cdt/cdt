@@ -8,15 +8,13 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.mi.core.command;
 
 /**
- * 
  * Represents a MI command.
  */
 public class MICommand extends Command {
-	final static String[] empty = new String[0];
+	final static String[] empty = {};
 	String[] fOptions = empty;
 	String[] fParameters = empty;
 	String fOperation = new String();
@@ -112,13 +110,13 @@ public class MICommand extends Command {
 
 	protected String optionsToString() {
 		String[] options = getOptions();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (options != null && options.length > 0) {
 			for (int i = 0; i < options.length; i++) {
 				String option = options[i];
 				// If the option argument contains " or \ it must be escaped
 				if (option.indexOf('"') != -1 || option.indexOf('\\') != -1) {
-					StringBuffer buf = new StringBuffer();
+					StringBuilder buf = new StringBuilder();
 					for (int j = 0; j < option.length(); j++) {
 						char c = option.charAt(j);
 						if (c == '"' || c == '\\') {
@@ -144,7 +142,7 @@ public class MICommand extends Command {
 	protected String parametersToString() {
 		String[] parameters = getParameters();
 		String[] options = getOptions();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (parameters != null && parameters.length > 0) {
 			// According to GDB/MI spec
 			// Add a "--" separator if any parameters start with "-"
@@ -157,7 +155,7 @@ public class MICommand extends Command {
 				}
 			}
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < parameters.length; i++) {
 				// We need to escape the double quotes and the backslash.
 				sb.setLength(0);
@@ -184,7 +182,7 @@ public class MICommand extends Command {
 
 	@Override
 	public String toString() {
-		StringBuffer command = new StringBuffer(getToken() + getOperation());
+		StringBuilder command = new StringBuilder(getToken() + getOperation());
 		String opt = optionsToString();
 		if (opt.length() > 0) {
 			command.append(' ').append(opt);

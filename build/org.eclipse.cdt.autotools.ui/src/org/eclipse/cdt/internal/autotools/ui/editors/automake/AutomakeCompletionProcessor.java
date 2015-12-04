@@ -18,6 +18,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.cdt.internal.autotools.ui.MakeUIImages;
+import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.IRule;
+import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.CompletionProposal;

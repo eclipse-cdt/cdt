@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.gnu.ITerminal;
+
 public abstract class Terminal extends Directive implements ITerminal {
 
 	public Terminal(Directive parent) {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.gnu.IPhonyRule;
+
 /**
  * .PHONY
  *     The prerequisites of the special target `.PHONY' are considered to be phony targets.

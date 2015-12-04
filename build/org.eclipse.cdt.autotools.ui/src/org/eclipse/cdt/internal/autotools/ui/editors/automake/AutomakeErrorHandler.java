@@ -11,6 +11,9 @@
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
+import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.IParent;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;

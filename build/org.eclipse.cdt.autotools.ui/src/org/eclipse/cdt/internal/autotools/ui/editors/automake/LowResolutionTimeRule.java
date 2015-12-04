@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.gnu.ILowResolutionTimeRule;
+
 /**
  * .LOW_RESOLUTION_TIME'
  *  If you specify prerequisites for `.LOW_RESOLUTION_TIME', `make'

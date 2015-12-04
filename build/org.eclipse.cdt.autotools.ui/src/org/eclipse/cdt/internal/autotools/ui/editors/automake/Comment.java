@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.IComment;
+
 public class Comment extends Directive implements IComment {
 
 	String comment;

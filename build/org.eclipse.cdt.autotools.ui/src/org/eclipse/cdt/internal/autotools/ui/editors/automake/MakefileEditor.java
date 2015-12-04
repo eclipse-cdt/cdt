@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.internal.autotools.ui.MakeUIMessages;
+import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.IAction;

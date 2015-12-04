@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.makefile.ITargetRule;
+
 /**
  * Makefile : ( statement ) *
  * statement :   rule | macro_definition | comments | empty

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.ISuffixesRule;
+
 /**
  * .SUFFIXES
  * Prerequisites of .SUFFIXES shall be appended to the list of known suffixes and are

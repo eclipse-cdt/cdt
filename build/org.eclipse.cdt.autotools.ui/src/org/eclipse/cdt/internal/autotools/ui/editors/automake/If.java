@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import java.io.File;
 
+import org.eclipse.cdt.make.core.makefile.ICommand;
+
 public class If extends Conditional implements IAutomakeConditional, ICommand {
     private static final String EMPTY = ""; //$NON-NLS-1$
     private Rule rules[] = null;

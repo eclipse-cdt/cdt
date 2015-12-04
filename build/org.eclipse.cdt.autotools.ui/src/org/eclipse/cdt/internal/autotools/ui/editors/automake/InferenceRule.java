@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.make.core.makefile.ICommand;
+
 public class InferenceRule extends Rule {
 
 	public InferenceRule(Directive parent, Target target) {

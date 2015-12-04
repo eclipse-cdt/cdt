@@ -19,6 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
+import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
+import org.eclipse.cdt.make.core.makefile.IParent;
+import org.eclipse.cdt.make.core.makefile.IRule;
+import org.eclipse.cdt.make.core.makefile.gnu.IConditional;
+import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;

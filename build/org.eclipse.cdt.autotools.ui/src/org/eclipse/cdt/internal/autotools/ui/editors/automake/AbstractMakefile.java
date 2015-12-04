@@ -15,6 +15,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IInferenceRule;
+import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
+import org.eclipse.cdt.make.core.makefile.IRule;
+import org.eclipse.cdt.make.core.makefile.ITargetRule;
+
 /**
  * Makefile : ( statement ) *
  * statement :   rule | macro_definition | comments | empty

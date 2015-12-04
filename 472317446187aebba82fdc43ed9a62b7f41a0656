@@ -133,6 +133,24 @@
       "revId": "472317446187aebba82fdc43ed9a62b7f41a0656",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_aa22305f",
+        "filename": "build/org.eclipse.cdt.cmake.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-12-04T21:31:53Z",
+      "side": 1,
+      "message": "Yes. Funny I had it there earlier but I outsmarted myself and now just look dumb :)",
+      "parentUuid": "27d6470d_4ae8c474",
+      "revId": "472317446187aebba82fdc43ed9a62b7f41a0656",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

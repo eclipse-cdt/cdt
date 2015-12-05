@@ -844,29 +844,6 @@
            </description>
         </wizard>
      </extension>
-     <extension
-           point="org.eclipse.cdt.ui.projectTypePages">
-        <projectTypePage
-              class="org.eclipse.cdt.managedbuilder.ui.wizards.ToolChainSelectionPage"
-              id="org.eclipse.cdt.managedbuilder.ui.exeProjectTypePage"
-              projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
-        </projectTypePage>
-        <projectTypePage
-              class="org.eclipse.cdt.managedbuilder.ui.wizards.ToolChainSelectionPage"
-              id="org.eclipse.cdt.managedbuilder.ui.staticLibProjectTypePage"
-              projectType="org.eclipse.cdt.build.core.buildArtefactType.staticLib">
-        </projectTypePage>
-        <projectTypePage
-              class="org.eclipse.cdt.managedbuilder.ui.wizards.ToolChainSelectionPage"
-              id="org.eclipse.cdt.managedbuilder.ui.sharedLibProjectTypePage"
-              projectType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib">
-        </projectTypePage>
-        <projectTypePage
-              class="org.eclipse.cdt.managedbuilder.ui.wizards.ToolChainSelectionPage"
-              id="org.eclipse.cdt.managedbuilder.ui.makefileProjectTypePage"
-              projectType="org.eclipse.cdt.build.makefile.projectType">
-        </projectTypePage>
-     </extension>
    <extension
             point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
          <id-association

@@ -278,8 +278,6 @@ public class Messages extends NLS {
 	public static String WizardDefaultsTab_0;
 	public static String WizardDefaultsTab_1;
 	public static String RefreshPolicyTab_resourcesTreeLabel;
-	public static String ToolChainSelectionPage_Description;
-	public static String ToolChainSelectionPage_Title;
 
 	static {
 		// Initialize resource bundle.

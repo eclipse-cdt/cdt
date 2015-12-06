@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.ui" version="2">
+    <resource path="src/org/eclipse/cdt/ui/refactoring/actions/CDeleteAction.java" type="org.eclipse.cdt.ui.refactoring.actions.CDeleteAction">
+        <filter id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.refactoring.actions.CDeleteAction"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

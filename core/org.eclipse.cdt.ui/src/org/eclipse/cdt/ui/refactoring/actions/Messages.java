@@ -22,6 +22,9 @@ class Messages extends NLS {
 	public static String ImplementMethodAction_label;
 	public static String GettersAndSetters_label;
 	public static String ToggleFunctionAction_label;
+	public static String CDeleteAction_label;
+	public static String CDeleteAction_error_title;
+	public static String CDeleteAction_error_message;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

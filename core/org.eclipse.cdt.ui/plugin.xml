@@ -1799,6 +1799,13 @@
                retarget="true">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.edit.text.delete.element"
+               label="%Refactoring.deleteAction.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup"
+               id="org.eclipse.cdt.ui.actions.Delete"
+               retarget="true">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.refactor.hide.method"
                label="%Refactoring.hideMethod.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"

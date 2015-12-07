@@ -117,6 +117,30 @@
     },
     {
       "key": {
+        "uuid": "27d6470d_eca45005",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CRefactoringActionGroup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2015-12-07T20:23:28Z",
+      "side": 1,
+      "message": "Why delete action is not enabled in editor? I\u0027d think that it should be present in all the places where rename is present.",
+      "parentUuid": "27d6470d_c01cb3f9",
+      "range": {
+        "startLine": 153,
+        "startChar": 13,
+        "endLine": 153,
+        "endChar": 22
+      },
+      "revId": "d6e91f3afd8740ca3112c017b69c63ada9908e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27d6470d_e019b706",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CRefactoringActionGroup.java",
         "patchSetId": 1
@@ -128,6 +152,30 @@
       "writtenOn": "2015-12-07T02:19:14Z",
       "side": 1,
       "message": "I\u0027m not sure, to be honest, whether re-using the id of an existing action provided by the platform is OK. Perhaps someone more experienced can chime in about this. (The alternative I have in mind is to define a new id in ICEditorActionDefinitionIds, and add a corresponding entry to org.eclipse.cdt.ui\u0027s plugin.xml.)",
+      "range": {
+        "startLine": 155,
+        "startChar": 59,
+        "endLine": 155,
+        "endChar": 65
+      },
+      "revId": "d6e91f3afd8740ca3112c017b69c63ada9908e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_d2d72232",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CRefactoringActionGroup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2015-12-07T20:23:28Z",
+      "side": 1,
+      "message": "If you want my take on it - I think the new action should follow the pattern used in this code for other actions. It means creating new id and follow what was done for others. Probably, rename action could serve as a model.\n\nNow, the better way would be not to add it programmatically but use platform command framework (extension points org.eclipse.ui.commands, org.eclipse.ui.menus). But I think that should not be in the scope of this task but a separate task to convert all refactoring actions to the framework.",
+      "parentUuid": "27d6470d_e019b706",
       "range": {
         "startLine": 155,
         "startChar": 59,

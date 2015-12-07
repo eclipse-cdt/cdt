@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27d6470d_400983bb",
+        "filename": "core/org.eclipse.cdt.ui/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-12-07T02:19:14Z",
+      "side": 1,
+      "message": "Instead of adding this file, add a \"@since 5.12\" tag to the javadoc comment for CDeleteAction. (If you set up an API baseline as described at https://wiki.eclipse.org/Getting_started_with_CDT_development, there should be a quick fix that adds it for you.)",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 54
+      },
+      "revId": "d6e91f3afd8740ca3112c017b69c63ada9908e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_600e87c6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CDeleteAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-12-07T02:19:14Z",
+      "side": 1,
+      "message": "This line should read:\n\nCopyright (c) 2015 Luis Yanes.",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 21
+      },
+      "revId": "d6e91f3afd8740ca3112c017b69c63ada9908e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_80138be7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CDeleteAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-12-07T02:19:14Z",
+      "side": 1,
+      "message": "Please add a comment stating that invoking this action from the editor is not supported.",
+      "range": {
+        "startLine": 42,
+        "startChar": 8,
+        "endLine": 42,
+        "endChar": 11
+      },
+      "revId": "d6e91f3afd8740ca3112c017b69c63ada9908e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_a0188f04",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CDeleteAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-12-07T02:19:14Z",
+      "side": 1,
+      "message": "This method can be inlined into the try block.",
+      "range": {
+        "startLine": 67,
+        "startChar": 13,
+        "endLine": 67,
+        "endChar": 16
+      },
+      "revId": "d6e91f3afd8740ca3112c017b69c63ada9908e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_c01cb3f9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CRefactoringActionGroup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-12-07T02:19:14Z",
+      "side": 1,
+      "message": "You can make this an \"else\" after the \"if (forEditor)\" block.",
+      "range": {
+        "startLine": 153,
+        "startChar": 13,
+        "endLine": 153,
+        "endChar": 22
+      },
+      "revId": "d6e91f3afd8740ca3112c017b69c63ada9908e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_e019b706",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CRefactoringActionGroup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-12-07T02:19:14Z",
+      "side": 1,
+      "message": "I\u0027m not sure, to be honest, whether re-using the id of an existing action provided by the platform is OK. Perhaps someone more experienced can chime in about this. (The alternative I have in mind is to define a new id in ICEditorActionDefinitionIds, and add a corresponding entry to org.eclipse.cdt.ui\u0027s plugin.xml.)",
+      "range": {
+        "startLine": 155,
+        "startChar": 59,
+        "endLine": 155,
+        "endChar": 65
+      },
+      "revId": "d6e91f3afd8740ca3112c017b69c63ada9908e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

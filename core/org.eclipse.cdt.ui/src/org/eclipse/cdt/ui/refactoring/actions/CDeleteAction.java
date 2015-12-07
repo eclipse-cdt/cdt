@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Wind River Systems, Inc. 
+ * Copyright (c) 2015 Luis Yanes. 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,11 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 /**
  * Launches a delete refactoring.
  * 
+ * @since 5.12
  * @noextend This class is not intended to be subclassed by clients.
  * @author Luis Yanes
- */          
+ */
+
 public class CDeleteAction extends RefactoringAction {
 	
 	public CDeleteAction(){
@@ -39,7 +41,7 @@ public class CDeleteAction extends RefactoringAction {
 
 	@Override
 	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection s) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Invoking this action from the editor is not supported");
 	}
 
 	@Override
@@ -56,16 +58,12 @@ public class CDeleteAction extends RefactoringAction {
 			}
 		};
 		try {
-			run(runnable, shellProvider.getShell());
+			IRunnableContext context = new ProgressMonitorDialog(shellProvider.getShell());
+			context.run(true, true, runnable);
 		} catch (InvocationTargetException e) {
 			ExceptionHandler.handle(e, Messages.CDeleteAction_error_title, Messages.CDeleteAction_error_message); 
 		} catch (InterruptedException e) {
 			// Safely ignore
 		}
-	}
-
-	public void run(IRunnableWithProgress runnable, Shell shell) throws InterruptedException, InvocationTargetException {
-		IRunnableContext context= new ProgressMonitorDialog(shell);
-		context.run(true, true, runnable);
 	}
 }

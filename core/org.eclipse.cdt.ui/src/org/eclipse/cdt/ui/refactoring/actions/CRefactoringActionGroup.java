@@ -150,11 +150,6 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 		fRenameAction = new CRenameAction();
         fRenameAction.setActionDefinitionId(ICEditorActionDefinitionIds.RENAME_ELEMENT);
         fAllActions.add(fRenameAction);
-        if (!forEditor) {
-        	fDeleteAction = new CDeleteAction();
-        	fDeleteAction.setActionDefinitionId(ActionFactory.DELETE.getId());
-        	fAllActions.add(fDeleteAction);
-        }
         if (forEditor) {
         	fExtractConstantAction= new ExtractConstantAction();
         	fExtractConstantAction.setActionDefinitionId(ICEditorActionDefinitionIds.EXTRACT_CONSTANT);
@@ -171,6 +166,10 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			fToggleFunctionAction = new ToggleFunctionAction();
 			fToggleFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_FUNCTION);
 			fAllActions.add(fToggleFunctionAction);
+        } else {
+        	fDeleteAction = new CDeleteAction();
+        	fDeleteAction.setActionDefinitionId(ICEditorActionDefinitionIds.DELETE_ELEMENT);
+        	fAllActions.add(fDeleteAction);
         }
 
         fHideMethodAction = new HideMethodAction();

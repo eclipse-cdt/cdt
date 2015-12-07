@@ -926,6 +926,9 @@
 		qmlImportHandler.reset();
 	}
 
+	/*
+	 * Called when a completions query is made to the server
+	 */
 	function completions(file, query) {
 		// We can get relatively simple completions on QML Object Types for free if we
 		// update the Context.paths variable.  Tern uses this variable to complete
@@ -937,6 +940,35 @@
 		for (var prop in file.scope.props) {
 			cx.paths[prop] = file.scope[prop];
 		}
+	}
+
+	/*
+	 * Called when a parse query is made to the server.
+	 */
+	function parse(srv, query, file) {
+		var ast = null;
+		if (query.file) {
+			// Get the file's AST.  It should have been parsed already by the server.
+			ast = file.ast;
+		} else if (query.text) {
+			// Parse the file manually and get the AST.
+			var text = query.text;
+			var options = {
+				allowReturnOutsideFunction: true,
+				allowImportExportEverywhere: true,
+				ecmaVersion: srv.options.ecmaVersion
+			};
+			srv.signal("preParse", text, options);
+			try {
+				ast = acorn.parse(text, options);
+			} catch (e) {
+				ast = acorn.parse_dammit(text, options);
+			}
+			srv.signal("postParse", ast, text);
+		}
+		return {
+			ast: ast
+		};
 	}
 
 	// Register the QML plugin in Tern
@@ -954,6 +986,18 @@
 
 		// Create the QML Import Handler
 		qmlImportHandler = exports.importHandler = new ImportHandler(server);
+
+		// Define the 'parseFile' and 'parseString' query types.  The reason we need
+		// two separate queries for these is that Tern will not allow us to resolve
+		// a file without 'takesFile' being true. However, if we set 'takesFile' to
+		// true, Tern will not allow a null file in the query.
+		tern.defineQueryType("parseFile", {
+			takesFile: true,
+			run: parse
+		});
+		tern.defineQueryType("parseString", {
+			run: parse
+		});
 
 		// Hook into server signals
 		server.on("preParse", preParse);

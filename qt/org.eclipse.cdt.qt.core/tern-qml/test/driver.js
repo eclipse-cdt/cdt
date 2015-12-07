@@ -15,7 +15,7 @@ var ternQML = require("../qml.js");
 var tern = require("tern");
 
 var projectDir = path.resolve(__dirname, "..");
-var resolve = function(pth) {
+var resolve = function (pth) {
 	return path.resolve(projectDir, pth);
 };
 var testCases = [];
@@ -108,8 +108,8 @@ function createServer(defs) {
 	plugins.qml = true;
 	var server = new tern.Server({
 		ecmaVersion: 5,
-		plugins : plugins,
-		defs : [ require("./ecma5-defs.js") ]
+		plugins: plugins,
+		defs: [ require("./ecma5-defs.js") ]
 	});
 	return server;
 }
@@ -117,7 +117,14 @@ function createServer(defs) {
 var assertCompletion = exports.assertCompletion = function (server, code, expected, pos, callback) {
 	server.addFile("main.qml", code);
 	server.request({
-		query : {
+		files: [
+			{
+				name: "main.qml",
+				text: code,
+				type: "full"
+			}
+		],
+		query: {
 			type: "completions",
 			file: "main.qml",
 			end: pos,
@@ -130,7 +137,7 @@ var assertCompletion = exports.assertCompletion = function (server, code, expect
 			expandWordForward: false,
 			guess: false
 		}
-	}, function(err, resp) {
+	}, function (err, resp) {
 		if (err) {
 			throw err;
 		}
@@ -140,9 +147,15 @@ var assertCompletion = exports.assertCompletion = function (server, code, expect
 };
 
 var assertDefinition = exports.assertDefinition = function (server, code, expected, pos, callback) {
-	server.addFile("main.qml", code);
 	server.request({
-		query : {
+		files: [
+			{
+				name: "main.qml",
+				text: code,
+				type: "full"
+			}
+		],
+		query: {
 			type: "definition",
 			file: "main.qml",
 			end: pos,
@@ -155,7 +168,7 @@ var assertDefinition = exports.assertDefinition = function (server, code, expect
 			expandWordForward: false,
 			guess: false
 		}
-	}, function(err, resp) {
+	}, function (err, resp) {
 		if (err) {
 			throw err;
 		}
@@ -169,8 +182,8 @@ function ppJSON(v) {
 }
 
 function addPath(str, pt) {
-	if (str.charAt(str.length-1) == ")")
-		return str.slice(0, str.length-1) + "/" + pt + ")";
+	if (str.charAt(str.length - 1) == ")")
+		return str.slice(0, str.length - 1) + "/" + pt + ")";
 	return str + " (" + pt + ")";
 }
 

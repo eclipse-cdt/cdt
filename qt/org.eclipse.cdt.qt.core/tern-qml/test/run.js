@@ -32,6 +32,7 @@ var stats, tests = [];
 tests.push(require("./test-scoping.js"));
 tests.push(require("./test-finddef.js"));
 tests.push(require("./test-completions.js"));
+tests.push(require("./test-parse.js"));
 
 function report(state, code, message) {
 	if (state != "ok") {++stats.failed; log(code, message);}

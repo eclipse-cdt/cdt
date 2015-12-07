@@ -202,13 +202,13 @@ test("{Add File After Import}", function (server, callback, name) {
 		return callback("fail", name, "- failed on initial file " + failed);
 	}
 	server.addFile("MyObject.qml", "QtObject {\n\tproperty var test\n}");
-	assertCompletion(server, "M", {
+	assertCompletion(server, "", {
 		start: { line: 0, ch: 0 },
-		end: { line: 0, ch: 1 },
+		end: { line: 0, ch: 0 },
 		isProperty: false,
 		isObjectKey: false,
 		completions: [{ name: "MyObject", type: "MyObject", origin: "MyObject.qml" }]
-	}, 1, function (mis) {
+	}, 0, function (mis) {
 		failed = mis;
 	});
 	if (failed) {

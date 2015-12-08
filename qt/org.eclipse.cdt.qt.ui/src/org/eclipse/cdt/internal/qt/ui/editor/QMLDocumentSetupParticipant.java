@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.editor;
 
-import org.eclipse.cdt.internal.qt.ui.text.IQMLPartitions;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;

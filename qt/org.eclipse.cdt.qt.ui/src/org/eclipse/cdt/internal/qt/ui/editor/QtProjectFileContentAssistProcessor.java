@@ -8,13 +8,12 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.qt.ui.text;
+package org.eclipse.cdt.internal.qt.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
 import org.eclipse.cdt.internal.qt.ui.Activator;
-import org.eclipse.cdt.internal.qt.ui.editor.QtProjectFileKeyword;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;

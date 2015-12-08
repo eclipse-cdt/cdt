@@ -8,10 +8,12 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.qt.ui.text;
+package org.eclipse.cdt.internal.qt.ui.editor;
 
-import org.eclipse.cdt.internal.qt.ui.editor.QMLEditor;
-import org.eclipse.cdt.internal.qt.ui.editor.QMLKeywords;
+import java.util.Map;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -56,7 +58,8 @@ public class QMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 
 	private final QMLEditor editor;
 
-	public QMLSourceViewerConfiguration(QMLEditor editor) {
+	public QMLSourceViewerConfiguration(QMLEditor editor, IPreferenceStore prefs) {
+		super(prefs);
 		this.editor = editor;
 	}
 
@@ -158,6 +161,14 @@ public class QMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 		return contentAssistant;
+	}
+
+	@Override
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		@SuppressWarnings("unchecked")
+		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
+		targets.put("org.eclipse.cdt.qt.ui.qml", editor); //$NON-NLS-1$
+		return targets;
 	}
 
 }

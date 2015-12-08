@@ -39,7 +39,7 @@ public class CMakeBuilder extends IncrementalProjectBuilder {
 				// TODO assuming cmake is in the path here, probably need a
 				// preference in case it isn't.
 				List<String> command = Arrays.asList("cmake", //$NON-NLS-1$
-						new File(project.getLocationURI()).getAbsolutePath());
+						"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", new File(project.getLocationURI()).getAbsolutePath());
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 				cmakeConfig.getToolChain().setEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();

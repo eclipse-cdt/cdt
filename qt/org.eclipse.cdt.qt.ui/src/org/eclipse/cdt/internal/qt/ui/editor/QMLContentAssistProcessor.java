@@ -5,14 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.internal.qt.ui.text;
+package org.eclipse.cdt.internal.qt.ui.editor;
 
+import java.io.File;
 import java.util.Collection;
 
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.ui.Activator;
-import org.eclipse.cdt.internal.qt.ui.editor.QMLEditor;
 import org.eclipse.cdt.qt.core.QMLAnalyzer;
 import org.eclipse.cdt.qt.core.QMLTernCompletion;
 import org.eclipse.jface.text.BadLocationException;
@@ -42,7 +42,7 @@ public class QMLContentAssistProcessor implements IContentAssistProcessor {
 		String prefix = lastWord(document, offset);
 		// Save the file
 		IFileEditorInput fileInput = (IFileEditorInput) editor.getEditorInput();
-		String fileName = fileInput.getFile().getFullPath().toString().substring(1);// getLocation().toOSString().substring(1);
+		String fileName = new File(fileInput.getFile().getLocationURI()).getAbsolutePath().substring(1);
 
 		try {
 			String contents = document.get();

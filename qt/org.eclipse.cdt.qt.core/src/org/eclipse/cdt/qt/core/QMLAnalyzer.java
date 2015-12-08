@@ -26,7 +26,6 @@ import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -135,7 +134,7 @@ public class QMLAnalyzer {
 
 	@FunctionalInterface
 	public interface RequestCallback {
-		void callback(Object err, Bindings data);
+		void callback(Object err, Object data);
 	}
 
 	public void addFile(String fileName, String code) throws NoSuchMethodException, ScriptException {
@@ -182,8 +181,9 @@ public class QMLAnalyzer {
 				throw new RuntimeException(err.toString());
 			} else {
 				try {
-					for (Bindings completion : (Bindings[]) invoke.invokeMethod(engine.get("Java"), "to",
-							data.get("completions"), "javax.script.Bindings[]")) {
+					Bindings comps = (Bindings) ((Bindings) data).get("completions");
+					for (Bindings completion : (Bindings[]) invoke.invokeMethod(engine.get("Java"), "to", comps,
+							"javax.script.Bindings[]")) {
 						completions.add(new QMLTernCompletion((String) completion.get("name"),
 								(String) completion.get("type"), (String) completion.get("origin")));
 					}
@@ -196,6 +196,47 @@ public class QMLAnalyzer {
 		invoke.invokeMethod(tern, "request", request, invoke.invokeFunction("requestCallback", callback));
 
 		return completions;
+	}
+
+	public List<Bindings> getDefinition(String identifier, String fileName, String text, int pos)
+			throws NoSuchMethodException, ScriptException {
+		waitUntilLoaded();
+		Bindings file = engine.createBindings();
+		file.put("type", "full");
+		file.put("name", fileName);
+		file.put("text", text);
+		Bindings files = (Bindings) engine.eval("new Array()");
+		invoke.invokeMethod(files, "push", file);
+
+		Bindings query = engine.createBindings();
+		query.put("type", "definition");
+		query.put("file", fileName);
+		query.put("end", pos);
+		query.put("types", true);
+		query.put("docs", false);
+		query.put("urls", false);
+		query.put("origins", true);
+		query.put("caseInsensitive", true);
+		query.put("lineCharPositions", true);
+		query.put("expandWordForward", false);
+		query.put("includeKeywords", true);
+		query.put("guess", false);
+		Bindings request = engine.createBindings();
+		request.put("files", files);
+		request.put("query", query);
+
+		List<Bindings> definitions = new ArrayList<>();
+
+		RequestCallback callback = (err, data) -> {
+			if (err != null) {
+				throw new RuntimeException(err.toString());
+			} else {
+				definitions.add((Bindings) data);
+			}
+		};
+
+		invoke.invokeMethod(tern, "request", request, invoke.invokeFunction("requestCallback", callback));
+		return definitions;
 	}
 
 }

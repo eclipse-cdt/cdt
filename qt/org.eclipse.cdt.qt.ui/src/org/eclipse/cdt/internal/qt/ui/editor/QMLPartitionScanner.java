@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.editor;
 
-import org.eclipse.cdt.internal.qt.ui.text.IQMLPartitions;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IToken;

@@ -118,7 +118,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	protected List<ICompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) {
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 
 		if (inPreprocessorDirective(context)) {
 			if (!inPreprocessorKeyword(context)) {
@@ -278,7 +278,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			}
 			String argString = args.toString();
 
-			StringBuilder descStringBuff = new StringBuilder(repStringBuff.toString());
+			StringBuilder descStringBuff = new StringBuilder(repStringBuff);
 			descStringBuff.append(argString);
 			descStringBuff.append(')');
 
@@ -542,7 +542,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         String dispargString = dispargs.toString();
         String idargString = idargs.toString();
 		String contextDispargString = hasArgs ? dispargString : null;
-        StringBuilder dispStringBuff = new StringBuilder(repStringBuff.toString());
+        StringBuilder dispStringBuff = new StringBuilder(repStringBuff);
 		dispStringBuff.append(dispargString);
         dispStringBuff.append(')');
         if (returnTypeStr != null && returnTypeStr.length() > 0) {
@@ -551,7 +551,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         }
         String dispString = dispStringBuff.toString();
 
-        StringBuilder idStringBuff = new StringBuilder(repStringBuff.toString());
+        StringBuilder idStringBuff = new StringBuilder(repStringBuff);
         idStringBuff.append(idargString);
         idStringBuff.append(')');
         String idString = idStringBuff.toString();
@@ -618,14 +618,14 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		if (varType != null)
 			returnTypeStr = ASTTypeUtil.getType(varType, false);
 
-        StringBuilder dispStringBuff = new StringBuilder(repStringBuff.toString());
+        StringBuilder dispStringBuff = new StringBuilder(repStringBuff);
         if (returnTypeStr != null) {
             dispStringBuff.append(" : "); //$NON-NLS-1$
             dispStringBuff.append(returnTypeStr);
         }
         String dispString = dispStringBuff.toString();
 
-        StringBuilder idStringBuff = new StringBuilder(repStringBuff.toString());
+        StringBuilder idStringBuff = new StringBuilder(repStringBuff);
         String idString = idStringBuff.toString();
 
         String repString = repStringBuff.toString();

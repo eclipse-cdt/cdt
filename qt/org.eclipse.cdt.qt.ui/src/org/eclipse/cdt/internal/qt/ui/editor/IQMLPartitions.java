@@ -8,9 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.qt.ui.text;
-
-import org.eclipse.cdt.internal.qt.ui.editor.QMLPartitionScanner;
+package org.eclipse.cdt.internal.qt.ui.editor;
 
 /**
  * Constants for the various partitions created by {@link QMLPartitionScanner}.

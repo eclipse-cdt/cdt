@@ -140,4 +140,24 @@
              name="Reload QML Analyzer">
        </command>
     </extension>
+    <extension
+          point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
+       <target
+             id="org.eclipse.cdt.qt.ui.qml"
+             name="QML Hyperlink Target">
+          <context
+                type="org.eclipse.cdt.internal.qt.ui.editor.QMLEditor">
+          </context>
+       </target>
+    </extension>
+    <extension
+          point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+       <hyperlinkDetector
+             activate="true"
+             class="org.eclipse.cdt.internal.qt.ui.editor.QMLHyperlinkDetector"
+             id="org.eclipse.cdt.qt.ui.hyperlinkDetector2"
+             name="QML Hyperlink Detector"
+             targetId="org.eclipse.cdt.qt.ui.qml">
+       </hyperlinkDetector>
+    </extension>
 </plugin>

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.editor;
 
-import org.eclipse.cdt.internal.qt.ui.text.QtProjectFileSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;

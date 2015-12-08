@@ -13,12 +13,16 @@ package org.eclipse.cdt.internal.qt.ui.editor;
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.ui.Activator;
-import org.eclipse.cdt.internal.qt.ui.text.QMLSourceViewerConfiguration;
+import org.eclipse.cdt.internal.qt.ui.actions.OpenDeclarationsAction;
 import org.eclipse.cdt.qt.core.QMLAnalyzer;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.ui.IFileEditorInput;
@@ -39,8 +43,8 @@ public class QMLEditor extends TextEditor {
 
 	@Override
 	protected void initializeEditor() {
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setSourceViewerConfiguration(new QMLSourceViewerConfiguration(this));
+		super.initializeEditor();
+		setSourceViewerConfiguration(new QMLSourceViewerConfiguration(this, getPreferenceStore()));
 	}
 
 	@Override
@@ -74,6 +78,58 @@ public class QMLEditor extends TextEditor {
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(BRACKET_MATCHING_PREFERENCE, true);
 		store.setDefault(BRACKET_MATCHING_COLOR_PREFERENCE, "155,155,155"); //$NON-NLS-1$
+	}
+
+	@Override
+	protected void createActions() {
+		super.createActions();
+
+		IAction action = new OpenDeclarationsAction();
+		action.setActionDefinitionId(IQMLEditorActionDefinitionIds.OPEN_DECLARATION);
+		setAction(OpenDeclarationsAction.ID, action);
+	}
+
+	public static IRegion findWord(IDocument document, int offset) {
+		int start = -2;
+		int end = -1;
+
+		try {
+			int pos = offset;
+			char c;
+
+			while (--pos >= 0) {
+				c = document.getChar(pos);
+				if (!Character.isJavaIdentifierPart(c)) {
+					break;
+				}
+			}
+
+			start = pos;
+
+			pos = offset;
+			int length = document.getLength();
+
+			while (pos < length) {
+				c = document.getChar(pos);
+				if (!Character.isJavaIdentifierPart(c))
+					break;
+				++pos;
+			}
+
+			end = pos;
+		} catch (BadLocationException x) {
+		}
+
+		if (start >= -1 && end > -1) {
+			if (start == offset && end == offset)
+				return new Region(offset, 0);
+			else if (start == offset)
+				return new Region(start, end - start);
+			else
+				return new Region(start + 1, end - start - 1);
+		}
+
+		return null;
 	}
 
 }

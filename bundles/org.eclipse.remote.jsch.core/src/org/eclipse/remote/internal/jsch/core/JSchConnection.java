@@ -79,7 +79,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.UserInfo#getPassphrase()
 		 */
 		@Override
@@ -92,7 +92,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.UserInfo#getPassword()
 		 */
 		@Override
@@ -105,7 +105,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.UIKeyboardInteractive#promptKeyboardInteractive(java.lang.String, java.lang.String,
 		 * java.lang.String, java.lang.String[], boolean[])
 		 */
@@ -140,7 +140,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.UserInfo#promptPassphrase(java.lang.String)
 		 */
 		@Override
@@ -173,7 +173,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.UserInfo#promptPassword(java.lang.String)
 		 */
 		@Override
@@ -202,7 +202,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.UserInfo#promptYesNo(java.lang.String)
 		 */
 		@Override
@@ -222,7 +222,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.UserInfo#showMessage(java.lang.String)
 		 */
 		@Override
@@ -278,7 +278,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection.Service#getRemoteConnection()
 	 */
 	@Override
@@ -289,7 +289,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	public static class Factory implements IRemoteConnection.Service.Factory {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.remote.core.IRemoteConnection.Service.Factory#getService(org.eclipse.remote.core.IRemoteConnection,
 		 * java.lang.Class)
 		 */
@@ -378,7 +378,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionControlService#close()
 	 */
 	@Override
@@ -405,7 +405,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemotePortForwardingService#forwardLocalPort(int, java.lang.String, int)
 	 */
 	@Override
@@ -422,7 +422,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemotePortForwardingService#forwardLocalPort(java.lang.String, int,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -458,7 +458,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemotePortForwardingService#forwardRemotePort(int, java.lang.String, int)
 	 */
 	@Override
@@ -475,7 +475,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemotePortForwardingService#forwardRemotePort(java.lang.String, int,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -510,7 +510,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionHostService#getHostname()
 	 */
 	@Override
@@ -535,7 +535,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteProcessService#getEnv()
 	 */
 	@Override
@@ -545,7 +545,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteProcessService#getEnv(java.lang.String)
 	 */
 	@Override
@@ -595,7 +595,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionHostService#getPort()
 	 */
 	@Override
@@ -606,7 +606,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteProcessService#getProcessBuilder(java.util.List)
 	 */
 	@Override
@@ -616,7 +616,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteProcessService#getProcessBuilder(java.lang.String[])
 	 */
 	@Override
@@ -626,7 +626,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionPropertyService#getProperty(java.lang.String)
 	 */
 	@Override
@@ -636,7 +636,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/**
 	 * Get the login shell command if useLoginShell is true
-	 * 
+	 *
 	 * @return login shell command
 	 */
 	public String getLoginShellCommand() {
@@ -714,7 +714,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionHostService#getUsername()
 	 */
 	@Override
@@ -724,7 +724,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteProcessService#getWorkingDirectory()
 	 */
 	@Override
@@ -758,7 +758,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionControlService#isOpen()
 	 */
 	@Override
@@ -931,7 +931,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionControlService#open(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -941,7 +941,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/**
 	 * Open ssh connection without full setup (environment, sftp)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#open()
 	 *
 	 * @param monitor
@@ -973,9 +973,13 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 			isFullySetup = true;
 			// getCwd checks the exec channel before checkConfiguration checks the sftp channel
 			fWorkingDir = getCwd(subMon.newChild(10));
-			if (!checkConfiguration(fSessions.get(0), subMon.newChild(20))) {
-				newSession(subMon.newChild(10));
-				loadEnv(subMon.newChild(10));
+			try {
+				if (!checkConfiguration(fSessions.get(0), subMon.newChild(20))) {
+					newSession(subMon.newChild(10));
+					loadEnv(subMon.newChild(10));
+				}
+			} catch (RemoteConnectionException e) {
+				// Do not throw exception now, it will be thrown if FileService is accessed.
 			}
 			loadProperties(subMon.newChild(10));
 			fRemoteConnection.fireConnectionChangeEvent(RemoteConnectionChangeEvent.CONNECTION_OPENED);
@@ -994,7 +998,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemotePortForwardingService#removeLocalPortForwarding(int)
 	 */
 	@Override
@@ -1011,7 +1015,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemotePortForwardingService#removeRemotePortForwarding(int)
 	 */
 	@Override
@@ -1028,7 +1032,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteProcessService#setWorkingDirectory(java.lang.String)
 	 */
 	@Override

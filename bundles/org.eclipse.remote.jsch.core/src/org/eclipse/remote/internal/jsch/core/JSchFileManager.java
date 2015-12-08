@@ -20,12 +20,13 @@ import org.eclipse.remote.core.IRemoteConnection.Service;
 import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.core.RemoteServicesUtils;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
+import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 public class JSchFileManager implements IRemoteFileService {
-
 	private final IRemoteConnection fConnection;
 
-	public JSchFileManager(IRemoteConnection connection) {
+	private JSchFileManager(IRemoteConnection connection) {
 		fConnection = connection;
 	}
 
@@ -34,6 +35,13 @@ public class JSchFileManager implements IRemoteFileService {
 		@Override
 		public <T extends Service> T getService(IRemoteConnection remoteConnection, Class<T> service) {
 			if (IRemoteFileService.class.equals(service)) {
+				if (remoteConnection instanceof JSchConnection)
+					try {
+						((JSchConnection) remoteConnection).getSftpChannel();
+					} catch (RemoteConnectionException e) {
+						throw new UnsupportedOperationException(
+								Messages.JSchConnection_Remote_host_does_not_support_sftp);
+					}
 				return (T) new JSchFileManager(remoteConnection);
 			}
 			return null;
@@ -87,5 +95,4 @@ public class JSchFileManager implements IRemoteFileService {
 	public URI toURI(String path) {
 		return toURI(RemoteServicesUtils.posixPath(path));
 	}
-
 }

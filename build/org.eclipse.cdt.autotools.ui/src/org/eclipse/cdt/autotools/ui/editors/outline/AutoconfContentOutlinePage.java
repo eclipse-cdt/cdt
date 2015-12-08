@@ -15,6 +15,8 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.autotools.ui.editors.AutoconfEditor;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfElement;
+import org.eclipse.cdt.internal.autotools.ui.editors.LexicalSortingAction;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -23,6 +25,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
@@ -31,6 +34,7 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 
 	private ITextEditor editor;
 	private IEditorInput input;
+	private LexicalSortingAction sortAction;
 	
 	public AutoconfContentOutlinePage(AutoconfEditor editor) {
 		super();
@@ -89,8 +93,10 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 		viewer.setLabelProvider(new AutoconfLabelProvider());
 		viewer.addSelectionChangedListener(this);
 
-		if (input != null)
+		if (input != null) {
 			viewer.setInput(input);
+		}
+		sortAction.setTreeViewer(viewer);
 	}
 	
 	/*
@@ -118,6 +124,14 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 				editor.resetHighlightRange();
 			}
 		}
+	}
+
+	@Override
+	public void init(IPageSite pageSite) {
+		super.init(pageSite);
+		IToolBarManager toolBarManager = pageSite.getActionBars().getToolBarManager();
+		sortAction = new LexicalSortingAction();
+		toolBarManager.add(sortAction);
 	}
 
 }

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.internal.autotools.ui.MakeUIImages;
+import org.eclipse.cdt.internal.autotools.ui.editors.LexicalSortingAction;
 import org.eclipse.cdt.make.core.makefile.IBadDirective;
 import org.eclipse.cdt.make.core.makefile.ICommand;
 import org.eclipse.cdt.make.core.makefile.IComment;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
 import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
 import org.eclipse.cdt.make.core.makefile.gnu.ITerminal;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -38,6 +40,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 
@@ -45,6 +48,7 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 	
 	protected IMakefile makefile;
 	protected IMakefile nullMakefile = new NullMakefile();
+	private LexicalSortingAction sortAction;
 
 	private class AutomakefileContentProvider implements ITreeContentProvider {
 
@@ -251,6 +255,7 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 		if (fInput != null) {
 			viewer.setInput(fInput);
 		}
+		sortAction.setTreeViewer(viewer);
 	}
 	
 	public void inputChanged(Object oldInput, Object newInput) {
@@ -265,6 +270,14 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 				makefile = nullMakefile;
 			}
 		}
+	}
+
+	@Override
+	public void init(IPageSite pageSite) {
+		super.init(pageSite);
+		IToolBarManager toolBarManager = pageSite.getActionBars().getToolBarManager();
+		sortAction = new LexicalSortingAction();
+		toolBarManager.add(sortAction);
 	}
 
 }

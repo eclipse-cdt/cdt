@@ -10,14 +10,14 @@
  *     QNX Software System
  *     Red Hat Inc. - convert to use with Automake editor
  *******************************************************************************/
-package org.eclipse.cdt.internal.autotools.ui.editors.automake;
+package org.eclipse.cdt.internal.autotools.ui.editors;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.autotools.ui.MakeUIImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 
 
@@ -29,7 +29,7 @@ public class LexicalSortingAction extends Action {
 	private LexicalCSorter fSorter;
 	private TreeViewer fTreeViewer;
 	
-	public LexicalSortingAction(TreeViewer treeViewer) {
+	public LexicalSortingAction() {
 		super(CUIPlugin.getResourceString(ACTION_NAME + ".label")); //$NON-NLS-1$
 		
 		setDescription(CUIPlugin.getResourceString(ACTION_NAME + ".description")); //$NON-NLS-1$
@@ -37,13 +37,15 @@ public class LexicalSortingAction extends Action {
 	
 		MakeUIImages.setImageDescriptors(this, MakeUIImages.T_TOOL, MakeUIImages.IMG_TOOLS_ALPHA_SORTING);
 	
-		fTreeViewer= treeViewer;
 		fSorter= new LexicalCSorter();
-		
-		boolean checked= CUIPlugin.getDefault().getDialogSettings().getBoolean(DIALOG_STORE_KEY);
-		valueChanged(checked, false);
 	}
 	
+	public void setTreeViewer(TreeViewer treeViewer) {
+		fTreeViewer = treeViewer;
+		boolean checked = CUIPlugin.getDefault().getDialogSettings().getBoolean(DIALOG_STORE_KEY);
+		valueChanged(checked, false);
+	}
+
 	@Override
 	public void run() {
 		valueChanged(isChecked(), true);
@@ -51,7 +53,7 @@ public class LexicalSortingAction extends Action {
 	
 	private void valueChanged(boolean on, boolean store) {
 		setChecked(on);
-		fTreeViewer.setSorter(on ? fSorter : null);
+		fTreeViewer.setComparator(on ? fSorter : null);
 		
 		String key= ACTION_NAME + ".tooltip" + (on ? ".on" : ".off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setToolTipText(CUIPlugin.getResourceString(key));
@@ -61,12 +63,7 @@ public class LexicalSortingAction extends Action {
 		}
 	}
 	
-	private static class LexicalCSorter extends ViewerSorter {		
-		@SuppressWarnings("unused")
-		public boolean isSorterProperty(Object element, Object property) {
-			return true;
-		}
-		
+	private static class LexicalCSorter extends ViewerComparator {
 		@Override
 		public int category(Object obj) {
 			if (obj instanceof ICElement) {

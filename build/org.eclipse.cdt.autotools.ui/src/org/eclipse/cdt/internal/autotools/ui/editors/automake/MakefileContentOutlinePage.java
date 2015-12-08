@@ -31,7 +31,6 @@ import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
 import org.eclipse.cdt.make.core.makefile.gnu.ITerminal;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -42,7 +41,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
@@ -280,15 +278,6 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 				});
 			}
 		}
-	}
-
-	@Override
-	public void setActionBars(IActionBars actionBars) {
-		super.setActionBars(actionBars);
-		IToolBarManager toolBarManager= actionBars.getToolBarManager();
-
-		LexicalSortingAction action= new LexicalSortingAction(getTreeViewer());
-		toolBarManager.add(action);
 	}
 
 }

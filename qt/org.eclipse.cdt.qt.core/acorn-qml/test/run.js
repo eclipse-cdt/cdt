@@ -37,26 +37,48 @@ function log(title, message) {
 }
 
 var stats, modes = {
-	Normal: {
+	"Normal QML": {
 		config: {
 			parse: acorn.parse,
-			normal: true,
 			filter: function (test) {
 				var opts = test.options || {};
-				return opts.normal !== false;
+				return opts.normal !== false && opts.qmltypes !== true;
 			}
 		}
 	},
-	Loose: {
+	"Loose QML": {
 		config: {
 			parse: acorn.parse_dammit,
-			loose: true,
 			filter: function (test) {
 				var opts = test.options || {};
-				return opts.loose !== false;
+				return opts.loose !== false && opts.qmltypes !== true;
 			}
 		}
 	},
+	"Normal QMLTypes": {
+		config: {
+			parse: acorn.parse,
+			options: {
+				mode: "qmltypes"
+			},
+			filter: function (test) {
+				var opts = test.options || {};
+				return opts.normal !== false && opts.qmltypes !== false;
+			}
+		}
+	},
+	"Loose QMLTypes": {
+		config: {
+			parse: acorn.parse_dammit,
+			options: {
+				mode: "qmltypes"
+			},
+			filter: function (test) {
+				var opts = test.options || {};
+				return opts.loose !== false && opts.qmltypes !== false;
+			}
+		}
+	}
 };
 
 function report(state, code, message) {

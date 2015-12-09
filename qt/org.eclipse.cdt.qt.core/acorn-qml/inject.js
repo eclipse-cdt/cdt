@@ -18,6 +18,9 @@
 	'use strict';
 
 	exports.inject = function (acorn) {
+		// Add the 'mode' option to acorn
+		acorn.defaultOptions.mode = "qml";
+
 		// Acorn token types
 		var tt = acorn.tokTypes;
 
@@ -411,13 +414,16 @@
 		 *    - QML Script Binding
 		 */
 		pp.qml_parseBinding = function () {
+			if (this.options.mode === "qmltypes") {
+				return this.qml_parseScriptBinding(false);
+			}
+
 			// TODO: solve ambiguity where a QML Object Literal starts with a
 			// Qualified Id that looks very similar to a MemberExpression in
 			// JavaScript.  For now, we just won't parse statements like:
 			//      test: QMLObject {  }
 			//      test: QMLObject.QualifiedId {  }
-
-			return this.qml_parseScriptBinding();
+			return this.qml_parseScriptBinding(true);
 		};
 
 		/*
@@ -425,10 +431,10 @@
 		 *    - Single JavaScript Expression
 		 *    - QML Statement Block (A block of JavaScript statements)
 		 */
-		pp.qml_parseScriptBinding = function () {
+		pp.qml_parseScriptBinding = function (allowStatementBlock) {
 			var node = this.startNode();
 			node.block = false;
-			if (this.type === tt.braceL) {
+			if (allowStatementBlock && this.type === tt.braceL) {
 				node.block = true;
 				node.script = this.qml_parseStatementBlock();
 			} else {
@@ -565,24 +571,30 @@
 						throw new Error("QML only supports ECMA Script Language Specification 5 or older");
 					}
 
-					// Force strict mode
-					this.strict = true;
+					if (this.options.mode === "qml" || this.options.mode === "qmltypes") {
+						// Force strict mode
+						this.strict = true;
 
-					// Most of QML's constructs sit at the top-level of the parse tree,
-					// replacing JavaScripts top-level.  Here we are parsing such things
-					// as the root object literal and header statements of QML.  Eventually,
-					// these rules will delegate down to JavaScript expressions.
-					node.headerStatements = this.qml_parseHeaderStatements();
-					node.rootObject = null;
-					if (this.type !== tt.eof) {
-						node.rootObject = this.qml_parseObjectLiteral();
+						// Most of QML's constructs sit at the top-level of the parse tree,
+						// replacing JavaScripts top-level.  Here we are parsing such things
+						// as the root object literal and header statements of QML.  Eventually,
+						// these rules will delegate down to JavaScript expressions.
+						node.headerStatements = this.qml_parseHeaderStatements();
+						node.rootObject = null;
+						if (this.type !== tt.eof) {
+							node.rootObject = this.qml_parseObjectLiteral();
+						}
+
+						if (!this.eat(tt.eof)) {
+							this.raise(this.pos, "Expected EOF after QML Root Object");
+						}
+
+						return this.finishNode(node, "QMLProgram");
+					} else if (this.options.mode === "js") {
+						return nextMethod.call(this, node);
+					} else {
+						throw new Error("Unknown mode '" + this.options.mode + "'");
 					}
-
-					if (!this.eat(tt.eof)) {
-						this.raise(this.pos, "Expected EOF after QML Root Object");
-					}
-
-					return this.finishNode(node, "QMLProgram");
 				};
 			});
 		};

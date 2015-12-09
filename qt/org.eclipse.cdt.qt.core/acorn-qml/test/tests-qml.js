@@ -775,9 +775,9 @@ test('a{ signal {} }', rootObjectMembers([{
 	}
 }]));
 
-//testFail('a{ readonly property var as: 3 }',
-//		 "Unexpected token (1:25)",
-//		{ locations: true, loose: false });
+testFail('a{ readonly property var as: 3 }',
+		 "Unexpected token (1:25)",
+		 { locations: true, loose: false });
 
 test('a{ readonly property var w: 3 }', rootObjectMembers([{
 	type: "QMLPropertyDeclaration",
@@ -2266,7 +2266,7 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 			]
 		}
 	}
-));
+), { locations: true, qmltypes: false });
 
 /***************************************************************************
 *                            Loose Parser Tests                            *
@@ -2949,7 +2949,7 @@ testLoose('a{ property var b: Window {} }', rootObjectMembers([{
 			members: []
 		}
 	}
-}]));
+}]), { locations: true, qmltypes: false });
 
 // TODO: Allow this to run with the normal parser once the ambiguity is solved
 testLoose('a{ b: Window {} }', rootObjectMembers([{
@@ -2991,7 +2991,7 @@ testLoose('a{ b: Window {} }', rootObjectMembers([{
 			members: []
 		}
 	}
-}]));
+}]), { locations: true, qmltypes: false });
 
 testLoose('a{ signal }', rootObjectMembers([{
 	type: "QMLSignalDefinition",
@@ -3229,6 +3229,63 @@ testLoose('Window {\n\tfunction (\n\tproperty var prop\n}', rootObjectMembers([
 		binding: null
 	}
 ]));
+
+/***************************************************************************
+*                          QMLTypes Parser Tests                           *
+****************************************************************************/
+function testQMLTypes(code, ast, options) {
+	var opts = options || {};
+	opts.qmltypes = true;
+	opts.locations = true;
+	test(code, ast, opts);
+}
+
+testQMLTypes("a{ b: {} }", javaScript({
+	type: "ObjectExpression",
+	loc: {
+		start: { line: 1, column: 6 },
+		end: { line: 1, column: 8 }
+	},
+	properties: []
+}));
+
+testQMLTypes('a{ b: "test" }', javaScript({
+	type: "Literal",
+	loc: {
+		start: { line: 1, column: 6 },
+		end: { line: 1, column: 12 }
+	},
+	value: "test",
+	raw: '"test"'
+}));
+
+testQMLTypes('a{ b: ["one", "two"] }', javaScript({
+	type: "ArrayExpression",
+	loc: {
+		start: { line: 1, column: 6 },
+		end: { line: 1, column: 20 }
+	},
+	elements: [
+		{
+			type: "Literal",
+			loc: {
+				start: { line: 1, column: 7 },
+				end: { line: 1, column: 12 }
+			},
+			value: "one",
+			raw: '"one"'
+		},
+		{
+			type: "Literal",
+			loc: {
+				start: { line: 1, column: 14 },
+				end: { line: 1, column: 19 }
+			},
+			value: "two",
+			raw: '"two"'
+		}
+	]
+}));
 
 /*
 * Creates a Program with 'headerStatements' and 'rootObject' as the program's expected

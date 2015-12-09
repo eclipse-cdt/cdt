@@ -953,12 +953,12 @@
 		} else if (query.text) {
 			// Parse the file manually and get the AST.
 			var text = query.text;
-			var options = {
+			var options = query.options || {
 				allowReturnOutsideFunction: true,
 				allowImportExportEverywhere: true,
 				ecmaVersion: srv.options.ecmaVersion
 			};
-			srv.signal("preParse", text, options);
+			srv.signalReturnFirst("preParse", text, options);
 			try {
 				ast = acorn.parse(text, options);
 			} catch (e) {

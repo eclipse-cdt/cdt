@@ -417,8 +417,12 @@ var injectQMLLoose;
 		 *    - QML Script Binding
 		 */
 		lp.qml_parseBinding = function (start) {
+			if (this.options.mode === "qmltypes") {
+				return this.qml_parseScriptBinding(start, false);
+			}
+
 			if (this.tok.type === tt.braceL) {
-				return this.qml_parseScriptBinding(start);
+				return this.qml_parseScriptBinding(start, true);
 			}
 			// Perform look ahead to determine whether this is an expression or
 			// a QML Object Literal
@@ -436,7 +440,7 @@ var injectQMLLoose;
 			if (la.type === tt.braceL) {
 				return this.qml_parseObjectLiteral();
 			} else {
-				return this.qml_parseScriptBinding(start);
+				return this.qml_parseScriptBinding(start, true);
 			}
 		};
 
@@ -445,12 +449,12 @@ var injectQMLLoose;
 		 *    - Single JavaScript Expression
 		 *    - QML Statement Block (A block of JavaScript statements)
 		 */
-		lp.qml_parseScriptBinding = function (start) {
+		lp.qml_parseScriptBinding = function (start, allowStatementBlock) {
 			// Help out Tern a little by starting the Script Binding at the end of
 			// the colon token (only if we consume invalid syntax).
 			var node = this.startNodeAt(start);
 			node.block = false;
-			if (this.tok.type === tt.braceL) {
+			if (allowStatementBlock && this.tok.type === tt.braceL) {
 				node.block = true;
 				node.script = this.qml_parseStatementBlock();
 			} else {
@@ -579,18 +583,24 @@ var injectQMLLoose;
 						throw new Error("QML only supports ECMA Script Language Specification 5 or older");
 					}
 
-					// Most of QML's constructs sit at the top-level of the parse tree,
-					// replacing JavaScripts top-level.  Here we are parsing such things
-					// as the root object literal and header statements of QML.  Eventually,
-					// these rules will delegate down to JavaScript expressions.
-					var node = this.startNode();
-					node.headerStatements = this.qml_parseHeaderStatements();
-					node.rootObject = null;
-					if (this.tok.type !== tt.eof) {
-						node.rootObject = this.qml_parseObjectLiteral();
-					}
+					if (this.options.mode === "qml" || this.options.mode === "qmltypes") {
+						// Most of QML's constructs sit at the top-level of the parse tree,
+						// replacing JavaScripts top-level.  Here we are parsing such things
+						// as the root object literal and header statements of QML.  Eventually,
+						// these rules will delegate down to JavaScript expressions.
+						var node = this.startNode();
+						node.headerStatements = this.qml_parseHeaderStatements();
+						node.rootObject = null;
+						if (this.tok.type !== tt.eof) {
+							node.rootObject = this.qml_parseObjectLiteral();
+						}
 
-					return this.finishNode(node, "QMLProgram");
+						return this.finishNode(node, "QMLProgram");
+					} else if (this.options.mode === "js") {
+						return nextMethod.call(this, node);
+					} else {
+						throw new Error("Unknown mode '" + this.options.mode + "'");
+					}
 				};
 			});
 		};

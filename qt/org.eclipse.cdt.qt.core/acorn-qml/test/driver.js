@@ -24,12 +24,16 @@ exports.testAssert = function(code, assert, options) {
 
 exports.runTests = function(config, callback) {
 	var parse = config.parse;
+	var opts = config.options || {};
 
 	for (var i = 0; i < tests.length; ++i) {
 		var test = tests[i];
 		if (config.filter && !config.filter(test)) continue;
 		try {
 			var testOpts = test.options || {locations: true};
+			for (var opt in opts) {
+				testOpts[opt] = opts[opt];
+			}
 			var expected = {};
 			if ((expected.onComment = testOpts.onComment)) {
 				testOpts.onComment = [];

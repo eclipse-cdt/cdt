@@ -807,78 +807,78 @@ public class Dwarf {
 	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List<AttributeValue> list) {
 		int len = list.size();
 		int tag = (int) entry.tag;
-		if (printEnabled)
+		if (printEnabled) {
 			System.out.println("Abbrev Number " + entry.code); //$NON-NLS-1$
-		
-		for (int i = 0; i < len; i++) {
-			AttributeValue av = list.get(i);
-			if (printEnabled)
+			for (int i = 0; i < len; i++) {
+				AttributeValue av = list.get(i);
 				System.out.println(av);
-			// We are only interrested in certain tags.
-			switch (tag) {
-				case DwarfConstants.DW_TAG_array_type :
-					break;
-				case DwarfConstants.DW_TAG_class_type :
-					break;
-				case DwarfConstants.DW_TAG_enumeration_type :
-					break;
-				case DwarfConstants.DW_TAG_formal_parameter :
-					break;
-				case DwarfConstants.DW_TAG_lexical_block :
-					break;
-				case DwarfConstants.DW_TAG_member :
-					break;
-				case DwarfConstants.DW_TAG_pointer_type :
-					break;
-				case DwarfConstants.DW_TAG_reference_type :
-					break;
-				case DwarfConstants.DW_TAG_compile_unit :
-					processCompileUnit(requestor, list);
-					break;
-				case DwarfConstants.DW_TAG_structure_type :
-					break;
-				case DwarfConstants.DW_TAG_subroutine_type :
-					break;
-				case DwarfConstants.DW_TAG_typedef :
-					break;
-				case DwarfConstants.DW_TAG_union_type :
-					break;
-				case DwarfConstants.DW_TAG_unspecified_parameters :
-					break;
-				case DwarfConstants.DW_TAG_inheritance :
-					break;
-				case DwarfConstants.DW_TAG_ptr_to_member_type :
-					break;
-				case DwarfConstants.DW_TAG_with_stmt :
-					break;
-				case DwarfConstants.DW_TAG_base_type :
-					break;
-				case DwarfConstants.DW_TAG_catch_block :
-					break;
-				case DwarfConstants.DW_TAG_const_type :
-					break;
-				case DwarfConstants.DW_TAG_enumerator :
-					break;
-				case DwarfConstants.DW_TAG_file_type :
-					break;
-				case DwarfConstants.DW_TAG_friend :
-					break;
-				case DwarfConstants.DW_TAG_subprogram :
-					processSubProgram(requestor, list);
-					break;
-				case DwarfConstants.DW_TAG_template_type_param :
-					break;
-				case DwarfConstants.DW_TAG_template_value_param :
-					break;
-				case DwarfConstants.DW_TAG_thrown_type :
-					break;
-				case DwarfConstants.DW_TAG_try_block :
-					break;
-				case DwarfConstants.DW_TAG_variable :
-					break;
-				case DwarfConstants.DW_TAG_volatile_type :
-					break;
 			}
+		}
+
+		// We are only interested in certain tags.
+		switch (tag) {
+			case DwarfConstants.DW_TAG_array_type :
+				break;
+			case DwarfConstants.DW_TAG_class_type :
+				break;
+			case DwarfConstants.DW_TAG_enumeration_type :
+				break;
+			case DwarfConstants.DW_TAG_formal_parameter :
+				break;
+			case DwarfConstants.DW_TAG_lexical_block :
+				break;
+			case DwarfConstants.DW_TAG_member :
+				break;
+			case DwarfConstants.DW_TAG_pointer_type :
+				break;
+			case DwarfConstants.DW_TAG_reference_type :
+				break;
+			case DwarfConstants.DW_TAG_compile_unit :
+				processCompileUnit(requestor, list);
+				break;
+			case DwarfConstants.DW_TAG_structure_type :
+				break;
+			case DwarfConstants.DW_TAG_subroutine_type :
+				break;
+			case DwarfConstants.DW_TAG_typedef :
+				break;
+			case DwarfConstants.DW_TAG_union_type :
+				break;
+			case DwarfConstants.DW_TAG_unspecified_parameters :
+				break;
+			case DwarfConstants.DW_TAG_inheritance :
+				break;
+			case DwarfConstants.DW_TAG_ptr_to_member_type :
+				break;
+			case DwarfConstants.DW_TAG_with_stmt :
+				break;
+			case DwarfConstants.DW_TAG_base_type :
+				break;
+			case DwarfConstants.DW_TAG_catch_block :
+				break;
+			case DwarfConstants.DW_TAG_const_type :
+				break;
+			case DwarfConstants.DW_TAG_enumerator :
+				break;
+			case DwarfConstants.DW_TAG_file_type :
+				break;
+			case DwarfConstants.DW_TAG_friend :
+				break;
+			case DwarfConstants.DW_TAG_subprogram :
+				processSubProgram(requestor, list);
+				break;
+			case DwarfConstants.DW_TAG_template_type_param :
+				break;
+			case DwarfConstants.DW_TAG_template_value_param :
+				break;
+			case DwarfConstants.DW_TAG_thrown_type :
+				break;
+			case DwarfConstants.DW_TAG_try_block :
+				break;
+			case DwarfConstants.DW_TAG_variable :
+				break;
+			case DwarfConstants.DW_TAG_volatile_type :
+				break;
 		}
 	}
 

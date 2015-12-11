@@ -46,7 +46,6 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -184,19 +183,16 @@ public class LaunchBarListViewer extends StructuredViewer {
 			this.index = index;
 			this.labelProvider = labelProvider;
 			setData(element);
-			setBackground(getParent().getBackground());
+			setBackground(parent.getBackground());
 			addPaintListener(new PaintListener() {
 				@Override
 				public void paintControl(PaintEvent e) {
-					Point size = getSize();
-					GC gc = e.gc;
-					gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-					gc.drawLine(0, size.y - 1, size.x, size.y - 1);
-					if (label == null)
+					removePaintListener(this);
+					if (label == null) {
 						lazyInit();
+					}
 				}
 			});
-			// lazyInit();
 		} // end ListItem(..)
 
 		protected void lazyInit() {
@@ -321,6 +317,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 					}
 				});
 			}
+			icon.setBackground(parent.getBackground());
 			return icon;
 		}
 
@@ -332,6 +329,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 			if (labelProvider instanceof IFontProvider) {
 				label.setFont(((IFontProvider) labelProvider).getFont(element));
 			}
+			label.setBackground(parent.getBackground());
 			return label;
 		}
 	} // end ListItem class

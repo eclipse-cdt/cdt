@@ -22,10 +22,6 @@ import org.w3c.dom.Node;
  * See <code>CompilationDirectorySourceContainer</code>.
  */
 public class CompilationDirectorySourceContainerType extends AbstractSourceContainerTypeDelegate {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
-	 */
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		CompilationDirectorySourceContainer folder = (CompilationDirectorySourceContainer) container;
@@ -41,9 +37,6 @@ public class CompilationDirectorySourceContainerType extends AbstractSourceConta
 		return serializeDocument(document);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
-	 */
 	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);

@@ -33,7 +33,6 @@ import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -333,11 +332,11 @@ implements IStack, ICachingService {
 	private boolean fTraceVisualization;
 
 	/**
-	 * A Map of a return value for each thread.
-	 * A return value is stored when the user performs a step-return,
-	 * and it cleared as soon as that thread executes again.
+	 * A Map of 0 or more return values for each thread.
+	 * A return value is stored whenever the user performs a step-return,
+	 * or a step-over and it cleared as soon as that thread executes again.
 	 */
-	private Map<IMIExecutionDMContext, VariableData> fThreadToReturnVariable = new HashMap<IMIExecutionDMContext, VariableData>();
+	private Map<IMIExecutionDMContext, ArrayList<VariableData>> fThreadToReturnVariable = new HashMap<>();
 
 	public MIStack(DsfSession session) {
 		super(session);
@@ -893,13 +892,13 @@ implements IStack, ICachingService {
 						}
 					});
 		} else if (miVariableDmc.fType == MIVariableDMC.Type.RETURN_VALUES) {
-			VariableData var = fThreadToReturnVariable.get(execDmc);
-			if (var != null) {
-				rm.setData(var);
-			} else {
-				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Return value not found", null));  //$NON-NLS-1$
+			ArrayList<VariableData> vars = fThreadToReturnVariable.get(execDmc);
+			if (vars == null || vars.size() <= miVariableDmc.getIndex()) {
+				rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Return value not found", null));  //$NON-NLS-1$
+				return;
 			}
-			rm.done();
+			
+			rm.done(vars.get(miVariableDmc.getIndex()));
 		} else {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable type " + miVariableDmc.fType, null));  //$NON-NLS-1$
 		}
@@ -929,18 +928,19 @@ implements IStack, ICachingService {
 	 * Retrieves variables which are used to store the return values of functions.
 	 */
 	private void getReturnValues(IFrameDMContext frameDmc, DataRequestMonitor<IVariableDMContext[]> rm) {
-		IVariableDMContext[] values = new IVariableDMContext[0];
+		ArrayList<IVariableDMContext> values = new ArrayList<>();
 
 		// Return values are only relevant for the top stack-frame
 		if (!fTraceVisualization && frameDmc.getLevel() == 0) {
 			IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
-			VariableData var = fThreadToReturnVariable.get(threadDmc);
-			if (var != null) {
-				values = new IVariableDMContext[1];
-				values[0] = new MIVariableDMC(this, frameDmc, MIVariableDMC.Type.RETURN_VALUES, 0);
+			ArrayList<VariableData> vars = fThreadToReturnVariable.get(threadDmc);
+			if (vars != null) {
+				for (int i=0; i<vars.size(); i++) {
+					values.add(new MIVariableDMC(this, frameDmc, MIVariableDMC.Type.RETURN_VALUES, i));
+				}
 			}
 		}
-		rm.done(values);
+		rm.done(values.toArray(new IVariableDMContext[values.size()]));
 	}
 
 	@Override
@@ -1129,7 +1129,8 @@ implements IStack, ICachingService {
 			// Non-stop mode
 			IDMContext ctx = e.getDMContext();
 			if (ctx instanceof IMIExecutionDMContext) {
-				fThreadToReturnVariable.remove(ctx);
+				// Don't clear for prototype as we don't know when we're done
+//				fThreadToReturnVariable.remove(ctx);
 			} else if (ctx instanceof IContainerDMContext) {
 				fThreadToReturnVariable.clear();
 			}
@@ -1149,6 +1150,33 @@ implements IStack, ICachingService {
 
 		handleReturnValues(e);
 	}
+	
+	// For prototype, listen for those events directly
+	// although there is a race condition
+	/** @since 5.0 */
+	@DsfServiceEventHandler
+	public void eventDispatched(MIFunctionFinishedEvent e) {
+		// When returning out of a function, we want to show the return value
+		// for the thread that finished the call.  To do that, we store
+		// the variable in which GDB stores that return value, and we do
+		// that for the proper thread.
+
+		// Non-stop mode
+		IMIExecutionDMContext finishedEventThread = (IMIExecutionDMContext)e.getDMContext();
+		if (finishedEventThread != null) {
+			String name = e.getGDBResultVar();
+			String value = e.getReturnValue();
+
+			if (name != null && !name.isEmpty() && value != null && !value.isEmpty()) {
+				ArrayList<VariableData> vars = fThreadToReturnVariable.get(finishedEventThread);
+				if (vars == null) {
+					vars = new ArrayList<>();
+					fThreadToReturnVariable.put(finishedEventThread, vars);
+				}
+				vars.add(new VariableData(new MIArg(name, value)));
+			}
+		}
+	}
 
 	private void handleReturnValues(ISuspendedDMEvent e) {
 		// Process MIFunctionFinishedEvent from within the ISuspendedDMEvent
@@ -1158,34 +1186,6 @@ implements IStack, ICachingService {
 		if (e instanceof IMIDMEvent) {
 			Object miEvent = ((IMIDMEvent)e).getMIEvent();
 			if (miEvent instanceof MIFunctionFinishedEvent) {
-				// When returning out of a function, we want to show the return value
-				// for the thread that finished the call.  To do that, we store
-				// the variable in which GDB stores that return value, and we do
-				// that for the proper thread.
-
-				IMIExecutionDMContext finishedEventThread = null;
-				if (e instanceof IContainerSuspendedDMEvent) {
-					// All-stop mode
-					IExecutionDMContext[] triggerContexts = ((IContainerSuspendedDMEvent)e).getTriggeringContexts();
-					if (triggerContexts.length != 0 && triggerContexts[0] instanceof IMIExecutionDMContext) {
-						finishedEventThread = (IMIExecutionDMContext)triggerContexts[0];
-					}
-				} else {
-					// Non-stop mode
-					IDMContext ctx = e.getDMContext();
-					if (ctx instanceof IMIExecutionDMContext) {
-						finishedEventThread = (IMIExecutionDMContext)ctx;
-					}
-				}
-
-				if (finishedEventThread != null) {
-					String name = ((MIFunctionFinishedEvent)miEvent).getGDBResultVar();
-					String value = ((MIFunctionFinishedEvent)miEvent).getReturnValue();
-
-					if (name != null && !name.isEmpty() && value != null && !value.isEmpty()) {
-						fThreadToReturnVariable.put(finishedEventThread, new VariableData(new MIArg(name, value)));
-					}
-				}
 			}
 		}
 	}

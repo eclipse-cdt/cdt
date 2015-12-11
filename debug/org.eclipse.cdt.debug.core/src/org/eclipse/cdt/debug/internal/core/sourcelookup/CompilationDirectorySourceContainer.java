@@ -12,7 +12,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 /**
  * A directory in the local file system that is used for running the C/C++ compiler. This container
@@ -78,9 +79,6 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 		fSubfolders = subfolders;
 	}	
 		
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
-	 */
 	@Override
 	public String getName() {
 		return fDirectory.getAbsolutePath();
@@ -97,16 +95,13 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 		return fDirectory;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-	 */
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
 
 	/**
-	 * Source elements returned from this method are instances of <code>IFile</code> or <code>LocalFileStorage</code>.
+	 * Source elements returned from this method are instances of {@link IFile} or {@link LocalFileStorage}.
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(String)
 	 */
 	@Override
@@ -115,11 +110,9 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 		if (!file.isAbsolute()) {
 			file = new File(fDirectory, name);
 		}
-		List<Object> sources = new ArrayList<Object>();
+		List<Object> sources = new ArrayList<>();
 		if (file.exists() && file.isFile()) {
-			sources.addAll(Arrays.asList(SourceUtils.findSourceElements(file, getDirector())));
-		} else {
-			sources = new ArrayList<Object>();
+			Collections.addAll(sources, SourceUtils.findSourceElements(file, getDirector()));
 		}
 		
 		// Check sub-folders		
@@ -130,8 +123,9 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 					continue;
 				}
 				if (isFindDuplicates()) {
-					for (Object element : elements)
+					for (Object element : elements) {
 						sources.add(element);
+					}
 				} else {
 					sources.add(elements[0]);
 					break;
@@ -144,17 +138,11 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 		return sources.toArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
-	 */
 	@Override
 	public boolean isComposite() {
 		return fSubfolders;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof CompilationDirectorySourceContainer) {
@@ -164,23 +152,17 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getDirectory().hashCode();
 	}
 	
-    /* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
-	 */
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if (fSubfolders) {
 			String[] files = fDirectory.list();
 			if (files != null) {
-				List<ISourceContainer> dirs = new ArrayList<ISourceContainer>();
+				List<ISourceContainer> dirs = new ArrayList<>();
 				for (String name : files) {
 					File file = new File(getDirectory(), name);
 					if (file.exists() && file.isDirectory()) {
@@ -197,9 +179,6 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 		return new ISourceContainer[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer#getCompilationPath(java.lang.String)
-	 */
 	@Override
 	public IPath getCompilationPath(String sourceName) {
 		IPath path = new Path(sourceName);

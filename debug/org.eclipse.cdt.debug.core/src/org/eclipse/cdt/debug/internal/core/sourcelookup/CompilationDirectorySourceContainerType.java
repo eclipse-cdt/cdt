@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
  
 /**
- * See <code>CompilationDirectorySourceContainer</code>.
+ * See {@link CompilationDirectorySourceContainer}.
  */
 public class CompilationDirectorySourceContainerType extends AbstractSourceContainerTypeDelegate {
 	@Override
@@ -43,13 +43,13 @@ public class CompilationDirectorySourceContainerType extends AbstractSourceConta
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
 			if ("directory".equals(element.getNodeName())) { //$NON-NLS-1$
-				String string = element.getAttribute("path"); //$NON-NLS-1$
-				if (string == null || string.length() == 0) {
+				String path = element.getAttribute("path"); //$NON-NLS-1$
+				if (path == null || path.isEmpty()) {
 					abort(InternalSourceLookupMessages.CompilationDirectorySourceContainerType_0, null);
 				}
 				String nest = element.getAttribute("nest"); //$NON-NLS-1$
 				boolean nested = "true".equals(nest); //$NON-NLS-1$
-				return new CompilationDirectorySourceContainer(new Path(string), nested);
+				return new CompilationDirectorySourceContainer(new Path(path), nested);
 			}
 			abort(InternalSourceLookupMessages.CompilationDirectorySourceContainerType_1, null);
 		}

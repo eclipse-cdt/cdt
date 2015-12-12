@@ -65,8 +65,7 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 		if (document == null || partition == null)
 			return;
 
-		@SuppressWarnings("unchecked")
-		Map<String, Object> preferences = getPreferences();
+		Map<String, String> preferences = getPreferences();
 
 		try {
 			TextEdit edit = CodeFormatterUtil.format(

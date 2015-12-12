@@ -188,8 +188,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	}
 
 	public Iterator<Position> getPositionIterator(String category, int offset) throws BadPositionCategoryException {
-		@SuppressWarnings("unchecked")
-		List<Position> positions = (List<Position>) getDocumentManagedPositions().get(category);
+		List<Position> positions = getDocumentManagedPositions().get(category);
 		if (positions == null) {
 			throw new BadPositionCategoryException();
 		}
@@ -198,22 +197,38 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	}
 
 	public Iterator<AddressRangePosition> getPositionIterator(String category, BigInteger address) throws BadPositionCategoryException {
-		@SuppressWarnings("unchecked")
-		List<AddressRangePosition> positions = (List<AddressRangePosition>) getDocumentManagedPositions().get(category);
-		if (positions == null) {
-			throw new BadPositionCategoryException();
-		}
+		List<AddressRangePosition> positions = getAddressRangePositions(category);
 		int idx = computeIndexInPositionListFirst(positions, address);
 		return positions.listIterator(idx);
 	}
 
-	public int computeIndexInCategory(String category, BigInteger address) throws BadPositionCategoryException {
-		@SuppressWarnings("unchecked")
-		List<AddressRangePosition> c = (List<AddressRangePosition>) getDocumentManagedPositions().get(category);
-		if (c == null) {
+	private List<AddressRangePosition> getAddressRangePositions(String category) throws BadPositionCategoryException {
+		List<Position> tmpPositions = getDocumentManagedPositions().get(category);
+		if (tmpPositions == null) {
 			throw new BadPositionCategoryException();
 		}
-		return computeIndexInPositionListFirst(c, address);
+		List<AddressRangePosition> positions = new ArrayList<>();
+		for(Position position: tmpPositions) {
+			positions.add((AddressRangePosition) position);
+		}
+		return positions;
+	}
+	
+	private List<AddressRangePosition> getAddressRangePositionsRaw(String category) {
+		List<Position> tmpPositions = getDocumentManagedPositions().get(category);
+		if (tmpPositions == null) {
+			return null;
+		}
+		List<AddressRangePosition> positions = new ArrayList<>();
+		for(Position position: tmpPositions) {
+			positions.add((AddressRangePosition) position);
+		}
+		return positions;
+	}
+
+	public int computeIndexInCategory(String category, BigInteger address) throws BadPositionCategoryException {
+		List<AddressRangePosition> positions = getAddressRangePositions(category);
+		return computeIndexInPositionListFirst(positions, address);
 	}
 
 	/**
@@ -380,8 +395,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 */
 	public Position getPositionOfIndex(String category, int index) throws BadPositionCategoryException {
 		if (index >= 0) {
-			@SuppressWarnings("unchecked")
-			List<Position> positions = (List<Position>) getDocumentManagedPositions().get(category);
+			List<Position> positions = getDocumentManagedPositions().get(category);
 			if (positions == null) {
 				throw new BadPositionCategoryException();
 			}
@@ -398,8 +412,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	}
 
 	public AddressRangePosition getPositionOfAddress(String category, BigInteger address) {
-		@SuppressWarnings("unchecked")
-		List<AddressRangePosition> positions = (List<AddressRangePosition>) getDocumentManagedPositions().get(category);
+		List<AddressRangePosition> positions = getAddressRangePositionsRaw(category);
 		if (positions == null) {
 			return null;
 		}
@@ -419,8 +432,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @return
 	 */
 	public AddressRangePosition getPositionInAddressRange(String category, AddressRangePosition range) {
-		@SuppressWarnings("unchecked")
-		List<AddressRangePosition> positions = (List<AddressRangePosition>) getDocumentManagedPositions().get(category);
+		List<AddressRangePosition> positions = getAddressRangePositionsRaw(category);
 		if (positions == null) {
 			return null;
 		}
@@ -643,8 +655,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @throws BadLocationException
 	 */
 	public Position getPosition(String category, int offset, boolean allowZeroLength) throws BadLocationException, BadPositionCategoryException {
-		@SuppressWarnings("unchecked")
-		List<Position> list = (List<Position>) getDocumentManagedPositions().get(category);
+		List<Position> list = getDocumentManagedPositions().get(category);
 		int idx;
 		idx = computeIndexInPositionList(list, offset, true);
 		if (idx > 0) {
@@ -681,8 +692,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @param pos
 	 */
 	public void addModelPositionFirst(AddressRangePosition pos) {
-		@SuppressWarnings("unchecked")
-		List<AddressRangePosition> list = (List<AddressRangePosition>) getDocumentManagedPositions().get(CATEGORY_MODEL);
+		List<AddressRangePosition> list = getAddressRangePositionsRaw(CATEGORY_MODEL);
 		int idx;
 		idx = computeIndexInPositionListFirst(list, pos.fAddressOffset.add(pos.fAddressLength));
 		if (idx < list.size()) {
@@ -724,11 +734,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @throws BadPositionCategoryException
 	 */
 	public void addPositionLast(String category, AddressRangePosition pos) throws BadPositionCategoryException {
-		@SuppressWarnings("unchecked")
-		List<AddressRangePosition> list = (List<AddressRangePosition>) getDocumentManagedPositions().get(category);
-		if (list == null) {
-			throw new BadPositionCategoryException();
-		}
+		List<AddressRangePosition> list = getAddressRangePositions(category);
 		if (DEBUG) System.out.println("Adding position to category <" + category + "> : " + pos); //$NON-NLS-1$ //$NON-NLS-2$
 		list.add(computeIndexInPositionListLast(list, pos.fAddressOffset), pos);
 	}
@@ -817,7 +823,6 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void removePositions(String category, List<AddressRangePosition> toRemove) {
 		if (toRemove.isEmpty()) {
 			return;
@@ -831,12 +836,12 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			}
 		}
 		
-		List<Position> positions = (List<Position>) getDocumentManagedPositions().get(category);
+		List<Position> positions = getDocumentManagedPositions().get(category);
 		if (positions != null) {
 			positions.removeAll(toRemove);
 		}
 		if (!category.equals(CATEGORY_MODEL)) {
-			positions = (List<Position>) getDocumentManagedPositions().get(CATEGORY_MODEL);
+			positions = getDocumentManagedPositions().get(CATEGORY_MODEL);
 			if (positions != null) {
 				positions.removeAll(toRemove);
 			}
@@ -852,8 +857,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		if (category == null)
 			throw new BadPositionCategoryException();
 
-		@SuppressWarnings("unchecked")
-		List<Position> list = (List<Position>) getDocumentManagedPositions().get(category);
+		List<Position> list = getDocumentManagedPositions().get(category);
 		if (list == null)
 			throw new BadPositionCategoryException();
 

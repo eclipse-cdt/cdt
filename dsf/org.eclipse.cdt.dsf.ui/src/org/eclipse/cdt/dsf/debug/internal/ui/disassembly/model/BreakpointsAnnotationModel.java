@@ -128,10 +128,9 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private Annotation findAnnotation(IMarker marker) {
-		for (Iterator<SimpleMarkerAnnotation> it= getAnnotationIterator(false); it.hasNext();) {
-			SimpleMarkerAnnotation a= it.next();
+		for (Iterator<Annotation> it= getAnnotationIterator(false); it.hasNext();) {
+			SimpleMarkerAnnotation a= (SimpleMarkerAnnotation) it.next();
 			if (a.getMarker().equals(marker)) {
 				return a;
 			}

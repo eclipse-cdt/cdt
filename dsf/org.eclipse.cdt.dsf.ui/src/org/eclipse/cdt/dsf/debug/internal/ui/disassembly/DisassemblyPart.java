@@ -2184,12 +2184,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 				int offset= lineRegion.getOffset();
 				int length= lineRegion.getLength();
-				@SuppressWarnings("unchecked")
-				Iterator<SimpleMarkerAnnotation> it= bpModel.getAnnotationIterator(offset, length, true, true);
+				Iterator<Annotation> it= bpModel.getAnnotationIterator(offset, length, true, true);
 				List<IBreakpoint> bpList= new ArrayList<IBreakpoint>(5);
 				final IBreakpointManager bpMgr= DebugPlugin.getDefault().getBreakpointManager();
 				while (it.hasNext()) {
-					final SimpleMarkerAnnotation annotation= it.next();
+					final SimpleMarkerAnnotation annotation= (SimpleMarkerAnnotation) it.next();
 					IBreakpoint bp= bpMgr.getBreakpoint(annotation.getMarker());
 					if (bp != null) {
 						bpList.add(bp);

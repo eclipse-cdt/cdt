@@ -72,8 +72,8 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(CompletionTests.suite());
 		addTest(CompletionTests_PlainC.suite());
 		addTest(ParameterHintTests.suite());
-//		addTest(CPPParameterGuessingTests.suite());
-//		addTest(CParameterGuessingTests.suite());
+		addTest(CPPParameterGuessingTests.suite());
+		addTest(CParameterGuessingTests.suite());
 		
 		addTest(ShowCamelCasePreferenceTest.suite());
 		

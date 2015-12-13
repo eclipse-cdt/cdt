@@ -13,12 +13,15 @@
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *     Nathan Ridge
  *     Thomas Corbat (IFS)
+ *     Mohamed Azab (Mentor Graphics) - Bug 438549. Add mechanism for parameter guessing.
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -107,17 +110,22 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private static final String TEMPLATE_PARAMETER_PATTERN = "template<{0}> class"; //$NON-NLS-1$;
 	private static final String TYPENAME = "typename"; //$NON-NLS-1$;
 	private static final String ELLIPSIS = "..."; //$NON-NLS-1$;
+	private String fPrefix;
+	private ArrayList<IBinding> fAvailableElements;
 
 	/**
 	 * Default constructor is required (executable extension).
 	 */
 	public DOMCompletionProposalComputer() {
+		fPrefix = ""; //$NON-NLS-1$
 	}
 
 	@Override
 	protected List<ICompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) {
+		fPrefix = prefix;
+		initializeDefinedElements(context);
 		List<ICompletionProposal> proposals = new ArrayList<>();
 
 		if (inPreprocessorDirective(context)) {
@@ -587,7 +595,122 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			proposal.setContextInformation(info);
 		}
 
-		proposals.add(proposal);
+		/*
+		 * The ParameterGuessingProposal will be active if the function accepts parameters and the content assist is
+		 * invoked before typing any parameters. Otherwise, the normal Parameter Hint Proposal will be added.
+		 */
+		if (function.getParameters() != null && function.getParameters().length > 0 && isBeforeParameters(context)) {
+			proposals.add(ParameterGuessingProposal.createProposal(context, fAvailableElements, proposal, function, fPrefix));
+		} else {
+			proposals.add(proposal);
+		}
+	}
+
+	/**
+	 * Returns true if the invocation is at the function name or before typing any parameters
+	 */
+	private boolean isBeforeParameters(CContentAssistInvocationContext context) {
+		/*
+		 * Invocation offset and parse offset are the same if content assist is invoked while in the function
+		 * name (i.e. before the '('). After that, the parse offset will indicate the end of the name part. If
+		 * the diff. between them is zero, then we're still inside the function name part.
+		 */
+		int relativeOffset = context.getInvocationOffset() - context.getParseOffset();
+		if (relativeOffset == 0)
+			return true;
+		int startOffset = context.getParseOffset();
+		String completePrefix = context.getDocument().get().substring(startOffset,
+				context.getInvocationOffset());
+		int lastChar = getLastNonWhitespaceChar(completePrefix);
+		if (lastChar != -1 && completePrefix.charAt(lastChar) == '(')
+			return true;
+		return false;
+	}
+
+	private static int getLastNonWhitespaceChar(String str) {
+		char[] chars = str.toCharArray();
+		for (int i = chars.length - 1; i >= 0; i--) {
+			if (!Character.isWhitespace(chars[i]))
+				return i;
+		}
+		return -1;
+	}
+
+	/**
+	 * Initializes the list of defined elements at the start of the current statement.
+	 */
+	private void initializeDefinedElements(CContentAssistInvocationContext context) {
+		/*
+		 * Get all defined elements before the start of the statement.
+		 * ex1:	int a = foo( 
+		 * 					^ --> We don't want 'a' as a suggestion. 
+		 * ex2:	char* foo(int a, int b) {return NULL;} 
+		 * 		void bar(char* name) {} 
+		 * 		...
+		 * 		bar( foo( 
+		 * 				 ^ --> If this offset is used, the only defined name will be "bar(char*)".
+		 */
+		int startOffset = getStatementStartOffset(context.getDocument(),
+				context.getParseOffset() - fPrefix.length());
+		Map<String, IBinding> elementsMap = new HashMap<>();
+		IASTCompletionNode node = null;
+		// Create a content assist context that points to the start of the statement.
+		CContentAssistInvocationContext newContext = new CContentAssistInvocationContext(
+				context.getViewer(), startOffset, context.getEditor(), true, false);
+		try {
+			node = newContext.getCompletionNode();
+			if (node != null) {
+				IASTTranslationUnit tu = node.getTranslationUnit();
+				IASTName[] names = node.getNames();
+				for (IASTName name : names) {
+					IASTCompletionContext astContext = name.getCompletionContext();
+					if (astContext != null) {
+						IBinding[] bindings = astContext.findBindings(name, true);
+						if (bindings != null) {
+							AccessContext accessibilityContext = new AccessContext(name);
+							for (IBinding binding : bindings) {
+								// Consider only variables that are part of the current translation unit and fields.
+								if (binding instanceof IVariable
+										&& accessibilityContext.isAccessible(binding)
+										&& !elementsMap.containsKey(binding.getName())) {
+									if (binding instanceof ICPPField) {
+										elementsMap.put(binding.getName(), binding);
+									} else {
+										IASTName[] declarations = tu.getDeclarationsInAST(binding);
+										if (declarations.length != 0)
+											elementsMap.put(binding.getName(), binding);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} finally {
+			fAvailableElements = new ArrayList<>(elementsMap.values());
+			newContext.dispose();
+		}
+	}
+
+	/**
+	 * Returns the position after last semicolon or opening or closing brace before the given offset.
+	 */
+	private static int getStatementStartOffset(IDocument doc, int offset) {
+		if (offset != 0) {
+			String docPart;
+			try {
+				docPart = doc.get(0, offset);
+				int index = docPart.lastIndexOf(';');
+				int tmpIndex = docPart.lastIndexOf('{');
+				index = (index < tmpIndex) ? tmpIndex : index;
+				tmpIndex = docPart.lastIndexOf('}');
+				index = (index < tmpIndex) ? tmpIndex : index;
+				return index + 1;
+			} catch (BadLocationException e) {
+				CUIPlugin.log(e);
+			}
+		}
+		return offset;
 	}
 
 	private boolean skipDefaultedParameter(IParameter param) {

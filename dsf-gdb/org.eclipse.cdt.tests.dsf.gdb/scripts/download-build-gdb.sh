@@ -27,7 +27,7 @@ default_jlevel="4"
 jlevel="${default_jlevel}"
 
 # Supported versions
-default_versions="6.6 6.7.1 6.8 7.0.1 7.1 7.2 7.3.1 7.4.1 7.5.1 7.6.2 7.7.1 7.8.2 7.9.1 7.10"
+default_versions="6.6 6.7.1 6.8 7.0.1 7.1 7.2 7.3.1 7.4.1 7.5.1 7.6.2 7.7.1 7.8.2 7.9.1 7.10.1"
 
 # Is set to "echo" if we are doing a dry-run.
 dryrun=""
@@ -237,7 +237,7 @@ function symlink_gdb() {
 
   # If the version is a triplet (x.y.z), also create a symlink with just
   # the first two numbers (x.y).
-  if [[ "$version" =~ [0-9]\.[0-9]\.[0-9] ]]; then
+  if [[ "$version" =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
     local short_version="${version%.[0-9]}"
     ${dryrun} ln -sf "${install_dir}/gdb-${version}/bin/gdb" "${symlinks_dir}/gdb.${short_version}"
     ${dryrun} ln -sf "${install_dir}/gdb-${version}/bin/gdbserver" "${symlinks_dir}/gdbserver.${short_version}"

@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This represents the node that would occur at the point of a context
  * completion.
  * 
- * This node may contain the prefix text of an identifer up to the point. If
+ * This node may contain the prefix text of an identifier up to the point. If
  * there is no prefix, the completion occurred at the point where a new token
  * would have begun.
  * 
@@ -25,7 +25,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTCompletionNode {
-
 	/**
 	 * If the point of completion was at the end of a potential identifier, this
 	 * string contains the text of that identifier.
@@ -35,21 +34,21 @@ public interface IASTCompletionNode {
 	public String getPrefix();
 
 	/**
-	 * Get the length of the completion point.
+	 * Returns the length of the completion point.
 	 * 
 	 * @return length of completion token
 	 */
 	public int getLength();
 
 	/**
-	 * Get a list of names that fit in this context.
+	 * Returns a list of names that fit in this context.
 	 * 
 	 * @return array of IASTName's
 	 */
 	public IASTName[] getNames();
 
 	/**
-	 * Get the translation unit for this completion
+	 * Returns the translation unit for this completion
 	 * 
 	 * @return the translation unit
 	 */

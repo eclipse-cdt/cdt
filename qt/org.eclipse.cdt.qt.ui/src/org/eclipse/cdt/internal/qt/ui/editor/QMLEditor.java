@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.editor;
 
+import java.io.File;
+
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.ui.Activator;
@@ -50,7 +52,7 @@ public class QMLEditor extends TextEditor {
 	@Override
 	public void doSave(IProgressMonitor progressMonitor) {
 		IFileEditorInput fileInput = (IFileEditorInput) getEditorInput();
-		String fileName = fileInput.getFile().getFullPath().toString().substring(1);
+		String fileName = new File(fileInput.getFile().getLocationURI()).getAbsolutePath();
 		IDocument document = getSourceViewer().getDocument();
 
 		try {

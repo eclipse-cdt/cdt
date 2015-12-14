@@ -141,7 +141,7 @@
 			// Walk the AST for any imports
 			var ih = this;
 			walk.simple(file.ast, {
-				QMLImportStatement: function (node) {
+				QMLImport: function (node) {
 					var prop = null;
 					var scope = file.scope;
 					if (node.qualifier) {
@@ -551,19 +551,22 @@
 
 	// Infers the property's type from its given primitive value
 	function infKind(kind, out) {
-		switch (kind) {
-		case "int":
-		case "double":
-		case "real":
-			infer.cx().num.propagate(out);
-			break;
-		case "string":
-		case "color":
-			infer.cx().str.propagate(out);
-			break;
-		case "boolean":
-			infer.cx().bool.propagate(out);
-			break;
+		// TODO: infer list type
+		if (kind.primitive) {
+			switch (kind.id.name) {
+			case "int":
+			case "double":
+			case "real":
+				infer.cx().num.propagate(out);
+				break;
+			case "string":
+			case "color":
+				infer.cx().str.propagate(out);
+				break;
+			case "boolean":
+				infer.cx().bool.propagate(out);
+				break;
+			}
 		}
 	}
 
@@ -612,11 +615,15 @@
 	function extendTernScopeGatherer(scopeGatherer) {
 		// Extend the Tern scopeGatherer to build up our custom QML scoping
 		extendWalk(scopeGatherer, {
-			QMLObjectLiteral: function (node, scope, c) {
+			QMLObjectDefinition: function (node, scope, c) {
 				var inner = node.scope = getScopeBuilder().newObjScope(node);
 				c(node.body, inner);
 			},
-			QMLMemberBlock: function (node, scope, c) {
+			QMLObjectBinding: function (node, scope, c) {
+				var inner = node.scope = getScopeBuilder().newObjScope(node);
+				c(node.body, inner);
+			},
+			QMLObjectInitializer: function (node, scope, c) {
 				var memScope = node.scope = getScopeBuilder().newMemberScope(scope, node);
 				for (var i = 0; i < node.members.length; i++) {
 					var member = node.members[i];
@@ -667,8 +674,8 @@
 			QMLStatementBlock: function (node, scope, c) {
 				var inner = getScopeBuilder().newJSScope(scope, node);
 				node.scope = inner;
-				for (var i = 0; i < node.statements.length; i++) {
-					c(node.statements[i], inner, "Statement");
+				for (var i = 0; i < node.body.length; i++) {
+					c(node.body[i], inner, "Statement");
 				}
 			},
 			QMLSignalDefinition: function (node, scope, c) {
@@ -707,8 +714,11 @@
 			QMLScriptBinding: fill(function (node, scope, out, name) {
 				return inf(node.script, node.scope, out, name);
 			}),
-			QMLObjectLiteral: ret(function (node, scope, name) {
+			QMLObjectBinding: ret(function (node, scope, name) {
 				return node.scope.objType;
+			}),
+			QMLArrayBinding: ret(function (node, scope, name) {
+				return new infer.Arr(null); // TODO: populate with type of array contents
 			})
 		});
 	}
@@ -716,10 +726,13 @@
 	function extendTernInferWrapper(inferWrapper) {
 		// Extend the inferWrapper methods
 		extendWalk(inferWrapper, {
-			QMLObjectLiteral: function (node, scope, c) {
+			QMLObjectDefinition: function (node, scope, c) {
 				c(node.body, node.scope);
 			},
-			QMLMemberBlock: function (node, scope, c) {
+			QMLObjectBinding: function (node, scope, c) {
+				c(node.body, node.scope);
+			},
+			QMLObjectInitializer: function (node, scope, c) {
 				for (var i = 0; i < node.members.length; i++) {
 					var member = node.members[i];
 					if (member.type === "QMLPropertyDeclaration" || member.type === "QMLPropertyBinding") {
@@ -765,15 +778,15 @@
 				c(node.script, node.scope);
 			},
 			QMLStatementBlock: function (node, scope, c) {
-				for (var i = 0; i < node.statements.length; i++) {
-					c(node.statements[i], node.scope, "Statement");
+				for (var i = 0; i < node.body.length; i++) {
+					c(node.body[i], node.scope, "Statement");
 				}
 			},
 			QMLSignalDefinition: function (node, scope, c) {
 				var sig = scope.getProp(node.id.name);
 				for (var i = 0; i < node.params.length; i++) {
 					var param = node.params[i];
-					infKind(param.kind.name, sig.sigType.args[i]);
+					infKind(param.kind, sig.sigType.args[i]);
 				}
 				sig.sigType.retval = infer.ANull;
 				sig.sigType.propagate(sig);
@@ -788,10 +801,13 @@
 	function extendTernTypeFinder(typeFinder) {
 		// Extend the type finder to return valid types for QML AST elements
 		extendWalk(typeFinder, {
-			QMLObjectLiteral: function (node, scope) {
+			QMLObjectDefinition: function (node, scope) {
 				return node.scope.objType;
 			},
-			QMLMemberBlock: function (node, scope) {
+			QMLObjectBinding: function (node, scope) {
+				return node.scope.objType;
+			},
+			QMLObjectInitializer: function (node, scope) {
 				return infer.ANull;
 			},
 			FunctionDeclaration: function (node, scope) {
@@ -819,10 +835,13 @@
 	function extendTernSearchVisitor(searchVisitor) {
 		// Extend the search visitor to traverse the scope properly
 		extendWalk(searchVisitor, {
-			QMLObjectLiteral: function (node, scope, c) {
+			QMLObjectDefinition: function (node, scope, c) {
 				c(node.body, node.scope);
 			},
-			QMLMemberBlock: function (node, scope, c) {
+			QMLObjectBinding: function (node, scope, c) {
+				c(node.body, node.scope);
+			},
+			QMLObjectInitializer: function (node, scope, c) {
 				for (var i = 0; i < node.members.length; i++) {
 					var member = node.members[i];
 					if (member.type === "QMLPropertyDeclaration" || member.type === "QMLPropertyBinding") {
@@ -868,8 +887,8 @@
 				// Ignore
 			},
 			QMLStatementBlock: function (node, scope, c) {
-				for (var i = 0; i < node.statements.length; i++) {
-					c(node.statements[i], node.scope, "Statement");
+				for (var i = 0; i < node.body.length; i++) {
+					c(node.body[i], node.scope, "Statement");
 				}
 			}
 		});

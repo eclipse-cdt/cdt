@@ -8,11 +8,14 @@
 package org.eclipse.cdt.qt.core;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,12 +28,6 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 @SuppressWarnings("nls")
 public class QMLAnalyzer {
@@ -74,28 +71,16 @@ public class QMLAnalyzer {
 
 		ResolveDirectory resolveDirectory = (file, pathString) -> {
 			String filename = (String) file.get("name");
-			int slash = filename.lastIndexOf('/');
-			String fileDirectory = slash >= 0 ? filename.substring(0, slash + 1) : filename;
+			String fileDirectory = new File(filename).getParent();
 			if (pathString == null) {
-				return fileDirectory;
+				return fixPathString(fileDirectory);
 			}
-			IPath path = Path.fromOSString(pathString);
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			Path fileDirectoryPath = Paths.get(fileDirectory);
+			Path path = Paths.get(pathString);
 			if (!path.isAbsolute()) {
-				IResource res = root.findMember(fileDirectory);
-				if (res instanceof IContainer) {
-					IContainer dir = (IContainer) res;
-					res = dir.findMember(path);
-					if (res != null) {
-						String p = res.getFullPath().toString().substring(1);
-						if (!p.isEmpty() && !p.endsWith("/")) {
-							p += "/";
-						}
-						return p;
-					}
-				}
+				path = fileDirectoryPath.toAbsolutePath().resolve(path);
 			}
-			return pathString;
+			return fixPathString(path.normalize().toString());
 		};
 		options.put("resolveDirectory", invoke.invokeFunction("resolveDirectory", resolveDirectory));
 
@@ -137,19 +122,28 @@ public class QMLAnalyzer {
 		void callback(Object err, Object data);
 	}
 
+	private String fixPathString(String fileName) {
+		fileName = fileName.replaceAll("\\\\", "/");
+		if (fileName.startsWith("/")) {
+			fileName = fileName.substring(1);
+		}
+		return fileName;
+	}
+
 	public void addFile(String fileName, String code) throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
-		invoke.invokeMethod(tern, "addFile", fileName, code);
+		invoke.invokeMethod(tern, "addFile", fixPathString(fileName), code);
 	}
 
 	public void deleteFile(String fileName) throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
-		invoke.invokeMethod(tern, "delFile", fileName);
+		invoke.invokeMethod(tern, "delFile", fixPathString(fileName));
 	}
 
 	public Collection<QMLTernCompletion> getCompletions(String fileName, String text, int pos)
 			throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
+		fileName = fixPathString(fileName);
 		Bindings file = engine.createBindings();
 		file.put("type", "full");
 		file.put("name", fileName);
@@ -201,6 +195,7 @@ public class QMLAnalyzer {
 	public List<Bindings> getDefinition(String identifier, String fileName, String text, int pos)
 			throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
+		fileName = fixPathString(fileName);
 		Bindings file = engine.createBindings();
 		file.put("type", "full");
 		file.put("name", fileName);

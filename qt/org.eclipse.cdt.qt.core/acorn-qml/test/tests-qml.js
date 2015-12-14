@@ -18,17 +18,17 @@ var tokTypes = driver.tokTypes;
 testFail('', "QML only supports ECMA Script Language Specification 5 or older",
 		{ locations: true, ecmaVersion: 6, allowReserved: false });
 
-test('import QtQuick 2.2', headerStatements([{
-	type: "QMLImportStatement",
+test('import QtQuick 2.02', headerItemList([{
+	type: "QMLImport",
 	loc: {
 			start: { line: 1, column: 0 },
-			end: { line: 1, column: 18 }
+			end: { line: 1, column: 19 }
 		},
 	module: {
 		type: "QMLModule",
 		loc: {
 			start: { line: 1, column: 7 },
-			end: { line: 1, column: 18 }
+			end: { line: 1, column: 19 }
 		},
 		id: {
 			type: "QMLQualifiedID",
@@ -43,18 +43,16 @@ test('import QtQuick 2.2', headerStatements([{
 			type: "QMLVersionLiteral",
 			loc: {
 				start: { line: 1, column: 15 },
-				end: { line: 1, column: 18 }
+				end: { line: 1, column: 19 }
 			},
-			value: 2.2,
-			major: 2,
-			minor: 2,
-			raw: "2.2"
+			value: 2.02,
+			raw: "2.02"
 		}
 	}
 }]));
 
-test('import "./file.js"', headerStatements([{
-	type: "QMLImportStatement",
+test('import "./file.js"', headerItemList([{
+	type: "QMLImport",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 18 }
@@ -70,8 +68,8 @@ test('import "./file.js"', headerStatements([{
 	}
 }]));
 
-test('import "./file.js" as MyModule', headerStatements([{
-	type: "QMLImportStatement",
+test('import "./file.js" as MyModule', headerItemList([{
+	type: "QMLImport",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 30 }
@@ -114,9 +112,9 @@ testFail('import QtQuick 1',
 		"QML module must specify major and minor version (1:15)",
 		{ locations: true, loose: false });
 
-test('import QtQuick 2.2\nimport "./file.js"', headerStatements([
+test('import QtQuick 2.2\nimport "./file.js"', headerItemList([
 	{
-		type: "QMLImportStatement",
+		type: "QMLImport",
 		loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 18 }
@@ -143,14 +141,12 @@ test('import QtQuick 2.2\nimport "./file.js"', headerStatements([
 					end: { line: 1, column: 18 }
 				},
 				value: 2.2,
-				major: 2,
-				minor: 2,
 				raw: "2.2"
 			}
 		}
 	},
 	{
-		type: "QMLImportStatement",
+		type: "QMLImport",
 		loc: {
 			start: { line: 2, column: 0 },
 			end: { line: 2, column: 18 }
@@ -167,9 +163,9 @@ test('import QtQuick 2.2\nimport "./file.js"', headerStatements([
 	}
 ]));
 
-test('import QtQuick 2.2;import "./file.js"', headerStatements([
+test('import QtQuick 2.2;import "./file.js"', headerItemList([
 	{
-		type: "QMLImportStatement",
+		type: "QMLImport",
 		loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 19 }
@@ -196,14 +192,12 @@ test('import QtQuick 2.2;import "./file.js"', headerStatements([
 					end: { line: 1, column: 18 }
 				},
 				value: 2.2,
-				major: 2,
-				minor: 2,
 				raw: "2.2"
 			}
 		}
 	},
 	{
-		type: "QMLImportStatement",
+		type: "QMLImport",
 		loc: {
 			start: { line: 1, column: 19 },
 			end: { line: 1, column: 37 }
@@ -220,9 +214,9 @@ test('import QtQuick 2.2;import "./file.js"', headerStatements([
 	}
 ]));
 
-test('import Module 1.0 as MyModule', headerStatements([
+test('import Module 1.0 as MyModule', headerItemList([
 	{
-		type: "QMLImportStatement",
+		type: "QMLImport",
 		loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 29 }
@@ -249,8 +243,6 @@ test('import Module 1.0 as MyModule', headerStatements([
 					end: { line: 1, column: 17 }
 				},
 				value: 1,
-				major: 1,
-				minor: 0,
 				raw: "1.0"
 			}
 		},
@@ -272,9 +264,9 @@ test('import Module 1.0 as MyModule', headerStatements([
 	}
 ]));
 
-test('import Qualified.Id.Test 1.0', headerStatements([
+test('import Qualified.Id.Test 1.0', headerItemList([
 	{
-		type: "QMLImportStatement",
+		type: "QMLImport",
 		loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 28 }
@@ -305,100 +297,103 @@ test('import Qualified.Id.Test 1.0', headerStatements([
 					end: { line: 1, column: 28 }
 				},
 				value: 1,
-				major: 1,
-				minor: 0,
 				raw: "1.0"
 			}
 		}
 	}
 ]));
 
-test('pragma Singleton', headerStatements([
+test('pragma Singleton', headerItemList([
 	{
-		type: "QMLPragmaStatement",
+		type: "QMLPragma",
 		loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 16 }
 		},
 		id: {
-			type: "Identifier",
+			type: "QMLQualifiedID",
 			loc: {
 				start: { line: 1, column: 7 },
 				end: { line: 1, column: 16 }
 			},
+			parts: [{ type: "Identifier", name: "Singleton" }],
 			name: "Singleton"
 		}
 	}
 ]));
 
-test('pragma Singleton\npragma Other', headerStatements([
+test('pragma Singleton\npragma Other', headerItemList([
 	{
-		type: "QMLPragmaStatement",
+		type: "QMLPragma",
 		loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 16 }
 		},
 		id: {
-			type: "Identifier",
+			type: "QMLQualifiedID",
 			loc: {
 				start: { line: 1, column: 7 },
 				end: { line: 1, column: 16 }
 			},
+			parts: [{ type: "Identifier", name: "Singleton" }],
 			name: "Singleton"
 		}
 	},
 	{
-		type: "QMLPragmaStatement",
+		type: "QMLPragma",
 		loc: {
 			start: { line: 2, column: 0 },
 			end: { line: 2, column: 12 }
 		},
 		id: {
-			type: "Identifier",
+			type: "QMLQualifiedID",
 			loc: {
 				start: { line: 2, column: 7 },
 				end: { line: 2, column: 12 }
 			},
+			parts: [{ type: "Identifier", name: "Other" }],
 			name: "Other"
 		}
 	}
 ]));
 
-test('pragma Singleton;pragma Other', headerStatements([
+test('pragma Singleton;pragma Other', headerItemList([
 	{
-		type: "QMLPragmaStatement",
+		type: "QMLPragma",
 		loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 17 }
 		},
 		id: {
-			type: "Identifier",
+			type: "QMLQualifiedID",
 			loc: {
 				start: { line: 1, column: 7 },
 				end: { line: 1, column: 16 }
 			},
+			parts: [{ type: "Identifier", name: "Singleton" }],
 			name: "Singleton"
 		}
 	},
 	{
-		type: "QMLPragmaStatement",
+		type: "QMLPragma",
 		loc: {
 			start: { line: 1, column: 17 },
 			end: { line: 1, column: 29 }
 		},
 		id: {
-			type: "Identifier",
+			type: "QMLQualifiedID",
 			loc: {
 				start: { line: 1, column: 24 },
 				end: { line: 1, column: 29 }
 			},
+			parts: [{ type: "Identifier", name: "Other" }],
 			name: "Other"
 		}
 	}
 ]));
 
 test('Window {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 9 }
@@ -413,7 +408,7 @@ test('Window {}', rootObject({
 		name: "Window"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 7 },
 			end: { line: 1, column: 9 }
@@ -423,7 +418,7 @@ test('Window {}', rootObject({
 }));
 
 test('QtQuick.Window {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 17 }
@@ -441,7 +436,7 @@ test('QtQuick.Window {}', rootObject({
 		name: "QtQuick.Window"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 15 },
 			end: { line: 1, column: 17 }
@@ -451,7 +446,7 @@ test('QtQuick.Window {}', rootObject({
 }));
 
 test('property {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 11 }
@@ -466,7 +461,7 @@ test('property {}', rootObject({
 		name: "property"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 9 },
 			end: { line: 1, column: 11 }
@@ -476,7 +471,7 @@ test('property {}', rootObject({
 }));
 
 test('readonly {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 11 }
@@ -491,7 +486,7 @@ test('readonly {}', rootObject({
 		name: "readonly"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 9 },
 			end: { line: 1, column: 11 }
@@ -501,7 +496,7 @@ test('readonly {}', rootObject({
 }));
 
 test('signal {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 9 }
@@ -516,7 +511,7 @@ test('signal {}', rootObject({
 		name: "signal"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 7 },
 			end: { line: 1, column: 9 }
@@ -526,7 +521,7 @@ test('signal {}', rootObject({
 }));
 
 test('alias {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 8 }
@@ -541,7 +536,7 @@ test('alias {}', rootObject({
 		name: "alias"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 6 },
 			end: { line: 1, column: 8 }
@@ -551,7 +546,7 @@ test('alias {}', rootObject({
 }));
 
 test('list {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 7 }
@@ -566,7 +561,7 @@ test('list {}', rootObject({
 		name: "list"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 5 },
 			end: { line: 1, column: 7 }
@@ -576,7 +571,7 @@ test('list {}', rootObject({
 }));
 
 test('color {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 8 }
@@ -591,7 +586,7 @@ test('color {}', rootObject({
 		name: "color"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 6 },
 			end: { line: 1, column: 8 }
@@ -601,7 +596,7 @@ test('color {}', rootObject({
 }));
 
 test('real {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 7 }
@@ -616,7 +611,7 @@ test('real {}', rootObject({
 		name: "real"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 5 },
 			end: { line: 1, column: 7 }
@@ -626,7 +621,7 @@ test('real {}', rootObject({
 }));
 
 test('string {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 9 }
@@ -641,7 +636,7 @@ test('string {}', rootObject({
 		name: "string"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 7 },
 			end: { line: 1, column: 9 }
@@ -651,7 +646,7 @@ test('string {}', rootObject({
 }));
 
 test('url {}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 6 }
@@ -666,7 +661,7 @@ test('url {}', rootObject({
 		name: "url"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 4 },
 			end: { line: 1, column: 6 }
@@ -676,7 +671,7 @@ test('url {}', rootObject({
 }));
 
 test('Window {Button {}}', rootObjectMembers([{
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 8 },
 		end: { line: 1, column: 17 }
@@ -691,7 +686,7 @@ test('Window {Button {}}', rootObjectMembers([{
 		name: "Button"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 15 },
 			end: { line: 1, column: 17 }
@@ -701,7 +696,7 @@ test('Window {Button {}}', rootObjectMembers([{
 }]));
 
 test('a{ property {} }', rootObjectMembers([{
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 3 },
 		end: { line: 1, column: 14 }
@@ -716,7 +711,7 @@ test('a{ property {} }', rootObjectMembers([{
 		name: "property"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 12 },
 			end: { line: 1, column: 14 }
@@ -726,7 +721,7 @@ test('a{ property {} }', rootObjectMembers([{
 }]));
 
 test('a{ readonly {} }', rootObjectMembers([{
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 3 },
 		end: { line: 1, column: 14 }
@@ -741,7 +736,7 @@ test('a{ readonly {} }', rootObjectMembers([{
 		name: "readonly"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 12 },
 			end: { line: 1, column: 14 }
@@ -751,7 +746,7 @@ test('a{ readonly {} }', rootObjectMembers([{
 }]));
 
 test('a{ signal {} }', rootObjectMembers([{
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 3 },
 		end: { line: 1, column: 12 }
@@ -766,7 +761,7 @@ test('a{ signal {} }', rootObjectMembers([{
 		name: "signal"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 10 },
 			end: { line: 1, column: 12 }
@@ -787,7 +782,15 @@ test('a{ readonly property var w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: true,
-	kind: "var",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 21 },
+			end: { line: 1, column: 24 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -818,7 +821,15 @@ test('a{ default property var w: 3 }', rootObjectMembers([{
 	},
 	default: true,
 	readonly: false,
-	kind: "var",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 20 },
+			end: { line: 1, column: 23 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -857,7 +868,15 @@ test('a{ property var w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "var",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 15 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -888,7 +907,15 @@ test('a{ property boolean w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "boolean",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 19 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "boolean"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -919,7 +946,15 @@ test('a{ property double w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "double",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 18 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "double"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -950,7 +985,15 @@ test('a{ property int w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "int",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 15 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "int"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -973,28 +1016,45 @@ test('a{ property int w: 3 }', rootObjectMembers([{
 	}
 }]));
 
-test('a{ property list w: 3 }', rootObjectMembers([{
+test('a{ property list<Type> w: 3 }', rootObjectMembers([{
 	type: "QMLPropertyDeclaration",
 	loc: {
 		start: { line: 1, column: 3 },
-		end: { line: 1, column: 21 }
+		end: { line: 1, column: 27 }
 	},
 	default: false,
 	readonly: false,
-	kind: "list",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 16 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "list"},
+	},
+	modifier: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 17 },
+			end: { line: 1, column: 21 }
+		},
+		primitive: false,
+		id: { type: "Identifier", name: "Type" }
+	},
 	id: {
 		type: "Identifier",
 		loc: {
-			start: { line: 1, column: 17 },
-			end: { line: 1, column: 18 }
+			start: { line: 1, column: 23 },
+			end: { line: 1, column: 24 }
 		},
 		name: "w"
 	},
 	binding: {
 		type: "QMLScriptBinding",
 		loc: {
-			start: { line: 1, column: 20 },
-			end: { line: 1, column: 21 }
+			start: { line: 1, column: 26 },
+			end: { line: 1, column: 27 }
 		},
 		script: {
 			type: "Literal",
@@ -1012,7 +1072,15 @@ test('a{ property color w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "color",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 17 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "color"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -1043,7 +1111,15 @@ test('a{ property real w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "real",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 16 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "real"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -1074,7 +1150,15 @@ test('a{ property string w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "string",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 18 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "string"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -1105,7 +1189,15 @@ test('a{ property url w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "url",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 15 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "url"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -1138,13 +1230,13 @@ test('a{ property QtObject w: 3 }', rootObjectMembers([{
 	default: false,
 	readonly: false,
 	kind: {
-		type: "QMLQualifiedID",
+		type: "QMLPropertyType",
 		loc: {
 			start: { line: 1, column: 12 },
 			end: { line: 1, column: 20 }
 		},
-		parts: [{ type: "Identifier", name: "QtObject" }],
-		name: "QtObject"
+		primitive: false,
+		id: { type: "Identifier", name: "QtObject"}
 	},
 	id: {
 		type: "Identifier",
@@ -1176,7 +1268,15 @@ test('a{ property alias w: 3 }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "alias",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 17 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "alias"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -1696,6 +1796,30 @@ test('a{b:url}', javaScript({
 	name: "url"
 }));
 
+test('a{b:[]}', javaScript({
+	type: "ArrayExpression",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 6 }
+	},
+	elements: []
+}));
+
+test('a{b:[{}]}', javaScript({
+	type: "ArrayExpression",
+	loc: {
+		start: { line: 1, column: 4 },
+		end: { line: 1, column: 8 }
+	},
+	elements: [{
+		type: "ObjectExpression",
+		loc: {
+			start: { line: 1, column: 5 },
+			end: { line: 1, column: 7 }
+		},
+	}]
+}));
+
 test('a{ function fn() {} }', rootObjectMembers([{
 	type: "FunctionDeclaration",
 	loc: {
@@ -1812,12 +1936,13 @@ test('a{ signal b (type param)}', rootObjectMembers([{
 			end: { line: 1, column: 23 }
 		},
 		kind: {
-			type: "Identifier",
+			type: "QMLPropertyType",
 			loc: {
 				start: { line: 1, column: 13 },
 				end: { line: 1, column: 17 }
 			},
-			name: "type"
+			primitive: false,
+			id: { type: "Identifier", name: "type" }
 		},
 		id: {
 			type: "Identifier",
@@ -1852,12 +1977,13 @@ test('a{ signal b (type1 param1, type2 param2, type3 param3)}', rootObjectMember
 				end: { line: 1, column: 25 }
 			},
 			kind: {
-				type: "Identifier",
+				type: "QMLPropertyType",
 				loc: {
 					start: { line: 1, column: 13 },
 					end: { line: 1, column: 18 }
 				},
-				name: "type1"
+				primitive: false,
+				id: { type: "Identifier", name: "type1" }
 			},
 			id: {
 				type: "Identifier",
@@ -1875,12 +2001,13 @@ test('a{ signal b (type1 param1, type2 param2, type3 param3)}', rootObjectMember
 				end: { line: 1, column: 39 }
 			},
 			kind: {
-				type: "Identifier",
+				type: "QMLPropertyType",
 				loc: {
 					start: { line: 1, column: 27 },
 					end: { line: 1, column: 32 }
 				},
-				name: "type2"
+				primitive: false,
+				id: { type: "Identifier", name: "type2" }
 			},
 			id: {
 				type: "Identifier",
@@ -1898,12 +2025,13 @@ test('a{ signal b (type1 param1, type2 param2, type3 param3)}', rootObjectMember
 				end: { line: 1, column: 53 }
 			},
 			kind: {
-				type: "Identifier",
+				type: "QMLPropertyType",
 				loc: {
 					start: { line: 1, column: 41 },
 					end: { line: 1, column: 46 }
 				},
-				name: "type3"
+				primitive: false,
+				id: { type: "Identifier", name: "type3" }
 			},
 			id: {
 				type: "Identifier",
@@ -1957,7 +2085,7 @@ test('a{ id: test }', rootObjectMembers([{
 */
 test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n\n\tMouseArea {\n\t\tanchors.fill: parent\n\t\tonClicked: {\n\t\t\tQt.quit();\n\t\t}\n\t}\n\tText {\n\t\ttext: qsTr("Hello World")\n\t\tanchors.centerIn: parent\n\t}\n}',
 	program([{
-		type: "QMLImportStatement",
+		type: "QMLImport",
 		loc: {
 			start: { line: 1, column: 0
 			},
@@ -1985,14 +2113,11 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 					end: { line: 1, column: 18 }
 				},
 				raw: "2.3",
-				value: 2.3,
-				major: 2,
-				minor: 3
 			}
 		}
 	},
 	{
-		type: "QMLImportStatement",
+		type: "QMLImport",
 		loc: {
 			start: { line: 2, column: 0 },
 			end: { line: 2, column: 25 }
@@ -2022,13 +2147,10 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 					end: { line: 2, column: 25 }
 				},
 				raw: "2.2",
-				value: 2.2,
-				major: 2,
-				minor: 2
 			}
 		}
 	}],{
-		type: "QMLObjectLiteral",
+		type: "QMLObjectDefinition",
 		loc: {
 			start: { line: 3, column: 0 },
 			end: { line: 16, column: 1 }
@@ -2043,7 +2165,7 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 			name: "Window"
 		},
 		body: {
-			type: "QMLMemberBlock",
+			type: "QMLObjectInitializer",
 			loc: {
 				start: { line: 3, column: 7 },
 				end: { line: 16, column: 1 }
@@ -2078,7 +2200,7 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 					}
 				},
 				{
-					type: "QMLObjectLiteral",
+					type: "QMLObjectDefinition",
 					loc: {
 						start: { line: 6, column: 1 },
 						end: { line: 11, column: 2 }
@@ -2093,7 +2215,7 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 						name: "MouseArea"
 					},
 					body: {
-						type: "QMLMemberBlock",
+						type: "QMLObjectInitializer",
 						loc: {
 							start: { line: 6, column: 11 },
 							end: { line: 11, column: 2 }
@@ -2152,7 +2274,7 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 									},
 									script: {
 										type: "QMLStatementBlock",
-										statements: [{
+										body: [{
 											type: "ExpressionStatement",
 											expression: {
 												type: "CallExpression",
@@ -2178,7 +2300,7 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 					}
 				},
 				{
-					type: "QMLObjectLiteral",
+					type: "QMLObjectDefinition",
 					loc: {
 						start: { line: 12, column: 1 },
 						end: { line: 15, column: 2 }
@@ -2193,7 +2315,7 @@ test('import QtQuick 2.3\nimport QtQuick.Window 2.2\nWindow {\n\tvisible: true\n
 						name: "Text"
 					},
 					body: {
-						type: "QMLMemberBlock",
+						type: "QMLObjectInitializer",
 						loc: {
 							start: { line: 12, column: 6 },
 							end: { line: 15, column: 2 }
@@ -2279,8 +2401,8 @@ function testLoose(code, ast, options) {
 	test(code, ast, opts);
 }
 
-testLoose('import QtQuick', headerStatements([{
-	type: "QMLImportStatement",
+testLoose('import QtQuick', headerItemList([{
+	type: "QMLImport",
 	loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 14 }
@@ -2307,15 +2429,13 @@ testLoose('import QtQuick', headerStatements([{
 				end: { line: 1, column: 14 }
 			},
 			value: 0,
-			major: 0,
-			minor: 0,
 			raw: "0.0"
 		}
 	}
 }]));
 
-testLoose('import ', headerStatements([{
-	type: "QMLImportStatement",
+testLoose('import ', headerItemList([{
+	type: "QMLImport",
 	loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 7 }
@@ -2342,15 +2462,13 @@ testLoose('import ', headerStatements([{
 				end: { line: 1, column: 7 }
 			},
 			value: 0,
-			major: 0,
-			minor: 0,
 			raw: "0.0"
 		}
 	}
 }]));
 
-testLoose('import QtQuick 0x01', headerStatements([{
-	type: "QMLImportStatement",
+testLoose('import QtQuick 0x01', headerItemList([{
+	type: "QMLImport",
 	loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 19 }
@@ -2377,15 +2495,13 @@ testLoose('import QtQuick 0x01', headerStatements([{
 				end: { line: 1, column: 19 }
 			},
 			value: 1,
-			major: 1,
-			minor: 0,
 			raw: "0x01"
 		}
 	}
 }]));
 
-testLoose('import QtQuick 1', headerStatements([{
-	type: "QMLImportStatement",
+testLoose('import QtQuick 1', headerItemList([{
+	type: "QMLImport",
 	loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 16 }
@@ -2412,15 +2528,13 @@ testLoose('import QtQuick 1', headerStatements([{
 				end: { line: 1, column: 16 }
 			},
 			value: 1,
-			major: 1,
-			minor: 0,
 			raw: "1"
 		}
 	}
 }]));
 
-testLoose('import "./file.js', headerStatements([{
-	type: "QMLImportStatement",
+testLoose('import "./file.js', headerItemList([{
+	type: "QMLImport",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 17 }
@@ -2436,8 +2550,8 @@ testLoose('import "./file.js', headerStatements([{
 	}
 }]));
 
-testLoose('import QtQuick 2.2 as ', headerStatements([{
-	type: "QMLImportStatement",
+testLoose('import QtQuick 2.2 as ', headerItemList([{
+	type: "QMLImport",
 	loc: {
 			start: { line: 1, column: 0 },
 			end: { line: 1, column: 22 }
@@ -2464,8 +2578,6 @@ testLoose('import QtQuick 2.2 as ', headerStatements([{
 				end: { line: 1, column: 18 }
 			},
 			value: 2.2,
-			major: 2,
-			minor: 2,
 			raw: "2.2"
 		}
 	},
@@ -2487,7 +2599,7 @@ testLoose('import QtQuick 2.2 as ', headerStatements([{
 }]));
 
 testLoose('Window {', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 1, column: 8 }
@@ -2502,7 +2614,7 @@ testLoose('Window {', rootObject({
 		name: "Window"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 7 },
 			end: { line: 1, column: 8 }
@@ -2512,7 +2624,7 @@ testLoose('Window {', rootObject({
 }));
 
 testLoose('Window {\n\tprop: 3', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 2, column: 8 }
@@ -2527,7 +2639,7 @@ testLoose('Window {\n\tprop: 3', rootObject({
 		name: "Window"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 7 },
 			end: { line: 2, column: 8 }
@@ -2564,7 +2676,7 @@ testLoose('Window {\n\tprop: 3', rootObject({
 }));
 
 testLoose('a {\n\tb {\n\n\tc {\n}', rootObject({
-	type: "QMLObjectLiteral",
+	type: "QMLObjectDefinition",
 	loc: {
 		start: { line: 1, column: 0 },
 		end: { line: 5, column: 1 }
@@ -2579,60 +2691,58 @@ testLoose('a {\n\tb {\n\n\tc {\n}', rootObject({
 		name: "a"
 	},
 	body: {
-		type: "QMLMemberBlock",
+		type: "QMLObjectInitializer",
 		loc: {
 			start: { line: 1, column: 2 },
 			end: { line: 5, column: 1 }
 		},
-		members: [
-			{
-				type: "QMLObjectLiteral",
+		members: [{
+			type: "QMLObjectDefinition",
+			loc: {
+				start: { line: 2, column: 1 },
+				end: { line: 5, column: 1 }
+			},
+			id: {
+				type: "QMLQualifiedID",
 				loc: {
 					start: { line: 2, column: 1 },
+					end: { line: 2, column: 2 }
+				},
+				parts: [{ type: "Identifier", name: "b" }],
+				name: "b"
+			},
+			body: {
+				type: "QMLObjectInitializer",
+				loc: {
+					start: { line: 2, column: 3 },
 					end: { line: 5, column: 1 }
 				},
-				id: {
-					type: "QMLQualifiedID",
+				members: [{
+					type: "QMLObjectDefinition",
 					loc: {
-						start: { line: 2, column: 1 },
-						end: { line: 2, column: 2 }
-					},
-					parts: [{ type: "Identifier", name: "b" }],
-					name: "b"
-				},
-				body: {
-					type: "QMLMemberBlock",
-					loc: {
-						start: { line: 2, column: 3 },
+						start: { line: 4, column: 1 },
 						end: { line: 5, column: 1 }
 					},
-					members: [{
-						type: "QMLObjectLiteral",
+					id: {
+						type: "QMLQualifiedID",
 						loc: {
 							start: { line: 4, column: 1 },
+							end: { line: 4, column: 2 }
+						},
+						parts: [{ type: "Identifier", name: "c" }],
+						name: "c"
+					},
+					body: {
+						type: "QMLObjectInitializer",
+						loc: {
+							start: { line: 4, column: 3 },
 							end: { line: 5, column: 1 }
 						},
-						id: {
-							type: "QMLQualifiedID",
-							loc: {
-								start: { line: 4, column: 1 },
-								end: { line: 4, column: 2 }
-							},
-							parts: [{ type: "Identifier", name: "c" }],
-							name: "c"
-						},
-						body: {
-							type: "QMLMemberBlock",
-							loc: {
-								start: { line: 4, column: 3 },
-								end: { line: 5, column: 1 }
-							},
-							members: []
-						}
-					}]
-				}
+						members: []
+					}
+				}]
 			}
-		]
+		}]
 	}
 }));
 
@@ -2644,7 +2754,15 @@ testLoose('a{ property var  }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "var",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 15 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -2847,7 +2965,15 @@ testLoose('a{ var }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "var",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 6 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -2867,7 +2993,15 @@ testLoose('a{ var w }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "var",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 6 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -2888,13 +3022,13 @@ testLoose('a{ obj w }', rootObjectMembers([{
 	default: false,
 	readonly: false,
 	kind: {
-		type: "QMLQualifiedID",
+		type: "QMLPropertyType",
 		loc: {
 			start: { line: 1, column: 3 },
 			end: { line: 1, column: 6 }
 		},
-		parts: [{ type: "Identifier", name: "obj" }],
-		name: "obj"
+		primitive: false,
+		id: { type: "Identifier", name: "obj"}
 	},
 	id: {
 		type: "Identifier",
@@ -2916,7 +3050,15 @@ testLoose('a{ property var b: Window {} }', rootObjectMembers([{
 	},
 	default: false,
 	readonly: false,
-	kind: "var",
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 15 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var"}
+	},
 	id: {
 		type: "Identifier",
 		loc: {
@@ -2926,7 +3068,7 @@ testLoose('a{ property var b: Window {} }', rootObjectMembers([{
 		name: "b"
 	},
 	binding: {
-		type: "QMLObjectLiteral",
+		type: "QMLObjectBinding",
 		loc: {
 			start: { line: 1, column: 19 },
 			end: { line: 1, column: 28 }
@@ -2941,7 +3083,7 @@ testLoose('a{ property var b: Window {} }', rootObjectMembers([{
 			name: "Window"
 		},
 		body: {
-			type: "QMLMemberBlock",
+			type: "QMLObjectInitializer",
 			loc: {
 				start: { line: 1, column: 26 },
 				end: { line: 1, column: 28 }
@@ -2968,7 +3110,7 @@ testLoose('a{ b: Window {} }', rootObjectMembers([{
 		name: "b"
 	},
 	binding: {
-		type: "QMLObjectLiteral",
+		type: "QMLObjectBinding",
 		loc: {
 			start: { line: 1, column: 6 },
 			end: { line: 1, column: 15 }
@@ -2983,7 +3125,7 @@ testLoose('a{ b: Window {} }', rootObjectMembers([{
 			name: "Window"
 		},
 		body: {
-			type: "QMLMemberBlock",
+			type: "QMLObjectInitializer",
 			loc: {
 				start: { line: 1, column: 13 },
 				end: { line: 1, column: 15 }
@@ -3065,12 +3207,13 @@ testLoose('a{ signal test(int test }', rootObjectMembers([{
 			end: { line: 1, column: 23 }
 		},
 		kind: {
-			type: "Identifier",
+			type: "QMLPropertyType",
 			loc: {
 				start: { line: 1, column: 15 },
 				end: { line: 1, column: 18 }
 			},
-			name: "int"
+			primitive: true,
+			id: { type: "Identifier", name: "int" }
 		},
 		id: {
 			type: "Identifier",
@@ -3116,7 +3259,15 @@ testLoose('Window {\n\tfunction\n\tproperty var prop\n}', rootObjectMembers([
 		},
 		default: false,
 		readonly: false,
-		kind: "var",
+		kind: {
+			type: "QMLPropertyType",
+			loc: {
+				start: { line: 3, column: 10 },
+				end: { line: 3, column: 13 }
+			},
+			primitive: true,
+			id: { type: "Identifier", name: "var"}
+		},
 		id: {
 			type: "Identifier",
 			loc: {
@@ -3171,7 +3322,15 @@ testLoose('Window {\n\tfunction (something)\n\tproperty var prop\n}', rootObject
 		},
 		default: false,
 		readonly: false,
-		kind: "var",
+		kind: {
+			type: "QMLPropertyType",
+			loc: {
+				start: { line: 3, column: 10 },
+				end: { line: 3, column: 13 }
+			},
+			primitive: true,
+			id: { type: "Identifier", name: "var"}
+		},
 		id: {
 			type: "Identifier",
 			loc: {
@@ -3217,7 +3376,15 @@ testLoose('Window {\n\tfunction (\n\tproperty var prop\n}', rootObjectMembers([
 		},
 		default: false,
 		readonly: false,
-		kind: "var",
+		kind: {
+			type: "QMLPropertyType",
+			loc: {
+				start: { line: 3, column: 10 },
+				end: { line: 3, column: 13 }
+			},
+			primitive: true,
+			id: { type: "Identifier", name: "var"}
+		},
 		id: {
 			type: "Identifier",
 			loc: {
@@ -3229,6 +3396,504 @@ testLoose('Window {\n\tfunction (\n\tproperty var prop\n}', rootObjectMembers([
 		binding: null
 	}
 ]));
+
+// TODO: Allow this to run on the normal parser once the ambiguity is solved
+testLoose("a{ QtObject on test {} }", rootObjectMembers([{
+	type: "QMLPropertyModifier",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 22 }
+	},
+	kind: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 11 }
+		},
+		parts: [{ type: "Identifier", name: "QtObject" }],
+		name: "QtObject"
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 15 },
+			end: { line: 1, column: 19 }
+		},
+		parts: [{ type: "Identifier", name: "test" }],
+		name: "test"
+	},
+	body: {
+		type: "QMLObjectInitializer",
+		loc: {
+			start: { line: 1, column: 20 },
+			end: { line: 1, column: 22 }
+		},
+		members: []
+	}
+}]));
+
+// TODO: Allow this to run on the normal parser once the ambiguity is solved
+testLoose("a{ QtObject on test {} }", rootObjectMembers([{
+	type: "QMLPropertyModifier",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 22 }
+	},
+	kind: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 11 }
+		},
+		parts: [{ type: "Identifier", name: "QtObject" }],
+		name: "QtObject"
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 15 },
+			end: { line: 1, column: 19 }
+		},
+		parts: [{ type: "Identifier", name: "test" }],
+		name: "test"
+	},
+	body: {
+		type: "QMLObjectInitializer",
+		loc: {
+			start: { line: 1, column: 20 },
+			end: { line: 1, column: 22 }
+		},
+		members: []
+	}
+}]));
+
+testLoose("a{ QtObject. on test {} }", rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 23 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 15 }
+		},
+		parts: [
+			{ type: "Identifier", name: "QtObject" },
+			{ type: "Identifier", name: "on" }
+		],
+		name: "QtObject.on"
+	},
+	binding: {
+		type: "QMLObjectBinding",
+		loc: {
+			start: { line: 1, column: 16 },
+			end: { line: 1, column: 23 }
+		},
+		id: {
+			type: "QMLQualifiedID",
+			loc: {
+				start: { line: 1, column: 16 },
+				end: { line: 1, column: 20 }
+			},
+			parts: [{ type: "Identifier", name: "test" }],
+			name: "test"
+		},
+		body: {
+			type: "QMLObjectInitializer",
+			loc: {
+				start: { line: 1, column: 21 },
+				end: { line: 1, column: 23 }
+			},
+			members: []
+		}
+	}
+}]), { locations: true, qmltypes: false } );
+
+// TODO: Allow this to run on the normal parser once the ambiguity is solved
+testLoose("a{ s: [ QtObject {} ] }", rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 21 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "s" }],
+		name: "s"
+	},
+	binding: {
+		type: "QMLArrayBinding",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 21 }
+		},
+		elements: [
+			{
+				type: "QMLObjectDefinition",
+				loc: {
+					start: { line: 1, column: 8 },
+					end: { line: 1, column: 19 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					loc: {
+						start: { line: 1, column: 8 },
+						end: { line: 1, column: 16 }
+					},
+					parts: [{ type: "Identifier", name: "QtObject" }],
+					name: "QtObject"
+				},
+				body: {
+					type: "QMLObjectInitializer",
+					loc: {
+						start: { line: 1, column: 17 },
+						end: { line: 1, column: 19 }
+					},
+					members: []
+				}
+			}
+		]
+	}
+}]), { locations: true, qmltypes: false });
+
+// TODO: Allow this to run on the normal parser once the ambiguity is solved
+testLoose("a{ s: [ QtObject {}, QtObject {} ] }", rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 34 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "s" }],
+		name: "s"
+	},
+	binding: {
+		type: "QMLArrayBinding",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 34 }
+		},
+		elements: [
+			{
+				type: "QMLObjectDefinition",
+				loc: {
+					start: { line: 1, column: 8 },
+					end: { line: 1, column: 19 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					loc: {
+						start: { line: 1, column: 8 },
+						end: { line: 1, column: 16 }
+					},
+					parts: [{ type: "Identifier", name: "QtObject" }],
+					name: "QtObject"
+				},
+				body: {
+					type: "QMLObjectInitializer",
+					loc: {
+						start: { line: 1, column: 17 },
+						end: { line: 1, column: 19 }
+					},
+					members: []
+				}
+			},
+			{
+				type: "QMLObjectDefinition",
+				loc: {
+					start: { line: 1, column: 21 },
+					end: { line: 1, column: 32 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					loc: {
+						start: { line: 1, column: 21 },
+						end: { line: 1, column: 29 }
+					},
+					parts: [{ type: "Identifier", name: "QtObject" }],
+					name: "QtObject"
+				},
+				body: {
+					type: "QMLObjectInitializer",
+					loc: {
+						start: { line: 1, column: 30 },
+						end: { line: 1, column: 32 }
+					},
+					members: []
+				}
+			}
+		]
+	}
+}]), { locations: true, qmltypes: false });
+
+// TODO: Allow this to run on the normal parser once the ambiguity is solved
+testLoose("a{ s: [ QtObject ] }", rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 18 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "s" }],
+		name: "s"
+	},
+	binding: {
+		type: "QMLScriptBinding",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 18 }
+		},
+		block: false,
+		script: {
+			type: "ArrayExpression",
+			loc: {
+				start: { line: 1, column: 6 },
+				end: { line: 1, column: 18 }
+			},
+			elements: [
+				{
+					type: "Identifier",
+					loc: {
+						start: { line: 1, column: 8 },
+						end: { line: 1, column: 16 }
+					},
+					name: "QtObject"
+				}
+			]
+		}
+	}
+}]
+), { locations: true, qmltypes: false });
+
+// TODO: Allow this to run on the normal parser once the ambiguity is solved
+testLoose("a{ property var s: [ QtObject {} ] }", rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 34 }
+	},
+	default: false,
+	readonly: false,
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 15 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var" }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 16 },
+			end: { line: 1, column: 17 }
+		},
+		name: "s"
+	},
+	binding: {
+		type: "QMLArrayBinding",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 34 }
+		},
+		elements: [
+			{
+				type: "QMLObjectDefinition",
+				loc: {
+					start: { line: 1, column: 21 },
+					end: { line: 1, column: 32 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					loc: {
+						start: { line: 1, column: 21 },
+						end: { line: 1, column: 29 }
+					},
+					parts: [{ type: "Identifier", name: "QtObject" }],
+					name: "QtObject"
+				},
+				body: {
+					type: "QMLObjectInitializer",
+					loc: {
+						start: { line: 1, column: 30 },
+						end: { line: 1, column: 32 }
+					},
+					members: []
+				}
+			}
+		]
+	}
+}]), { locations: true, qmltypes: false });
+
+// TODO: Allow this to run on the normal parser once the ambiguity is solved
+testLoose("a{ property var s: [ QtObject ] }", rootObjectMembers([{
+	type: "QMLPropertyDeclaration",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 31 }
+	},
+	default: false,
+	readonly: false,
+	kind: {
+		type: "QMLPropertyType",
+		loc: {
+			start: { line: 1, column: 12 },
+			end: { line: 1, column: 15 }
+		},
+		primitive: true,
+		id: { type: "Identifier", name: "var" }
+	},
+	id: {
+		type: "Identifier",
+		loc: {
+			start: { line: 1, column: 16 },
+			end: { line: 1, column: 17 }
+		},
+		name: "s"
+	},
+	binding: {
+		type: "QMLScriptBinding",
+		loc: {
+			start: { line: 1, column: 19 },
+			end: { line: 1, column: 31 }
+		},
+		block: false,
+		script: {
+			type: "ArrayExpression",
+			loc: {
+				start: { line: 1, column: 19 },
+				end: { line: 1, column: 31 }
+			},
+			elements: [
+				{
+					type: "Identifier",
+					loc: {
+						start: { line: 1, column: 21 },
+						end: { line: 1, column: 29 }
+					},
+					name: "QtObject"
+				}
+			]
+		}
+	}
+}]), { locations: true, qmltypes: false });
+
+testLoose("a{ s: [ QtObject {} }", rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 20 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "s" }],
+		name: "s"
+	},
+	binding: {
+		type: "QMLArrayBinding",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 20 }
+		},
+		elements: [
+			{
+				type: "QMLObjectDefinition",
+				loc: {
+					start: { line: 1, column: 8 },
+					end: { line: 1, column: 19 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					loc: {
+						start: { line: 1, column: 8 },
+						end: { line: 1, column: 16 }
+					},
+					parts: [{ type: "Identifier", name: "QtObject" }],
+					name: "QtObject"
+				},
+				body: {
+					type: "QMLObjectInitializer",
+					loc: {
+						start: { line: 1, column: 17 },
+						end: { line: 1, column: 19 }
+					},
+					members: []
+				}
+			}
+		]
+	}
+}]), { locations: true, qmltypes: false });
+
+testLoose("a{ s: [ QtObject { ] }", rootObjectMembers([{
+	type: "QMLPropertyBinding",
+	loc: {
+		start: { line: 1, column: 3 },
+		end: { line: 1, column: 22 }
+	},
+	id: {
+		type: "QMLQualifiedID",
+		loc: {
+			start: { line: 1, column: 3 },
+			end: { line: 1, column: 4 }
+		},
+		parts: [{ type: "Identifier", name: "s" }],
+		name: "s"
+	},
+	binding: {
+		type: "QMLArrayBinding",
+		loc: {
+			start: { line: 1, column: 6 },
+			end: { line: 1, column: 22 }
+		},
+		elements: [
+			{
+				type: "QMLObjectDefinition",
+				loc: {
+					start: { line: 1, column: 8 },
+					end: { line: 1, column: 22 }
+				},
+				id: {
+					type: "QMLQualifiedID",
+					loc: {
+						start: { line: 1, column: 8 },
+						end: { line: 1, column: 16 }
+					},
+					parts: [{ type: "Identifier", name: "QtObject" }],
+					name: "QtObject"
+				},
+				body: {
+					type: "QMLObjectInitializer",
+					loc: {
+						start: { line: 1, column: 17 },
+						end: { line: 1, column: 22 }
+					},
+					members: []
+				}
+			}
+		]
+	}
+}]), { locations: true, qmltypes: false });
 
 /***************************************************************************
 *                          QMLTypes Parser Tests                           *
@@ -3288,34 +3953,34 @@ testQMLTypes('a{ b: ["one", "two"] }', javaScript({
 }));
 
 /*
-* Creates a Program with 'headerStatements' and 'rootObject' as the program's expected
+* Creates a Program with 'headerItemList' and 'rootObject' as the program's expected
 * body.
 */
-function program(headerStatements, rootObject) {
+function program(headerItemList, rootObject) {
 	return {
 		type: "QMLProgram",
-		headerStatements: {
-			type: "QMLHeaderStatements",
-			statements: headerStatements || []
+		headerItemList: {
+			type: "QMLHeaderItemList",
+			items: headerItemList || []
 		},
 		rootObject: rootObject || null
 	};
 }
 
 /*
-* Creates a QMLHeaderStatements with 'stmts' as the expected statements and 'prog' as the
-* parent Program.  A value of null for 'prog' will append the QMLHeaderStatements AST to
+* Creates a QMLHeaderItemList with 'stmts' as the expected statements and 'prog' as the
+* parent Program.  A value of null for 'prog' will append the QMLHeaderItemList AST to
 * the Program returned by program().
 */
-function headerStatements(stmts, prog) {
+function headerItemList(items, prog) {
 	prog = prog || program();
-	prog.headerStatements.statements = stmts;
+	prog.headerItemList.items = items;
 	return prog;
 }
 
 /*
-* Creates a QMLObjectLiteral with 'stmts' as the expected statements and 'prog' as the parent
-* Program.  A value of null for 'prog' will append the QMLObjectLiteral AST to the Program
+* Creates a QMLObjectDefinition with 'stmts' as the expected statements and 'prog' as the parent
+* Program.  A value of null for 'prog' will append the QMLObjectDefinition AST to the Program
 * returned by program().
 */
 function rootObject(obj, prog) {
@@ -3325,15 +3990,15 @@ function rootObject(obj, prog) {
 }
 
 /*
-* Creates a QMLMemberBlock with 'members' as the expected members and 'obj' as the parent
-* QMLObjectLiteral.  A value of null for 'obj' will append the QMLMemberBlock AST to the
-* QMLObjectLiteral returned by rootObject().
+* Creates a QMLObjectInitializer with 'members' as the expected members and 'obj' as the parent
+* QMLObjectDefinition.  A value of null for 'obj' will append the QMLObjectInitializer AST to the
+* QMLObjectDefinition returned by rootObject().
 */
 function rootObjectMembers(members, obj) {
 	var rootObj = obj || rootObject({
-		type: "QMLObjectLiteral",
+		type: "QMLObjectDefinition",
 		body: {
-			type: "QMLMemberBlock",
+			type: "QMLObjectInitializer",
 			members: members
 		}
 	});
@@ -3342,8 +4007,8 @@ function rootObjectMembers(members, obj) {
 
 /*
 * Creates a JavaScript Expression with 'expr' as the expected expression and 'objMembers' as
-* the parent QMLMemberBlock.  A value of null for 'objMembers' will append the JavaScript
-* Expression to the QMLMemberBlock returned by rootObjectMembers().
+* the parent QMLObjectInitializer.  A value of null for 'objMembers' will append the JavaScript
+* Expression to the QMLObjectInitializer returned by rootObjectMembers().
 */
 function javaScript(expr, objMembers) {
 	objMembers = objMembers || rootObjectMembers([{

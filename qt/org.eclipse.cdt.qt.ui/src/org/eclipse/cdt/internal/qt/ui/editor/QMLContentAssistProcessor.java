@@ -42,7 +42,7 @@ public class QMLContentAssistProcessor implements IContentAssistProcessor {
 		String prefix = lastWord(document, offset);
 		// Save the file
 		IFileEditorInput fileInput = (IFileEditorInput) editor.getEditorInput();
-		String fileName = new File(fileInput.getFile().getLocationURI()).getAbsolutePath().substring(1);
+		String fileName = new File(fileInput.getFile().getLocationURI()).getAbsolutePath();
 
 		try {
 			String contents = document.get();

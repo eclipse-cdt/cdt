@@ -31,45 +31,54 @@
 
 	extendWalk(walk.base, {
 		QMLProgram: function (node, st, c) {
-			c(node.headerStatements, st);
+			c(node.headerItemList, st);
 			if (node.rootObject) {
 				c(node.rootObject, st, "QMLRootObject");
 			}
 		},
-		QMLHeaderStatements: function (node, st, c) {
-			for (var i = 0; i < node.statements.length; i++) {
-				c(node.statements[i], st, "QMLHeaderStatement");
+		QMLHeaderItemList: function (node, st, c) {
+			for (var i = 0; i < node.items.length; i++) {
+				c(node.items[i], st, "QMLHeaderItem");
 			}
 		},
-		QMLHeaderStatement: skipThrough,
-		QMLImportStatement: ignore,
-		QMLPragmaStatement: ignore,
+		QMLHeaderItem: skipThrough,
+		QMLImport: ignore,
+		QMLPragma: ignore,
 		QMLRootObject: skipThrough,
-		QMLObjectLiteral: function (node, st, c) {
+		QMLObjectDefinition: function (node, st, c) {
 			c(node.body, st);
 		},
-		QMLMemberBlock: function (node, st, c) {
+		QMLObjectInitializer: function (node, st, c) {
 			for (var i = 0; i < node.members.length; i++) {
-				c(node.members[i], st, "QMLMember");
+				c(node.members[i], st, "QMLObjectMember");
 			}
 		},
-		QMLMember: skipThrough,
+		QMLObjectMember: skipThrough,
 		QMLPropertyDeclaration: function (node, st, c) {
 			if (node.binding) {
-				c(node.binding, st);
+				c(node.binding, st, "QMLBinding");
 			}
 		},
 		QMLSignalDefinition: ignore,
 		QMLPropertyBinding: function (node, st, c) {
-			c(node.binding, st);
+			c(node.binding, st, "QMLBinding");
+		},
+		QMLBinding: skipThrough,
+		QMLObjectBinding: function (node, st, c) {
+			c(node.body, st);
+		},
+		QMLArrayBinding: function (node, st, c) {
+			for (var i = 0; i < node.elements.length; i++) {
+				c(node.elements[i], st);
+			}
 		},
 		QMLScriptBinding: function (node, st, c) {
 			c(node.script, st);
 		},
 		QMLQualifiedID: ignore,
 		QMLStatementBlock: function (node, st, c) {
-			for (var i = 0; i < node.statements.length; i++) {
-				c(node.statements[i], st, "Statement");
+			for (var i = 0; i < node.body.length; i++) {
+				c(node.body[i], st, "Statement");
 			}
 		}
 	});

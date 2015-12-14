@@ -156,7 +156,7 @@ public class ArduinoPlatformsPreferencePage extends PreferencePage implements IW
 				if (selection.length > 0) {
 					TableItem item = selection[0];
 					toInstall.add(((ArduinoPlatform) item.getData()));
-					item.setImage(getShell().getDisplay().getSystemImage(SWT.ICON_WORKING));
+					item.setImage(Activator.getDefault().getImageRegistry().get(Activator.IMG_ADD));
 				}
 			}
 		});
@@ -172,7 +172,7 @@ public class ArduinoPlatformsPreferencePage extends PreferencePage implements IW
 				if (selection.length > 0) {
 					TableItem item = selection[0];
 					toUninstall.add(((ArduinoPlatform) item.getData()));
-					item.setImage(getShell().getDisplay().getSystemImage(SWT.ICON_ERROR));
+					item.setImage(Activator.getDefault().getImageRegistry().get(Activator.IMG_DELETE));
 				}
 			}
 		});

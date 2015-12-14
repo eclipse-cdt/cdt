@@ -18,8 +18,7 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 public class AutoconfDocumentProvider extends TextFileDocumentProvider {
 	
 	public void shutdown() {
-		@SuppressWarnings("rawtypes")
-		Iterator e= getConnectedElementsIterator();
+		Iterator<?> e = getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
 	}

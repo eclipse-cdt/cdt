@@ -89,8 +89,7 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 	
 	@Override
 	public void shutdown() {
-		@SuppressWarnings("rawtypes")
-		Iterator e= getConnectedElementsIterator();
+		Iterator<?> e = getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
 	}

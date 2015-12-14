@@ -29,11 +29,10 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 		this.value = name;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private FlagConfigureOption(String name, AutotoolsConfiguration cfg, String value, ArrayList<String> children) {
 		super(name, cfg);
 		this.value = value;
-		this.children = (ArrayList<String>) children.clone();
+		this.children = new ArrayList<>(children);
 	}
 	
 	@Override

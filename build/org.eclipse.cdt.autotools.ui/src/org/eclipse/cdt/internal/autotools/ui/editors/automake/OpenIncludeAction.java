@@ -269,8 +269,7 @@ public class OpenIncludeAction extends Action {
 
 	private static IInclude getIncludeStatement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			@SuppressWarnings("rawtypes")
-			List list= ((IStructuredSelection)sel).toList();
+			List<?> list = ((IStructuredSelection) sel).toList();
 			if (list.size() == 1) {
 				Object element= list.get(0);
 				if (element instanceof IInclude) {

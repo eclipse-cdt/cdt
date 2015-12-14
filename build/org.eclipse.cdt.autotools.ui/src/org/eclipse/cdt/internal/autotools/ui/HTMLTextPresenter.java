@@ -49,11 +49,10 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 				
 		int yoursStart= offset;
 		
-		@SuppressWarnings("rawtypes")
-		Iterator e= presentation.getAllStyleRangeIterator();
+		Iterator<StyleRange> e = presentation.getAllStyleRangeIterator();
 		while (e.hasNext()) {
 			
-			StyleRange range= (StyleRange) e.next();
+			StyleRange range= e.next();
 		
 			int myStart= range.start;
 			int myEnd=   range.start + range.length -1;

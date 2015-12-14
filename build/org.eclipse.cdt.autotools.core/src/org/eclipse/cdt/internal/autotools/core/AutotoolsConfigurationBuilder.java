@@ -47,7 +47,7 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 	}
 
 	@Override
-	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args, IProgressMonitor monitor)
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
 	throws CoreException {
 		IProject project = getProject();
 		if(!isCdtProjectCreated(project))

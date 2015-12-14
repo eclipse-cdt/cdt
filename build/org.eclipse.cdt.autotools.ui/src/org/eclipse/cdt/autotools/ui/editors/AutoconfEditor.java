@@ -185,18 +185,18 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 		}
 	}
 
-    @Override
-	@SuppressWarnings({ "rawtypes" })
-	public Object getAdapter(Class required) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> required) {
 		if (ProjectionAnnotationModel.class.equals(required)) {
 			if (fProjectionSupport != null) {
 				Object result = fProjectionSupport.getAdapter(getSourceViewer(), required);
 				if (result != null) {
-					return result;
+					return (T) result;
 				}
 			}
 		} else if (IContentOutlinePage.class.equals(required)) {
-			return getOutlinePage();
+			return (T) getOutlinePage();
 		}
 		return super.getAdapter(required);
 	}

@@ -75,8 +75,7 @@ public class AutoconfAnnotationHover implements IAnnotationHover, IAnnotationHov
 		List<Annotation> exact= new ArrayList<>();
 		List<Annotation> including= new ArrayList<>();
 		
-		@SuppressWarnings("rawtypes")
-		Iterator e= model.getAnnotationIterator();
+		Iterator<?> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Object o= e.next();
 			if (o instanceof Annotation) {

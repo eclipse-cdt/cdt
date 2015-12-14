@@ -90,10 +90,11 @@ public class AutomakeEditor extends MakefileEditor {
 		return ampage;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
+	public <T> T getAdapter(Class<T> key) {
 		if (key.equals(IContentOutlinePage.class)) {
-			return getAutomakeOutlinePage();
+			return (T) getAutomakeOutlinePage();
 		}
 		return super.getAdapter(key);
 	}

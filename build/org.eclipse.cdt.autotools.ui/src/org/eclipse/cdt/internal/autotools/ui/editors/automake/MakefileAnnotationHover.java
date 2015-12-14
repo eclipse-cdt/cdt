@@ -92,29 +92,22 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 		List<Annotation> exact= new ArrayList<>();
 		List<Annotation> including= new ArrayList<>();
 		
-		@SuppressWarnings("rawtypes")
-		Iterator e= model.getAnnotationIterator();
+		Iterator<Annotation> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
-			Object o= e.next();
-			if (o instanceof Annotation) {
-				Annotation a= (Annotation) o;
-				switch (compareRulerLine(model.getPosition(a), document, line)) {
-					case 1:
-						exact.add(a);
-						break;
-					case 2:
-						including.add(a);
-						break;
-				}
+			Annotation a = e.next();
+			switch (compareRulerLine(model.getPosition(a), document, line)) {
+			case 1:
+				exact.add(a);
+				break;
+			case 2:
+				including.add(a);
+				break;
 			}
 		}
 		
 		return select(exact, including);
 	}
 
-	/*
-	 * @see IVerticalRulerHover#getHoverInfo(ISourceViewer, int)
-	 */
 	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		List<Annotation> annotations = getAnnotationsForLine(sourceViewer, lineNumber);

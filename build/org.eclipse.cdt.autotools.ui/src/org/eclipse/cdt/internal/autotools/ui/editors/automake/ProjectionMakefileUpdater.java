@@ -149,10 +149,9 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			fInput= manager.getWorkingCopy(fEditor.getEditorInput());
 			
 			if (fInput != null) {
-				ProjectionAnnotationModel model= (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+				ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 				if (model != null) {
-					@SuppressWarnings("rawtypes")
-					Map additions= computeAdditions((IParent) fInput);
+					Map<MakefileProjectionAnnotation, Position> additions = computeAdditions((IParent) fInput);
 					model.removeAllAnnotations();
 					model.replaceAnnotations(null, additions);
 				}
@@ -235,7 +234,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		if (!isInstalled())
 			return;
 		
-		ProjectionAnnotationModel model= (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel model= fEditor.getAdapter(ProjectionAnnotationModel.class);
 		if (model == null)
 			return;
 		
@@ -371,10 +370,9 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 
 	private Map<IDirective, List<MakefileProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
 		Map<IDirective, List<MakefileProjectionAnnotation>> map= new HashMap<>();
-		@SuppressWarnings("rawtypes")
-		Iterator e= model.getAnnotationIterator();
+		Iterator<Annotation> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
-			Object annotation= e.next();
+			Annotation annotation = e.next();
 			if (annotation instanceof MakefileProjectionAnnotation) {
 				MakefileProjectionAnnotation directive= (MakefileProjectionAnnotation) annotation;
 				List<MakefileProjectionAnnotation> list= map.get(directive.getElement());

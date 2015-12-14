@@ -87,10 +87,9 @@ public class AutoconfErrorHandler implements IAutoconfErrorHandler {
 
 	public void removeExistingMarkers(int offset, int length)
 	{	
-		@SuppressWarnings("rawtypes")
-		Iterator i = fAnnotationModel.getAnnotationIterator();
+		Iterator<Annotation> i = fAnnotationModel.getAnnotationIterator();
 		while (i.hasNext()) {
-			Annotation annotation = (Annotation)i.next();
+			Annotation annotation = i.next();
 			Position p = fAnnotationModel.getPosition(annotation);
 			int pStart = p.getOffset();
 			if (pStart >= offset && pStart < (offset + length)) {

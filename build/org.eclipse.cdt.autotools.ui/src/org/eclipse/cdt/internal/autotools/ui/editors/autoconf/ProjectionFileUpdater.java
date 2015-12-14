@@ -157,7 +157,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 			AutoconfElement fInput= fEditor.getRootElement();
 			
 			if (fInput != null) {
-				ProjectionAnnotationModel model= (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+				ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 				if (model != null) {
 					Map<AutoconfProjectionAnnotation, Position> additions= computeAdditions(fInput);
 					model.removeAllAnnotations();
@@ -262,7 +262,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 		if (!isInstalled())
 			return;
 		
-		ProjectionAnnotationModel model= (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel model= fEditor.getAdapter(ProjectionAnnotationModel.class);
 		if (model == null)
 			return;
 		
@@ -398,10 +398,9 @@ public class ProjectionFileUpdater implements IProjectionListener {
 
 	private Map<AutoconfElement, List<AutoconfProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
 		Map<AutoconfElement, List<AutoconfProjectionAnnotation>> map= new HashMap<>();
-		@SuppressWarnings("rawtypes")
-		Iterator e= model.getAnnotationIterator();
+		Iterator<Annotation> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
-			Object annotation= e.next();
+			Annotation annotation = e.next();
 			if (annotation instanceof AutoconfProjectionAnnotation) {
 				AutoconfProjectionAnnotation directive= (AutoconfProjectionAnnotation) annotation;
 				List<AutoconfProjectionAnnotation> list= map.get(directive.getElement());

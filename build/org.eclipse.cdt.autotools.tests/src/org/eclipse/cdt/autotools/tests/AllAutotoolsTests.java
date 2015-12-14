@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests;
 
-import org.eclipse.cdt.autotools.tests.autoconf.AutoconfTests;
 import org.eclipse.cdt.autotools.tests.editors.EditorTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -26,7 +25,6 @@ import org.junit.runners.Suite;
 	AutotoolsEnvironmentVarTest.class,
 	LibtoolGCCBuildCommandParserTest.class,
 	UpdateConfigureTest.class,
-	AutoconfTests.class,
 	EditorTests.class
 })
 public class AllAutotoolsTests {

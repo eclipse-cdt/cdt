@@ -13,6 +13,7 @@ package org.eclipse.cdt.autotools.ui.tests;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.autotools.ui.tests.autoconf.AutoconfTests;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -24,7 +25,8 @@ import org.junit.runners.Suite;
 	TestToolActions.class,
 	TestEnvironmentVars.class,
 	TestMakeTargets.class,
-	SetConfigurationParameter.class
+	SetConfigurationParameter.class,
+	AutoconfTests.class
 })
 
 public class AllTests {

@@ -8,7 +8,7 @@
  * Contributors:
  *    Ed Swartz (Nokia) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.autotools.tests.autoconf;
+package org.eclipse.cdt.autotools.ui.tests.autoconf;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

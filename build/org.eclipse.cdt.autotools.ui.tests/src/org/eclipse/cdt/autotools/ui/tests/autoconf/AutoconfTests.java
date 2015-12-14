@@ -8,7 +8,7 @@
  * Contributors:
  *     Red Hat Incorporated - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.autotools.tests.autoconf;
+package org.eclipse.cdt.autotools.ui.tests.autoconf;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

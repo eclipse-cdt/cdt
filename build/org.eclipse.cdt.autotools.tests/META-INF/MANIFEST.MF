@@ -20,5 +20,4 @@ Bundle-ActivationPolicy: lazy
 Fragment-Host: org.eclipse.cdt.autotools.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.cdt.autotools.tests,
- org.eclipse.cdt.autotools.tests.autoconf,
  org.eclipse.cdt.autotools.tests.editors

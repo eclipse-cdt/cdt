@@ -139,7 +139,7 @@ public class PreprocessorRule extends WordRule {
 				}
 				scanner.unread();
 			}
-			IToken token = (IToken) fWords.get(fBuffer.toString());
+			IToken token = fWords.get(fBuffer.toString());
 			if (token != null)
 				return token;
 			

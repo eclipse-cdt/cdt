@@ -846,7 +846,6 @@ abstract public class AbstractToggleBreakpointAdapter
         IAnnotationModel annotationModel = editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
         IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
         if (annotationModel != null) {
-            @SuppressWarnings("unchecked")
             Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
             while (iterator.hasNext()) {
                 Object object = iterator.next();

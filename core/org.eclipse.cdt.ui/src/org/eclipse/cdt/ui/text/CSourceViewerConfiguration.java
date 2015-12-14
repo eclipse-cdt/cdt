@@ -1049,12 +1049,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		};
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectorTargets(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
-		@SuppressWarnings("unchecked")
 		Map<String, IAdaptable> targets= super.getHyperlinkDetectorTargets(sourceViewer);
 		targets.put("org.eclipse.cdt.ui.cCode", fTextEditor); //$NON-NLS-1$
 		return targets;

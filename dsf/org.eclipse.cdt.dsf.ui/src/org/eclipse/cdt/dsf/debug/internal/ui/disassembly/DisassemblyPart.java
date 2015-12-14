@@ -2829,11 +2829,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	protected abstract void closePart();
 
-	/*
-	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
-	 */
 	@Override
-	@SuppressWarnings("unchecked")
     public void applyTextPresentation(TextPresentation textPresentation) {
 		IRegion coverage = textPresentation.getExtent();
 		if (coverage == null) {

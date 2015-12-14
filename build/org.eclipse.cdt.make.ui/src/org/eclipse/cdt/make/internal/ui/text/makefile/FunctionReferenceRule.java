@@ -83,7 +83,7 @@ public class FunctionReferenceRule extends WordRule {
 		if (c == tagDetector.closedBracket) {
 			if (tagDetector.bracketNesting > 0) {
 				tagDetector.bracketNesting--;
-				return (IToken)fWords.get(endSeq);
+				return fWords.get(endSeq);
 			}
 			return fDefaultToken;
 		}
@@ -100,7 +100,7 @@ public class FunctionReferenceRule extends WordRule {
 
 				String buffer= fBuffer.toString();
 
-				IToken token= (IToken)fWords.get(buffer);
+				IToken token= fWords.get(buffer);
 
 				if (token != null) {
 					if (buffer.equals(startSeq + GNUMakefileConstants.FUNCTION_CALL) || buffer.equals('$' + startSeq + GNUMakefileConstants.FUNCTION_CALL)) {

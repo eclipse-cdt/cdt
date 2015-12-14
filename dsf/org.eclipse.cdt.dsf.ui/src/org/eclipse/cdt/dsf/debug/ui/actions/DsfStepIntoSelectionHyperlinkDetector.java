@@ -65,33 +65,21 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 			fSelectionResolver = selectionResolver;
 		}
 
-		/**
-		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
-		 */
 		@Override
 		public IRegion getHyperlinkRegion() {
 			return new Region(fSelection.getOffset(), fSelection.getLength());
 		}
 
-		/**
-		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
-		 */
 		@Override
 		public String getHyperlinkText() {
 			return Messages.DsfUIStepIntoEditorSelection;
 		}
 
-		/**
-		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
-		 */
 		@Override
 		public String getTypeLabel() {
 			return null;
 		}
 
-		/**
-		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
-		 */
 		@Override
 		public void open() {
 			// Resolve the debug context
@@ -111,15 +99,10 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
-	 */
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
 		// Only valid in the context of a selection within the CEditor
-		ITextEditor editor = (ITextEditor) getAdapter(ITextEditor.class);
+		ITextEditor editor = getAdapter(ITextEditor.class);
 		if (editor == null || region == null || !(editor instanceof CEditor))
 			return null;
 

@@ -100,7 +100,6 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 
 		int length= end - offset;
 
-		@SuppressWarnings("unchecked")
 		final Iterator<TemplateVariableResolver> resolvers = fContextType.resolvers();
 		while (resolvers.hasNext()) {
 			TemplateVariableResolver variable= resolvers.next();

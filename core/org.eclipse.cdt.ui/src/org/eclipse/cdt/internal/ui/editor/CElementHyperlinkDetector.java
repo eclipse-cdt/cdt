@@ -53,7 +53,7 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 
 	@Override
 	public IHyperlink[] detectHyperlinks(final ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
-		ITextEditor textEditor= (ITextEditor) getAdapter(ITextEditor.class);
+		ITextEditor textEditor= getAdapter(ITextEditor.class);
 		if (region == null || !(textEditor instanceof CEditor))
 			return null;
 

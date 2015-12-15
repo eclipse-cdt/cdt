@@ -11745,4 +11745,17 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(1, implicitNames.length);
 		assertEquals(ctor, implicitNames[0].resolveBinding());
 	}
+	
+	//	template <typename T>
+	//	struct Waldo {
+	//	    T x;
+	//	};
+	//
+	//	void test() {
+	//	    using Waldo = Waldo<int>;
+	//	    auto size = sizeof(Waldo::x);
+	//	}
+	public void testShadowingAliasDeclaration_484200() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -293,6 +293,22 @@
                name="%problem.name.ReturnStyle">
          </problem>
       </checker>
+      <!-- CUSTOMIZATION -->
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.ExternalBindingChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.ExternalBinding"
+            name="%checker.name.ExternalBinding">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="true"
+               defaultSeverity="Warning"
+               description="%problem.description.ExternalBinding"
+               id="org.eclipse.cdt.codan.internal.checkers.ExternalBindingProblem"
+               messagePattern="%problem.messagePattern.ExternalBinding"
+               name="%problem.name.ExternalBinding">
+         </problem>
+      </checker>
+      <!-- /CUSTOMIZATION -->
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonChecker"
             id="org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolon"
@@ -396,32 +412,6 @@
             id="org.eclipse.cdt.codan.internal.checkers.ClassMembersInitialization"
             messagePattern="%problem.messagePattern.ClassMembersInitialization"
             name="%problem.name.ClassMembersInitialization">
-         </problem>
-      </checker>
-      <checker
-            class="org.eclipse.cdt.codan.internal.checkers.CommentChecker"
-            id="org.eclipse.cdt.codan.internal.checkers.CommentChecker"
-            name="Comment Checks">
-         <problem
-               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
-               defaultEnabled="false"
-               defaultSeverity="Error"
-               description="This rule will flag usage of // style comments. Only applicable for C code, not C++"
-               id="org.eclipse.cdt.codan.checkers.nolinecomment"
-               markerType="org.eclipse.cdt.codan.core.codanProblem"
-               messagePattern="Line comments ''//'' are not allowed"
-               multiple="false"
-               name="Line comments">
-         </problem>
-         <problem
-               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
-               defaultEnabled="false"
-               defaultSeverity="Error"
-               description="This rule will flag usage of /* inside another comment."
-               id="org.eclipse.cdt.codan.checkers.nocommentinside"
-               markerType="org.eclipse.cdt.codan.core.codanProblem"
-               messagePattern="Sequence ''/*'' used inside the comment"
-               name="Nesting comments">
          </problem>
       </checker>
    </extension>

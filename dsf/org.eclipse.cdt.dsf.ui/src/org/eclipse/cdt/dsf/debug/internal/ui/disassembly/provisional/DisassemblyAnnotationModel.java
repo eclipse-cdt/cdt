@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2011, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 						if (candidate != null && candidate.startsWith(label)) {
 							// exact match or followed by ()
 							if (candidate.length() == labelLen || candidate.charAt(labelLen) == '(') {
-								return position;
+								return new Position(position.offset, position.length);
 							}
 						}
 					}

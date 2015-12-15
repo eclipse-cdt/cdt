@@ -1967,6 +1967,11 @@ public class CPPSemantics {
             } else if (prop == ICPPASTNamespaceAlias.ALIAS_NAME) {
             	nd = (ASTNode) nd.getParent();
             	pointOfDecl = nd.getOffset() + nd.getLength();
+            } else if (prop == ICPPASTAliasDeclaration.ALIAS_NAME) {
+            	// [basic.scope.pdecl]/p3: The point of declaration of an alias or alias template
+            	// immediately follows the type-id to which the alias refers.
+            	ASTNode targetType = (ASTNode) ((ICPPASTAliasDeclaration) nd.getParent()).getMappingTypeId();
+            	pointOfDecl = targetType.getOffset() + targetType.getLength();
             } else if (prop == ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME
             		|| prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER_NAME) {
             	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 

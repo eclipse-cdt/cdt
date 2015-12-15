@@ -11602,4 +11602,17 @@ public class AST2CPPTests extends AST2TestBase {
 		// this test will need to be updated.
 		helper.assertVariableValue("generic_lambdas_supported", 0);
 	}
+	
+	//	template <typename T>
+	//	struct Waldo {
+	//	    T x;
+	//	};
+	//
+	//	void test() {
+	//	    using Waldo = Waldo<int>;
+	//	    auto size = sizeof(Waldo::x);
+	//	}
+	public void testShadowingAliasDeclaration_484200() throws Exception {
+		parseAndCheckBindings();
+	}
 }

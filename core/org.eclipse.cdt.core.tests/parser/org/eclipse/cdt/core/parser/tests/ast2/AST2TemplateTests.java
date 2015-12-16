@@ -8691,6 +8691,27 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testStrayFriends_419301() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename>
+	//	struct A {
+	//	  struct B {
+	//	      friend B foo(B, long);
+	//	      friend long foo(B, B);
+	//	  };
+	//	};
+	//
+	//	template <typename T>
+	//	void waldo(T);
+	//
+	//	A<int>::B c;
+	//	A<int>::B d;
+	//
+	//	void test() {
+	//	  waldo(foo(c, d)); // problem on waldo
+	//	}
+	public void testInstantiationOfFriendOfNestedClassInsideTemplate_484162() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T>
 	//	constexpr T t(T) {

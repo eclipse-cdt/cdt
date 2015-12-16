@@ -805,16 +805,18 @@ public class CPPSemantics {
 			// * ... types of the template arguments for template type parameters
 			//       (excluding template template parameters);
 			// * ... owners of which any template template arguments are members;
-			if (ct instanceof ICPPTemplateInstance) {
+			if (ct instanceof ICPPSpecialization) {
 				for (IBinding friend : ClassTypeHelper.getFriends(ct, tu)) {
 					if (friend instanceof ICPPFunction) {
 						friendFns.add((ICPPFunction) friend);
 					}
 				}
-				ICPPTemplateArgument[] args = ((ICPPTemplateInstance) ct).getTemplateArguments();
-				for (ICPPTemplateArgument arg : args) {
-					if (arg.isTypeValue()) {
-						getAssociatedScopes(arg.getTypeValue(), namespaces, friendFns, handled, tu);
+				if (ct instanceof ICPPTemplateInstance) {
+					ICPPTemplateArgument[] args = ((ICPPTemplateInstance) ct).getTemplateArguments();
+					for (ICPPTemplateArgument arg : args) {
+						if (arg.isTypeValue()) {
+							getAssociatedScopes(arg.getTypeValue(), namespaces, friendFns, handled, tu);
+						}
 					}
 				}
 			}

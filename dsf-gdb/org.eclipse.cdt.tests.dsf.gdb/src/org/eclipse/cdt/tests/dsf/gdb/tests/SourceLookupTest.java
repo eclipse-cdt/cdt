@@ -147,7 +147,37 @@ public class SourceLookupTest extends BaseTestCase {
 
 		// Check file name as returned from back end
 		IFrameDMData frameData = SyncUtil.getFrameData(0, 0);
-		assertFalse("GDB Unexpectedly located the source", Files.exists(Paths.get(frameData.getFile())));
+		assertTrue("GDB failed to find source", Files.exists(Paths.get(frameData.getFile())));
+
+		// Check file as resolved by source lookup director
+		ISourceLookupDirector director = (ISourceLookupDirector) getGDBLaunch().getSourceLocator();
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(0, 0);
+		Object sourceElement = director.getSourceElement(frameDmc);
+		assertTrue("Source locator failed to find source", sourceElement instanceof IStorage);
+
+		// Check file as resolved by ISourceLookup service
+		sourceElement = SyncUtil.getSource(frameData.getFile());
+		assertTrue("Source Lookup service failed to find source", sourceElement instanceof IStorage);
+	}
+
+	/**
+	 * Same as {@link #sourceMapping()}, however performs mapping in DSF instead
+	 * of delegating to DSF.
+	 * 
+	 * This can be seen as the "legacy" behaviour of the mapping source
+	 * containers.
+	 */
+	@Test
+	public void sourceMappingDisabledBackendMapping() throws Throwable {
+		MappingSourceContainer mapContainer = new MappingSourceContainer("Mappings");
+		mapContainer.setIsMappingWithBackendEnabled(false);
+		mapContainer.addMapEntry(new MapEntrySourceContainer(new Path(BUILD_ABSPATH), new Path(SOURCE_ABSPATH)));
+		setSourceContainer(mapContainer);
+		doLaunch();
+
+		// Check file name as returned from back end
+		IFrameDMData frameData = SyncUtil.getFrameData(0, 0);
+		assertFalse("GDB unexpectedly found source", Files.exists(Paths.get(frameData.getFile())));
 
 		// Check file as resolved by source lookup director
 		ISourceLookupDirector director = (ISourceLookupDirector) getGDBLaunch().getSourceLocator();

@@ -67,6 +67,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITraceDump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetSubstitutePath;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIAddInferior;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCommands;
@@ -148,6 +149,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsoleK
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIListFeatures;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIListThreadGroups;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIRemoveInferior;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MISetSubstitutePath;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackInfoDepth;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListArguments;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListFrames;
@@ -365,6 +367,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createCLIUnsetEnv(ICommandControlDMContext ctx, String name) {
 		return new CLIUnsetEnv(ctx, name);
+	}
+
+	/** @since 5.0 */
+	public ICommand<MIInfo> createCLIUnsetSubstitutePath(IDMContext ctx) {
+		return new CLIUnsetSubstitutePath(ctx);
 	}
 
 	/** @since 4.0 */
@@ -899,6 +906,11 @@ public class CommandFactory {
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIRemoveInferior(ICommandControlDMContext ctx, String groupId) {
 		return new MIRemoveInferior(ctx, groupId);
+	}
+
+	/** @since 5.0 */
+	public ICommand<MIInfo> createMISetSubstitutePath(IDMContext context, String from, String to) {
+		return new MISetSubstitutePath(context, from, to);
 	}
 
 	public ICommand<MIStackInfoDepthInfo> createMIStackInfoDepth(IMIExecutionDMContext ctx) {

@@ -44,8 +44,8 @@ public class SourceLookupTest_7_6 extends SourceLookupTest_7_5 {
 	 */
 	@Test
 	@Override
-	public void sourceMapping() throws Throwable {
-		super.sourceMapping();
+	public void sourceMappingDisabledBackendMapping() throws Throwable {
+		super.sourceMappingDisabledBackendMapping();
 	}
 
 	/**

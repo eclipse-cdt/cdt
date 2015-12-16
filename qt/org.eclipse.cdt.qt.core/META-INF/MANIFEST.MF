@@ -31,4 +31,5 @@ Export-Package: org.eclipse.cdt.internal.qt.core;x-friends:="org.eclipse.cdt.qt.
  org.eclipse.cdt.internal.qt.core.qmldir;x-friends:="org.eclipse.cdt.qt.core.tests",
  org.eclipse.cdt.qt.core,
  org.eclipse.cdt.qt.core.location,
- org.eclipse.cdt.qt.core.qmldir
+ org.eclipse.cdt.qt.core.qmldir,
+ org.eclipse.cdt.qt.core.qmljs

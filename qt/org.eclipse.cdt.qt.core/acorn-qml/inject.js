@@ -623,6 +623,7 @@
 						// replacing JavaScripts top-level.  Here we are parsing such things
 						// as the root object literal and header statements of QML.  Eventually,
 						// these rules will delegate down to JavaScript expressions.
+						node.mode = this.options.mode;
 						node.headerItemList = this.qml_parseHeaderItemList();
 						node.rootObject = null;
 						if (this.type !== tt.eof) {

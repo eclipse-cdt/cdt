@@ -14,7 +14,7 @@ import javax.script.Bindings;
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.qt.core.QMLAnalyzer;
+import org.eclipse.cdt.qt.core.IQMLAnalyzer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.BadLocationException;
@@ -57,7 +57,7 @@ public class QMLHyperlink implements IHyperlink {
 
 	@Override
 	public void open() {
-		QMLAnalyzer analyzer = Activator.getService(QMLAnalyzer.class);
+		IQMLAnalyzer analyzer = Activator.getService(IQMLAnalyzer.class);
 		try {
 			IDocument document = viewer.getDocument();
 			String selected = document.get(region.getOffset(), region.getLength());

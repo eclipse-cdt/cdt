@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.qt.core;
+package org.eclipse.cdt.internal.qt.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,10 +27,12 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.cdt.qt.core.IQMLAnalyzer;
+import org.eclipse.cdt.qt.core.QMLTernCompletion;
+import org.eclipse.cdt.qt.core.qmljs.IQmlASTNode;
 
 @SuppressWarnings("nls")
-public class QMLAnalyzer {
+public class QMLAnalyzer implements IQMLAnalyzer {
 
 	private ScriptEngine engine;
 	private Invocable invoke;
@@ -72,6 +74,9 @@ public class QMLAnalyzer {
 		ResolveDirectory resolveDirectory = (file, pathString) -> {
 			String filename = (String) file.get("name");
 			String fileDirectory = new File(filename).getParent();
+			if (fileDirectory == null) {
+				fileDirectory = "";
+			}
 			if (pathString == null) {
 				return fixPathString(fileDirectory);
 			}
@@ -130,43 +135,134 @@ public class QMLAnalyzer {
 		return fileName;
 	}
 
+	@Override
 	public void addFile(String fileName, String code) throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
 		invoke.invokeMethod(tern, "addFile", fixPathString(fileName), code);
 	}
 
+	@Override
 	public void deleteFile(String fileName) throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
 		invoke.invokeMethod(tern, "delFile", fixPathString(fileName));
 	}
 
+	private static class ASTCallback implements RequestCallback {
+		private IQmlASTNode ast;
+
+		@Override
+		public void callback(Object err, Object data) {
+			if (err != null) {
+				throw new RuntimeException(err.toString());
+			} else {
+				try {
+					ast = QmlASTNodeHandler.createQmlASTProxy((Bindings) ((Bindings) data).get("ast"));
+				} catch (Throwable e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+
+		public IQmlASTNode getAST() {
+			return ast;
+		}
+	}
+
+	@Override
+	public IQmlASTNode parseFile(String fileName, String text) throws NoSuchMethodException, ScriptException {
+		waitUntilLoaded();
+		fileName = fixPathString(fileName);
+
+		Bindings query = engine.createBindings();
+		query.put("type", "parseFile");
+		query.put("file", fileName);
+		Bindings request = engine.createBindings();
+		request.put("query", query);
+
+		if (text != null) {
+			Bindings file = engine.createBindings();
+			file.put("type", "full");
+			file.put("name", fileName);
+			file.put("text", text);
+			Bindings files = (Bindings) engine.eval("new Array()");
+			invoke.invokeMethod(files, "push", file);
+			request.put("files", files);
+		}
+
+		ASTCallback callback = new ASTCallback();
+		invoke.invokeMethod(tern, "request", request, invoke.invokeFunction("requestCallback", callback));
+		return callback.getAST();
+	}
+
+	@Override
+	public IQmlASTNode parseString(String text) throws NoSuchMethodException, ScriptException {
+		return parseString(text, "qml", false, false);
+	}
+
+	@Override
+	public IQmlASTNode parseString(String text, String mode, boolean locations, boolean ranges)
+			throws NoSuchMethodException, ScriptException {
+		waitUntilLoaded();
+		Bindings query = engine.createBindings();
+		query.put("type", "parseString");
+		query.put("text", text);
+		Bindings options = engine.createBindings();
+		options.put("mode", mode);
+		options.put("locations", locations);
+		options.put("ranges", ranges);
+		query.put("options", options);
+		Bindings request = engine.createBindings();
+		request.put("query", query);
+
+		ASTCallback callback = new ASTCallback();
+		invoke.invokeMethod(tern, "request", request, invoke.invokeFunction("requestCallback", callback));
+		return callback.getAST();
+	}
+
+	protected <T> T[] toJavaArray(Bindings binding, Class<T[]> clazz) throws NoSuchMethodException, ScriptException {
+		return clazz.cast(invoke.invokeMethod(engine.get("Java"), "to", binding,
+				clazz.getCanonicalName() + (clazz.isArray() ? "" : "[]")));
+	}
+
+	@Override
 	public Collection<QMLTernCompletion> getCompletions(String fileName, String text, int pos)
+			throws NoSuchMethodException, ScriptException {
+		return getCompletions(fileName, text, pos, true);
+	}
+
+	@Override
+	public Collection<QMLTernCompletion> getCompletions(String fileName, String text, int pos, boolean includeKeywords)
 			throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
 		fileName = fixPathString(fileName);
-		Bindings file = engine.createBindings();
-		file.put("type", "full");
-		file.put("name", fileName);
-		file.put("text", text);
-		Bindings files = (Bindings) engine.eval("new Array()");
-		invoke.invokeMethod(files, "push", file);
 
 		Bindings query = engine.createBindings();
 		query.put("type", "completions");
+		query.put("lineCharPositions", true);
 		query.put("file", fileName);
 		query.put("end", pos);
 		query.put("types", true);
 		query.put("docs", false);
 		query.put("urls", false);
 		query.put("origins", true);
+		query.put("filter", true);
 		query.put("caseInsensitive", true);
-		query.put("lineCharPositions", true);
-		query.put("expandWordForward", false);
-		query.put("includeKeywords", true);
 		query.put("guess", false);
+		query.put("sort", true);
+		query.put("expandWordForward", false);
+		query.put("includeKeywords", includeKeywords);
+
 		Bindings request = engine.createBindings();
-		request.put("files", files);
 		request.put("query", query);
+		if (text != null) {
+			Bindings file = engine.createBindings();
+			file.put("type", "full");
+			file.put("name", fileName);
+			file.put("text", text);
+			Bindings files = (Bindings) engine.eval("new Array()");
+			invoke.invokeMethod(files, "push", file);
+			request.put("files", files);
+		}
 
 		List<QMLTernCompletion> completions = new ArrayList<>();
 
@@ -176,8 +272,7 @@ public class QMLAnalyzer {
 			} else {
 				try {
 					Bindings comps = (Bindings) ((Bindings) data).get("completions");
-					for (Bindings completion : (Bindings[]) invoke.invokeMethod(engine.get("Java"), "to", comps,
-							"javax.script.Bindings[]")) {
+					for (Bindings completion : toJavaArray(comps, Bindings[].class)) {
 						completions.add(new QMLTernCompletion((String) completion.get("name"),
 								(String) completion.get("type"), (String) completion.get("origin")));
 					}
@@ -192,16 +287,11 @@ public class QMLAnalyzer {
 		return completions;
 	}
 
+	@Override
 	public List<Bindings> getDefinition(String identifier, String fileName, String text, int pos)
 			throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
 		fileName = fixPathString(fileName);
-		Bindings file = engine.createBindings();
-		file.put("type", "full");
-		file.put("name", fileName);
-		file.put("text", text);
-		Bindings files = (Bindings) engine.eval("new Array()");
-		invoke.invokeMethod(files, "push", file);
 
 		Bindings query = engine.createBindings();
 		query.put("type", "definition");
@@ -217,8 +307,16 @@ public class QMLAnalyzer {
 		query.put("includeKeywords", true);
 		query.put("guess", false);
 		Bindings request = engine.createBindings();
-		request.put("files", files);
 		request.put("query", query);
+		if (text != null) {
+			Bindings file = engine.createBindings();
+			file.put("type", "full");
+			file.put("name", fileName);
+			file.put("text", text);
+			Bindings files = (Bindings) engine.eval("new Array()");
+			invoke.invokeMethod(files, "push", file);
+			request.put("files", files);
+		}
 
 		List<Bindings> definitions = new ArrayList<>();
 

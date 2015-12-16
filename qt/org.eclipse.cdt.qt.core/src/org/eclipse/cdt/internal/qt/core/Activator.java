@@ -13,8 +13,8 @@ import javax.script.ScriptException;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory;
+import org.eclipse.cdt.qt.core.IQMLAnalyzer;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
-import org.eclipse.cdt.qt.core.QMLAnalyzer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,8 +64,8 @@ public class Activator extends Plugin {
 		context.registerService(IQtInstallManager.class, new QtInstallManager(), null);
 
 		QMLAnalyzer qmlAnalyzer = new QMLAnalyzer();
-		context.registerService(QMLAnalyzer.class, qmlAnalyzer, null);
-		new Job("Load QML Analyzer") {
+		context.registerService(IQMLAnalyzer.class, qmlAnalyzer, null);
+		new Job("Load QML Analyzer") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {

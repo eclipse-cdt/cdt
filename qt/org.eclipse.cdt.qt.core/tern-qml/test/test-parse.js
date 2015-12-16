@@ -29,7 +29,7 @@ test("{Parse existing file}", function (server, callback, name) {
 		if (err) {
 			throw err;
 		}
-		if (!resp.ast && resp.ast.type === "QMLProgram") {
+		if (!resp.ast || resp.ast.type !== "QMLProgram") {
 			return callback("fail", name, "AST could not be found in response");
 		}
 		return callback("ok", name);
@@ -53,14 +53,33 @@ test("{Parse given file}", function (server, callback, name) {
 		if (err) {
 			throw err;
 		}
-		if (!resp.ast && resp.ast.type === "QMLProgram") {
+		if (!resp.ast || resp.ast.type !== "QMLProgram") {
 			return callback("fail", name, "AST could not be found in response");
 		}
 		return callback("ok", name);
 	});
 });
 
-test("{Parse text}", function (server, callback, name) {
+test("{Parse empty text}", function (server, callback, name) {
+	server.request({
+		query: {
+			type: "parseString",
+			text: ""
+		}
+	}, function (err, resp) {
+		if (err) {
+			throw err;
+		}
+		if (!resp.ast) {
+			return callback("fail", name, "AST could not be found in response");
+		} else if (resp.ast.type !== "QMLProgram" || resp.ast.mode !== "qml") {
+			return callback("fail", name, "AST was not a QMLProgram with mode 'qml'");
+		}
+		return callback("ok", name);
+	});
+});
+
+test("{Parse text no mode}", function (server, callback, name) {
 	server.request({
 		query: {
 			type: "parseString",
@@ -70,8 +89,57 @@ test("{Parse text}", function (server, callback, name) {
 		if (err) {
 			throw err;
 		}
-		if (!resp.ast && resp.ast.type === "QMLProgram") {
+		if (!resp.ast) {
 			return callback("fail", name, "AST could not be found in response");
+		} else if (resp.ast.type !== "QMLProgram" || resp.ast.mode !== "qml") {
+			return callback("fail", name, "AST was not a QMLProgram with mode 'qml'");
+		}
+		return callback("ok", name);
+	});
+});
+
+test("{Parse text (mode: qmltypes)}", function (server, callback, name) {
+	server.request({
+		query: {
+			type: "parseString",
+			text: "QtObject {\n\tobj: {\n\t\tprop1: 1,\n\t\tprop2: 2\n\t}\n}",
+			options: {
+				mode: "qmltypes"
+			}
+		}
+	}, function (err, resp) {
+		if (err) {
+			throw err;
+		}
+		if (!resp.ast) {
+			return callback("fail", name, "AST could not be found in response");
+		} else if (resp.ast.type !== "QMLProgram" || resp.ast.mode !== "qmltypes") {
+			return callback("fail", name, "AST was not a QMLProgram with mode 'qmltypes'");
+		}
+		return callback("ok", name);
+	});
+});
+
+test("{Parse text with locations}", function (server, callback, name) {
+	server.request({
+		query: {
+			type: "parseString",
+			text: "var w = 3",
+			options: {
+				mode: "js",
+				locations: true
+			}
+		}
+	}, function (err, resp) {
+		if (err) {
+			throw err;
+		}
+		if (!resp.ast) {
+			return callback("fail", name, "AST could not be found in response");
+		} else if (resp.ast.type !== "Program") {
+			return callback("fail", name, "AST was not a JavaScript Program");
+		} else if (!resp.ast.loc) {
+			return callback("fail", name, "AST had no loc object");
 		}
 		return callback("ok", name);
 	});

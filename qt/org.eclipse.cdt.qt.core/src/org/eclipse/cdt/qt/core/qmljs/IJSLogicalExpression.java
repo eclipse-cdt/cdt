@@ -22,6 +22,17 @@ public interface IJSLogicalExpression extends IJSExpression {
 		Or("||"), //$NON-NLS-1$
 		And("&&"); //$NON-NLS-1$
 
+		public static LogicalOperator fromObject(Object obj) {
+			if (obj instanceof String) {
+				for (LogicalOperator op : LogicalOperator.values()) {
+					if (obj.equals(op.toString())) {
+						return op;
+					}
+				}
+			}
+			return null;
+		}
+
 		private final String op;
 
 		private LogicalOperator(String op) {

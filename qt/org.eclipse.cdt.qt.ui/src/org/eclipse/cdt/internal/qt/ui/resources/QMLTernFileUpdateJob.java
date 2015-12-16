@@ -17,7 +17,7 @@ import java.util.List;
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.ui.Activator;
-import org.eclipse.cdt.qt.core.QMLAnalyzer;
+import org.eclipse.cdt.qt.core.IQMLAnalyzer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 public class QMLTernFileUpdateJob extends Job {
 
 	private List<IResourceDelta> deltaList;
-	private final QMLAnalyzer analyzer = Activator.getService(QMLAnalyzer.class);
+	private final IQMLAnalyzer analyzer = Activator.getService(IQMLAnalyzer.class);
 
 	public QMLTernFileUpdateJob(List<IResourceDelta> deltas) {
 		super("Add/Remove Files in Tern"); //$NON-NLS-1$

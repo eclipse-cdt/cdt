@@ -969,20 +969,20 @@
 		if (query.file) {
 			// Get the file's AST.  It should have been parsed already by the server.
 			ast = file.ast;
-		} else if (query.text) {
+		} else {
 			// Parse the file manually and get the AST.
-			var text = query.text;
-			var options = query.options || {
+			var options = {
+				directSourceFile: file,
 				allowReturnOutsideFunction: true,
 				allowImportExportEverywhere: true,
 				ecmaVersion: srv.options.ecmaVersion
 			};
-			srv.signalReturnFirst("preParse", text, options);
-			try {
-				ast = acorn.parse(text, options);
-			} catch (e) {
-				ast = acorn.parse_dammit(text, options);
+			for (var opt in query.options) {
+				options[opt] = query.options[opt];
 			}
+			query.text = query.text || "";
+			var text = srv.signalReturnFirst("preParse", query.text, options) || query.text;
+			ast = infer.parse(text, options);
 			srv.signal("postParse", ast, text);
 		}
 		return {

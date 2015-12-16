@@ -16,7 +16,7 @@ import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.qt.ui.actions.OpenDeclarationsAction;
-import org.eclipse.cdt.qt.core.QMLAnalyzer;
+import org.eclipse.cdt.qt.core.IQMLAnalyzer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -41,7 +41,7 @@ public class QMLEditor extends TextEditor {
 	private static final String BRACKET_MATCHING_PREFERENCE = "org.eclipse.cdt.qt.ui.qmlMatchingBrackets"; //$NON-NLS-1$
 
 	private static final char[] BRACKETS = { '{', '}', '(', ')', '[', ']' };
-	private final QMLAnalyzer analyzer = Activator.getService(QMLAnalyzer.class);
+	private final IQMLAnalyzer analyzer = Activator.getService(IQMLAnalyzer.class);
 
 	@Override
 	protected void initializeEditor() {

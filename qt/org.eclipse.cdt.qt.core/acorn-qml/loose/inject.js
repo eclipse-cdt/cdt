@@ -656,6 +656,7 @@ var injectQMLLoose;
 						// as the root object literal and header statements of QML.  Eventually,
 						// these rules will delegate down to JavaScript expressions.
 						var node = this.startNode();
+						node.mode = this.options.mode;
 						node.headerItemList = this.qml_parseHeaderItemList();
 						node.rootObject = null;
 						if (this.tok.type !== tt.eof) {

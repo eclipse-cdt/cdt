@@ -13,7 +13,7 @@ import java.util.Collection;
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.internal.qt.ui.Activator;
-import org.eclipse.cdt.qt.core.QMLAnalyzer;
+import org.eclipse.cdt.qt.core.IQMLAnalyzer;
 import org.eclipse.cdt.qt.core.QMLTernCompletion;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -29,7 +29,7 @@ public class QMLContentAssistProcessor implements IContentAssistProcessor {
 	private static final IContextInformation[] NO_CONTEXTS = {};
 	private static final ICompletionProposal[] NO_COMPLETIONS = {};
 
-	private final QMLAnalyzer analyzer = Activator.getService(QMLAnalyzer.class);
+	private final IQMLAnalyzer analyzer = Activator.getService(IQMLAnalyzer.class);
 	private final QMLEditor editor;
 
 	public QMLContentAssistProcessor(QMLEditor editor) {

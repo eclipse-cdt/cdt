@@ -27,6 +27,17 @@ public interface IJSUnaryExpression extends IJSExpression {
 		Void("void"), //$NON-NLS-1$
 		Delete("delete"); //$NON-NLS-1$
 
+		public static UnaryOperator fromObject(Object obj) {
+			if (obj instanceof String) {
+				for (UnaryOperator op : UnaryOperator.values()) {
+					if (obj.equals(op.toString())) {
+						return op;
+					}
+				}
+			}
+			return null;
+		}
+
 		private final String op;
 
 		private UnaryOperator(String op) {

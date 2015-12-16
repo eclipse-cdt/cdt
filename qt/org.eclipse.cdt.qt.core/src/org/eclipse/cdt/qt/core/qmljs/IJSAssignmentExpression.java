@@ -32,6 +32,17 @@ public interface IJSAssignmentExpression extends IJSExpression {
 		AssignExclusiveOr("^"), //$NON-NLS-1$
 		AssignAnd("&="); //$NON-NLS-1$
 
+		public static AssignmentOperator fromObject(Object obj) {
+			if (obj instanceof String) {
+				for (AssignmentOperator op : AssignmentOperator.values()) {
+					if (obj.equals(op.toString())) {
+						return op;
+					}
+				}
+			}
+			return null;
+		}
+
 		private final String op;
 
 		private AssignmentOperator(String op) {

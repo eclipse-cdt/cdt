@@ -22,6 +22,17 @@ public interface IJSUpdateExpression extends IQmlASTNode {
 		Decrement("--"), //$NON-NLS-1$
 		Increment("++"); //$NON-NLS-1$
 
+		public static UpdateOperator fromObject(Object obj) {
+			if (obj instanceof String) {
+				for (UpdateOperator op : UpdateOperator.values()) {
+					if (obj.equals(op.toString())) {
+						return op;
+					}
+				}
+			}
+			return null;
+		}
+
 		private final String op;
 
 		private UpdateOperator(String op) {

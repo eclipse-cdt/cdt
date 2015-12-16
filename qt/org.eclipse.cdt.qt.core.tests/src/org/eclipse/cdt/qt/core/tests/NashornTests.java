@@ -1,34 +1,45 @@
 package org.eclipse.cdt.qt.core.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.qt.core.QMLAnalyzer;
+import org.eclipse.cdt.qt.core.IQMLAnalyzer;
 import org.eclipse.cdt.qt.core.QMLTernCompletion;
+import org.eclipse.cdt.qt.core.qmljs.IJSBinaryExpression;
+import org.eclipse.cdt.qt.core.qmljs.IJSBinaryExpression.BinaryOperator;
+import org.eclipse.cdt.qt.core.qmljs.IQmlASTNode;
+import org.eclipse.cdt.qt.core.qmljs.IQmlHeaderItem;
+import org.eclipse.cdt.qt.core.qmljs.IQmlImport;
+import org.eclipse.cdt.qt.core.qmljs.IQmlObjectMember;
+import org.eclipse.cdt.qt.core.qmljs.IQmlProgram;
+import org.eclipse.cdt.qt.core.qmljs.IQmlPropertyBinding;
+import org.eclipse.cdt.qt.core.qmljs.IQmlRootObject;
+import org.eclipse.cdt.qt.core.qmljs.IQmlScriptBinding;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 @SuppressWarnings("nls")
 public class NashornTests {
 
-	protected static QMLAnalyzer analyzer;
+	protected static IQMLAnalyzer analyzer;
 
 	@BeforeClass
 	public static void loadAnalyzer() {
-		analyzer = Activator.getService(QMLAnalyzer.class);
+		analyzer = Activator.getService(IQMLAnalyzer.class);
 	}
 
 	protected void getCompletions(String code, QMLTernCompletion... expected) throws Throwable {
 		int pos = code.indexOf('|');
 		code = code.substring(0, pos) + code.substring(pos + 1);
 
-		Collection<QMLTernCompletion> QMLTernCompletions = analyzer.getCompletions("test1.qml", code, pos);
+		Collection<QMLTernCompletion> QMLTernCompletions = analyzer.getCompletions("test1.qml", code, pos, false);
 
 		Map<String, QMLTernCompletion> set = new HashMap<>();
 		Set<String> unexpected = new HashSet<>();
@@ -55,7 +66,108 @@ public class NashornTests {
 	}
 
 	@Test
-	public void test1() throws Throwable {
+	public void testParseFile1() throws Throwable {
+		IQmlASTNode node = analyzer.parseFile("main.qml", "");
+		assertEquals("Unexpected program node type", "QMLProgram", node.getType());
+	}
+
+	@Test
+	public void testParseFile2() throws Throwable {
+		IQmlASTNode node = analyzer.parseFile("main.qml", "import QtQuick 2.2");
+		assertThat(node, instanceOf(IQmlProgram.class));
+		IQmlProgram program = (IQmlProgram) node;
+		List<IQmlHeaderItem> headerItems = program.getHeaderItemList().getItems();
+		assertEquals("Unexpected number of header items", 1, headerItems.size());
+		assertThat(headerItems.get(0), instanceOf(IQmlImport.class));
+		IQmlImport imp = (IQmlImport) headerItems.get(0);
+		assertEquals("Unexpected module identifier", "QtQuick", imp.getModule().getIdentifier().getName());
+		assertEquals("Unexpected module raw version", "2.2", imp.getModule().getVersion().getRaw());
+		assertEquals("Unexpected module version", 2.2, imp.getModule().getVersion().getValue(), 0.0001d);
+	}
+
+	@Test
+	public void testParseString1() throws Throwable {
+		IQmlASTNode node = analyzer.parseString("", "qml", true, true);
+		assertEquals("Unexpected program node type", "QMLProgram", node.getType());
+	}
+
+	@Test
+	public void testParseString2() throws Throwable {
+		IQmlASTNode node = analyzer.parseString("import QtQuick 2.2", "qml", true, true);
+		assertThat(node, instanceOf(IQmlProgram.class));
+		IQmlProgram program = (IQmlProgram) node;
+		List<IQmlHeaderItem> headerItems = program.getHeaderItemList().getItems();
+		assertEquals("Unexpected number of header items", 1, headerItems.size());
+		assertThat(headerItems.get(0), instanceOf(IQmlImport.class));
+		IQmlImport imp = (IQmlImport) headerItems.get(0);
+		assertEquals("Unexpected module identifier", "QtQuick", imp.getModule().getIdentifier().getName());
+		assertEquals("Unexpected module raw version", "2.2", imp.getModule().getVersion().getRaw());
+		assertEquals("Unexpected module version", 2.2, imp.getModule().getVersion().getValue(), 0.0001d);
+	}
+
+	@Test
+	public void testParseString3() throws Throwable {
+		IQmlASTNode node = analyzer.parseString("import QtQuick 2.2", "qml", true, true);
+		assertThat(node, instanceOf(IQmlProgram.class));
+		IQmlProgram program = (IQmlProgram) node;
+		List<IQmlHeaderItem> headerItems = program.getHeaderItemList().getItems();
+		assertEquals("Unexpected number of header items", 1, headerItems.size());
+		assertThat(headerItems.get(0), instanceOf(IQmlImport.class));
+		IQmlImport imp = (IQmlImport) headerItems.get(0);
+		assertEquals("Unexpected start range", 0, imp.getRange()[0]);
+		assertEquals("Unexpected end range", 18, imp.getRange()[1]);
+	}
+
+	@Test
+	public void testParseString4() throws Throwable {
+		IQmlASTNode node = analyzer.parseString("import QtQuick 2.2", "qml", true, true);
+		assertThat(node, instanceOf(IQmlProgram.class));
+		IQmlProgram program = (IQmlProgram) node;
+		List<IQmlHeaderItem> headerItems = program.getHeaderItemList().getItems();
+		assertEquals("Unexpected number of header items", 1, headerItems.size());
+		assertThat(headerItems.get(0), instanceOf(IQmlImport.class));
+		IQmlImport imp = (IQmlImport) headerItems.get(0);
+		assertEquals("Unexpected start line", 1, imp.getLocation().getStart().getLine());
+		assertEquals("Unexpected start column", 0, imp.getLocation().getStart().getColumn());
+		assertEquals("Unexpected start line", 1, imp.getLocation().getEnd().getLine());
+		assertEquals("Unexpected start column", 18, imp.getLocation().getEnd().getColumn());
+	}
+
+	@Test
+	public void testParseString5() throws Throwable {
+		IQmlASTNode node = analyzer.parseString("QtObject {}", "qml", true, true);
+		assertThat(node, instanceOf(IQmlProgram.class));
+		IQmlProgram program = (IQmlProgram) node;
+		List<IQmlHeaderItem> headerItems = program.getHeaderItemList().getItems();
+		assertEquals("Unexpected number of header items", 0, headerItems.size());
+		assertNotNull("Root object was null", program.getRootObject());
+		IQmlRootObject root = program.getRootObject();
+		assertEquals("Unexpected root object type", "QMLObjectDefinition", root.getType());
+		assertEquals("Unexpected root object identifier", "QtObject", root.getIdentifier().getName());
+	}
+
+	@Test
+	public void testParseString6() throws Throwable {
+		IQmlASTNode node = analyzer.parseString("QtObject {s: 3 + 3}", "qml", true, true);
+		assertThat(node, instanceOf(IQmlProgram.class));
+		IQmlProgram program = (IQmlProgram) node;
+		assertNotNull("Root object was null", program.getRootObject());
+		IQmlRootObject root = program.getRootObject();
+		List<IQmlObjectMember> members = root.getBody().getMembers();
+		assertEquals("Unexpected number of root object members", 1, members.size());
+		assertThat(members.get(0), instanceOf(IQmlPropertyBinding.class));
+		IQmlPropertyBinding bind = (IQmlPropertyBinding) members.get(0);
+		assertThat(bind.getBinding(), instanceOf(IQmlScriptBinding.class));
+		IQmlScriptBinding scriptBinding = (IQmlScriptBinding) bind.getBinding();
+		assertFalse("Script binding was not a JavaScript expression", scriptBinding.isBlock());
+		assertThat(scriptBinding.getScript(), instanceOf(IJSBinaryExpression.class));
+		assertEquals("Unexpected expression type", "BinaryExpression", scriptBinding.getScript().getType());
+		IJSBinaryExpression expr = (IJSBinaryExpression) scriptBinding.getScript();
+		assertEquals("Unexpected binary operator", BinaryOperator.Add, expr.getOperator());
+	}
+
+	@Test
+	public void testCompletions1() throws Throwable {
 		if (analyzer == null) {
 			return;
 		}
@@ -64,7 +176,7 @@ public class NashornTests {
 	}
 
 	@Test
-	public void test2() throws Throwable {
+	public void testCompletions2() throws Throwable {
 		if (analyzer == null) {
 			return;
 		}
@@ -75,7 +187,7 @@ public class NashornTests {
 	}
 
 	@Test
-	public void test3() throws Throwable {
+	public void testCompletions3() throws Throwable {
 		if (analyzer == null) {
 			return;
 		}
@@ -83,7 +195,7 @@ public class NashornTests {
 	}
 
 	@Test
-	public void test4() throws Throwable {
+	public void testCompletions4() throws Throwable {
 		if (analyzer == null) {
 			return;
 		}
@@ -118,7 +230,7 @@ public class NashornTests {
 	}
 
 	@Test
-	public void test5() throws Throwable {
+	public void testCompletions5() throws Throwable {
 		if (analyzer == null) {
 			return;
 		}
@@ -153,7 +265,7 @@ public class NashornTests {
 	}
 
 	@Test
-	public void test6() throws Throwable {
+	public void testCompletions6() throws Throwable {
 		if (analyzer == null) {
 			return;
 		}
@@ -188,7 +300,7 @@ public class NashornTests {
 	}
 
 	@Test
-	public void test7() throws Throwable {
+	public void testCompletions7() throws Throwable {
 		if (analyzer == null) {
 			return;
 		}

@@ -40,6 +40,17 @@ public interface IJSBinaryExpression extends IJSExpression {
 		In("in"), //$NON-NLS-1$
 		Instanceof("instanceof"); //$NON-NLS-1$
 
+		public static BinaryOperator fromObject(Object obj) {
+			if (obj instanceof String) {
+				for (BinaryOperator op : BinaryOperator.values()) {
+					if (obj.equals(op.toString())) {
+						return op;
+					}
+				}
+			}
+			return null;
+		}
+
 		private final String op;
 
 		private BinaryOperator(String op) {
@@ -54,7 +65,7 @@ public interface IJSBinaryExpression extends IJSExpression {
 
 	@Override
 	default String getType() {
-		return "UnaryExpression"; //$NON-NLS-1$
+		return "BinaryExpression"; //$NON-NLS-1$
 	}
 
 	public BinaryOperator getOperator();

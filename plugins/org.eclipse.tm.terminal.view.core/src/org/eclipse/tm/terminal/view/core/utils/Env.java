@@ -78,8 +78,10 @@ public class Env {
 				// The full provided variable in form "name=value"
 				String envpPart = envp[i];
 				// Split the variable
-				String[] parts = envpPart.split("=");//$NON-NLS-1$
-				String name = parts[0].trim();
+				int eqIdx = envpPart.indexOf('=');
+				if (eqIdx < 1)
+					continue;
+				String name = envpPart.substring(0, eqIdx);
 				// Map the variable name to the real environment name (Windows only)
 				if (Platform.OS_WIN32.equals(Platform.getOS())) {
 					if (k2n.containsKey(name.toLowerCase())) {
@@ -88,12 +90,12 @@ public class Env {
 						name = candidate;
 					}
 					// Filter out environment variables with bad names
-					if ("".equals(name.trim()) || name.contains("=") || name.contains(":")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					if ("".equals(name.trim()) || name.contains(":")) { //$NON-NLS-1$ //$NON-NLS-2$
 						continue;
 					}
 				}
 				// Get the variable value
-				String value = parts.length > 1 ? parts[1].trim() : ""; //$NON-NLS-1$
+				String value = envpPart.substring(eqIdx+1);
 				// Don't overwrite the TERM variable if in terminal mode
 				if (terminal && "TERM".equals(name)) continue; //$NON-NLS-1$
 				// If a variable with the name does not exist, just append it
@@ -172,21 +174,22 @@ public class Env {
 			BufferedReader reader = new BufferedReader(isreader);
 			try {
 				String line = reader.readLine();
-				String key = null;
-				String value = null;
 				while (line != null) {
+					String key = null;
+					String value = null;
 					int func = line.indexOf("=()"); //$NON-NLS-1$
 					if (func > 0) {
 						key = line.substring(0, func);
 						// scan until we find the closing '}' with no following chars
-						value = "'" + line.substring(func + 1); //$NON-NLS-1$
-						while (line != null && !line.equals("}")) { //$NON-NLS-1$
+						value = line.substring(func + 1);
+						do {
 							line = reader.readLine();
-							if (line != null) {
-								value += " " + line; //$NON-NLS-1$
-							}
-						}
-						value += "'"; //$NON-NLS-1$
+							if (line == null)
+								break;
+							if (line.equals("}")) //$NON-NLS-1$
+								value += ';';
+							value += ' ' + line;
+						} while (!line.equals("}")); //$NON-NLS-1$
 						line = reader.readLine();
 					} else {
 						int separator = line.indexOf('=');
@@ -214,8 +217,6 @@ public class Env {
 					}
 					if (key != null) {
 						cache.put(key, value);
-						key = null;
-						value = null;
 					} else {
 						line = reader.readLine();
 					}

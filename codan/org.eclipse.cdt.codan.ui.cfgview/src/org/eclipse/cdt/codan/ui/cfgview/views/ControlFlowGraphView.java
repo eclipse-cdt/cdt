@@ -18,12 +18,13 @@ import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.ui.cfgview.ControlFlowGraphPlugin;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -32,9 +33,7 @@ import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.text.SharedASTJob;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -47,9 +46,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -66,6 +62,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -94,8 +91,8 @@ public class ControlFlowGraphView extends ViewPart {
 	public static final String ID = "org.eclipse.cdt.codan.ui.cfgview.views.ControlFlowGraphView";
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
-	private Action action1;
-	private Action doubleClickAction;
+	private Action actionSync;
+
 
 	class DeadNodes extends ArrayList<IBasicBlock> {
 	}
@@ -122,7 +119,7 @@ public class ControlFlowGraphView extends ViewPart {
 		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof Collection) {
-				return ((Collection) parent).toArray();
+				return ((Collection<?>) parent).toArray();
 			} else if (parent instanceof IControlFlowGraph) {
 				IControlFlowGraph cfg = (IControlFlowGraph) parent;
 				Collection<IBasicBlock> blocks = getFlat(cfg.getStartNode(), new ArrayList<IBasicBlock>());
@@ -269,12 +266,12 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
+		manager.add(actionSync);
 		manager.add(new Separator());
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
+		manager.add(actionSync);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		// Other plug-ins can contribute there actions here
@@ -282,18 +279,18 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
+		manager.add(actionSync);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 	}
 
 	private void makeActions() {
-		action1 = new Action() {
+		actionSync = new Action() {
 			@Override
 			public void run() {
 				IEditorPart e = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 				ITranslationUnit tu = (ITranslationUnit) CDTUITools.getEditorInputCElement(e.getEditorInput());
-				Job job = new SharedASTJob("Job Name", tu) {
+				Job job = new SharedASTJob("Building Control Flow Grath", tu) {
 					@Override
 					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 						processAst(ast);
@@ -303,35 +300,14 @@ public class ControlFlowGraphView extends ViewPart {
 				job.schedule();
 			}
 		};
-		action1.setText("Synchronize");
-		action1.setToolTipText("Synchronize");
-		action1.setImageDescriptor(ControlFlowGraphPlugin.getDefault().getImageDescriptor("icons/refresh_view.gif"));
-		doubleClickAction = new Action() {
-			@Override
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				showMessage("Double-click detected on " + obj.toString());
-			}
-		};
-	}
-
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
-	}
-
-	private void showMessage(String message) {
-		MessageDialog.openInformation(viewer.getControl().getShell(), "Control Flow Graph", message);
+		actionSync.setText("Synchronize");
+		actionSync.setToolTipText("Synchronize");
+		actionSync.setImageDescriptor(ControlFlowGraphPlugin.getDefault().getImageDescriptor("icons/refresh_view.gif"));
 	}
 
 	protected void processAst(IASTTranslationUnit ast) {
 		final ArrayList<IControlFlowGraph> functions = new ArrayList<IControlFlowGraph>();
-		CASTVisitor visitor = new CASTVisitor() {
+		ASTVisitor visitor = new ASTVisitor() {
 			{
 				shouldVisitDeclarations = true;
 			}
@@ -365,26 +341,23 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	private class ASTHighlighterAction extends Action {
-		private static final String A_PART_INSTANCEOF = "aPart instanceof "; //$NON-NLS-1$
 		IEditorPart aPart = null;
 
 		public ASTHighlighterAction(IEditorPart part) {
 			this.aPart = part;
 		}
 
-		public void setPart(IEditorPart part) {
-			this.aPart = part;
-		}
-
 		protected boolean open(String filename) throws PartInitException, CModelException {
-			IPath path = new Path(filename);
-			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-			if (f != null) {
-				EditorUtility.openInEditor(f);
-				return true;
+			if (filename.equals(""))
+				return false;
+			IResource r = ParserUtil.getResourceForFilename(filename);
+			if (r != null) {
+				aPart = EditorUtility.openInEditor(r);
+			} else {
+				IPath path = new Path(filename);
+				FileStorage storage = new FileStorage(null, path);
+				aPart = EditorUtility.openInEditor(storage);
 			}
-			FileStorage storage = new FileStorage(null, path);
-			EditorUtility.openInEditor(storage);
 			return true;
 		}
 
@@ -400,32 +373,22 @@ public class ControlFlowGraphView extends ViewPart {
 						return;
 					IASTFileLocation loc = node.getFileLocation();
 					String filename = loc.getFileName();
-					if (filename.equals(""))
-						return;
-					IResource r = ParserUtil.getResourceForFilename(filename);
-					if (r != null) {
-						try {
-							aPart = EditorUtility.openInEditor(r);
-						} catch (PartInitException pie) {
-							return;
-						} catch (CModelException e) {
-							return;
-						}
-					} else {
-						// IPath path = new Path(filename);
-						// if (tu != null) {
-						// try {
-						// aPart = EditorUtility.openInEditor(path, tu);
-						// } catch (PartInitException e) {
-						// return;
-						// }
-						// }
+					try {
+						open(filename);
+					} catch (PartInitException e) {
+						ControlFlowGraphPlugin.log(e);
+					} catch (CModelException e) {
+						ControlFlowGraphPlugin.log(e);
 					}
+
 					if (aPart instanceof AbstractTextEditor) {
 						((AbstractTextEditor) aPart).selectAndReveal(loc.getNodeOffset(), loc.getNodeLength());
-					} else
-						System.out.println(A_PART_INSTANCEOF + aPart.getClass().getName());
-					aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(ID));
+					}
+					// re-activate view
+					if (aPart != null) {
+						IWorkbenchPage page = aPart.getSite().getPage();
+						page.activate(page.findView(ID));
+					}
 				}
 			}
 		}

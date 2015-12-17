@@ -14,12 +14,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * A pointer operator of a declarator
  */
-public class CPPASTPointer extends ASTAttributeOwner implements IASTPointer {
+public class CPPASTPointer extends CPPASTAttributeOwner implements IASTPointer {
     private boolean isConst;
     private boolean isVolatile;
     private boolean isRestrict;

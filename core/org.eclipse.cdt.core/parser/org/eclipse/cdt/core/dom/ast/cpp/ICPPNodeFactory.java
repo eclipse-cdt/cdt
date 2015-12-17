@@ -78,9 +78,16 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTAttribute newAttribute(char[] name, char[] scope, IASTToken argumentClause, boolean packExpansion);
 
 	/**
+	 * @deprecated Use newAttributeList() instead.
 	 * @since 5.7
 	 */
+	@Deprecated
 	public ICPPASTAttributeSpecifier newAttributeSpecifier();
+	
+	/**
+	 * @since 5.12
+	 */
+	public ICPPASTAttributeList newAttributeList();
 
 	@Deprecated
 	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual);

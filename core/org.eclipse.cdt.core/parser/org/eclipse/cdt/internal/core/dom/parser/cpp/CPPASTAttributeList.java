@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2014, 2015 Institute for Software, HSR Hochschule fuer Technik and others
  * Rapperswil, University of applied sciences.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,22 +9,22 @@
  * Contributors:
  *     Thomas Corbat (IFS) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser;
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ASTAttributeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeList;
 
 /**
- * Represents a GCC attribute specifier, containing attributes.
+ * Represents a C++ attribute list, containing attributes.
  */
-public class GCCASTAttributeSpecifier extends ASTAttributeSpecifier implements IGCCASTAttributeSpecifier {
+public class CPPASTAttributeList extends ASTAttributeList implements ICPPASTAttributeList {
 	@Override
-	public GCCASTAttributeSpecifier copy(CopyStyle style) {
-		return copy(new GCCASTAttributeSpecifier(), style);
+	public CPPASTAttributeList copy(CopyStyle style) {
+		return copy(new CPPASTAttributeList(), style);
 	}
 
 	@Override
-	public GCCASTAttributeSpecifier copy() {
+	public CPPASTAttributeList copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 }

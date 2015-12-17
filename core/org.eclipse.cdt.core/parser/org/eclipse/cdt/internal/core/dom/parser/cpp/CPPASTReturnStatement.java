@@ -17,10 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CPPASTReturnStatement extends ASTAttributeOwner implements IASTReturnStatement, IASTAmbiguityParent {
+public class CPPASTReturnStatement extends CPPASTAttributeOwner implements IASTReturnStatement {
 	private IASTInitializerClause retValue;
 
     public CPPASTReturnStatement() {
@@ -99,6 +97,8 @@ public class CPPASTReturnStatement extends ASTAttributeOwner implements IASTRetu
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
             retValue = (IASTInitializerClause) other;
+            return;
         }
+        super.replace(child, other);
     }
 }

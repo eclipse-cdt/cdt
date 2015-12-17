@@ -11,14 +11,15 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAlignmentSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CPPASTAlignmentSpecifier extends ASTNode implements IASTAlignmentSpecifier,
+public class CPPASTAlignmentSpecifier extends ASTNode implements ICPPASTAlignmentSpecifier,
 		IASTAmbiguityParent {
 	// Precisely one of these is null.
 	private IASTExpression fExpression;
@@ -47,12 +48,12 @@ public class CPPASTAlignmentSpecifier extends ASTNode implements IASTAlignmentSp
 	}
 
 	@Override
-	public IASTAlignmentSpecifier copy() {
+	public ICPPASTAlignmentSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
 	@Override
-	public IASTAlignmentSpecifier copy(CopyStyle style) {
+	public ICPPASTAlignmentSpecifier copy(CopyStyle style) {
 		CPPASTAlignmentSpecifier copy;
 		if (fExpression != null) {
 			copy = new CPPASTAlignmentSpecifier(fExpression.copy(style));
@@ -81,5 +82,16 @@ public class CPPASTAlignmentSpecifier extends ASTNode implements IASTAlignmentSp
 			other.setParent(child.getParent());
 			other.setPropertyInParent(child.getPropertyInParent());
 		}
+	}
+
+	@Deprecated
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return null;
+	}
+
+	@Deprecated
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
 	}
 }

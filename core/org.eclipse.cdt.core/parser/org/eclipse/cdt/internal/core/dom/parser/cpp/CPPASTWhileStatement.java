@@ -19,14 +19,11 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * While statement in C++.
  */
-public class CPPASTWhileStatement extends ASTAttributeOwner
-		implements ICPPASTWhileStatement, IASTAmbiguityParent {
+public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPASTWhileStatement {
     private IASTExpression condition;
     private IASTDeclaration condition2;
     private IASTStatement body;
@@ -136,6 +133,7 @@ public class CPPASTWhileStatement extends ASTAttributeOwner
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
 			body = (IASTStatement) other;
+			return;
 		}
 		if (child == condition || child == condition2) {
 			if (other instanceof IASTExpression) {
@@ -143,7 +141,9 @@ public class CPPASTWhileStatement extends ASTAttributeOwner
 			} else if (other instanceof IASTDeclaration) {
 				setConditionDeclaration((IASTDeclaration) other);
 			}
+			return;
 		}
+		super.replace(child, other);
 	}
 
 	@Override

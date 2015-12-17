@@ -182,10 +182,6 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		if (!acceptByAttributeSpecifiers(action))
 			return false;
 		
-		if (!visitAlignmentSpecifiers(action)) {
-			return false;
-		}
-
 		if (fName != null && !fName.accept(action))
 			return false;
 

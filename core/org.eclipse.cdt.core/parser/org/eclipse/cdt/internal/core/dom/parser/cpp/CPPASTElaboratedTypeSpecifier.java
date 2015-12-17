@@ -90,10 +90,6 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		if (!acceptByAttributeSpecifiers(action))
 			return false;
 
-		if (!visitAlignmentSpecifiers(action)) {
-			return false;
-		}
-
         if (name != null) if (!name.accept(action)) return false;
         if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.leave(this)) {

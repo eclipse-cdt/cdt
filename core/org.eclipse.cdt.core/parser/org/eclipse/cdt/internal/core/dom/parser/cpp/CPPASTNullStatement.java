@@ -13,12 +13,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * @author jcamelon
  */
-public class CPPASTNullStatement extends ASTAttributeOwner implements IASTNullStatement {
+public class CPPASTNullStatement extends CPPASTAttributeOwner implements IASTNullStatement {
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {

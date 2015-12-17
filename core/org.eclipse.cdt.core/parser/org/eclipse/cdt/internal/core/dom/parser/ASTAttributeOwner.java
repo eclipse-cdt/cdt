@@ -12,10 +12,13 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
@@ -29,7 +32,10 @@ public abstract class ASTAttributeOwner extends ASTNode implements IASTAttribute
 	public IASTAttribute[] getAttributes() {
 		IASTAttribute[] attributes = IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
 		for (IASTAttributeSpecifier attributeSpecifier : getAttributeSpecifiers()) {
-			attributes = ArrayUtil.addAll(attributes, attributeSpecifier.getAttributes());
+			if (attributeSpecifier instanceof IASTAttributeList) {
+				attributes = ArrayUtil.addAll(attributes, 
+						((IASTAttributeList) attributeSpecifier).getAttributes());
+			}
 		}
 		return attributes;
 	}
@@ -78,7 +84,7 @@ public abstract class ASTAttributeOwner extends ASTNode implements IASTAttribute
 
 	protected boolean acceptByGCCAttributeSpecifiers(ASTVisitor action) {
 		for (IASTAttributeSpecifier attributeSpecifier : attributeSpecifiers) {
-			if (!(attributeSpecifier instanceof IGCCASTAttributeSpecifier))
+			if (!(attributeSpecifier instanceof IGCCASTAttributeList))
 				continue;
 			if (!attributeSpecifier.accept(action))
 				return false;
@@ -94,5 +100,22 @@ public abstract class ASTAttributeOwner extends ASTNode implements IASTAttribute
 				return false;
 		}
 		return true;
+	}
+	
+	/*
+	 * Having this here allows CPPASTAttributeOwner to implement IASTAmbiguityParent
+	 * without needing to access the field attributeSpecifiers. 
+	 */
+	protected void replace(IASTNode child, IASTNode other) {
+		if (child instanceof IASTAlignmentSpecifier && other instanceof IASTAlignmentSpecifier) {
+			for (int i = 0; i < attributeSpecifiers.length; ++i) {
+				if (attributeSpecifiers[i] == child) {
+					attributeSpecifiers[i] = (IASTAttributeSpecifier) other;
+					other.setParent(child.getParent());
+					other.setPropertyInParent(child.getPropertyInParent());
+					return;
+				}
+			}
+		}
 	}
 }

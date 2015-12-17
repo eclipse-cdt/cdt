@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 /**
  * Base for all c++ declaration specifiers.
  */
-public abstract class CPPASTBaseDeclSpecifier extends ASTAttributeOwner 
-		implements ICPPASTDeclSpecifier, IASTAmbiguityParent {
+public abstract class CPPASTBaseDeclSpecifier extends CPPASTAttributeOwner implements ICPPASTDeclSpecifier {
     private boolean explicit;
     private boolean friend;
     private boolean inline;
@@ -34,8 +29,6 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTAttributeOwner
     private boolean isVolatile;
     private int sc;
     private boolean virtual;
-    private IASTAlignmentSpecifier[] alignmentSpecifiers = 
-    		IASTAlignmentSpecifier.EMPTY_ALIGNMENT_SPECIFIER_ARRAY;
     
     @Override
 	public boolean isFriend() {
@@ -147,19 +140,15 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTAttributeOwner
         this.explicit = value;
     }
     
+    @Deprecated
     @Override
     public IASTAlignmentSpecifier[] getAlignmentSpecifiers() {
-    	return alignmentSpecifiers;
+    	return null;
     }
     
+    @Deprecated
     @Override
     public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers) {
-    	assertNotFrozen();
-    	for (IASTAlignmentSpecifier specifier : alignmentSpecifiers) {
-    		specifier.setParent(this);
-    		specifier.setPropertyInParent(ALIGNMENT_SPECIFIER);
-    	}
-    	this.alignmentSpecifiers = alignmentSpecifiers;
     }
     
 	protected <T extends CPPASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
@@ -174,11 +163,6 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTAttributeOwner
     	target.isVolatile = isVolatile;
     	target.sc = sc;
     	target.virtual = virtual;
-    	target.alignmentSpecifiers = new IASTAlignmentSpecifier[alignmentSpecifiers.length];
-    	for (int i = 0; i < alignmentSpecifiers.length; ++i) {
-    		target.alignmentSpecifiers[i] = alignmentSpecifiers[i].copy(style);
-    		target.alignmentSpecifiers[i].setParent(target);
-    	}
 		return super.copy(copy, style);
 	}
 
@@ -188,28 +172,5 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTAttributeOwner
 	@Override
 	public String toString() {
     	return ASTStringUtil.getSignatureString(this, null);
-    }
-	
-    protected boolean visitAlignmentSpecifiers(ASTVisitor visitor) {
-    	for (IASTAlignmentSpecifier specifier : alignmentSpecifiers) {
-    		if (!specifier.accept(visitor)) {
-    			return false;
-    		}
-    	}
-    	return true;
-    }
-    
-    @Override
-    public void replace(IASTNode child, IASTNode other) {
-    	if (child instanceof IASTAlignmentSpecifier && other instanceof IASTAlignmentSpecifier) {
-    		for (int i = 0; i < alignmentSpecifiers.length; ++i) {
-    			if (alignmentSpecifiers[i] == child) {
-    				alignmentSpecifiers[i] = (IASTAlignmentSpecifier) other;
-    				other.setParent(child.getParent());
-    				other.setPropertyInParent(child.getPropertyInParent());
-    				return;
-    			}
-    		}
-    	}
     }
 }

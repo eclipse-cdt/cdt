@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * Represents an alignment specifier.
  * 
- * Grammatically, this is a decl-specifier.
+ * Grammatically, this is a decl-specifier in C and an attribute-specifier in C++.
  * 
  * Possible forms are:
  *   C++:

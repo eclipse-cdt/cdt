@@ -34,17 +34,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Models a function definition without a try-block. If used for a constructor definition
  * it may contain member initializers.
  */
-public class CPPASTFunctionDefinition extends ASTAttributeOwner
-		implements ICPPASTFunctionDefinition, IASTAmbiguityParent, IASTImplicitNameOwner {
+public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
+		implements ICPPASTFunctionDefinition, IASTImplicitNameOwner {
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
     private IASTStatement bodyStatement;
@@ -245,7 +243,9 @@ public class CPPASTFunctionDefinition extends ASTAttributeOwner
             other.setPropertyInParent(bodyStatement.getPropertyInParent());
             other.setParent(bodyStatement.getParent());
             bodyStatement = (IASTStatement) other;
+            return;
         }
+        super.replace(child, other);
     }
 
 	@Override

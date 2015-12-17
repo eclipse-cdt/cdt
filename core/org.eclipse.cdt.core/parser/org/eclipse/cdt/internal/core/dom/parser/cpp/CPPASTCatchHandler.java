@@ -19,15 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 
 /**
  * @author jcamelon
  */
-public class CPPASTCatchHandler extends ASTAttributeOwner
-		implements ICPPASTCatchHandler, IASTAmbiguityParent {
+public class CPPASTCatchHandler extends CPPASTAttributeOwner implements ICPPASTCatchHandler {
     private boolean fIsCatchAll;
     private IASTStatement fBody;
     private IASTDeclaration fDeclaration;
@@ -139,12 +136,15 @@ public class CPPASTCatchHandler extends ASTAttributeOwner
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
             fBody = (IASTStatement) other;
+            return;
         }
         if (fDeclaration == child) {
             other.setParent(child.getParent());
             other.setPropertyInParent(child.getPropertyInParent());
             fDeclaration = (IASTDeclaration) other;
+            return;
         }
+        super.replace(child, other);
     }
 
 	@Override

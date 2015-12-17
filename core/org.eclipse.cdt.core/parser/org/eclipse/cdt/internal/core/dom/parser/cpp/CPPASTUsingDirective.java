@@ -22,10 +22,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
-public class CPPASTUsingDirective extends ASTAttributeOwner
+public class CPPASTUsingDirective extends CPPASTAttributeOwner
 		implements ICPPASTUsingDirective, ICPPASTCompletionContext {
     private IASTName name;
 

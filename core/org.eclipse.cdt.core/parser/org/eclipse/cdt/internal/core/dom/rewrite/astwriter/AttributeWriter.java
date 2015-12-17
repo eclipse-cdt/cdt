@@ -11,14 +11,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTokenList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttribute;
-import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier;
-import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
+import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 import org.eclipse.cdt.core.parser.GCCKeywords;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAttribute;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -36,14 +38,27 @@ public class AttributeWriter extends NodeWriter {
 	}
 
 	public void writeAttributeSpecifier(IASTAttributeSpecifier attribute) {
-		if (attribute instanceof ICPPASTAttributeSpecifier) {
-			writeAttributeSpecifier((ICPPASTAttributeSpecifier) attribute);
-		} else if (attribute instanceof IGCCASTAttributeSpecifier) {
-			writeGCCAttributeSpecifier((IGCCASTAttributeSpecifier) attribute);
+		if (attribute instanceof ICPPASTAttributeList) {
+			writeAttributeSpecifier((ICPPASTAttributeList) attribute);
+		} else if (attribute instanceof IGCCASTAttributeList) {
+			writeGCCAttributeSpecifier((IGCCASTAttributeList) attribute);
+		} else if (attribute instanceof IASTAlignmentSpecifier) {
+			writeAlignmentSpecifier((IASTAlignmentSpecifier) attribute);
 		}
 	}
+	
+	private void writeAlignmentSpecifier(IASTAlignmentSpecifier specifier) {
+		scribe.print(Keywords.ALIGNAS);
+		scribe.print(OPENING_PARENTHESIS);
+		if (specifier.getExpression() != null) {
+			specifier.getExpression().accept(visitor);
+		} else if (specifier.getTypeId() != null) {
+			specifier.getTypeId().accept(visitor);
+		}
+		scribe.print(CLOSING_PARENTHESIS);
+	}
 
-	private void writeGCCAttributeSpecifier(IGCCASTAttributeSpecifier specifier) {
+	private void writeGCCAttributeSpecifier(IGCCASTAttributeList specifier) {
 		scribe.print(GCCKeywords.__ATTRIBUTE__);
 		scribe.print(OPENING_PARENTHESIS);
 		scribe.print(OPENING_PARENTHESIS);
@@ -60,7 +75,7 @@ public class AttributeWriter extends NodeWriter {
 		scribe.print(CLOSING_PARENTHESIS);
 	}
 
-	private void writeAttributeSpecifier(ICPPASTAttributeSpecifier specifier) {
+	private void writeAttributeSpecifier(ICPPASTAttributeList specifier) {
 		scribe.print(OPENING_SQUARE_BRACKET);
 		scribe.print(OPENING_SQUARE_BRACKET);
 		IASTAttribute[] innerAttributes = specifier.getAttributes();

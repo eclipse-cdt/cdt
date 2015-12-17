@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttribute;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -129,14 +130,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
-import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTokenList;
-import org.eclipse.cdt.internal.core.dom.parser.GCCASTAttributeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
@@ -211,9 +210,15 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTAttribute(name, scope, argumentClause, packExpansion);
 	}
 
+	@Deprecated
 	@Override
 	public ICPPASTAttributeSpecifier newAttributeSpecifier() {
-		return new CPPASTAttributeSpecifier();
+		return new CPPASTAttributeList();
+	}
+	
+	@Override
+	public ICPPASTAttributeList newAttributeList() {
+		return new CPPASTAttributeList();
 	}
 
 	@Override
@@ -467,11 +472,6 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTFunctionWithTryBlock newFunctionTryBlock(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
 			IASTStatement bodyStatement) {
 		return new CPPASTFunctionWithTryBlock(declSpecifier, declarator, bodyStatement);
-	}
-
-	@Override
-	public IGCCASTAttributeSpecifier newGCCAttributeSpecifier() {
-		return new GCCASTAttributeSpecifier();
 	}
 
 	@Override

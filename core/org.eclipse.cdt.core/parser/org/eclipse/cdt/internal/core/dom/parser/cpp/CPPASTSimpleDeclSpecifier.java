@@ -222,10 +222,6 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
 		if (!acceptByAttributeSpecifiers(action))
 			return false;
 
-		if (!visitAlignmentSpecifiers(action)) {
-			return false;
-		}
-
         if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

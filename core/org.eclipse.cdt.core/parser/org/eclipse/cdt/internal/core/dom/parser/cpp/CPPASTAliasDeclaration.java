@@ -15,9 +15,8 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
-public class CPPASTAliasDeclaration extends ASTAttributeOwner implements ICPPASTAliasDeclaration {
+public class CPPASTAliasDeclaration extends CPPASTAttributeOwner implements ICPPASTAliasDeclaration {
 	private IASTName aliasName;
 	private ICPPASTTypeId mappingTypeId;
 

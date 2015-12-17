@@ -11249,6 +11249,12 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testAlignas_451082() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct alignas(16) Node {};
+	//	enum alignas(8) E { E1, E2 };
+	public void testAlignas_475739() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	// int operator "" _A(unsigned long long i) { return 1; }
 	// int operator "" _B(long double d) { return 1; }

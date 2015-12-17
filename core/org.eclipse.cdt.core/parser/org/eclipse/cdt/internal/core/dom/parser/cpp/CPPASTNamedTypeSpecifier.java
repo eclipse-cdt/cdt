@@ -90,10 +90,6 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 	        }
 		}
 
-        if (!visitAlignmentSpecifiers(action)) {
-			return false;
-		}
-
         if (name != null && !name.accept(action))
         	return false;
         

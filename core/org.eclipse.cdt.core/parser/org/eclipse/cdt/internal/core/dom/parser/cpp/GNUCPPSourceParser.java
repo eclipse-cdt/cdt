@@ -73,10 +73,12 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttribute;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -147,7 +149,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
-import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -2577,23 +2578,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			BacktrackException {
 		List<IASTAttributeSpecifier> specifiers = null;
 
-		while (LTcatchEOF(1) == IToken.tLBRACKET && LTcatchEOF(2) == IToken.tLBRACKET) {
+		while ((LTcatchEOF(1) == IToken.tLBRACKET && LTcatchEOF(2) == IToken.tLBRACKET) ||
+				LTcatchEOF(1) == IToken.t_alignas) {
 			if (specifiers == null)
 				specifiers = new ArrayList<>();
-			int offset = consumeOrEOC(IToken.tLBRACKET).getOffset();
-			consumeOrEOC(IToken.tLBRACKET);
-			ICPPASTAttributeSpecifier attributeSpecifier = getNodeFactory().newAttributeSpecifier();
-			while (LT(1) != IToken.tRBRACKET) {
-				if (LT(1) == IToken.tCOMMA)
-					consume();
-				ICPPASTAttribute attribute = singleAttribute();
-				attributeSpecifier.addAttribute(attribute);
-
+			if (LTcatchEOF(1) == IToken.t_alignas) {
+				specifiers.add((ICPPASTAlignmentSpecifier) alignmentSpecifier());
+			} else {
+				int offset = consumeOrEOC(IToken.tLBRACKET).getOffset();
+				consumeOrEOC(IToken.tLBRACKET);
+				ICPPASTAttributeList attributeList = getNodeFactory().newAttributeList();
+				while (LT(1) != IToken.tRBRACKET) {
+					if (LT(1) == IToken.tCOMMA)
+						consume();
+					ICPPASTAttribute attribute = singleAttribute();
+					attributeList.addAttribute(attribute);
+	
+				}
+				consumeOrEOC(IToken.tRBRACKET);
+				int endOffset = consumeOrEOC(IToken.tRBRACKET).getEndOffset();
+				setRange(attributeList, offset, endOffset);
+				specifiers.add(attributeList);
 			}
-			consumeOrEOC(IToken.tRBRACKET);
-			int endOffset = consumeOrEOC(IToken.tRBRACKET).getEndOffset();
-			setRange(attributeSpecifier, offset, endOffset);
-			specifiers.add(attributeSpecifier);
 		}
 		return specifiers;
 	}
@@ -2970,7 +2976,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		ICPPASTDeclSpecifier result= null;
 		ICPPASTDeclSpecifier altResult= null;
 		List<IASTAttributeSpecifier> attributes = null;
-		IASTAlignmentSpecifier[] alignmentSpecifiers = IASTAlignmentSpecifier.EMPTY_ALIGNMENT_SPECIFIER_ARRAY;
 		try {
 			IASTName identifier= null;
 			IASTExpression typeofExpression= null;
@@ -3259,10 +3264,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					encounteredTypename= true;
 					break;
 
-				case IToken.t_alignas:
-					alignmentSpecifiers = ArrayUtil.append(alignmentSpecifiers, alignmentSpecifier());
-					break;
-
 				case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
 					if (!supportAttributeSpecifiers)
 						throwBacktrack(LA(1));
@@ -3362,7 +3363,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				result= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
 			}
 			addAttributeSpecifiers(attributes, result);
-			result.setAlignmentSpecifiers(ArrayUtil.trim(alignmentSpecifiers));
 		} catch (BacktrackException e) {
 			if (returnToken != null) {
 				backup(returnToken);

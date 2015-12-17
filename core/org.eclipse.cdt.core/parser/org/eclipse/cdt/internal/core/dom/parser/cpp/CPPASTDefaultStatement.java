@@ -13,12 +13,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * @author jcamelon
  */
-public class CPPASTDefaultStatement extends ASTAttributeOwner implements IASTDefaultStatement {
+public class CPPASTDefaultStatement extends CPPASTAttributeOwner implements IASTDefaultStatement {
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {

@@ -27,9 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
@@ -38,8 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 /**
  * Range based 'for' loop in C++.
  */
-public class CPPASTRangeBasedForStatement extends ASTAttributeOwner
-		implements ICPPASTRangeBasedForStatement, IASTAmbiguityParent {
+public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implements ICPPASTRangeBasedForStatement {
     private IScope fScope;
     private IASTDeclaration  fDeclaration;
     private IASTInitializerClause fInitClause;
@@ -223,10 +220,14 @@ public class CPPASTRangeBasedForStatement extends ASTAttributeOwner
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == fDeclaration) {
 			setDeclaration((IASTDeclaration) other);
+			return;
 		} else if (child == fInitClause) {
 			setInitializerClause((IASTInitializerClause) other);
+			return;
 		} else if (child == fBody) {
 			setBody((IASTStatement) other);
+			return;
 		}
+		super.replace(child, other);
 	}
 }

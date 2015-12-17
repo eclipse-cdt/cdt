@@ -11,12 +11,14 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAlignmentSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 
-public class CPPASTAmbiguousAlignmentSpecifier extends ASTAmbiguousNode implements IASTAlignmentSpecifier {
+public class CPPASTAmbiguousAlignmentSpecifier extends ASTAmbiguousNode implements ICPPASTAlignmentSpecifier {
 	IASTAlignmentSpecifier fExpression;
 	IASTAlignmentSpecifier fTypeId;
 	
@@ -36,17 +38,28 @@ public class CPPASTAmbiguousAlignmentSpecifier extends ASTAmbiguousNode implemen
 	}
 
 	@Override
-	public IASTAlignmentSpecifier copy() {
+	public ICPPASTAlignmentSpecifier copy() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public IASTAlignmentSpecifier copy(CopyStyle style) {
+	public ICPPASTAlignmentSpecifier copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public IASTNode[] getNodes() {
 		return new IASTNode[] { fExpression, fTypeId };
+	}
+
+	@Deprecated
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return null;
+	}
+
+	@Deprecated
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
 	}
 }

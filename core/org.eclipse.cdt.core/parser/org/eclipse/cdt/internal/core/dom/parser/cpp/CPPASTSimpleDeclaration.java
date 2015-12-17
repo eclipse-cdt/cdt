@@ -18,14 +18,11 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTSimpleDeclaration extends ASTAttributeOwner
-		implements IASTSimpleDeclaration, IASTAmbiguityParent {
+public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IASTSimpleDeclaration {
     private IASTDeclarator[] declarators;
     private int declaratorsPos = -1;
     private IASTDeclSpecifier declSpecifier;
@@ -124,8 +121,9 @@ public class CPPASTSimpleDeclaration extends ASTAttributeOwner
 				declarators[i] = (IASTDeclarator) other;
 				other.setParent(child.getParent());
 	            other.setPropertyInParent(child.getPropertyInParent());
-				break;
+				return;
 			}
 		}
+		super.replace(child, other);
 	}
 }

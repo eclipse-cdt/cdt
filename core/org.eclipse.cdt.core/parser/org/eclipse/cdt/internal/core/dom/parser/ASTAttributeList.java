@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2014, 2015 Institute for Software, HSR Hochschule fuer Technik and others
  * Rapperswil, University of applied sciences.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,21 +9,21 @@
  * Contributors:
  *     Thomas Corbat (IFS) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
+package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * Represents an attribute specifier, containing attributes.
+ * Represents an attribute list, containing attributes.
  */
-public abstract class ASTAttributeSpecifier extends ASTNode implements IASTAttributeSpecifier {
+public abstract class ASTAttributeList extends ASTNode implements IASTAttributeList {
 	protected IASTAttribute[] attributes = IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
 
-	public ASTAttributeSpecifier() {
+	public ASTAttributeList() {
 		super();
 	}
 
@@ -65,7 +65,7 @@ public abstract class ASTAttributeSpecifier extends ASTNode implements IASTAttri
 		return true;
 	}
 
-	protected <T extends ASTAttributeSpecifier> T copy(T copy, CopyStyle style) {
+	protected <T extends ASTAttributeList> T copy(T copy, CopyStyle style) {
 		copy.attributes = ArrayUtil.trim(attributes, true);
 		for (int i = 0; i < copy.attributes.length; i++) {
 			IASTAttribute attributeCopy = copy.attributes[i].copy(style);

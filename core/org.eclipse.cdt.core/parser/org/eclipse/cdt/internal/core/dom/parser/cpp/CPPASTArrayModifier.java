@@ -16,13 +16,11 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTArrayModifier extends ASTAttributeOwner implements IASTArrayModifier, IASTAmbiguityParent {
+public class CPPASTArrayModifier extends CPPASTAttributeOwner implements IASTArrayModifier {
     private IASTExpression exp;
 
     public CPPASTArrayModifier() {
@@ -85,6 +83,8 @@ public class CPPASTArrayModifier extends ASTAttributeOwner implements IASTArrayM
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
             exp = (IASTExpression) other;
+            return;
         }
+        super.replace(child, other);
     }
 }

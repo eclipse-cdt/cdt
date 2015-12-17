@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -2384,11 +2385,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @throws BacktrackException
      * @throws EndOfFileException
      */
-    protected IASTAttributeSpecifier __attribute__() throws BacktrackException, EndOfFileException {
+    protected IASTAttributeList __attribute__() throws BacktrackException, EndOfFileException {
     	if (LT(1) != IGCCToken.t__attribute__)
     		return null;
 
-    	IASTAttributeSpecifier result = nodeFactory.newGCCAttributeSpecifier();
+    	IASTAttributeList result = nodeFactory.newGCCAttributeList();
     	consume();
     	if (LT(1) == IToken.tLPAREN) {
     		consume();

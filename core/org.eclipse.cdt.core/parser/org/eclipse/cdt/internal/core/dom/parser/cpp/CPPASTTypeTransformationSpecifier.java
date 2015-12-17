@@ -61,10 +61,6 @@ public class CPPASTTypeTransformationSpecifier extends CPPASTBaseDeclSpecifier i
 			}
 		}
 
-		if (!visitAlignmentSpecifiers(action)) {
-			return false;
-		}
-
         if (!fOperand.accept(action)) 
         	return false;
         

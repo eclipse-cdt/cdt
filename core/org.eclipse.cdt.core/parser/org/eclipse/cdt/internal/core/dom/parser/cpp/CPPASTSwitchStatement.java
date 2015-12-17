@@ -19,14 +19,11 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Switch statement in C++.
  */
-public class CPPASTSwitchStatement extends ASTAttributeOwner
-		implements ICPPASTSwitchStatement, IASTAmbiguityParent {
+public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPASTSwitchStatement {
 	private IScope scope;
     private IASTExpression controllerExpression;
     private IASTDeclaration controllerDeclaration;
@@ -123,13 +120,16 @@ public class CPPASTSwitchStatement extends ASTAttributeOwner
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
 			body = (IASTStatement) other;
+			return;
 		} else if (controllerDeclaration == child || controllerExpression == child) {
 			if (other instanceof IASTExpression) {
 				setControllerExpression((IASTExpression) other);
 			} else if (other instanceof IASTDeclaration) {
 				setControllerDeclaration((IASTDeclaration) other);
 			}
+			return;
 		}
+		super.replace(child, other);
 	}
 
     @Override

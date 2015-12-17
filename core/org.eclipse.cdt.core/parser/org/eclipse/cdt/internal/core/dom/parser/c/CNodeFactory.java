@@ -81,14 +81,12 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
-import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTokenList;
-import org.eclipse.cdt.internal.core.dom.parser.GCCASTAttributeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
@@ -300,11 +298,6 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	}
 
 	@Override
-	public IGCCASTAttributeSpecifier newGCCAttributeSpecifier() {
-		return new GCCASTAttributeSpecifier();
-	}
-	
-	@Override
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
 		return new CASTCompoundStatementExpression(compoundStatement);
 	}
@@ -490,20 +483,3 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 		return new CASTWhileStatement(condition, body);
 	}
 } 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

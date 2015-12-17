@@ -9,21 +9,21 @@
  * Contributors:
  *     Thomas Corbat (IFS) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
+package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
+import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 
 /**
- * Represents a C++ attribute specifier, containing attributes.
+ * Represents a GCC attribute list, containing attributes.
  */
-public class CPPASTAttributeSpecifier extends ASTAttributeSpecifier implements ICPPASTAttributeSpecifier {
+public class GCCASTAttributeList extends ASTAttributeList implements IGCCASTAttributeList {
 	@Override
-	public CPPASTAttributeSpecifier copy(CopyStyle style) {
-		return copy(new CPPASTAttributeSpecifier(), style);
+	public GCCASTAttributeList copy(CopyStyle style) {
+		return copy(new GCCASTAttributeList(), style);
 	}
 
 	@Override
-	public CPPASTAttributeSpecifier copy() {
+	public GCCASTAttributeList copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 }

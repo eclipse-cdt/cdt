@@ -135,10 +135,6 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		if (!acceptByAttributeSpecifiers(action))
 			return false;
 
-		if (!visitAlignmentSpecifiers(action)) {
-			return false;
-		}
-
 		for (IASTEnumerator e : getEnumerators()) {
 			if (!e.accept(action))
 				return false;

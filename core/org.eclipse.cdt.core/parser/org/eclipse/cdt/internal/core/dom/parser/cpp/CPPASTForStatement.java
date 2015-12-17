@@ -22,14 +22,12 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 
 /**
  * For statement in C++
  */
-public class CPPASTForStatement extends ASTAttributeOwner
-		implements ICPPASTForStatement, IASTAmbiguityParent {
+public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTForStatement {
     private IScope fScope;
     
     private IASTStatement fInit;
@@ -173,21 +171,26 @@ public class CPPASTForStatement extends ASTAttributeOwner
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
 			fBody = (IASTStatement) other;
+			return;
 		} else if (child == fCondition || child == fCondDeclaration) {
 			if (other instanceof IASTExpression) {
 				setConditionExpression((IASTExpression) other);
 			} else if (other instanceof IASTDeclaration) {
 				setConditionDeclaration((IASTDeclaration) other);
 			}
+			return;
 		} else if (child == fIterationExpression) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
 			fIterationExpression = (IASTExpression) other;
+			return;
 		} else if (child == fInit) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
 			fInit = (IASTStatement) other;
+			return;
 		}
+		super.replace(child, other);
 	}
 
     @Override

@@ -14,12 +14,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * Reference operator for declarators.
  */
-public class CPPASTReferenceOperator extends ASTAttributeOwner implements ICPPASTReferenceOperator {
+public class CPPASTReferenceOperator extends CPPASTAttributeOwner implements ICPPASTReferenceOperator {
 	private final boolean fIsRValue;
 
 	public CPPASTReferenceOperator(boolean isRValueReference) {

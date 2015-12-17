@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * GNU C++ goto statement.
@@ -27,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
  * 
  * @since 5.8
  */
-public class GNUCPPASTGotoStatement extends ASTAttributeOwner implements IGNUASTGotoStatement {
+public class GNUCPPASTGotoStatement extends CPPASTAttributeOwner implements IGNUASTGotoStatement {
 	private IASTExpression expression;
 
 	public GNUCPPASTGotoStatement() {

@@ -14,12 +14,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * @author jcamelon
  */
-public class CPPASTGotoStatement extends ASTAttributeOwner implements IASTGotoStatement {
+public class CPPASTGotoStatement extends CPPASTAttributeOwner implements IASTGotoStatement {
 	private IASTName name;
 	
     public CPPASTGotoStatement() {

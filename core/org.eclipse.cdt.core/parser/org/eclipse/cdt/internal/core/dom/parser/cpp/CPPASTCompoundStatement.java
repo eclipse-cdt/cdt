@@ -19,15 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 
 /**
  * @author jcamelon
  */
-public class CPPASTCompoundStatement extends ASTAttributeOwner
-		implements ICPPASTCompoundStatement, IASTAmbiguityParent {
+public class CPPASTCompoundStatement extends CPPASTAttributeOwner implements ICPPASTCompoundStatement {
     private IASTStatement[] statements = new IASTStatement[2];
     private ICPPScope scope;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
@@ -118,7 +115,9 @@ public class CPPASTCompoundStatement extends ASTAttributeOwner
                 other.setParent(statements[i].getParent());
                 other.setPropertyInParent(statements[i].getPropertyInParent());
                 statements[i] = (IASTStatement) other;
+                return;
             }
         }
+        super.replace(child, other);
     }
 }

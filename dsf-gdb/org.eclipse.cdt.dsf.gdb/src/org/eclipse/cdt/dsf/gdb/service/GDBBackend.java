@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -143,7 +144,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
         });
     }
 
-    private void doInitialize(final RequestMonitor requestMonitor) {
+    /** @since 5.0 */
+    protected void doInitialize(final RequestMonitor requestMonitor) {
 
         final Sequence.Step[] initializeSteps = new Sequence.Step[] {
                 new GDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),
@@ -159,22 +161,25 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
     @Override
     public void shutdown(final RequestMonitor requestMonitor) {
-        final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
+    	getExecutor().execute( 
+            	new Sequence(getExecutor(), 
+            				 new RequestMonitor(getExecutor(), requestMonitor) {
+            					@Override
+            					protected void handleCompleted() {
+            						GDBBackend.super.shutdown(requestMonitor);
+            					}
+            				}) {
+                @Override public Step[] getSteps() { return getShutdownSteps(); }
+            });
+    }
+    
+    /** @since 5.0 */
+    protected Step[] getShutdownSteps() {
+        return new Sequence.Step[] {
                 new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new MonitorJobStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new GDBProcessStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
             };
-        Sequence shutdownSequence = 
-        	new Sequence(getExecutor(), 
-        				 new RequestMonitor(getExecutor(), requestMonitor) {
-        					@Override
-        					protected void handleCompleted() {
-        						GDBBackend.super.shutdown(requestMonitor);
-        					}
-        				}) {
-            @Override public Step[] getSteps() { return shutdownSteps; }
-        };
-        getExecutor().execute(shutdownSequence);
     }        
 
     
@@ -558,6 +563,11 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
         return GdbPlugin.getBundleContext();
 	}
 
+	/** @since 5.0 */
+	protected String getOutputToWaitFor() {
+		return "(gdb)"; //$NON-NLS-1$
+	}
+	
 	protected class GDBProcessStep extends InitializationShutdownStep {
         GDBProcessStep(Direction direction) { super(direction); }
         
@@ -616,11 +626,11 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
                     boolean success = false;
                     try {
                     	// Read initial GDB prompt
-                        inputReader = new BufferedReader(new InputStreamReader(getMIInputStream()));
+                        inputReader = new BufferedReader(new InputStreamReader(getProcess().getInputStream()));
                         String line;
                         while ((line = inputReader.readLine()) != null) {
                             line = line.trim();
-                            if (line.endsWith("(gdb)")) { //$NON-NLS-1$
+                            if (line.indexOf(getOutputToWaitFor()) != -1) {
                             	success = true;
                                 break;
                             }
@@ -628,7 +638,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
                         
                         // Failed to read initial prompt, check for error
                         if (!success) {
-                        	errorReader = new BufferedReader(new InputStreamReader(getMIErrorStream()));
+                        	errorReader = new BufferedReader(new InputStreamReader(getProcess().getErrorStream()));
                         	String errorInfo = errorReader.readLine();
                         	if (errorInfo == null) {
                         		errorInfo = "GDB prompt not read"; //$NON-NLS-1$

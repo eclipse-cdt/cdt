@@ -88,6 +88,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
 	/** @since 4.8 */
 	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
+	
+	private static final String GDB_7_11_VERSION = "7.10.88888";
 
 	private final String fVersion;
 	
@@ -188,6 +190,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 
 	protected IMIBackend createBackendGDBService(DsfSession session, ILaunchConfiguration lc) {
+		if (compareVersionWith(GDB_7_11_VERSION) >= 0) {
+			return new GDBBackend_7_11(session, lc);
+		}
 		return new GDBBackend(session, lc);
 	}
 

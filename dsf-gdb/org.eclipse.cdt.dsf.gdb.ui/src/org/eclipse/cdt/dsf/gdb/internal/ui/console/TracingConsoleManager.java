@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.ITracedLaunch;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -112,6 +113,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	public void launchesAdded(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			addConsole(launch);
+			addGdbConsole(launch);
 		}
 	}
 
@@ -123,6 +125,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	public void launchesRemoved(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			removeConsole(launch);
+			removeGdbConsole(launch);
 		}
 	}
 	
@@ -132,6 +135,8 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 			// Since we already had a console, don't get rid of it
 			// just yet.  Simply rename it to show it is terminated.
 			renameConsole(launch);
+			renameGdbConsole(launch);
+			disposeGdbConsole(launch);
 		}
 	}
 	
@@ -162,9 +167,33 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		}
 	}
 
+	protected void addGdbConsole(ILaunch launch) {
+		// Tracing consoles are only added to ITracingLaunches
+		if (launch instanceof GdbLaunch) {
+			// Make sure we didn't already add this console
+			if (getGdbConsole(launch) == null) {
+				if (!launch.isTerminated()) {
+					// Create and  new tracing console.
+					GdbConsole console = new GdbConsole(launch, ConsoleMessages.ConsoleMessages_gdb_console_name);
+//					console.setWaterMarks(fMinNumCharacters, fMaxNumCharacters);
+					ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
+				} // else we don't display a new console for a terminated launch
+			}
+		}
+	}
+
 	protected void removeConsole(ILaunch launch) {
 		if (launch instanceof ITracedLaunch) {
 			TracingConsole console = getConsole(launch);
+			if (console != null) {
+				ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{console});
+			}
+		}
+	}
+
+	protected void removeGdbConsole(ILaunch launch) {
+		if (launch instanceof GdbLaunch) {
+			GdbConsole console = getGdbConsole(launch);
 			if (console != null) {
 				ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{console});
 			}
@@ -179,7 +208,25 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 			}		
 		}
 	}
+
+	protected void renameGdbConsole(ILaunch launch) {
+		if (launch instanceof GdbLaunch) {
+			GdbConsole console = getGdbConsole(launch);
+			if (console != null) {
+				console.resetName();
+			}		
+		}
+	}
 	
+	protected void disposeGdbConsole(ILaunch launch) {
+		if (launch instanceof GdbLaunch) {
+			GdbConsole console = getGdbConsole(launch);
+			if (console != null) {
+				console.dispose();
+			}		
+		}
+	}
+
 	private TracingConsole getConsole(ILaunch launch) {
 		ConsolePlugin plugin = ConsolePlugin.getDefault();
 		if (plugin != null) {
@@ -198,6 +245,24 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		return null;
 	}
 	
+	private GdbConsole getGdbConsole(ILaunch launch) {
+		ConsolePlugin plugin = ConsolePlugin.getDefault();
+		if (plugin != null) {
+			// I've seen the plugin be null when running headless JUnit tests
+			IConsoleManager manager = plugin.getConsoleManager(); 
+			IConsole[] consoles = manager.getConsoles();
+			for (IConsole console : consoles) {
+				if (console instanceof GdbConsole) {
+					GdbConsole gdbConsole = (GdbConsole)console;
+					if (gdbConsole.getLaunch().equals(launch)) {
+						return gdbConsole;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	/** @since 2.2 */
 	protected void setWaterMarks(int maxChars) {
 		if (maxChars < (MIN_NUMBER_OF_CHARS_TO_KEEP * 2)) {

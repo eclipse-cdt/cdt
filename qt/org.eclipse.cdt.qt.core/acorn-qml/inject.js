@@ -615,7 +615,8 @@
 						throw new Error("QML only supports ECMA Script Language Specification 5 or older");
 					}
 
-					if (this.options.mode === "qml" || this.options.mode === "qmltypes") {
+					// Disabled 'qmltypes' mode for now since the normal parser can't parse it anyway
+					if (this.options.mode === "qml") {
 						// Force strict mode
 						this.strict = true;
 

@@ -8,6 +8,12 @@ function resolveDirectory(obj) {
 	};
 }
 
+function resolveModule(obj) {
+	return function (module) {
+		return obj.resolveModule(module);
+	};
+}
+
 function requestCallback(obj) {
 	return function (err, data) {
 		obj.callback(err, data);

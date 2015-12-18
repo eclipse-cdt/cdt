@@ -65,6 +65,12 @@
 			}
 			return path;
 		},
+		resolveModule: function (module) {
+			var impl = this.server.options.resolveModule;
+			if (impl) {
+				return impl(module);
+			}
+		},
 		updateDirectoryImportList: function () {
 			if (!this.imports) {
 				this.imports = {};
@@ -961,35 +967,6 @@
 		}
 	}
 
-	/*
-	 * Called when a parse query is made to the server.
-	 */
-	function parse(srv, query, file) {
-		var ast = null;
-		if (query.file) {
-			// Get the file's AST.  It should have been parsed already by the server.
-			ast = file.ast;
-		} else {
-			// Parse the file manually and get the AST.
-			var options = {
-				directSourceFile: file,
-				allowReturnOutsideFunction: true,
-				allowImportExportEverywhere: true,
-				ecmaVersion: srv.options.ecmaVersion
-			};
-			for (var opt in query.options) {
-				options[opt] = query.options[opt];
-			}
-			query.text = query.text || "";
-			var text = srv.signalReturnFirst("preParse", query.text, options) || query.text;
-			ast = infer.parse(text, options);
-			srv.signal("postParse", ast, text);
-		}
-		return {
-			ast: ast
-		};
-	}
-
 	// Register the QML plugin in Tern
 	tern.registerPlugin("qml", function (server) {
 		// First we want to replace the top-level defs array with our own and save the
@@ -1003,19 +980,41 @@
 			if (this.cx) this.reset();
 		};
 
+		// Create a method on the server object that parses a string. We can't make this
+		// a query due to the fact that tern always does its infer processing on every
+		// query regardless of its contents.
+		server.parseString = function (text, options, callback) {
+			try {
+				var opts = {
+					allowReturnOutsideFunction: true,
+					allowImportExportEverywhere: true,
+					ecmaVersion: this.options.ecmaVersion
+				};
+				for (var opt in options) {
+					opts[opt] = options[opt];
+				}
+				text = this.signalReturnFirst("preParse", text, opts) || text;
+				var ast = infer.parse(text, opts);
+				callback(null, {
+					ast: ast
+				});
+				this.signal("postParse", ast, text);
+			} catch (err) {
+				callback(err, null);
+			}
+		};
+
 		// Create the QML Import Handler
 		qmlImportHandler = exports.importHandler = new ImportHandler(server);
 
-		// Define the 'parseFile' and 'parseString' query types.  The reason we need
-		// two separate queries for these is that Tern will not allow us to resolve
-		// a file without 'takesFile' being true. However, if we set 'takesFile' to
-		// true, Tern will not allow a null file in the query.
+		// Define the 'parseFile' query type.
 		tern.defineQueryType("parseFile", {
 			takesFile: true,
-			run: parse
-		});
-		tern.defineQueryType("parseString", {
-			run: parse
+			run: function (srv, query, file) {
+				return {
+					ast: file.ast
+				};
+			}
 		});
 
 		// Hook into server signals

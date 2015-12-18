@@ -55,18 +55,6 @@ var stats, modes = {
 			}
 		}
 	},
-	"Normal QMLTypes": {
-		config: {
-			parse: acorn.parse,
-			options: {
-				mode: "qmltypes"
-			},
-			filter: function (test) {
-				var opts = test.options || {};
-				return opts.normal !== false && opts.qmltypes !== false;
-			}
-		}
-	},
 	"Loose QMLTypes": {
 		config: {
 			parse: acorn.parse_dammit,

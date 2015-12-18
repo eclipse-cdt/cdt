@@ -34,11 +34,14 @@ import org.eclipse.cdt.qt.core.qmljs.IQmlASTNode;
 @SuppressWarnings("nls")
 public class QMLAnalyzer implements IQMLAnalyzer {
 
+	private QMLModuleResolver moduleResolver;
 	private ScriptEngine engine;
 	private Invocable invoke;
 	private Object tern;
 
+	@Override
 	public void load() throws ScriptException, IOException, NoSuchMethodException {
+		moduleResolver = new QMLModuleResolver(this);
 		engine = new ScriptEngineManager().getEngineByName("nashorn");
 		invoke = (Invocable) engine;
 
@@ -88,6 +91,7 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 			return fixPathString(path.normalize().toString());
 		};
 		options.put("resolveDirectory", invoke.invokeFunction("resolveDirectory", resolveDirectory));
+		options.put("resolveModule", invoke.invokeFunction("resolveModule", moduleResolver));
 
 		synchronized (this) {
 			tern = invoke.invokeFunction("newTernServer", options);
@@ -203,19 +207,13 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 	public IQmlASTNode parseString(String text, String mode, boolean locations, boolean ranges)
 			throws NoSuchMethodException, ScriptException {
 		waitUntilLoaded();
-		Bindings query = engine.createBindings();
-		query.put("type", "parseString");
-		query.put("text", text);
 		Bindings options = engine.createBindings();
 		options.put("mode", mode);
 		options.put("locations", locations);
 		options.put("ranges", ranges);
-		query.put("options", options);
-		Bindings request = engine.createBindings();
-		request.put("query", query);
 
 		ASTCallback callback = new ASTCallback();
-		invoke.invokeMethod(tern, "request", request, invoke.invokeFunction("requestCallback", callback));
+		invoke.invokeMethod(tern, "parseString", text, options, invoke.invokeFunction("requestCallback", callback));
 		return callback.getAST();
 	}
 

@@ -40,6 +40,11 @@ public class QtInstall implements IQtInstall {
 		return qmakePath.resolve("../lib"); //$NON-NLS-1$
 	}
 
+	@Override
+	public Path getQmlPath() {
+		return qmakePath.resolve("../../qml"); //$NON-NLS-1$
+	}
+
 	public static String getSpec(String qmakePath) throws IOException {
 		Process proc = new ProcessBuilder(qmakePath, "-query", "QMAKE_XSPEC").start(); //$NON-NLS-1$ //$NON-NLS-2$
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {

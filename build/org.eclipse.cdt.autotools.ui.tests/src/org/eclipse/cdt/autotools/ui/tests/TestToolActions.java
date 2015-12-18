@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.ui.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -72,7 +72,7 @@ public class TestToolActions extends AbstractTest {
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// Verify we still don't have an aclocal.m4 file yet
 		f = new File(path.toOSString());
-		assertTrue(!f.exists());
+		assertFalse(f.exists());
 		// Now lets run aclocal for our hello world project which hasn't had any
 		// autotool files generated yet.
 		clickProjectContextMenu("Invoke Autotools", "Invoke Aclocal");

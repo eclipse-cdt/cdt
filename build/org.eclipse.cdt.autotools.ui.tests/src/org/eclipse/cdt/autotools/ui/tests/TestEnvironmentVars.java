@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.ui.tests;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedWriter;
@@ -69,7 +70,7 @@ public class TestEnvironmentVars extends AbstractTest {
 		Pattern p = Pattern.compile(".*some_var.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
 		// We shouldn't see some_var anywhere in the console
-		assertTrue(!m.matches());
+		assertFalse(m.matches());
 
 		setEnvVar();
 	}

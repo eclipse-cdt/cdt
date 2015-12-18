@@ -117,8 +117,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		fTree.addSelectionChangedListener(event -> handleOptionSelection());
 		fTree.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		// Create a temporary default AutotoolsConfiguration to use for label info
-		IAConfiguration tmp = AutotoolsConfigurationManager.getInstance().createDefaultConfiguration(page.getProject(),
-				"");
+		IAConfiguration tmp = AutotoolsConfigurationManager.getInstance().createDefaultConfiguration("");
 		fTree.setLabelProvider(new ToolListLabelProvider(tmp));
 	}
 

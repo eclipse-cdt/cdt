@@ -19,6 +19,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -55,6 +57,9 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     private char[] fSuffix = CharArrayUtils.EMPTY;
     private boolean fIsCompilerSuffix = true;
 	private ICPPEvaluation fEvaluation;
+	
+	private IBinding fUserDefinedLiteralOperator;
+	private IASTImplicitName[] fImplicitNames;
 
     public CPPASTLiteralExpression() {
 	}
@@ -194,6 +199,13 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	            default: break;
 	        }
 		}
+        
+        if (action.shouldVisitImplicitNames) {
+        	for (IASTImplicitName name : getImplicitNames()) {
+        		if (!name.accept(action)) return false;
+        	}
+        }
+        
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -287,16 +299,28 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		return fSuffix.length > 0 ? getUserDefinedLiteralOperatorType() : new CPPBasicType(getBasicCharKind(), 0, this);
     }
 	
+	private IBinding getUserDefinedLiteralOperator() {
+		if (!fIsCompilerSuffix && fUserDefinedLiteralOperator == null) {
+			try {
+				fUserDefinedLiteralOperator = CPPSemantics.findUserDefinedLiteralOperator(this);
+			} catch (DOMException e) {
+			}
+			if (fUserDefinedLiteralOperator == null) {
+				fUserDefinedLiteralOperator = new ProblemBinding(this, ISemanticProblem.BINDING_NOT_FOUND, 
+						fSuffix);
+			}
+		}
+		return fUserDefinedLiteralOperator;
+	}
+	
 	// 13.5.8
 	private IType getUserDefinedLiteralOperatorType() {
 		IType ret = new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 		
-		try {
-			IBinding func = CPPSemantics.findUserDefinedLiteralOperator(this);
-			if (func != null && func instanceof ICPPFunction) {
-				ret = ((ICPPFunction) func).getType().getReturnType();
-			}
-		} catch (DOMException e) { /* ignore and return the problem type */ }
+		IBinding func = getUserDefinedLiteralOperator();
+		if (func != null && func instanceof ICPPFunction) {
+			ret = ((ICPPFunction) func).getType().getReturnType();
+		}
 		
 		return ret;
 	}
@@ -659,5 +683,21 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	@Override
 	public ValueCategory getValueCategory() {
 		return getKind() == lk_string_literal ? LVALUE : PRVALUE;
+	}
+
+	@Override
+	public IASTImplicitName[] getImplicitNames() {
+		if (fImplicitNames == null) {
+			if (fIsCompilerSuffix) {
+				fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			} else {
+				CPPASTImplicitName operatorName = new CPPASTImplicitName(fSuffix, this);
+				operatorName.setOperator(true);
+				operatorName.setBinding(getUserDefinedLiteralOperator());
+				operatorName.setOffsetAndLength(getOffset() + fValue.length, fSuffix.length);
+				fImplicitNames = new IASTImplicitName[] { operatorName };
+			}
+		}
+		return fImplicitNames;
 	}
 }

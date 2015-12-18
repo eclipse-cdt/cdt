@@ -872,7 +872,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				"MakeGenerator.make.message", msgs)); //$NON-NLS-1$
 
 
-		ErrorParserManager epm = null;
 		StringBuffer buf = new StringBuffer();
 
 		// Launch command - main invocation
@@ -911,92 +910,92 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 			// Hook up an error parser manager
 			URI uri = URIUtil.toURI(runPath);
-			epm = new ErrorParserManager(project, uri, this);
-			epm.setOutputStream(consoleOutStream);
-			epm.addErrorParser(ErrorParser.ID, new ErrorParser(getSourcePath(), getBuildPath()));
+			try (ErrorParserManager epm = new ErrorParserManager(project, uri, this)) {
+				epm.setOutputStream(consoleOutStream);
+				epm.addErrorParser(ErrorParser.ID, new ErrorParser(getSourcePath(), getBuildPath()));
 
-			OutputStream stdout = epm.getOutputStream();
-			OutputStream stderr = stdout;
+				OutputStream stdout = epm.getOutputStream();
+				OutputStream stderr = stdout;
 
-			launcher.showCommand(true);
-			Process proc = launcher.execute(commandPath, configTargets, env, runPath, SubMonitor.convert(monitor));
-			int exitValue = 0;
-			if (proc != null) {
-				try {
-					// Close the input of the process since we will never write to
-					// it
-					proc.getOutputStream().close();
-				} catch (IOException e) {
-				}
+				launcher.showCommand(true);
+				Process proc = launcher.execute(commandPath, configTargets, env, runPath, SubMonitor.convert(monitor));
+				int exitValue = 0;
+				if (proc != null) {
+					try {
+						// Close the input of the process since we will never
+						// write to
+						// it
+						proc.getOutputStream().close();
+					} catch (IOException e) {
+					}
 
-				if (launcher.waitAndRead(stdout, stderr, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
+					if (launcher.waitAndRead(stdout, stderr, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
+						errMsg = launcher.getErrorMessage();
+					}
+
+					// There can be a problem looking at the process exit value,
+					// so prevent an exception from occurring.
+					if (errMsg == null || errMsg.length() == 0) {
+						try {
+							exitValue = proc.exitValue();
+						} catch (IllegalThreadStateException e) {
+							try {
+								proc.waitFor();
+							} catch (InterruptedException e1) {
+								e1.printStackTrace();
+							}
+							exitValue = proc.exitValue();
+						}
+					}
+
+					// Force a resync of the projects without allowing the user
+					// to
+					// cancel.
+					// This is probably unkind, but short of this there is no
+					// way to
+					// ensure
+					// the UI is up-to-date with the build results
+					// monitor.subTask(ManagedMakeMessages
+					// .getResourceString(REFRESH));
+					monitor.subTask(AutotoolsPlugin.getResourceString("MakeGenerator.refresh")); //$NON-NLS-1$
+					try {
+						project.refreshLocal(IResource.DEPTH_INFINITE, null);
+					} catch (CoreException e) {
+						monitor.subTask(AutotoolsPlugin.getResourceString("MakeGenerator.refresh.error")); //$NON-NLS-1$
+					}
+				} else {
 					errMsg = launcher.getErrorMessage();
 				}
 
-				// There can be a problem looking at the process exit value,
-				// so prevent an exception from occurring.
-				if (errMsg == null || errMsg.length() == 0) {
-					try {
-						exitValue = proc.exitValue();
-					} catch (IllegalThreadStateException e) {
-						try {
-							proc.waitFor();
-						} catch (InterruptedException e1) {
-							e1.printStackTrace();
-						}
-						exitValue = proc.exitValue();
-					}
-				}
-
-				// Force a resync of the projects without allowing the user to
-				// cancel.
-				// This is probably unkind, but short of this there is no way to
-				// ensure
-				// the UI is up-to-date with the build results
-				// monitor.subTask(ManagedMakeMessages
-				// .getResourceString(REFRESH));
-				monitor.subTask(AutotoolsPlugin.getResourceString("MakeGenerator.refresh")); //$NON-NLS-1$
-				try {
-					project.refreshLocal(IResource.DEPTH_INFINITE, null);
-				} catch (CoreException e) {
-					monitor.subTask(AutotoolsPlugin
-							.getResourceString("MakeGenerator.refresh.error")); //$NON-NLS-1$
-				}
-			} else {
-				errMsg = launcher.getErrorMessage();
-			}
-
-			// Report either the success or failure of our mission
-			buf = new StringBuffer();
-			if (errMsg != null && errMsg.length() > 0) {
-				String errorDesc = AutotoolsPlugin
-						.getResourceString("MakeGenerator.generation.error"); //$NON-NLS-1$
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				buf.append(errorDesc);
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-				rc = IStatus.ERROR;
-			} else if (exitValue >= 1 || exitValue < 0) {
-				// We have an invalid return code from configuration.
-				String[] errArg = new String[2];
-				errArg[0] = Integer.toString(proc.exitValue());
-				errArg[1] = commandPath.toString();
-				errMsg = AutotoolsPlugin.getFormattedString(
-						"MakeGenerator.config.error", errArg); //$NON-NLS-1$
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				buf.append(AutotoolsPlugin.getResourceString("MakeGenerator.generation.error")); //$NON-NLS-1$
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				if (proc.exitValue() == 1)
-					rc = IStatus.WARNING;
-				else
+				// Report either the success or failure of our mission
+				buf = new StringBuffer();
+				if (errMsg != null && errMsg.length() > 0) {
+					String errorDesc = AutotoolsPlugin.getResourceString("MakeGenerator.generation.error"); //$NON-NLS-1$
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					buf.append(errorDesc);
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 					rc = IStatus.ERROR;
-			} else {
-				// Report a successful build
-				String successMsg = 
-						AutotoolsPlugin.getResourceString("MakeGenerator.success"); //$NON-NLS-1$
-				buf.append(successMsg);
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				rc = IStatus.OK;
+				} else if (exitValue >= 1 || exitValue < 0) {
+					// We have an invalid return code from configuration.
+					String[] errArg = new String[2];
+					errArg[0] = Integer.toString(proc.exitValue());
+					errArg[1] = commandPath.toString();
+					errMsg = AutotoolsPlugin.getFormattedString("MakeGenerator.config.error", errArg); //$NON-NLS-1$
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					buf.append(AutotoolsPlugin.getResourceString("MakeGenerator.generation.error")); //$NON-NLS-1$
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					if (proc.exitValue() == 1)
+						rc = IStatus.WARNING;
+					else
+						rc = IStatus.ERROR;
+				} else {
+					// Report a successful build
+					String successMsg = AutotoolsPlugin.getResourceString("MakeGenerator.success"); //$NON-NLS-1$
+					buf.append(successMsg);
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					rc = IStatus.OK;
+				}
 			}
 
 			// Write message on the console
@@ -1008,9 +1007,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// .getResourceString(MARKERS));
 			// epm.reportProblems();
 
-		} finally {
-			if (epm != null)
-				epm.close();
 		}
 		
 		// If we have an error and no specific error markers, use the default error marker.
@@ -1176,7 +1172,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				"MakeGenerator.make.message", msgs)); //$NON-NLS-1$
 
 
-		ErrorParserManager epm = null;
 		StringBuffer buf = new StringBuffer();
 
 		// Launch command - main invocation
@@ -1246,95 +1241,95 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 			// Hook up an error parser manager
 			URI uri = URIUtil.toURI(runPath);
-			epm = new ErrorParserManager(project, uri, this);
-			epm.setOutputStream(consoleOutStream);
-			epm.addErrorParser(ErrorParser.ID, new ErrorParser(getSourcePath(), getBuildPath()));
+			try (ErrorParserManager epm = new ErrorParserManager(project, uri, this)) {
+				epm.setOutputStream(consoleOutStream);
+				epm.addErrorParser(ErrorParser.ID, new ErrorParser(getSourcePath(), getBuildPath()));
 
-			OutputStream stdout = epm.getOutputStream();
-			OutputStream stderr = stdout;
+				OutputStream stdout = epm.getOutputStream();
+				OutputStream stderr = stdout;
 
-			launcher.showCommand(true);
-			// Run the shell script via shell command.
-			Process proc = launcher.execute(new Path(SHELL_COMMAND), configTargets, env, runPath,
-					SubMonitor.convert(monitor));
-			
-			int exitValue = 0;
-			if (proc != null) {
-				try {
-					// Close the input of the process since we will never write to
-					// it
-					proc.getOutputStream().close();
-				} catch (IOException e) {
-				}
+				launcher.showCommand(true);
+				// Run the shell script via shell command.
+				Process proc = launcher.execute(new Path(SHELL_COMMAND), configTargets, env, runPath,
+						SubMonitor.convert(monitor));
 
-				if (launcher.waitAndRead(stdout, stderr, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
+				int exitValue = 0;
+				if (proc != null) {
+					try {
+						// Close the input of the process since we will never
+						// write to
+						// it
+						proc.getOutputStream().close();
+					} catch (IOException e) {
+					}
+
+					if (launcher.waitAndRead(stdout, stderr, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
+						errMsg = launcher.getErrorMessage();
+					}
+
+					// There can be a problem looking at the process exit value,
+					// so prevent an exception from occurring.
+					if (errMsg == null || errMsg.length() == 0) {
+						try {
+							exitValue = proc.exitValue();
+						} catch (IllegalThreadStateException e) {
+							try {
+								proc.waitFor();
+							} catch (InterruptedException e1) {
+								e1.printStackTrace();
+							}
+							exitValue = proc.exitValue();
+						}
+					}
+
+					// Force a resync of the projects without allowing the user
+					// to
+					// cancel.
+					// This is probably unkind, but short of this there is no
+					// way to
+					// ensure
+					// the UI is up-to-date with the build results
+					// monitor.subTask(ManagedMakeMessages
+					// .getResourceString(REFRESH));
+					monitor.subTask(AutotoolsPlugin.getResourceString("MakeGenerator.refresh")); //$NON-NLS-1$
+					try {
+						project.refreshLocal(IResource.DEPTH_INFINITE, null);
+					} catch (CoreException e) {
+						monitor.subTask(AutotoolsPlugin.getResourceString("MakeGenerator.refresh.error")); //$NON-NLS-1$
+					}
+				} else {
 					errMsg = launcher.getErrorMessage();
 				}
-				
-				// There can be a problem looking at the process exit value,
-				// so prevent an exception from occurring.
-				if (errMsg == null || errMsg.length() == 0) {
-					try {
-						exitValue = proc.exitValue();
-					} catch (IllegalThreadStateException e) {
-						try {
-							proc.waitFor();
-						} catch (InterruptedException e1) {
-							e1.printStackTrace();
-						}
-						exitValue = proc.exitValue();
-					}
-				}
 
-				// Force a resync of the projects without allowing the user to
-				// cancel.
-				// This is probably unkind, but short of this there is no way to
-				// ensure
-				// the UI is up-to-date with the build results
-				// monitor.subTask(ManagedMakeMessages
-				// .getResourceString(REFRESH));
-				monitor.subTask(AutotoolsPlugin.getResourceString("MakeGenerator.refresh")); //$NON-NLS-1$
-				try {
-					project.refreshLocal(IResource.DEPTH_INFINITE, null);
-				} catch (CoreException e) {
-					monitor.subTask(AutotoolsPlugin
-							.getResourceString("MakeGenerator.refresh.error")); //$NON-NLS-1$
-				}
-			} else {
-				errMsg = launcher.getErrorMessage();
-			}
-
-			// Report either the success or failure of our mission
-			buf = new StringBuffer();
-			if (errMsg != null && errMsg.length() > 0) {
-				String errorDesc = AutotoolsPlugin
-						.getResourceString("MakeGenerator.generation.error"); //$NON-NLS-1$
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				buf.append(errorDesc);
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-				rc = IStatus.ERROR;
-			} else if (exitValue >= 1 || exitValue < 0) {
-				// We have an invalid return code from configuration.
-				String[] errArg = new String[2];
-				errArg[0] = Integer.toString(proc.exitValue());
-				errArg[1] = commandPath.toString();
-				errMsg = AutotoolsPlugin.getFormattedString(
-						"MakeGenerator.config.error", errArg); //$NON-NLS-1$
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				buf.append(AutotoolsPlugin.getResourceString("MakeGenerator.generation.error")); //$NON-NLS-1$
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				if (proc.exitValue() == 1)
-					rc = IStatus.WARNING;
-				else
+				// Report either the success or failure of our mission
+				buf = new StringBuffer();
+				if (errMsg != null && errMsg.length() > 0) {
+					String errorDesc = AutotoolsPlugin.getResourceString("MakeGenerator.generation.error"); //$NON-NLS-1$
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					buf.append(errorDesc);
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 					rc = IStatus.ERROR;
-			} else {
-				// Report a successful build
-				String successMsg = 
-						AutotoolsPlugin.getResourceString("MakeGenerator.success"); //$NON-NLS-1$
-				buf.append(successMsg);
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				rc = IStatus.OK;
+				} else if (exitValue >= 1 || exitValue < 0) {
+					// We have an invalid return code from configuration.
+					String[] errArg = new String[2];
+					errArg[0] = Integer.toString(proc.exitValue());
+					errArg[1] = commandPath.toString();
+					errMsg = AutotoolsPlugin.getFormattedString("MakeGenerator.config.error", errArg); //$NON-NLS-1$
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					buf.append(AutotoolsPlugin.getResourceString("MakeGenerator.generation.error")); //$NON-NLS-1$
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					if (proc.exitValue() == 1)
+						rc = IStatus.WARNING;
+					else
+						rc = IStatus.ERROR;
+				} else {
+					// Report a successful build
+					String successMsg = AutotoolsPlugin.getResourceString("MakeGenerator.success"); //$NON-NLS-1$
+					buf.append(successMsg);
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+					rc = IStatus.OK;
+				}
 			}
 
 			// Write message on the console
@@ -1345,9 +1340,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// monitor.subTask(ManagedMakeMessages
 			// .getResourceString(MARKERS));
 			// epm.reportProblems();
-		} finally {
-			if (epm != null)
-				epm.close();
 		}
 		
 		// If we have an error and no specific error markers, use the default error marker.

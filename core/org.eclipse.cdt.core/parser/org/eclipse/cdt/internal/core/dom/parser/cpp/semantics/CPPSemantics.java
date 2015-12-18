@@ -3137,7 +3137,7 @@ public class CPPSemantics {
 		
 		if (funcs.length == 0) {
 			// S shall not be empty
-			return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_INVALID_TYPE);
+			return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 		}
 		
 		if (kind == IASTLiteralExpression.lk_integer_constant || kind == IASTLiteralExpression.lk_float_constant) {
@@ -3209,7 +3209,7 @@ public class CPPSemantics {
 			}
 			else if (ret == null) {
 				// Couldn't find a valid operator
-				return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_INVALID_TYPE);
+				return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_INVALID_OVERLOAD);
 			}
 		} else if (kind == IASTLiteralExpression.lk_string_literal) {
 			/*

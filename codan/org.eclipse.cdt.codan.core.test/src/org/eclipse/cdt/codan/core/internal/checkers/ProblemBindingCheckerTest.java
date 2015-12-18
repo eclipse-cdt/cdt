@@ -95,4 +95,18 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 		IMarker marker = checkErrorLine(3, ProblemBindingChecker.ERR_ID_FunctionResolutionProblem);
 		assertFalse(marker.getAttribute(IMarker.MESSAGE, "").contains("MACRO"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
+
+	//	auto d = 42_waldo;
+	public void testNonexistentUDLOperator_484619() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(1, ProblemBindingChecker.ERR_ID_FunctionResolutionProblem);
+	}
+
+	//	struct R {};
+	//	R operator "" _waldo(const char*, unsigned long);  // expects a string literal
+	//	auto d = 42_waldo;                                 // passing an integer
+	public void testUDLOperatorWithWrongType_484619() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(3, ProblemBindingChecker.ERR_ID_InvalidArguments);
+	}
 }

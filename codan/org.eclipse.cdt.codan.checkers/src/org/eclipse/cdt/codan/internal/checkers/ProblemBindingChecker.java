@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -244,6 +245,9 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 				return true;
 			}
 		} else if (parentNode instanceof ICPPASTDeclarator && name instanceof IASTImplicitName) {
+			return true;
+		} else if (parentNode instanceof ICPPASTLiteralExpression && name instanceof IASTImplicitName) {
+			// Implicit name for user-defined literal operator.
 			return true;
 		}
 		return false;

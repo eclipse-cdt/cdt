@@ -132,7 +132,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		if (fType == null)
 			fType= computeType(point);
 		return fType;
@@ -209,7 +209,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 			if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
 				return EvalFixed.INCOMPLETE;
 			} else if (packSize != CPPTemplates.PACK_SIZE_DEFER) {
-				return new EvalFixed(getTypeOrFunctionSet(point), getValueCategory(point), Value.create(packSize));
+				return new EvalFixed(getType(point), getValueCategory(point), Value.create(packSize));
 			}
 		}
 		IType type = CPPTemplates.instantiateType(fOrigType, tpMap, packOffset, within, point);

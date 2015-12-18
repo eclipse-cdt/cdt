@@ -137,7 +137,7 @@ public class CPPASTIdExpression extends ASTNode
 
 	@Override
 	public IType getExpressionType() {
-		IType type= getEvaluation().getTypeOrFunctionSet(this);
+		IType type= getEvaluation().getType(this);
 		if (type instanceof FunctionSetType) {
 			IBinding binding= fName.resolveBinding();
 			if (binding instanceof IFunction) {

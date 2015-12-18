@@ -148,7 +148,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		return new FunctionSetType(fFunctionSet, fAddressOf);
 	}
 

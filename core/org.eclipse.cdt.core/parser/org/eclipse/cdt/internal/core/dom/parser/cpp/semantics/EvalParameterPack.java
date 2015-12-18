@@ -72,9 +72,9 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		if (fType == null) {
-			IType type = fExpansionPattern.getTypeOrFunctionSet(point);
+			IType type = fExpansionPattern.getType(point);
 			if (type == null) {
 				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 			} else {

@@ -43,7 +43,7 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 				// Avoid nesting EvalFixed's as nesting causes the signature to be different.
 				fEvaluation = value.getEvaluation();
 			} else {
-				fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(point),
+				fEvaluation= new EvalFixed(evaluation.getType(point),
 						evaluation.getValueCategory(point), value);
 			}
 		}
@@ -85,17 +85,17 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 
 	@Override
 	public IType getTypeOfNonTypeValue() {
-		return fEvaluation.getTypeOrFunctionSet(null);
+		return fEvaluation.getType(null);
 	}
 
 	@Override
 	public boolean isPackExpansion() {
-		return fEvaluation.getTypeOrFunctionSet(null) instanceof ICPPParameterPackType;
+		return fEvaluation.getType(null) instanceof ICPPParameterPackType;
 	}
 
 	@Override
 	public ICPPTemplateArgument getExpansionPattern() {
-		IType type = fEvaluation.getTypeOrFunctionSet(null);
+		IType type = fEvaluation.getType(null);
 		if (type instanceof ICPPParameterPackType) {
 			IType t= ((ICPPParameterPackType) type).getType();
 			if (t != null) {

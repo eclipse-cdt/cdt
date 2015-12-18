@@ -102,7 +102,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		if (isTypeDependent())
 			return null;
 
-		IType t= SemanticUtil.getNestedType(fArguments[0].getTypeOrFunctionSet(point), TDEF | REF | CVTYPE);
+		IType t= SemanticUtil.getNestedType(fArguments[0].getType(point), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
 	    	return CPPSemantics.findOverloadedOperator(point, getTemplateDefinitionScope(), fArguments, t, 
 	    			OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
@@ -111,7 +111,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
     }
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		if (fType == null)
 			fType= computeType(point);
 		return fType;
@@ -126,7 +126,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
 		final ICPPEvaluation arg0 = fArguments[0];
-		IType t= SemanticUtil.getNestedType(arg0.getTypeOrFunctionSet(point), TDEF | REF | CVTYPE);
+		IType t= SemanticUtil.getNestedType(arg0.getType(point), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
 			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 		}
@@ -159,7 +159,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
     	if (overload != null)
     		return valueCategoryFromFunctionCall(overload);
 
-		IType t= fArguments[0].getTypeOrFunctionSet(point);
+		IType t= fArguments[0].getType(point);
 		if (t instanceof IPointerType) {
 			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
 		}

@@ -304,7 +304,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getTypeOrFunctionSet(this);
+    	return getEvaluation().getType(this);
     }
 
 	@Override

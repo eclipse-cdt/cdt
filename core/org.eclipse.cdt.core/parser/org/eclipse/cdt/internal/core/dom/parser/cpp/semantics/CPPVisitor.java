@@ -2008,7 +2008,7 @@ public class CPPVisitor extends ASTQueries {
 	        			sizeValue = Value.create(clauses.length);
 	        		} else if (clause instanceof ICPPASTLiteralExpression) {
 	        			ICPPEvaluation value = ((ICPPASTLiteralExpression) clause).getEvaluation();
-	        			IType valueType = value.getTypeOrFunctionSet(clause);
+	        			IType valueType = value.getType(clause);
 	        			if (valueType instanceof IArrayType) {
 	        				sizeValue = ((IArrayType) valueType).getSize();
 	        			}
@@ -2173,7 +2173,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		type = decorateType(type, declSpec, declarator);
 		final ICPPEvaluation evaluation = initClause.getEvaluation();
-		initType= evaluation.getTypeOrFunctionSet(declarator);
+		initType= evaluation.getType(declarator);
 		valueCat= evaluation.getValueCategory(declarator);
 		if (initType == null || initType instanceof ISemanticProblem) {
 			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);

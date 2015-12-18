@@ -220,7 +220,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		if (fType == null) {
 			fType= computeType(point);
 		}

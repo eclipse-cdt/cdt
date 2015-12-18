@@ -135,7 +135,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
 
 	@Override
 	public IType getExpressionType() {
-		return getEvaluation().getTypeOrFunctionSet(this);
+		return getEvaluation().getType(this);
 	}
 	
 	@Override

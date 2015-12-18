@@ -195,7 +195,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getTypeOrFunctionSet(this);
+    	return getEvaluation().getType(this);
     }
 
 	@Override

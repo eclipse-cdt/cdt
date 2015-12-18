@@ -71,7 +71,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 	
 	@Override
 	public IType getExpressionType() {
-		return getEvaluation().getTypeOrFunctionSet(this);
+		return getEvaluation().getType(this);
 	}
 
 	@Override

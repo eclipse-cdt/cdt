@@ -213,7 +213,7 @@ public abstract class VariableReadWriteFlags {
 
 	private IType getArgumentType(IASTInitializerClause argument) {
 		if (argument instanceof ICPPASTInitializerClause) {
-			return ((ICPPASTInitializerClause) argument).getEvaluation().getTypeOrFunctionSet(argument);
+			return ((ICPPASTInitializerClause) argument).getEvaluation().getType(argument);
 		} else if (argument instanceof IASTExpression) {
 			return ((IASTExpression) argument).getExpressionType();
 		}

@@ -190,7 +190,7 @@ public class CPPASTConditionalExpression extends ASTNode
 	
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getTypeOrFunctionSet(this);
+    	return getEvaluation().getType(this);
     }
     
 	@Override

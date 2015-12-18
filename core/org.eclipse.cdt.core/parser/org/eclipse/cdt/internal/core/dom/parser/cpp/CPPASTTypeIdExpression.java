@@ -117,7 +117,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getTypeOrFunctionSet(this);
+    	return getEvaluation().getType(this);
     }
 
 	@Override

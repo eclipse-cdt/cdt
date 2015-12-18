@@ -71,8 +71,8 @@ public class EvalCompound extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
-		return fDelegate.getTypeOrFunctionSet(point);
+	public IType getType(IASTNode point) {
+		return fDelegate.getType(point);
 	}
 
 	@Override

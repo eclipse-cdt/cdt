@@ -218,7 +218,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     
     @Override
 	public IType getExpressionType() {
-		IType type= getEvaluation().getTypeOrFunctionSet(this);
+		IType type= getEvaluation().getType(this);
 		if (type instanceof FunctionSetType) {
 			type= fOperand.getExpressionType();
 			if (fOperator == op_amper) {

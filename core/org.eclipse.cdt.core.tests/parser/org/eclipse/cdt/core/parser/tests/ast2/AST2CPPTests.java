@@ -11558,13 +11558,10 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	// // Test name lacking a space
+	// int operator ""X(const char* s) { return 0; }
 	// int operator ""_X(const char* s) { return 0; }
 	public void testUserDefinedLiteralNoWhiteSpace1() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, false);
-		IASTDeclaration decl = tu.getDeclarations()[0];
-
-		assertTrue(decl instanceof IASTProblemDeclaration);
-		assertEquals(IProblem.SYNTAX_ERROR, ((IASTProblemDeclaration)decl).getProblem().getID());
+		parseAndCheckBindings();
 	}
 
 	// // Test literals with spaces before the suffix

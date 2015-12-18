@@ -851,6 +851,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			op= OverloadableOperator.SHIFTR;
 			break;
 		case IToken.tSTRING: // User defined literal T operator "" SUFFIX
+		{
 			IToken strOp = consume();
 
 			// Should be an empty string
@@ -858,11 +859,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				endOffset = strOp.getEndOffset();
 
 				IToken ident = consume(IToken.tIDENTIFIER);
-
-				// Make sure there is at least one white space
-				if (ident.getOffset() <= endOffset) {
-					break;
-				}
 
 				char[] operatorName = CharArrayUtils.concat(firstToken.getCharImage(), " ".toCharArray()); //$NON-NLS-1$
 				operatorName = CharArrayUtils.concat(operatorName,  strOp.getCharImage());
@@ -873,6 +869,26 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				return name;
 			}
 			break;
+		}
+		case IToken.tUSER_DEFINED_STRING_LITERAL: // User defined literal T operator ""SUFFIX
+		{
+			IToken strOp = consume();
+			String image = strOp.getImage();
+			int startQuote = image.indexOf('"');
+			int endQuote = image.lastIndexOf('"');
+			if (startQuote != -1 && endQuote == startQuote + 1) {
+				char[] ident = image.substring(endQuote + 1).toCharArray();
+				
+				char[] operatorName = CharArrayUtils.concat(firstToken.getCharImage(), " ".toCharArray()); //$NON-NLS-1$
+				operatorName = CharArrayUtils.concat(operatorName,  strOp.getCharImage());
+				operatorName = CharArrayUtils.concat(operatorName, ident);
+
+				IASTName name = getNodeFactory().newOperatorName(operatorName);
+				setRange(name, firstToken.getOffset(), strOp.getEndOffset());
+				return name;
+			}
+			break;
+		}
 		default:
 			op= OverloadableOperator.valueOf(LA(1));
 			if (op != null) {

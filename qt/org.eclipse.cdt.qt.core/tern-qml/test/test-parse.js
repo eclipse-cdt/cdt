@@ -61,12 +61,7 @@ test("{Parse given file}", function (server, callback, name) {
 });
 
 test("{Parse empty text}", function (server, callback, name) {
-	server.request({
-		query: {
-			type: "parseString",
-			text: ""
-		}
-	}, function (err, resp) {
+	server.parseString("", null, function (err, resp) {
 		if (err) {
 			throw err;
 		}
@@ -80,12 +75,7 @@ test("{Parse empty text}", function (server, callback, name) {
 });
 
 test("{Parse text no mode}", function (server, callback, name) {
-	server.request({
-		query: {
-			type: "parseString",
-			text: "import QtQuick 2.0\nModule {\n\tComponent {\n\t}\n}"
-		}
-	}, function (err, resp) {
+	server.parseString("import QtQuick 2.0\nModule {\n\tComponent {\n\t}\n}", null, function (err, resp) {
 		if (err) {
 			throw err;
 		}
@@ -99,14 +89,8 @@ test("{Parse text no mode}", function (server, callback, name) {
 });
 
 test("{Parse text (mode: qmltypes)}", function (server, callback, name) {
-	server.request({
-		query: {
-			type: "parseString",
-			text: "QtObject {\n\tobj: {\n\t\tprop1: 1,\n\t\tprop2: 2\n\t}\n}",
-			options: {
-				mode: "qmltypes"
-			}
-		}
+	server.parseString("QtObject {\n\tobj: {\n\t\tprop1: 1,\n\t\tprop2: 2\n\t}\n}", {
+		mode: "qmltypes"
 	}, function (err, resp) {
 		if (err) {
 			throw err;
@@ -121,15 +105,9 @@ test("{Parse text (mode: qmltypes)}", function (server, callback, name) {
 });
 
 test("{Parse text with locations}", function (server, callback, name) {
-	server.request({
-		query: {
-			type: "parseString",
-			text: "var w = 3",
-			options: {
-				mode: "js",
-				locations: true
-			}
-		}
+	server.parseString("var w = 3", {
+		mode: "js",
+		locations: true
 	}, function (err, resp) {
 		if (err) {
 			throw err;

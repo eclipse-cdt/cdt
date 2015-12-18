@@ -25,4 +25,6 @@ public interface IQtInstall {
 
 	Path getLibPath();
 
+	Path getQmlPath();
+
 }

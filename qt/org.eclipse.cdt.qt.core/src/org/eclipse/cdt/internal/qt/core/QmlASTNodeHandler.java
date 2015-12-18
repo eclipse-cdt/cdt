@@ -150,11 +150,20 @@ public class QmlASTNodeHandler implements InvocationHandler {
 				methodResults.put(mName, handleObject(node.get(pName), method.getReturnType()));
 			}
 		}
-		return methodResults.get(method.getName());
+		return methodResults.get(mName);
 	}
 
 	private Object handleObject(Object value, Class<?> expectedType) throws Throwable {
-		if (expectedType.isAssignableFrom(ISourceLocation.class)) {
+		if (expectedType.isArray()) {
+			Object arr = Array.newInstance(expectedType.getComponentType(), ((Bindings) value).size());
+			int ctr = 0;
+			for (Object obj : ((Bindings) value).values()) {
+				Array.set(arr, ctr++, handleObject(obj, expectedType.getComponentType()));
+			}
+			return arr;
+		} else if (expectedType.equals(Object.class)) {
+			return value;
+		} else if (expectedType.isAssignableFrom(ISourceLocation.class)) {
 			// ISourceLocation doesn't correspond to an AST Node and needs to be created manually from
 			// the given Bindings.
 			if (value instanceof Bindings) {
@@ -170,13 +179,6 @@ public class QmlASTNodeHandler implements InvocationHandler {
 				return loc;
 			}
 			return new SourceLocation();
-		} else if (expectedType.isArray()) {
-			Object arr = Array.newInstance(expectedType.getComponentType(), ((Bindings) value).size());
-			int ctr = 0;
-			for (Object obj : ((Bindings) value).values()) {
-				Array.set(arr, ctr++, handleObject(obj, expectedType.getComponentType()));
-			}
-			return arr;
 		} else if (expectedType.isAssignableFrom(List.class)) {
 			if (value instanceof Bindings) {
 				List<Object> list = new ArrayList<>();

@@ -51,7 +51,7 @@ public class HeuristicResolver {
 				EvalID evalId = (EvalID) evaluation;
 				ICPPEvaluation fieldOwner = evalId.getFieldOwner();
 				if (fieldOwner != null) {
-					IType fieldOwnerType = fieldOwner.getTypeOrFunctionSet(point);
+					IType fieldOwnerType = fieldOwner.getType(point);
 					if (fieldOwnerType instanceof ICPPDeferredClassInstance) {
 						ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) fieldOwnerType;
 						IScope scope = instance.getClassTemplate().getCompositeScope();
@@ -158,7 +158,7 @@ public class HeuristicResolver {
 				// Handle the common case of a dependent type representing the result of
 				// dereferencing another dependent type.
 				if (unary.getOperator() == IASTUnaryExpression.op_star) {
-					IType argument = unary.getArgument().getTypeOrFunctionSet(point);
+					IType argument = unary.getArgument().getType(point);
 					if (argument instanceof ICPPUnknownType) {
 						IType resolved = resolveUnknownType((ICPPUnknownType) argument, point);
 						resolved = SemanticUtil.getSimplifiedType(resolved);
@@ -171,7 +171,7 @@ public class HeuristicResolver {
 				EvalID id = (EvalID) evaluation;
 				ICPPEvaluation fieldOwner = id.getFieldOwner();
 				if (fieldOwner != null) {
-					IBinding[] candidates = lookInside(fieldOwner.getTypeOrFunctionSet(point), 
+					IBinding[] candidates = lookInside(fieldOwner.getType(point), 
 							id.isPointerDeref(), id.getName(), id.getTemplateArgs(), point);
 					if (candidates.length == 1) {
 						return typeForBinding(candidates[0]);

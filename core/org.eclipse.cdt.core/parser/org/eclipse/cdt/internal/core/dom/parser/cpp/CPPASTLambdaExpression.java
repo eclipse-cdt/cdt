@@ -215,7 +215,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	
 	@Override
 	public CPPClosureType getExpressionType() {
-		return (CPPClosureType) getEvaluation().getTypeOrFunctionSet(this);
+		return (CPPClosureType) getEvaluation().getType(this);
 	}
 
 	@Override

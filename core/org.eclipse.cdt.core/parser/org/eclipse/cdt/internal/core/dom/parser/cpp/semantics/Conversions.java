@@ -352,9 +352,9 @@ public class Conversions {
 
 		if (listType != null) {
 			ICPPEvaluation[] clauses = arg.getClauses();
-			Cost worstCost= new Cost(arg.getTypeOrFunctionSet(point), target, Rank.IDENTITY);
+			Cost worstCost= new Cost(arg.getType(point), target, Rank.IDENTITY);
 			for (ICPPEvaluation clause : clauses) {
-				Cost cost= checkImplicitConversionSequence(listType, clause.getTypeOrFunctionSet(point),
+				Cost cost= checkImplicitConversionSequence(listType, clause.getType(point),
 						clause.getValueCategory(point), UDCMode.ALLOWED, Context.ORDINARY, point);
 				if (!cost.converts())
 					return cost;
@@ -376,7 +376,7 @@ public class Conversions {
 
 			ICPPClassType classTarget= (ICPPClassType) noCVTarget;
 			if (TypeTraits.isAggregateClass(classTarget, point)) {
-				Cost cost= new Cost(arg.getTypeOrFunctionSet(point), target, Rank.IDENTITY);
+				Cost cost= new Cost(arg.getType(point), target, Rank.IDENTITY);
 				cost.setUserDefinedConversion(null);
 				return cost;
 			}
@@ -387,14 +387,14 @@ public class Conversions {
 		if (args.length == 1) {
 			final ICPPEvaluation firstArg = args[0];
 			if (!firstArg.isInitializerList()) {
-				Cost cost= checkImplicitConversionSequence(target, firstArg.getTypeOrFunctionSet(point), firstArg.getValueCategory(point), udc, Context.ORDINARY, point);
+				Cost cost= checkImplicitConversionSequence(target, firstArg.getType(point), firstArg.getValueCategory(point), udc, Context.ORDINARY, point);
 				if (cost.isNarrowingConversion(point)) {
 					return Cost.NO_CONVERSION;
 				}
 				return cost;
 			}
 		} else if (args.length == 0) {
-			return new Cost(arg.getTypeOrFunctionSet(point), target, Rank.IDENTITY);
+			return new Cost(arg.getType(point), target, Rank.IDENTITY);
 		}
 
 		return Cost.NO_CONVERSION;
@@ -541,7 +541,7 @@ public class Conversions {
 	// 13.3.1.7 Initialization by list-initialization
 	static Cost listInitializationOfClass(EvalInitList arg, ICPPClassType t, boolean isDirect, boolean deferUDC, IASTNode point) throws DOMException {
 		if (deferUDC) {
-			Cost c= new Cost(arg.getTypeOrFunctionSet(point), t, Rank.USER_DEFINED_CONVERSION);
+			Cost c= new Cost(arg.getType(point), t, Rank.USER_DEFINED_CONVERSION);
 			c.setDeferredUDC(isDirect ? DeferredUDC.DIRECT_LIST_INIT_OF_CLASS : DeferredUDC.LIST_INIT_OF_CLASS);
 			return c;
 		}
@@ -556,7 +556,7 @@ public class Conversions {
 			final int minArgCount = ctor.getRequiredArgumentCount();
 			if (minArgCount == 0) {
 				if (arg.getClauses().length == 0) {
-					Cost c= new Cost(arg.getTypeOrFunctionSet(point), t, Rank.IDENTITY);
+					Cost c= new Cost(arg.getType(point), t, Rank.IDENTITY);
 					c.setUserDefinedConversion(ctor);
 					return c;
 				}
@@ -624,11 +624,11 @@ public class Conversions {
 		final IBinding result= CPPSemantics.resolveFunction(data, filteredConstructors, true);
 		final Cost c;
 		if (result instanceof ICPPMethod) {
-			c= new Cost(arg.getTypeOrFunctionSet(point), t, Rank.IDENTITY);
+			c= new Cost(arg.getType(point), t, Rank.IDENTITY);
 			c.setUserDefinedConversion((ICPPMethod) result);
 		} else if (result instanceof IProblemBinding
 				&& ((IProblemBinding) result).getID() == IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP) {
-			c = new Cost(arg.getTypeOrFunctionSet(point), t, Rank.USER_DEFINED_CONVERSION);
+			c = new Cost(arg.getType(point), t, Rank.USER_DEFINED_CONVERSION);
 			c.setAmbiguousUDC(true);
 		} else {
 			c= Cost.NO_CONVERSION;

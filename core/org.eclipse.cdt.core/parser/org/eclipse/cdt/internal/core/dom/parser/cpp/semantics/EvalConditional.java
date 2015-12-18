@@ -108,7 +108,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		evaluate(point);
 		return fType;
 	}
@@ -162,8 +162,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 		final ICPPEvaluation positive = fPositive == null ? fCondition : fPositive;
 
-		IType t2 = positive.getTypeOrFunctionSet(point);
-		IType t3 = fNegative.getTypeOrFunctionSet(point);
+		IType t2 = positive.getType(point);
+		IType t3 = fNegative.getType(point);
 
 		final IType uqt2= getNestedType(t2, TDEF | REF | CVTYPE);
 		final IType uqt3= getNestedType(t3, TDEF | REF | CVTYPE);

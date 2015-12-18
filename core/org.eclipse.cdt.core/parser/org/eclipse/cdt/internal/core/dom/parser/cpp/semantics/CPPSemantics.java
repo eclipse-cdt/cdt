@@ -1246,7 +1246,7 @@ public class CPPSemantics {
 				if (expression instanceof ICPPASTLiteralExpression) {
 					final ICPPASTLiteralExpression litExpr = (ICPPASTLiteralExpression) expression;
 					if (litExpr.getKind() == IASTLiteralExpression.lk_this) {
-						final IType thisType = SemanticUtil.getNestedType(litExpr.getEvaluation().getTypeOrFunctionSet(litExpr), TDEF | ALLCVQ | PTR | ARRAY | MPTR | REF);
+						final IType thisType = SemanticUtil.getNestedType(litExpr.getEvaluation().getType(litExpr), TDEF | ALLCVQ | PTR | ARRAY | MPTR | REF);
 						if (thisType instanceof ICPPUnknownBinding || thisType instanceof ICPPTemplateDefinition) {
 							result[0]= true;
 							return PROCESS_ABORT;
@@ -3297,9 +3297,9 @@ public class CPPSemantics {
 		if (op == null || arg1 == null || arg2 == null)
 			return null;
 
-		IType op1type = getNestedType(arg1.getTypeOrFunctionSet(pointOfInstantiation), TDEF | REF | CVTYPE);
+		IType op1type = getNestedType(arg1.getType(pointOfInstantiation), TDEF | REF | CVTYPE);
 		if (!isUserDefined(op1type) && !isUserDefined(
-				getNestedType(arg2.getTypeOrFunctionSet(pointOfInstantiation), TDEF | REF | CVTYPE)))
+				getNestedType(arg2.getType(pointOfInstantiation), TDEF | REF | CVTYPE)))
 			return null;
 
 		final LookupMode lookupNonMember;
@@ -3338,7 +3338,7 @@ public class CPPSemantics {
 				args[i++]= a;
     		}
     	}
-		IType type= getNestedType(arg1.getTypeOrFunctionSet(expr), TDEF | REF | CVTYPE);
+		IType type= getNestedType(arg1.getType(expr), TDEF | REF | CVTYPE);
 		return findOverloadedOperator(expr, null, args, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
     }
 
@@ -3435,7 +3435,7 @@ public class CPPSemantics {
 	    		IASTEqualsInitializer eqInit= (IASTEqualsInitializer) initializer;
 	    		ICPPASTInitializerClause initClause = (ICPPASTInitializerClause) eqInit.getInitializerClause();
 	    		final ICPPEvaluation evaluation = initClause.getEvaluation();
-	    		IType sourceType= evaluation.getTypeOrFunctionSet(typeId);
+	    		IType sourceType= evaluation.getType(typeId);
 				ValueCategory isLValue= evaluation.getValueCategory(typeId);
 	    		if (sourceType != null) {
 	    			Cost c;
@@ -3556,8 +3556,8 @@ public class CPPSemantics {
      */
     public static ICPPFunction findOverloadedOperatorComma(IASTNode pointOfInstantiation, IScope pointOfDefinition,
     		ICPPEvaluation arg1, ICPPEvaluation arg2) {
-		IType op1type = getNestedType(arg1.getTypeOrFunctionSet(pointOfInstantiation), TDEF | REF | CVTYPE);
-		IType op2type = getNestedType(arg2.getTypeOrFunctionSet(pointOfInstantiation), TDEF | REF | CVTYPE);
+		IType op1type = getNestedType(arg1.getType(pointOfInstantiation), TDEF | REF | CVTYPE);
+		IType op2type = getNestedType(arg2.getType(pointOfInstantiation), TDEF | REF | CVTYPE);
 		if (!isUserDefined(op1type) && !isUserDefined(op2type))
 			return null;
 
@@ -3577,7 +3577,7 @@ public class CPPSemantics {
     	ICPPClassType callToObjectOfClassType= null;
 		IType type2= null;
 		if (args.length >= 2) {
-			type2 = args[1].getTypeOrFunctionSet(pointOfInstantiation);
+			type2 = args[1].getType(pointOfInstantiation);
 			type2= getNestedType(type2, TDEF | REF | CVTYPE);
 		}
 

@@ -88,13 +88,13 @@ class BuiltinOperators {
 		fUnary= args.length < 2;
 		fGlobalCandidates= globCandidates;
 		if (args.length > 0) {
-			IType type= args[0].getTypeOrFunctionSet(point);
+			IType type= args[0].getType(point);
 			if (!(type instanceof ISemanticProblem)) 
 				fType1= type;
 			
 		}
 		if (args.length > 1) {
-			IType type= args[1].getTypeOrFunctionSet(point);
+			IType type= args[1].getType(point);
 			if (!(type instanceof ISemanticProblem))
 				fType2= type;
 		}

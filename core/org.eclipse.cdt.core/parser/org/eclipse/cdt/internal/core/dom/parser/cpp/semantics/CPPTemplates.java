@@ -1376,7 +1376,7 @@ public class CPPTemplates {
 					ICPPEvaluation instantiated = eval.instantiate(tpMap, packOffset, within,
 							Value.MAX_RECURSION_DEPTH, point);
 					if (instantiated != eval)
-						return instantiated.getTypeOrFunctionSet(point);
+						return instantiated.getType(point);
 				} else {
 					IBinding binding= resolveUnknown((ICPPUnknownBinding) type, tpMap, packOffset,
 							within, point);

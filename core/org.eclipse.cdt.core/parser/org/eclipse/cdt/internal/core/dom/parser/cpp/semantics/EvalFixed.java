@@ -104,7 +104,7 @@ public class EvalFixed extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		return fType;
 	}
 

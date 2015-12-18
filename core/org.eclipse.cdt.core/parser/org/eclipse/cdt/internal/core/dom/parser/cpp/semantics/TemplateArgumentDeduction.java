@@ -150,7 +150,7 @@ public class TemplateArgumentDeduction {
 						if (inner != null) {
 							final EvalInitList eval = ((InitializerListType) arg).getEvaluation();
 							for (ICPPEvaluation clause : eval.getClauses()) {
-								if (!deduceFromFunctionArg(inner, clause.getTypeOrFunctionSet(point), 
+								if (!deduceFromFunctionArg(inner, clause.getType(point), 
 										clause.getValueCategory(point), deduct, point))
 									return false;
 							}

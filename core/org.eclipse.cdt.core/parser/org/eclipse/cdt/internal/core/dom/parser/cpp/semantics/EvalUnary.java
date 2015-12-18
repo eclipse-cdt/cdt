@@ -175,7 +175,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 				return null;
 		}
 
-    	IType type = fArgument.getTypeOrFunctionSet(point);
+    	IType type = fArgument.getType(point);
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		if (!CPPSemantics.isUserDefined(type))
 			return null;
@@ -191,7 +191,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		if (fType == null)
 			fType= computeType(point);
 		return fType;
@@ -225,9 +225,9 @@ public class EvalUnary extends CPPDependentEvaluation {
 					}
 				}
 			}
-			return new CPPPointerType(fArgument.getTypeOrFunctionSet(point));
+			return new CPPPointerType(fArgument.getType(point));
 		case op_star:
-			IType type= fArgument.getTypeOrFunctionSet(point);
+			IType type= fArgument.getType(point);
 			type = prvalueTypeWithResolvedTypedefs(type);
 	    	if (type instanceof IPointerType) {
 	    		return glvalueType(((IPointerType) type).getType());
@@ -241,14 +241,14 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return CPPBasicType.BOOLEAN;
 		case op_postFixDecr:
 		case op_postFixIncr:
-			return prvalueType(fArgument.getTypeOrFunctionSet(point));
+			return prvalueType(fArgument.getType(point));
 		case op_plus:
-			return promoteType(fArgument.getTypeOrFunctionSet(point), true);
+			return promoteType(fArgument.getType(point), true);
 		case op_minus:
 		case op_tilde:
-			return promoteType(fArgument.getTypeOrFunctionSet(point), false);
+			return promoteType(fArgument.getType(point), false);
 		}
-		return fArgument.getTypeOrFunctionSet(point);
+		return fArgument.getType(point);
 	}
 
 	private IType promoteType(IType type, boolean allowPointer) {
@@ -284,12 +284,12 @@ public class EvalUnary extends CPPDependentEvaluation {
 		switch (fOperator) {
 			case op_sizeof: {
 				SizeAndAlignment info =
-						SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
+						SizeofCalculator.getSizeAndAlignment(fArgument.getType(point), point);
 				return info == null ? Value.UNKNOWN : Value.create(info.size);
 			}
 			case op_alignOf: {
 				SizeAndAlignment info =
-						SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
+						SizeofCalculator.getSizeAndAlignment(fArgument.getType(point), point);
 				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
 			}
 			case op_noexcept:

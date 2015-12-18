@@ -49,12 +49,13 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	boolean isConstantExpression(IASTNode point);
 
 	/**
-	 * Returns the type of the expression, or a {@code FunctionSetType} if the expression evaluates
-	 * to a function set.
+	 * Returns the type of the expression.
+	 * 
+	 * If the expression evaluates to a function set, a {@code FunctionSetType} is returned.
 	 *
 	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
-	IType getTypeOrFunctionSet(IASTNode point);
+	IType getType(IASTNode point);
 
 	/**
 	 * Returns the value of the expression.

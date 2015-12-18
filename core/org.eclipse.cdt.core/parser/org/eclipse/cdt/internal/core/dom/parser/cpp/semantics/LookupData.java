@@ -534,7 +534,7 @@ public class LookupData extends ScopeLookupData {
 			functionArgTypes= new IType[functionArgs.length];
 			for (int i = 0; i < functionArgs.length; i++) {
 				ICPPEvaluation e = functionArgs[i];
-				functionArgTypes[i]= getSimplifiedType(e.getTypeOrFunctionSet(getLookupPoint()));
+				functionArgTypes[i]= getSimplifiedType(e.getType(getLookupPoint()));
 			}
 		}
 		return functionArgTypes;

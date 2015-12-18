@@ -115,7 +115,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		if (fType == null) {
 			if (isTypeDependent()) {
 				fType= new TypeOfDependentExpression(this);
@@ -124,7 +124,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 				if (overload != null) {
 					fType= ExpressionTypes.restoreTypedefs(
 							ExpressionTypes.typeFromFunctionCall(overload),
-							fArg1.getTypeOrFunctionSet(point), fArg2.getTypeOrFunctionSet(point));
+							fArg1.getType(point), fArg2.getType(point));
 				} else {
 					fType= computeType(point);
 				}
@@ -219,12 +219,12 @@ public class EvalBinary extends CPPDependentEvaluation {
 			return LVALUE;
 
 		case op_pmdot:
-			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType))
+			if (!(getType(point) instanceof ICPPFunctionType))
 				return fArg1.getValueCategory(point);
 			break;
 
 		case op_pmarrow:
-			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType))
+			if (!(getType(point) instanceof ICPPFunctionType))
 				return LVALUE;
 			break;
 		}
@@ -244,7 +244,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 			return null;
 
 		if (fOperator == op_arrayAccess) {
-			IType type = fArg1.getTypeOrFunctionSet(point);
+			IType type = fArg1.getType(point);
 			type= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
     		if (type instanceof ICPPClassType) {
     			return CPPSemantics.findOverloadedBinaryOperator(point, getTemplateDefinitionScope(), 
@@ -266,13 +266,13 @@ public class EvalBinary extends CPPDependentEvaluation {
 		if (o != null)
 			return typeFromFunctionCall(o);
 
-		final IType originalType1 = fArg1.getTypeOrFunctionSet(point);
+		final IType originalType1 = fArg1.getType(point);
 		final IType type1 = prvalueTypeWithResolvedTypedefs(originalType1);
 		if (type1 instanceof ISemanticProblem) {
 			return type1;
 		}
 
-    	final IType originalType2 = fArg2.getTypeOrFunctionSet(point);
+    	final IType originalType2 = fArg2.getType(point);
 		final IType type2 = prvalueTypeWithResolvedTypedefs(originalType2);
 		if (type2 instanceof ISemanticProblem) {
 			return type2;

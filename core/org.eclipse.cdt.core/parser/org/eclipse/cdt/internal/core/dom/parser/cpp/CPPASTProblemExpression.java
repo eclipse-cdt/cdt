@@ -75,7 +75,7 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getTypeOrFunctionSet(this);
+    	return getEvaluation().getType(this);
     }
 
 	@Override

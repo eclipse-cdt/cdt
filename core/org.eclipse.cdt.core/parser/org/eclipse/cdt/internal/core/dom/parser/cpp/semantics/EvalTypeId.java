@@ -90,7 +90,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		if (fOutputType == null) {
 			fOutputType= computeType();
 		}

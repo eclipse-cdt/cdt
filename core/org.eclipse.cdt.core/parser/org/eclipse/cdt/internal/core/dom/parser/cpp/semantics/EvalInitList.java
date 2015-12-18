@@ -71,7 +71,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		return new InitializerListType(this);
 	}
 

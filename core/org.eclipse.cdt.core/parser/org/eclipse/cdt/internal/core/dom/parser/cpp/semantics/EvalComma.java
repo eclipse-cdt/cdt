@@ -110,7 +110,7 @@ public class EvalComma extends CPPDependentEvaluation {
 			} else {
 				overloads[i - 1] = overload;
 				e1= new EvalFixed(typeFromFunctionCall(overload), valueCategoryFromFunctionCall(overload), Value.UNKNOWN);
-				if (e1.getTypeOrFunctionSet(point) instanceof ISemanticProblem) {
+				if (e1.getType(point) instanceof ISemanticProblem) {
 					e1= e2;
 				}
 			}
@@ -119,7 +119,7 @@ public class EvalComma extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		if (fType == null) {
 			fType= computeType(point);
 		}
@@ -137,7 +137,7 @@ public class EvalComma extends CPPDependentEvaluation {
 				return typeFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length - 1].getTypeOrFunctionSet(point);
+		return fArguments[fArguments.length - 1].getType(point);
 	}
 
 	@Override

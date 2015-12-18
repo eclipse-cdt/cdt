@@ -150,7 +150,7 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getType(IASTNode point) {
 		return new TypeOfDependentExpression(this);
 	}
 
@@ -370,7 +370,7 @@ public class EvalID extends CPPDependentEvaluation {
 		}
 		
 		if (fieldOwner != null && !fieldOwner.isTypeDependent()) {
-			IType fieldOwnerType = fieldOwner.getTypeOrFunctionSet(point);
+			IType fieldOwnerType = fieldOwner.getType(point);
 			if (fIsPointerDeref) {
 				fieldOwnerType = SemanticUtil.getSimplifiedType(fieldOwnerType);
 				if (fieldOwnerType instanceof IPointerType) {

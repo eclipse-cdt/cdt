@@ -142,7 +142,7 @@ public class ASTUtil {
 
 		ICPPASTInitializerClause cppInit = (ICPPASTInitializerClause) init;
 		ICPPEvaluation eval = cppInit.getEvaluation();
-		return eval == null ? null : getBaseType(eval.getTypeOrFunctionSet(cppInit));
+		return eval == null ? null : getBaseType(eval.getType(cppInit));
 	}
 
 	public static ICPPClassType getReceiverType(IASTFunctionCallExpression fncall) {

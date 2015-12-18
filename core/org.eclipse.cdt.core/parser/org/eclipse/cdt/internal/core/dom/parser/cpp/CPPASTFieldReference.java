@@ -268,7 +268,7 @@ public class CPPASTFieldReference extends ASTNode
 	private ICPPEvaluation createEvaluation() {
 		ICPPEvaluation ownerEval = fOwner.getEvaluation();
 		if (!ownerEval.isTypeDependent()) {
-			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getTypeOrFunctionSet(this), fIsDeref, this, null, false);
+			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getType(this), fIsDeref, this, null, false);
 			if (ownerType != null) {
 				IBinding binding = fName.resolvePreBinding();
 				if (binding instanceof CPPFunctionSet)
@@ -306,7 +306,7 @@ public class CPPASTFieldReference extends ASTNode
 
 	@Override
 	public IType getExpressionType() {
-		return getEvaluation().getTypeOrFunctionSet(this);
+		return getEvaluation().getType(this);
 	}
 	
 	@Override

@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.autotools.ui" version="2">
+    <resource path="src/org/eclipse/cdt/autotools/ui/editors/IAutotoolsEditor.java" type="org.eclipse.cdt.autotools.ui.editors.IAutotoolsEditor">
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="IReconcilingParticipant"/>
+                <message_argument value="IAutotoolsEditor"/>
+                <message_argument value="addReconcilingParticipant(IReconcilingParticipant)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/AbstractMakefile.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.AbstractMakefile">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IMakefile"/>
+                <message_argument value="AbstractMakefile"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/BadDirective.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.BadDirective">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IBadDirective"/>
+                <message_argument value="BadDirective"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Command.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Command">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ICommand"/>
+                <message_argument value="Command"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Comment.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Comment">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IComment"/>
+                <message_argument value="Comment"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Conditional.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Conditional">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IConditional"/>
+                <message_argument value="Conditional"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/DefaultRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.DefaultRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IDefaultRule"/>
+                <message_argument value="DefaultRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/DeleteOnErrorRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.DeleteOnErrorRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IDeleteOnErrorRule"/>
+                <message_argument value="DeleteOnErrorRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Directive.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Directive">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IDirective"/>
+                <message_argument value="Directive"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Else.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Else">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ICommand"/>
+                <message_argument value="Else"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/EmptyLine.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.EmptyLine">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IEmptyLine"/>
+                <message_argument value="EmptyLine"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/ExportAllVariablesRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.ExportAllVariablesRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IExportAllVariablesRule"/>
+                <message_argument value="ExportAllVariablesRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/GNUAutomakefile.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.GNUAutomakefile">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IGNUMakefile"/>
+                <message_argument value="GNUAutomakefile"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/GNUVariableDef.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.GNUVariableDef">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IVariableDefinition"/>
+                <message_argument value="GNUVariableDef"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/If.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.If">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ICommand"/>
+                <message_argument value="If"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/IgnoreRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.IgnoreRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IIgnoreRule"/>
+                <message_argument value="IgnoreRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Include.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Include">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IInclude"/>
+                <message_argument value="Include"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/IntermediateRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.IntermediateRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IIntermediateRule"/>
+                <message_argument value="IntermediateRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/LowResolutionTimeRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.LowResolutionTimeRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ILowResolutionTimeRule"/>
+                <message_argument value="LowResolutionTimeRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/MacroDefinition.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.MacroDefinition">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IMacroDefinition"/>
+                <message_argument value="MacroDefinition"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/NotParallelRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.NotParallelRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="INotParallelRule"/>
+                <message_argument value="NotParallelRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/OpenIncludeAction.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.OpenIncludeAction">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CUIPlugin"/>
+                <message_argument value="OpenIncludeAction"/>
+                <message_argument value="log(IStatus)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Parent.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Parent">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IParent"/>
+                <message_argument value="Parent"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/PhonyRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.PhonyRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IPhonyRule"/>
+                <message_argument value="PhonyRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/PosixRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.PosixRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IPosixRule"/>
+                <message_argument value="PosixRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/PreciousRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.PreciousRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IPreciousRule"/>
+                <message_argument value="PreciousRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Rule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Rule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IRule"/>
+                <message_argument value="Rule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/SccsGetRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.SccsGetRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ISccsGetRule"/>
+                <message_argument value="SccsGetRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/SecondaryRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.SecondaryRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ISecondaryRule"/>
+                <message_argument value="SecondaryRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/SilentRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.SilentRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ISilentRule"/>
+                <message_argument value="SilentRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/SpecialRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.SpecialRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ISpecialRule"/>
+                <message_argument value="SpecialRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/StaticTargetRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.StaticTargetRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IInferenceRule"/>
+                <message_argument value="StaticTargetRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/SuffixesRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.SuffixesRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ISuffixesRule"/>
+                <message_argument value="SuffixesRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Target.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Target">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ITarget"/>
+                <message_argument value="Target"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/TargetRule.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.TargetRule">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ITargetRule"/>
+                <message_argument value="TargetRule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/Terminal.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.Terminal">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ITerminal"/>
+                <message_argument value="Terminal"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/UnExport.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.UnExport">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IUnExport"/>
+                <message_argument value="UnExport"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/VPath.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.VPath">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IVPath"/>
+                <message_argument value="VPath"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/VariableDefinition.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.VariableDefinition">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IVariableDefinition"/>
+                <message_argument value="VariableDefinition"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/internal/autotools/ui/editors/automake/WorkingCopyManager.java" type="org.eclipse.cdt.internal.autotools.ui.editors.automake.WorkingCopyManager">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IWorkingCopyManager"/>
+                <message_argument value="WorkingCopyManager"/>
+            </message_arguments>
+        </filter>
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IWorkingCopyManagerExtension"/>
+                <message_argument value="WorkingCopyManager"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

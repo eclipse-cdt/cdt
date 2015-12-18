@@ -17,7 +17,7 @@ import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withRe
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withStyle;
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.waitForWidget;
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.widgetIsEnabled;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.regex.Pattern;
@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -156,7 +155,7 @@ public abstract class AbstractTest {
 
 		IProjectNature nature = checkProject().getNature(
 				"org.eclipse.cdt.autotools.core.autotoolsNatureV2");
-		assertTrue(nature != null);
+		assertNotNull(nature);
 
 		projectExplorer = bot.viewByTitle("Project Explorer");
 	}
@@ -249,13 +248,13 @@ public abstract class AbstractTest {
 			final String inGroup) {
 		UIThreadRunnable.syncExec(() -> {
 			@SuppressWarnings("unchecked")
-			Matcher<Widget> matcher = allOf(inGroup(inGroup), widgetOfType(Button.class),
+			Matcher<Button> matcher = allOf(inGroup(inGroup), widgetOfType(Button.class),
 					withStyle(SWT.RADIO, "SWT.RADIO"));
 			int i = 0;
 			while (true) {
 				Button b;
 				try {
-					b = (Button) bot.widget(matcher, i++);
+					b = bot.widget(matcher, i++);
 				} catch (IndexOutOfBoundsException e) {
 					return;
 				}
@@ -327,11 +326,11 @@ public abstract class AbstractTest {
 
 	public static IProject checkProject() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		assertTrue(workspace != null);
+		assertNotNull(workspace);
 		IWorkspaceRoot root = workspace.getRoot();
-		assertTrue(root != null);
+		assertNotNull(root);
 		IProject project = root.getProject(projectName);
-		assertTrue(project != null);
+		assertNotNull(project);
 		return project;
 	}
 

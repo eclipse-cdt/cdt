@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.ui.tests;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -43,11 +44,11 @@ public class TestMakeTargets extends AbstractTest {
 		bot.waitUntil(Conditions.shellCloses(shell), 120000);
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		assertTrue(workspace != null);
+		assertNotNull(workspace);
 		IWorkspaceRoot root = workspace.getRoot();
-		assertTrue(root != null);
+		assertNotNull(root);
 		IProject project = root.getProject(projectName);
-		assertTrue(project != null);
+		assertNotNull(project);
 		IPath path = project.getLocation();
 		path = path.append("config.status");
 		File f = new File(path.toOSString());

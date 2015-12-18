@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
@@ -66,9 +65,7 @@ public class LibtoolGCCBuildCommandParserTest {
 		IFile file1 = ResourceHelper.createFile(project, "file1.cpp");
 		IFile file2 = ResourceHelper.createFile(project, "file2.cpp");
 		IFile file3 = ResourceHelper.createFile(project, "file3.cpp");
-		@SuppressWarnings("deprecation")
-		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file1.getProjectRelativePath(), true);
-		String languageId = ls.getLanguageId();
+		String languageId = LanguageSettingsManager.getLanguages(file1, cfgDescription).get(0);
 
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager

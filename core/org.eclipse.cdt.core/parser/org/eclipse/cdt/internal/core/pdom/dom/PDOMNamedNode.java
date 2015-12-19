@@ -35,17 +35,17 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	 * The size in bytes of a PDOMNamedNode record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + Database.PTR_SIZE;
 
 	private volatile char[] fName;
-	
+
 	public PDOMNamedNode(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
 	public PDOMNamedNode(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
 		super(linkage, parent);
-		
+
 		fName= name;
 		final Database db = linkage.getDB();
 		db.putRecPtr(record + NAME, name != null ? db.newString(name).getRecord() : 0);
@@ -59,41 +59,41 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		fName= name;
 		db.putRecPtr(record + NAME, name != null ? db.newString(name).getRecord() : 0);
 	}
-	
+
 	@Override
 	abstract protected int getRecordSize();
 
 	public IString getDBName() throws CoreException {
 		return getDBName(getDB(), record);
 	}
-	
+
 	public static IString getDBName(Database db, long record) throws CoreException {
 		long namerec = db.getRecPtr(record + NAME);
 		return db.getString(namerec);
 	}
-	
+
 	public char[] getNameCharArray() throws CoreException {
 		if (fName != null)
 			return fName;
-		
+
 		return fName= getDBName().getChars();
 	}
-	
+
 	public boolean hasName(char[] name) throws CoreException {
 		if (fName != null)
 			return Arrays.equals(fName, name);
-			
+
 		return getDBName().equals(name);
 	}
 
 	/**
 	 * Template parameters need to update their name.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected void updateName(char[] nameCharArray) throws CoreException {
 		if (fName != null && CharArrayUtils.equals(fName, nameCharArray))
 			return;
-		
+
 		IString name= getDBName();
 		if (!name.equals(nameCharArray)) {
 			name.delete();
@@ -112,11 +112,11 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		}
 		super.delete(linkage);
 	}
-	
+
 	public boolean mayHaveChildren() {
 		return false;
 	}
-	
+
 	public IIndexFragmentBinding getParentBinding() throws CoreException {
 		PDOMNode parent= getParentNode();
 		if (parent instanceof IIndexFragmentBinding) {
@@ -124,7 +124,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		}
 		return null;
 	}
-	
+
 	public IIndexFragmentBinding getOwner() {
 		try {
 			return getParentBinding();

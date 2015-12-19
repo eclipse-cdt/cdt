@@ -44,14 +44,14 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding {
 	public static final PDOMBinding[] EMPTY_PDOMBINDING_ARRAY = {};
 
-	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0; // size 4
-	private static final int FIRST_DEF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 4; // size 4
-	private static final int FIRST_REF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 8; // size 4
-	private static final int LOCAL_TO_FILE		 = PDOMNamedNode.RECORD_SIZE + 12; // size 4
-	private static final int FIRST_EXTREF_OFFSET = PDOMNamedNode.RECORD_SIZE + 16; // size 4
+	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE; // size 4
+	private static final int FIRST_DEF_OFFSET    = FIRST_DECL_OFFSET + Database.PTR_SIZE; // size 4
+	private static final int FIRST_REF_OFFSET    = FIRST_DEF_OFFSET + Database.PTR_SIZE; // size 4
+	private static final int LOCAL_TO_FILE		 = FIRST_REF_OFFSET + Database.PTR_SIZE; // size 4
+	private static final int FIRST_EXTREF_OFFSET = LOCAL_TO_FILE + Database.PTR_SIZE; // size 4
 
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
+	protected static final int RECORD_SIZE = FIRST_EXTREF_OFFSET + + Database.PTR_SIZE;
 
 	private byte hasDeclaration= -1;
 

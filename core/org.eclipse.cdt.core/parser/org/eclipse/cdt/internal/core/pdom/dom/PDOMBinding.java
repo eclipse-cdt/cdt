@@ -353,7 +353,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	@Override
-	final public boolean isFileLocal() throws CoreException {
+	public final boolean isFileLocal() throws CoreException {
 		return getDB().getRecPtr(record + LOCAL_TO_FILE) != 0;
 	}
 
@@ -442,7 +442,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	@Override
-	final public void delete(PDOMLinkage linkage) throws CoreException {
+	public final void delete(PDOMLinkage linkage) throws CoreException {
 		assert false;
 	}
 
@@ -465,11 +465,6 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(new ScopeLookupData(name, resolve, prefix));
-	}
-
-	@Deprecated
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix, IIndexFileSet fileSet) {
-		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	public IBinding[] getBindings(ScopeLookupData lookup) {

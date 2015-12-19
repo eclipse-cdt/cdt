@@ -27,14 +27,14 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class PDOMNode implements IInternalPDOMNode {
 	private static final int FACTORY_ID = 0;
-	private static final int NODE_TYPE = 2;
-	private static final int PARENT = 4;
-	
-	protected static final int RECORD_SIZE = 8;
-	
+	private static final int NODE_TYPE = FACTORY_ID + 2;
+	private static final int PARENT = NODE_TYPE + 2;
+
+	protected static final int RECORD_SIZE = PARENT + Database.PTR_SIZE;
+
 	private final PDOMLinkage fLinkage;
 	protected final long record;
-	
+
 	private volatile long cachedParentRecord;
 
 	/**
@@ -81,7 +81,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	protected PDOMNode(Database db) throws CoreException {
 		this(db, null, 0);
 	}
-	
+
 	protected PDOMNode(Database db, PDOMLinkage linkage, long parentRec) throws CoreException {
 		this.fLinkage = linkage;
 
@@ -102,7 +102,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	public PDOM getPDOM() {
 		return fLinkage.getPDOM();
 	}
-	
+
 	public PDOMLinkage getLinkage() {
 		return fLinkage;
 	}
@@ -122,7 +122,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	public final long getRecord() {
 		return record;
 	}
-	
+
 	public final long getBindingID() {
 		return record;
 	}
@@ -148,7 +148,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 			PDOMNode other = (PDOMNode) obj;
 			return getPDOM() == other.getPDOM() && record == other.record;
 		}
-		
+
 		return super.equals(obj);
 	}
 
@@ -195,16 +195,16 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 		}
 		return cachedParentRecord= getDB().getRecPtr(record + PARENT);
 	}
-	
+
 	public PDOMNode getParentNode() throws CoreException {
 		long parentrec = getParentNodeRec();
 		return parentrec != 0 ? load(getPDOM(), parentrec) : null;
 	}
-	
+
 	public void addChild(PDOMNode child) throws CoreException {
 		// nothing here
 	}
-		
+
 	/**
 	 * Convenience method for fetching a byte from the database.
 	 * @param offset Location of the byte.
@@ -232,8 +232,8 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 
 	/**
 	 * Delete this PDOMNode, make sure you are actually the owner of this record!
-	 * @param linkage 
-	 * @throws CoreException 
+	 * @param linkage
+	 * @throws CoreException
 	 */
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {

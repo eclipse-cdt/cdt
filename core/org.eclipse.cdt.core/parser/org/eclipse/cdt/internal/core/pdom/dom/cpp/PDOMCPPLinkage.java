@@ -417,9 +417,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 			long fileLocalRec[]= {0};
 			pdomBinding = adaptBinding(parent, binding, fileLocalRec);
-			if (pdomBinding != null) {
-				getPDOM().putCachedResult(inputBinding, pdomBinding);
-			} else {
+			if (pdomBinding == null) {
 				try {
 					pdomBinding = createBinding(parent, binding, fileLocalRec[0]);
 					if (pdomBinding != null) {
@@ -437,6 +435,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 				return pdomBinding;
 			}
+
+			getPDOM().putCachedResult(inputBinding, pdomBinding);
 		}
 
 		if (shouldUpdate(pdomBinding, fromName)) {
@@ -884,25 +884,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			parent= adaptOrAddParent(false, binding);
 		}
 		if (parent == this) {
-			PDOMBinding glob= CPPFindBinding.findBinding(getIndex(), this, binding, 0);
-			if (fileLocalRecHolder == null)
-				return glob;
-			final long loc= getLocalToFileRec(parent, binding, glob);
-			if (loc == 0)
-				return glob;
-			fileLocalRecHolder[0]= loc;
-			return CPPFindBinding.findBinding(getIndex(), this, binding, loc);
+			BTree btree = getIndex();
+			return findBinding(btree, parent, binding, fileLocalRecHolder);
 		}
 		if (parent instanceof PDOMCPPNamespace) {
-			final BTree btree = ((PDOMCPPNamespace) parent).getIndex();
-			PDOMBinding glob= CPPFindBinding.findBinding(btree, this, binding, 0);
-			if (fileLocalRecHolder == null)
-				return glob;
-			final long loc= getLocalToFileRec(parent, binding, glob);
-			if (loc == 0)
-				return glob;
-			fileLocalRecHolder[0]= loc;
-			return CPPFindBinding.findBinding(btree, this, binding,	loc);
+			BTree btree = ((PDOMCPPNamespace) parent).getIndex();
+			return findBinding(btree, parent, binding, fileLocalRecHolder);
 		}
 		if (binding instanceof ICPPTemplateParameter && parent instanceof IPDOMCPPTemplateParameterOwner) {
 			return (PDOMBinding) ((IPDOMCPPTemplateParameterOwner) parent).adaptTemplateParameter(
@@ -917,6 +904,18 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPFindBinding.findBinding(parent, this, binding, loc);
 		}
 		return null;
+	}
+
+	private PDOMBinding findBinding(BTree btree, PDOMNode parent, IBinding binding, long[] fileLocalRecHolder)
+			throws CoreException {
+		PDOMBinding glob= CPPFindBinding.findBinding(btree, this, binding, 0);
+		if (fileLocalRecHolder == null)
+			return glob;
+		final long loc= getLocalToFileRec(parent, binding, glob);
+		if (loc == 0)
+			return glob;
+		fileLocalRecHolder[0]= loc;
+		return CPPFindBinding.findBinding(btree, this, binding, loc);
 	}
 
 	/**

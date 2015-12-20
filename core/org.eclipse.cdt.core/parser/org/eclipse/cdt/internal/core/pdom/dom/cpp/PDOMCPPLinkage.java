@@ -417,9 +417,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 			long fileLocalRec[]= {0};
 			pdomBinding = adaptBinding(parent, binding, fileLocalRec);
-			if (pdomBinding != null) {
-				getPDOM().putCachedResult(inputBinding, pdomBinding);
-			} else {
+			if (pdomBinding == null) {
 				try {
 					pdomBinding = createBinding(parent, binding, fileLocalRec[0]);
 					if (pdomBinding != null) {
@@ -437,6 +435,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 				return pdomBinding;
 			}
+
+			getPDOM().putCachedResult(inputBinding, pdomBinding);
 		}
 
 		if (shouldUpdate(pdomBinding, fromName)) {

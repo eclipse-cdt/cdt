@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMFileSet implements IIndexFragmentFileSet {
-	private final HashSet<Long> fFileIDs= new HashSet<Long>();
+	private final HashSet<Long> fFileIDs= new HashSet<>();
 	
 	@Override
 	public void add(IIndexFragmentFile fragFile) {

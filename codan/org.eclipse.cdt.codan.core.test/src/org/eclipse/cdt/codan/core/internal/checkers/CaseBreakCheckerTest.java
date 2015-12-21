@@ -218,6 +218,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    bye();
 	//  }
 	// }
+	// void bye(void);
 	public void testLastCaseBadCommentNotLast() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);

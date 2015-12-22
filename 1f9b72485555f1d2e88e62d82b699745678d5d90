@@ -226,6 +226,24 @@
     },
     {
       "key": {
+        "uuid": "27d6470d_1f7a4661",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-12-22T22:25:03Z",
+      "side": 1,
+      "message": "On further examination I assume that overriding postExecute in ShowVersionHandler (as done in ReverseToggleCommandHandler) is the way to do it, but I have not been able to figure out to get it to work.",
+      "parentUuid": "27d6470d_df20dea5",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27d6470d_244701f8",
         "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/commands/IShowVersionHandler.java",
         "patchSetId": 4

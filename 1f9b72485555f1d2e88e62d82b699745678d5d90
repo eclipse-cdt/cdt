@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27d6470d_5f0dae43",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-12-22T21:50:34Z",
+      "side": 1,
+      "message": "I have made the change (and related changes). However the effect of the platform bug is even worse :-( I have added a comment, and as this is an example it may be sufficient as is.",
+      "parentUuid": "27d6470d_c441f50d",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27d6470d_a444f11e",
         "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
         "patchSetId": 4
@@ -138,6 +156,24 @@
     },
     {
       "key": {
+        "uuid": "27d6470d_bf14fa4b",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-12-22T21:50:34Z",
+      "side": 1,
+      "message": ":-) it was the first time I use optional properly, it is nice that Java 8 is coming up to speed. I agree the above case adds little, however if getService returned an Optional, then this NPE would not have been possible.",
+      "parentUuid": "27d6470d_845d2dc4",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27d6470d_a45a31c7",
         "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
         "patchSetId": 4
@@ -172,6 +208,24 @@
     },
     {
       "key": {
+        "uuid": "27d6470d_df20dea5",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-12-22T21:50:34Z",
+      "side": 1,
+      "message": "OK, I have changed it, but I don\u0027t know how to resolve the problem of marking the request done in a way that reenables the button which is why I had it returning true originally.",
+      "parentUuid": "27d6470d_64602978",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27d6470d_244701f8",
         "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/commands/IShowVersionHandler.java",
         "patchSetId": 4
@@ -183,6 +237,24 @@
       "writtenOn": "2015-12-22T19:51:47Z",
       "side": 1,
       "message": "Do you own the copyright to this code or is it your employer?\nThe copyright must be to the entity that owns the copyright.",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_3f20ea9f",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/commands/IShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-12-22T21:50:34Z",
+      "side": 1,
+      "message": "Kichwa is my (and Tracy Miranda\u0027s) consultancy, however to be consistent I have changed copyright to be Kichwa.",
+      "parentUuid": "27d6470d_244701f8",
       "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

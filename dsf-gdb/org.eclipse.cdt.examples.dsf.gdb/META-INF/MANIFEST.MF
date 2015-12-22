@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.ui,
  org.eclipse.cdt.debug.core,
  org.eclipse.cdt.debug.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse CDT
 Export-Package: org.eclipse.cdt.examples.dsf.gdb;x-internal:=true,

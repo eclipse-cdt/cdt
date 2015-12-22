@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27d6470d_c441f50d",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "With target platform files, we can import all CDT plugins in our workspace easily.\nThat implies that if any plugins, even examples, add global buttons/menus, they will be\nvisible to committers, which can be counter productive.\nI suggest you make them visible only when the examples plugin is activated\nas you do for the handler; that should be enough to hide the buttons\nuntil someone actually uses the example.",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_a444f11e",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "You might have noticed that the above does not work perfectly.  There is a bug written on\nplatform about that.  I just wanted to make you aware.",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_e4c199fc",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "Add a visibleWhen as suggested above",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_24cc6132",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "Add more checks as suggested above",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_444c051a",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "Please remove suppressWarnings\nThen go to the plugin that you want to be able to use and add this examples plugin as a friend for the required package",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_046cbd26",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "Please rename to GdbShowVersionHandler",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_c47ad5db",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "Please update the plugin to require Java 8 (5 changes within files \n.settings/org.eclipse.jdt.core.prefs \n.classpath \nMANIFEST.MF)\nThanks for teaching me about optionals :)  It does not add much value in this particular class\nbut it is an interesting example, so let\u0027s keep it if you are willing to update the plugin requirements.",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_845d2dc4",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "TTo be more complete, check for funcService !\u003d null first (or use an optional?)",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_a45a31c7",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "TTo be more complete, check for funcService !\u003d null first (or use an optional?)",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_64602978",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/DsfShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "This should return false to avoid the user pressing more than once very quickly",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_244701f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/commands/IShowVersionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-22T19:51:47Z",
+      "side": 1,
+      "message": "Do you own the copyright to this code or is it your employer?\nThe copyright must be to the entity that owns the copyright.",
+      "revId": "1f9b72485555f1d2e88e62d82b699745678d5d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

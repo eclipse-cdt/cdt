@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.gdb;
 
+import java.util.List;
+
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbSessionAdapters;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.gdb.actions.DsfExtendedTerminateCommand;
+import org.eclipse.cdt.examples.dsf.gdb.actions.GdbShowVersionHandler;
+import org.eclipse.cdt.examples.dsf.gdb.commands.IShowVersionHandler;
 import org.eclipse.cdt.examples.dsf.gdb.viewmodel.GdbExtendedViewModelAdapter;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.commands.ITerminateHandler;
@@ -34,7 +38,30 @@ public class GdbExtendedSessionAdapters extends GdbSessionAdapters {
 		if (IViewerInputProvider.class.equals(adapterType)) {
 			return (T)new GdbExtendedViewModelAdapter(session, getSteppingController());
 		}
+		if (IShowVersionHandler.class.equals(adapterType)) {
+			return (T)new GdbShowVersionHandler(session);
+		}
 
 		return super.createModelAdapter(adapterType, launch, session);
+	}
+
+	@Override
+	protected List<Class<?>> getModelAdapters() {
+		List<Class<?>> modelAdapters = super.getModelAdapters();
+		modelAdapters.add(IShowVersionHandler.class);
+		return modelAdapters;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getLaunchAdapter(Class<T> adapterType) {
+		if (adapterType.equals(IShowVersionHandler.class)) {
+			// These launch adapters re-use the session adapters.
+			// Return them directly instead of including them
+			// in fLaunchAdapters to avoid trying to dispose of them
+			// twice when dispose() is called.
+			return (T) getSession().getModelAdapter(adapterType);
+		}
+		return super.getLaunchAdapter(adapterType);
 	}
 }

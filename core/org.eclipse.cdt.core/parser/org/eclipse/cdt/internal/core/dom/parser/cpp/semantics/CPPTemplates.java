@@ -233,50 +233,12 @@ public class CPPTemplates {
 				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) template, arguments, isDefinition, null, point);
 			}
 
-			final ICPPTemplateParameter[] parameters= template.getTemplateParameters();
-			final int numArgs = arguments.length;
-			final int numParams= parameters.length;
-			final int length= Math.max(numArgs, numParams);
-
-			CPPTemplateParameterMap map= new CPPTemplateParameterMap(numParams);
-
-			boolean isPack= false;
-			ICPPTemplateParameter param= null;
-			for (int i = 0; i < length; i++) {
-				if (!isPack || param == null) {
-					if (i < numParams) {
-						param= parameters[i];
-						isPack= param.isParameterPack();
-					} else {
-						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
-					}
-				}
-				if (i < numArgs) {
-					ICPPTemplateArgument arg= arguments[i];
-					ICPPTemplateArgument newArg = matchTemplateParameterAndArgument(template, param, arg, map, point);
-					if (newArg == null)
-						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
-					if (newArg != arg) {
-						if (arguments == args) {
-							arguments= args.clone();
-						}
-						arguments[i]= newArg;
-					}
-					if (!isPack) {
-						map.put(param, newArg);
-					}
-				} else {
-					// Parameter pack with empty arguments.
-					assert isPack;
-				}
+			if (arguments == args) {
+				arguments= args.clone();  // The createParameterMap call may modify the arguments array.
 			}
-
-			if (isPack) {
-				int packOffset= numParams - 1;
-				int packSize= numArgs - packOffset;
-				ICPPTemplateArgument[] pack= new ICPPTemplateArgument[packSize];
-				System.arraycopy(arguments, packOffset, pack, 0, packSize);
-				map.put(param, pack);
+			CPPTemplateParameterMap map = createParameterMap(template, arguments, point);
+			if (map == null) {
+				return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
 			}
 
 			ICPPTemplateInstance prim= getInstance(template, arguments, isDefinition);
@@ -735,7 +697,10 @@ public class CPPTemplates {
 				if (args == null) {
 					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
 				}
-				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args);
+				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args, id);
+				if (parameterMap == null) {
+					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
+				}
 				IType aliasedType = aliasTemplate.getType();
 				IBinding owner = template.getOwner();
 				return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, id);
@@ -750,7 +715,10 @@ public class CPPTemplates {
 				if (args == null) {
 					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
 				}
-				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args);
+				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args, id);
+				if (parameterMap == null) {
+					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
+				}
 				IType aliasedType = aliasTemplateInstance.getType();
 				IBinding owner = aliasTemplateInstance.getOwner();
 				return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, id);
@@ -2866,14 +2834,61 @@ public class CPPTemplates {
 		return s1.equals(s2);
 	}
 
-	public static ICPPTemplateParameterMap createParameterMap(ICPPTemplateDefinition tdef, ICPPTemplateArgument[] args) {
-		ICPPTemplateParameter[] tpars= tdef.getTemplateParameters();
-		int len= Math.min(tpars.length, args.length);
-		CPPTemplateParameterMap result= new CPPTemplateParameterMap(len);
-		for (int i = 0; i < len; i++) {
-			result.put(tpars[i], args[i]);
+	/**
+	 * Creates a template parameter map for the given template definition and template arguments. The template
+	 * arguments are adjusted by converting types of the non-type arguments to match the types of the template
+	 * parameters.
+	 *
+	 * @param template the template definition
+	 * @param arguments the template arguments; arguments may be modified by this method due to type
+	 *     conversion performed for non-type arguments  
+	 * @param point the point of instantiation
+	 * @return the created template parameter map, or {@code null} if the arguments are invalid
+	 */
+	private static CPPTemplateParameterMap createParameterMap(ICPPTemplateDefinition template,
+			ICPPTemplateArgument[] arguments, IASTNode point) {
+		final ICPPTemplateParameter[] parameters= template.getTemplateParameters();
+		final int numArgs = arguments.length;
+		final int numParams= parameters.length;
+		final int length= Math.max(numArgs, numParams);
+
+		CPPTemplateParameterMap map= new CPPTemplateParameterMap(numParams);
+
+		boolean isPack= false;
+		ICPPTemplateParameter param= null;
+		for (int i = 0; i < length; i++) {
+			if (!isPack || param == null) {
+				if (i >= numParams)
+					return null;
+				param= parameters[i];
+				isPack= param.isParameterPack();
+			}
+			if (i < numArgs) {
+				ICPPTemplateArgument arg= arguments[i];
+				ICPPTemplateArgument newArg =
+						matchTemplateParameterAndArgument(template, param, arg, map, point);
+				if (newArg == null)
+					return null;
+				if (newArg != arg) {
+					arguments[i]= newArg;
+				}
+				if (!isPack) {
+					map.put(param, newArg);
+				}
+			} else {
+				// Parameter pack with empty arguments.
+				assert isPack;
+			}
 		}
-		return result;
+
+		if (isPack) {
+			int packOffset= numParams - 1;
+			int packSize= numArgs - packOffset;
+			ICPPTemplateArgument[] pack= new ICPPTemplateArgument[packSize];
+			System.arraycopy(arguments, packOffset, pack, 0, packSize);
+			map.put(param, pack);
+		}
+		return map;
 	}
 
 	/**

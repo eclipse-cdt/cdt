@@ -8954,4 +8954,30 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRegression_421823() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<typename E>
+	//	class G {};
+	//
+	//	template<typename E>
+	//	void waldo(G<E>);
+	//
+	//	template <typename T>
+	//	struct A {
+	//	  typedef G<T> type;
+	//	};
+	//
+	//	template <typename... T>
+	//	using B = typename A<T...>::type;
+	//
+	//	template <typename T>
+	//	class C : public B<T> {
+	//	};
+	//
+	//	void test() {
+	//	  C<int> a;
+	//	  waldo(a);
+	//	}
+	public void testRecursiveTemplateClass_484786() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems Ltd and others.
+ * Copyright (c) 2004, 2013 QNX Software Systems Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,7 +201,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 	public void testGccErrorMessages_RequiredFromHere() throws IOException {
 		runParserTest(
 				new String[] {
-						"utils/bar.hpp:61:7: required from ‘static void OpenCVUtils::show_contours_d(std::string, cv::Mat&, const std::vector<std::vector<cv::Point_<_Tp> > >&, bool, const Scalar&, int, int, int) [with T = int; std::string = std::basic_string<char>; cv::Scalar = cv::Scalar_<double>]’",
+						"utils/bar.hpp:61:7: required from Â‘static void OpenCVUtils::show_contours_d(std::string, cv::Mat&, const std::vector<std::vector<cv::Point_<_Tp> > >&, bool, const Scalar&, int, int, int) [with T = int; std::string = std::basic_string<char>; cv::Scalar = cv::Scalar_<double>]Â’",
 						"utils/foo.cpp:117:96: required from here",
 					},
 				0, // errors
@@ -212,7 +212,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 						"foo.cpp",
 				},
 				new String[] {
-						"required from ‘static void OpenCVUtils::show_contours_d(std::string, cv::Mat&, const std::vector<std::vector<cv::Point_<_Tp> > >&, bool, const Scalar&, int, int, int) [with T = int; std::string = std::basic_string<char>; cv::Scalar = cv::Scalar_<double>]’",
+						"required from Â‘static void OpenCVUtils::show_contours_d(std::string, cv::Mat&, const std::vector<std::vector<cv::Point_<_Tp> > >&, bool, const Scalar&, int, int, int) [with T = int; std::string = std::basic_string<char>; cv::Scalar = cv::Scalar_<double>]Â’",
 						"required from here",
 				},
 				new String[] {GCC_ERROR_PARSER_ID}

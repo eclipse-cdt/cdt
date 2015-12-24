@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 QNX Software Systems and others.
+ * Copyright (c) 2002, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ class MacroDefinitionRule implements IPredicateRule {
 
 	protected boolean isValidCharacter(int c) {
 		// From GNUMakefile manual:
-		// A variable name may be any sequence of characters not containing ‘:’, ‘#’, ‘=’, or leading or trailing whitespace.
+		// A variable name may be any sequence of characters not containing Â‘:Â’, Â‘#Â’, Â‘=Â’, or leading or trailing whitespace.
 		// However, variable names containing characters other than letters, numbers, and underscores should be avoided,
 		// as they may be given special meanings in the future, and with some shells they cannot be passed through the environment to a sub-make
 		return !Character.isWhitespace(c) && c != ':' && c != '#' && c != '=';

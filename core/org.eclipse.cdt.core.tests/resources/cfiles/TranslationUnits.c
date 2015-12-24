@@ -1,5 +1,5 @@
 /*
- * (c) Copyright QNX Software Systems Ltd. 2002.
+ * (c) Copyright QNX Software Systems Ltd. 2002, 2003.
  * All Rights Reserved.
  */
 /********

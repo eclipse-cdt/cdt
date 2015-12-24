@@ -250,4 +250,18 @@ public class OverrideIndicatorTest extends AnnotationTestCase {
 		checkImplementsAnnotationLines(25, 26);
 		checkOverridesAnnotationLines(27);
 	}
+	
+	//	struct Foo {
+	//	  virtual void waldo(int) = 0;
+	//	  virtual void waldo(float) = 0;
+	//	};
+	//
+	//	struct Bar : Foo {
+	//	  void waldo(int) override;
+	//	  void waldo(float) override;
+	//	};
+	public void testMultipleOverloadsOverridden_479142() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkImplementsAnnotationLines(7, 8);
+	}
 }

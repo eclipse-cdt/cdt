@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -39,11 +42,13 @@ import org.eclipse.cdt.dsf.service.DsfSession.SessionStartedListener;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -204,6 +209,29 @@ public class BaseTestCase {
     	}
     }
 
+	/**
+	 * Make sure we are starting with a clean/known state. That means no
+	 * existing launches or launch configurations.
+	 */
+    @Before
+    public void removeTeminatedLaunchesBefore() throws CoreException {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
+		for (ILaunch launch : launches) {
+			if (!launch.isTerminated()) {
+				fail("Something has gone wrong, there is an unterminated launch from a previous test!");
+			}
+		}
+		if (launches.length > 0) {
+			launchManager.removeLaunches(launches);
+		}
+		
+		ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations();
+		for (ILaunchConfiguration launchConfiguration : launchConfigurations) {
+			launchConfiguration.delete();
+		}
+    }
+    
 	@Before
 	public void doBeforeTest() throws Exception {
 		setLaunchAttributes();
@@ -379,6 +407,12 @@ public class BaseTestCase {
 	public void doAfterTest() throws Exception {
 		if (fLaunch != null) {
 			fLaunch.terminate();
+			// Give a few seconds to allow the launch to terminate
+			int waitCount = 100;
+			while (!fLaunch.isTerminated() && --waitCount > 0) {
+				Thread.sleep(TestsPlugin.massageTimeout(100));
+			}
+			assertTrue("Launch failed to terminate before timeout", fLaunch.isTerminated());
 			fLaunch = null;
 		}
 	}

@@ -258,29 +258,35 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 			methodsCache.put(aClass, allInheritedMethods);
 		}
 
+		boolean foundOverridden = false;
+		ICPPMethod result = null;
 		for (ICPPMethod method : allInheritedMethods) {
 			if (method.getName().equals(testedMethodName)) {
 				if (method.isVirtual()) {
 					if (ClassTypeHelper.isOverrider(testedMethod, method)) {
 						if (method.isPureVirtual()) {
 							annotationKind = ANNOTATION_IMPLEMENTS;
+							result = method;
 						} else {
 							annotationKind = ANNOTATION_OVERRIDES;
+							result = method;
 						}
-					} else {
+						foundOverridden = true;
+					} else if (!foundOverridden) {
 						// The method has same name as virtual method in base, but does not override
 						// it (e.g. because it has a different signature), it shadows it.
 						annotationKind = ANNOTATION_SHADOWS;
+						result = method;
 					}
-				} else {
+				} else if (!foundOverridden) {
 					// The method has same name and is not virtual, it hides/shadows the method
 					// in the base class.
 					annotationKind = ANNOTATION_SHADOWS;
+					result = method;
 				}
-				return method;
 			}
 		}
-		return null;
+		return result;
 	}
 
 	/**

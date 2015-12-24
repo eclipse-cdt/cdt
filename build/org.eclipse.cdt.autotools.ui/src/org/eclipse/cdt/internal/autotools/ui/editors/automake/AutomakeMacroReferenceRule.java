@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, Red Hat, Inc.
+ * Copyright (c) 2006, 2015, Red Hat, Inc.
  * Based on MacroReferenceRule which has the following copyright notice
  * 
  * Copyright (c) 2000, 2006 QNX Software Systems and others.

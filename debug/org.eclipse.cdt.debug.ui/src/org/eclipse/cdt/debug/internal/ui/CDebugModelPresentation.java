@@ -24,35 +24,20 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
-import org.eclipse.cdt.debug.core.cdi.ICDIEventBreakpointHit;
-import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
-import org.eclipse.cdt.debug.core.cdi.ICDISignalExitInfo;
-import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
-import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
-import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
-import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
-import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
-import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICModule;
-import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
-import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
-import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
@@ -80,13 +65,10 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
@@ -272,42 +254,12 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			}
 			if ( element instanceof IWatchExpression && ((IWatchExpression)element).hasErrors() )
 				overlays[OverlayImageDescriptor.BOTTOM_LEFT] = CDebugImages.DESC_OVRS_ERROR;
-			if ( element instanceof ICVariable && ((ICVariable)element).isArgument() )
-				overlays[OverlayImageDescriptor.TOP_RIGHT] = CDebugImages.DESC_OVRS_ARGUMENT;
-			if ( element instanceof ICGlobalVariable && !(element instanceof IRegister) )
-				overlays[OverlayImageDescriptor.TOP_RIGHT] = CDebugImages.DESC_OVRS_GLOBAL;
 			return getImageCache().getImageFor( new OverlayImageDescriptor( baseImage, overlays ) );
 		}
 		return null;
 	}
 
 	private Image getBaseImage( Object element ) {
-		if ( element instanceof ICDebugTarget ) {
-			ICDebugTarget target = (ICDebugTarget)element;
-			if ( target.isPostMortem() ) {
-				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED ) );
-			}
-			if ( target.isTerminated() || target.isDisconnected() ) {
-				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED ) );
-			}
-			return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET ) );
-		}
-		if ( element instanceof ICThread ) {
-			ICThread thread = (ICThread)element;
-			ICDebugTarget target = (ICDebugTarget)thread.getDebugTarget();
-			if ( target.isPostMortem() ) {
-				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED ) );
-			}
-			if ( thread.isSuspended() ) {
-				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED ) );
-			}
-			else if ( thread.isTerminated() ) {
-				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED ) );
-			}
-			else {
-				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_THREAD_RUNNING ) );
-			}
-		}
 		if ( element instanceof IMarker ) {
 			IBreakpoint bp = getBreakpoint( (IMarker)element );
 			if ( bp != null && bp instanceof ICBreakpoint ) {
@@ -322,12 +274,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		}
 		if ( element instanceof IExpression ) {
 			return getExpressionImage( (IExpression)element );
-		}
-		if ( element instanceof IRegister ) {
-			return getRegisterImage( (IRegister)element );
-		}
-		if ( element instanceof IVariable ) {
-			return getVariableImage( (IVariable)element );
 		}
 		if ( element instanceof ICModule ) {
 			return getModuleImage( (ICModule)element );
@@ -485,10 +431,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			if ( element instanceof IWatchExpression ) {
 				return getWatchExpressionText( (IWatchExpression)element );
 			}
-			if ( element instanceof IVariable ) {
-				label.append( getVariableText( (IVariable)element ) );
-				return label.toString();
-			}
 			if ( element instanceof IValue ) {
 				label.append( getValueText( (IValue)element ) );
 				return label.toString();
@@ -518,8 +460,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			}
 			if ( element instanceof IDebugTarget )
 				label.append( getTargetText( (IDebugTarget)element, showQualified ) );
-			else if ( element instanceof IThread )
-				label.append( getThreadText( (IThread)element, showQualified ) );
 			if ( element instanceof ITerminate ) {
 				if ( ((ITerminate)element).isTerminated() ) {
 					label.insert( 0, CDebugUIMessages.getString( "CDTDebugModelPresentation.0" ) ); //$NON-NLS-1$
@@ -615,30 +555,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return overlays;
 	}
 
-
-	protected Image getVariableImage( IVariable element ) {
-		if ( element instanceof ICVariable ) {
-			ICType type = null;
-			try {
-				type = ((ICVariable)element).getType();
-			}
-			catch( DebugException e ) {
-				// use default image
-			}
-			if ( type != null && (type.isPointer() || type.isReference()) )
-				return fDebugImageRegistry.get( (((ICVariable)element).isEnabled()) ? CDebugImages.DESC_OBJS_VARIABLE_POINTER : CDebugImages.DESC_OBJS_VARIABLE_POINTER_DISABLED );
-			else if ( type != null && (type.isArray() || type.isStructure()) )
-				return fDebugImageRegistry.get( (((ICVariable)element).isEnabled()) ? CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE : CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE_DISABLED );
-			else
-				return fDebugImageRegistry.get( (((ICVariable)element).isEnabled()) ? CDebugImages.DESC_OBJS_VARIABLE_SIMPLE : CDebugImages.DESC_OBJS_VARIABLE_SIMPLE_DISABLED );
-		}
-		return null;
-	}
-
-	protected Image getRegisterImage( IRegister element ) {
-		return ( ( element instanceof ICVariable && ((ICVariable)element).isEnabled() ) ) ? fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER ) : fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER_DISABLED );
-	}
-
 	protected Image getExpressionImage( IExpression element ) {
 		return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_EXPRESSION ) );
 	}
@@ -657,34 +573,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_SHARED_LIBRARY );
 		}
 		return null;
-	}
-
-	protected String getVariableText( IVariable var ) throws DebugException {
-		StringBuffer label = new StringBuffer();
-		if ( var instanceof ICVariable ) {
-			ICType type = null;
-			try {
-				type = ((ICVariable)var).getType();
-			}
-			catch( DebugException e ) {
-				// don't display type
-			}
-			if ( type != null && isShowVariableTypeNames() ) {
-				String typeName = CDebugUIUtils.getVariableTypeName( type );
-				if ( typeName != null && typeName.length() > 0 ) {
-					label.append( typeName ).append( ' ' );
-				}
-			}
-			String name = var.getName();
-			if ( name != null )
-				label.append( name.trim() );
-			String valueString = getValueText( var.getValue() );
-			if ( !isEmpty( valueString ) ) {
-				label.append( " = " ); //$NON-NLS-1$
-				label.append( valueString );
-			}
-		}
-		return label.toString();
 	}
 
 	protected String getValueText( IValue value ) {
@@ -739,73 +627,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	protected String getTargetText( IDebugTarget target, boolean qualified ) throws DebugException {
-		ICDebugTarget t = target.getAdapter( ICDebugTarget.class );
-		if ( t != null ) {
-			if ( !t.isPostMortem() ) {
-				CDebugElementState state = t.getState();
-				if ( state.equals( CDebugElementState.EXITED )  || state.equals( CDebugElementState.TERMINATED )) {
-					Object info = t.getCurrentStateInfo();
-					String label = CDebugUIMessages.getString( "CDTDebugModelPresentation.3" ); //$NON-NLS-1$
-					String reason = ""; //$NON-NLS-1$
-					if ( info != null && info instanceof ICDISignalExitInfo ) {
-						ICDISignalExitInfo sigInfo = (ICDISignalExitInfo)info;
-						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.5" ), sigInfo.getName(), sigInfo.getDescription() ); //$NON-NLS-1$
-					}
-					else if ( info != null && info instanceof ICDIExitInfo ) {
-						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.6" ), Integer.valueOf( ((ICDIExitInfo)info).getCode() )  ); //$NON-NLS-1$
-					}
-					return MessageFormat.format( label, target.getName(), reason );
-				}
-				else if ( state.equals( CDebugElementState.SUSPENDED ) ) {
-						return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.7" ), target.getName() ); //$NON-NLS-1$
-				}
-			}
-		}
 		return target.getName();
-	}
-
-	protected String getThreadText( IThread thread, boolean qualified ) throws DebugException {
-		ICDebugTarget target = thread.getDebugTarget().getAdapter( ICDebugTarget.class );
-		if ( target.isPostMortem() ) {
-			return getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.8" ), thread.getName() ); //$NON-NLS-1$
-		}
-		if ( thread.isTerminated() ) {
-			return getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.9" ), thread.getName() ); //$NON-NLS-1$
-		}
-		if ( thread.isStepping() ) {
-			return getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.10" ), thread.getName() ); //$NON-NLS-1$
-		}
-		if ( !thread.isSuspended() ) {
-			return getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.11" ), thread.getName() ); //$NON-NLS-1$
-		}
-		if ( thread.isSuspended() ) {
-			String reason = ""; //$NON-NLS-1$
-			ICDebugElement element = thread.getAdapter( ICDebugElement.class );
-			if ( element != null ) {
-				Object info = element.getCurrentStateInfo();
-				if ( info instanceof ICDISignalReceived ) {
-					ICDISignal signal = ((ICDISignalReceived)info).getSignal();
-					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.13" ), signal.getName(), signal.getDescription() ); //$NON-NLS-1$
-				}
-				else if ( info instanceof ICDIWatchpointTrigger ) {
-					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.14" ), ((ICDIWatchpointTrigger)info).getOldValue(), ((ICDIWatchpointTrigger)info).getNewValue() ); //$NON-NLS-1$
-				}
-				else if ( info instanceof ICDIWatchpointScope ) {
-					reason = CDebugUIMessages.getString( "CDTDebugModelPresentation.15" ); //$NON-NLS-1$
-				}
-				else if ( info instanceof ICDIBreakpointHit ) {
-					reason = CDebugUIMessages.getString( "CDTDebugModelPresentation.16" ); //$NON-NLS-1$
-				}
-				else if ( info instanceof ICDISharedLibraryEvent ) {
-					reason = CDebugUIMessages.getString( "CDTDebugModelPresentation.17" ); //$NON-NLS-1$
-				}
-				else if ( info instanceof ICDIEventBreakpointHit ) {
-					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.20" ),  ((ICDIEventBreakpointHit)info).getEventBreakpointType()  ); //$NON-NLS-1$					
-				}
-			}
-			return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.18" ), thread.getName(), reason ); //$NON-NLS-1$
-		}
-		return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.19" ), thread.getName() ); //$NON-NLS-1$
 	}
 
 	protected String getStackFrameText( IStackFrame f, boolean qualified ) throws DebugException {

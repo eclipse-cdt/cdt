@@ -34,7 +34,6 @@ import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.CRequest;
-import org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
@@ -478,19 +477,11 @@ abstract public class AbstractToggleBreakpointAdapter
             }
         }
         
-        String memorySpace = getMemorySpace(rendering.getMemoryBlock(), null);
         String address = getSelectedAddress(rendering.getSelectedAddress(), ""); //$NON-NLS-1$
         String range = getRange(rendering.getSelectedAsBytes(), addressableSize, "1"); //$NON-NLS-1$
         
         createWatchpoint(interactive, part, "", ResourcesPlugin.getWorkspace().getRoot(), -1, -1, -1, address,  //$NON-NLS-1$
-            memorySpace, range);
-    }
-
-    private String getMemorySpace(IMemoryBlock memBlock, String def) {
-        if (memBlock != null && memBlock instanceof CMemoryBlockExtension) {
-            return ((CMemoryBlockExtension)memBlock).getMemorySpaceID();
-        }
-        return def;
+            range);
     }
 
     private String getSelectedAddress(BigInteger selectedAddress, String def) {
@@ -983,6 +974,16 @@ abstract public class AbstractToggleBreakpointAdapter
 	    throws CoreException;
 
     /**
+     * @deprecated The memorySpace parameter is no longer relevant
+     */
+	@Deprecated
+    protected void createWatchpoint(boolean interactive, IWorkbenchPart part, String sourceHandle,
+        IResource resource, int charStart, int charEnd, int lineNumber, String expression, String memorySpace,
+        String range) throws CoreException {
+		createWatchpoint(interactive, part, sourceHandle, resource, charStart, charEnd, lineNumber, expression, range);
+    }
+	
+    /**
      * Creates a watchpoint at the given location.
      * @param interactive true if action should open a dialog to let user edit
      * breakpoint properties prior to creation. 
@@ -995,9 +996,10 @@ abstract public class AbstractToggleBreakpointAdapter
      * -1 if not known.
      * @param lineNumber Line number where the variable is located.
      * @throws CoreException Exception while creating breakpoint.
+     * @since 8.0
      */
     protected abstract void createWatchpoint(boolean interactive, IWorkbenchPart part, String sourceHandle,
-        IResource resource, int charStart, int charEnd, int lineNumber, String expression, String memorySpace, 
+        IResource resource, int charStart, int charEnd, int lineNumber, String expression,
         String range) throws CoreException;
 
     /**

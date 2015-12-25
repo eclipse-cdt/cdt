@@ -16,10 +16,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.ICDebugConfiguration;
-import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.debug.ui.ICDebuggerPageExtension;
 import org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener;
@@ -104,12 +101,6 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			fCoreMode = true;
 		}
 		fAttachMode = attach;
-		
-		ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDefaultDebugConfiguration();
-		if (dc == null) {
-			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault(
-					ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, LOCAL_DEBUGGER_ID);
-		}
 	}
 
 	@Override

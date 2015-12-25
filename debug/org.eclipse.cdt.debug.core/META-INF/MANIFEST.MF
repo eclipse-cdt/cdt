@@ -2,16 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.core; singleton:=true
-Bundle-Version: 7.7.0.qualifier
+Bundle-Version: 8.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.core.CDebugCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.debug.core,
  org.eclipse.cdt.debug.core.breakpointactions,
- org.eclipse.cdt.debug.core.cdi,
- org.eclipse.cdt.debug.core.cdi.event,
- org.eclipse.cdt.debug.core.cdi.model,
- org.eclipse.cdt.debug.core.cdi.model.type,
  org.eclipse.cdt.debug.core.command,
  org.eclipse.cdt.debug.core.disassembly,
  org.eclipse.cdt.debug.core.executables,

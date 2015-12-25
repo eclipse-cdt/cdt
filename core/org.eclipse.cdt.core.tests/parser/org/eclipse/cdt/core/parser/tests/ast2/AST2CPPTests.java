@@ -11622,7 +11622,14 @@ public class AST2CPPTests extends AST2TestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPVariable test = bh.assertNonProblemOnFirstIdentifier("test");
 		assertTrue(test.getType() instanceof IProblemType); // resolution is ambiguous
-  }
+	}
+	
+	//	char foo() {
+	//		return '*';
+	//	}
+	public void testRegression_484618() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 	
 	//	constexpr int lambdas_supported = 
 	//	#if __has_feature(cxx_lambdas)

@@ -1248,4 +1248,15 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		offset = code.indexOf("::other->foo") + 9;
 		assertTrue(testF3(file, offset) instanceof IASTName);
 	}
+	
+	//	struct Duration {};
+	//	Duration operator "" _d(unsigned long long);
+	//	Duration dur = 42_d;
+	public void testUserDefinedLiteralSuffix_484618() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug484618.cpp", code);
+		
+		int offset = code.indexOf("42_d") + 3;
+		assertTrue(testF3(file, offset) instanceof IASTName);
+	}
 }

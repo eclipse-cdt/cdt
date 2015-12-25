@@ -440,4 +440,11 @@ public class SemanticHighlightingTest extends TestCase {
     public void testHighlightingInsideAlignmentSpecifier_451082() throws Exception {
     	makeAssertions();
     }
+    
+	//	struct Duration {};                              //$class
+	//	Duration operator "" _d(unsigned long long);     //$class,functionDeclaration
+	//	Duration dur = 1000_d;                           //$class,globalVariable,overloadedOperator
+    public void testUserDefinedLiteralSuffix_484617() throws Exception {
+    	makeAssertions();
+    }
 }

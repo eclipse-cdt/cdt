@@ -196,39 +196,45 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		return positions.listIterator(idx);
 	}
 
+	/**
+	 * As a result of Bug 478673 IDocument/AbstractDocument was generified.
+	 * Prior to the generified version getDocumentManagedPositions() returned a
+	 * Map (i.e. Map<?>), DisassemblyDocument treated sometimes as a Map<String,
+	 * List<Position>> and sometimes as Map<String, List
+	 * <AddressRangePosition>>. Once the generification happened, the latter
+	 * case became a compile error.
+	 *
+	 * The current workaround is to do (at runtime) what we always did, i.e.
+	 * cast to the more specific List<AddressRangePosition>. This unfortunately
+	 * requires a double-cast to avoid the compilation error, hence the warning
+	 * suppressions.
+	 *
+	 * This was fixed for Bug 484894.
+	 */
+	private List<AddressRangePosition> getAddressRangePositions(String category) {
+		List<Position> listOfPositions = getDocumentManagedPositions().get(category);
+		@SuppressWarnings("rawtypes")
+		List listUntyped = listOfPositions;
+		@SuppressWarnings("unchecked")
+		List<AddressRangePosition> listOfAddressRangePositions = listUntyped;
+		return listOfAddressRangePositions;
+	}
+
 	public Iterator<AddressRangePosition> getPositionIterator(String category, BigInteger address) throws BadPositionCategoryException {
 		List<AddressRangePosition> positions = getAddressRangePositions(category);
+		if (positions == null) {
+			throw new BadPositionCategoryException();
+		}
 		int idx = computeIndexInPositionListFirst(positions, address);
 		return positions.listIterator(idx);
 	}
 
-	private List<AddressRangePosition> getAddressRangePositions(String category) throws BadPositionCategoryException {
-		List<Position> tmpPositions = getDocumentManagedPositions().get(category);
-		if (tmpPositions == null) {
+	public int computeIndexInCategory(String category, BigInteger address) throws BadPositionCategoryException {
+		List<AddressRangePosition> c = getAddressRangePositions(category);
+		if (c == null) {
 			throw new BadPositionCategoryException();
 		}
-		List<AddressRangePosition> positions = new ArrayList<>();
-		for(Position position: tmpPositions) {
-			positions.add((AddressRangePosition) position);
-		}
-		return positions;
-	}
-	
-	private List<AddressRangePosition> getAddressRangePositionsRaw(String category) {
-		List<Position> tmpPositions = getDocumentManagedPositions().get(category);
-		if (tmpPositions == null) {
-			return null;
-		}
-		List<AddressRangePosition> positions = new ArrayList<>();
-		for(Position position: tmpPositions) {
-			positions.add((AddressRangePosition) position);
-		}
-		return positions;
-	}
-
-	public int computeIndexInCategory(String category, BigInteger address) throws BadPositionCategoryException {
-		List<AddressRangePosition> positions = getAddressRangePositions(category);
-		return computeIndexInPositionListFirst(positions, address);
+		return computeIndexInPositionListFirst(c, address);
 	}
 
 	/**
@@ -412,7 +418,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	}
 
 	public AddressRangePosition getPositionOfAddress(String category, BigInteger address) {
-		List<AddressRangePosition> positions = getAddressRangePositionsRaw(category);
+		List<AddressRangePosition> positions = getAddressRangePositions(category);
 		if (positions == null) {
 			return null;
 		}
@@ -432,7 +438,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @return
 	 */
 	public AddressRangePosition getPositionInAddressRange(String category, AddressRangePosition range) {
-		List<AddressRangePosition> positions = getAddressRangePositionsRaw(category);
+		List<AddressRangePosition> positions = getAddressRangePositions(category);
 		if (positions == null) {
 			return null;
 		}
@@ -692,7 +698,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @param pos
 	 */
 	public void addModelPositionFirst(AddressRangePosition pos) {
-		List<AddressRangePosition> list = getAddressRangePositionsRaw(CATEGORY_MODEL);
+		List<AddressRangePosition> list = getAddressRangePositions(CATEGORY_MODEL);
 		int idx;
 		idx = computeIndexInPositionListFirst(list, pos.fAddressOffset.add(pos.fAddressLength));
 		if (idx < list.size()) {
@@ -735,6 +741,9 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 */
 	public void addPositionLast(String category, AddressRangePosition pos) throws BadPositionCategoryException {
 		List<AddressRangePosition> list = getAddressRangePositions(category);
+		if (list == null) {
+			throw new BadPositionCategoryException();
+		}
 		if (DEBUG) System.out.println("Adding position to category <" + category + "> : " + pos); //$NON-NLS-1$ //$NON-NLS-2$
 		list.add(computeIndexInPositionListLast(list, pos.fAddressOffset), pos);
 	}

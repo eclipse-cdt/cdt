@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27d6470d_9bfd87e3",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/model/DisassemblyDocument.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-25T18:05:35Z",
+      "side": 1,
+      "message": "seems to be some typo in \"by this class it was\"\n\nmaybe \"which in this class was treated",
+      "revId": "58aba6229bafcc0f690eda8f813bd216ff0e8cfe",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_7b060395",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/model/DisassemblyDocument.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-12-25T18:05:35Z",
+      "side": 1,
+      "message": "The above part of the comment need not be in the code; let\u0027s put it in the commit message instead.",
+      "revId": "58aba6229bafcc0f690eda8f813bd216ff0e8cfe",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

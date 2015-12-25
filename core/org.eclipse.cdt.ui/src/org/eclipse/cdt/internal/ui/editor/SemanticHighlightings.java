@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
@@ -1142,6 +1144,18 @@ public class SemanticHighlightings {
 					return false;
 				}
 				IBinding binding= token.getBinding();
+				// Names that resolve to alias template instances are template-ids
+				// with the template-name naming the alias template. We don't want
+				// to color the entire template-id, but rather want to color its
+				// constituent names separately.
+				if (binding instanceof ICPPAliasTemplateInstance) {
+					return false;
+				}
+				// This covers the name defining an alias template.
+				if (binding instanceof ICPPAliasTemplate) {
+					return true;
+				}
+				// This covers regular typedefs.
 				if (binding instanceof ITypedef) {
 					return true;
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.graphics.RGB;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -55,9 +51,13 @@ import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingPresenter;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Semantic highlighting tests.
@@ -445,6 +445,21 @@ public class SemanticHighlightingTest extends TestCase {
 	//	Duration operator "" _d(unsigned long long);     //$class,functionDeclaration
 	//	Duration dur = 1000_d;                           //$class,globalVariable,overloadedOperator
     public void testUserDefinedLiteralSuffix_484617() throws Exception {
+		makeAssertions();
+	}
+
+    //	template<typename T, typename U>                 //$templateParameter,templateParameter
+	//	struct Pair {};                                  //$class
+	//
+	//	template<typename T>                             //$templateParameter
+	//	using PairIntX = Pair<int, T>;                   //$typedef,class,templateParameter
+	//
+    //	struct Waldo {};                                 //$class
+    //
+	//	int main() {                                     //$functionDeclaration
+	//		PairIntX<Waldo> pair;                        //$typedef,class,localVariableDeclaration
+	//	}
+    public void testAliasTemplates_416748() throws Exception {
     	makeAssertions();
     }
 }

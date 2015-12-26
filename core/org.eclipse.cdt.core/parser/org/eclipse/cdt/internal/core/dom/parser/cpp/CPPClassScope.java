@@ -455,8 +455,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (name == null)
 			return false;
 		
-		if (!isPrefixLookup)
-			return CPPVisitor.isConstructorDeclaration(name);
+		if (!isPrefixLookup) {
+			return CPPVisitor.isConstructorDeclaration(name)
+				|| CPPVisitor.isLastNameInUsingDeclaration(name);
+		}
 		
 		IASTNode node = name.getParent();
 		if (node instanceof ICPPASTTemplateId)

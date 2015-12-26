@@ -215,6 +215,12 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 						continue;
 					}
 				}
+				if (binding instanceof ICPPUsingDeclaration) {
+					// For using-declarations, apply the logic below to each delegate
+					// individually.
+					bindings = ArrayUtil.addAll(bindings, ((ICPPUsingDeclaration) binding).getDelegates());
+					continue;
+				}
 				if (binding != null && !(binding instanceof IProblemBinding)) {
 					IName[] names = findDeclNames(ast, kind, binding);
 					for (final IName name : names) {

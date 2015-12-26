@@ -1030,6 +1030,14 @@ public class CPPVisitor extends ASTQueries {
 
 	    return false;
 	}
+	
+	public static boolean isUsingDeclaration(IASTName name) {
+		IASTNode parent = name.getParent();
+		if (parent instanceof ICPPASTQualifiedName) {
+			name = (IASTName) parent;
+		}
+		return name.getParent() instanceof ICPPASTUsingDeclaration;
+	}
 
 	public static IScope getContainingNonTemplateScope(final IASTNode inputNode) {
 		IScope scope= getContainingScope(inputNode);

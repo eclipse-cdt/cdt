@@ -37,6 +37,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
@@ -1247,5 +1249,23 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 
 		offset = code.indexOf("::other->foo") + 9;
 		assertTrue(testF3(file, offset) instanceof IASTName);
+	}
+	
+	//	struct Base {
+	//	    Base(int, int);
+	//	};
+	//
+	//	struct Derived : Base {
+	//	    using Base::Base;
+	//	};
+	public void testInheritedConstructor_484899() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug484899.cpp", code);
+
+		int offset = code.indexOf("Base::Base") + 7;
+		IASTNode target = testF3(file, offset); 
+		assertInstance(target, IASTName.class);
+		IBinding targetBinding = ((IASTName) target).resolveBinding();
+		assertInstance(targetBinding, ICPPConstructor.class);
 	}
 }

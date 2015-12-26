@@ -19,11 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -525,24 +522,6 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
         return array2d;
     }
     
-    private ICDIMemorySpaceManagement getMemorySpaceManagement(){
-        Object debugViewElement = getDebugContext();
-        ICDIMemorySpaceManagement memMgr = null;
-        
-        if ( debugViewElement != null ) {
-            ICDebugTarget debugTarget = (ICDebugTarget)DebugPlugin.getAdapter(debugViewElement, ICDebugTarget.class);
-            
-            if ( debugTarget != null ){
-                ICDITarget target = debugTarget.getAdapter(ICDITarget.class);
-            
-                if (target instanceof ICDIMemorySpaceManagement)
-                    memMgr = (ICDIMemorySpaceManagement)target;
-            }
-        }
-        
-        return memMgr;
-    }
-    
 	class LabelFieldEditor extends ReadOnlyFieldEditor {
 		private String fValue;
 
@@ -655,7 +634,6 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.sourceHandle_label" ), filename ) ); //$NON-NLS-1$
 			}
 			createWatchExpressionEditor(getFieldEditorParent());
-            createWatchMemorySpaceEditor(getFieldEditorParent());
 			createWatchRangeEditor(getFieldEditorParent());
 			createWatchTypeEditors(getFieldEditorParent());
 			
@@ -763,31 +741,6 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
                 parent, 
                 BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_label"), //$NON-NLS-1$
                 getPreferenceStore().getString(ICWatchpoint.EXPRESSION) ));
-        }
-    }
-
-    protected void createWatchMemorySpaceEditor( Composite parent ) {
-        ICBreakpoint breakpoint = getBreakpoint();
-        if (breakpoint == null || breakpoint.getMarker() == null) {
-            ICDIMemorySpaceManagement memSpaceMgmt = getMemorySpaceManagement();
-            if (memSpaceMgmt != null) {
-                String[] memorySpaces = memSpaceMgmt.getMemorySpaces();
-                if (memorySpaces != null && memorySpaces.length != 0) {
-                    addField( new WatchpointMemorySpaceFieldEditor(
-                         ICWatchpoint2.MEMORYSPACE,
-                         BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_memorySpace_label"), //$NON-NLS-1$
-                         memorySpaces,
-                         parent) ); 
-                }
-            }
-        } else {
-            String memorySpace = getPreferenceStore().getString(ICWatchpoint2.MEMORYSPACE);
-            if (memorySpace != null && memorySpace.length() != 0) {
-                addField(createLabelEditor(
-                    parent, 
-                    BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_memorySpace_label"), //$NON-NLS-1$
-                    getPreferenceStore().getString(ICWatchpoint2.MEMORYSPACE) ));
-            }
         }
     }
     

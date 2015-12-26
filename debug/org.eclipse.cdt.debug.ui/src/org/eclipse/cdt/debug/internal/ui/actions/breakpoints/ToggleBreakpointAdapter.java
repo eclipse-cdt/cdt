@@ -18,10 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -29,8 +26,6 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.breakpoints.AbstractToggleBreakpointAdapter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -90,12 +85,12 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
 
 	@Override
     protected void createWatchpoint( boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource, 
-        int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range) throws CoreException 
+        int charStart, int charEnd, int lineNumber, String expression, String range) throws CoreException 
     {
         ICWatchpoint bp = CDIDebugModel.createBlankWatchpoint();
         Map<String, Object> attributes = new HashMap<String, Object>();
         CDIDebugModel.setWatchPointAttributes(attributes, sourceHandle, resource, true, false, 
-            expression, memorySpace, new BigInteger(range), true, 0, ""); //$NON-NLS-1$
+            expression, new BigInteger(range), true, 0, ""); //$NON-NLS-1$
         openBreakpointPropertiesDialog(bp, part, resource, attributes);
 	}
 
@@ -112,23 +107,4 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;
 	}
-	
-	public static ICDIMemorySpaceManagement getMemorySpaceManagement(){
-        IAdaptable debugViewElement = DebugUITools.getDebugContext();
-        ICDIMemorySpaceManagement memMgr = null;
-        
-        if ( debugViewElement != null ) {
-            ICDebugTarget debugTarget = debugViewElement.getAdapter(ICDebugTarget.class);
-            
-            if ( debugTarget != null ){
-                ICDITarget target = debugTarget.getAdapter(ICDITarget.class);
-            
-                if (target instanceof ICDIMemorySpaceManagement)
-                    memMgr = (ICDIMemorySpaceManagement)target;
-            }
-        }
-        
-        return memMgr;
-    }
-
 }

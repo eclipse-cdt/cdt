@@ -505,16 +505,6 @@ public class AST2TestBase extends BaseTestCase {
 		return TestSourceReader.getContentsForTest(plugin.getBundle(), "parser", getClass(), getName(), sections);
 	}
 
-	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
-		assertNotNull("Expected object of " + clazz.getName() + " but got a null value", o);
-		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
-		for (Class c : cs) {
-			assertNotNull("Expected object of " + c.getName() + " but got a null value", o);
-			assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
-		}
-		return clazz.cast(o);
-	}
-
 	protected static void assertField(IBinding binding, String fieldName, String ownerName) {
     	assertInstance(binding, IField.class);
     	assertEquals(fieldName, binding.getName());

@@ -337,4 +337,16 @@ public class BaseTestCase extends TestCase {
 	public static void waitUntilFileIsIndexed(IIndex index, IFile file) throws Exception {
 		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEXER_TIMEOUT_SEC * 1000);
 	}
+
+	// Assertion helpers
+	
+	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
+		assertNotNull("Expected object of " + clazz.getName() + " but got a null value", o);
+		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
+		for (Class c : cs) {
+			assertNotNull("Expected object of " + c.getName() + " but got a null value", o);
+			assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
+		}
+		return clazz.cast(o);
+	}
 }

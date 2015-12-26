@@ -1030,6 +1030,13 @@ public class CPPVisitor extends ASTQueries {
 
 	    return false;
 	}
+	
+	public static boolean isLastNameInUsingDeclaration(IASTName name) {
+		IASTNode parent = name.getParent();
+		return parent instanceof ICPPASTQualifiedName
+			&& ((ICPPASTQualifiedName) parent).getLastName() == name
+			&& parent.getParent() instanceof ICPPASTUsingDeclaration;
+	}
 
 	public static IScope getContainingNonTemplateScope(final IASTNode inputNode) {
 		IScope scope= getContainingScope(inputNode);

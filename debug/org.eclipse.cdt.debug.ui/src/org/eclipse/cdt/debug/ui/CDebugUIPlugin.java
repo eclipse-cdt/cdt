@@ -16,16 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebuggerPageAdapter;
-import org.eclipse.cdt.debug.internal.ui.CRegisterManagerProxies;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
-import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointUpdater;
-import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyBackendCdiFactory;
 import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditorManager;
 import org.eclipse.cdt.debug.internal.ui.pinclone.ViewIDCounterManager;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
@@ -292,9 +288,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
         fDisassemblyEditorManager = new DisassemblyEditorManager();
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
 		
-		// Register the CDI backend for DSF's disassembly view
-		Platform.getAdapterManager().registerAdapters(new DisassemblyBackendCdiFactory(), ICDebugElement.class);
-		
 		WorkbenchJob wjob = new WorkbenchJob("Initializing CDT Debug UI") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -306,7 +299,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	private void startupInUIThread() {
-		EvaluationContextManager.startup();
 		ViewIDCounterManager.getInstance().init();
 		
 		// We contribute actions to the platform's Variables view with a
@@ -339,7 +331,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	@Override
     public void stop( BundleContext context ) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
-		CRegisterManagerProxies.getInstance().dispose();
         fDisassemblyEditorManager.dispose();
 		if ( fImageDescriptorRegistry != null ) {
 			fImageDescriptorRegistry.dispose();

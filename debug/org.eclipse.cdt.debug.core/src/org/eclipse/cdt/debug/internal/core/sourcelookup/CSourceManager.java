@@ -13,14 +13,11 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
-import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
-import org.eclipse.cdt.debug.internal.core.model.Disassembly;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -33,7 +30,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 public class CSourceManager implements ICSourceLocator, IPersistableSourceLocator, IAdaptable {
 	private ISourceLocator fSourceLocator = null;
 	private ILaunch fLaunch = null;
-	private CDebugTarget fDebugTarget = null;
 
 	/**
 	 * Constructor for CSourceManager.
@@ -75,17 +71,6 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	public void setSourceLocations(ICSourceLocation[] locations) {
 		if (getCSourceLocator() != null) {
 			getCSourceLocator().setSourceLocations(locations);
-			CDebugTarget target = getDebugTarget();
-			if (target != null) {
-				Disassembly d = null;
-				try {
-					d = (Disassembly)target.getDisassembly();
-				} catch (DebugException e) {
-				}
-				if (d != null) {
-					d.reset();
-				}
-			}
 		}
 	}
 
@@ -201,14 +186,6 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	@Override
 	public IProject getProject() {
 		return (getCSourceLocator() != null) ? getCSourceLocator().getProject() : null;
-	}
-
-	public void setDebugTarget(CDebugTarget target) {
-		fDebugTarget = target;
-	}
-
-	protected CDebugTarget getDebugTarget() {
-		return fDebugTarget;
 	}
 
 	/*

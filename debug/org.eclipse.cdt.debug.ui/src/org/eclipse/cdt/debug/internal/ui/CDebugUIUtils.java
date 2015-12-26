@@ -14,14 +14,12 @@ package org.eclipse.cdt.debug.internal.ui;
 import java.net.URI;
 import java.util.Iterator;
 
-import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
-import org.eclipse.cdt.debug.internal.ui.disassembly.rendering.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointPropertyDialogAction;
 import org.eclipse.core.filesystem.URIUtil;
@@ -146,16 +144,6 @@ public class CDebugUIUtils {
 							valueString = "."; //$NON-NLS-1$
 						label.append( valueString );
 					}
-					else if ( type != null && type.isFloatingPointType() ) {
-						Number floatingPointValue = CDebugUtils.getFloatingPointValue( (ICValue)value );
-						if ( CDebugUtils.isNaN( floatingPointValue ) )
-							valueString = "NAN"; //$NON-NLS-1$
-						if ( CDebugUtils.isPositiveInfinity( floatingPointValue ) )
-							valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.23" ); //$NON-NLS-1$
-						if ( CDebugUtils.isNegativeInfinity( floatingPointValue ) )
-							valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.24" ); //$NON-NLS-1$
-						label.append( valueString );
-					}
 					else if ( valueString.length() > 0 ) {
 							label.append( valueString );
 					}
@@ -220,13 +208,6 @@ public class CDebugUIUtils {
 		}
 		if ( input instanceof IPathEditorInput ) {
 			return ((IPathEditorInput)input).getPath().toOSString();
-		}
-		if ( input instanceof DisassemblyEditorInput ) {
-			String sourceFile = ((DisassemblyEditorInput)input).getSourceFile();
-			if ( sourceFile != null ) {
-				return sourceFile;
-			}
-			return ((DisassemblyEditorInput)input).getModuleFile();
 		}
 		if ( input instanceof IURIEditorInput)
 		{

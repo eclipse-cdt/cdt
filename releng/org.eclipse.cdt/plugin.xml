@@ -101,18 +101,6 @@
             description="%activity.description.cdigdb"
             id="org.eclipse.cdt.debug.cdigdbActivity">
        </activity>
-
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.debug.cdigdbActivity"
-           	isEqualityPattern="true" 
-            pattern="org.eclipse.cdt.debug.mi.ui/org.eclipse.cdt.debug.mi.ui.MIPreferencePage">
-      </activityPatternBinding>
-   
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.debug.cdigdbActivity"
-           	isEqualityPattern="true" 
-            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.DebuggerTypesPreferencePage">
-      </activityPatternBinding>
     
    </extension>
    

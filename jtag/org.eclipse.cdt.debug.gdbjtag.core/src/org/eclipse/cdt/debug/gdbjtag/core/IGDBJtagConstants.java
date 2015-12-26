@@ -18,8 +18,6 @@ package org.eclipse.cdt.debug.gdbjtag.core;
  */
 public interface IGDBJtagConstants {
 	
-	public static final String DEBUGGER_ID = "org.eclipse.cdt.debug.mi.core.CDebuggerNew"; //$NON-NLS-1$
-	
 	// Debugger
 	public static final String ATTR_USE_REMOTE_TARGET = Activator.PLUGIN_ID + ".useRemoteTarget"; //$NON-NLS-1$
 	public static final String ATTR_IP_ADDRESS = Activator.PLUGIN_ID + ".ipAddress"; //$NON-NLS-1$

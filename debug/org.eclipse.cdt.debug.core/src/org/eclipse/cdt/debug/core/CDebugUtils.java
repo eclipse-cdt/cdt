@@ -32,17 +32,14 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
-import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -246,16 +243,6 @@ public class CDebugUtils {
 		return serializeDocument(doc, true);
 	}
 
-	public static Number getFloatingPointValue(ICValue value) {
-		if (value instanceof CFloatingPointValue) {
-			try {
-				return ((CFloatingPointValue)value).getFloatingPointValue();
-			} catch (CDIException e) {
-			}
-		}
-		return null;
-	}
-
 	public static boolean isNaN(Number value) {
 		if (value instanceof Double) {
 			return ((Double) value).isNaN();
@@ -369,7 +356,6 @@ public class CDebugUtils {
 		appendWatchExpression(watchpoint, label);
 		if (watchpoint instanceof ICWatchpoint2) {
 			ICWatchpoint2 wp2 = (ICWatchpoint2)watchpoint;
-			appendWatchMemorySpace(wp2, label);
 			appendWatchRange(wp2, label);
 		}
 		appendBreakpointType(watchpoint, label);
@@ -475,14 +461,6 @@ public class CDebugUtils {
 		if (expression != null && expression.length() > 0) {
 			label.append(' ');
 			label.append(MessageFormat.format( DebugCoreMessages.getString("CDebugUtils.5"), (Object[])new String[] { expression })); //$NON-NLS-1$
-		}
-	}
-
-	private static void appendWatchMemorySpace(ICWatchpoint2 watchpoint, StringBuffer label) throws CoreException {
-		String memorySpace = watchpoint.getMemorySpace();
-		if (memorySpace != null && memorySpace.length() > 0) {
-			label.append(' ');
-			label.append(MessageFormat.format( DebugCoreMessages.getString("CDebugUtils.6"), (Object[])new String[] { memorySpace })); //$NON-NLS-1$
 		}
 	}
 

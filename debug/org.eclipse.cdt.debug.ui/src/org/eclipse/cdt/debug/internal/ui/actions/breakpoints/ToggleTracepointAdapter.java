@@ -80,8 +80,9 @@ public class ToggleTracepointAdapter extends AbstractToggleBreakpointAdapter {
 	    return false;
 	}
 	
+	@Override
     protected void createWatchpoint( boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource, 
-        int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range) throws CoreException 
+        int charStart, int charEnd, int lineNumber, String expression, String range) throws CoreException 
     {
     }
 

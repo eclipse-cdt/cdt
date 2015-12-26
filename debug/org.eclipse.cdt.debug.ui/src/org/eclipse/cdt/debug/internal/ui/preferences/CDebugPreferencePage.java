@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Ken Ryall (Nokia) - 207675
  * Mathias Kunter - Support for different charsets (bug 370462)
+ * Jonah Graham (Kichwa Coders) - Remove CDI
 *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
@@ -16,7 +17,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
-import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -38,7 +38,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -57,32 +56,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private IWorkbench fWorkbench;
 
-	private Combo fVariableFormatCombo;
-
-	private Combo fExpressionFormatCombo;
-	
-	private Combo fRegisterFormatCombo;
-
 	private EncodingFieldEditor fCharsetEditor;
 	
 	private EncodingFieldEditor fWideCharsetEditor;
-	
-	// Format constants
-	private static int[] fFormatIds = new int[] {
-		ICDIFormat.NATURAL,
-		ICDIFormat.HEXADECIMAL,
-		ICDIFormat.DECIMAL,
-		ICDIFormat.OCTAL,
-		ICDIFormat.BINARY
-	};
-
-	private static String[] fFormatLabels = new String[] {
-		PreferenceMessages.getString( "CDebugPreferencePage.0" ), //$NON-NLS-1$
-		PreferenceMessages.getString( "CDebugPreferencePage.1" ), //$NON-NLS-1$
-		PreferenceMessages.getString( "CDebugPreferencePage.2" ), //$NON-NLS-1$
-		PreferenceMessages.getString( "CDebugPreferencePage.17" ), //$NON-NLS-1$
-		PreferenceMessages.getString( "CDebugPreferencePage.14" ) //$NON-NLS-1$
-	};
 
 	private PropertyChangeListener fPropertyChangeListener;
 
@@ -148,8 +124,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData( data );
 		createSpacer( composite, 1 );
-		createViewSettingPreferences( composite );
-		createSpacer( composite, 1 );
 		createCharsetSettingPreferences( composite );
 		createSpacer( composite, 1 );
 		createBinarySettings( composite );
@@ -158,30 +132,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	/**
-	 * Creates composite group and sets the default layout data.
-	 * 
-	 * @param parent
-	 *            the parent of the new composite
-	 * @param numColumns
-	 *            the number of columns for the new composite
-	 * @param labelText
-	 *            the text label of the new composite
-	 * @return the newly-created composite
-	 */
-	private Composite createGroupComposite( Composite parent, int numColumns, String labelText ) {
-		return ControlFactory.createGroup( parent, labelText, numColumns );
-	}
-
-	/**
 	 * Set the values of the component widgets based on the values in the preference store
 	 */
 	private void setValues() {
-		// Set the number format combo boxes.
-		fVariableFormatCombo.select(getFormatIndex(Platform.getPreferencesService().getInt(CDebugCorePlugin.PLUGIN_ID, ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL, null)));
-		fExpressionFormatCombo.select(getFormatIndex(Platform.getPreferencesService().getInt(CDebugCorePlugin.PLUGIN_ID, ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL, null)));
-		fRegisterFormatCombo.select(getFormatIndex(Platform.getPreferencesService().getInt(CDebugCorePlugin.PLUGIN_ID, ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL, null)));
-		
-		
 		// Set the charset editors.
 		
 		// Create a temporary preference store.
@@ -265,18 +218,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		getPreferenceStore().removePropertyChangeListener( getPropertyChangeListener() );
 	}
 
-	/**
-	 * Create the view setting preferences composite widget
-	 */
-	private void createViewSettingPreferences( Composite parent ) {
-		Composite comp = createGroupComposite( parent, 1, PreferenceMessages.getString( "CDebugPreferencePage.4" ) ); //$NON-NLS-1$
-		Composite formatComposite = ControlFactory.createCompositeEx( comp, 2, 0 );
-		((GridLayout)formatComposite.getLayout()).makeColumnsEqualWidth = true;
-		fVariableFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.8" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
-		fExpressionFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.9" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
-		fRegisterFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.10" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
-	}
-	
 	private void createCharsetSettingPreferences( Composite parent ) {
 		// Create containing composite
 		Composite formatComposite = ControlFactory.createComposite( parent, 2);
@@ -308,16 +249,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		GridData data = new GridData();
 		button.setLayoutData( data );
 		return button;
-	}
-
-	/**
-	 * Creates a button with the given label and sets the default configuration data.
-	 */
-	private Combo createComboBox( Composite parent, String label, String[] items, String selection ) {
-		ControlFactory.createLabel( parent, label );
-		Combo combo = ControlFactory.createSelectCombo( parent, items, selection );
-		combo.setLayoutData( new GridData() );
-		return combo;
 	}
 
 	protected void createSpacer( Composite composite, int columnSpan ) {
@@ -389,11 +320,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 * Store the preference values based on the state of the component widgets
 	 */
 	private void storeValues() {
-		// Store the number formats.
-		InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).putInt(ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, getFormatId(fVariableFormatCombo.getSelectionIndex()));
-		InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).putInt(ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId(fExpressionFormatCombo.getSelectionIndex()));
-		InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).putInt(ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, getFormatId(fRegisterFormatCombo.getSelectionIndex()));
-		
 		// Store the charset.
 		if (fCharsetEditor.presentsDefaultValue()) {
 			InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).remove(ICDebugConstants.PREF_DEBUG_CHARSET);
@@ -426,23 +352,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	private void setDefaultValues() {
-		fVariableFormatCombo.select(getFormatIndex(DefaultScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).getInt(ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL)));
-		fExpressionFormatCombo.select(getFormatIndex(DefaultScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).getInt(ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL)));
-		fRegisterFormatCombo.select(getFormatIndex(DefaultScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).getInt(ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL)));
 		fCharsetEditor.loadDefault();
 		fWideCharsetEditor.loadDefault();
 		fShowBinarySourceFilesButton.setSelection(DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).getBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true));
-	}
-
-	private static int getFormatId( int index ) {
-		return (index >= 0 && index < fFormatIds.length) ? fFormatIds[index] : fFormatIds[0];
-	}
-
-	private static int getFormatIndex( int id ) {
-		for( int i = 0; i < fFormatIds.length; ++i )
-			if ( fFormatIds[i] == id )
-				return i;
-		return -1;
 	}
 
 	private IWorkbench getWorkbench() {

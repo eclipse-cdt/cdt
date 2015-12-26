@@ -12,15 +12,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.pda.sourcelookup;
 
+import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupParticipant;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
  * PDA source lookup director.
  */
 public class PDASourceLookupDirector extends AbstractSourceLookupDirector {
+	private DsfSession fSession;
+
+	public PDASourceLookupDirector(DsfSession session) {
+		fSession = session;
+	}
+
 	@Override
 	public void initializeParticipants() {
-	    // No need to add participants here, the source display adapter will
-	    // add the participant with the correct session ID.
+		addParticipants( new ISourceLookupParticipant[]{ new DsfSourceLookupParticipant(fSession) } );
 	}
 }

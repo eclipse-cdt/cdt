@@ -251,13 +251,13 @@ public class GdbSessionAdapters {
 		if (ISteppingModeTarget.class.equals(adapterType)) {
 			return (T)new GdbSteppingModeTarget(session);
 		}
-		if (ISourceDisplay.class.equals(adapterType)) { 
-			return launch.getSourceLocator() instanceof ISourceLookupDirector ? 
-					(T)new DsfSourceDisplayAdapter(
-					session, 
-					(ISourceLookupDirector)launch.getSourceLocator(), 
-					getSteppingController()
-				) : null;
+		if (ISourceDisplay.class.equals(adapterType)) {
+			if (launch.getSourceLocator() instanceof ISourceLookupDirector) {
+				ISourceLookupDirector director = (ISourceLookupDirector) launch.getSourceLocator();
+				return (T) new DsfSourceDisplayAdapter(session, director, getSteppingController());
+			} else {
+				return null;
+			}
 		}
 		if (IStepIntoHandler.class.equals(adapterType)) {
 			return (T)new DsfStepIntoCommand(session, getSteppingModeTarget());

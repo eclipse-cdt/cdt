@@ -18,8 +18,10 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.pda.PDAPlugin;
 import org.eclipse.cdt.examples.dsf.pda.service.PDABackend;
+import org.eclipse.cdt.examples.dsf.pda.sourcelookup.PDASourceLookupDirector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,10 +30,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
-import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
 
 
 /**
@@ -45,9 +45,11 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         // because once the launch is created and added to launch manager, 
         // the adapters will be created for the whole session, including 
         // the source lookup adapter.
-        ISourceLocator locator = getSourceLocator(configuration);
 
-        return new PDALaunch(configuration, mode, locator);
+        PDALaunch pdaLaunch = new PDALaunch(configuration, mode, null);
+        ISourceLocator locator = getSourceLocator(configuration, pdaLaunch.getSession());
+        pdaLaunch.setSourceLocator(locator);
+        return pdaLaunch;
     }
 
     @Override
@@ -57,27 +59,31 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
     }
 
     /**
-     * Returns a source locator created based on the attributes in the launch configuration.
+     * Creates and initializes the source locator for the given launch configuration and dsf session.
      */
-    private ISourceLocator getSourceLocator(ILaunchConfiguration configuration) throws CoreException {
-        String type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
-        if (type == null) {
-            type = configuration.getType().getSourceLocatorId();
+    protected ISourceLocator getSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
+        PDASourceLookupDirector locator = createPDASourceLocator(configuration, session);
+        String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+        if (memento == null) {
+            locator.initializeDefaults(configuration);
+        } else {
+            locator.initializeFromMemento(memento, configuration);
         }
-        if (type != null) {
-            IPersistableSourceLocator locator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(type);
-            String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
-            if (memento == null) {
-                locator.initializeDefaults(configuration);
-            } else {
-                if(locator instanceof IPersistableSourceLocator2)
-                    ((IPersistableSourceLocator2)locator).initializeFromMemento(memento, configuration);
-                else
-                    locator.initializeFromMemento(memento);
-            }
-            return locator;
-        }
-        return null;
+        return locator;
+    }
+
+    /**
+     * Creates an object of PDASourceLookupDirector with the given DsfSession.
+     * Subclasses who wish to just replace the source locator object with a sub-classed source locator
+     * should override this method.
+     * Subclasses who wish to replace the source locator object as well as change the
+     * initialization sequence of the source locator, should override getSourceLocator()
+     * as well as this method.
+     * Subclasses who wish to create a source locator which does not subclass DsfSourceLookupDirector,
+     * are advised to override getSourceLocator() directly.
+     */
+    protected PDASourceLookupDirector createPDASourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
+        return new PDASourceLookupDirector(session);
     }
 
     @Override

@@ -38,7 +38,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
-import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupParticipant;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.ISteppingControlParticipant;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
@@ -56,7 +55,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ISourcePresentation;
@@ -580,7 +578,6 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     private FrameData fPrevFrameData;
     private SourceLookupResult fPrevResult;
     private ISourceLookupDirector fSourceLookup;
-    private DsfSourceLookupParticipant fSourceLookupParticipant;
     private InstructionPointerManager fIPManager;
     
     private LookupJob fRunningLookupJob;
@@ -611,8 +608,6 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         fExecutor = session.getExecutor();
         fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
         fSourceLookup = sourceLocator;
-        fSourceLookupParticipant = new DsfSourceLookupParticipant(session); 
-        fSourceLookup.addParticipants(new ISourceLookupParticipant[] {fSourceLookupParticipant} );
 
         final IInstructionPointerPresentation ipPresentation = (IInstructionPointerPresentation) session.getModelAdapter(IInstructionPointerPresentation.class);
 		fIPManager = new InstructionPointerManager(ipPresentation);
@@ -656,7 +651,6 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		}
 		
         fServicesTracker.dispose();
-        fSourceLookup.removeParticipants(new ISourceLookupParticipant[] {fSourceLookupParticipant});
         
         // fSourceLookupParticipant is disposed by the source lookup director
         

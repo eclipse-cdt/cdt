@@ -31,10 +31,12 @@ import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIMixedInstruction;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
@@ -80,6 +82,7 @@ import org.junit.runner.RunWith;
  * </li>
  * <li><b>RN</b>: Relative and Non-Canonical path (a ../ in path passed to GCC)
  * </li>
+ * <li><b>No suffix</b>: Compilation that does not need mapping to be found
  * </ul>
  * The result of the variations on compilation arguments means that some of the
  * tests are parameterised.
@@ -101,6 +104,11 @@ public class SourceLookupTest extends BaseTestCase {
 	protected static final String EXEC_RC_NAME = "SourceLookupRC.exe"; //$NON-NLS-1$
 	/** Compiled with relative and non-canonical path to SourceLookup.cc */
 	protected static final String EXEC_RN_NAME = "SourceLookupRN.exe"; //$NON-NLS-1$
+	/**
+	 * File compiled with SourceLookup.cc in the src directory, so GDB resolves
+	 * it without help.
+	 */
+	protected static final String EXEC_NAME = "SourceLookup.exe"; //$NON-NLS-1$
 
 	protected static final String SOURCE_ABSPATH = new File(SOURCE_PATH).getAbsolutePath();
 	protected static final String BUILD_ABSPATH = new File(BUILD_PATH).getAbsolutePath();
@@ -462,6 +470,39 @@ public class SourceLookupTest extends BaseTestCase {
 		setSourceContainer(container);
 		doLaunch(EXEC_PATH + EXEC_RC_NAME);
 		assertSourceFoundByDirectorOnly();
+	}
+
+	/**
+	 * This test verifies that doing a source lookup where the absolute name of
+	 * the file is provided by the backend resolves.
+	 *
+	 * In the normal DSF case
+	 * {@link ISourceLookupDirector#findSourceElements(Object)} is called with a
+	 * {@link IDMContext}, e.g. a stack frame DMC.
+	 *
+	 * However, the disassembly view/editor does the lookup on a String (it
+	 * passes the result of {@link MIMixedInstruction#getFileName()} to
+	 * findSourceElements).
+	 *
+	 * In both the CDI and DSF participants there is special handling to ensure
+	 * that absolute file names are resolved even if there are no source
+	 * containers in the launch configuration.
+	 */
+	@Test
+	public void noExplicitSourceContainers() throws Throwable {
+		// create a director with no containers so that the memento can be
+		// created.
+		AbstractSourceLookupDirector tmpDirector = (AbstractSourceLookupDirector) DebugPlugin.getDefault()
+				.getLaunchManager().newSourceLocator("org.eclipse.cdt.debug.core.sourceLocator");
+		tmpDirector.setSourceContainers(new ISourceContainer[0]);
+		setLaunchAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, tmpDirector.getMemento());
+		setLaunchAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, tmpDirector.getId());
+
+		// We are using the version of the executable that is resolvable, i.e
+		// the one that has not had its source file moved since we compiled.
+		doLaunch(EXEC_PATH + EXEC_NAME);
+
+		assertSourceFound();
 	}
 
 }

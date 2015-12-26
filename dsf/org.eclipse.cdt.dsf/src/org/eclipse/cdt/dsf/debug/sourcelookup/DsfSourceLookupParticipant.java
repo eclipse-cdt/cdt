@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
  * Source lookup participant that should be used with DSF-based debuggers.
- * 
+ *
  * @since 1.0
  */
 @ThreadSafe
@@ -62,26 +62,17 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
         fServicesTracker = new DsfServicesTracker(DsfPlugin.getBundleContext(), fSessionId);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
-     */
     @Override
     public void init(ISourceLookupDirector director) {
         fDirector = director;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#dispose()
-     */
     @Override
     public void dispose() {
         fServicesTracker.dispose();
         fDirector = null;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#findSourceElements(java.lang.Object)
-     */
     @Override
     public Object[] findSourceElements(Object object) throws CoreException {
         CoreException single = null;
@@ -175,20 +166,17 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
         return new ISourceContainer[0];
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
-     */
     @Override
     public void sourceContainersChanged(ISourceLookupDirector director) {
         fLookupCache.clear();
     }
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
     @Override
-	public String getSourceName(Object object) throws CoreException {
-		if ( !(object instanceof IDMContext) || 
+    public String getSourceName(Object object) throws CoreException {
+        if (object instanceof String) {
+            return (String)object;
+        }
+        if ( !(object instanceof IDMContext) || 
              !((IDMContext)object).getSessionId().equals(fSessionId) ) 
         {
             return null;

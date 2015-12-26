@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,9 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
  
 /**
  * A source lookup participant that searches for C/C++ source code.
+ * @deprecated Only used by CDI, scheduled for removal as part of Bug 484900
  */
+@Deprecated
 public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 
 	static class NoSourceElement {

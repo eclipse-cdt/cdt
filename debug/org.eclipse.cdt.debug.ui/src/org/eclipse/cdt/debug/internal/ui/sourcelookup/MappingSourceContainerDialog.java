@@ -81,7 +81,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
             if (element instanceof MapEntrySourceContainer) {
                 MapEntrySourceContainer entry = (MapEntrySourceContainer)element;
                 if (CP_COMPILATION_PATH.equals(property))
-                    return entry.getBackendPath().toOSString();
+                    return entry.getBackend();
                 if (CP_FILE_SYSTEM_PATH.equals(property))
                     return entry.getLocalPath().toOSString();
             }
@@ -99,7 +99,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
                         : (MapEntrySourceContainer)element;
             boolean isDirty = false;
             if (CP_COMPILATION_PATH.equals(property)) {
-                entry.setBackendPath(new Path((String)value));
+                entry.setBackend((String)value);
                 isDirty = true;
             }
             else if (CP_FILE_SYSTEM_PATH.equals(property)) {
@@ -150,7 +150,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
             if (element instanceof MapEntrySourceContainer) {
                 MapEntrySourceContainer entry = (MapEntrySourceContainer)element;
                 if (columnIndex == 0)
-                    return entry.getBackendPath().toOSString();
+                    return entry.getBackend();
                 if (columnIndex == 1)
                     return entry.getLocalPath().toOSString();
             }
@@ -484,13 +484,9 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
                 return;
             for (ISourceContainer c : containers) {
                 MapEntrySourceContainer entry = (MapEntrySourceContainer)c;
-                IPath backendPath = entry.getBackendPath();
+                String backendPath = entry.getBackend();
                 if (backendPath.isEmpty()) {
                     setErrorMessage(SourceLookupUIMessages.PathMappingDialog_5);
-                    break;
-                }
-                if (!backendPath.isValidPath(backendPath.toString())) {
-                    setErrorMessage(SourceLookupUIMessages.PathMappingDialog_6);
                     break;
                 }
                 IPath localPath = entry.getLocalPath();

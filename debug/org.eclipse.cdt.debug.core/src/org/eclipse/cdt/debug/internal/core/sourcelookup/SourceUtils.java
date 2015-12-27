@@ -186,7 +186,7 @@ public class SourceUtils {
 				IPath a = d.getAssociation();
 				if (a != null) {
 					MappingSourceContainer mapping = new MappingSourceContainer(InternalSourceLookupMessages.SourceUtils_0 + (++mappingCount));
-					mapping.addMapEntries(new MapEntrySourceContainer[] { new MapEntrySourceContainer(a, d.getDirectory()) });
+					mapping.addMapEntries(new MapEntrySourceContainer[] { new MapEntrySourceContainer(a.toOSString(), d.getDirectory()) });
 					containers.add(mapping);
 
 				}

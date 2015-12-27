@@ -183,7 +183,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 
 		private void initialize() {
 			if (fEntry != null) {
-				fBackendPathText.setText(fEntry.getBackendPath().toOSString());
+				fBackendPathText.setText(fEntry.getBackend());
 				fLocalPathText.setText(fEntry.getLocalPath().toOSString());
 			}
 		}
@@ -227,8 +227,8 @@ public class PathMappingDialog extends TitleAreaDialog {
 			return true;
 		}
 
-		protected IPath getBackendPath() {
-			return new Path(fBackendPathText.getText().trim());
+		protected String getBackend() {
+			return fBackendPathText.getText().trim();
 		}
 
 		protected IPath getLocalPath() {
@@ -241,7 +241,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 				fEntry = new MapEntrySourceContainer();
 				fMapping.addMapEntry(fEntry);
 			}
-			fEntry.setBackendPath(getBackendPath());
+			fEntry.setBackend(getBackend());
 			fEntry.setLocalPath(getLocalPath());
 			super.okPressed();
 		}

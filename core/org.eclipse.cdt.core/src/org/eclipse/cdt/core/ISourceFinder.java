@@ -106,7 +106,10 @@ public interface ISourceFinder {
 	 *         is in OS specific format, along the lines of what {@link IPath#toOSString()} would return. Note
 	 *         that by "on the host machine", we simply mean a specification that is <i>accessible by the host
 	 *         machine</i>. The file may be on a network drive, e.g., and thus not really be "local".
+	 * @deprecated This method is unused in CDT code base. Use {@link #toLocalPath(String)} or request
+	 * undeprecating on the cdt-dev mailing list.
 	 */
+	@Deprecated
 	public String toLocalPath(IAdaptable launch, String compilationPath);
 
 	/**

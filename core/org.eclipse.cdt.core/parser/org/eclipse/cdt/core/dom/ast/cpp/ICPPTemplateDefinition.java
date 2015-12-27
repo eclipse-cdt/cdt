@@ -21,8 +21,9 @@ public interface ICPPTemplateDefinition extends ICPPBinding {
 	/**
 	 * Returns an array of the template parameters. 
 	 * In the case of a specialization, the array will be empty,
-	 * a partial specialization will have the specialized parameter list
-	 * @return array of ICPPTemplateParameter
+	 * a partial specialization will have the specialized parameter list.
+	 *
+	 * @return an array of template parameters
 	 */
 	public ICPPTemplateParameter[] getTemplateParameters();
 }

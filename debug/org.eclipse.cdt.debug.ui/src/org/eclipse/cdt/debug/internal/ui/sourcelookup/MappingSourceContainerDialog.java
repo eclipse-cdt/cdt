@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 ARM Limited and others.
+ * Copyright (c) 2009, 2015 ARM Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,6 +166,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
     private MappingSourceContainer fContainer;
 
     private Text fNameText;
+    private Button fMappingWithBackendEnabledCheck;
     private TableViewer fViewer;
     private Button fAddButton;
     private Button fRemoveButton;
@@ -254,6 +255,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         createNameArea(composite);
         createViewer(composite);
         createViewerButtonBar(composite);
+        createMappingWithBackendEnabledArea(composite);
 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), ICDebugHelpContextIds.SOURCE_PATH_MAP_ENTRY_DIALOG);
         return control;
@@ -266,6 +268,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
     protected void okPressed() {
         fOriginalContainer.clear();
         fOriginalContainer.setName(fNameText.getText().trim());
+        fOriginalContainer.setIsMappingWithBackendEnabled(fMappingWithBackendEnabledCheck.getSelection());
         try {
             fOriginalContainer.addMapEntries((MapEntrySourceContainer[])fContainer.getSourceContainers());
         } catch (CoreException e) {
@@ -305,6 +308,18 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
 			public void modifyText(ModifyEvent e) {
             }
         });
+    }
+
+    private void createMappingWithBackendEnabledArea(Composite parent) {
+        Composite composite = new Composite(parent, SWT.None);
+        composite.setLayout(new GridLayout(1, false));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
+
+        fMappingWithBackendEnabledCheck = new Button(composite, SWT.CHECK);
+        fMappingWithBackendEnabledCheck.setText(SourceLookupUIMessages.PathMappingDialog_MappingWithBackendEnabled);
+        fMappingWithBackendEnabledCheck.setToolTipText(SourceLookupUIMessages.PathMappingDialog_MappingWithBackendEnabledTooltip);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+        fMappingWithBackendEnabledCheck.setLayoutData(data);
     }
 
     private void createViewer(Composite parent) {
@@ -442,6 +457,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
     private void initialize() {
         fNameText.setText(fContainer.getName());
         fNameText.selectAll();
+        fMappingWithBackendEnabledCheck.setSelection(fContainer.isMappingWithBackendEnabled());
         fViewer.setInput(fContainer);
         updateViewerButtons();
     }

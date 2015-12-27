@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,28 +51,30 @@ import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
  * 
  * An instance is either associated with a particular launch configuration or it
  * has no association (global).
+ * 
+ * This class is created by the {@link ILaunchManager#newSourceLocator(String)}
+ * (e.g. DebugPlugin.getDefault().getLaunchManager().newSourceLocator(type)) and
+ * must have a no-arguments constructor.
  */
 public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	private static Set<String> fSupportedTypes;
 	private static Object fSupportedTypesLock = new Object();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
-	 */
 	@Override
 	public void initializeParticipants() {
 		addParticipants(new ISourceLookupParticipant[] { new CSourceLookupParticipant() });
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.core.sourcelookup.ISourceContainerType)
-	 */
 	@Override
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		readSupportedContainerTypes();
 		return fSupportedTypes.contains(type.getId());
 	}
 
+	/**
+	 * @deprecated Only used by CDI, scheduled for removal as part of Bug 484900
+	 */
+	@Deprecated
 	public boolean contains(String source) {
 		for (ISourceContainer cont : getSourceContainers()) {
 			if (contains(cont, source))
@@ -81,6 +83,10 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return false;
 	}
 
+	/**
+	 * @deprecated Only used by CDI, scheduled for removal as part of Bug 484900
+	 */
+	@Deprecated
 	public boolean contains(ICBreakpoint breakpoint) {
 		try {
 			String handle = breakpoint.getSourceHandle();
@@ -93,6 +99,10 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return false;
 	}
 
+	/**
+	 * @deprecated Only used by CDI, scheduled for removal as part of Bug 484900
+	 */
+	@Deprecated
 	public boolean contains(IProject project) {
 		for (ISourceContainer cont : getSourceContainers()) {
 			if (contains(cont, project))
@@ -101,6 +111,10 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return false;
 	}
 
+	/**
+	 * @deprecated Only used by CDI, scheduled for removal as part of Bug 484900
+	 */
+	@Deprecated
 	private boolean contains(ISourceContainer container, IProject project) {
 		if (container instanceof CProjectSourceContainer && project.equals(((CProjectSourceContainer) container).getProject())) {
 			return true;
@@ -118,6 +132,10 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return false;
 	}
 
+	/**
+	 * @deprecated Only used by CDI, scheduled for removal as part of Bug 484900
+	 */
+	@Deprecated
 	private boolean contains(ISourceContainer container, String sourceName) {
 		IPath path = new Path(sourceName);
 		if (!path.isValidPath(sourceName))
@@ -174,6 +192,18 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return false;
 	}
 
+	/**
+	 * Translate a local file name to a name understood by the backend.
+	 *
+	 * This method is used when CDT needs to send a command to the backend
+	 * containing a file name. For example, inserting a breakpoint. The platform
+	 * breakpoint's file name is a path of a file on the user's machine, but GDB
+	 * needs the path that corresponds to the debug information.
+	 *
+	 * @param sourceName
+	 *            file name of a local file
+	 * @return file name as understood by the debugger backend
+	 */
 	public IPath getCompilationPath(String sourceName) {
 		for (ISourceContainer container : getSourceContainers()) {
 			IPath path = SourceUtils.getCompilationPath(container, sourceName);
@@ -184,7 +214,12 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return null;
 	}
 
-	// >> Bugzilla 279473
+	/**
+	 * Load and cache the source container types which are supported for CDT
+	 * debugging.
+	 *
+	 * See Bug 279473 for more information.
+	 */
 	private void readSupportedContainerTypes() {
 		synchronized (fSupportedTypesLock) {
 			if (fSupportedTypes == null) {
@@ -203,5 +238,4 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 			}
 		}
 	}
-	// << Bugzilla 279473
 }

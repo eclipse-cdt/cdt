@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,22 +19,23 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 /**
  * DSF source lookup director.
  * 
+ * When a launch (or the global) source lookup containers are being edited it is
+ * an instance of CSourceLookupDirector that is created. However, when using DSF
+ * launch, the subclass DsfSourceLookupDirector is actually instantiated because
+ * connection to the DsfSession is needed.
+ *
  * @since 1.0
  */
 public class DsfSourceLookupDirector extends CSourceLookupDirector {
 
 	private final DsfSession fSession;
 	
-    public DsfSourceLookupDirector(DsfSession session) {
-        fSession = session;
-    }
+	public DsfSourceLookupDirector(DsfSession session) {
+		fSession = session;
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
-	 */
 	@Override
-    public void initializeParticipants() {
-	    super.initializeParticipants();
+	public void initializeParticipants() {
 		addParticipants( new ISourceLookupParticipant[]{ new DsfSourceLookupParticipant(fSession) } );
 	}
 	

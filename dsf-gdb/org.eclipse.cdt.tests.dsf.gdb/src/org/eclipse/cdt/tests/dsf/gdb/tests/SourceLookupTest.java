@@ -143,12 +143,12 @@ public class SourceLookupTest extends BaseTestCase {
 	/**
 	 * Map entry for non-canonical build dirs
 	 */
-	protected MapEntrySourceContainer fMapEntrySourceContainerN = new MapEntrySourceContainer(
-			new Path(BUILD_NONCANONICAL_PATH), new Path(SOURCE_ABSPATH));
+	protected MapEntrySourceContainer fMapEntrySourceContainerN = new MapEntrySourceContainer(BUILD_NONCANONICAL_PATH,
+			new Path(SOURCE_ABSPATH));
 	/**
 	 * Map entry for canonical build dirs
 	 */
-	protected MapEntrySourceContainer fMapEntrySourceContainerC = new MapEntrySourceContainer(new Path(BUILD_ABSPATH),
+	protected MapEntrySourceContainer fMapEntrySourceContainerC = new MapEntrySourceContainer(BUILD_ABSPATH,
 			new Path(SOURCE_ABSPATH));
 
 	protected AsyncCompletionWaitor fBreakpointInstalledWait = new AsyncCompletionWaitor();
@@ -518,8 +518,8 @@ public class SourceLookupTest extends BaseTestCase {
 		doMappingAndLaunch(EXEC_AC_NAME);
 
 		DsfSourceLookupDirector sourceLocator = (DsfSourceLookupDirector) getGDBLaunch().getSourceLocator();
-		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(
-				new Path(BUILD_ABSPATH + "/incorrectsubpath"), new Path(SOURCE_ABSPATH));
+		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(BUILD_ABSPATH + "/incorrectsubpath",
+				new Path(SOURCE_ABSPATH));
 
 		assertSourceFoundByDirectorOnly();
 
@@ -634,7 +634,6 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteAN() throws Throwable {
 		sourceSubstitute(EXEC_AN_NAME);
 	}
@@ -653,7 +652,6 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteRN() throws Throwable {
 		sourceSubstitute(EXEC_RN_NAME);
 	}
@@ -672,7 +670,6 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteBreakpointsAN() throws Throwable {
 		sourceSubstituteBreakpoints(EXEC_AN_NAME);
 	}
@@ -691,7 +688,6 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteBreakpointsRN() throws Throwable {
 		sourceSubstituteBreakpoints(EXEC_RN_NAME);
 	}
@@ -722,8 +718,8 @@ public class SourceLookupTest extends BaseTestCase {
 		doSubstituteAndLaunch(EXEC_AC_NAME);
 
 		DsfSourceLookupDirector sourceLocator = (DsfSourceLookupDirector) getGDBLaunch().getSourceLocator();
-		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(
-				new Path(BUILD_ABSPATH + "/incorrectsubpath"), new Path(SOURCE_ABSPATH));
+		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(BUILD_ABSPATH + "/incorrectsubpath",
+				new Path(SOURCE_ABSPATH));
 
 		assertSourceFound();
 

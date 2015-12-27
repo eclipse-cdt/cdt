@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 
 	private String fName;
 	private ArrayList<MapEntrySourceContainer> fContainers;
+	private boolean fIsMappingWithBackendEnabled = true;
 
 	/** 
 	 * Constructor for MappingSourceContainer. 
@@ -176,6 +177,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 
 	public MappingSourceContainer copy() {
 		MappingSourceContainer copy = new MappingSourceContainer(fName);
+		copy.setIsMappingWithBackendEnabled(isMappingWithBackendEnabled());
 		MapEntrySourceContainer[] entries = new MapEntrySourceContainer[fContainers.size()];
 		for (int i = 0; i < entries.length; ++i) {
 			copy.addMapEntry(fContainers.get(i).copy());
@@ -208,5 +210,30 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 			CDebugCorePlugin.log(e);
 		}
 		return result;
+	}
+
+	/**
+	 * Return <code>true</code> if the user has allowed this mapping container
+	 * to be mapped with the backend (e.g. GDB's set substitute-path) instead of
+	 * using {@link #findSourceElements(String)} and
+	 * {@link #getCompilationPath(String)}
+	 * <p>
+	 * The default if otherwise unspecified is to allow the GDB backend to
+	 * handle the substitution.
+	 *
+	 * @since 7.8
+	 */
+	public boolean isMappingWithBackendEnabled() {
+		return fIsMappingWithBackendEnabled;
+	}
+
+	/**
+	 * Set whether mapping is enabled. See
+	 * {@link #isMappingWithBackendEnabled()}
+	 *
+	 * @since 7.8
+	 */
+	public void setIsMappingWithBackendEnabled(boolean isMappingWithBackendEnabled) {
+		fIsMappingWithBackendEnabled = isMappingWithBackendEnabled;
 	}
 }

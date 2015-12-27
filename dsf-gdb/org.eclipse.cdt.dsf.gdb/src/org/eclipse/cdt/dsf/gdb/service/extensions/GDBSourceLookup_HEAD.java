@@ -8,8 +8,8 @@
 package org.eclipse.cdt.dsf.gdb.service.extensions;
 
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
+import org.eclipse.cdt.dsf.gdb.service.GDBSourceLookup;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
-import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
@@ -36,7 +36,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * 
  * @since 4.8
  */
-public class GDBSourceLookup_HEAD extends CSourceLookup {
+public class GDBSourceLookup_HEAD extends GDBSourceLookup {
 	public GDBSourceLookup_HEAD(DsfSession session) {
 		super(session);
 		

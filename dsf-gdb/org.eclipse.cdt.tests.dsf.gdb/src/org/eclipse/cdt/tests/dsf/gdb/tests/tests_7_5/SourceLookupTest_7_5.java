@@ -17,6 +17,20 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class SourceLookupTest_7_5 extends SourceLookupTest_7_4 {
+
+	public SourceLookupTest_7_5() {
+		/*
+		 * For version of GDB <= 7.4 we need to use the strict dwarf2 flags. See
+		 * comment in Makefile on OLDDWARFFLAGS. Also see SourceLookupTest_6_6
+		 * constructor which sets up the old flags.
+		 */
+		EXEC_AC_NAME = "SourceLookupAC.exe"; //$NON-NLS-1$
+		EXEC_AN_NAME = "SourceLookupAN.exe"; //$NON-NLS-1$
+		EXEC_RC_NAME = "SourceLookupRC.exe"; //$NON-NLS-1$
+		EXEC_RN_NAME = "SourceLookupRN.exe"; //$NON-NLS-1$
+		EXEC_NAME = "SourceLookup.exe"; //$NON-NLS-1$
+	}
+
 	@Override
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_5);

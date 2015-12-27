@@ -20,18 +20,88 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class SourceLookupTest_6_6 extends SourceLookupTest {
+
+	public SourceLookupTest_6_6() {
+		/*
+		 * For version of GDB <= 7.4 we need to use the strict dwarf2 flags. See
+		 * comment in Makefile on OLDDWARFFLAGS. Also see SourceLookupTest_7_5
+		 * constructor which changes to not use the old flags.
+		 */
+		EXEC_AC_NAME = "SourceLookupDwarf2AC.exe"; //$NON-NLS-1$
+		EXEC_AN_NAME = "SourceLookupDwarf2AN.exe"; //$NON-NLS-1$
+		EXEC_RC_NAME = "SourceLookupDwarf2RC.exe"; //$NON-NLS-1$
+		EXEC_RN_NAME = "SourceLookupDwarf2RN.exe"; //$NON-NLS-1$
+		EXEC_NAME = "SourceLookupDwarf2.exe"; //$NON-NLS-1$
+	}
+
 	@Override
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_6);
 	}
 
 	/**
-	 * For details on the ignore, see {@link SourceLookupTest_7_6#sourceMapping()}
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingAC()}
 	 */
 	@Ignore("Only works starting with GDB 7.6")
 	@Test
 	@Override
-	public void sourceMapping() throws Throwable {
-		super.sourceMapping();
+	public void sourceMappingAC() throws Throwable {
+		super.sourceMappingAC();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingAN() throws Throwable {
+		super.sourceMappingAN();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingRC() throws Throwable {
+		super.sourceMappingRC();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingRN() throws Throwable {
+		super.sourceMappingRN();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingBreakpointsAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingBreakpointsAC() throws Throwable {
+		super.sourceMappingBreakpointsAC();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingBreakpointsAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingBreakpointsRC() throws Throwable {
+		super.sourceMappingBreakpointsRC();
 	}
 }

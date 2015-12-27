@@ -1,0 +1,268 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27d6470d_1b29773a",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/AutoconfAnnotationHover.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "replace wth ,",
+      "range": {
+        "startLine": 2,
+        "startChar": 22,
+        "endLine": 2,
+        "endChar": 26
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_3b247b60",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/AutoconfCodeScanner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "2008, 2015? Or maybe many juste replace with  2006, 2015 Red Hat, Nokia",
+      "range": {
+        "startLine": 2,
+        "startChar": 41,
+        "endLine": 2,
+        "endChar": 45
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_5b669fa1",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/AutoconfEditorMacroValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "2007, 2015",
+      "range": {
+        "startLine": 2,
+        "startChar": 47,
+        "endLine": 2,
+        "endChar": 51
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_9b702751",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/outline/AutoconfLabelProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "2007, 2015",
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_bb732b5a",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/parser/AutoconfParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "2007, 2015",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 21
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_5b4dbf17",
+        "filename": "build/org.eclipse.cdt.make.core/src/org/eclipse/cdt/make/internal/core/makefile/gnu/VPath.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "2011?",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 28
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_bb4a4bfc",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/internal/errorparsers/tests/GCCErrorParserTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "some characters changed here?",
+      "range": {
+        "startLine": 204,
+        "startChar": 41,
+        "endLine": 204,
+        "endChar": 42
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_db60ef79",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ITranslationUnitHolder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "2009, 2014?",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 21
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_3e2aa97e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/Messages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "2007, 2013",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 32
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_debffda5",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CWatchpoint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "uh, 2012?",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 29
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_feba01b5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/disassembly/rulers/RulerColumnPreferenceAdapter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "that can\u0027t be right",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 26
+      },
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_1eca4543",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.floatingpoint/src/org/eclipse/cdt/debug/ui/memory/floatingpoint/FPRendering.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-12-27T05:06:47Z",
+      "side": 1,
+      "message": "Should the \u0027 Inc.\u0027 part be kept?",
+      "revId": "1a879dc6e046702db1727e36b337aa82bdca7d15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

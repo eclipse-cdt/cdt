@@ -44,8 +44,60 @@ public class SourceLookupTest_7_6 extends SourceLookupTest_7_5 {
 	 */
 	@Test
 	@Override
-	public void sourceMapping() throws Throwable {
-		super.sourceMapping();
+	public void sourceMappingAC() throws Throwable {
+		super.sourceMappingAC();
+	}
+
+	/**
+	 * For details, see {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Test
+	@Override
+	public void sourceMappingAN() throws Throwable {
+		super.sourceMappingAN();
+	}
+
+	/**
+	 * For details, see {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Test
+	@Override
+	public void sourceMappingRC() throws Throwable {
+		super.sourceMappingRC();
+	}
+
+	/**
+	 * For details, see {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Test
+	@Override
+	public void sourceMappingRN() throws Throwable {
+		super.sourceMappingRN();
+	}
+
+	/**
+	 * Support for inserting breakpoints on the build fullpath of a filename was
+	 * added in GDB 7.6 along with other changes to fullname handling. (It was
+	 * in 7.6 that fullname started being reported all the time, even if not
+	 * resolved. See associated gdb/NEWS item:
+	 * https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff;h=
+	 * ec83d2110de6831ac2ed0e5a56dc33c60a477eb6 although you have to dig quite
+	 * deep on these changes.)
+	 */
+	@Test
+	@Override
+	public void sourceMappingBreakpointsAC() throws Throwable {
+		super.sourceMappingBreakpointsAC();
+	}
+
+	/**
+	 * For details, see
+	 * {@link SourceLookupTest_7_6#sourceMappingBreakpointsAC()}
+	 */
+	@Test
+	@Override
+	public void sourceMappingBreakpointsRC() throws Throwable {
+		super.sourceMappingBreakpointsRC();
 	}
 
 	/**

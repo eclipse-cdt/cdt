@@ -88,6 +88,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 
     @Override
 	public void doBeforeTest() throws Exception {
+    	removeTeminatedLaunchesBeforeTest();
     	// Suppress settings of the launch attributes and launching. 
     	// Each test sets its own launch attributes
 	}

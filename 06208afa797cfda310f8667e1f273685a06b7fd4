@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27d6470d_be079924",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-12-27T03:49:06Z",
+      "side": 0,
+      "message": "How does this change relate to bug 483602? Please move unrelated changes to a separate commit.",
+      "range": {
+        "startLine": 33,
+        "startChar": 3,
+        "endLine": 33,
+        "endChar": 106
+      },
+      "revId": "06208afa797cfda310f8667e1f273685a06b7fd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

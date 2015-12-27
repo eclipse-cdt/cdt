@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27d6470d_fe084135",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CDeleteAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-12-27T03:49:06Z",
+      "side": 1,
+      "message": "Please remove this blank line.",
+      "revId": "3c412739c1bfa904eb188a35f575ee1519387b67",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_de0d3d46",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CDeleteAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-12-27T03:49:06Z",
+      "side": 1,
+      "message": "Please remove this blank line.",
+      "revId": "3c412739c1bfa904eb188a35f575ee1519387b67",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_1e18857f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/CDeleteAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-12-27T03:49:06Z",
+      "side": 1,
+      "message": "A space is missing before {",
+      "range": {
+        "startLine": 38,
+        "startChar": 21,
+        "endLine": 38,
+        "endChar": 24
+      },
+      "revId": "3c412739c1bfa904eb188a35f575ee1519387b67",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

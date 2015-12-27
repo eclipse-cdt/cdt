@@ -26,12 +26,68 @@ public class SourceLookupTest_6_6 extends SourceLookupTest {
 	}
 
 	/**
-	 * For details on the ignore, see {@link SourceLookupTest_7_6#sourceMapping()}
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingAC()}
 	 */
 	@Ignore("Only works starting with GDB 7.6")
 	@Test
 	@Override
-	public void sourceMapping() throws Throwable {
-		super.sourceMapping();
+	public void sourceMappingAC() throws Throwable {
+		super.sourceMappingAC();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingAN() throws Throwable {
+		super.sourceMappingAN();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingRC() throws Throwable {
+		super.sourceMappingRC();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingRN() throws Throwable {
+		super.sourceMappingRN();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingBreakpointsAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingBreakpointsAC() throws Throwable {
+		super.sourceMappingBreakpointsAC();
+	}
+
+	/**
+	 * For details on the ignore, see
+	 * {@link SourceLookupTest_7_6#sourceMappingBreakpointsAC()}
+	 */
+	@Ignore("Only works starting with GDB 7.6")
+	@Test
+	@Override
+	public void sourceMappingBreakpointsRC() throws Throwable {
+		super.sourceMappingBreakpointsRC();
 	}
 }

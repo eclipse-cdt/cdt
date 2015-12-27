@@ -70,6 +70,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 
     @Override
 	public void doBeforeTest() throws Exception {
+		removeTeminatedLaunchesBeforeTest();
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some 
 		// parameters.  The individual tests will be responsible for starting the launch. 

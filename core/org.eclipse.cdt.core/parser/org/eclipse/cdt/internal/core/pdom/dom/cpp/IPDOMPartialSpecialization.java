@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -16,12 +16,11 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Interface for partial specializations in the pdom.
+ * Interface for partial specializations in the PDOM.
  */
 interface IPDOMPartialSpecialization extends ICPPClassTemplatePartialSpecialization, IPDOMBinding {
-
 	/**
-	 * Allows for setting the arguments after the binding has been added to the pdom.
+	 * Allows for setting the arguments after the binding has been added to the PDOM.
 	 */
 	void setArguments(ICPPTemplateArgument[] args) throws CoreException;
 }

@@ -255,17 +255,17 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					fReturnExpression);
 		}
 	}
-	
+
 	class ConfigureFunctionSpecialization implements Runnable {
-		private final PDOMCPPFunctionSpecialization fSpec; 
+		private final PDOMCPPFunctionSpecialization fSpec;
 		private final ICPPEvaluation fReturnExpression;
-		
+
 		public ConfigureFunctionSpecialization(ICPPFunction original, PDOMCPPFunctionSpecialization spec) {
 			fSpec = spec;
 			fReturnExpression = CPPFunction.getReturnExpression(original);
 			postProcesses.add(this);
 		}
-		
+
 		@Override
 		public void run() {
 			fSpec.initData(fReturnExpression);
@@ -328,29 +328,29 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fTemplate.initData(fOriginalAliasedType);
 		}
 	}
-	
+
 	class ConfigureInstance implements Runnable {
 		PDOMCPPSpecialization fInstance;
-		
+
 		public ConfigureInstance(PDOMCPPSpecialization specialization) {
 			fInstance = specialization;
 			postProcesses.add(this);
 		}
-		
+
 		@Override
 		public void run() {
 			fInstance.storeTemplateParameterMap();
 		}
 	}
-	
+
 	class ConfigureClassInstance implements Runnable {
 		PDOMCPPClassInstance fClassInstance;
-		
+
 		public ConfigureClassInstance(PDOMCPPClassInstance classInstance) {
 			fClassInstance = classInstance;
 			postProcesses.add(this);
 		}
-		
+
 		@Override
 		public void run() {
 			fClassInstance.storeTemplateArguments();
@@ -368,7 +368,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		IBinding binding = name.resolveBinding();
 
 		PDOMBinding pdomBinding = addBinding(binding, name);
-		
+
 		// Some nodes schedule some of their initialization to be done
 		// after the binding has been added to the PDOM, to avoid
 		// infinite recursion. We run those post-processes now.
@@ -382,7 +382,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				addImplicitMethods(pdomBinding, (ICPPClassType) binding, name);
 			}
 		}
-		
+
 		// Some of the nodes created during addImplicitMethods() can
 		// also schedule post-processes, so we need to run through
 		// them again.
@@ -588,7 +588,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
             binding = ((ICPPSpecialization) binding).getSpecializedBinding();
         }
         if (binding instanceof ICPPClassTemplatePartialSpecialization) {
-        	// A class template partial specialization inherits the visibility of its primary class template. 
+        	// A class template partial specialization inherits the visibility of its primary class template.
         	binding = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
         }
         if (binding instanceof ICPPAliasTemplateInstance) {
@@ -665,7 +665,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			ICPPClassTemplate primarySpec = partialSpecSpec.getPrimaryClassTemplate();
 			PDOMBinding pdomPrimarySpec = addBinding(primarySpec, null);
 			if (pdomPrimarySpec instanceof PDOMCPPClassTemplateSpecialization) {
-				result= new PDOMCPPClassTemplatePartialSpecializationSpecialization(this, parent, orig, 
+				result= new PDOMCPPClassTemplatePartialSpecializationSpecialization(this, parent, orig,
 						partialSpecSpec, (PDOMCPPClassTemplateSpecialization) pdomPrimarySpec);
 			}
 		} else if (special instanceof ICPPConstructor) {

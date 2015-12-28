@@ -65,7 +65,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
-		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
+		return ICPPClassTemplatePartialSpecialization.EMPTY_ARRAY;
 	}
 	
 	public PDOMCPPClassTemplatePartialSpecializationSpecialization getNextPartial() throws CoreException {

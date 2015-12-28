@@ -266,7 +266,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
-		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
+		return ICPPClassTemplatePartialSpecialization.EMPTY_ARRAY;
 	}
 
 	@Override

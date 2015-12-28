@@ -49,11 +49,11 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 			}
 
 			return ArrayUtil.addAll(
-					ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY,
+					ICPPClassTemplatePartialSpecialization.EMPTY_ARRAY,
 					cf.getCompositeBindings(preresult));
 		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
-			return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
+			return ICPPClassTemplatePartialSpecialization.EMPTY_ARRAY;
 		}
 	}
 

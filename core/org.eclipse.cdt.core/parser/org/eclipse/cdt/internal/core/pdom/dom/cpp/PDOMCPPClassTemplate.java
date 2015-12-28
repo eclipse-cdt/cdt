@@ -226,7 +226,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return partials.toArray(new ICPPClassTemplatePartialSpecialization[partials.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
+			return ICPPClassTemplatePartialSpecialization.EMPTY_ARRAY;
 		}
 	}
 

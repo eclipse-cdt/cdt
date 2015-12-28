@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * This interface represents a class template partial specialization.  A partial specialization is
  * a class template in its own right.
  * 
- * e.g.:
+ * E.g.:
  * template <class T> class A {};     // the primary class template
  * template <class T> class A<T*> {}; // a partial specialization of the primary class template
  *
@@ -26,10 +26,14 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplate {
-	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_PARTIAL_SPECIALIZATION_ARRAY = {};
+	/** @since 5.12 */
+	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_ARRAY = {};
+	/** @deprecated Use {@link #EMPTY_ARRAY} */
+	@Deprecated
+	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_PARTIAL_SPECIALIZATION_ARRAY = EMPTY_ARRAY;
 	
 	/**
-	 * Returns the ICPPTemplateDefinition which this is a specialization of
+	 * Returns the ICPPTemplateDefinition which this is a specialization of.
 	 */
 	public ICPPClassTemplate getPrimaryClassTemplate();
 

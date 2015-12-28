@@ -509,6 +509,15 @@ public class ArduinoBuildConfiguration {
 		Properties properties = getProperties();
 
 		properties.put("serial.port", serialPort); //$NON-NLS-1$
+		if (serialPort.startsWith("/dev/")) {
+			properties.put("serial.port.file", serialPort.substring(5)); //$NON-NLS-1$
+		} else {
+			properties.put("serial.port.file", serialPort); //$NON-NLS-1$
+		}
+		// to make up for some cheating in the platform.txt file
+		properties.put("path", "{tools." + toolName + ".path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.put("cmd.path", "{tools." + toolName + ".cmd.path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.put("config.path", "{tools." + toolName + ".config.path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		// properties for the tool flattened
 		HierarchicalProperties toolsProps = new HierarchicalProperties(getBoard().getPlatform().getPlatformProperties())

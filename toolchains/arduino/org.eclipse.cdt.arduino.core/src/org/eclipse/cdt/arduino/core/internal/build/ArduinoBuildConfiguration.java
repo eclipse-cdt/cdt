@@ -261,7 +261,11 @@ public class ArduinoBuildConfiguration {
 			properties.put("runtime.ide.version", "10607"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("software", "ARDUINO"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
-			properties.put("build.path", config.getName()); //$NON-NLS-1$
+			String configName = config.getName();
+			if (configName.equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
+				configName = "default"; //$NON-NLS-1$
+			}
+			properties.put("build.path", configName); //$NON-NLS-1$
 			properties.put("build.variant.path", //$NON-NLS-1$
 					platform.getInstallPath().resolve("variants").resolve("{build.variant}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -456,7 +460,15 @@ public class ArduinoBuildConfiguration {
 	}
 
 	public String getMakeCommand() {
-		return isWindows ? ArduinoPreferences.getArduinoHome().resolve("tools/make/make").toString() : "make"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (isWindows) {
+			Path makePath = ArduinoPreferences.getArduinoHome().resolve("tools/make/make.exe"); //$NON-NLS-1$
+			if (!Files.exists(makePath)) {
+				makePath = ArduinoPreferences.getArduinoHome().resolve("make.exe"); //$NON-NLS-1$
+			}
+			return makePath.toString();
+		} else {
+			return "make"; //$NON-NLS-1$
+		}
 	}
 
 	public String[] getBuildCommand() throws CoreException {

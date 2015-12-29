@@ -50,7 +50,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
-import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -325,16 +324,16 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public final Object getAdapter(Class adapter) {
-		if (adapter.isAssignableFrom(fLocationResolver.getClass())) {
-			return fLocationResolver;
+	@SuppressWarnings("unchecked")
+	public final <T> T getAdapter(Class<T> adapter) {
+		if (adapter.isInstance(fLocationResolver)) {
+			return (T) fLocationResolver;
 		}
-		if (adapter.isAssignableFrom(IIndexFileSet.class)) {
-			return fIndexFileSet;
+		if (adapter.isInstance(fIndexFileSet)) {
+			return (T) fIndexFileSet;
 		}
-		if (adapter.isAssignableFrom(LexerOptions.class)) {
-			return fLocationResolver.getLexerOptions();
+		if (fLocationResolver != null && adapter.isInstance(fLocationResolver.getLexerOptions())) {
+			return (T) fLocationResolver.getLexerOptions();
 		}
 		return null;
 	}

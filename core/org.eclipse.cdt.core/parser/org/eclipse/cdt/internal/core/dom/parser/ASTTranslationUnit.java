@@ -325,16 +325,16 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public final Object getAdapter(Class adapter) {
-		if (adapter.isAssignableFrom(fLocationResolver.getClass())) {
-			return fLocationResolver;
+	@SuppressWarnings("unchecked")
+	public final <T> T getAdapter(Class<T> adapter) {
+		if (adapter.isAssignableFrom(ILocationResolver.class)) {
+			return (T) fLocationResolver;
 		}
 		if (adapter.isAssignableFrom(IIndexFileSet.class)) {
-			return fIndexFileSet;
+			return (T) fIndexFileSet;
 		}
 		if (adapter.isAssignableFrom(LexerOptions.class)) {
-			return fLocationResolver.getLexerOptions();
+			return (T) fLocationResolver.getLexerOptions();
 		}
 		return null;
 	}

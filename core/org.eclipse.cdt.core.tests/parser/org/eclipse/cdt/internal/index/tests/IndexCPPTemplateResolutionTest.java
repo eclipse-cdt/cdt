@@ -2870,4 +2870,22 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		// (e.g. because the author omitted a base case) doesn't cause a stack overflow.
 		checkBindings();
 	}
+
+	//	template<int L> constexpr
+	//	auto Bar(char const (&val)[L]) -> int {
+	//		return 0;
+	//	}
+	//
+	//	template<int K>
+	//	auto Foo() -> int;
+	//
+	//	template<>
+	//	auto Foo<Bar("")>() -> int {
+	//		return 1;
+	//	}
+	
+	//	// empty file
+	public void testStackOverflow_462764() throws Exception {
+		checkBindings();
+	}
 }

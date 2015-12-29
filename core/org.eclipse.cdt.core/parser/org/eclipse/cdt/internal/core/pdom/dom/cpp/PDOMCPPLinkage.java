@@ -271,6 +271,22 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fSpec.initData(fReturnExpression);
 		}
 	}
+	
+	class ConfigureFunctionInstance implements Runnable {
+		private final PDOMCPPFunctionInstance fInstance;
+		private final ICPPTemplateArgument[] fTemplateArguments;
+		
+		public ConfigureFunctionInstance(ICPPFunction original, PDOMCPPFunctionInstance instance) {
+			fInstance = instance;
+			fTemplateArguments = ((ICPPTemplateInstance) original).getTemplateArguments();
+			postProcesses.add(this);
+		}
+		
+		@Override
+		public void run() {
+			fInstance.initData(fTemplateArguments);
+		}
+	}
 
 	class ConfigureFunctionTemplate implements Runnable {
 		private final PDOMCPPFunctionTemplate fTemplate;

@@ -1,0 +1,8 @@
+Code-Review-1: Hudson CI
+Code-Review+2: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Verified+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Submitted-by: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Submitted-at: Tue, 29 Dec 2015 15:13:23 -0500
+Reviewed-on: https://git.eclipse.org/r/63334
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

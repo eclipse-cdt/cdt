@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 
 public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	public static String ERR_ID_OverloadProblem = "org.eclipse.cdt.codan.internal.checkers.OverloadProblem"; //$NON-NLS-1$
@@ -281,7 +282,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 				}
 			} else if (candidateBinding instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType) candidateBinding;
-				for (ICPPFunction constructor : classType.getConstructors()) {
+				for (ICPPFunction constructor : ClassTypeHelper.getConstructors(classType, problemBinding.getASTNode())) {
 					String signature = getFunctionSignature(constructor);
 					if (!signature.equals(lastSignature)) {
 						candidatesString += signature + "\n"; //$NON-NLS-1$

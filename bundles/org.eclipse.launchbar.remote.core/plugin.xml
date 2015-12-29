@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.launchbar.remote.core.launchTargetType"
+            provider="org.eclipse.launchbar.remote.core.internal.RemoteLaunchTargetProvider">
+      </launchTargetType>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.launchbar.core.target.ILaunchTarget"
+            class="org.eclipse.launchbar.remote.core.internal.RemoteTargetAdapterFactory">
+         <adapter
+               type="org.eclipse.remote.core.IRemoteConnection">
+         </adapter>
+      </factory>
+   </extension>
+
+</plugin>

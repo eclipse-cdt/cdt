@@ -19,7 +19,8 @@ public class LocalLaunchTargetProvider implements ILaunchTargetProvider {
 	public void init(ILaunchTargetManager targetManager) {
 		if (targetManager.getLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
 				Messages.LocalTarget_name) == null) {
-			targetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId, Messages.LocalTarget_name);
+			targetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId, Messages.LocalTarget_name,
+					Messages.LocalTarget_name);
 		}
 	}
 

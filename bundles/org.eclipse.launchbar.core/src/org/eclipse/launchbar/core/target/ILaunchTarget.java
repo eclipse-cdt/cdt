@@ -18,10 +18,17 @@ import org.eclipse.launchbar.core.internal.target.LaunchTarget;
  * @noimplement not to be implemented by clients
  */
 public interface ILaunchTarget extends IAdaptable {
-	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---");
+	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "null", "---");
 
 	/**
-	 * The name of the target.
+	 * The id for the target. It is unique for each type.
+	 * 
+	 * @return id for the target.
+	 */
+	String getId();
+
+	/**
+	 * The user consumable name of the target.
 	 *
 	 * @return name of the target
 	 */

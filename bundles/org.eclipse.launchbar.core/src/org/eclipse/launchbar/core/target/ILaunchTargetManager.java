@@ -45,11 +45,11 @@ public interface ILaunchTargetManager {
 	 * 
 	 * @param typeId
 	 *            type of the launch target
-	 * @param name
-	 *            name of the launch target
+	 * @param id
+	 *            id of the launch target
 	 * @return the launch target
 	 */
-	ILaunchTarget getLaunchTarget(String typeId, String name);
+	ILaunchTarget getLaunchTarget(String typeId, String id);
 
 	/**
 	 * Return the status of the launch target.
@@ -61,7 +61,21 @@ public interface ILaunchTargetManager {
 	TargetStatus getStatus(ILaunchTarget target);
 
 	/**
-	 * Add a launch target with the given typeId and name.
+	 * Add a launch target with the given typeId, id, and name.
+	 * 
+	 * @param typeId
+	 *            type id of the launch target
+	 * @param id
+	 *            id for the target.
+	 * @param name
+	 *            name of the launch target
+	 * @return the created launch target
+	 */
+	ILaunchTarget addLaunchTarget(String typeId, String id, String name);
+
+	/**
+	 * Add a launch target with the given typeId and name. The name is also the
+	 * id for the target.
 	 * 
 	 * @param typeId
 	 *            type id of the launch target
@@ -69,7 +83,9 @@ public interface ILaunchTargetManager {
 	 *            name of the launch target
 	 * @return the created launch target
 	 */
-	ILaunchTarget addLaunchTarget(String typeId, String name);
+	default ILaunchTarget addLaunchTarget(String typeId, String name) {
+		return addLaunchTarget(typeId, name, name);
+	}
 
 	/**
 	 * Removes a launch target.
@@ -96,7 +112,7 @@ public interface ILaunchTargetManager {
 	ILaunchTarget getDefaultLaunchTarget(ILaunchConfiguration configuration);
 
 	/**
-	 * Set the default target for the given launch configuraiton.
+	 * Set the default target for the given launch configuration.
 	 * 
 	 * @param configuration
 	 *            launch configuration

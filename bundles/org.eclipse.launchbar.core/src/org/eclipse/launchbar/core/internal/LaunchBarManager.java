@@ -730,7 +730,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		// This is the only concrete time we have the mapping from launch
 		// configuration to launch target. Record it in the target manager for
 		// the launch delegates to use.
-		launchTargetManager.setDefaultLaunchTarget(configuration, activeLaunchTarget);
+		if (configuration != null) {
+			launchTargetManager.setDefaultLaunchTarget(configuration, activeLaunchTarget);
+		}
 
 		return configuration;
 	}

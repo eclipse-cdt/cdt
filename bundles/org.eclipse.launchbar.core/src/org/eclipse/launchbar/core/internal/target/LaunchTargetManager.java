@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,7 +38,9 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	private Map<String, ILaunchTargetProvider> typeProviders = new HashMap<>();
 	private List<ILaunchTargetListener> listeners = new LinkedList<>();
 
-	private static final String DELIMETER = ","; //$NON-NLS-1$
+	private static final String DELIMETER1 = ","; //$NON-NLS-1$
+	private static final String DELIMETER2 = "!"; //$NON-NLS-1$
+	private static final String DELIMETER3 = ":"; //$NON-NLS-1$
 
 	private Preferences getTargetsPref() {
 		return InstanceScope.INSTANCE.getNode(Activator.getDefault().getBundle().getSymbolicName())
@@ -71,8 +74,13 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 						targets.put(typeId, type);
 					}
 
-					for (String name : prefs.get(typeId, "").split(DELIMETER)) { //$NON-NLS-1$
-						type.put(name, new LaunchTarget(typeId, name));
+					for (String name : prefs.get(typeId, "").split(DELIMETER1)) { //$NON-NLS-1$
+						if (name.contains(DELIMETER2)) {
+							String[] list = name.split(DELIMETER2);
+							type.put(list[0], new LaunchTarget(typeId, list[0], list[1]));
+						} else {
+							type.put(name, new LaunchTarget(typeId, name, name));
+						}
 					}
 				}
 			} catch (BackingStoreException e) {
@@ -139,11 +147,11 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	}
 
 	@Override
-	public ILaunchTarget getLaunchTarget(String typeId, String name) {
+	public ILaunchTarget getLaunchTarget(String typeId, String id) {
 		initTargets();
 		Map<String, ILaunchTarget> type = targets.get(typeId);
 		if (type != null) {
-			return type.get(name);
+			return type.get(id);
 		}
 		return null;
 	}
@@ -154,7 +162,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	}
 
 	@Override
-	public ILaunchTarget addLaunchTarget(String typeId, String name) {
+	public ILaunchTarget addLaunchTarget(String typeId, String id, String name) {
 		initTargets();
 		Map<String, ILaunchTarget> type = targets.get(typeId);
 		if (type == null) {
@@ -162,9 +170,11 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			targets.put(typeId, type);
 		}
 
-		ILaunchTarget target = new LaunchTarget(typeId, name);
-		type.put(name, target);
-		getTargetsPref().put(typeId, String.join(DELIMETER, type.keySet()));
+		ILaunchTarget target = new LaunchTarget(typeId, id, name);
+		type.put(id, target);
+
+		getTargetsPref().put(typeId, type.values().stream().map(t -> t.getId() + DELIMETER2 + t.getName())
+				.collect(Collectors.joining(DELIMETER1)));
 
 		for (ILaunchTargetListener listener : listeners) {
 			listener.launchTargetAdded(target);
@@ -183,7 +193,8 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 				targets.remove(target.getTypeId());
 				getTargetsPref().remove(target.getTypeId());
 			} else {
-				getTargetsPref().put(target.getTypeId(), String.join(DELIMETER, type.keySet()));
+				getTargetsPref().put(target.getTypeId(), type.values().stream()
+						.map(t -> t.getId() + DELIMETER2 + t.getName()).collect(Collectors.joining(DELIMETER1)));
 			}
 
 			for (ILaunchTargetListener listener : listeners) {
@@ -204,7 +215,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 		Preferences prefs = getTargetsPref().node("configs"); //$NON-NLS-1$
 		String targetId = prefs.get(configuration.getName(), null);
 		if (targetId != null) {
-			String[] parts = targetId.split(":"); //$NON-NLS-1$
+			String[] parts = targetId.split(DELIMETER3);
 			return getLaunchTarget(parts[0], parts[1]);
 		}
 		return null;
@@ -213,7 +224,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	@Override
 	public void setDefaultLaunchTarget(ILaunchConfiguration configuration, ILaunchTarget target) {
 		Preferences prefs = getTargetsPref().node("configs"); //$NON-NLS-1$
-		String targetId = String.join(":", target.getTypeId(), target.getName()); //$NON-NLS-1$
+		String targetId = String.join(DELIMETER3, target.getTypeId(), target.getId());
 		prefs.put(configuration.getName(), targetId);
 		try {
 			prefs.flush();

@@ -13,11 +13,18 @@ import org.eclipse.launchbar.core.target.ILaunchTarget;
 public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 
 	private final String typeId;
+	private final String id;
 	private final String name;
 
-	public LaunchTarget(String typeId, String name) {
+	public LaunchTarget(String typeId, String id, String name) {
 		this.typeId = typeId;
+		this.id = id;
 		this.name = name;
+	}
+
+	@Override
+	public String getId() {
+		return id;
 	}
 
 	@Override
@@ -34,7 +41,7 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((typeId == null) ? 0 : typeId.hashCode());
 		return result;
 	}
@@ -48,10 +55,10 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 		if (getClass() != obj.getClass())
 			return false;
 		LaunchTarget other = (LaunchTarget) obj;
-		if (name == null) {
-			if (other.name != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!id.equals(other.id))
 			return false;
 		if (typeId == null) {
 			if (other.typeId != null)

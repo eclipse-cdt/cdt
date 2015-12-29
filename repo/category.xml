@@ -3,5 +3,8 @@
    <feature id="org.eclipse.launchbar">
       <category name="main"/>
    </feature>
+   <feature id="org.eclipse.launchbar.remote">
+      <category name="main"/>
+   </feature>
    <category-def name="main" label="LaunchBar"/>
 </site>

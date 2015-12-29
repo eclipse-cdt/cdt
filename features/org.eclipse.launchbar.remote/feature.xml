@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.launchbar"
-      label="%featureName"
-      version="2.0.0.qualifier"
-      provider-name="%providerName"
+      id="org.eclipse.launchbar.remote"
+      label="Remote Launch Targets"
+      version="1.0.0.qualifier"
+      provider-name="Eclipse CDT"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
@@ -20,14 +20,7 @@
    </license>
 
    <plugin
-         id="org.eclipse.launchbar.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.launchbar.ui"
+         id="org.eclipse.launchbar.remote.core"
          download-size="0"
          install-size="0"
          version="0.0.0"

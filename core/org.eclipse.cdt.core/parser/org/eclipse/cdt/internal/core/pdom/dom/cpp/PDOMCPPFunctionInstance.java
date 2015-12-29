@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -44,17 +43,25 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 			throws CoreException {
 		super(linkage, parent, function, orig);
 
-		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) function;
-		final long argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
 		final Database db = getDB();
-		db.putRecPtr(record + ARGUMENTS, argListRec);
-		
 		long exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
 		db.putRecPtr(record + EXCEPTION_SPEC, exceptSpecRec);
+		
+		linkage.new ConfigureFunctionInstance(function, this);
 	}
 
 	public PDOMCPPFunctionInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
+	}
+	
+	public void initData(ICPPTemplateArgument[] templateArguments) {
+		try {
+			final long argListRec= PDOMCPPArgumentList.putArguments(this, templateArguments);
+			final Database db = getDB();
+			db.putRecPtr(record + ARGUMENTS, argListRec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	@Override

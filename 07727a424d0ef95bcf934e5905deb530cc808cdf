@@ -22,6 +22,30 @@
       "revId": "07727a424d0ef95bcf934e5905deb530cc808cdf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27d6470d_e76354ba",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TestBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-12-30T03:50:33Z",
+      "side": 1,
+      "message": "Because we are inside BindingAssertionHelper, not AST2TestBase.",
+      "parentUuid": "27d6470d_a77a2c5f",
+      "range": {
+        "startLine": 779,
+        "startChar": 6,
+        "endLine": 779,
+        "endChar": 18
+      },
+      "revId": "07727a424d0ef95bcf934e5905deb530cc808cdf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -8752,24 +8752,6 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testConstexprFunctionCallWithNonConstexprArguments_429891() throws Exception {
 		parseAndCheckBindings();
 	}
-	
-	//	template <typename>
-	//	struct S;
-	//
-	//	template <>
-	//	struct S<int> {
-	//		static const int value = 42;
-	//	};
-	//
-	//	template <typename T>
-	//	constexpr int foo() {
-	//		return S<T>::value;
-	//	}
-	//
-	//	constexpr int waldo = foo<int>();
-	public void testInstantiationOfReturnExpression_484959() throws Exception {
-		getAssertionHelper().assertVariableValue("waldo", 42);
-	}
 
 	//	template <typename> class A {};
 	//	template <int>      class B {};

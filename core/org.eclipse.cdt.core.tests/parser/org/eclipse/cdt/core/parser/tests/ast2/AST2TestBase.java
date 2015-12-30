@@ -776,7 +776,9 @@ public class AST2TestBase extends BaseTestCase {
     	
     	public void assertVariableValue(String variableName, long expectedValue) {
     		IVariable var = assertNonProblem(variableName);
-    		BaseTestCase.assertVariableValue(var, expectedValue);
+    		assertNotNull(var.getInitialValue());
+    		assertNotNull(var.getInitialValue().numericalValue());
+    		assertEquals(expectedValue, var.getInitialValue().numericalValue().longValue());
     	}
 
 		public <T, U extends T> U assertType(T obj, Class... cs) {

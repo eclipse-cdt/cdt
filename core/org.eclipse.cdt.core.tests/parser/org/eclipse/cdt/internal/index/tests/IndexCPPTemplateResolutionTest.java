@@ -2644,25 +2644,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSpecializationOfConstexprFunction_420995() throws Exception {
 		checkBindings();
 	}
-	
-	//	template <typename>
-	//	struct S;
-	//
-	//	template <>
-	//	struct S<int> {
-	//		static const int value = 42;
-	//	};
-	//
-	//	template <typename T>
-	//	constexpr int foo() {
-	//		return S<T>::value;
-	//	}
-	
-	//	constexpr int waldo = foo<int>();
-	public void testInstantiationOfReturnExpression_484959() throws Exception {
-		ICPPVariable waldo = getBindingFromASTName("waldo", 5);
-		assertVariableValue(waldo, 42);
-	}
 
 	//	template <class TYPE>
 	//	class waldo {

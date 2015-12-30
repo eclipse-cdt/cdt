@@ -32,7 +32,6 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -349,11 +348,5 @@ public class BaseTestCase extends TestCase {
 			assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
 		}
 		return clazz.cast(o);
-	}
-	
-	protected static void assertVariableValue(IVariable var, long expectedValue) {
-		assertNotNull(var.getInitialValue());
-		assertNotNull(var.getInitialValue().numericalValue());
-		assertEquals(expectedValue, var.getInitialValue().numericalValue().longValue());
 	}
 }

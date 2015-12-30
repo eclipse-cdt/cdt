@@ -39,6 +39,9 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 			IValue value = evaluation.getValue(point);
 			if (value == Value.ERROR) {
 				fEvaluation = EvalFixed.INCOMPLETE; 
+			} else if (value.getEvaluation() instanceof EvalFixed) {
+				// Avoid nesting EvalFixed's as nesting causes the signature to be different.
+				fEvaluation = value.getEvaluation();
 			} else {
 				fEvaluation= new EvalFixed(evaluation.getType(point),
 						evaluation.getValueCategory(point), value);

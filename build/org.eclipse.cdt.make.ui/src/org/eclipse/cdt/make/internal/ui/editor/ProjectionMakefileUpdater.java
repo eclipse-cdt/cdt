@@ -145,7 +145,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			fInput= manager.getWorkingCopy(fEditor.getEditorInput());
 
 			if (fInput != null) {
-				ProjectionAnnotationModel model= (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+				ProjectionAnnotationModel model= fEditor.getAdapter(ProjectionAnnotationModel.class);
 				if (model != null) {
 					Map<MakefileProjectionAnnotation, Position> additions= computeAdditions((IParent) fInput);
 					model.removeAllAnnotations();
@@ -229,7 +229,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			return;
 		}
 
-		ProjectionAnnotationModel model= (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel model= fEditor.getAdapter(ProjectionAnnotationModel.class);
 		if (model == null) {
 			return;
 		}

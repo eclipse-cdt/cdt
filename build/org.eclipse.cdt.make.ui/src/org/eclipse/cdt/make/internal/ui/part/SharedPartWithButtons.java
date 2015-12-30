@@ -19,10 +19,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-/**
- * @version 	1.0
- * @author
- */
 public abstract class SharedPartWithButtons extends SharedPart {
 	private String[] buttonLabels;
 	private Control[] controls;
@@ -58,9 +54,6 @@ public abstract class SharedPartWithButtons extends SharedPart {
 	protected abstract void createMainControl(Composite parent, int style, int span);
 	protected abstract void buttonSelected(Button button, int index);
 
-	/*
-	 * @see SharedPart#createControl(Composite, FormWidgetFactory)
-	 */
 	@Override
 	public void createControl(Composite parent, int style, int span) {
 		createMainLabel(parent, span);

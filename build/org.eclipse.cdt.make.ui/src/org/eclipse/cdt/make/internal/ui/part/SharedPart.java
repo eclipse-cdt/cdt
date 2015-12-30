@@ -14,10 +14,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-/**
- * @version 	1.0
- * @author
- */
 public abstract class SharedPart {
 	private boolean enabled = true;
 

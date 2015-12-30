@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
-import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnectionListener;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
+import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.remote.core.IRemoteServicesManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -45,13 +48,10 @@ public class Activator extends Plugin {
 
 	public void start(BundleContext bundleContext) throws Exception {
 		plugin = this;
-		IRemoteServicesManager remoteManager = getService(IRemoteServicesManager.class);
-		remoteManager.addRemoteConnectionChangeListener(ArduinoRemoteConnectionListener.INSTANCE);
+		bundleContext.registerService(ArduinoManager.class, new ArduinoManager(), null);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
-		IRemoteServicesManager remoteManager = getService(IRemoteServicesManager.class);
-		remoteManager.removeRemoteConnectionChangeListener(ArduinoRemoteConnectionListener.INSTANCE);
 		plugin = null;
 	}
 
@@ -59,6 +59,12 @@ public class Activator extends Plugin {
 		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
+	}
+
+	public static ArduinoConsoleService getConsoleService() throws CoreException {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.getId(), "consoleService"); //$NON-NLS-1$
+		IExtension extension = point.getExtensions()[0]; // should only be one
+		return (ArduinoConsoleService) extension.getConfigurationElements()[0].createExecutableExtension("class"); //$NON-NLS-1$
 	}
 
 }

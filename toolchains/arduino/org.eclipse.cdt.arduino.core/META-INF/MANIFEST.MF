@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.arduino.core;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.arduino.core.internal.Activator
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
@@ -15,14 +15,13 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.remote.serial.core;bundle-version="1.0.0",
  com.google.gson;bundle-version="2.2.4",
  org.apache.commons.compress;bundle-version="1.6.0",
- org.eclipse.cdt.build.core;bundle-version="1.0.0",
- org.eclipse.cdt.build.gcc.core;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+ org.freemarker;bundle-version="2.3.22"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: libs/freemarker-2.3.22.jar,
- .
+Bundle-ClassPath: .
 Export-Package: org.eclipse.cdt.arduino.core.internal;x-friends:="org.eclipse.cdt.arduino.ui",
  org.eclipse.cdt.arduino.core.internal.board;x-friends:="org.eclipse.cdt.arduino.ui",
  org.eclipse.cdt.arduino.core.internal.build;x-friends:="org.eclipse.cdt.arduino.ui",
+ org.eclipse.cdt.arduino.core.internal.console;x-friends:="org.eclipse.cdt.arduino.ui",
  org.eclipse.cdt.arduino.core.internal.remote;x-friends:="org.eclipse.cdt.arduino.ui"
 Bundle-Localization: plugin

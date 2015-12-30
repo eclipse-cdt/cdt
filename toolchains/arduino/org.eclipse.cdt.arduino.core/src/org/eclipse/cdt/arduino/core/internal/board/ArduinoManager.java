@@ -19,10 +19,14 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,8 +63,6 @@ import com.google.gson.reflect.TypeToken;
 
 public class ArduinoManager {
 
-	public static final ArduinoManager instance = new ArduinoManager();
-
 	// Build tool ids
 	public static final String BOARD_OPTION_ID = "org.eclipse.cdt.arduino.option.board"; //$NON-NLS-1$
 	public static final String PLATFORM_OPTION_ID = "org.eclipse.cdt.arduino.option.platform"; //$NON-NLS-1$
@@ -68,20 +70,23 @@ public class ArduinoManager {
 	public static final String AVR_TOOLCHAIN_ID = "org.eclipse.cdt.arduino.toolChain.avr"; //$NON-NLS-1$
 
 	public static final String LIBRARIES_URL = "http://downloads.arduino.cc/libraries/library_index.json"; //$NON-NLS-1$
+
 	private List<PackageIndex> packageIndices;
 	private LibraryIndex libraryIndex;
 
 	public void loadIndices() {
 		new Job(Messages.ArduinoBoardManager_0) {
 			protected IStatus run(IProgressMonitor monitor) {
-				String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
-				packageIndices = new ArrayList<>(boardUrls.length);
-				for (String boardUrl : boardUrls) {
-					loadPackageIndex(boardUrl, true);
-				}
+				synchronized (ArduinoManager.this) {
+					String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
+					packageIndices = new ArrayList<>(boardUrls.length);
+					for (String boardUrl : boardUrls) {
+						loadPackageIndex(boardUrl, true);
+					}
 
-				loadLibraryIndex(true);
-				return Status.OK_STATUS;
+					loadLibraryIndex(true);
+					return Status.OK_STATUS;
+				}
 			}
 		}.schedule();
 	}
@@ -93,6 +98,7 @@ public class ArduinoManager {
 					.resolve(Paths.get(packageUrl.getPath()).getFileName());
 			File packageFile = packagePath.toFile();
 			if (download) {
+				Files.createDirectories(ArduinoPreferences.getArduinoHome());
 				Files.copy(packageUrl.openStream(), packagePath, StandardCopyOption.REPLACE_EXISTING);
 			}
 			if (packageFile.exists()) {
@@ -107,7 +113,7 @@ public class ArduinoManager {
 		}
 	}
 
-	public List<PackageIndex> getPackageIndices() throws CoreException {
+	public synchronized List<PackageIndex> getPackageIndices() {
 		if (packageIndices == null) {
 			String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
 			packageIndices = new ArrayList<>(boardUrls.length);
@@ -118,18 +124,20 @@ public class ArduinoManager {
 		return packageIndices;
 	}
 
-	private void loadLibraryIndex(boolean download) {
+	public void loadLibraryIndex(boolean download) {
 		try {
 			URL librariesUrl = new URL(LIBRARIES_URL);
 			Path librariesPath = ArduinoPreferences.getArduinoHome()
 					.resolve(Paths.get(librariesUrl.getPath()).getFileName());
 			File librariesFile = librariesPath.toFile();
 			if (download) {
+				Files.createDirectories(ArduinoPreferences.getArduinoHome());
 				Files.copy(librariesUrl.openStream(), librariesPath, StandardCopyOption.REPLACE_EXISTING);
 			}
 			if (librariesFile.exists()) {
 				try (Reader reader = new FileReader(librariesFile)) {
 					libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
+					libraryIndex.resolve();
 				}
 			}
 		} catch (IOException e) {
@@ -146,7 +154,7 @@ public class ArduinoManager {
 	}
 
 	public ArduinoBoard getBoard(String boardName, String platformName, String packageName) throws CoreException {
-		for (PackageIndex index : packageIndices) {
+		for (PackageIndex index : getPackageIndices()) {
 			ArduinoPackage pkg = index.getPackage(packageName);
 			if (pkg != null) {
 				ArduinoPlatform platform = pkg.getPlatform(platformName);
@@ -161,23 +169,11 @@ public class ArduinoManager {
 		return null;
 	}
 
-	public List<ArduinoBoard> getBoards() throws CoreException {
-		List<ArduinoBoard> boards = new ArrayList<>();
-		for (PackageIndex index : packageIndices) {
-			for (ArduinoPackage pkg : index.getPackages()) {
-				for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {
-					boards.addAll(platform.getBoards());
-				}
-			}
-		}
-		return boards;
-	}
-
 	public List<ArduinoBoard> getInstalledBoards() throws CoreException {
 		List<ArduinoBoard> boards = new ArrayList<>();
-		for (PackageIndex index : packageIndices) {
+		for (PackageIndex index : getPackageIndices()) {
 			for (ArduinoPackage pkg : index.getPackages()) {
-				for (ArduinoPlatform platform : pkg.getInstalledPlatforms()) {
+				for (ArduinoPlatform platform : pkg.getInstalledPlatforms().values()) {
 					boards.addAll(platform.getBoards());
 				}
 			}
@@ -185,8 +181,8 @@ public class ArduinoManager {
 		return boards;
 	}
 
-	public ArduinoPackage getPackage(String packageName) {
-		for (PackageIndex index : packageIndices) {
+	public ArduinoPackage getPackage(String packageName) throws CoreException {
+		for (PackageIndex index : getPackageIndices()) {
 			ArduinoPackage pkg = index.getPackage(packageName);
 			if (pkg != null) {
 				return pkg;
@@ -195,30 +191,13 @@ public class ArduinoManager {
 		return null;
 	}
 
-	public ArduinoTool getTool(String packageName, String toolName, String version) {
-		for (PackageIndex index : packageIndices) {
+	public ArduinoTool getTool(String packageName, String toolName, String version) throws CoreException {
+		for (PackageIndex index : getPackageIndices()) {
 			ArduinoPackage pkg = index.getPackage(packageName);
 			if (pkg != null) {
 				ArduinoTool tool = pkg.getTool(toolName, version);
 				if (tool != null) {
 					return tool;
-				}
-			}
-		}
-		return null;
-	}
-
-	public ArduinoTool getLatestTool(String packageName, String toolName) {
-		for (PackageIndex index : packageIndices) {
-			ArduinoPackage pkg = index.getPackage(packageName);
-			if (pkg != null) {
-				ArduinoTool latestTool = null;
-				for (ArduinoTool tool : pkg.getTools()) {
-					if (tool.getName().equals(toolName)) {
-						if (latestTool == null || compareVersions(latestTool.getVersion(), tool.getVersion()) > 1) {
-							latestTool = tool;
-						}
-					}
 				}
 			}
 		}
@@ -237,10 +216,19 @@ public class ArduinoManager {
 		Type stringSet = new TypeToken<Set<String>>() {
 		}.getType();
 		Set<String> libraryNames = new Gson().fromJson(librarySetting, stringSet);
-		LibraryIndex index = ArduinoManager.instance.getLibraryIndex();
+		LibraryIndex index = Activator.getService(ArduinoManager.class).getLibraryIndex();
+
+		ArduinoPlatform platform = project.getActiveBuildConfig().getAdapter(ArduinoBuildConfiguration.class).getBoard()
+				.getPlatform();
 		List<ArduinoLibrary> libraries = new ArrayList<>(libraryNames.size());
 		for (String name : libraryNames) {
-			libraries.add(index.getLibrary(name));
+			ArduinoLibrary lib = index.getLibrary(name);
+			if (lib == null) {
+				lib = platform.getLibrary(name);
+			}
+			if (lib != null) {
+				libraries.add(lib);
+			}
 		}
 		return libraries;
 	}
@@ -258,9 +246,9 @@ public class ArduinoManager {
 			Activator.log(e);
 		}
 
-		new Job("Install libraries") {
+		new Job(Messages.ArduinoManager_0) {
 			protected IStatus run(IProgressMonitor monitor) {
-				MultiStatus mstatus = new MultiStatus(Activator.getId(), 0, "Installing libraries", null);
+				MultiStatus mstatus = new MultiStatus(Activator.getId(), 0, Messages.ArduinoManager_1, null);
 				for (ArduinoLibrary library : libraries) {
 					IStatus status = library.install(monitor);
 					if (!status.isOK()) {
@@ -272,7 +260,7 @@ public class ArduinoManager {
 				try {
 					for (IBuildConfiguration config : project.getBuildConfigs()) {
 						ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
-						arduinoConfig.clearScannerInfo();
+						arduinoConfig.clearScannerInfoCache();
 					}
 				} catch (CoreException e) {
 					mstatus.add(e.getStatus());
@@ -284,115 +272,97 @@ public class ArduinoManager {
 
 	public static IStatus downloadAndInstall(String url, String archiveFileName, Path installPath,
 			IProgressMonitor monitor) {
-		try {
-			URL dl = new URL(url);
-			Path dlDir = ArduinoPreferences.getArduinoHome().resolve("downloads"); //$NON-NLS-1$
-			Files.createDirectories(dlDir);
-			Path archivePath = dlDir.resolve(archiveFileName);
-			Files.copy(dl.openStream(), archivePath, StandardCopyOption.REPLACE_EXISTING);
-
-			boolean isWin = Platform.getOS().equals(Platform.OS_WIN32);
-
-			// extract
-			ArchiveInputStream archiveIn = null;
+		Exception error = null;
+		for (int retries = 3; retries > 0 && !monitor.isCanceled(); --retries) {
 			try {
-				String compressor = null;
-				String archiver = null;
-				if (archiveFileName.endsWith("tar.bz2")) { //$NON-NLS-1$
-					compressor = CompressorStreamFactory.BZIP2;
-					archiver = ArchiveStreamFactory.TAR;
-				} else if (archiveFileName.endsWith(".tar.gz") || archiveFileName.endsWith(".tgz")) { //$NON-NLS-1$ //$NON-NLS-2$
-					compressor = CompressorStreamFactory.GZIP;
-					archiver = ArchiveStreamFactory.TAR;
-				} else if (archiveFileName.endsWith(".tar.xz")) { //$NON-NLS-1$
-					compressor = CompressorStreamFactory.XZ;
-					archiver = ArchiveStreamFactory.TAR;
-				} else if (archiveFileName.endsWith(".zip")) { //$NON-NLS-1$
-					archiver = ArchiveStreamFactory.ZIP;
-				}
+				URL dl = new URL(url);
+				Path dlDir = ArduinoPreferences.getArduinoHome().resolve("downloads"); //$NON-NLS-1$
+				Files.createDirectories(dlDir);
+				Path archivePath = dlDir.resolve(archiveFileName);
+				URLConnection conn = dl.openConnection();
+				conn.setConnectTimeout(10000);
+				conn.setReadTimeout(10000);
+				Files.copy(conn.getInputStream(), archivePath, StandardCopyOption.REPLACE_EXISTING);
 
-				InputStream in = new BufferedInputStream(new FileInputStream(archivePath.toFile()));
-				if (compressor != null) {
-					in = new CompressorStreamFactory().createCompressorInputStream(compressor, in);
-				}
-				archiveIn = new ArchiveStreamFactory().createArchiveInputStream(archiver, in);
+				boolean isWin = Platform.getOS().equals(Platform.OS_WIN32);
 
-				for (ArchiveEntry entry = archiveIn.getNextEntry(); entry != null; entry = archiveIn.getNextEntry()) {
-					if (entry.isDirectory()) {
-						continue;
+				// extract
+				ArchiveInputStream archiveIn = null;
+				try {
+					String compressor = null;
+					String archiver = null;
+					if (archiveFileName.endsWith("tar.bz2")) { //$NON-NLS-1$
+						compressor = CompressorStreamFactory.BZIP2;
+						archiver = ArchiveStreamFactory.TAR;
+					} else if (archiveFileName.endsWith(".tar.gz") || archiveFileName.endsWith(".tgz")) { //$NON-NLS-1$ //$NON-NLS-2$
+						compressor = CompressorStreamFactory.GZIP;
+						archiver = ArchiveStreamFactory.TAR;
+					} else if (archiveFileName.endsWith(".tar.xz")) { //$NON-NLS-1$
+						compressor = CompressorStreamFactory.XZ;
+						archiver = ArchiveStreamFactory.TAR;
+					} else if (archiveFileName.endsWith(".zip")) { //$NON-NLS-1$
+						archiver = ArchiveStreamFactory.ZIP;
 					}
 
-					Path entryPath = installPath.resolve(entry.getName());
-					Files.createDirectories(entryPath.getParent());
+					InputStream in = new BufferedInputStream(new FileInputStream(archivePath.toFile()));
+					if (compressor != null) {
+						in = new CompressorStreamFactory().createCompressorInputStream(compressor, in);
+					}
+					archiveIn = new ArchiveStreamFactory().createArchiveInputStream(archiver, in);
 
-					if (entry instanceof TarArchiveEntry) {
-						TarArchiveEntry tarEntry = (TarArchiveEntry) entry;
-						if (tarEntry.isLink()) {
-							Path linkPath = installPath.resolve(tarEntry.getLinkName());
-							Files.createSymbolicLink(entryPath, entryPath.getParent().relativize(linkPath));
+					for (ArchiveEntry entry = archiveIn.getNextEntry(); entry != null; entry = archiveIn
+							.getNextEntry()) {
+						if (entry.isDirectory()) {
+							continue;
+						}
+
+						// Magic file for git tarballs
+						Path path = Paths.get(entry.getName());
+						if (path.endsWith("pax_global_header")) { //$NON-NLS-1$
+							continue;
+						}
+
+						// Strip the first directory of the path
+						Path entryPath = installPath.resolve(path.subpath(1, path.getNameCount()));
+
+						Files.createDirectories(entryPath.getParent());
+
+						if (entry instanceof TarArchiveEntry) {
+							TarArchiveEntry tarEntry = (TarArchiveEntry) entry;
+							if (tarEntry.isLink()) {
+								Path linkPath = Paths.get(tarEntry.getLinkName());
+								linkPath = installPath.resolve(linkPath.subpath(1, linkPath.getNameCount()));
+								Files.deleteIfExists(entryPath);
+								Files.createSymbolicLink(entryPath, entryPath.getParent().relativize(linkPath));
+							} else if (tarEntry.isSymbolicLink()) {
+								Path linkPath = Paths.get(tarEntry.getLinkName());
+								Files.deleteIfExists(entryPath);
+								Files.createSymbolicLink(entryPath, linkPath);
+							} else {
+								Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
+							}
+							if (!isWin && !tarEntry.isSymbolicLink()) {
+								int mode = tarEntry.getMode();
+								Files.setPosixFilePermissions(entryPath, toPerms(mode));
+							}
 						} else {
 							Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
 						}
-						if (!isWin) {
-							int mode = tarEntry.getMode();
-							Files.setPosixFilePermissions(entryPath, toPerms(mode));
-						}
-					} else {
-						Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
+					}
+				} finally {
+					if (archiveIn != null) {
+						archiveIn.close();
 					}
 				}
-			} finally {
-				if (archiveIn != null) {
-					archiveIn.close();
-				}
-			}
 
-			// Fix up directory
-			File[] children = installPath.toFile().listFiles();
-			if (children.length == 1 && children[0].isDirectory()) {
-				// make that directory the install path
-				Path childPath = children[0].toPath();
-				Path tmpPath = installPath.getParent().resolve("_t"); //$NON-NLS-1$
-				Files.move(childPath, tmpPath);
-				Files.delete(installPath);
-				Files.move(tmpPath, installPath);
+				return Status.OK_STATUS;
+			} catch (IOException | CompressorException | ArchiveException e) {
+				error = e;
+				// retry
 			}
-			return Status.OK_STATUS;
-		} catch (IOException | CompressorException | ArchiveException e) {
-			return new Status(IStatus.ERROR, Activator.getId(), "Installing Platform", e);
 		}
-	}
-
-	private static Set<PosixFilePermission> toPerms(int mode) {
-		Set<PosixFilePermission> perms = new HashSet<>();
-		if ((mode & 0400) != 0) {
-			perms.add(PosixFilePermission.OWNER_READ);
-		}
-		if ((mode & 0200) != 0) {
-			perms.add(PosixFilePermission.OWNER_WRITE);
-		}
-		if ((mode & 0100) != 0) {
-			perms.add(PosixFilePermission.OWNER_EXECUTE);
-		}
-		if ((mode & 0040) != 0) {
-			perms.add(PosixFilePermission.GROUP_READ);
-		}
-		if ((mode & 0020) != 0) {
-			perms.add(PosixFilePermission.GROUP_WRITE);
-		}
-		if ((mode & 0010) != 0) {
-			perms.add(PosixFilePermission.GROUP_EXECUTE);
-		}
-		if ((mode & 0004) != 0) {
-			perms.add(PosixFilePermission.OTHERS_READ);
-		}
-		if ((mode & 0002) != 0) {
-			perms.add(PosixFilePermission.OTHERS_WRITE);
-		}
-		if ((mode & 0001) != 0) {
-			perms.add(PosixFilePermission.OTHERS_EXECUTE);
-		}
-		return perms;
+		// out of retries
+		return new Status(IStatus.ERROR, Activator.getId(), Messages.ArduinoManager_2, error);
 	}
 
 	public static int compareVersions(String version1, String version2) {
@@ -440,4 +410,52 @@ public class ArduinoManager {
 		return 0;
 	}
 
+	private static Set<PosixFilePermission> toPerms(int mode) {
+		Set<PosixFilePermission> perms = new HashSet<>();
+		if ((mode & 0400) != 0) {
+			perms.add(PosixFilePermission.OWNER_READ);
+		}
+		if ((mode & 0200) != 0) {
+			perms.add(PosixFilePermission.OWNER_WRITE);
+		}
+		if ((mode & 0100) != 0) {
+			perms.add(PosixFilePermission.OWNER_EXECUTE);
+		}
+		if ((mode & 0040) != 0) {
+			perms.add(PosixFilePermission.GROUP_READ);
+		}
+		if ((mode & 0020) != 0) {
+			perms.add(PosixFilePermission.GROUP_WRITE);
+		}
+		if ((mode & 0010) != 0) {
+			perms.add(PosixFilePermission.GROUP_EXECUTE);
+		}
+		if ((mode & 0004) != 0) {
+			perms.add(PosixFilePermission.OTHERS_READ);
+		}
+		if ((mode & 0002) != 0) {
+			perms.add(PosixFilePermission.OTHERS_WRITE);
+		}
+		if ((mode & 0001) != 0) {
+			perms.add(PosixFilePermission.OTHERS_EXECUTE);
+		}
+		return perms;
+	}
+
+	public static void recursiveDelete(Path directory) throws IOException {
+		Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.delete(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				Files.delete(dir);
+				return FileVisitResult.CONTINUE;
+			}
+
+		});
+	}
 }

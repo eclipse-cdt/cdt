@@ -29,6 +29,8 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMG_ARDUINO = PLUGIN_ID + ".arduino"; //$NON-NLS-1$
 	public static final String IMG_CONNECTION_TYPE = PLUGIN_ID + ".connectionType"; //$NON-NLS-1$
+	public static final String IMG_ADD = PLUGIN_ID + ".add";
+	public static final String IMG_DELETE = PLUGIN_ID + ".delete";
 
 	// The shared instance
 	private static Activator plugin;
@@ -37,7 +39,7 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		// Load up the Arduino indices
-		ArduinoManager.instance.loadIndices();
+		getService(ArduinoManager.class).loadIndices();
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -50,6 +52,8 @@ public class Activator extends AbstractUIPlugin {
 		ImageRegistry registry = super.createImageRegistry();
 		registry.put(IMG_ARDUINO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cprojects.gif")); //$NON-NLS-1$
 		registry.put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arduino.png")); //$NON-NLS-1$
+		registry.put(IMG_ADD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/list-add.gif")); //$NON-NLS-1$
+		registry.put(IMG_DELETE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/list-delete.gif")); //$NON-NLS-1$
 		return registry;
 	}
 

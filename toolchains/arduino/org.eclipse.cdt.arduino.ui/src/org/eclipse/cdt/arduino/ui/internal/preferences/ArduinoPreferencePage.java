@@ -12,6 +12,7 @@ package org.eclipse.cdt.arduino.ui.internal.preferences;
 
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
+import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -43,7 +44,7 @@ public class ArduinoPreferencePage extends PreferencePage implements IWorkbenchP
 		desc.setBackground(parent.getBackground());
 		desc.setText(Messages.ArduinoPreferencePage_desc);
 
-		urlsText = new Text(control, SWT.BORDER);
+		urlsText = new Text(control, SWT.BORDER | SWT.MULTI);
 		urlsText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		urlsText.setText(ArduinoPreferences.getBoardUrls());
 
@@ -53,7 +54,7 @@ public class ArduinoPreferencePage extends PreferencePage implements IWorkbenchP
 	@Override
 	public boolean performOk() {
 		ArduinoPreferences.setBoardUrls(urlsText.getText());
-		ArduinoManager.instance.loadIndices();
+		Activator.getService(ArduinoManager.class).loadIndices();
 		return true;
 	}
 

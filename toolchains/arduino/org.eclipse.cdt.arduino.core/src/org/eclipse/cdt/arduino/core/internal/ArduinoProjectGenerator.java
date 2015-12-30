@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -36,7 +35,15 @@ public class ArduinoProjectGenerator {
 		this.project = project;
 	}
 
-	public void setupArduinoProject(IProgressMonitor monitor) throws CoreException {
+	public void generate(IProgressMonitor monitor) throws CoreException {
+		// Generate files
+		ArduinoTemplateGenerator templateGen = new ArduinoTemplateGenerator();
+		Map<String, Object> fmModel = new HashMap<>();
+		fmModel.put("projectName", project.getName()); //$NON-NLS-1$
+
+		sourceFile = project.getFile(project.getName() + ".cpp"); //$NON-NLS-1$
+		templateGen.generateFile(fmModel, "arduino.cpp", sourceFile, monitor); //$NON-NLS-1$
+
 		// Add natures to project: C, C++, Arduino
 		IProjectDescription projDesc = project.getDescription();
 		String[] oldIds = projDesc.getNatureIds();
@@ -55,20 +62,8 @@ public class ArduinoProjectGenerator {
 
 		project.setDescription(projDesc, monitor);
 
-		// Generate files
-		ArduinoTemplateGenerator templateGen = new ArduinoTemplateGenerator();
-		Map<String, Object> fmModel = new HashMap<>();
-		fmModel.put("projectName", project.getName()); //$NON-NLS-1$
-
-		IFolder sourceFolder = project.getFolder("src"); //$NON-NLS-1$
-		if (!sourceFolder.exists()) {
-			sourceFolder.create(true, true, monitor);
-		}
-		IPathEntry[] entries = new IPathEntry[] { CoreModel.newOutputEntry(sourceFolder.getFullPath()) };
+		IPathEntry[] entries = new IPathEntry[] { CoreModel.newSourceEntry(project.getFullPath()) };
 		CoreModel.getDefault().create(project).setRawPathEntries(entries, monitor);
-
-		sourceFile = sourceFolder.getFile(project.getName() + ".cpp"); //$NON-NLS-1$
-		templateGen.generateFile(fmModel, "arduino.cpp", sourceFile, monitor); //$NON-NLS-1$
 	}
 
 	public IFile getSourceFile() {

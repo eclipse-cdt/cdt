@@ -13,7 +13,6 @@
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *     Anders Dahlberg (Ericsson) - bug 84144
- *     Justin You (Synopsys) - bug 84144
  *     Alexander Nyßen (itemis AG) - bug 475908
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
@@ -2568,6 +2567,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			skipBrackets(IToken.tLPAREN, IToken.tRPAREN, IToken.tSEMI);
 			switch (LTcatchEOF(1)) {
 			case IToken.tAMPERASSIGN:
+			case IToken.tAND:
 			case IToken.tARROW:
 			case IToken.tARROWSTAR:
 			case IToken.tASSIGN:

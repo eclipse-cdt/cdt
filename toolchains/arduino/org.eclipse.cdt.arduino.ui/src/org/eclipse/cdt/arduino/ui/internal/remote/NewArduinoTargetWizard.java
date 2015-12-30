@@ -1,17 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.remote;
 
 import java.util.Set;
 
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.jface.wizard.Wizard;
@@ -38,15 +28,7 @@ public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectio
 			return false;
 		}
 
-		workingCopy.setAttribute(ArduinoRemoteConnection.PORT_NAME, page.portName);
-
-		ArduinoBoard board = page.board;
-		workingCopy.setAttribute(ArduinoRemoteConnection.BOARD_NAME, board.getName());
-		ArduinoPlatform platform = board.getPlatform();
-		workingCopy.setAttribute(ArduinoRemoteConnection.PLATFORM_NAME, platform.getName());
-		ArduinoPackage pkg = platform.getPackage();
-		workingCopy.setAttribute(ArduinoRemoteConnection.PACKAGE_NAME, pkg.getName());
-
+		page.performFinish(workingCopy);
 		return true;
 	}
 

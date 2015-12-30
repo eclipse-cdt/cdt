@@ -1,10 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.remote;
 
 import java.io.IOException;
@@ -50,29 +43,17 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		Label portLabel = new Label(comp, SWT.NONE);
 		portLabel.setText(Messages.ArduinoTargetPropertyPage_0);
 
-		portSelector = new Combo(comp, SWT.READ_ONLY);
+		portSelector = new Combo(comp, SWT.NONE);
 		portSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		String currentPort = arduinoRemote.getPortName();
-		int i = 0, portSel = -1;
+		portSelector.setText(currentPort);
 		try {
 			for (String port : SerialPort.list()) {
 				portSelector.add(port);
-				if (port.equals(currentPort)) {
-					portSel = i;
-				} else {
-					portSel = portSel < 0 ? 0 : portSel;
-				}
-				i++;
 			}
 		} catch (IOException e) {
 			Activator.log(e);
-		}
-		if (portSel >= 0) {
-			portSelector.select(portSel);
-		} else {
-			setMessage(Messages.ArduinoTargetPropertyPage_1, ERROR);
-			setValid(false);
 		}
 
 		Label boardLabel = new Label(comp, SWT.NONE);
@@ -83,9 +64,9 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 
 		try {
 			ArduinoBoard currentBoard = arduinoRemote.getBoard();
-			Collection<ArduinoBoard> boardList = ArduinoManager.instance.getBoards();
+			Collection<ArduinoBoard> boardList = Activator.getService(ArduinoManager.class).getInstalledBoards();
 			boards = new ArduinoBoard[boardList.size()];
-			i = 0;
+			int i = 0;
 			int boardSel = 0;
 			for (ArduinoBoard board : boardList) {
 				boards[i] = board;

@@ -19,6 +19,11 @@ public class Messages extends NLS {
 	public static String ArduinoLaunchConfigurationDelegate_0;
 	public static String ArduinoLaunchConfigurationDelegate_1;
 	public static String ArduinoLaunchConfigurationDelegate_2;
+	public static String ArduinoManager_0;
+	public static String ArduinoManager_1;
+	public static String ArduinoManager_2;
+	public static String ArduinoPlatform_0;
+	public static String ArduinoPlatform_1;
 	public static String ArduinoProjectGenerator_0;
 
 	static {

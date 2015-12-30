@@ -7824,6 +7824,23 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testTypeLookupWithMultipleInheritance_286213() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<class>
+	//	struct ContainerOf {
+	//		int numParts;
+	//	};
+	//
+	//	struct HumanPart;
+	//	struct RobotPart;
+	//
+	//	struct BionicMan : ContainerOf<HumanPart>, ContainerOf<RobotPart> {
+	//		int numRoboParts() {
+	//			return ContainerOf<RobotPart>::numParts;
+	//		}
+	//	};
+	public void testInheritanceFromMultipleInstancesOfSameTemplate_383502() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	int v1;
 	//	static int v2;

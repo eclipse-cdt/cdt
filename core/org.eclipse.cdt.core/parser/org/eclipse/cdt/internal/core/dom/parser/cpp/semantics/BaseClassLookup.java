@@ -28,10 +28,13 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -384,15 +387,61 @@ class BaseClassLookup {
 		}
 		if (numBindingsToAdd < fBindings.length)
 			fBindings[numBindingsToAdd] = null;
+		boolean possibleAmbiguity = false;
 		if (result.length > 0 && numBindingsToAdd > 0 && data.problem == null) {
-			// Matches are found in more than one base class - this is an indication of ambiguity.
-			data.problem= new ProblemBinding(data.getLookupName(),
-					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, result);
+			// Matches are found in more than one base class - this is usually 
+			// an indication of ambiguity (but see below).
+			possibleAmbiguity = true;
 		}
 		result= ArrayUtil.addAll(result, fBindings);
+		if (possibleAmbiguity) {
+			// [temp.local] p4:
+			//   A lookup that finds an injected-class-name can result in an
+			//   ambiguity in certain cases (for example, if it is found in
+			//   more than one base class). If all of the injected-class-names
+			//   that are found refer to specializations of the same class
+			//   template, and if the name is used as a template-name, the
+			//   reference refers to the class template itself and not a
+			//   specialization thereof, and is not ambiguous.
+			result = collapseInjectedClassNames(data, result);
+			if (result.length > 1) {
+				data.problem= new ProblemBinding(data.getLookupName(),
+						IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, result);
+			}
+		}
 		for (int i= 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			result= child.collectResult(data, fVirtual.get(i), result);
+		}
+		return result;
+	}
+	
+	// If all bindings in 'result' are instances of the same class template,
+	// collapse them to the class template itself. Only applies if the lookup
+	// is for a name used as a template-name.
+	private IBinding[] collapseInjectedClassNames(LookupData data, IBinding[] result) {
+		IASTName lookupName = data.getLookupName();
+		if (lookupName == null || lookupName.getPropertyInParent() != ICPPASTTemplateId.TEMPLATE_NAME) {
+			// Name not used as a template-name.
+			return result;
+		}
+		ICPPTemplateDefinition template = null;
+		for (IBinding binding : result) {
+			if (binding instanceof ICPPClassType && binding instanceof ICPPTemplateInstance) {
+				ICPPTemplateDefinition specialized = 
+						(ICPPTemplateDefinition) ((ICPPTemplateInstance) binding).getSpecializedBinding();
+				if (template == null) {
+					template = specialized;
+					continue;
+				}
+				if (template == specialized) {
+					continue;
+				}
+			}
+			return result;
+		}
+		if (template != null) {
+			return new IBinding[] { template };
 		}
 		return result;
 	}

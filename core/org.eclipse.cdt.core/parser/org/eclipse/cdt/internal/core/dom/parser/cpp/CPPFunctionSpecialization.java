@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -330,7 +332,18 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		}
 		IBinding f = getSpecializedBinding();
 		if (f instanceof ICPPComputableFunction) {
-			return ((ICPPComputableFunction) f).getReturnExpression();
+			ICPPEvaluation eval = ((ICPPComputableFunction) f).getReturnExpression();
+			if (eval != null) {
+				// TODO: Should we instead do this when the CPPFunctionSpecialization is created?
+				// It would mean getting a more accurate point of instantiation, but it would also
+				// mean doing the instantiation when we might never need it.
+				IASTNode point = f instanceof ICPPInternalFunction 
+						? ((ICPPInternalFunction) f).getDefinition()
+						: null;
+				eval = eval.instantiate(getTemplateParameterMap(), -1, 
+						CPPTemplates.getSpecializationContext(getOwner()), Value.MAX_RECURSION_DEPTH, point);
+			}
+			return eval;
 		}
 		return null;
 	}

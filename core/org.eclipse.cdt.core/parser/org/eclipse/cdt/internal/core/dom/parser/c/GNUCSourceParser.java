@@ -144,7 +144,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     @Override
 	protected IASTInitializer optionalInitializer(IASTDeclarator dtor, DeclarationOptions options) throws EndOfFileException, BacktrackException {
-        if (LTcatchEOF(1) == IToken.tASSIGN) {
+        if (options.fAllowInitializer && LTcatchEOF(1) == IToken.tASSIGN) {
             final int offset= consume().getOffset();
             IASTInitializerClause initClause = initClause();
             IASTEqualsInitializer result= getNodeFactory().newEqualsInitializer(initClause);

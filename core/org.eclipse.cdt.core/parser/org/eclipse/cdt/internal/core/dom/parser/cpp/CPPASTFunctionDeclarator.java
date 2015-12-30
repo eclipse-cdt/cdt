@@ -314,6 +314,12 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 				}
 			}
 		}
+		if (child == noexceptExpression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			noexceptExpression = (ICPPASTExpression) other;
+			return;
+		}
 		assert false;
 	}
 

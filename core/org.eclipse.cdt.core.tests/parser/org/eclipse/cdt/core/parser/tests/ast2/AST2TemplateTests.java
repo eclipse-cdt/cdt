@@ -8980,4 +8980,16 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRecursiveTemplateClass_484786() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	struct S {
+	//		static const bool value = true;
+	//	};
+	//
+	//	typedef int Int;
+	//
+	//	void waldo() noexcept(S<Int>::value) {}
+	public void testDisambiguationInNoexceptSpecifier_467332() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -70,8 +70,11 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
@@ -920,8 +923,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int isLong= 0;
 
         IToken returnToken= null;
-    	IASTDeclSpecifier result= null;
-    	IASTDeclSpecifier altResult= null;
+    	ICASTDeclSpecifier result= null;
+    	ICASTDeclSpecifier altResult= null;
     	IASTAlignmentSpecifier[] alignmentSpecifiers = IASTAlignmentSpecifier.EMPTY_ALIGNMENT_SPECIFIER_ARRAY;
     	try {
     		IASTName identifier= null;
@@ -1131,10 +1134,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     				if (encounteredTypename || encounteredRawType)
     					break declSpecifiers;
     				try {
-    					result= enumSpecifier();
+    					result= (ICASTEnumerationSpecifier) enumSpecifier();
     				} catch (BacktrackException bt) {
-    					if (bt.getNodeBeforeProblem() instanceof IASTDeclSpecifier) {
-    						result= (IASTDeclSpecifier) bt.getNodeBeforeProblem();
+    					if (bt.getNodeBeforeProblem() instanceof ICASTDeclSpecifier) {
+    						result= (ICASTDeclSpecifier) bt.getNodeBeforeProblem();
     						problem = bt.getProblem();
     						break declSpecifiers;
     					} else {
@@ -1323,7 +1326,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
-    protected IASTElaboratedTypeSpecifier elaboratedTypeSpecifier() throws BacktrackException, EndOfFileException {
+    protected ICASTElaboratedTypeSpecifier elaboratedTypeSpecifier() throws BacktrackException, EndOfFileException {
         // this is an elaborated class specifier
         IToken t = consume();
         int eck = 0;
@@ -1347,7 +1350,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         IASTName name = identifier();
-        IASTElaboratedTypeSpecifier result = getNodeFactory().newElaboratedTypeSpecifier(eck, name);
+        ICASTElaboratedTypeSpecifier result = getNodeFactory().newElaboratedTypeSpecifier(eck, name);
         ((ASTNode) result).setOffsetAndLength(t.getOffset(), calculateEndOffset(name) - t.getOffset());
         return result;
     }

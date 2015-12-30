@@ -60,9 +60,21 @@ public class ArduinoToolSystem {
 		case Platform.OS_LINUX:
 			switch (Platform.getOSArch()) {
 			case Platform.ARCH_X86_64:
-				return "x86_64-pc-linux-gnu".equals(host); //$NON-NLS-1$
+				switch (host) {
+				case "x86_64-pc-linux-gnu": //$NON-NLS-1$
+				case "x86_64-linux-gnu": //$NON-NLS-1$
+					return true;
+				default:
+					return false;
+				}
 			case Platform.ARCH_X86:
-				return "i686-pc-linux-gnu".equals(host); //$NON-NLS-1$
+				switch (host) {
+				case "i686-pc-linux-gnu": //$NON-NLS-1$
+				case "i686-linux-gnu": //$NON-NLS-1$
+					return true;
+				default:
+					return false;
+				}
 			default:
 				return false;
 			}

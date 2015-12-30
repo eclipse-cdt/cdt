@@ -1,15 +1,18 @@
 package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,6 +33,29 @@ public class ArduinoLibrary {
 	private String archiveFileName;
 	private int size;
 	private String checksum;
+
+	private Path installPath;
+
+	public ArduinoLibrary() {
+	}
+
+	public ArduinoLibrary(Path propertiesFile) throws IOException {
+		installPath = propertiesFile.getParent();
+
+		Properties props = new Properties();
+		try (FileReader reader = new FileReader(propertiesFile.toFile())) {
+			props.load(reader);
+		}
+
+		name = props.getProperty("name"); //$NON-NLS-1$
+		version = props.getProperty("version"); //$NON-NLS-1$
+		author = props.getProperty("author"); //$NON-NLS-1$
+		maintainer = props.getProperty("maintainer"); //$NON-NLS-1$
+		sentence = props.getProperty("sentence"); //$NON-NLS-1$
+		paragraph = props.getProperty("paragraph"); //$NON-NLS-1$
+		category = props.getProperty("category"); //$NON-NLS-1$
+		architectures = Arrays.asList(props.getProperty("architectures").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 	public String getName() {
 		return name;
@@ -144,8 +170,9 @@ public class ArduinoLibrary {
 	}
 
 	public Path getInstallPath() {
-		return ArduinoPreferences.getArduinoHome().resolve("libraries").resolve(name.replace(' ', '_')) //$NON-NLS-1$
-				.resolve(version);
+		return installPath != null ? installPath
+				: ArduinoPreferences.getArduinoHome().resolve("libraries").resolve(name.replace(' ', '_')) //$NON-NLS-1$
+						.resolve(version);
 	}
 
 	public boolean isInstalled() {
@@ -166,39 +193,57 @@ public class ArduinoLibrary {
 		if (srcPath.toFile().isDirectory()) {
 			return Collections.singletonList(srcPath);
 		} else {
-			// TODO do I need the 'utility' directory?
-			return Collections.singletonList(installPath);
+			Path utilityPath = installPath.resolve("utility"); //$NON-NLS-1$
+			if (utilityPath.toFile().isDirectory()) {
+				return Arrays.asList(installPath, utilityPath);
+			} else {
+				return Collections.singletonList(installPath);
+			}
 		}
 	}
 
-	private void getSources(IProject project, Collection<Path> sources, Path dir, boolean recurse) {
+	private void getSources(Collection<String> sources, Path dir, boolean recurse) {
 		for (File file : dir.toFile().listFiles()) {
 			if (file.isDirectory()) {
 				if (recurse) {
-					getSources(project, sources, file.toPath(), recurse);
+					getSources(sources, file.toPath(), recurse);
 				}
 			} else {
-				if (CoreModel.isValidSourceUnitName(project, file.getName())) {
-					sources.add(file.toPath());
+				if (ArduinoBuildConfiguration.isSource(file.getName())) {
+					sources.add(ArduinoBuildConfiguration.pathString(file.toPath()));
 				}
 			}
 		}
 	}
 
-	public Collection<Path> getSources(IProject project) {
-		List<Path> sources = new ArrayList<>();
+	public Collection<String> getSources() {
+		List<String> sources = new ArrayList<>();
 		Path installPath = getInstallPath();
 		Path srcPath = installPath.resolve("src"); //$NON-NLS-1$
 		if (srcPath.toFile().isDirectory()) {
-			getSources(project, sources, srcPath, true);
+			getSources(sources, srcPath, true);
 		} else {
-			getSources(project, sources, installPath, false);
+			getSources(sources, installPath, false);
 			Path utilityPath = installPath.resolve("utility"); //$NON-NLS-1$
 			if (utilityPath.toFile().isDirectory()) {
-				getSources(project, sources, utilityPath, false);
+				getSources(sources, utilityPath, false);
 			}
 		}
 		return sources;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ArduinoLibrary) {
+			return getName().equals(((ArduinoLibrary) obj).getName());
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
 	}
 
 }

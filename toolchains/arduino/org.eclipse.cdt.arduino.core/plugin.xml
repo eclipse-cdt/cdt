@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="consoleService" name="Arduino Launch Console Service" schema="schema/consoleService.exsd"/>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
@@ -107,19 +108,5 @@
                type="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration">
          </adapter>
       </factory>
-      <factory
-            adaptableType="org.eclipse.launchbar.core.target.ILaunchTarget"
-            class="org.eclipse.cdt.arduino.core.internal.remote.ArduinoTargetAdapterFactory">
-         <adapter
-               type="org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection">
-         </adapter>
-      </factory>
-   </extension>
-   <extension
-         point="org.eclipse.launchbar.core.launchTargetTypes">
-      <launchTargetType
-            id="org.eclipse.cdt.arduino.core.connectionType"
-            provider="org.eclipse.cdt.arduino.core.internal.remote.ArduinoLaunchTargetProvider">
-      </launchTargetType>
    </extension>
 </plugin>

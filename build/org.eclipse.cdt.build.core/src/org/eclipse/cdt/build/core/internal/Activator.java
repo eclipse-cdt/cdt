@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.core.internal;
 
+import org.eclipse.cdt.build.core.IBuildConfigurationManager;
 import org.eclipse.cdt.build.core.IToolChainManager;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -21,8 +22,9 @@ public class Activator extends Plugin {
 	private static Activator plugin;
 
 	private static ToolChainManager toolChainManager;
-	private static CBuildConfigurationCleanup configCleanup;
+	private static CBuildConfigurationManager buildConfigManager;
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -30,18 +32,22 @@ public class Activator extends Plugin {
 		toolChainManager = new ToolChainManager();
 		context.registerService(IToolChainManager.class, toolChainManager, null);
 
-		configCleanup = new CBuildConfigurationCleanup();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(configCleanup);
+		buildConfigManager = new CBuildConfigurationManager();
+		context.registerService(IBuildConfigurationManager.class, buildConfigManager, null);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(buildConfigManager);
 
 		// Save participant for toolchain data
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getId(), new ScannerInfoSaveParticipant());
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(configCleanup);
-		configCleanup = null;
+		toolChainManager = null;
+
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(buildConfigManager);
+		buildConfigManager = null;
 
 		super.stop(context);
 	}

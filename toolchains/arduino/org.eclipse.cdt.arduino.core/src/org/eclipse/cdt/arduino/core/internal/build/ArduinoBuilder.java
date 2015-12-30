@@ -15,8 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
-import org.eclipse.cdt.build.core.CConsoleParser;
-import org.eclipse.cdt.build.core.IConsoleService;
+import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,8 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * This class is responsible for generating the Makefile for the current build
- * config.
+ * This class is responsible for generating the Makefile for the current build config.
  */
 public class ArduinoBuilder extends IncrementalProjectBuilder {
 
@@ -40,8 +38,8 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 		try {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 
-			IConsoleService consoleService = Activator.getService(IConsoleService.class);
-			consoleService.writeOutput(String.format("Building %s\n", project.getName()));
+			ArduinoConsoleService consoleService = Activator.getConsoleService();
+			consoleService.writeOutput(String.format("\nBuilding %s\n", project.getName()));
 
 			ArduinoBuildConfiguration config = getBuildConfig().getAdapter(ArduinoBuildConfiguration.class);
 			config.generateMakeFile(monitor);
@@ -51,17 +49,15 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			config.setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			consoleService.monitor(process, config.getConsoleParsers().toArray(new CConsoleParser[0]),
-					config.getBuildDirectory().toPath());
+			consoleService.monitor(process, config.getBuildConsoleParsers(), config.getBuildFolder());
 
 			if (process.exitValue() == 0) {
 				showSizes(config, consoleService);
 			}
 
 			config.getBuildFolder().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			consoleService.writeOutput("\n"); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e));
 		}
 
 		// TODO if there are references we want to watch, return them here
@@ -74,8 +70,8 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			IProject project = getProject();
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 
-			IConsoleService consoleService = Activator.getService(IConsoleService.class);
-			consoleService.writeOutput(String.format("Cleaning %s\n", project.getName()));
+			ArduinoConsoleService consoleService = Activator.getConsoleService();
+			consoleService.writeOutput(String.format("\nCleaning %s\n", project.getName()));
 
 			ArduinoBuildConfiguration config = getBuildConfig().getAdapter(ArduinoBuildConfiguration.class);
 
@@ -84,17 +80,15 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			config.setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			consoleService.monitor(process, config.getConsoleParsers().toArray(new CConsoleParser[0]),
-					config.getBuildDirectory().toPath());
+			consoleService.monitor(process, config.getBuildConsoleParsers(), config.getBuildFolder());
 
 			config.getBuildFolder().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			consoleService.writeOutput("\n"); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e));
 		}
 	}
 
-	private void showSizes(ArduinoBuildConfiguration config, IConsoleService console) throws CoreException {
+	private void showSizes(ArduinoBuildConfiguration config, ArduinoConsoleService console) throws CoreException {
 		try {
 			int codeSize = -1;
 			int dataSize = -1;
@@ -102,7 +96,7 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			String codeSizeRegex = config.getCodeSizeRegex();
 			Pattern codeSizePattern = codeSizeRegex != null ? Pattern.compile(codeSizeRegex) : null;
 			String dataSizeRegex = config.getDataSizeRegex();
-			Pattern dataSizePattern = codeSizeRegex != null ? Pattern.compile(dataSizeRegex) : null;
+			Pattern dataSizePattern = dataSizeRegex != null ? Pattern.compile(dataSizeRegex) : null;
 
 			if (codeSizePattern == null && dataSizePattern == null) {
 				return;
@@ -138,11 +132,13 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			}
 			console.writeOutput(" bytes\n");
 
-			console.writeOutput("Initial RAM usage: " + dataSize);
-			if (maxCodeSize > 0) {
-				console.writeOutput(" of maximum " + maxDataSize);
+			if (maxDataSize >= 0) {
+				console.writeOutput("Initial RAM usage: " + dataSize);
+				if (maxCodeSize > 0) {
+					console.writeOutput(" of maximum " + maxDataSize);
+				}
+				console.writeOutput(" bytes\n");
 			}
-			console.writeOutput(" bytes\n");
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Checking sizes", e));
 		}

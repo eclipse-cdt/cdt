@@ -56,7 +56,8 @@ public interface IASTDeclSpecifier extends IASTNode {
 	
 	/**
 	 * Get any alignment-specifiers in this decl-specifier sequence.
-	 * @deprecated Alignment specifiers are now stored in the attribute specifier sequence.
+	 * @deprecated Use ICASTDeclSpecifier.getAlignmentSpecifiers() for C code.
+	 * In C++ code, alignment specifiers are now stored in the attribute specifier sequence.
 	 * @since 5.10
 	 */
 	@Deprecated
@@ -102,7 +103,8 @@ public interface IASTDeclSpecifier extends IASTNode {
 	
 	/**
 	 * Not allowed on frozen ast.
-	 * @deprecated Alignment specifiers are now stored in the attribute specifier sequence.
+	 * @deprecated Use ICASTDeclSpecifier.setAlignmentSpecifiers() for C code.
+	 * In C++ code, alignment specifiers are now stored in the attribute specifier sequence.
 	 * @since 5.10
 	 */
 	@Deprecated

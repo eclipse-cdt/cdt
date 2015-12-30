@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 
 /**
@@ -21,8 +23,20 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  */
 public interface ICASTDeclSpecifier extends IASTDeclSpecifier {
 	/**
+	 * @since 5.12
+	 */
+	public static final ASTNodeProperty ALIGNMENT_SPECIFIER = new ASTNodeProperty(
+			"ICASTDeclSpecifier.ALIGNMENT_SPECIFIER - Alignment specifier");  //$NON-NLS-1$
+	
+	/**
 	 * @since 5.1
 	 */
 	@Override
 	public ICASTDeclSpecifier copy();
+
+	@Override
+	public IASTAlignmentSpecifier[] getAlignmentSpecifiers();
+	
+	@Override
+	public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers);
 }

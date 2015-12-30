@@ -45,6 +45,14 @@ public class EvalFixed extends CPPEvaluation {
 	private boolean fCheckedIsValueDependent;
 
 	public EvalFixed(IType type, ValueCategory cat, IValue value) {
+		// Avoid nesting EvalFixed's as nesting causes the signature to be different.
+		if (value.getEvaluation() instanceof EvalFixed) {
+			EvalFixed inner = (EvalFixed) value.getEvaluation();
+			type = inner.fType;
+			cat = inner.fValueCategory;
+			value = inner.fValue;
+		}
+		
 		if (type instanceof CPPBasicType) {
 			Long num = value.numericalValue();
 			if (num != null) {
@@ -57,7 +65,7 @@ public class EvalFixed extends CPPEvaluation {
 		fValueCategory= cat;
 		fValue= value;
 	}
-
+	
 	public IType getType() {
 		return fType;
 	}

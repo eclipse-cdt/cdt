@@ -15,10 +15,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-/**
- * @version 	1.0
- * @author
- */
+
 public abstract class StructuredViewerPart extends SharedPartWithButtons {
 	private StructuredViewer viewer;
 	private Point minSize = null;
@@ -35,9 +32,6 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 		return viewer.getControl();
 	}
 
-	/*
-	 * @see SharedPartWithButtons#createMainControl(Composite, int, FormWidgetFactory)
-	 */
 	@Override
 	protected void createMainControl(Composite parent, int style, int span) {
 		viewer = createStructuredViewer(parent, style);

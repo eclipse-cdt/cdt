@@ -186,18 +186,18 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		return viewer;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class key) {
+	public <T> T getAdapter(Class<T> key) {
 		if (ProjectionAnnotationModel.class.equals(key)) {
 			if (projectionSupport != null) {
-				Object result = projectionSupport.getAdapter(getSourceViewer(), key);
+				T result = projectionSupport.getAdapter(getSourceViewer(), key);
 				if (result != null) {
 					return result;
 				}
 			}
 		} else if (key.equals(IContentOutlinePage.class)) {
-			return getOutlinePage();
+			return (T) getOutlinePage();
 		}
 		return super.getAdapter(key);
 	}

@@ -44,35 +44,23 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(2, false));
 
-		IRemoteConnection remoteConnection = (IRemoteConnection) getElement().getAdapter(IRemoteConnection.class);
+		IRemoteConnection remoteConnection = getElement().getAdapter(IRemoteConnection.class);
 		ArduinoRemoteConnection arduinoRemote = remoteConnection.getService(ArduinoRemoteConnection.class);
 
 		Label portLabel = new Label(comp, SWT.NONE);
 		portLabel.setText(Messages.ArduinoTargetPropertyPage_0);
 
-		portSelector = new Combo(comp, SWT.READ_ONLY);
+		portSelector = new Combo(comp, SWT.NONE);
 		portSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		String currentPort = arduinoRemote.getPortName();
-		int i = 0, portSel = -1;
+		portSelector.setText(currentPort);
 		try {
 			for (String port : SerialPort.list()) {
 				portSelector.add(port);
-				if (port.equals(currentPort)) {
-					portSel = i;
-				} else {
-					portSel = portSel < 0 ? 0 : portSel;
-				}
-				i++;
 			}
 		} catch (IOException e) {
 			Activator.log(e);
-		}
-		if (portSel >= 0) {
-			portSelector.select(portSel);
-		} else {
-			setMessage(Messages.ArduinoTargetPropertyPage_1, ERROR);
-			setValid(false);
 		}
 
 		Label boardLabel = new Label(comp, SWT.NONE);
@@ -83,9 +71,9 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 
 		try {
 			ArduinoBoard currentBoard = arduinoRemote.getBoard();
-			Collection<ArduinoBoard> boardList = ArduinoManager.instance.getBoards();
+			Collection<ArduinoBoard> boardList = Activator.getService(ArduinoManager.class).getInstalledBoards();
 			boards = new ArduinoBoard[boardList.size()];
-			i = 0;
+			int i = 0;
 			int boardSel = 0;
 			for (ArduinoBoard board : boardList) {
 				boards[i] = board;
@@ -105,7 +93,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 
 	@Override
 	public boolean performOk() {
-		IRemoteConnection remoteConnection = (IRemoteConnection) getElement().getAdapter(IRemoteConnection.class);
+		IRemoteConnection remoteConnection = getElement().getAdapter(IRemoteConnection.class);
 		IRemoteConnectionWorkingCopy workingCopy = remoteConnection.getWorkingCopy();
 
 		String portName = portSelector.getItem(portSelector.getSelectionIndex());

@@ -9,11 +9,15 @@ package org.eclipse.cdt.arduino.ui.internal.project;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoLibrary;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.LibraryIndex;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.resources.IProject;
@@ -40,7 +44,9 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class LibrariesPropertyPage extends PropertyPage {
 
-	private static class ContentProvider implements ITreeContentProvider {
+	private static ArduinoManager manager = Activator.getService(ArduinoManager.class);
+
+	private class ContentProvider implements ITreeContentProvider {
 		private LibraryIndex index;
 
 		@Override
@@ -55,9 +61,9 @@ public class LibrariesPropertyPage extends PropertyPage {
 		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof LibraryIndex) {
-				return !index.getCategories().isEmpty();
+				return true;
 			} else if (element instanceof String) { // category
-				return !index.getLibraries((String) element).isEmpty();
+				return true;
 			} else if (element instanceof ArduinoLibrary) {
 				return false;
 			} else {
@@ -68,8 +74,10 @@ public class LibrariesPropertyPage extends PropertyPage {
 		@Override
 		public Object getParent(Object element) {
 			if (element instanceof ArduinoLibrary) {
-				return ((ArduinoLibrary) element).getCategory();
-			} else if (element instanceof String) {
+				ArduinoLibrary lib = (ArduinoLibrary) element;
+				String category = lib.getCategory();
+				return category != null ? category : LibraryIndex.UNCATEGORIZED;
+			} else if (element instanceof String || element instanceof ArduinoPlatform) {
 				return index;
 			} else {
 				return null;
@@ -78,15 +86,46 @@ public class LibrariesPropertyPage extends PropertyPage {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return ((LibraryIndex) inputElement).getCategories().toArray(new String[0]);
+			Set<String> categories = new HashSet<>();
+			categories.addAll(((LibraryIndex) inputElement).getCategories());
+
+			try {
+				for (ArduinoLibrary lib : getPlatform().getLibraries()) {
+					String category = lib.getCategory();
+					categories.add(category != null ? category : LibraryIndex.UNCATEGORIZED);
+				}
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
+
+			return categories.toArray();
 		}
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof String) {
-				return index.getLibraries((String) parentElement).toArray(new ArduinoLibrary[0]);
+				String category = (String) parentElement;
+				List<ArduinoLibrary> libs = new ArrayList<>();
+				libs.addAll(index.getLibraries(category));
+				try {
+					for (ArduinoLibrary lib : getPlatform().getLibraries()) {
+						String cat = lib.getCategory();
+						if (cat != null) {
+							if (cat.equals(category)) {
+								libs.add(lib);
+							}
+						} else if (category.equals(LibraryIndex.UNCATEGORIZED)) { // cat
+																					// ==
+																					// null
+							libs.add(lib);
+						}
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
+				return libs.toArray();
 			} else {
-				return null;
+				return new Object[0];
 			}
 		}
 	}
@@ -146,6 +185,7 @@ public class LibrariesPropertyPage extends PropertyPage {
 						}
 					}
 				}, true) {
+
 			@Override
 			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 				return new ContainerCheckedTreeViewer(parent, style);
@@ -158,28 +198,36 @@ public class LibrariesPropertyPage extends PropertyPage {
 		Tree tree = viewer.getTree();
 		tree.setHeaderVisible(true);
 		TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
-		column1.setText("Name");
+		column1.setText(Messages.LibrariesPropertyPage_0);
 		column1.setWidth(200);
 		TreeColumn column2 = new TreeColumn(tree, SWT.LEFT);
-		column2.setText("Description");
+		column2.setText(Messages.LibrariesPropertyPage_1);
 		column2.setWidth(200);
 
 		viewer.setContentProvider(new ContentProvider());
 		viewer.setLabelProvider(new LabelProvider());
 
 		try {
-			viewer.setInput(ArduinoManager.instance.getLibraryIndex());
+			viewer.setInput(manager.getLibraryIndex());
 			// Set the check states for currently selected libraries
 			IProject project = getElement().getAdapter(IProject.class);
-			Collection<ArduinoLibrary> libraries = ArduinoManager.instance.getLibraries(project);
+			Collection<ArduinoLibrary> libraries = manager.getLibraries(project);
 			for (ArduinoLibrary lib : libraries) {
 				viewer.setChecked(lib, true);
 			}
 		} catch (CoreException e) {
 			Activator.log(e);
 		}
-
 		return comp;
+
+	}
+
+	private IProject getProject() {
+		return getElement().getAdapter(IProject.class);
+	}
+
+	private ArduinoPlatform getPlatform() throws CoreException {
+		return getProject().getActiveBuildConfig().getAdapter(ArduinoBuildConfiguration.class).getBoard().getPlatform();
 	}
 
 	@Override
@@ -194,7 +242,7 @@ public class LibrariesPropertyPage extends PropertyPage {
 			}
 		}
 		try {
-			ArduinoManager.instance.setLibraries(getElement().getAdapter(IProject.class), libs);
+			manager.setLibraries(getProject(), libs);
 		} catch (CoreException e) {
 			Activator.log(e);
 		}

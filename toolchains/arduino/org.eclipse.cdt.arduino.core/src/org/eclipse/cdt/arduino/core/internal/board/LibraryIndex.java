@@ -1,5 +1,6 @@
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,19 +13,20 @@ import java.util.Set;
 public class LibraryIndex {
 
 	private List<ArduinoLibrary> libraries;
+	public static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
 
 	// category name to library name
 	private Map<String, Set<String>> categories = new HashMap<>();
 	// library name to latest version of library
 	private Map<String, ArduinoLibrary> latestLibs = new HashMap<>();
 
-	public void resolve() {
+	public void resolve() throws IOException {
 		for (ArduinoLibrary library : libraries) {
 			String name = library.getName();
 
 			String category = library.getCategory();
 			if (category == null) {
-				category = "Uncategorized"; //$NON-NLS-1$
+				category = UNCATEGORIZED;
 			}
 
 			Set<String> categoryLibs = categories.get(category);

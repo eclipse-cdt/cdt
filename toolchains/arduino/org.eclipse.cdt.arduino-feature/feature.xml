@@ -21,9 +21,11 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.launchbar" version="1.0.0.qualifier"/>
-      <import feature="org.eclipse.remote.serial" version="1.0.0.qualifier"/>
-      <import feature="org.eclipse.remote" version="2.0.0.qualifier"/>
+      <import feature="org.eclipse.launchbar" version="1.0.0"/>
+      <import feature="org.eclipse.remote.serial" version="1.0.0"/>
+      <import feature="org.eclipse.remote" version="2.0.0"/>
+      <import feature="org.eclipse.remote.console" version="2.0.0"/>
+      <import feature="org.eclipse.cdt" version="8.8.0"/>
    </requires>
 
    <plugin

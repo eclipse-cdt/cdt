@@ -33,10 +33,11 @@ public class NewArduinoProjectWizard extends BasicNewProjectResourceWizard {
 			return false;
 
 		new Job(Messages.NewArduinoProjectWizard_0) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					final ArduinoProjectGenerator generator = new ArduinoProjectGenerator(getNewProject());
-					generator.setupArduinoProject(monitor);
+					generator.generate(monitor);
 					getWorkbench().getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {

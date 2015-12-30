@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
@@ -30,7 +28,7 @@ public class ArduinoScannerInfoProvider implements IScannerInfoProvider {
 			IBuildConfiguration config = project.getActiveBuildConfig();
 			ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
 			return arduinoConfig.getScannerInfo(resource);
-		} catch (IOException | CoreException e) {
+		} catch (CoreException e) {
 			Activator.log(e);
 			return null;
 		}

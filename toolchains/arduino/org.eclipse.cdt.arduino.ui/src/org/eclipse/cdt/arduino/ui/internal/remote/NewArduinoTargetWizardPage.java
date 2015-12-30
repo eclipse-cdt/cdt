@@ -7,18 +7,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.remote;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
-import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
-import org.eclipse.cdt.serial.SerialPort;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -26,7 +17,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -36,13 +26,7 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 	String name;
 	private Text nameText;
 
-	String portName;
-	private String[] portNames;
-	private Combo portCombo;
-
-	ArduinoBoard board;
-	private ArduinoBoard[] boards;
-	private Combo boardCombo;
+	BoardPropertyControl boardControl;
 
 	public NewArduinoTargetWizardPage() {
 		super("NewArduinoTargetPage"); //$NON-NLS-1$
@@ -53,17 +37,22 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(2, false));
+		comp.setLayout(new GridLayout());
 
-		Label nameLabel = new Label(comp, SWT.NONE);
+		Composite nameComp = new Composite(comp, SWT.NONE);
+		nameComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		nameComp.setLayout(new GridLayout(2, false));
+
+		Label nameLabel = new Label(nameComp, SWT.NONE);
 		nameLabel.setText(Messages.NewArduinoTargetWizardPage_2);
 
-		nameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
+		nameText = new Text(nameComp, SWT.BORDER | SWT.SINGLE);
 		nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		nameText.setText(Messages.NewArduinoTargetWizardPage_3);
 		nameText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
+				name = nameText.getText();
 				updateStatus();
 			}
 
@@ -72,51 +61,9 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 			}
 		});
 
-		Label portLabel = new Label(comp, SWT.NONE);
-		portLabel.setText(Messages.NewArduinoTargetWizardPage_4);
-
-		portCombo = new Combo(comp, SWT.READ_ONLY);
-		portCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		try {
-			portNames = SerialPort.list();
-		} catch (IOException e) {
-			portNames = new String[0];
-			Activator.log(e);
-		}
-		for (String portName : portNames) {
-			portCombo.add(portName);
-		}
-		portCombo.select(0);
-		portCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateStatus();
-			}
-		});
-
-		Label boardLabel = new Label(comp, SWT.NONE);
-		boardLabel.setText(Messages.NewArduinoTargetWizardPage_5);
-
-		boardCombo = new Combo(comp, SWT.READ_ONLY);
-		boardCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		try {
-			List<ArduinoBoard> boardList = ArduinoManager.instance.getInstalledBoards();
-			Collections.sort(boardList, new Comparator<ArduinoBoard>() {
-				@Override
-				public int compare(ArduinoBoard o1, ArduinoBoard o2) {
-					return o1.getName().compareTo(o2.getName());
-				}
-			});
-			boards = boardList.toArray(new ArduinoBoard[0]);
-
-			for (ArduinoBoard board : boards) {
-				boardCombo.add(board.getName());
-			}
-			boardCombo.select(0);
-		} catch (CoreException e) {
-			Activator.log(e);
-		}
-		boardCombo.addSelectionListener(new SelectionAdapter() {
+		boardControl = new BoardPropertyControl(comp, SWT.NONE);
+		boardControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		boardControl.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateStatus();
@@ -128,15 +75,12 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 	}
 
 	private void updateStatus() {
-		name = nameText.getText();
+		setPageComplete(name != null && !name.isEmpty() && boardControl.getPortName() != null
+				&& boardControl.getSelectedBoard() != null);
+	}
 
-		int portIndex = portCombo.getSelectionIndex();
-		portName = portIndex < 0 ? null : portNames[portIndex];
-
-		int boardIndex = boardCombo.getSelectionIndex();
-		board = boardIndex < 0 ? null : boards[boardIndex];
-
-		setPageComplete(!name.isEmpty() && portName != null && board != null);
+	public void performFinish(IRemoteConnectionWorkingCopy workingCopy) {
+		boardControl.apply(workingCopy);
 	}
 
 }

@@ -31,6 +31,12 @@
       </wizard>
    </extension>
    <extension
+         point="org.eclipse.cdt.arduino.core.consoleService">
+      <provider
+            class="org.eclipse.cdt.arduino.ui.internal.launch.ArduinoConsole">
+      </provider>
+   </extension>
+   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="org.eclipse.cdt.arduino.ui.internal.remote.ArduinoTargetPropertyPage"
@@ -38,10 +44,13 @@
             name="Arduino"
             selectionFilter="single">
          <enabledWhen>
-            <adapt
-                  type="org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection">
-            </adapt>
-         </enabledWhen>
+             <adapt type="org.eclipse.remote.core.IRemoteConnection">
+                <test
+                      forcePluginActivation="false"
+                      property="org.eclipse.cdt.arduino.ui.isArduinoRemote">
+                </test>
+             </adapt>
+          </enabledWhen>
       </page>
       <page
             class="org.eclipse.cdt.arduino.ui.internal.project.LibrariesPropertyPage"
@@ -89,12 +98,42 @@
             id="org.eclipse.cdt.arduino.preference.page.boards"
             name="Boards">
       </page>
+      <page
+            category="org.eclipse.cdt.arduino.preference.page"
+            class="org.eclipse.cdt.arduino.ui.internal.preferences.ArduinoPlatformsPreferencePage"
+            id="org.eclipse.cdt.arduino.ui.page.platforms"
+            name="Platforms">
+      </page>
    </extension>
    <extension
-         point="org.eclipse.launchbar.ui.launchTargetTypeUI">
-      <launchTargetTypeUI
-            id="org.eclipse.cdt.arduino.core.connectionType"
-            labelProvider="org.eclipse.cdt.arduino.ui.internal.remote.ArduinoLaunchTargetLabelProvider">
-      </launchTargetTypeUI>
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+         <view
+               id="org.eclipse.remote.ui.view.connections"
+               minimized="false"
+               ratio="0.75"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.cdt.arduino.ui.internal.project.ArduinoPropertyTester"
+            id="temporaryRemoteTester"
+            namespace="org.eclipse.cdt.arduino.ui"
+            properties="isArduinoRemote"
+            type="org.eclipse.remote.core.IRemoteConnection">
+      </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.arduino.ui.internal.launch.ArduinoLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.arduino.ui.launchConfigurationTabGroup"
+            type="org.eclipse.cdt.arduino.core.launchConfigurationType">
+      </launchConfigurationTabGroup>
    </extension>
 </plugin>

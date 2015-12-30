@@ -7,11 +7,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 
 public class ArduinoPackage {
 
@@ -63,12 +66,16 @@ public class ArduinoPackage {
 		return Collections.unmodifiableCollection(platforms);
 	}
 
+	public Path getInstallPath() {
+		return ArduinoPreferences.getArduinoHome().resolve("packages").resolve(getName()); //$NON-NLS-1$
+	}
+
 	/**
 	 * Only the latest versions of the platforms.
 	 * 
 	 * @return latest platforms
 	 */
-	public Collection<ArduinoPlatform> getLatestPlatforms() {
+	public Map<String, ArduinoPlatform> getAvailablePlatforms() {
 		Map<String, ArduinoPlatform> platformMap = new HashMap<>();
 		for (ArduinoPlatform platform : platforms) {
 			ArduinoPlatform p = platformMap.get(platform.getName());
@@ -76,20 +83,17 @@ public class ArduinoPackage {
 				platformMap.put(platform.getName(), platform);
 			}
 		}
-		return Collections.unmodifiableCollection(platformMap.values());
+		return platformMap;
 	}
 
-	public Collection<ArduinoPlatform> getInstalledPlatforms() {
+	public Map<String, ArduinoPlatform> getInstalledPlatforms() {
 		Map<String, ArduinoPlatform> platformMap = new HashMap<>();
 		for (ArduinoPlatform platform : platforms) {
 			if (platform.isInstalled()) {
-				ArduinoPlatform p = platformMap.get(platform.getName());
-				if (p == null || ArduinoManager.compareVersions(platform.getVersion(), p.getVersion()) > 0) {
-					platformMap.put(platform.getName(), platform);
-				}
+				platformMap.put(platform.getName(), platform);
 			}
 		}
-		return Collections.unmodifiableCollection(platformMap.values());
+		return platformMap;
 	}
 
 	public ArduinoPlatform getPlatform(String name) {
@@ -120,19 +124,6 @@ public class ArduinoPackage {
 			}
 		}
 		return null;
-	}
-
-	public ArduinoTool getLatestTool(String toolName) {
-		ArduinoTool latestTool = null;
-		for (ArduinoTool tool : tools) {
-			if (tool.getName().equals(toolName)) {
-				if (latestTool == null
-						|| ArduinoManager.compareVersions(tool.getVersion(), latestTool.getVersion()) > 0) {
-					latestTool = tool;
-				}
-			}
-		}
-		return latestTool;
 	}
 
 	@Override

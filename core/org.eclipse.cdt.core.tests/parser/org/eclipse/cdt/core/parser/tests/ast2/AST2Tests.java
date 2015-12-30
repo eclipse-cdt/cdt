@@ -7569,4 +7569,16 @@ public class AST2Tests extends AST2TestBase {
     public void testAlignas_451082() throws Exception {
     	parseAndCheckBindings(getAboveComment(), C);
     }
+    
+	//	void foo(int waldo) {
+	//		(waldo = 5) && waldo;
+	//	}
+    public void testTypeIdWithEqualsInitializer_484824() throws Exception {
+    	// Test that 'waldo = 5' is not parsed as a type-id, causing 
+    	// the entire expression to be parsed as a cast-expression.
+    	// See also bug 471174, which is about the broader problem of
+    	// binary && expressions with a parenthesized left operand
+    	// being incorrectly parsed as cast-expressions.
+    	parseAndCheckBindings(getAboveComment(), C);
+    }
 }

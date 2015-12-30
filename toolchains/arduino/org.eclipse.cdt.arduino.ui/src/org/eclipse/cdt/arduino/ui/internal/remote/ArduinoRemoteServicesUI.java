@@ -1,10 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.remote;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 public class ArduinoRemoteServicesUI extends AbstractRemoteUIConnectionService {
 
 	private final IRemoteConnectionType connectionType;
-
+	
 	public ArduinoRemoteServicesUI(IRemoteConnectionType connectionType) {
 		this.connectionType = connectionType;
 	}
@@ -48,8 +41,7 @@ public class ArduinoRemoteServicesUI extends AbstractRemoteUIConnectionService {
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
-			Activator.getDefault().getLog()
-					.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e));
+			Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e));
 		}
 	}
 

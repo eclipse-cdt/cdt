@@ -72,6 +72,7 @@
 		<module>tests/org.eclipse.launchbar.core.tests</module>
 		
 		<module>bundles/org.eclipse.launchbar.remote.core</module>
+		<module>bundles/org.eclipse.launchbar.remote.ui</module>
 		<module>features/org.eclipse.launchbar.remote</module>
 		
 		<module>repo</module>

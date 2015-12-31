@@ -18,7 +18,7 @@ import org.eclipse.launchbar.core.internal.target.LaunchTarget;
  * @noimplement not to be implemented by clients
  */
 public interface ILaunchTarget extends IAdaptable {
-	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "null", "---");
+	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * The id for the target. It is unique for each type.
@@ -29,10 +29,14 @@ public interface ILaunchTarget extends IAdaptable {
 
 	/**
 	 * The user consumable name of the target.
-	 *
+	 * 
+	 * @deprecated this will be the same as the id
 	 * @return name of the target
 	 */
-	String getName();
+	@Deprecated
+	default String getName() {
+		return getId();
+	}
 
 	/**
 	 * The type of the target.

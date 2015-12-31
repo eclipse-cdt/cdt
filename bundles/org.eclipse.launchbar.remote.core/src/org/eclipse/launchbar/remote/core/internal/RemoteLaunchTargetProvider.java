@@ -17,8 +17,8 @@ import org.eclipse.remote.core.IRemoteServicesManager;
 
 public class RemoteLaunchTargetProvider implements ILaunchTargetProvider {
 
-	static final String TYPE_ID = "org.eclipse.launchbar.remote.core.launchTargetType"; //$NON-NLS-1$
-	static final String DELIMITER = "|"; //$NON-NLS-1$
+	public static final String TYPE_ID = "org.eclipse.launchbar.remote.core.launchTargetType"; //$NON-NLS-1$
+	public static final String DELIMITER = "|"; //$NON-NLS-1$
 
 	private static final TargetStatus CLOSED = new TargetStatus(Code.ERROR, Messages.RemoteLaunchTargetProvider_Closed);
 
@@ -39,7 +39,7 @@ public class RemoteLaunchTargetProvider implements ILaunchTargetProvider {
 		for (IRemoteConnection connection : manager.getAllRemoteConnections()) {
 			String id = getTargetId(connection);
 			if (targetManager.getLaunchTarget(TYPE_ID, id) == null) {
-				targetManager.addLaunchTarget(TYPE_ID, id, connection.getName());
+				targetManager.addLaunchTarget(TYPE_ID, id);
 			}
 		}
 	}

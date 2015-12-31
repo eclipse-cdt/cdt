@@ -67,25 +67,9 @@ public interface ILaunchTargetManager {
 	 *            type id of the launch target
 	 * @param id
 	 *            id for the target.
-	 * @param name
-	 *            name of the launch target
 	 * @return the created launch target
 	 */
-	ILaunchTarget addLaunchTarget(String typeId, String id, String name);
-
-	/**
-	 * Add a launch target with the given typeId and name. The name is also the
-	 * id for the target.
-	 * 
-	 * @param typeId
-	 *            type id of the launch target
-	 * @param name
-	 *            name of the launch target
-	 * @return the created launch target
-	 */
-	default ILaunchTarget addLaunchTarget(String typeId, String name) {
-		return addLaunchTarget(typeId, name, name);
-	}
+	ILaunchTarget addLaunchTarget(String typeId, String id);
 
 	/**
 	 * Removes a launch target.

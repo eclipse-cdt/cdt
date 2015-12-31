@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.launchbar.ui.launchTargetTypeUI">
+      <launchTargetTypeUI
+            id="org.eclipse.launchbar.remote.core.launchTargetType"
+            labelProvider="org.eclipse.launchbar.remote.ui.internal.RemoteLaunchTargetLabelProvider">
+      </launchTargetTypeUI>
+   </extension>
+
+</plugin>

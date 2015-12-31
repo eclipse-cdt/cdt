@@ -39,8 +39,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	private List<ILaunchTargetListener> listeners = new LinkedList<>();
 
 	private static final String DELIMETER1 = ","; //$NON-NLS-1$
-	private static final String DELIMETER2 = "!"; //$NON-NLS-1$
-	private static final String DELIMETER3 = ":"; //$NON-NLS-1$
+	private static final String DELIMETER2 = ":"; //$NON-NLS-1$
 
 	private Preferences getTargetsPref() {
 		return InstanceScope.INSTANCE.getNode(Activator.getDefault().getBundle().getSymbolicName())
@@ -75,12 +74,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 					}
 
 					for (String name : prefs.get(typeId, "").split(DELIMETER1)) { //$NON-NLS-1$
-						if (name.contains(DELIMETER2)) {
-							String[] list = name.split(DELIMETER2);
-							type.put(list[0], new LaunchTarget(typeId, list[0], list[1]));
-						} else {
-							type.put(name, new LaunchTarget(typeId, name, name));
-						}
+						type.put(name, new LaunchTarget(typeId, name));
 					}
 				}
 			} catch (BackingStoreException e) {
@@ -162,7 +156,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	}
 
 	@Override
-	public ILaunchTarget addLaunchTarget(String typeId, String id, String name) {
+	public ILaunchTarget addLaunchTarget(String typeId, String id) {
 		initTargets();
 		Map<String, ILaunchTarget> type = targets.get(typeId);
 		if (type == null) {
@@ -170,11 +164,11 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			targets.put(typeId, type);
 		}
 
-		ILaunchTarget target = new LaunchTarget(typeId, id, name);
+		ILaunchTarget target = new LaunchTarget(typeId, id);
 		type.put(id, target);
 
-		getTargetsPref().put(typeId, type.values().stream().map(t -> t.getId() + DELIMETER2 + t.getName())
-				.collect(Collectors.joining(DELIMETER1)));
+		getTargetsPref().put(typeId,
+				type.values().stream().map(t -> t.getId()).collect(Collectors.joining(DELIMETER1)));
 
 		for (ILaunchTargetListener listener : listeners) {
 			listener.launchTargetAdded(target);
@@ -188,13 +182,13 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 		initTargets();
 		Map<String, ILaunchTarget> type = targets.get(target.getTypeId());
 		if (type != null) {
-			type.remove(target.getName());
+			type.remove(target.getId());
 			if (type.isEmpty()) {
 				targets.remove(target.getTypeId());
 				getTargetsPref().remove(target.getTypeId());
 			} else {
-				getTargetsPref().put(target.getTypeId(), type.values().stream()
-						.map(t -> t.getId() + DELIMETER2 + t.getName()).collect(Collectors.joining(DELIMETER1)));
+				getTargetsPref().put(target.getTypeId(),
+						type.values().stream().map(t -> t.getId()).collect(Collectors.joining(DELIMETER1)));
 			}
 
 			for (ILaunchTargetListener listener : listeners) {
@@ -215,7 +209,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 		Preferences prefs = getTargetsPref().node("configs"); //$NON-NLS-1$
 		String targetId = prefs.get(configuration.getName(), null);
 		if (targetId != null) {
-			String[] parts = targetId.split(DELIMETER3);
+			String[] parts = targetId.split(DELIMETER2);
 			return getLaunchTarget(parts[0], parts[1]);
 		}
 		return null;
@@ -224,7 +218,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	@Override
 	public void setDefaultLaunchTarget(ILaunchConfiguration configuration, ILaunchTarget target) {
 		Preferences prefs = getTargetsPref().node("configs"); //$NON-NLS-1$
-		String targetId = String.join(DELIMETER3, target.getTypeId(), target.getId());
+		String targetId = String.join(DELIMETER2, target.getTypeId(), target.getId());
 		prefs.put(configuration.getName(), targetId);
 		try {
 			prefs.flush();

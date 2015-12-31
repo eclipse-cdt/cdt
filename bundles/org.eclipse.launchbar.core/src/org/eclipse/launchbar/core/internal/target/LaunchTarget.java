@@ -14,22 +14,15 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 
 	private final String typeId;
 	private final String id;
-	private final String name;
 
-	public LaunchTarget(String typeId, String id, String name) {
+	public LaunchTarget(String typeId, String id) {
 		this.typeId = typeId;
 		this.id = id;
-		this.name = name;
 	}
 
 	@Override
 	public String getId() {
 		return id;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override

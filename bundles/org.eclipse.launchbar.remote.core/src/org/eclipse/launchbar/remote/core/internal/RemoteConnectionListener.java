@@ -23,7 +23,7 @@ public class RemoteConnectionListener implements IRemoteConnectionChangeListener
 		switch (event.getType()) {
 		case RemoteConnectionChangeEvent.CONNECTION_ADDED:
 			targetManager.addLaunchTarget(RemoteLaunchTargetProvider.TYPE_ID,
-					RemoteLaunchTargetProvider.getTargetId(connection), connection.getName());
+					RemoteLaunchTargetProvider.getTargetId(connection));
 			break;
 		case RemoteConnectionChangeEvent.CONNECTION_REMOVED:
 			ILaunchTarget target = targetManager.getLaunchTarget(RemoteLaunchTargetProvider.TYPE_ID,

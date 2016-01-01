@@ -23,7 +23,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 public class CPPConstructorInstance extends CPPMethodInstance implements ICPPConstructor {
 
 	public CPPConstructorInstance(ICPPConstructor orig, ICPPClassType owner, 
-			CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpec) {
-		super(orig, owner, tpmap, args, type, exceptionSpec);
+			CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args, ICPPFunctionType type, 
+			IType[] exceptionSpec, ICPPEvaluation returnExpression) {
+		super(orig, owner, tpmap, args, type, exceptionSpec, returnExpression);
 	}
 }

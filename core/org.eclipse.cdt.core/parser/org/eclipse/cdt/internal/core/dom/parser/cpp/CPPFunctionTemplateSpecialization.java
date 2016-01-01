@@ -31,8 +31,9 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 	private ObjectMap instances;
 	
 	public CPPFunctionTemplateSpecialization(ICPPFunction original, IBinding owner,
-			ICPPTemplateParameterMap argumentMap, ICPPFunctionType type, IType[] exceptionSpecs) {
-		super(original, owner, argumentMap, type, exceptionSpecs);
+			ICPPTemplateParameterMap argumentMap, ICPPFunctionType type, IType[] exceptionSpecs,
+			ICPPEvaluation returnExpression) {
+		super(original, owner, argumentMap, type, exceptionSpecs, returnExpression);
 	}
 
 	@Override

@@ -24,8 +24,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod {
 
 	public CPPMethodInstance(ICPPMethod orig, ICPPClassType owner, CPPTemplateParameterMap tpmap,
-			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs) {
-		super(orig, owner, tpmap, args, type, exceptionSpecs);
+			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs,
+			ICPPEvaluation returnExpression) {
+		super(orig, owner, tpmap, args, type, exceptionSpecs, returnExpression);
 	}
 
 	@Override

@@ -24,7 +24,8 @@ public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpeci
 		implements ICPPConstructor {
 
 	public CPPConstructorTemplateSpecialization(ICPPConstructor original,
-			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpmap, ICPPFunctionType type, IType[] exceptionSpecs) {
-		super(original, owner, tpmap, type, exceptionSpecs);
+			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpmap, ICPPFunctionType type, 
+			IType[] exceptionSpecs, ICPPEvaluation returnExpression) {
+		super(original, owner, tpmap, type, exceptionSpecs, returnExpression);
 	}
 }

@@ -45,12 +45,14 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	private final ICPPFunctionType fType;
 	private ICPPParameter[] fParams;
 	private final IType[] fExceptionSpecs;
+	private ICPPEvaluation fReturnExpression;
 
 	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap,
-			ICPPFunctionType type, IType[] exceptionSpecs) {
+			ICPPFunctionType type, IType[] exceptionSpecs, ICPPEvaluation returnExpression) {
 		super(orig, owner, argMap);
 		fType= type;
 		fExceptionSpecs= exceptionSpecs;
+		fReturnExpression= returnExpression;
 	}
 	
 	private ICPPFunction getFunction() {
@@ -288,6 +290,12 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 			updateFunctionParameterBindings(dtor);
 	        super.addDefinition(dtor);
 		}
+		
+		// If this method is called, this CPPFunctionSpecialization represents
+		// an explicit specialization, which has its own return expression.
+		if (isConstexpr()) {
+			fReturnExpression = CPPFunction.getReturnExpression(CPPFunction.getFunctionDefinition(node));
+		}
 	}
 
 	@Override
@@ -320,18 +328,6 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 
 	@Override
 	public ICPPEvaluation getReturnExpression() {
-		if (!isConstexpr())
-			return null;
-
-		IASTNode def = getDefinition();
-		if (def != null) {
-			ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(def);
-			return CPPFunction.getReturnExpression(functionDefinition);
-		}
-		IBinding f = getSpecializedBinding();
-		if (f instanceof ICPPComputableFunction) {
-			return ((ICPPComputableFunction) f).getReturnExpression();
-		}
-		return null;
+		return fReturnExpression;
 	}
 }

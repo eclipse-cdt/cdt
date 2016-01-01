@@ -24,7 +24,8 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization
 		implements ICPPConstructor {
 
 	public CPPConstructorSpecialization(ICPPConstructor orig, ICPPClassType owner,
-			ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {
-		super(orig, owner, argMap, type, exceptionSpecs);
+			ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs,
+			ICPPEvaluation returnExpression) {
+		super(orig, owner, argMap, type, exceptionSpecs, returnExpression);
 	}
 }

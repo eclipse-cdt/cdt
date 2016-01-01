@@ -30,8 +30,9 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 	private ICPPTemplateParameter[] fTemplateParameters;
 
 	public CPPMethodTemplateSpecialization(ICPPMethod specialized, ICPPClassSpecialization owner,
-			ICPPTemplateParameterMap ctmap, ICPPFunctionType type, IType[] exceptionSpecs) {
-		super(specialized, owner, ctmap, type, exceptionSpecs);
+			ICPPTemplateParameterMap ctmap, ICPPFunctionType type, IType[] exceptionSpecs, 
+			ICPPEvaluation returnExpression) {
+		super(specialized, owner, ctmap, type, exceptionSpecs, returnExpression);
 	}
 
 	public void setTemplateParameters(ICPPTemplateParameter[] templateParameters) {

@@ -31,8 +31,9 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 	private final ICPPTemplateArgument[] fArguments;
 
 	public CPPFunctionInstance(ICPPFunction orig, IBinding owner, CPPTemplateParameterMap argMap,
-			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs) {
-		super(orig, owner, argMap, type, exceptionSpecs);
+			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs,
+			ICPPEvaluation returnExpression) {
+		super(orig, owner, argMap, type, exceptionSpecs, returnExpression);
 		fArguments = args;
 	}
 

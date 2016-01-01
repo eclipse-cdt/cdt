@@ -31,8 +31,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 public class CPPMethodSpecialization extends CPPFunctionSpecialization implements ICPPMethodSpecialization {
 
 	public CPPMethodSpecialization(ICPPMethod orig, ICPPClassType owner, ICPPTemplateParameterMap argMap,
-			ICPPFunctionType type, IType[] exceptionSpec) {
-		super(orig, owner, argMap, type, exceptionSpec);
+			ICPPFunctionType type, IType[] exceptionSpec, ICPPEvaluation returnExpression) {
+		super(orig, owner, argMap, type, exceptionSpec, returnExpression);
 	}
 
 	@Override

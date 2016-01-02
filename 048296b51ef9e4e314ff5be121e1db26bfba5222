@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_ff795fe8",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-02T00:05:10Z",
+      "side": 1,
+      "message": "name of checker/problem must not contain args parameters, such as as {0}, did you test it after you changed it?",
+      "revId": "048296b51ef9e4e314ff5be121e1db26bfba5222",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_1f660349",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-02T00:05:10Z",
+      "side": 1,
+      "message": "why I capital here? Description should be more elaborate, i.e.\n\n\"Function is used before declaration, likely header is not included which declares this function\"",
+      "revId": "048296b51ef9e4e314ff5be121e1db26bfba5222",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_5f608b29",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ExternalBindingChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-02T00:05:10Z",
+      "side": 1,
+      "message": "2015,2016",
+      "revId": "048296b51ef9e4e314ff5be121e1db26bfba5222",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_7f654f38",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ExternalBindingChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-02T00:05:10Z",
+      "side": 1,
+      "message": "brackets around if",
+      "revId": "048296b51ef9e4e314ff5be121e1db26bfba5222",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_9f593389",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/CaseBreakCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-02T00:05:10Z",
+      "side": 1,
+      "message": "Please remove this from caseBreak test.\nYou have to create your own test class",
+      "revId": "048296b51ef9e4e314ff5be121e1db26bfba5222",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

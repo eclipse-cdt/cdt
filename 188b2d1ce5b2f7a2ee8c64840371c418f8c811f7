@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_3f6bc711",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-02T00:05:10Z",
+      "side": 0,
+      "message": "Why you removed this checkers???",
+      "revId": "188b2d1ce5b2f7a2ee8c64840371c418f8c811f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

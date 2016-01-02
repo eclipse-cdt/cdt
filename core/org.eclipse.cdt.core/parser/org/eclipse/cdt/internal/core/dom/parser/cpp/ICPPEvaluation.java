@@ -164,9 +164,9 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	boolean referencesTemplateParameter();
 	
 	/**
-	 * If the evaluation is dependent (or instantiated from a dependent
-	 * evaluation), returns the template definition in which the
-	 * evaluation occurs. Otherwise returns null. 
+	 * If the evaluation is dependent (or instantiated from a dependent evaluation),
+	 * returns the template definition in which the evaluation occurs.
+	 * Otherwise returns {@code null}. 
 	 */
 	IBinding getTemplateDefinition();
 }

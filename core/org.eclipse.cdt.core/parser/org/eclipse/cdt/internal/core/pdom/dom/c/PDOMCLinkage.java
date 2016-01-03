@@ -114,7 +114,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		if (shouldUpdate(pdomBinding, fromName)) {
 			IBinding fromBinding = fromName.getBinding();
 
-			pdomBinding.update(this, fromBinding);
+			pdomBinding.update(this, fromBinding, null);
 
 			// Update the tags based on the tags from the new binding.  This cannot be done in
 			// PDOMBinding.update, because not all subclasses (e.g., PDOMCFunction) call

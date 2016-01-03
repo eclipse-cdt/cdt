@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -319,7 +321,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	}
 
 	@Override
-	public ICPPEvaluation getReturnExpression() {
+	public ICPPEvaluation getReturnExpression(IASTNode point) {
 		if (!isConstexpr())
 			return null;
 
@@ -330,7 +332,12 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		}
 		IBinding f = getSpecializedBinding();
 		if (f instanceof ICPPComputableFunction) {
-			return ((ICPPComputableFunction) f).getReturnExpression();
+			ICPPEvaluation eval = ((ICPPComputableFunction) f).getReturnExpression(point);
+			if (eval != null) {
+				eval = eval.instantiate(getTemplateParameterMap(), -1, 
+						CPPTemplates.getSpecializationContext(getOwner()), Value.MAX_RECURSION_DEPTH, point);
+			}
+			return eval;
 		}
 		return null;
 	}

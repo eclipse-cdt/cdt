@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+
 /**
  * Represents a function the return value of which may potentially be calculated at parsing time.
  */
@@ -17,6 +19,7 @@ public interface ICPPComputableFunction {
 	/**
 	 * For a constexpr function returns the return statement expression. Otherwise returns
 	 * {@code null}.
+	 * @param point the point of instantiation for name lookups
 	 */
-	public ICPPEvaluation getReturnExpression();
+	public ICPPEvaluation getReturnExpression(IASTNode point);
 }

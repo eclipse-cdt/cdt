@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -47,7 +48,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 	}
 
 	@Override
-	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	public void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 		if (newBinding instanceof ITypedef) {
 			ITypedef td= (ITypedef) newBinding;
 			setType(linkage, td.getType());

@@ -438,7 +438,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	}
 
 	@Override
-	public ICPPEvaluation getReturnExpression() {
+	public ICPPEvaluation getReturnExpression(IASTNode point) {
 		if (!isConstexpr())
 			return null;
 		ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(getDefinition());

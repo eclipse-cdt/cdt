@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -66,7 +67,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	}
 
 	@Override
-	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	public void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 		if (newBinding instanceof IVariable) {
 			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;

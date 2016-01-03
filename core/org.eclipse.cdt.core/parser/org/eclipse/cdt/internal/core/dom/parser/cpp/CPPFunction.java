@@ -673,7 +673,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	}
 
 	@Override
-	public ICPPEvaluation getReturnExpression() {
+	public ICPPEvaluation getReturnExpression(IASTNode point) {
 		if (!isConstexpr())
 			return null;
 		if (definition == null)
@@ -710,9 +710,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    return EvalFixed.INCOMPLETE;
 	}
 
-	public static ICPPEvaluation getReturnExpression(ICPPFunction function) {
+	public static ICPPEvaluation getReturnExpression(ICPPFunction function, IASTNode point) {
 		if (function instanceof ICPPComputableFunction) {
-			return ((ICPPComputableFunction) function).getReturnExpression();
+			return ((ICPPComputableFunction) function).getReturnExpression(point);
 		}
 		return null;
 	}

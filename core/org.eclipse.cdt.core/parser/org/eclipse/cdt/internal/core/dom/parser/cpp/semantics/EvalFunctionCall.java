@@ -244,7 +244,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		}
 		if (function == null)
 			return this;
-		ICPPEvaluation eval = CPPFunction.getReturnExpression(function);
+		ICPPEvaluation eval = CPPFunction.getReturnExpression(function, context.getPoint());
 		if (eval == null)
 			return EvalFixed.INCOMPLETE;
 		CPPFunctionParameterMap parameterMap = buildParameterMap(function);

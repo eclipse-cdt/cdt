@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -84,13 +85,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	@Override
-	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 		if (newBinding instanceof ICPPClassType) {
 			ICPPClassType ct= (ICPPClassType) newBinding;
 			setKind(ct);
 			setAnonymous(ct);
 			setFinal(ct);
-			super.update(linkage, newBinding);
+			super.update(linkage, newBinding, point);
 		}
 	}
 

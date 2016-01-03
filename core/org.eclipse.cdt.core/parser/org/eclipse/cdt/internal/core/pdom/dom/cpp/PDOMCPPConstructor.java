@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -20,9 +21,9 @@ import org.eclipse.core.runtime.CoreException;
 
 class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 
-	public PDOMCPPConstructor(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method)
+	public PDOMCPPConstructor(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method, IASTNode point)
 			throws CoreException, DOMException {
-		super(linkage, parent, method);
+		super(linkage, parent, method, point);
 	}
 
 	public PDOMCPPConstructor(PDOMLinkage linkage, long record) {

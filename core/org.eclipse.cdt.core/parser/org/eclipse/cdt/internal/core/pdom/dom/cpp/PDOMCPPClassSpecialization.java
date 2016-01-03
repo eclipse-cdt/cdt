@@ -89,11 +89,11 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	}
 
 	@Override
-	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 		if (newBinding instanceof ICPPClassType) {
 			ICPPClassType classType= (ICPPClassType) newBinding;
 			setFlags(classType);
-			super.update(linkage, newBinding);
+			super.update(linkage, newBinding, point);
 		}
 	}
 

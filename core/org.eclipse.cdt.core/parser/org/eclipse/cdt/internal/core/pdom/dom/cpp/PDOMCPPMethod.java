@@ -63,8 +63,9 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	private byte annotation1= -1;
 
-	public PDOMCPPMethod(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method) throws CoreException, DOMException {
-		super(linkage, parent, method, true);
+	public PDOMCPPMethod(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, IASTNode point) 
+			throws CoreException, DOMException {
+		super(linkage, parent, method, true, point);
 
 		Database db = getDB();
 
@@ -81,10 +82,10 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	@Override
-	public final void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	public final void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 		if (newBinding instanceof ICPPMethod) {
 			ICPPMethod method= (ICPPMethod) newBinding;
-			super.update(linkage, newBinding);
+			super.update(linkage, newBinding, point);
 			annotation1= -1;
 			try {
 				final byte annot = PDOMCPPAnnotation.encodeExtraAnnotation(method);

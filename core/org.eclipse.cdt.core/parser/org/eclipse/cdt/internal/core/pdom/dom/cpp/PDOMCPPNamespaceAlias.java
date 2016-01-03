@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -43,7 +44,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	}
 
 	@Override
-	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	public void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 		if (newBinding instanceof ICPPNamespaceAlias) {
 			ICPPNamespaceAlias alias= (ICPPNamespaceAlias) newBinding;
 			IBinding newTarget= alias.getBinding();

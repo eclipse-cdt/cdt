@@ -19,6 +19,7 @@ import java.lang.reflect.Modifier;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -436,9 +437,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 
 	/**
 	 * The binding is reused by a declaration or definition, we may need to update modifiers.
+	 * @param point the point of instantiation for name lookups
 	 * @throws CoreException
 	 */
-	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 	}
 
 	@Override

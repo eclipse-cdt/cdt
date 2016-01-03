@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.pdom.dom.IInternalPDOMNode;
@@ -29,7 +30,7 @@ public interface IPDOMCPPTemplateParameter extends IInternalPDOMNode, ICPPTempla
 	 */
 	void configure(ICPPTemplateParameter templateParameter);
 	
-	void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException;
+	void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException;
 
 	/**
 	 * parameters of template template parameters need to be deleted.

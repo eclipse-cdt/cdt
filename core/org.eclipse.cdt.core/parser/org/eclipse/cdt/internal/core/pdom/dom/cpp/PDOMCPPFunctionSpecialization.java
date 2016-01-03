@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
@@ -84,7 +85,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	private int fRequiredArgCount= -1;
 	
 	public PDOMCPPFunctionSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction astFunction,
-			PDOMBinding specialized) throws CoreException {
+			PDOMBinding specialized, IASTNode point) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astFunction, specialized);
 		
 		Database db = getDB();
@@ -129,7 +130,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			typelist = PDOMCPPTypeList.putTypes(this, astFunction.getExceptionSpecification());
 		}
 		db.putRecPtr(record + EXCEPTION_SPEC, typelist);
-		linkage.new ConfigureFunctionSpecialization(astFunction, this);
+		linkage.new ConfigureFunctionSpecialization(astFunction, this, point);
 	}
 
 	private short getAnnotation(ICPPFunction astFunction) {
@@ -329,7 +330,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	}
 
 	@Override
-	public ICPPEvaluation getReturnExpression() {
+	public ICPPEvaluation getReturnExpression(IASTNode point) {
 		if (!isConstexpr())
 			return null;
 

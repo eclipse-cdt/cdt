@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -27,8 +28,8 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 	protected static final int RECORD_SIZE = PDOMCPPMethodTemplateSpecialization.RECORD_SIZE + 0;
 
 	public PDOMCPPConstructorTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPConstructor constructor, PDOMBinding specialized) throws CoreException {
-		super(linkage, parent, constructor, specialized);
+			ICPPConstructor constructor, PDOMBinding specialized, IASTNode point) throws CoreException {
+		super(linkage, parent, constructor, specialized, point);
 	}
 
 	public PDOMCPPConstructorTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {

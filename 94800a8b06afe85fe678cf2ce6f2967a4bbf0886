@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_656f8274",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-04T07:05:42Z",
+      "side": 1,
+      "message": "See Bug 485107 for ongoing work on duplicate factories",
+      "parentUuid": "07d9433e_8539e68d",
+      "revId": "94800a8b06afe85fe678cf2ce6f2967a4bbf0886",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_a5b0aac6",
         "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/GdbShowVersionHandler.java",
         "patchSetId": 8

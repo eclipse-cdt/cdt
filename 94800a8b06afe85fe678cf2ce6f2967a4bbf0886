@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_8539e68d",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-04T06:59:26Z",
+      "side": 1,
+      "message": "Yes, I did add this so launch was adapatable as the original reason was to demonstrate something for Christelle on the cdt-dev mailing list. I thought that I had a comment in GdbShowVersionHandler about it, but somewhere along the way it was removed (or never written ;-). \n\nFor now I am simply removing IShowVersionHandler\u0027s adapter to launches.\n\nAs for extending the adapter factories, I would be happy to tackle that and consider how to do it, perhaps we could come up with a solution for this? I\u0027ll file a new bug for that case.",
+      "parentUuid": "07d9433e_85ac8677",
+      "revId": "94800a8b06afe85fe678cf2ce6f2967a4bbf0886",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_a5b0aac6",
         "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/GdbShowVersionHandler.java",
         "patchSetId": 8

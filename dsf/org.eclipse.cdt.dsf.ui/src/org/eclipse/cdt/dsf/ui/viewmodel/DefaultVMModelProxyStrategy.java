@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - adapted to use with DSF
  *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)   
+ *     Marc Dumais (Ericsson) - bug 485170
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
@@ -528,7 +529,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 if (delta == null) {
                     delta = parentDelta.addNode(vmc, IModelDelta.NO_CHANGE);
                 }
-                callChildNodesToBuildDelta(node, childNodesWithDeltaFlags, delta, event, rm);
+                callChildNodesToBuildDelta(node, childNodesWithDeltaFlags, delta, event, countingRm);
                 count++;
             }
             countingRm.setDoneCount(count);

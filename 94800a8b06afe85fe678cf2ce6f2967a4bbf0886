@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_85ac8677",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/plugin.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-04T04:01:35Z",
+      "side": 1,
+      "message": "I assume that you added this line allow the new command to work when the launch is selected.  To make that fully work (which it does not now, the command stays disabled), you will need to handle the launch node in GdbShowVersionHandler when doing getContext().  You can look at DsfTerminateCommand to see how the launch is explicitly handled.  Or you can simply remove the above line and update GdbExtendedAdapterFactory and  GdbExtendedSessionAdapters to not support IShowVersionHandler for the launch node.\n\nIf you dig a little deeper, you will probably wonder why DsfTerminateCommand (and even more, DsfExtendedTerminateCommand) even gets called when the GdbExtendedLaunch node is selected, when that adapter type is not even listed above.  \n\nBottom line is that the extending of the GdbAdapterFactory is not done well.  I hadn\u0027t realized but it turns out that both GdbAdapterFactory and GdbExtendedAdapterFactory get instantiated.  Things work for two reasons:\n\n1- the extended factory is called first and gets to create all the adapters; so DsfExtendedTerminateCommand gets created properly.  This may be a simply lucky, I\u0027m not sure. If GdbAdapterFactory were to get called first, the extended adapters wouldn\u0027t be used.\n\n2- When GdbExtendedLaunch is selected in the debug view, GdbExtendedAdapterFactory will not trigger to enable the Terminate command BUT since GdbExtendedLaunch is also a GdbLaunch, GdbAdapterFactory does get triggered, and as it happens to share a static list of adapters, it finds DsfExtendedTerminateCommand!\n\nIt would be nice to improve this, to provide a clean way to extend our list of adapters.",
+      "revId": "94800a8b06afe85fe678cf2ce6f2967a4bbf0886",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_a5b0aac6",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/actions/GdbShowVersionHandler.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-04T04:01:35Z",
+      "side": 1,
+      "message": "Sorry, I forgot that the re-enablement wasn\u0027t done automatically.  Please set this back to true.\n  \nTechnically, double-clicking on the button _could_ trigger two dialogs to come up, but in this case, the command is fast enough that it does not happen.  If you want to see it happen, you can set a breakpoint in the code that executes the command, then double-click on the command; because of the delay of the bp, you will see two dialogs.\n\nFYI, the way we handled this before is by extending RefreshableDebugCommand (written just for that case) and mimic the logic in GdbConnectCommand.  But it is overly complicated in your situation, which does not need it anyway.",
+      "revId": "94800a8b06afe85fe678cf2ce6f2967a4bbf0886",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

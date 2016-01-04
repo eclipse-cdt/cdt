@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
 package org.eclipse.cdt.arduino.ui.internal.project;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +22,10 @@ import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -36,8 +39,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -45,6 +46,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 public class LibrariesPropertyPage extends PropertyPage {
 
 	private static ArduinoManager manager = Activator.getService(ArduinoManager.class);
+	private Set<ArduinoLibrary> checkedLibs;
 
 	private class ContentProvider implements ITreeContentProvider {
 		private LibraryIndex index;
@@ -188,12 +190,62 @@ public class LibrariesPropertyPage extends PropertyPage {
 
 			@Override
 			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
-				return new ContainerCheckedTreeViewer(parent, style);
+				CheckboxTreeViewer viewer = new CheckboxTreeViewer(parent, style);
+				viewer.setCheckStateProvider(new ICheckStateProvider() {
+					@Override
+					public boolean isGrayed(Object element) {
+						if (element instanceof String) {
+							for (ArduinoLibrary lib : checkedLibs) {
+								if (element.equals(lib.getCategory())) {
+									return true;
+								}
+							}
+						}
+						return false;
+					}
+
+					@Override
+					public boolean isChecked(Object element) {
+						if (element instanceof ArduinoLibrary) {
+							return checkedLibs.contains(element);
+						} else if (element instanceof String) {
+							for (ArduinoLibrary lib : checkedLibs) {
+								if (element.equals(lib.getCategory())) {
+									return true;
+								}
+							}
+						}
+
+						return false;
+					}
+				});
+				viewer.addCheckStateListener(new ICheckStateListener() {
+					@Override
+					public void checkStateChanged(CheckStateChangedEvent event) {
+						Object element = event.getElement();
+						if (element instanceof ArduinoLibrary) {
+							if (event.getChecked()) {
+								checkedLibs.add((ArduinoLibrary) element);
+							} else {
+								checkedLibs.remove(element);
+							}
+						} else if (element instanceof String) {
+							if (!event.getChecked()) {
+								for (ArduinoLibrary lib : new ArrayList<>(checkedLibs)) {
+									if (element.equals(lib.getCategory())) {
+										checkedLibs.remove(lib);
+									}
+								}
+							}
+						}
+					}
+				});
+				return viewer;
 			}
 		};
 		filteredTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		ContainerCheckedTreeViewer viewer = (ContainerCheckedTreeViewer) filteredTree.getViewer();
+		TreeViewer viewer = filteredTree.getViewer();
 
 		Tree tree = viewer.getTree();
 		tree.setHeaderVisible(true);
@@ -208,18 +260,14 @@ public class LibrariesPropertyPage extends PropertyPage {
 		viewer.setLabelProvider(new LabelProvider());
 
 		try {
-			viewer.setInput(manager.getLibraryIndex());
-			// Set the check states for currently selected libraries
 			IProject project = getElement().getAdapter(IProject.class);
-			Collection<ArduinoLibrary> libraries = manager.getLibraries(project);
-			for (ArduinoLibrary lib : libraries) {
-				viewer.setChecked(lib, true);
-			}
+			checkedLibs = new HashSet<>(manager.getLibraries(project));
+			viewer.setInput(manager.getLibraryIndex());
 		} catch (CoreException e) {
 			Activator.log(e);
 		}
-		return comp;
 
+		return comp;
 	}
 
 	private IProject getProject() {
@@ -232,17 +280,8 @@ public class LibrariesPropertyPage extends PropertyPage {
 
 	@Override
 	public boolean performOk() {
-		List<ArduinoLibrary> libs = new ArrayList<>();
-		for (TreeItem categoryItem : filteredTree.getViewer().getTree().getItems()) {
-			for (TreeItem libItem : categoryItem.getItems()) {
-				ArduinoLibrary lib = (ArduinoLibrary) libItem.getData();
-				if (libItem.getChecked()) {
-					libs.add(lib);
-				}
-			}
-		}
 		try {
-			manager.setLibraries(getProject(), libs);
+			manager.setLibraries(getProject(), checkedLibs);
 		} catch (CoreException e) {
 			Activator.log(e);
 		}

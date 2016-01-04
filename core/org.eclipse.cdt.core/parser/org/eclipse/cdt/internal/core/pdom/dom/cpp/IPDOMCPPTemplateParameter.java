@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
  * Interface for template parameters stored in the index.
  */
 public interface IPDOMCPPTemplateParameter extends IInternalPDOMNode, ICPPTemplateParameter {
-
 	IPDOMCPPTemplateParameter[] EMPTY_ARRAY = {};
 
 	/**
@@ -30,6 +29,9 @@ public interface IPDOMCPPTemplateParameter extends IInternalPDOMNode, ICPPTempla
 	 */
 	void configure(ICPPTemplateParameter templateParameter);
 	
+	/**
+	 * @see org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding#update(PDOMLinkage, IBinding, IASTNode)
+	 */
 	void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException;
 
 	/**

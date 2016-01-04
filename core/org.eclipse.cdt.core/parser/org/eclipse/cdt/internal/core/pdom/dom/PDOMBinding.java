@@ -436,9 +436,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	/**
-	 * The binding is reused by a declaration or definition, we may need to update modifiers.
+	 * The binding is reused by a declaration or definition, update the binding, e.g. modifiers,
+	 * with the new information.
+	 *
 	 * @param point the point of instantiation for name lookups
-	 * @throws CoreException
 	 */
 	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 	}

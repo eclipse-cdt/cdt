@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Google, Inc and others.
+ * Copyright (c) 2012, 2016 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,6 +150,47 @@ public class TypeTraits {
 		if (!(type instanceof ICPPClassType))
 			return true;
 		return isTrivial((ICPPClassType) type, point);
+	}
+
+	/**
+	 * Returns true if the given type is a class type, but not a union type, with no non-static
+	 * data members other than bit-fields of length 0, no virtual member functions, no virtual
+	 * base classes, and no base class for which isEmpty is false. [meta.unary.prop]
+	 */
+	public static boolean isEmpty(IType type, IASTNode point) {
+		type = SemanticUtil.getNestedType(type, CVTYPE | TDEF);
+		if (!(type instanceof ICPPClassType))
+			return false;
+		ICPPClassType classType = (ICPPClassType) type;
+		if (!isItselfEmpty(classType, point))
+			return false;
+		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType, point);
+		for (ICPPClassType baseClass : baseClasses) {
+			if (!isItselfEmpty(baseClass, point))
+				return false;
+		}
+		return true;
+	}
+
+	private static boolean isItselfEmpty(ICPPClassType classType, IASTNode point) {
+		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
+		for (ICPPField field : fields) {
+			if (!field.isStatic()) {
+				// TODO(sprigogin): Check for empty bit fields when bit field size becomes available.
+				return false;
+			}
+		}
+		ICPPMethod[] methods = ClassTypeHelper.getDeclaredMethods(classType, point);
+		for (ICPPMethod method : methods) {
+			if (method.isVirtual())
+				return false;
+		}
+		ICPPBase[] bases = ClassTypeHelper.getBases(classType, point);
+		for (ICPPBase base : bases) {
+			if (base.isVirtual())
+				return false;
+		}
+		return true;
 	}
 
 	/**

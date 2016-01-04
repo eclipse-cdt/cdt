@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -333,7 +333,7 @@ public class Value implements IValue {
 				return type instanceof ICompositeType &&
 						((ICompositeType) type).getKey() != ICompositeType.k_union ? 1 : 0;
 			case op_is_empty:
-				break;  // TODO(sprigogin): Implement
+				return TypeTraits.isEmpty(type, point) ? 1 : 0;
 			case op_is_enum:
 				return type instanceof IEnumeration ? 1 : 0;
 			case op_is_final:

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_b45ff6ba",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteDSFGDBDebuggerPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-01-05T15:23:34Z",
+      "side": 1,
+      "message": "Please change grid data constructor to \n\"new GridData(SWT.FILL, SWT.TOP, true, false);\"",
+      "revId": "9db59985952a6255e6abefe86d5b31e12590354a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_b491b6d7",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteDSFGDBDebuggerPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-01-05T15:23:34Z",
+      "side": 1,
+      "message": "Please change grid data constructor to \n\"new GridData(SWT.FILL, SWT.TOP, true, false);\"",
+      "revId": "9db59985952a6255e6abefe86d5b31e12590354a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_d45c7ac8",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteDSFGDBDebuggerPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-01-05T15:23:34Z",
+      "side": 1,
+      "message": "Please change grid data constructor to \n\"new GridData(SWT.FILL, SWT.TOP, true, false);\"",
+      "revId": "9db59985952a6255e6abefe86d5b31e12590354a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

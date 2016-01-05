@@ -42,6 +42,8 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 	protected Text fGDBServerCommandText;
 
 	protected Text fGDBServerPortNumberText;
+
+	protected Text fGDBServerOptionsText;
 	
 	@Override
 	public String getName() {
@@ -55,6 +57,8 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 									IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT );
 		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
 									IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT );
+		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
+									IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT );
 	}
 	
 	@Override
@@ -62,6 +66,7 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 		super.initializeFrom(configuration);
 		String gdbserverCommand = null;
 		String gdbserverPortNumber = null;
+		String gdbserverOptions = null;
 		try {
 			gdbserverCommand = configuration.getAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
 														   IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
@@ -74,8 +79,15 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 		}
 		catch( CoreException e ) {
 		}
+		try {
+			gdbserverOptions = configuration.getAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
+														   IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT );
+		}
+		catch( CoreException e ) {
+		}
 		fGDBServerCommandText.setText( gdbserverCommand );
 		fGDBServerPortNumberText.setText( gdbserverPortNumber );
+		fGDBServerOptionsText.setText( gdbserverOptions );
 	}
 	
 	@Override
@@ -87,6 +99,9 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 		str = fGDBServerPortNumberText.getText();
 		str.trim();
 		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT, str );
+		str = fGDBServerOptionsText.getText();
+		str.trim();
+		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS, str );
 	}
 	
 	protected void createGdbserverSettingsTab( TabFolder tabFolder ) {
@@ -130,6 +145,20 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 		data = new GridData();
 		fGDBServerPortNumberText.setLayoutData(data);
 		fGDBServerPortNumberText.addModifyListener( new ModifyListener() {
+
+			public void modifyText( ModifyEvent evt ) {
+				updateLaunchConfigurationDialog();
+			}
+		} );
+		label = new Label(subComp, SWT.LEFT);
+		label.setText(Messages.Gdbserver_options_textfield_label);
+		gd = new GridData();
+		label.setLayoutData( gd );
+
+		fGDBServerOptionsText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
+		data = new GridData();
+		fGDBServerOptionsText.setLayoutData(data);
+		fGDBServerOptionsText.addModifyListener( new ModifyListener() {
 
 			public void modifyText( ModifyEvent evt ) {
 				updateLaunchConfigurationDialog();

@@ -42,7 +42,7 @@ public class CBuildConfigurationManager
 		// TODO
 		CBuildConfiguration config = null;
 
-		configMap.put(config.getBuildConfiguration(), config);
+		//configMap.put(config.getBuildConfiguration(), config);
 		return config;
 	}
 

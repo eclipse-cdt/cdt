@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt" sequenceNumber="4">
+<?pde version="3.8"?><target name="cdt" sequenceNumber="5">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.commons.compress" version="0.0.0"/>
@@ -9,6 +9,8 @@
 <unit id="org.junit" version="0.0.0"/>
 <unit id="org.junit.source" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
+<unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
+<unit id="org.hamcrest" version="0.0.0"/>
 <unit id="org.hamcrest.core" version="0.0.0"/>
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="org.easymock" version="0.0.0"/>

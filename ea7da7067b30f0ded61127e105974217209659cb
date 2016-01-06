@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_77256bb2",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T23:46:06Z",
+      "side": 1,
+      "message": "I suspect that this may give false negatives for header files. Please test with a header file.",
+      "range": {
+        "startLine": 41,
+        "startChar": 51,
+        "endLine": 41,
+        "endChar": 63
+      },
+      "revId": "ea7da7067b30f0ded61127e105974217209659cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_971aef73",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/NewClassCreationWizard.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T23:46:06Z",
+      "side": 1,
+      "message": "Set -\u003e Sets",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 7
+      },
+      "revId": "ea7da7067b30f0ded61127e105974217209659cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -19,16 +19,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
-import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
-import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
@@ -64,13 +59,6 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		if (object instanceof String) {
 			return (String)object;
 		}
-		if (object instanceof IAdaptable) {
-			ICStackFrame frame = ((IAdaptable)object).getAdapter(ICStackFrame.class);
-			if (frame != null) {
-				String name = frame.getFile();
-				return (name != null && name.trim().length() > 0) ? name : null;
-			}
-		}
 		return null;
 	}
 
@@ -87,30 +75,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		// Workaround for cases when the stack frame doesn't contain the source file name 
 		String name = null;
 		IBreakpoint breakpoint = null;
-		if (object instanceof IAdaptable) {
-			ICStackFrame frame = ((IAdaptable)object).getAdapter(ICStackFrame.class);
-			if (frame != null) {
-				name = frame.getFile().trim();
-				if (name == null || name.length() == 0)
-				{
-					if (object instanceof IDebugElement)
-						results = new Object[] { new CSourceNotFoundElement((IDebugElement) object, ((IDebugElement) object).getLaunch().getLaunchConfiguration(), name) };
-					else
-						results = new Object[] { gfNoSource }; 
-					fCachedResults.put(object, results);
-					return results;
-				}
-			}
-			// See if findSourceElements(...) is the result of a Breakpoint Hit Event
-			ICDebugTarget target =  ((IAdaptable)object).getAdapter(ICDebugTarget.class);
-			if (target != null) {
-				CBreakpointManager bmanager = target.getAdapter(CBreakpointManager.class);
-				Object stateInfo = target.getCurrentStateInfo();
-				if (bmanager != null && stateInfo instanceof ICDIBreakpointHit) {
-					breakpoint = bmanager.getBreakpoint(((ICDIBreakpointHit)stateInfo).getBreakpoint());
-				}
-			}
-		} else if (object instanceof String) {
+		if (object instanceof String) {
 			name = (String)object;
 		}
 

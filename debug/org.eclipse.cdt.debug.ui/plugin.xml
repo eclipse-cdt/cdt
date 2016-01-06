@@ -246,11 +246,6 @@
             class="org.eclipse.cdt.debug.internal.ui.preferences.SourcePreferencePage"
             id="org.eclipse.cdt.debug.ui.SourcePreferencePage">
       </page>
-      <page
-            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
-            class="org.eclipse.cdt.debug.internal.ui.preferences.DebuggerTypesPage"
-            id="org.eclipse.cdt.debug.ui.DebuggerTypesPreferencePage"
-            name="%DebuggerTypesPreferencePage.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -327,37 +322,6 @@
    
    <extension 
          point="org.eclipse.ui.menus">
-        <menuContribution
-            locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=additions">
-            <menu 
-                 id="org.eclipse.cdt.debug.ui.expressionsView_CVariableFormatMenu" 
-            	 label="%CVariableFormatMenu.label">
-             <visibleWhen>
-             	<reference definitionId="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported"/>
-             </visibleWhen>
-               <dynamic
-	               id="org.eclipse.cdt.debug.ui.numberFormats"
-	               class="org.eclipse.cdt.debug.internal.ui.actions.NumberFormatsContribution">
-	           </dynamic>
-	           <separator name="formatGroup" visible="false"/>
-            </menu>         
-       </menuContribution>
-       <menuContribution
-            locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
-            <menu 
-                 id="org.eclipse.cdt.debug.ui.CVariableFormatMenu" 
-            	 label="%CVariableFormatMenu.label">
-             <visibleWhen>
-             	<reference definitionId="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported"/>
-             </visibleWhen>
-               <dynamic
-	               id="org.eclipse.cdt.debug.ui.numberFormats"
-	               class="org.eclipse.cdt.debug.internal.ui.actions.NumberFormatsContribution">
-	           </dynamic>
-    		  <separator name="formatGroup" visible="false"/>
-	           
-            </menu>         
-       </menuContribution>
        <menuContribution
             locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
             <command
@@ -365,44 +329,6 @@
             	label="%command.viewMemory.name">
             </command>
        </menuContribution>
-       <menuContribution
-            locationURI="popup:org.eclipse.debug.ui.RegisterView?after=variableGroup">
-            <menu 
-                 id="org.eclipse.cdt.debug.ui.registerView_CVariableFormatMenu" 
-            	 label="%CVariableFormatMenu.label">
-             <visibleWhen>
-             	<reference definitionId="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported"/>
-             </visibleWhen>
-               <dynamic
-	               id="org.eclipse.cdt.debug.ui.numberFormats"
-	               class="org.eclipse.cdt.debug.internal.ui.actions.NumberFormatsContribution">
-	           </dynamic>
-    		  <separator name="formatGroup" visible="false"/>	           
-            </menu>         
-       </menuContribution>
-      </extension>
-      <extension point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported">
-			    <with variable="selection">
-               	   <count
-                         value="+">
-               	   </count>
-                   <iterate>
-                       <test property="org.eclipse.cdt.debug.ui.canFormatObject" value="true"/>
-                   </iterate>
-               </with>
-      </definition>   
-      </extension>
-   
-      <extension point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-      		namespace="org.eclipse.cdt.debug.ui"
-            properties="canFormatObject"
-            type="org.eclipse.core.runtime.IAdaptable"
-            class="org.eclipse.cdt.debug.internal.ui.actions.CanFormatObjectTester"
-            id="org.eclipse.cdt.debug.ui.canFormatObjectTester">
-      </propertyTester>
       </extension>
       
    <extension
@@ -694,49 +620,6 @@
             targetID="org.eclipse.debug.ui.VariableView"
             id="org.eclipse.debug.ui.variablesView.popupMenu">
          <action
-               helpContextId="remove_all_globals_action_context"
-               enablesFor="*"
-               label="%RemoveAllGlobalsAction.label"
-               tooltip="%RemoveAllGlobalsAction.tooltip"
-               icon="icons/elcl16/rem_all_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
-               helpContextId="remove_globals_action_context"
-               enablesFor="+"
-               label="%RemoveGlobalsAction.label"
-               tooltip="%RemoveGlobalsAction.tooltip"
-               icon="icons/elcl16/rem_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
-               helpContextId="add_globals_action_context"
-               label="%AddGlobalsAction.label"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
-               icon="icons/elcl16/watch_globals.gif"
-               menubarPath="additions"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
                label="%DisableVariablesAction.label"
                icon="icons/elcl16/disabled_co.gif"
                helpContextId="disable_variables_action_context"
@@ -944,57 +827,6 @@
                tooltip="%AddLineBreakpoint.tooltip"/>
       </viewContribution>
       <viewContribution
-            targetID="org.eclipse.debug.ui.VariableView"
-            id="org.eclipse.debug.ui.variablesView.toolbar">
-         <action
-               helpContextId="remove_all_globals_action_context"
-               disabledIcon="icons/dlcl16/rem_all_co.gif"
-               enablesFor="*"
-               toolbarPath="additions"
-               label="%RemoveAllGlobalsAction.label"
-               tooltip="%RemoveAllGlobalsAction.tooltip"
-               icon="icons/elcl16/rem_all_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
-               helpContextId="remove_globals_action_context"
-               disabledIcon="icons/dlcl16/rem_co.gif"
-               enablesFor="+"
-               toolbarPath="additions"
-               label="%RemoveGlobalsAction.label"
-               tooltip="%RemoveGlobalsAction.tooltip"
-               icon="icons/elcl16/rem_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
-               helpContextId="add_globals_action_context"
-               disabledIcon="icons/dlcl16/watch_globals.gif"
-               toolbarPath="additions"
-               label="%AddGlobalsAction.label"
-               tooltip="%AddGlobalsAction.tooltip"
-               icon="icons/elcl16/watch_globals.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-      </viewContribution>
-      <viewContribution
             targetID="org.eclipse.debug.ui.RegisterView"
             id="org.eclipse.debug.ui.registersView.toolbar">
          <menu
@@ -1180,25 +1012,6 @@
             </and>
          </enabledWhen>
       </page>
-      <page class="org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointFilteringPage"
-            id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.filtering"
-            name="%FilteringBreakpointPage.label">
-         <filter name="debugModelId" value="org.eclipse.cdt.debug.core"/>
-         <enabledWhen>
-            <and>   
-               <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
-               </adapt>
-               <not>   
-                  <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
-                  </adapt>
-               </not>
-               <not>   
-                  <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf">
-                  </adapt>
-               </not>                 
-            </and>
-         </enabledWhen>
-      </page>
       <page
             class="org.eclipse.cdt.debug.internal.ui.propertypages.SignalPropertyPage"
             id="org.eclipse.cdt.debug.ui.propertypages.signal.common"
@@ -1344,81 +1157,6 @@
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
       <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.IModuleRetrieval"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICDebugTarget"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICThread"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICStackFrame"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-         <adapter type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider"/>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
-         </adapter>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.core.model.ICElement"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
-         </adapter>
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICVariable"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
-         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICSignal"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICVariable"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CWatchExpressionFactoryAdapterFactory">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter">
-         </adapter>
-      </factory>
-      <factory
             adaptableType="org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval"
             class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory">
          <adapter
@@ -1443,20 +1181,6 @@
             class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
          <adapter
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICStackFrame"
-            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory">
-         <adapter
-               type="org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICThread"
-            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory">
-         <adapter
-               type="org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler">
          </adapter>
       </factory>
       <factory
@@ -1504,22 +1228,6 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.debug.internal.ui.CDebugUIPreferenceInitializer"/>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.memoryRenderings">
-      <renderingBindings
-            defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
-            primaryId="org.eclipse.debug.ui.rendering.raw_memory"
-            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint,org.eclipse.debug.ui.rendering.hexint">
-         <enablement>
-            <instanceof value="org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension"/>
-         </enablement>
-      </renderingBindings>
-      <renderingType
-            class="org.eclipse.cdt.debug.internal.ui.disassembly.rendering.DisassemblyRenderingTypeDelegate"
-            id="org.eclipse.cdt.debug.ui.rendering.disassembly"
-            name="%DisassemblyRendering.name">
-      </renderingType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.sourceContainerPresentations">
@@ -1589,13 +1297,6 @@
             icon="$nl$/icons/obj16/c_app.gif"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor"
             id="org.eclipse.cdt.debug.ui.SourceNotFoundEditor">
-      </editor>
-      <editor
-            class="org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor"
-            default="false"
-            icon="icons/obj16/disassembly_obj.gif"
-            id="org.eclipse.cdt.debug.ui.disassemblyEditor"
-            name="%DisassemblyEditor.name">
       </editor>
    </extension>
 <!-- Breakpoint Action UI -->
@@ -2018,104 +1719,6 @@
  <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.cdt.debug.internal.ui.commands.AddRegisterGroupCommandHandler"
-            commandId="org.eclipse.cdt.debug.ui.command.addRegisterGroup">
-            <activeWhen>
-			    <with variable="selection">
-			        <iterate operator="and">
-                  <or>
-                     <instanceof
-                           value="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">
-                     </instanceof>
-                     <instanceof
-                           value="org.eclipse.cdt.debug.internal.core.model.CRegister">
-                     </instanceof>
-                  </or>
-			        </iterate>
-			        <count value="+">
-			        </count>
-			    </with>
-			</activeWhen>
-      </handler>
-      <handler
-            class="org.eclipse.cdt.debug.internal.ui.commands.EditRegisterGroupCommandHandler"
-            commandId="org.eclipse.cdt.debug.ui.command.editRegisterGroup">
-            <activeWhen>
-			    <with variable="selection">
-			        <iterate operator="and">
-                     <instanceof
-                           value="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">
-                     </instanceof>
-			        </iterate>
-			        <count value="1">
-			        </count>
-			    </with>
-			</activeWhen>
-      </handler>
-      <handler
-            class="org.eclipse.cdt.debug.internal.ui.commands.RestoreRegisterGroupsCommandHandler"
-            commandId="org.eclipse.cdt.debug.ui.command.restoreRegisterGroups">
-            <activeWhen>
-			    <with variable="selection">
-			        <iterate operator="and">
-                  <or>
-                     <instanceof
-                           value="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">
-                     </instanceof>
-                     <instanceof
-                           value="org.eclipse.cdt.debug.internal.core.model.CRegister">
-                     </instanceof>
-                  </or>
-			        </iterate>
-			        <count value="+">
-			        </count>
-			    </with>
-			</activeWhen>
-      </handler>
-      <handler
-            class="org.eclipse.cdt.debug.internal.ui.commands.RemoveRegisterGroupsCommandHandler"
-            commandId="org.eclipse.cdt.debug.ui.command.removeRegisterGroups">
-            <activeWhen>
-			    <with variable="selection">
-			        <iterate operator="and">
-                     <instanceof
-                           value="org.eclipse.cdt.debug.internal.core.model.CRegisterGroup">
-                     </instanceof>
-			        </iterate>
-			        <count value="+">
-			        </count>
-			    </with>
-			</activeWhen>
-      </handler>
-       <handler
-      		class="org.eclipse.cdt.debug.internal.ui.commands.LoadSymbolsCommandHandler"
-      		commandId="org.eclipse.cdt.debug.ui.command.loadSymbols">
-			 <activeWhen>
-			    <with variable="selection">
-			        <iterate operator="and">
-			            <instanceof value="org.eclipse.cdt.debug.core.model.ICModule">
-			            </instanceof>
-			        </iterate>
-			        <count value="+">
-			        </count>
-			    </with>
-			</activeWhen> 
-      </handler>
-      <handler
-      		class="org.eclipse.cdt.debug.internal.ui.commands.LoadAllSymbolsCommandHandler"
-      		commandId="org.eclipse.cdt.debug.ui.command.loadAllSymbols">
-			 <activeWhen>
-			    <with variable="selection">
-			        <iterate operator="and">
-			            <instanceof value="org.eclipse.cdt.debug.core.model.ICModule">
-			            </instanceof>
-			        </iterate>
-			        <count value="+">
-			        </count>
-			    </with>
-			</activeWhen> 
-      </handler>
-      <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.ReverseToggleCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.reverseToggle">
       </handler>
@@ -2151,20 +1754,6 @@
             class="org.eclipse.cdt.debug.internal.ui.commands.ResumeWithoutSignalCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.resumeWithoutSignal"
             helpContextId="resume_without_signal_action_context">
-      </handler>
-      <handler
-      		class="org.eclipse.cdt.debug.internal.ui.commands.ViewMemoryHandler"
-      		commandId="org.eclipse.cdt.debug.ui.commands.viewMemory">
-			<activeWhen>
-			    <with variable="selection">
-			        <iterate operator="and">
-			            <instanceof value="org.eclipse.cdt.debug.core.model.ICVariable">
-			            </instanceof>
-			        </iterate>
-			        <count value="+">
-			        </count>
-			    </with>
-			</activeWhen>
       </handler>
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.GroupDebugContextsCommandHandler"

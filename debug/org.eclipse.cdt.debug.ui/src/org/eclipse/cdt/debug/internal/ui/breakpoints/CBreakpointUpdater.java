@@ -11,9 +11,9 @@
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
 import java.util.Map;
+
 import org.eclipse.cdt.debug.core.ICBreakpointListener;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -54,22 +54,6 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	 */
 	@Override
 	public void breakpointInstalled( final IDebugTarget target, IBreakpoint breakpoint ) {
-		if ( breakpoint instanceof ICBreakpoint && target instanceof ICDebugTarget ) {
-			final ICBreakpoint b = (ICBreakpoint)breakpoint;
-			asyncExec( new Runnable() {
-	
-				@Override
-				public void run() {
-						try {
-							if ( b.incrementInstallCount() == 1 )
-								DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( b );
-						}
-						catch( CoreException e ) {
-							CDebugUIPlugin.log( e.getStatus() );
-						}
-					}
-			} );
-		}
 	}
 
 	/*

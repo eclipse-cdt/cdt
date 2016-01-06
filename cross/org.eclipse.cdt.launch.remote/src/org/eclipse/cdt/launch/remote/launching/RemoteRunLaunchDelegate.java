@@ -131,7 +131,12 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 								.getAttribute(
 										IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
 										IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
-						String command_arguments = ":" + gdbserver_port_number + " " //$NON-NLS-1$ //$NON-NLS-2$
+						String gdbserver_options = config
+								.getAttribute(
+										IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
+										IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT);
+						String command_arguments = gdbserver_options + " " //$NON-NLS-1$
+								+ ":" + gdbserver_port_number + " " //$NON-NLS-1$ //$NON-NLS-2$
 								+ RSEHelper.spaceEscapify(remoteExePath);
 						if (arguments != null && !arguments.equals("")) //$NON-NLS-1$
 							command_arguments += " " + arguments; //$NON-NLS-1$

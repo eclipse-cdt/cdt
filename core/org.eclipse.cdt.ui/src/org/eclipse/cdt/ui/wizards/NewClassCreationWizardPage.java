@@ -448,13 +448,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                 }
             }
         }
-        if (namespace == null) {
-        	namespace = fDialogSettings.get(KEY_NAMESPACE);
-        }
+		if (namespace == null) {
+			namespace = fDialogSettings.get(KEY_NAMESPACE);
+		}
 
-        setNamespaceText(namespace, false);
-        setNamespaceSelection(namespace != null || fDialogSettings.getBoolean(KEY_NAMESPACE_SELECTED),
-        		true);
+		setNamespaceText(namespace, false);
+		setNamespaceSelection(namespace != null || fDialogSettings.getBoolean(KEY_NAMESPACE_SELECTED), true);
 
         IPath folderPath = null;
         if (celem != null) {
@@ -479,7 +478,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                 className = text;
             }
         }
-        setClassName(className, false);
+		// Forcing update will also populate default file names.
+        setClassName(className, true);
 
         IMethodStub[] stubs = getDefaultMethodStubs();
         for (int i = 0; i < stubs.length; ++i) {

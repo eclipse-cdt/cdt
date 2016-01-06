@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_ab9314ae",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T03:02:57Z",
+      "side": 1,
+      "message": "For readability it\u0027s better to keep alphabetical order.",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 5
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_0ba240f6",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T03:02:57Z",
+      "side": 1,
+      "message": "For consistency with Java the quick fix should be called \"Create class \u0027\u003cclass_name\u003e\u0027\"",
+      "range": {
+        "startLine": 13,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 64
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_cba77807",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T03:02:57Z",
+      "side": 1,
+      "message": "Why not invert the condition and compare with CC_LINKAGE_ID?",
+      "range": {
+        "startLine": 41,
+        "startChar": 51,
+        "endLine": 41,
+        "endChar": 63
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_8b89f07c",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T03:02:57Z",
+      "side": 1,
+      "message": "The namespace should be populated too using the context where the quick fix was invoked. It may be easier to override the NewClassCreationWizard.getSelection() method instead of addPages().",
+      "range": {
+        "startLine": 82,
+        "startChar": 15,
+        "endLine": 82,
+        "endChar": 23
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_eba43c05",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T03:02:57Z",
+      "side": 1,
+      "message": "Use NewSourceFileGenerator instead of hardcoding.",
+      "range": {
+        "startLine": 91,
+        "startChar": 18,
+        "endLine": 91,
+        "endChar": 20
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

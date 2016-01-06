@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_c1f599f7",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T15:50:18Z",
+      "side": 1,
+      "message": "Typo *RRN.exe\n\nI noticed this because the compilation of these files was being triggered twice.  With the typo fixed, it only happens once, as expected.",
+      "revId": "ae7058ef5f3eb56973f88fb64c9d1fb72ff8a07b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_a19335ae",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T15:50:18Z",
+      "side": 1,
+      "message": "Let\u0027s add a comment to say something like:\n# We must remove the source file used for all the SourceLookup*.exe compilation so that the SourceLookup logic is forced to look elsewhere to find it, i.e., in the src/ directory.",
+      "revId": "ae7058ef5f3eb56973f88fb64c9d1fb72ff8a07b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_c1a75907",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T15:50:18Z",
+      "side": 1,
+      "message": "Use $(RM)\n\nShall we remove $(BUILDDIR) $(BUILD2DIR) now or is it better to leave them?",
+      "revId": "ae7058ef5f3eb56973f88fb64c9d1fb72ff8a07b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

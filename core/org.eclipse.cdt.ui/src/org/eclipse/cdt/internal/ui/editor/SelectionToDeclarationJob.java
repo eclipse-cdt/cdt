@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -416,8 +417,10 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 			IASTName astName = (IASTName) declName;
 			IBinding binding = astName.resolveBinding();
 			if (binding != null) {
-				ITranslationUnit tu = IndexUI.getTranslationUnit(project, astName);
+				ITranslationUnit tu = IndexUI.getTranslationUnit(astName);
 				if (tu != null) {
+					if (tu instanceof IWorkingCopy)
+						tu = ((IWorkingCopy) tu).getOriginalElement();
 					IASTFileLocation loc = astName.getFileLocation();
 					IRegion region = new Region(loc.getNodeOffset(), loc.getNodeLength());
 					return CElementHandleFactory.create(tu, binding, astName.isDefinition(), region, 0);

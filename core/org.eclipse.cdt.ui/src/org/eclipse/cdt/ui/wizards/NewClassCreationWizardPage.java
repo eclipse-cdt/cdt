@@ -452,8 +452,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         	namespace = fDialogSettings.get(KEY_NAMESPACE);
         }
 
+        if (namespace == null) {
+        	namespace = ""; //$NON-NLS-1$
+        }
+
         setNamespaceText(namespace, false);
-        setNamespaceSelection(namespace != null || fDialogSettings.getBoolean(KEY_NAMESPACE_SELECTED),
+        // if namespace is empty selector should be checked off regardless of dialog settings otherwise it will just be an error
+        setNamespaceSelection(!namespace.isEmpty() && fDialogSettings.getBoolean(KEY_NAMESPACE_SELECTED),
         		true);
 
         IPath folderPath = null;
@@ -479,7 +484,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                 className = text;
             }
         }
-        setClassName(className, false);
+        // forcing update will also populate default file names
+        setClassName(className, true);
 
         IMethodStub[] stubs = getDefaultMethodStubs();
         for (int i = 0; i < stubs.length; ++i) {

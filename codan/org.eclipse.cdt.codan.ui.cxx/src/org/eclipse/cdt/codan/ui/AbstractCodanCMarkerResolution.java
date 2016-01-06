@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CDTUITools;
@@ -42,7 +44,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * class for codanMarkerResolution extension. To add specific icon and
  * description client class should additionally implement
  * {@link IMarkerResolution2}
- * 
+ *
  * @since 2.0
  */
 public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerResolution {
@@ -51,7 +53,7 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 	/**
 	 * Get position offset from marker. If CHAR_START attribute is not set for
 	 * marker, line and document would be used.
-	 * 
+	 *
 	 * @param marker
 	 * @param doc
 	 * @return
@@ -82,10 +84,11 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 
 	/**
 	 * Runs this resolution.
-	 * 
+	 *
 	 * @param marker
 	 *        the marker to resolve
 	 */
+	@Override
 	public void run(IMarker marker) {
 		IDocument doc = openDocument(marker);
 		if (doc != null) {
@@ -96,7 +99,7 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 
 	/**
 	 * Apply marker resolution for given marker in given open document.
-	 * 
+	 *
 	 * @param marker
 	 * @param document
 	 */
@@ -105,10 +108,11 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 	/**
 	 * Override is extra checks is required to determine appicablity of marker
 	 * resolution
-	 * 
+	 *
 	 * @param marker
 	 * @return
 	 */
+	@Override
 	public boolean isApplicable(IMarker marker) {
 		return true;
 	}
@@ -118,7 +122,7 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 	 * returns the corresponding IEditorPart. Please note that is code analysis
 	 * is setup to run on reconsile this action would trigger checkers run, and
 	 * original marker may be removed as a result.
-	 * 
+	 *
 	 * @param marker
 	 *        the problem marker
 	 * @return the opened document
@@ -137,7 +141,7 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 	/**
 	 * Opens the editor and returns the document corresponding to a given
 	 * marker.
-	 * 
+	 *
 	 * @param marker
 	 *        the marker to find the editor
 	 * @return the corresponding document
@@ -148,7 +152,7 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 
 	/**
 	 * Returns the document corresponding to a given editor part.
-	 * 
+	 *
 	 * @param editorPart
 	 *        an editor part
 	 * @return the document of that part
@@ -164,7 +168,7 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 
 	/**
 	 * Receives a translation unit from a given marker. Opens the editor.
-	 * 
+	 *
 	 * @param marker
 	 *        A marker in an editor to get the translation unit
 	 * @return The translation unit
@@ -176,7 +180,7 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 
 	/**
 	 * Receives a translation unit from a given marker using the marker's path.
-	 * 
+	 *
 	 * @param marker
 	 *        A marker in a translation unit
 	 * @return The translation unit
@@ -190,7 +194,7 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 
 	/**
 	 * Receives an ASTName enclosing a given IMarker
-	 * 
+	 *
 	 * @param marker
 	 *        The marker enclosing an ASTName
 	 * @param ast
@@ -214,10 +218,41 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 		return name;
 	}
 
+
+	/**
+	 * Returns the smallest element within translation unit that
+	 * includes the given source position (that is, a method, field, etc.), or
+	 * {@code null} if there is no element other than the translation
+	 * unit itself at the given position, or if the given position is not
+	 * within the source range of this translation unit.
+	 *
+	 * @param marker that contains a position inside the translation unit
+	 * @return the innermost C element enclosing a given source position or {@code null}
+	 *	   if none found (excluding the translation unit).
+	 * @since 3.2
+	 */
+	protected ICElement getCElementFromMarker(IMarker marker) {
+		ITranslationUnit tu = getTranslationUnitViaEditor(marker);
+		ICElement element = null;
+		try {
+			int charStart = marker.getAttribute(IMarker.CHAR_START, -1);
+			if (charStart > 0) {
+				element = tu.getElementAtOffset(charStart);
+			} else {
+				int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+				element = tu.getElementAtLine(lineNumber);
+			}
+		} catch (CModelException e) {
+			CodanUIActivator.log(e);
+		}
+		return element;
+	}
+
+
 	/**
 	 * Receives an {@link IIndex} corresponding to the given {@link IMarker}'s
 	 * resource.
-	 * 
+	 *
 	 * @param marker
 	 *        the marker to use
 	 * @return the received index

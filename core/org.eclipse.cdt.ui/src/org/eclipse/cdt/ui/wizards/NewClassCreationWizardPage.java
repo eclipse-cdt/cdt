@@ -479,7 +479,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                 className = text;
             }
         }
-        setClassName(className, false);
+        // forcing update will also populate default file names
+        setClassName(className, true);
 
         IMethodStub[] stubs = getDefaultMethodStubs();
         for (int i = 0; i < stubs.length; ++i) {

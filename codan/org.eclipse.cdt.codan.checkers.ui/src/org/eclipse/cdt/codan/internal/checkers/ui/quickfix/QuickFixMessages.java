@@ -15,6 +15,7 @@ import org.eclipse.osgi.util.NLS;
 public class QuickFixMessages extends NLS {
 	public static String CaseBreakQuickFixBreak_Label;
 	public static String CaseBreakQuickFixComment_Label;
+	public static String QuickFixCreateClass_OpemNewClassWizard;
 	public static String QuickFixCreateField_create_field;
 	public static String QuickFixCreateLocalVariable_create_local_variable;
 	public static String QuickFixCreateParameter_create_parameter;

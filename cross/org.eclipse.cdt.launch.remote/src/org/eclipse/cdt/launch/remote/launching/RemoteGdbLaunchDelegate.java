@@ -82,7 +82,12 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 					.getAttribute(
 							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
 							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
-			String commandArguments = ":" + gdbserverPortNumber + " " //$NON-NLS-1$ //$NON-NLS-2$
+			String gdbserverOptions = config
+					.getAttribute(
+							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
+							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT);
+			String commandArguments = gdbserverOptions + " " //$NON-NLS-1$
+					+ ":" + gdbserverPortNumber + " " //$NON-NLS-1$ //$NON-NLS-2$
 					+ RSEHelper.spaceEscapify(remoteExePath);
 			String arguments = getProgramArguments(config);
 			String prelaunchCmd = config

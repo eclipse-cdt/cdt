@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_fce880f1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T16:34:41Z",
+      "side": 1,
+      "message": "I noticed this too and my last (version 16) patch fixed this. the reason it didn\u0027t fail further was because all the tests that rely on SourceLookupDwarf2RN.exe are @Ignore because they don\u0027t work for other reasons. However in change 52068 I do rely on it because  with source path substitution these issues are fixed. The relevant tests are sourceMappingBreakpointsRN and sourceMappingRN",
+      "parentUuid": "07d9433e_c1f599f7",
+      "revId": "ae7058ef5f3eb56973f88fb64c9d1fb72ff8a07b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_a19335ae",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
         "patchSetId": 15
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_7c939061",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T16:34:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_a19335ae",
+      "revId": "ae7058ef5f3eb56973f88fb64c9d1fb72ff8a07b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_c1a75907",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
         "patchSetId": 15
@@ -47,6 +83,24 @@
       "writtenOn": "2016-01-06T15:50:18Z",
       "side": 1,
       "message": "Use $(RM)\n\nShall we remove $(BUILDDIR) $(BUILD2DIR) now or is it better to leave them?",
+      "revId": "ae7058ef5f3eb56973f88fb64c9d1fb72ff8a07b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_9c885430",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T16:34:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_c1a75907",
       "revId": "ae7058ef5f3eb56973f88fb64c9d1fb72ff8a07b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

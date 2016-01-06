@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_1e899cad",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ISourceFinder.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T10:09:08Z",
+      "side": 1,
+      "message": "I deprecated it because there are no tests for it and it is code at high risk for bitrotting because of the lack of reference. I don\u0027t particularly recommend removing it, but there needs to be a little buyer beware with it, and if someone is using it, perhaps they can contribute a test or two to ensure it does not bitrot.\nThe reason I deprecated as part of this commit may be a bit more iffy, but I added tests for ISourceFinder as part of this commit, so I thought it best to be complete and it helps indicate that the tests don\u0027t cover this method.",
+      "parentUuid": "07d9433e_ebbd1c1f",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_8b8e508a",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/META-INF/MANIFEST.MF",
         "patchSetId": 11
@@ -30,6 +48,24 @@
       "writtenOn": "2016-01-06T03:53:36Z",
       "side": 1,
       "message": "You need to add this requirement to the target file\norg.eclipse.cdt/releng/org.eclipse.cdt.target/cdt-e4.6.target\n\nIt is already part of Orbit, which CDT depends on, so you should only need to add it right above the Orbit repository entry in the target file.",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_3e0900bd",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 11
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T10:09:08Z",
+      "side": 1,
+      "message": "Done. Strangely it worked without the addition, so presumably somewhere else along the line added this in to the target platform. If you can point me at a a flow that does not work with the target change I can be sure that the target change is correct.",
+      "parentUuid": "07d9433e_8b8e508a",
       "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_9e184c05",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T10:09:08Z",
+      "side": 1,
+      "message": "It would have been enough. However I took the opportunity to clean up some state here. This was a subtle place where running a single test or a group of tests had different behaviour.",
+      "parentUuid": "07d9433e_eb56fc54",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_2b9f04b2",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 11
@@ -81,6 +135,24 @@
       "writtenOn": "2016-01-06T03:53:36Z",
       "side": 1,
       "message": "protected?",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_be1c30f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T10:09:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_2b9f04b2",
       "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_3e302071",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T10:09:08Z",
+      "side": 1,
+      "message": "I have normally use mockito before, but mockito at the moment in orbit does not work well with CDT (https://dev.eclipse.org/mhonarc/lists/cdt-dev/msg30055.html) and I am not using any advanced features so it made no difference to me which one to use. So I favoured the one that just worked.",
+      "parentUuid": "07d9433e_4b66084a",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_2b7aa4dc",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 11
@@ -132,6 +222,24 @@
       "writtenOn": "2016-01-06T03:53:36Z",
       "side": 1,
       "message": "This was hard to understand.  Can you expand the comment to explain that we need getAdapter(ISourceFinder) to return null, so that we fall back to the CSourceFinderFactory to find the corresponding ISourceFinder.",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_de19f406",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 562,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-01-06T10:09:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_2b7aa4dc",
       "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

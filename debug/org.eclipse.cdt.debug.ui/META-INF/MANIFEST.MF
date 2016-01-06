@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui; singleton:=true
-Bundle-Version: 7.5.0.qualifier
+Bundle-Version: 8.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.ui.CDebugUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -17,7 +17,6 @@ Export-Package:
  org.eclipse.cdt.debug.internal.ui.disassembly.commands;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.disassembly.dsf;x-friends:="org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.debug.internal.ui.disassembly.editor;x-internal:=true,
- org.eclipse.cdt.debug.internal.ui.disassembly.rendering;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.disassembly.viewer;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.editors;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.elements.adapters;x-internal:=true,

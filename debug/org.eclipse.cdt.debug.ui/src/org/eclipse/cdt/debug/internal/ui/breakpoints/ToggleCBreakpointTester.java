@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor;
 import org.eclipse.core.expressions.PropertyTester;
@@ -84,10 +83,6 @@ public class ToggleCBreakpointTester extends PropertyTester {
 					return true; // can't figure the associated project, enable it by default.
 				}
 			}
-		} else if ("isDisassemblyEditorSupportsCBreakpoint".equals(property) && (receiver instanceof DisassemblyEditor)) { //$NON-NLS-1$
-			if (!CDebugUtils.isCustomToggleBreakpointFactory())
-				return true;
-			// No additional check is required, the check for the receiver is enough. 
 			
 		// test for IVariableDeclaration, IFunctionDeclaration, IMethodDeclaration
 		} else if ("isCDeclarationSupportsCBreakpoint".equals(property) && (receiver instanceof List<?>)) { //$NON-NLS-1$

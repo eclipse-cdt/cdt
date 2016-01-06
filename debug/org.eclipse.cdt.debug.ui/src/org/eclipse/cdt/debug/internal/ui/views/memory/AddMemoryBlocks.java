@@ -15,11 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval;
-import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
 import org.eclipse.cdt.debug.internal.core.CRequest;
-import org.eclipse.cdt.debug.internal.core.model.CRegister;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -353,56 +350,6 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		IMemoryRenderingContainer container = memRendSite.getContainer(paneId);
 		rendering.init(container, memoryBlock);
 		container.addMemoryRendering(rendering);
-	}
-
-	public void addMemoryBlocksForVariables(ICVariable[] variables, IMemoryRenderingSite memSite) throws DebugException {
-
-		IAdaptable debugViewElement = DebugUITools.getDebugContext();
-
-
-		CMemoryBlockRetrievalExtension cdtRetrieval = null;
-
-		{
-			IMemoryBlockRetrieval retrieval = debugViewElement.getAdapter(IMemoryBlockRetrieval.class);
-
-			if (retrieval == null && debugViewElement instanceof IDebugElement)
-				retrieval = ((IDebugElement)debugViewElement).getDebugTarget();
-
-			if (retrieval == null || !(retrieval instanceof CMemoryBlockRetrievalExtension))
-				return;
-
-			cdtRetrieval = (CMemoryBlockRetrievalExtension) retrieval;
-		}
-
-		String[] expressions = new String[variables.length];
-		for (int i = 0; i < variables.length; i++) {
-			
-			String exp = variables[i].getExpressionString();
-			
-			if (variables[i].getType().isPointer() ||  variables[i].getType().isArray() ||
-                    variables[i].getType().isReference() || variables[i] instanceof CRegister)
-				expressions[i] = exp;
-			else
-				expressions[i] = "&" + exp; //$NON-NLS-1$
-		}
-
-		ParamHolder params;
-			params = new ExpressionsHolder(expressions);
-
-		final IAdaptable debugViewElement_f = debugViewElement;
-		final CMemoryBlockRetrievalExtension retrieval_f = cdtRetrieval;
-		final ParamHolder params_f = params;
-		final IMemoryRenderingSite memRendSite = memSite;
-		Job job = new Job("Add Memory Block") { //$NON-NLS-1$
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				addMemoryBlocks(debugViewElement_f, retrieval_f, params_f,
-						memRendSite);
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.schedule();
 	}
 
 	/**

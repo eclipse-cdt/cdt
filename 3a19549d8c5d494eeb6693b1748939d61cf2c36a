@@ -16,6 +16,24 @@
       "revId": "3a19549d8c5d494eeb6693b1748939d61cf2c36a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_97c10fcc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/IndexUI.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T21:40:53Z",
+      "side": 1,
+      "message": "It never returns nulls for ASTs produced by parsing translation units.",
+      "parentUuid": "07d9433e_175a5fc9",
+      "revId": "3a19549d8c5d494eeb6693b1748939d61cf2c36a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

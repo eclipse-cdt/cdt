@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_dcf65cca",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T16:03:13Z",
+      "side": 1,
+      "message": "How about piping this to head -1 to avoid the useless extra output?",
+      "revId": "1bff4e2a18ad74d475cd0aa9c31ed1f662e64f52",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

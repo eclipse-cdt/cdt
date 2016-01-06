@@ -416,7 +416,7 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 			IASTName astName = (IASTName) declName;
 			IBinding binding = astName.resolveBinding();
 			if (binding != null) {
-				ITranslationUnit tu = IndexUI.getTranslationUnit(project, astName);
+				ITranslationUnit tu = IndexUI.getTranslationUnit(astName);
 				if (tu != null) {
 					IASTFileLocation loc = astName.getFileLocation();
 					IRegion region = new Region(loc.getNodeOffset(), loc.getNodeLength());

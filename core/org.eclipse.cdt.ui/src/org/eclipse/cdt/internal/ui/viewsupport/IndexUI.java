@@ -316,7 +316,7 @@ public class IndexUI {
 		assert !declName.isReference();
 		IBinding binding= declName.resolveBinding();
 		if (binding != null) {
-			ITranslationUnit tu= getTranslationUnit(preferProject, declName);
+			ITranslationUnit tu= getTranslationUnit(declName);
 			if (tu != null) {
 				IFile file= (IFile) tu.getResource();
 				long timestamp= file != null ? file.getLocalTimeStamp() : 0;
@@ -332,8 +332,9 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ITranslationUnit getTranslationUnit(ICProject cproject, IASTName name) {
-		return getTranslationUnit(cproject, name.getFileLocation());
+	public static ITranslationUnit getTranslationUnit(IASTName name) {
+		IASTTranslationUnit astTranslationUnit = name.getTranslationUnit();
+		return astTranslationUnit == null ? null : astTranslationUnit.getOriginatingTranslationUnit();
 	}
 
 	public static ITranslationUnit getTranslationUnit(ICProject cproject, IIndexName name) {

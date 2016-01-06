@@ -66,6 +66,7 @@ public class MIFrame {
         buffer.append(",addr=\"" + addr + "\"");  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append(",func=\"" + func + "\"");  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append(",file=\"" + file + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+        buffer.append(",fullname=\"" + fullname + "\"");  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append(",line=\"").append(line).append('"'); //$NON-NLS-1$
         buffer.append(",args=["); //$NON-NLS-1$
         for (int i = 0; i < args.length; i++) {

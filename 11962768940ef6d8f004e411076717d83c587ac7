@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_1717bf51",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T20:32:16Z",
+      "side": 1,
+      "message": "If the class name is hard to propagate to the message, please add a TODO for it and rename the quick fix to \"Create New Class\".",
+      "parentUuid": "07d9433e_018301a7",
+      "range": {
+        "startLine": 13,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 64
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_cba77807",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
         "patchSetId": 1
@@ -178,6 +202,30 @@
       "side": 1,
       "message": "I won\u0027t do it in this fix, can be added later",
       "parentUuid": "07d9433e_8b89f07c",
+      "range": {
+        "startLine": 82,
+        "startChar": 15,
+        "endLine": 82,
+        "endChar": 23
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_f7309bee",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-06T20:32:16Z",
+      "side": 1,
+      "message": "Please add a TODO to populate namespace.",
+      "parentUuid": "07d9433e_61512db0",
       "range": {
         "startLine": 82,
         "startChar": 15,

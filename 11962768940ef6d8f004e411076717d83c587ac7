@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_e1753d3e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-06T14:41:18Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "07d9433e_ab9314ae",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 5
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_0ba240f6",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixMessages.properties",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-01-06T03:02:57Z",
       "side": 1,
       "message": "For consistency with Java the quick fix should be called \"Create class \u0027\u003cclass_name\u003e\u0027\"",
+      "range": {
+        "startLine": 13,
+        "startChar": 39,
+        "endLine": 13,
+        "endChar": 64
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_018301a7",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-06T14:41:18Z",
+      "side": 1,
+      "message": "Won\u0027t do in this fix. Too many changes to do that.",
+      "parentUuid": "07d9433e_0ba240f6",
       "range": {
         "startLine": 13,
         "startChar": 39,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_21800598",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-06T14:41:18Z",
+      "side": 1,
+      "message": "Won\u0027t do it because there are more c++ dialects, i.e.\nQT_LINKAGE and OBJC_LINKAGE",
+      "parentUuid": "07d9433e_cba77807",
+      "range": {
+        "startLine": 41,
+        "startChar": 51,
+        "endLine": 41,
+        "endChar": 63
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_8b89f07c",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_61512db0",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-06T14:41:18Z",
+      "side": 1,
+      "message": "I won\u0027t do it in this fix, can be added later",
+      "parentUuid": "07d9433e_8b89f07c",
+      "range": {
+        "startLine": 82,
+        "startChar": 15,
+        "endLine": 82,
+        "endChar": 23
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_eba43c05",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
         "patchSetId": 1
@@ -105,6 +201,30 @@
       "writtenOn": "2016-01-06T03:02:57Z",
       "side": 1,
       "message": "Use NewSourceFileGenerator instead of hardcoding.",
+      "range": {
+        "startLine": 91,
+        "startChar": 18,
+        "endLine": 91,
+        "endChar": 20
+      },
+      "revId": "11962768940ef6d8f004e411076717d83c587ac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_414c291d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixOpenNewClassWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-01-06T14:41:18Z",
+      "side": 1,
+      "message": "Will do. Awesome, that what I was looking for",
+      "parentUuid": "07d9433e_eba43c05",
       "range": {
         "startLine": 91,
         "startChar": 18,

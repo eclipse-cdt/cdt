@@ -31,26 +31,10 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<file>cdt-e4.5.target</file>
+									<file>cdt.target</file>
 									<type>target</type>
-									<classifier>cdt-e4.5</classifier>
+									<classifier>cdt</classifier>
 								</artifact>
-								<artifact>
-									<file>cdt-e4.4.target</file>
-									<type>target</type>
-									<classifier>cdt-e4.4</classifier>
-								</artifact>
-								<artifact>
-									<file>cdt-e4.3.target</file>
-									<type>target</type>
-									<classifier>cdt-e4.3</classifier>
-								</artifact>
-								<artifact>
-									<file>cdt-e4.2.target</file>
-									<type>target</type>
-									<classifier>cdt-e4.2</classifier>
-								</artifact>
-								<!-- More targets could be added here -->
 							</artifacts>
 						</configuration>
 					</execution>

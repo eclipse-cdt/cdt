@@ -21,53 +21,65 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
 
 public class NewClassCreationWizard extends NewElementWizard {
-    private NewClassCreationWizardPage fPage;
-    
-    public NewClassCreationWizard() {
-        super();
-        setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEWCLASS);
-        setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle(NewClassWizardMessages.NewClassCreationWizard_title); 
-    }
-    
-    /*
-     * @see Wizard#createPages
-     */
-    @Override
+	private NewClassCreationWizardPage fPage;
+	private String className;
+
+	public NewClassCreationWizard() {
+		super();
+		setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEWCLASS);
+		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
+		setWindowTitle(NewClassWizardMessages.NewClassCreationWizard_title);
+	}
+
+	/*
+	 * @see Wizard#createPages
+	 */
+	@Override
 	public void addPages() {
-        super.addPages();
-        fPage = new NewClassCreationWizardPage();
-        addPage(fPage);
-        fPage.init(getSelection());
-    }
-    
-    @Override
+		super.addPages();
+		fPage = new NewClassCreationWizardPage();
+		addPage(fPage);
+		fPage.init(getSelection());
+		if (className != null)
+			fPage.setClassName(className, true);
+	}
+
+	/**
+	 * Sets the class name for creation in the wizard
+	 * @param className - name of the class or null, null will indicate default behavior which
+	 * is extract class name from editor context. Setting an empty string will force the empty fields.
+	 */
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	@Override
 	protected boolean canRunForked() {
-        return !fPage.isNamespaceSelected();
-    }
-    
-    @Override
+		return !fPage.isNamespaceSelected();
+	}
+
+	@Override
 	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
-        fPage.createClass(monitor); // use the full progress monitor
-    }
-    
-    @Override
+		fPage.createClass(monitor); // use the full progress monitor
+	}
+
+	@Override
 	public boolean performFinish() {
-        boolean finished = super.performFinish();
-        if (finished) {
-            if (fPage.openClassInEditor()) {
-                IFile source = fPage.getCreatedSourceFile();
-                if (source != null) {
-                    selectAndReveal(source);
-                    openResource(source);
-                }
-                IFile header = fPage.getCreatedHeaderFile();
-                if (header != null) {
-                    selectAndReveal(header);
-                    openResource(header);
-                }
-            }
-        }
-        return finished;
-    }
+		boolean finished = super.performFinish();
+		if (finished) {
+			if (fPage.openClassInEditor()) {
+				IFile source = fPage.getCreatedSourceFile();
+				if (source != null) {
+					selectAndReveal(source);
+					openResource(source);
+				}
+				IFile header = fPage.getCreatedHeaderFile();
+				if (header != null) {
+					selectAndReveal(header);
+					openResource(header);
+				}
+			}
+		}
+		return finished;
+	}
 }

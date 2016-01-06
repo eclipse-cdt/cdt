@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_ebbd1c1f",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ISourceFinder.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T03:53:36Z",
+      "side": 1,
+      "message": "I\u0027m not sure why we should deprecate.  The javadoc documents a specific time when this method should be used instead of the other.  CDT may not use it but my guess is some product extending CDT must be using it; this is probably why it was added in the first place.",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_8b8e508a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 11
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T03:53:36Z",
+      "side": 1,
+      "message": "You need to add this requirement to the target file\norg.eclipse.cdt/releng/org.eclipse.cdt.target/cdt-e4.6.target\n\nIt is already part of Orbit, which CDT depends on, so you should only need to add it right above the Orbit repository entry in the target file.",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_eb56fc54",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T03:53:36Z",
+      "side": 1,
+      "message": "Out of curiosity, would it have been enough to add this to the SourceLookupTest only?",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_2b9f04b2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T03:53:36Z",
+      "side": 1,
+      "message": "protected?",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_4b7fe8d3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T03:53:36Z",
+      "side": 1,
+      "message": "Nice",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_4b66084a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T03:53:36Z",
+      "side": 1,
+      "message": "Very cool!  I never saw easyMock before.",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_2b7aa4dc",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 562,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-06T03:53:36Z",
+      "side": 1,
+      "message": "This was hard to understand.  Can you expand the comment to explain that we need getAdapter(ISourceFinder) to return null, so that we fall back to the CSourceFinderFactory to find the corresponding ISourceFinder.",
+      "revId": "aac07e2a1af7a68fb5b604e6054cd57272084aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

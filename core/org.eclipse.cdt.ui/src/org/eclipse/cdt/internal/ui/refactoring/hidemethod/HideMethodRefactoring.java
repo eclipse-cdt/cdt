@@ -143,7 +143,7 @@ public class HideMethodRefactoring extends CRefactoring {
 			}
 	
 			IASTCompositeTypeSpecifier classNode =
-					CPPVisitor.findAncestorWithType(methodName, IASTCompositeTypeSpecifier.class);
+					ASTQueries.findAncestorWithType(methodName, IASTCompositeTypeSpecifier.class);
 			if (classNode == null) {
 				initStatus.addError(Messages.HideMethodRefactoring_EnclosingClassNotFound);
 			}

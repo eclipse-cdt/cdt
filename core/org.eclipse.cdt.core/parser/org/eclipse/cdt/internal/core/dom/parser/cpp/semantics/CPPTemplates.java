@@ -882,7 +882,7 @@ public class CPPTemplates {
 			IType type = instantiateType(var.getType(), tpMap, -1, within, point);
 
 			IValue value;
-			ICPPASTDeclarator decl = CPPVisitor.findAncestorWithType(point, ICPPASTDeclarator.class);
+			ICPPASTDeclarator decl = ASTQueries.findAncestorWithType(point, ICPPASTDeclarator.class);
 			if (((IASTName) point).getRoleOfName(false) == IASTNameOwner.r_definition && decl != null && decl.getInitializer() != null) {
 				// Explicit specialization.
 				value = SemanticUtil.getValueOfInitializer(decl.getInitializer(), type);

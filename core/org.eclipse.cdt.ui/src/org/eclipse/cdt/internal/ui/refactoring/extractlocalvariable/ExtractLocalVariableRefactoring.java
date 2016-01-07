@@ -60,12 +60,12 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
@@ -142,7 +142,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 	private ArrayList<String> findAllDeclaredNames() {
 		ArrayList<String> names = new ArrayList<String>();
-		IASTFunctionDefinition funcDef = CPPVisitor.findAncestorWithType(target, IASTFunctionDefinition.class);
+		IASTFunctionDefinition funcDef = ASTQueries.findAncestorWithType(target, IASTFunctionDefinition.class);
 		ICPPASTCompositeTypeSpecifier comTypeSpec = getCompositeTypeSpecifier(funcDef);
 		if (comTypeSpec != null) {
 			for (IASTDeclaration decl : comTypeSpec.getMembers()) {
@@ -332,7 +332,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	public String[] guessTempNames() {
 		final List<String> guessedTempNames = new ArrayList<String>();
 		final List<String> usedNames = new ArrayList<String>();
-		IASTFunctionDefinition funcDef = CPPVisitor.findAncestorWithType(target, IASTFunctionDefinition.class);
+		IASTFunctionDefinition funcDef = ASTQueries.findAncestorWithType(target, IASTFunctionDefinition.class);
 		final IScope scope;
 		if (funcDef != null && funcDef.getBody() instanceof IASTCompoundStatement) {
 			IASTCompoundStatement body = (IASTCompoundStatement) funcDef.getBody();

@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.parser.Keywords;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTPointer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
@@ -74,7 +75,7 @@ public abstract class AccessorFactory {
 		this.fieldDeclarator = fieldDeclarator;
 		this.accessorName = accessorName;
 		IASTSimpleDeclaration declaration =
-				CPPVisitor.findAncestorWithType(fieldDeclarator, IASTSimpleDeclaration.class);
+				ASTQueries.findAncestorWithType(fieldDeclarator, IASTSimpleDeclaration.class);
 		this.declSpecifier = declaration.getDeclSpecifier();
 		IType type = CPPVisitor.createType(declSpecifier);
 		passByReference = TypeHelper.shouldBePassedByReference(type, fieldDeclarator.getTranslationUnit());

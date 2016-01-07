@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -300,7 +301,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 				IASTTranslationUnit ast = point.getTranslationUnit();
 				IASTName[] definitions = ast.getDefinitionsInAST(binding);
 				for (IASTName definition : definitions) {
-					IASTDeclarator declarator = CPPVisitor.findAncestorWithType(definition, IASTDeclarator.class);
+					IASTDeclarator declarator = ASTQueries.findAncestorWithType(definition, IASTDeclarator.class);
 					if (declarator != null) {
 						IType localType = CPPVisitor.createType(declarator);
 						if (localType instanceof IArrayType && ((IArrayType) localType).getSize() != null) {

@@ -62,7 +62,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
@@ -289,7 +289,7 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 			IASTName name = astNames[i];
 			if (name.isDefinition()) {
 				astNames[i] = null;
-			} else if (CPPVisitor.findAncestorWithType(name, ICPPASTUsingDeclaration.class) != null) {
+			} else if (ASTQueries.findAncestorWithType(name, ICPPASTUsingDeclaration.class) != null) {
 				if (usingDeclarations == null)
 					usingDeclarations = new ArrayList<IASTName>(1);
 				usingDeclarations.add(name);

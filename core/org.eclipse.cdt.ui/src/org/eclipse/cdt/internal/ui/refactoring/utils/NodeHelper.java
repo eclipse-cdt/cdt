@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -141,6 +142,6 @@ public class NodeHelper {
 	}
 
 	public static boolean isContainedInTemplateDeclaration(IASTNode node) {
-		return CPPVisitor.findAncestorWithType(node, ICPPASTTemplateDeclaration.class) != null;
+		return ASTQueries.findAncestorWithType(node, ICPPASTTemplateDeclaration.class) != null;
 	}
 }

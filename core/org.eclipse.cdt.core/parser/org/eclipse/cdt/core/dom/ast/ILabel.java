@@ -18,8 +18,15 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILabel extends IBinding {
-    /** @since 5.4 */
+    /** 
+     * @since 5.4
+     * @deprecated use EMPTY_ARRAY instead
+     */
+	@Deprecated
     public static final IBinding[] EMPTY_LABEL_ARRAY = {};
+	
+    /** @since 5.12 */
+    public static final ILabel[] EMPTY_ARRAY = {};
 
     /**
 	 * Returns the label statement for this label.

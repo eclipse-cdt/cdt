@@ -462,16 +462,7 @@ public class CVisitor extends ASTQueries {
 		IBinding binding = null;
 		IASTNode parent = name.getParent();
 		
-		// GNU Goto label reference
-		//
-		//   void* labelPtr = &&foo; <-- label reference
-		// foo:
-		//
-		boolean labelReference = isLabelReference(parent);
-		
-		if (labelReference) {
-			binding = createLabelReferenceBinding(name);
-		} else if (parent instanceof CASTIdExpression) {
+		if (parent instanceof CASTIdExpression) {
 			binding = resolveBinding(parent);
 		} else if (parent instanceof ICASTTypedefNameSpecifier) {
 			binding = resolveBinding(parent);
@@ -486,8 +477,10 @@ public class CVisitor extends ASTQueries {
 			binding = createBinding((ICASTCompositeTypeSpecifier) parent);
 		} else if (parent instanceof ICASTElaboratedTypeSpecifier) {
 			binding = createBinding((ICASTElaboratedTypeSpecifier) parent);
-		} else if (parent instanceof IASTStatement) {
-		    binding = createBinding ((IASTStatement) parent);
+		} else if (parent instanceof IASTGotoStatement) {
+		    binding = resolveBinding((IASTGotoStatement) parent);
+		} else if (parent instanceof IASTLabelStatement) {
+			binding = createBinding((IASTLabelStatement) parent);
 		} else if (parent instanceof ICASTEnumerationSpecifier) {
 		    binding = createBinding((ICASTEnumerationSpecifier) parent);
 		} else if (parent instanceof IASTEnumerator) {
@@ -529,33 +522,20 @@ public class CVisitor extends ASTQueries {
 	    return binding;
 	}
 
-	private static IBinding createBinding(IASTStatement statement) {
-	    if (statement instanceof IASTGotoStatement) {
-	        char[] gotoName = ((IASTGotoStatement) statement).getName().toCharArray();
-	        IScope scope = getContainingScope(statement);
-	        if (scope != null && scope instanceof ICFunctionScope) {
-	            CFunctionScope functionScope = (CFunctionScope) scope;
-	            ILabel[] labels = functionScope.getLabels();
-	            for (ILabel label : labels) {
-	                if (CharArrayUtils.equals(label.getNameCharArray(), gotoName)) {
-	                    return label;
-	                }
-	            }
-	            //label not found
-	            return new ProblemBinding(((IASTGotoStatement) statement).getName(), IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, gotoName);
-	        }
-	    } else if (statement instanceof IASTLabelStatement) {
-	        IASTName name = ((IASTLabelStatement) statement).getName();
-	        IBinding binding = new CLabel(name);
-	        try {
-	        	IScope scope = binding.getScope();
-	        	if (scope instanceof ICFunctionScope)
-	        		ASTInternal.addName(binding.getScope(), name);
-            } catch (DOMException e) {
-            }
-	        return binding;
-	    }
-	    return null;
+	private static IBinding resolveBinding(IASTGotoStatement statement) {
+    	return resolveLabel(statement.getName());
+	}
+	
+	private static IBinding createBinding(IASTLabelStatement statement) {
+        IASTName name = statement.getName();
+        IBinding binding = new CLabel(name);
+        try {
+        	IScope scope = binding.getScope();
+        	if (scope instanceof ICFunctionScope)
+        		ASTInternal.addName(binding.getScope(), name);
+        } catch (DOMException e) {
+        }
+        return binding;
 	}
 
 	private static IBinding createBinding(ICASTElaboratedTypeSpecifier elabTypeSpec) {
@@ -610,34 +590,6 @@ public class CVisitor extends ASTQueries {
 			return resolveBinding(elabTypeSpec);
 		}
 		return null;
-	}
-
-	private static IBinding createLabelReferenceBinding(IASTName name) {
-		// Find function scope for r-value expression
-		//   void* labelPtr = &&foo;
-		// foo:                 ^^^
-		//   return
-		IBinding binding = null;
-		IBinding enclosingFunction = findEnclosingFunction(name);
-		if (enclosingFunction instanceof IFunction) {
-			IFunction function = (IFunction) enclosingFunction;
-			IScope functionScope = function.getFunctionScope();
-			if (functionScope != null) {
-				binding = functionScope.getBinding(name, false);
-				if (!(binding instanceof ILabel)) {
-					binding = new CLabel(name);
-					ASTInternal.addName(functionScope, name);
-				}
-			}
-		}
-
-		if (binding == null) {
-			IASTNode parentExpression = name.getParent();
-			binding = new ProblemBinding(parentExpression, IProblemBinding.SEMANTIC_BAD_SCOPE,
-					parentExpression.getRawSignature().toCharArray());
-		}
-
-		return binding;
 	}
 
 	/**
@@ -878,6 +830,9 @@ public class CVisitor extends ASTQueries {
 			IScope scope = getContainingScope(node);
 			return lookup(scope, name);
 		} else if (node instanceof IASTIdExpression) {
+			if (isLabelReference(node)) {
+				return resolveLabel(((IASTIdExpression) node).getName());
+			}
 			IScope scope = getContainingScope(node);
 			IBinding binding = lookup(scope, ((IASTIdExpression) node).getName());
 			if (binding instanceof IType && !(binding instanceof IProblemBinding) ) {
@@ -1653,8 +1608,10 @@ public class CVisitor extends ASTQueries {
         List<ILabel> b3 = new ArrayList<>();
         do {
             char[] n = name.toCharArray();
-            if (scope instanceof ICFunctionScope) {
-                ILabel[] labels = ((CFunctionScope) scope).getLabels();
+            if (scope instanceof CFunctionScope) {
+            	IASTFunctionDefinition def = ASTQueries.findAncestorWithType(
+            			((CFunctionScope) scope).getPhysicalNode(), IASTFunctionDefinition.class);
+                ILabel[] labels = getLabels(def);
                 for (ILabel label : labels) {
                 	if (CharArrayUtils.equals(label.getNameCharArray(), n)) {
                 		b3.add(label);

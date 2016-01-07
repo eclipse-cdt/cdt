@@ -7569,4 +7569,29 @@ public class AST2Tests extends AST2TestBase {
     	// being incorrectly parsed as cast-expressions.
     	parseAndCheckBindings(getAboveComment(), C);
     }
+    
+    private void labelResolutionHelper(BindingAssertionHelper helper) {
+    	// Make sure existing labels are resolved correctly.
+    	ILabel label = helper.assertNonProblem("goto existent", "existent");
+    	assertEquals(1, helper.tu.getDeclarationsInAST(label).length);
+    	label = helper.assertNonProblem("&& existent", "existent");
+    	assertEquals(1, helper.tu.getDeclarationsInAST(label).length);
+    	
+    	// Make sure non-existent labels are not resolved.
+    	helper.assertProblem("goto nonexistent", "nonexistent");
+    	helper.assertProblem("&& nonexistent", "nonexistent");
+    }
+    
+	//	int main() {
+	//	existent:
+	//		int x;
+	//		goto existent;
+	//		goto nonexistent;
+	//		void* ref1 = && existent;
+	//		void* ref2 = && nonexistent;
+	//	}
+    public void testLabelResolution_484979() throws Exception {
+    	labelResolutionHelper(getAssertionHelper(C));
+    	labelResolutionHelper(getAssertionHelper(CPP));
+    }
 }

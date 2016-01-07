@@ -1,0 +1,176 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_f4789438",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateNewClass.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T18:36:29Z",
+      "side": 1,
+      "message": "Instead of suppressing warning make Codan a friend.",
+      "range": {
+        "startLine": 82,
+        "startChar": 2,
+        "endLine": 82,
+        "endChar": 18
+      },
+      "revId": "58f1ec79bd7082e8bd3ca0756f670eb65e43bd40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_1476d849",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/ui/AbstractCodanCMarkerResolution.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T18:36:29Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "revId": "58f1ec79bd7082e8bd3ca0756f670eb65e43bd40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_3483dca7",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/ui/AbstractCodanCMarkerResolution.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T18:36:29Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "revId": "58f1ec79bd7082e8bd3ca0756f670eb65e43bd40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_54806098",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/NewClassCreationWizard.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T18:36:29Z",
+      "side": 1,
+      "message": "Terminate sentence with a dot.",
+      "range": {
+        "startLine": 48,
+        "startChar": 44,
+        "endLine": 48,
+        "endChar": 50
+      },
+      "revId": "58f1ec79bd7082e8bd3ca0756f670eb65e43bd40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_744c841d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/NewClassCreationWizard.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T18:36:29Z",
+      "side": 1,
+      "message": "Indent this line for readability.",
+      "range": {
+        "startLine": 50,
+        "startChar": 4,
+        "endLine": 50,
+        "endChar": 6
+      },
+      "revId": "58f1ec79bd7082e8bd3ca0756f670eb65e43bd40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_946ae862",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T18:36:29Z",
+      "side": 1,
+      "message": "Empty namespace is also known as anonymous one. It is not the same as absence of namespace statement.",
+      "range": {
+        "startLine": 456,
+        "startChar": 9,
+        "endLine": 456,
+        "endChar": 18
+      },
+      "revId": "58f1ec79bd7082e8bd3ca0756f670eb65e43bd40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_f42df449",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T18:36:29Z",
+      "side": 1,
+      "message": "The comment doesn\u0027t seem to match the code below.\n\nPlease use proper sentence capitalization and punctuation and break the excessively long line.",
+      "range": {
+        "startLine": 460,
+        "startChar": 52,
+        "endLine": 460,
+        "endChar": 59
+      },
+      "revId": "58f1ec79bd7082e8bd3ca0756f670eb65e43bd40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_142b3835",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T18:36:29Z",
+      "side": 1,
+      "message": "Please use proper sentence capitalization and punctuation and break the excessively long line.",
+      "range": {
+        "startLine": 487,
+        "startChar": 11,
+        "endLine": 487,
+        "endChar": 18
+      },
+      "revId": "58f1ec79bd7082e8bd3ca0756f670eb65e43bd40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

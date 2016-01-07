@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_970e6ac3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTQueries.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-07T23:00:50Z",
+      "side": 1,
+      "message": "Why not use CPPVisitor.findAncestorWithType(IASTNode, Class\u003cT\u003e), which should probably be moved to ASTQueries?",
+      "range": {
+        "startLine": 150,
+        "startChar": 46,
+        "endLine": 150,
+        "endChar": 77
+      },
+      "revId": "e1f0b2d30ab971e27895f25430cb83052c66edc9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

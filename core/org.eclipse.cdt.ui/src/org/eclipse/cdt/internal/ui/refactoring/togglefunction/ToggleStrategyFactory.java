@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 public class ToggleStrategyFactory {
 	private ToggleRefactoringContext context;
@@ -44,10 +44,10 @@ public class ToggleStrategyFactory {
 
 	private boolean isInClassSituation() {
 		return (context.getDeclaration() == null) && 
-			(CPPVisitor.findAncestorWithType(context.getDefinition(), IASTCompositeTypeSpecifier.class) != null);
+			(ASTQueries.findAncestorWithType(context.getDefinition(), IASTCompositeTypeSpecifier.class) != null);
 	}
 
 	private boolean isTemplateSituation() {
-		return (CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTTemplateDeclaration.class) != null);
+		return (ASTQueries.findAncestorWithType(context.getDefinition(), ICPPASTTemplateDeclaration.class) != null);
 	}
 }

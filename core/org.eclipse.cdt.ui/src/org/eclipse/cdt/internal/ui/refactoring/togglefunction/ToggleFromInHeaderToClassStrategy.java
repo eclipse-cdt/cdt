@@ -30,8 +30,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 
@@ -55,7 +55,7 @@ public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStra
 		if (declarator.getName() instanceof ICPPASTQualifiedName) {
 			declarator = backup;
 		}
-		return (CPPVisitor.findAncestorWithType(declarator, IASTCompositeTypeSpecifier.class) == null);
+		return (ASTQueries.findAncestorWithType(declarator, IASTCompositeTypeSpecifier.class) == null);
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStra
 			}
 		}
 		
-		IASTNode parent = CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTCompositeTypeSpecifier.class);
+		IASTNode parent = ASTQueries.findAncestorWithType(context.getDefinition(), ICPPASTCompositeTypeSpecifier.class);
 		if (parent != null) {
 			newDefinition.setParent(parent);
 		} else {
@@ -111,7 +111,7 @@ public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStra
 
 	private ASTRewrite replaceDeclarationWithDefinition(ASTRewrite rewriter,
 			IASTFunctionDefinition newDefinition) {
-		IASTSimpleDeclaration fullDeclaration = CPPVisitor.findAncestorWithType(context.getDeclaration(), CPPASTSimpleDeclaration.class);
+		IASTSimpleDeclaration fullDeclaration = ASTQueries.findAncestorWithType(context.getDeclaration(), CPPASTSimpleDeclaration.class);
 		ASTRewrite newRewriter = rewriter.replace(fullDeclaration, newDefinition, infoText);
 		return newRewriter;
 	}

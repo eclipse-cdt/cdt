@@ -40,7 +40,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.util.TextUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -237,11 +237,11 @@ public class CCodeFormatter extends CodeFormatter {
 			node = nodeSelector.findFirstContainedNode(pos, end - pos);
 			if (node != null) {
 				IASTNode containedNode = node;
-				node = CPPVisitor.findAncestorWithType(containedNode, IASTStatement.class);
+				node = ASTQueries.findAncestorWithType(containedNode, IASTStatement.class);
 				if (node == null)
-					node = CPPVisitor.findAncestorWithType(containedNode, IASTDeclaration.class);
+					node = ASTQueries.findAncestorWithType(containedNode, IASTDeclaration.class);
 				if (node == null)
-					node = CPPVisitor.findAncestorWithType(containedNode, IASTPreprocessorMacroExpansion.class);
+					node = ASTQueries.findAncestorWithType(containedNode, IASTPreprocessorMacroExpansion.class);
 			}
 			if (node == null)
 				break;

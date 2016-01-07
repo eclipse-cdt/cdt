@@ -43,8 +43,8 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
@@ -227,7 +227,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
 		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
 		ICPPASTCompositeTypeSpecifier classDefinition =
-				CPPVisitor.findAncestorWithType(context.existingFields.get(0), ICPPASTCompositeTypeSpecifier.class);
+				ASTQueries.findAncestorWithType(context.existingFields.get(0), ICPPASTCompositeTypeSpecifier.class);
 		for (AccessorDescriptor accessor : context.selectedAccessors) {
 			IASTName accessorName = new CPPASTName(accessor.toString().toCharArray());
 			if (context.isDefinitionSeparate()) {
@@ -277,7 +277,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		}
 		
 		IASTSimpleDeclaration decl =
-				CPPVisitor.findAncestorWithType(context.existingFields.get(0), IASTSimpleDeclaration.class);
+				ASTQueries.findAncestorWithType(context.existingFields.get(0), IASTSimpleDeclaration.class);
 		MethodDefinitionInsertLocationFinder locationFinder = new MethodDefinitionInsertLocationFinder();
 		InsertLocation location = locationFinder.find(tu, decl.getFileLocation(), decl.getParent(),
 				refactoringContext, pm);

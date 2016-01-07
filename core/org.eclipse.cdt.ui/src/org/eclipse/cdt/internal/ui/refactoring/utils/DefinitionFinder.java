@@ -37,7 +37,7 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
@@ -262,7 +262,7 @@ public class DefinitionFinder {
 		if (classDefintionName == null)
 			return null;
 		IASTCompositeTypeSpecifier compositeTypeSpecifier =
-				CPPVisitor.findAncestorWithType(classDefintionName, IASTCompositeTypeSpecifier.class);
+				ASTQueries.findAncestorWithType(classDefintionName, IASTCompositeTypeSpecifier.class);
 		IASTTranslationUnit ast = classDefintionName.getTranslationUnit();
 		IIndex index = context.getIndex();
 		if (index == null) {
@@ -271,7 +271,7 @@ public class DefinitionFinder {
 		IASTName[] memberDeclarationNames = ast.getDeclarationsInAST(index.adaptBinding(member));
 		for (IASTName name : memberDeclarationNames) {
 			if (name.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME) {
-				IASTDeclaration declaration = CPPVisitor.findAncestorWithType(name, IASTDeclaration.class);
+				IASTDeclaration declaration = ASTQueries.findAncestorWithType(name, IASTDeclaration.class);
 				if (declaration.getParent() == compositeTypeSpecifier) {
 					return name;
 				}

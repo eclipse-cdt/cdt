@@ -1329,7 +1329,7 @@ public class CPPVisitor extends ASTQueries {
 					return new CPPScope.CPPScopeProblem(name, ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 				}
 			} else if (parent instanceof ICPPASTFieldDesignator) {
-				ICPPASTDeclarator declarator = findAncestorWithType(parent, ICPPASTDeclarator.class);
+				ICPPASTDeclarator declarator = ASTQueries.findAncestorWithType(parent, ICPPASTDeclarator.class);
 				if (declarator != null) {
 					IType type = createType(declarator);
 					type= getNestedType(type, TDEF | CVTYPE);
@@ -2705,23 +2705,6 @@ public class CPPVisitor extends ASTQueries {
 
 	public static ICPPASTDeclarator findInnermostDeclarator(ICPPASTDeclarator dtor) {
 		return (ICPPASTDeclarator) ASTQueries.findInnermostDeclarator(dtor);
-	}
-
-	/**
-	 * Traverses parent chain of the given node and returns the first node of the given type.
-	 * @param node the start node
-	 * @param type the type to look for
-	 * @return the node itself or its closest ancestor that has the given type, or {@code null}
-	 *     if no such node is found.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends IASTNode> T findAncestorWithType(IASTNode node, Class<T> type) {
-		do {
-			if (type.isInstance(node)) {
-				return (T) node;
-			}
-		} while ((node = node.getParent()) != null);
-		return null;
 	}
 
 	/**

@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
  * Given a selection and a translation unit, this class finds a
@@ -106,6 +106,6 @@ public class DeclaratorFinder {
 	}
 
 	private boolean isPartOfAStatement(IASTNode node) {
-		return CPPVisitor.findAncestorWithType(node, IASTStatement.class) != null;
+		return ASTQueries.findAncestorWithType(node, IASTStatement.class) != null;
 	}
 }

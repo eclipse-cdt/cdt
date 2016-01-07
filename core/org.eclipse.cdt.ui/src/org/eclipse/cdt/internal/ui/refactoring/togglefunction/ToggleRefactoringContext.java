@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
@@ -184,11 +184,11 @@ public class ToggleRefactoringContext {
 		if (node instanceof IASTSimpleDeclaration) {
 			return (IASTFunctionDeclarator) ((IASTSimpleDeclaration) node).getDeclarators()[0];
 		}
-		return CPPVisitor.findAncestorWithType(node, IASTFunctionDeclarator.class);
+		return ASTQueries.findAncestorWithType(node, IASTFunctionDeclarator.class);
 	}
 
 	private IASTFunctionDefinition findFunctionDefinition(IASTNode node) {
-		return CPPVisitor.findAncestorWithType(node, IASTFunctionDefinition.class);
+		return ASTQueries.findAncestorWithType(node, IASTFunctionDefinition.class);
 	}
 
 	public void setDefaultAnswer(boolean defaultAnswer) {

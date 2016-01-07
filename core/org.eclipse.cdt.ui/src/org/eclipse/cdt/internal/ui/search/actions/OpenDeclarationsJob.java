@@ -90,6 +90,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -363,7 +364,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			IASTName name = astNames[i];
 			if (name.isDefinition()) {
 				astNames[i]= null;
-			} else if (CPPVisitor.findAncestorWithType(name, ICPPASTUsingDeclaration.class) != null) {
+			} else if (ASTQueries.findAncestorWithType(name, ICPPASTUsingDeclaration.class) != null) {
 				if (usingDeclarations == null)
 					usingDeclarations = new ArrayList<>(1);
 				usingDeclarations.add(name);

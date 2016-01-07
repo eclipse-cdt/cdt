@@ -129,6 +129,23 @@ public class ASTQueries {
 	}
 
 	/**
+	 * Traverses parent chain of the given node and returns the first node of the given type.
+	 * @param node the start node
+	 * @param type the type to look for
+	 * @return the node itself or its closest ancestor that has the given type, or {@code null}
+	 *     if no such node is found.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends IASTNode> T findAncestorWithType(IASTNode node, Class<T> type) {
+		do {
+			if (type.isInstance(node)) {
+				return (T) node;
+			}
+		} while ((node = node.getParent()) != null);
+		return null;
+	}
+	
+	/**
 	 * Searches for the function enclosing the given node. May return <code>null</code>.
 	 */
 	public static IBinding findEnclosingFunction(IASTNode node) {

@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 
@@ -44,7 +44,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 
 	private boolean isInClass(IASTNode node) {
 		return node != null &&
-				CPPVisitor.findAncestorWithType(node, ICPPASTCompositeTypeSpecifier.class) != null;
+				ASTQueries.findAncestorWithType(node, ICPPASTCompositeTypeSpecifier.class) != null;
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 
 	private IASTNode getParentNamespace() {
 		IASTNode parentNamespace =
-				CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
+				ASTQueries.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
 		if (parentNamespace == null)
 			parentNamespace = context.getDefinitionAST();
 		return parentNamespace;

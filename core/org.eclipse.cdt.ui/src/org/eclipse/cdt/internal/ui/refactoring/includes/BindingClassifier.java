@@ -120,6 +120,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
@@ -127,7 +128,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -1460,7 +1460,7 @@ public class BindingClassifier {
 	 * Checks if the given name is part of a template argument.
 	 */
 	private boolean isTemplateArgumentRequiringCompleteType(IASTName name) {
-		ICPPASTTypeId typeId = CPPVisitor.findAncestorWithType(name, ICPPASTTypeId.class);
+		ICPPASTTypeId typeId = ASTQueries.findAncestorWithType(name, ICPPASTTypeId.class);
 		if (typeId == null || typeId.getPropertyInParent() != ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT)
 			return false;
 		ICPPASTTemplateId templateId = (ICPPASTTemplateId) typeId.getParent();

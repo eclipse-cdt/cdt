@@ -294,16 +294,7 @@ public class CPPVisitor extends ASTQueries {
 			return name.getBinding();
 		}
 
-		// GNU Goto label reference
-		//
-		//   void* labelPtr = &&foo; <-- label reference
-		// foo:
-		//
-		boolean labelReference = isLabelReference(parent);
-
-		if (labelReference) {
-			return createLabelReferenceBinding(name);
-		} else if (parent instanceof IASTIdExpression) {
+		if (parent instanceof IASTIdExpression) {
 			return resolveBinding(parent);
 		} else if (parent instanceof ICPPASTFieldReference) {
 			return resolveBinding(parent);
@@ -320,7 +311,7 @@ public class CPPVisitor extends ASTQueries {
 		} else if (parent instanceof IASTEnumerator) {
 		    return createBinding((IASTEnumerator) parent);
 		} else if (parent instanceof IASTGotoStatement) {
-		    return createBinding((IASTGotoStatement) parent);
+		    return resolveBinding((IASTGotoStatement) parent);
 		} else if (parent instanceof IASTLabelStatement) {
 		    return createBinding((IASTLabelStatement) parent);
 		} else if (parent instanceof ICPPASTTemplateParameter) {
@@ -382,44 +373,8 @@ public class CPPVisitor extends ASTQueries {
 		return scope == inScope;
 	}
 
-	private static IBinding createLabelReferenceBinding(IASTName name) {
-		// Find function scope for r-value expression
-		//   void* labelPtr = &&foo;
-		// foo:                 ^^^
-		//   return
-		IBinding binding = null;
-		IBinding enclosingFunction = findEnclosingFunction(name);
-		if (enclosingFunction instanceof IFunction) {
-			IFunction function = (IFunction) enclosingFunction;
-			IScope functionScope = function.getFunctionScope();
-			if (functionScope != null) {
-				binding = functionScope.getBinding(name, false);
-				if (!(binding instanceof ILabel)) {
-					binding = new CPPLabel(name);
-					ASTInternal.addName(functionScope, name);
-				}
-			}
-		}
-
-		if (binding == null) {
-			IASTNode parentExpression = name.getParent();
-			binding = new CPPScope.CPPScopeProblem(parentExpression, IProblemBinding.SEMANTIC_BAD_SCOPE,
-					parentExpression.getRawSignature().toCharArray());
-		}
-
-		return binding;
-	}
-
-	private static IBinding createBinding(IASTGotoStatement gotoStatement) {
-	    IASTName name = gotoStatement.getName();
-	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope(name);
-	    IBinding binding = functionScope.getBinding(name, false);
-		if (binding == null || !(binding instanceof ILabel)) {
-		    binding = new CPPLabel(name);
-		    ASTInternal.addName(functionScope, name);
-		}
-
-	    return binding;
+	private static IBinding resolveBinding(IASTGotoStatement gotoStatement) {
+		return resolveLabel(gotoStatement.getName());
 	}
 
 	private static IBinding createBinding(IASTLabelStatement labelStatement) {
@@ -1423,6 +1378,9 @@ public class CPPVisitor extends ASTQueries {
 		while (node != null) {
 			if (node instanceof IASTIdExpression) {
 				name = ((IASTIdExpression) node).getName();
+				if (isLabelReference(node)) {
+					return resolveLabel(name);
+				} 
 				break;
 			} else if (node instanceof ICPPASTFieldReference) {
 				name = ((ICPPASTFieldReference) node).getFieldName();

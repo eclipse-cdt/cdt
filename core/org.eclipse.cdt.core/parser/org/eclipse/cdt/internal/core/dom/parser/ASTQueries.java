@@ -17,13 +17,18 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ILabel;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -149,13 +154,11 @@ public class ASTQueries {
 	 * Searches for the function enclosing the given node. May return <code>null</code>.
 	 */
 	public static IBinding findEnclosingFunction(IASTNode node) {
-		while (node != null && !(node instanceof IASTFunctionDefinition)) {
-			node= node.getParent();
-		}
-		if (node == null)
+		IASTFunctionDefinition functionDefinition = findAncestorWithType(node, IASTFunctionDefinition.class);
+		if (functionDefinition == null)
 			return null;
 
-		IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+		IASTDeclarator dtor= findInnermostDeclarator(functionDefinition.getDeclarator());
 		if (dtor != null) {
 			IASTName name= dtor.getName();
 			if (name != null) {
@@ -225,5 +228,54 @@ public class ASTQueries {
 		}
 
 		return labelReference;
+	}
+	
+	private static class FindLabelsAction extends ASTVisitor {
+        public IASTLabelStatement[] labels = null;
+        
+        public FindLabelsAction() {
+            shouldVisitStatements = true;
+        }
+        
+        @Override
+		public int visit(IASTStatement statement) {
+            if (statement instanceof IASTLabelStatement) {
+               labels = ArrayUtil.append(IASTLabelStatement.class, labels, (IASTLabelStatement) statement);
+            }
+            return PROCESS_CONTINUE;
+        }
+	}
+	
+	protected static ILabel[] getLabels(IASTFunctionDefinition functionDefinition) {
+	    FindLabelsAction action = new FindLabelsAction();
+	    
+        functionDefinition.accept(action);
+	    
+	    ILabel[] result = null;
+	    if (action.labels != null) {
+		    for (int i = 0; i < action.labels.length && action.labels[i] != null; i++) {
+		        IASTLabelStatement labelStatement = action.labels[i];
+		        IBinding binding = labelStatement.getName().resolveBinding();
+		        if (binding != null)
+		            result = ArrayUtil.append(ILabel.class, result, (ILabel) binding);
+		    }
+	    }
+	    return ArrayUtil.trim(ILabel.class, result);
+	}
+	
+	protected static IBinding resolveLabel(IASTName labelReference) {
+		char[] labelName = labelReference.toCharArray();
+		IASTFunctionDefinition functionDefinition = findAncestorWithType(labelReference,
+				IASTFunctionDefinition.class);
+		if (functionDefinition != null) {
+            for (ILabel label : getLabels(functionDefinition)) {
+                if (CharArrayUtils.equals(label.getNameCharArray(), labelName)) {
+                    return label;
+                }
+            }
+		}
+        // label not found
+        return new ProblemBinding(labelReference, IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, 
+        		labelName);
 	}
 }

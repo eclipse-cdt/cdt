@@ -10,18 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 public class CFunctionScope extends CScope implements ICFunctionScope {
 	public CFunctionScope(IASTFunctionDefinition function) {
@@ -45,38 +41,5 @@ public class CFunctionScope extends CScope implements ICFunctionScope {
 	        return ((IASTCompoundStatement) statement).getScope();
 	    }
 	    return null;
-	}
-
-	public ILabel[] getLabels() {
-	    FindLabelsAction action = new FindLabelsAction();
-	    
-        getPhysicalNode().accept(action);
-	    
-	    ILabel[] result = null;
-	    if (action.labels != null) {
-		    for (int i = 0; i < action.labels.length && action.labels[i] != null; i++) {
-		        IASTLabelStatement labelStatement = action.labels[i];
-		        IBinding binding = labelStatement.getName().resolveBinding();
-		        if (binding != null)
-		            result = ArrayUtil.append(ILabel.class, result, (ILabel) binding);
-		    }
-	    }
-	    return ArrayUtil.trim(ILabel.class, result);
-	}
-	
-	static private class FindLabelsAction extends ASTVisitor {
-        public IASTLabelStatement[] labels = null;
-        
-        public FindLabelsAction() {
-            shouldVisitStatements = true;
-        }
-        
-        @Override
-		public int visit(IASTStatement statement) {
-            if (statement instanceof IASTLabelStatement) {
-               labels = ArrayUtil.append(IASTLabelStatement.class, labels, (IASTLabelStatement) statement);
-            }
-            return PROCESS_CONTINUE;
-        }
 	}
 }

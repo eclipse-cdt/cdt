@@ -491,6 +491,7 @@ public abstract class CSelector extends Composite {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
+				if (isDisposed()) return;
 				update(selection); // update current selection - name or icon
 									// may have changed
 				if (popup != null && !popup.isDisposed()) {

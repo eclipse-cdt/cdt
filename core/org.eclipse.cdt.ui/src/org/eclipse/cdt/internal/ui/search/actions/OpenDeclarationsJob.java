@@ -496,7 +496,17 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 
 	private ICElementHandle getCElementForName(ICProject project, IIndex index, IName declName) throws CoreException {
 		if (declName instanceof IIndexName) {
-			return IndexUI.getCElementForName(project, index, (IIndexName) declName);
+			IIndexName indexName = (IIndexName) declName;
+			ITranslationUnit tu= IndexUI.getTranslationUnit(project, indexName);
+			if (tu != null) {
+				// If the file containing the target name is accessible via multiple
+				// workspace paths, choose the one that most closely matches the
+				// workspace path of the file originating the action.
+				tu = IndexUI.getPreferredTranslationUnit(tu, fTranslationUnit);
+				
+				return IndexUI.getCElementForName(tu, index, indexName);
+			}
+			return null;
 		}
 		if (declName instanceof IASTName) {
 			IASTName astName = (IASTName) declName;

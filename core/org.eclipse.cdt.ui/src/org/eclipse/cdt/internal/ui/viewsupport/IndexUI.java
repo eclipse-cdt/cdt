@@ -13,7 +13,9 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
@@ -92,6 +94,7 @@ import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
@@ -358,6 +361,79 @@ public class IndexUI {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Given a 'source' and a 'target' translation unit, return a translation unit
+	 * that resolves to the same file as 'target' and has a workspace path that
+	 * matches the workspace path of 'source' as closely as possible.
+	 * 
+	 * Most commonly, 'target' will be the only trasnlation unit that resolves to
+	 * the file in question, and 'target' is returned. In the presence of linked
+	 * folders, however, multiple workspace paths can refer to the same file, and
+	 * this function chooses the one that's closest to 'source'.
+	 */
+	public static ITranslationUnit getPreferredTranslationUnit(ITranslationUnit target, 
+			ITranslationUnit source) {
+		// Get the files corresponding to the source and target translation units.
+		// These files encode the workspace paths.
+		IFile sourceFile = source.getFile();
+		IFile targetFile = target.getFile();
+		if (sourceFile == null || targetFile == null) {
+			return target;
+		}
+		
+		// Resolve the location of the target in the filesystem.
+		IPath targetLocation = targetFile.getLocation();
+		if (targetLocation == null) {
+			return target;
+		}
+		
+		// Find all files that resolve to the same location.
+		IFile[] candidates = ResourceLookup.findFilesForLocation(targetLocation);
+		
+		// In the common case that there is one only file that resolves to that
+		// location, or if the search found no results, return the original target.
+		if (candidates.length <= 1) {
+			return target;
+		}
+		
+		// Get the workspace path of the source translation unit's file.
+		final IPath sourcePath = sourceFile.getFullPath();
+				
+		// Sort the candidates files by how closely they match 'sourcePath'.
+		Arrays.sort(candidates, new Comparator<IFile>() {
+			@Override
+			public int compare(IFile f1, IFile f2) {
+				// Get the workspace paths of the files being compared.
+				IPath p1 = f1.getFullPath();
+				IPath p2 = f2.getFullPath();
+				
+				// Closeness of the match is defined by how many segments of
+				// the candidate's workspace path match 'sourcePath'.
+				int s1 = p1.matchingFirstSegments(sourcePath);
+				int s2 = p2.matchingFirstSegments(sourcePath);
+				if (s1 > s2)
+					return -1;
+				if (s1 < s2)
+					return 1;
+				
+				// Fall back on alphabetical comparison.
+				return p1.toString().compareTo(p2.toString());
+			}
+		});
+		
+		// Processing in the sorted order, return the first file for which
+		// a translation unit can be found.
+		for (IFile candidate : candidates) {
+			ITranslationUnit tu = CoreModelUtil.findTranslationUnit(candidate);
+			if (tu != null) {
+				return tu;
+			}
+		}
+		
+		// Fall back on returning the original target.
+		return target;
 	}
 
 	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName)

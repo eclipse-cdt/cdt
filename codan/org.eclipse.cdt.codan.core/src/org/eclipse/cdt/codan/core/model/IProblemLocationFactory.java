@@ -16,11 +16,6 @@ import org.eclipse.core.resources.IFile;
  * Factory interface that allows to create problem locations.
  *
  * Clients may implement and extend this interface.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
- * of a work in progress. There is no guarantee that this API will work or that
- * it will remain the same.
- * </p>
  */
 public interface IProblemLocationFactory {
 	/**
@@ -33,23 +28,6 @@ public interface IProblemLocationFactory {
 	 * @return instance of IProblemLocation
 	 */
 	public IProblemLocation createProblemLocation(IFile file, int line);
-
-	/**
-	 * Create and return instance of IProblemLocation
-	 *
-	 * @param file
-	 *        - file where problem is found
-	 * @param startChar
-	 *        - start char of the problem in the file, is zero-relative
-	 * @param endChar
-	 *        - end char of the problem in the file, is zero-relative and
-	 *        exclusive.
-	 * @return instance of IProblemLocation
-	 *
-	 * @deprecated Use {@link #createProblemLocation(IFile, int, int, int)} instead.
-	 */
-	@Deprecated
-	public IProblemLocation createProblemLocation(IFile file, int startChar, int endChar);
 
 	/**
 	 * Create and return instance of IProblemLocation

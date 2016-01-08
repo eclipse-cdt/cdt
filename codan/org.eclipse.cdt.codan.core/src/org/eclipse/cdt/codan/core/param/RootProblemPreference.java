@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
-
 /**
  * Common problem preference root for most of the codan problems
  *
@@ -24,26 +23,34 @@ public class RootProblemPreference extends MapProblemPreference {
 	public static final String KEY = PARAM;
 
 	/**
-	 *  Default constructor
+	 * Default constructor
 	 */
 	public RootProblemPreference() {
 		super(KEY, ""); //$NON-NLS-1$
 		addChildDescriptor(new FileScopeProblemPreference());
 		addChildDescriptor(new LaunchModeProblemPreference());
+		addChildDescriptor(new SuppressionCommentProblemPreference());
 	}
 
 	/**
 	 * @return scope preference
 	 */
 	public FileScopeProblemPreference getScopePreference() {
-		return (FileScopeProblemPreference) getChildDescriptor(
-				FileScopeProblemPreference.KEY);
+		return (FileScopeProblemPreference) getChildDescriptor(FileScopeProblemPreference.KEY);
 	}
+
 	/**
-	 * @return launch mode
+	 * @return launch mode preference
 	 */
 	public LaunchModeProblemPreference getLaunchModePreference() {
 		return (LaunchModeProblemPreference) getChildDescriptor(LaunchModeProblemPreference.KEY);
+	}
 
+	/**
+	 * @return suppression comment preference
+	 * @since 4.0
+	 */
+	public SuppressionCommentProblemPreference getSuppressionCommentPreference() {
+		return (SuppressionCommentProblemPreference) getChildDescriptor(SuppressionCommentProblemPreference.KEY);
 	}
 }

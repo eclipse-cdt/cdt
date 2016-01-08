@@ -35,12 +35,6 @@ public abstract class AbstractChecker implements IChecker {
 	public AbstractChecker() {
 	}
 
-	@Deprecated
-	@Override
-	public boolean enabledInContext(IResource resource) {
-		return false;
-	}
-
 	/**
 	 * Reports a simple problem for given file and line
 	 *

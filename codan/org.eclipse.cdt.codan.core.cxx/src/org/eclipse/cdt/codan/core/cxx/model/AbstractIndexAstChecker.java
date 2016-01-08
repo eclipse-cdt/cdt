@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
 import org.eclipse.cdt.codan.core.model.ICheckerInvocationContext;
@@ -18,6 +21,7 @@ import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
@@ -35,7 +39,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
- * Convenience implementation of checker that works on index-based AST of a C/C++
+ * Convenience implementation of checker that works on index-based AST of a
+ * C/C++
  * program.
  * 
  * Clients may extend this class.
@@ -50,7 +55,6 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			return false;
 		if (!(resource instanceof IFile))
 			return true;
-			
 		processFile((IFile) resource);
 		return false;
 	}
@@ -68,7 +72,6 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 				context.add(modelCache);
 			}
 		}
-
 		try {
 			// Run the checker only if the index is fully initialized. Otherwise it may produce
 			// false positives.
@@ -87,8 +90,11 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IRunnableInEditorChecker#processModel(Object, ICheckerInvocationContext)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IRunnableInEditorChecker#processModel(Object,
+	 * ICheckerInvocationContext)
 	 */
 	@Override
 	public synchronized void processModel(Object model, ICheckerInvocationContext context) {
@@ -98,7 +104,6 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			// Otherwise the checker may produce false positives.
 			if (ast.isBasedOnIncompleteIndex())
 				return;
-
 			setContext(context);
 			synchronized (context) {
 				modelCache = context.get(CxxModelsCache.class);
@@ -110,7 +115,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			try {
 				processAst(ast);
 			} finally {
-				modelCache = null; 
+				modelCache = null;
 				setContext(null);
 			}
 		}
@@ -131,6 +136,49 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		IProblemLocation loc = getProblemLocation(astNode);
 		if (loc != null)
 			reportProblem(problem, loc, args);
+	}
+
+	/**
+	 * Checks if problem should be reported, in this case it will check line
+	 * comments, later can add filters or what not.
+	 * 
+	 * @param problem - problem kind
+	 * @param loc - location
+	 * @param args - arguments
+	 * @since 3.4
+	 */
+	@Override
+	protected boolean shouldProduceProblem(IProblem problem, IProblemLocation loc, Object... args) {
+		String suppressionComment = (String) getSuppressionCommentPreference(problem).getValue();
+		if (suppressionComment.isEmpty())
+			return true;
+		List<IASTComment> lineComments = getLineCommentsForLocation(loc);
+		for (IASTComment astComment : lineComments) {
+			if (astComment.getRawSignature().contains(suppressionComment))
+				return false;
+		}
+		return true;
+	}
+
+	protected List<IASTComment> getLineCommentsForLocation(IProblemLocation loc) {
+		ArrayList<IASTComment> lineComments = new ArrayList<>();
+		try {
+			IASTComment[] commentsArray = modelCache.getAST().getComments();
+			for (IASTComment comm : commentsArray) {
+				IASTFileLocation fileLocation = comm.getFileLocation();
+				if (fileLocation.getStartingLineNumber() == loc.getLineNumber()) {
+					//XXX check on windows portable or os?
+					String problemFile = loc.getFile().getLocation().toPortableString();
+					String commentFile = fileLocation.getFileName();
+					if (problemFile.equals(commentFile)) {
+						lineComments.add(comm);
+					}
+				}
+			}
+		} catch (OperationCanceledException | CoreException e) {
+			Activator.log(e);
+		}
+		return lineComments;
 	}
 
 	protected IProblemLocation getProblemLocation(IASTNode astNode) {

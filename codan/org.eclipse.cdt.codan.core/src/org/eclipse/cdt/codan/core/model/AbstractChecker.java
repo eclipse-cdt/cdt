@@ -50,7 +50,7 @@ public abstract class AbstractChecker implements IChecker {
 	 *        internationalization)
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber, Object... args) {
-		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), args);
+		reportProblem(id, createProblemLocation(file, lineNumber), args);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public abstract class AbstractChecker implements IChecker {
 	 *        - line
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber) {
-		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), EMPTY_OBJECT_ARRAY);
+		reportProblem(id, createProblemLocation(file, lineNumber), EMPTY_OBJECT_ARRAY);
 	}
 
 	/**

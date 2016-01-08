@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,8 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Abstract Implementation of IProblemLocation
- * 
+ *
  * Clients may extend this class.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same.
- * </p>
  */
 public abstract class AbstractProblemLocation implements IProblemLocation {
 	protected IResource file;
@@ -58,10 +53,11 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 		this.posEnd = endChar;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getData()
+	/**
+	 * Gets the extra data for the location. It is checker specific,
+	 * for example can be problem backtrace.
+	 *
+	 * @return data object or null if non set
 	 */
 	@Override
 	public Object getData() {
@@ -69,8 +65,8 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	}
 
 	/**
-	 * Sets extra data for the problem location
-	 * 
+	 * Sets extra data for the problem location.
+	 *
 	 * @param data
 	 */
 	public void setData(Object data) {
@@ -79,7 +75,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getFile()
 	 */
 	@Override
@@ -112,7 +108,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getStartPos()
 	 */
 	@Override
@@ -122,7 +118,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getEndingChar()
 	 */
 	@Override

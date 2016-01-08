@@ -107,4 +107,44 @@ public class AssignmentInConditionCheckerTest extends CheckerTestCase {
 		String arg = CodanProblemMarker.getProblemArgument(marker, 0);
 		assertEquals("a=b", arg); //$NON-NLS-1$
 	}
+
+	//	main() {
+	//      int i;
+	//	    while (i=b()) { // @suppress("Assignment in condition")
+	//	    }
+	//	}
+	public void test_while2supp() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	main() {
+	//      int i;
+	//	    while (i=b()) { /* @suppress("Assignment in condition") */
+	//	    }
+	//	}
+	public void test_while3supp() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	#define LOOP() while (i=b() /* @suppress("Assignment in condition") */ ) {  }
+	//  main() {
+	//      int i;
+	//	    LOOP();
+	//	}
+	public void test_whileMacroSupp() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(4); // TODO: suppression does not work in macro body now
+	}
+
+	//	#define LOOP() while (i=b()) { }
+	//  main() {
+	//      int i;
+	//	    LOOP(); // err
+	//	}
+	public void test_whileMacro() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(4);
+	}
 }

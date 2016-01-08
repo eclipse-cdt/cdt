@@ -20,11 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  */
 public interface ICodanCommentMap {
 	/**
-	 * Returns an Collection of comments for the given node (after the node).
-	 * This list contains all the comments
-	 * which are assigned to this specific node. If no comments are available an
-	 * empty
-	 * collection is returned.
+	 * Returns a List of comments for the given node (following the node).
+	 * If no comments are available an empty list is returned.
 	 * 
 	 * @param node The key to fetch the associated comments.
 	 * @return list of comments
@@ -32,42 +29,48 @@ public interface ICodanCommentMap {
 	public List<IASTComment> getTrailingCommentsForNode(IASTNode node);
 
 	/**
-	 * Returns an Collection of comments for the given node (before the node).
-	 * This list contains all the comments
-	 * which are assigned to this specific node. If no comments are available an
-	 * empty
-	 * collection is returned.
+	 * Returns a List of all comments for the given node (preceding the node).
+	 * If no comments are available an empty list is returned.
 	 * 
 	 * @param node The key to fetch the associated comments.
 	 * @return list of comments
 	 */
 	public List<IASTComment> getLeadingCommentsForNode(IASTNode node);
 
-	
 	/**
-	 * Returns an ArrayList for the given node. This ArrayList contains all the comments 
-	 * which are assigned to this specific node. If no comments are available an empty
-	 * ArrayList is returned.
+	 * Returns a List of comments associated with the given node.
+	 * If no comments are available an empty list is returned.
+	 * 
+	 * 
 	 * @param node The key to fetch the associated comments.
-	 * @return ArrayList
+	 * @return list of comments
 	 */
 	public List<IASTComment> getFreestandingForNode(IASTNode node);
 
 	/**
-	 * @param node
-	 * @return
+	 * Gets last comment from {@link #getLeadingCommentsForNode(IASTNode)}, or
+	 * null if list is empty
+	 * 
+	 * @param node - The key to fetch the associated comments.
+	 * @return - A comment node or null if not found.
 	 */
 	public IASTComment getLastLeadingCommentForNode(IASTNode node);
 
 	/**
-	 * @param node
-	 * @return
+	 * Gets first comment from {@link #getTrailingCommentsForNode(IASTNode)} or
+	 * null if list is empty.
+	 * 
+	 * @param node - The key to fetch the associated comments.
+	 * @return - A comment node or null if not found.
 	 */
 	public IASTComment getFirstTrailingCommentForNode(IASTNode node);
 
 	/**
-	 * @param node
-	 * @return
+	 * Gets last comment from {@link #getFreestandingForNode(IASTNode)} or
+	 * null if list is empty.
+	 * 
+	 * @param node - The key to fetch the associated comments.
+	 * @return - A comment node or null if not found.
 	 */
 	public IASTComment getLastFreestandingCommentForNode(IASTNode node);
 }

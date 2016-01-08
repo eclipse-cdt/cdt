@@ -25,12 +25,6 @@ public class ProblemLocationFactory implements IProblemLocationFactory {
 	}
 
 	@Override
-	@Deprecated
-	public IProblemLocation createProblemLocation(IFile file, int startChar, int endChar) {
-		return new CodanProblemLocation(file, startChar, endChar);
-	}
-
-	@Override
 	public IProblemLocation createProblemLocation(IFile file, int startChar, int endChar, int line) {
 		return new CodanProblemLocation(file, startChar, endChar, line);
 	}

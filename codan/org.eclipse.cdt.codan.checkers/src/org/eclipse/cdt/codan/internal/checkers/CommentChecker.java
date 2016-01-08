@@ -55,9 +55,9 @@ public class CommentChecker extends AbstractIndexAstChecker {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private IProblemLocation getProblemLocation(IASTFileLocation astLocation, int pos) {
 		IProblemLocationFactory locFactory = getRuntime().getProblemLocationFactory();
-		return locFactory.createProblemLocation(getFile(), astLocation.getNodeOffset() + pos, astLocation.getNodeOffset() + pos + 2);
+		int newPosition = astLocation.getNodeOffset() + pos;
+		return locFactory.createProblemLocation(getFile(), newPosition, newPosition + 2, -1);
 	}
 }

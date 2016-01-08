@@ -66,15 +66,6 @@ public interface IChecker {
 	IProblemReporter getProblemReporter();
 
 	/**
-	 * @param resource the resource to run on.
-	 * @return true if checker should be run on this resource.
-	 * @deprecated Ignored since 2.0. Replaced by
-	 *     {@link org.eclipse.cdt.codan.internal.core.CheckersRegistry#isCheckerEnabled(IChecker, IResource, CheckerLaunchMode)}
-	 */
-	@Deprecated
-	boolean enabledInContext(IResource resource);
-
-	/**
 	 * Checker must implement this method to determine if it can run in editor
 	 * "as you type". Checker must be really light weight to run in this mode.
 	 * If it returns true, checker must also implement

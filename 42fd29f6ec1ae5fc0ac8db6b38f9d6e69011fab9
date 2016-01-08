@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_d765523a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTQueries.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-08T00:09:46Z",
+      "side": 1,
+      "message": "Better is initialize to IASTLabelStatement.EMPTY_LABEL_STATEMENT_ARRAY. The way IASTLabelStatement.class can be removed from line 243.",
+      "range": {
+        "startLine": 234,
+        "startChar": 45,
+        "endLine": 234,
+        "endChar": 49
+      },
+      "revId": "42fd29f6ec1ae5fc0ac8db6b38f9d6e69011fab9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_f7597687",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ASTQueries.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-08T00:09:46Z",
+      "side": 1,
+      "message": "Better to initialize to ILabel.EMPTY_LABEL_ARRAY.",
+      "range": {
+        "startLine": 254,
+        "startChar": 23,
+        "endLine": 254,
+        "endChar": 27
+      },
+      "revId": "42fd29f6ec1ae5fc0ac8db6b38f9d6e69011fab9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -22,6 +22,7 @@ import org.eclipse.cdt.codan.core.param.LaunchModeProblemPreference;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.core.param.RootProblemPreference;
+import org.eclipse.cdt.codan.core.param.SuppressionCommentProblemPreference;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
@@ -43,6 +44,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 				CheckerLaunchMode.RUN_ON_DEMAND,
 				CheckerLaunchMode.RUN_ON_FULL_BUILD,
 				CheckerLaunchMode.RUN_ON_INC_BUILD);
+		getSuppressionCommentPreference(problem).setValue(SuppressionCommentProblemPreference.generateDefaultComment(problem));
 	}
 
 	/**
@@ -66,9 +68,18 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	}
 
 	/**
+	 * @param problem - problem for which preference is extracted
+	 * @return suppression comment preference
+	 * @since 4.0
+	 */
+	public SuppressionCommentProblemPreference getSuppressionCommentPreference(IProblem problem) {
+		return getTopLevelPreference(problem).getSuppressionCommentPreference();
+	}
+
+	/**
 	 * User can scope out some resources for this checker. Checker can use this
 	 * call to test if it should run on this resource at all or not. Test should
-	 * be done within processResource method not in enabledInContext.
+	 * be done within processResource method.
 	 * This test uses user "scope" preference for the all problems that this
 	 * checker can produce.
 	 *
@@ -109,10 +120,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 
 	@Override
 	public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
-		if (shouldProduceProblem(getProblemById(problemId, loc.getFile()),
-				loc.getFile().getFullPath())) {
-			super.reportProblem(problemId, loc, args);
-		}
+		reportProblem(getProblemById(problemId, loc.getFile()), loc, args);
 	}
 
 	/**
@@ -125,8 +133,23 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 * @since 2.0
 	 */
 	public void reportProblem(IProblem pr, IProblemLocation loc, Object... args) {
-		if (shouldProduceProblem(pr, loc.getFile().getFullPath()))
+		if (shouldProduceProblem(pr, loc, args))
 			super.reportProblem(pr.getId(), loc, args);
+	}
+
+	/**
+	 * Checks if problem should be reported, this implementation only checks
+	 * suppression by scope, but subclass should override,
+	 * to implement any other filtering, such as suppression by filter or by comment.
+	 * Call super to check for scope suppression as well.
+	 *
+	 * @param problem - problem kind
+	 * @param loc - location
+	 * @param args - arguments
+	 * @since 4.0
+	 */
+	protected boolean shouldProduceProblem(IProblem problem, IProblemLocation loc, Object... args) {
+		return shouldProduceProblem(problem, loc.getFile().getFullPath());
 	}
 
 	/**

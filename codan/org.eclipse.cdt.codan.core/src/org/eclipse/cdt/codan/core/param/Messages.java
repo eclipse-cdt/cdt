@@ -18,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
  */
 class Messages extends NLS {
 	public static String FileScopeProblemPreference_Label;
+	public static String SuppressionCommentProblemPreference_Label;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

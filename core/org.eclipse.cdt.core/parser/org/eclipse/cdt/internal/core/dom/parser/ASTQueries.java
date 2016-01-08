@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -70,23 +70,23 @@ public class ASTQueries {
 		}
 	}
 	private static NameSearch NAME_SEARCH= new NameSearch();
-	
+
 	/**
-	 * Tests whether the given node can contain ast-names, suitable to be used before ambiguity 
+	 * Tests whether the given node can contain ast-names, suitable to be used before ambiguity
 	 * resolution.
 	 */
 	public static boolean canContainName(IASTNode node) {
 		if (node == null)
 			return false;
-		
+
 		NAME_SEARCH.reset();
 		node.accept(NAME_SEARCH);
 		return NAME_SEARCH.foundName();
 	}
-	
-	/** 
-	 * Returns the outermost declarator the given <code>declarator</code> nests within, or
-	 * <code>declarator</code> itself.
+
+	/**
+	 * Returns the outermost declarator the given {@code declarator} nests within, or
+	 * the given {@code declarator} itself.
 	 */
 	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
 		IASTDeclarator outermost= null;
@@ -98,9 +98,9 @@ public class ASTQueries {
 		return outermost;
 	}
 
-	/** 
-	 * Returns the innermost declarator nested within the given <code>declarator</code>, or
-	 * <code>declarator</code> itself.
+	/**
+	 * Returns the innermost declarator nested within the given {@code declarator}, or
+	 * the given {@code declarator} itself.
 	 */
 	public static IASTDeclarator findInnermostDeclarator(IASTDeclarator declarator) {
 		IASTDeclarator innermost= null;
@@ -117,9 +117,9 @@ public class ASTQueries {
 	public static IASTDeclarator findTypeRelevantDeclarator(IASTDeclarator declarator) {
 		if (declarator == null)
 			return null;
-		
+
 		IASTDeclarator result= findInnermostDeclarator(declarator);
-		while (result.getPointerOperators().length == 0 
+		while (result.getPointerOperators().length == 0
 				&& !(result instanceof IASTFieldDeclarator)
 				&& !(result instanceof IASTFunctionDeclarator)
 				&& !(result instanceof IASTArrayDeclarator)) {
@@ -147,9 +147,9 @@ public class ASTQueries {
 		}
 		return (T) node;
 	}
-	
+
 	/**
-	 * Searches for the function enclosing the given node. May return <code>null</code>.
+	 * Searches for the function enclosing the given node. May return {@code null}.
 	 */
 	public static IBinding findEnclosingFunction(IASTNode node) {
 		IASTFunctionDefinition functionDefinition = findAncestorWithType(node, IASTFunctionDefinition.class);
@@ -169,7 +169,7 @@ public class ASTQueries {
 	/**
 	 * Extracts the active declarations from an array of declarations.
 	 */
-	public static IASTDeclaration[] extractActiveDeclarations(final IASTDeclaration[] allDeclarations, final int size) {
+	public static IASTDeclaration[] extractActiveDeclarations(IASTDeclaration[] allDeclarations, int size) {
 		IASTDeclaration[] active;
 		if (size == 0) {
 			active= IASTDeclaration.EMPTY_DECLARATION_ARRAY;
@@ -182,7 +182,7 @@ public class ASTQueries {
 					active[j++]= d;
 				}
 			}
-			active= ArrayUtil.trimAt(IASTDeclaration.class, active, j-1);
+			active= ArrayUtil.trim(active, j);
 		}
 		return active;
 	}
@@ -194,7 +194,7 @@ public class ASTQueries {
 			return false;
 		return type1.isSameType(type2);
 	}
-	
+
 	protected static boolean areArraysOfTheSameElementType(IType t1, IType t2) {
 		if (t1 instanceof IArrayType && t2 instanceof IArrayType) {
 			IArrayType a1 = (IArrayType) t1;
@@ -203,9 +203,9 @@ public class ASTQueries {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Check whether 'ancestor' is an ancestor of 'descendant' in the AST. 
+	 * Check whether 'ancestor' is an ancestor of 'descendant' in the AST.
 	 */
 	public static boolean isAncestorOf(IASTNode ancestor, IASTNode descendant) {
 		do {
@@ -222,19 +222,19 @@ public class ASTQueries {
 
 		if (parent instanceof IASTUnaryExpression) {
 			int operator = ((IASTUnaryExpression) parent).getOperator();
-			labelReference = operator == IASTUnaryExpression.op_labelReference; 
+			labelReference = operator == IASTUnaryExpression.op_labelReference;
 		}
 
 		return labelReference;
 	}
-	
+
 	private static class FindLabelsAction extends ASTVisitor {
         public IASTLabelStatement[] labels = IASTLabelStatement.EMPTY_ARRAY;
-        
+
         public FindLabelsAction() {
             shouldVisitStatements = true;
         }
-        
+
         @Override
 		public int visit(IASTStatement statement) {
             if (statement instanceof IASTLabelStatement) {
@@ -243,12 +243,12 @@ public class ASTQueries {
             return PROCESS_CONTINUE;
         }
 	}
-	
+
 	protected static ILabel[] getLabels(IASTFunctionDefinition functionDefinition) {
 	    FindLabelsAction action = new FindLabelsAction();
-	    
+
         functionDefinition.accept(action);
-	    
+
 	    ILabel[] result = ILabel.EMPTY_ARRAY;
 	    if (action.labels != null) {
 		    for (int i = 0; i < action.labels.length && action.labels[i] != null; i++) {
@@ -260,11 +260,11 @@ public class ASTQueries {
 	    }
 	    return ArrayUtil.trim(result);
 	}
-	
+
 	protected static IBinding resolveLabel(IASTName labelReference) {
 		char[] labelName = labelReference.toCharArray();
-		IASTFunctionDefinition functionDefinition = findAncestorWithType(labelReference,
-				IASTFunctionDefinition.class);
+		IASTFunctionDefinition functionDefinition =
+				findAncestorWithType(labelReference, IASTFunctionDefinition.class);
 		if (functionDefinition != null) {
             for (ILabel label : getLabels(functionDefinition)) {
                 if (CharArrayUtils.equals(label.getNameCharArray(), labelName)) {
@@ -272,8 +272,8 @@ public class ASTQueries {
                 }
             }
 		}
-        // label not found
-        return new ProblemBinding(labelReference, IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, 
+        // Label not found.
+        return new ProblemBinding(labelReference, IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND,
         		labelName);
 	}
 }

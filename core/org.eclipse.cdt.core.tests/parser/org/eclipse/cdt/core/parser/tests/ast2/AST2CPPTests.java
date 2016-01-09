@@ -1477,6 +1477,16 @@ public class AST2CPPTests extends AST2TestBase {
 	public void _testInheritedTemplateConstructor() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct base {};
+	//
+	//	struct derived : public base {
+	//		using base::base;
+	//		base waldo() const;
+	//	};
+	public void testInheritedConstructorShadowingBaseClassName_485383() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	// class A { ~A(); };
 	// class B { ~B(void); };

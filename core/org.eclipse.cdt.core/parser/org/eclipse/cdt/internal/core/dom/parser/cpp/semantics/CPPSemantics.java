@@ -1360,7 +1360,17 @@ public class CPPSemantics {
 				if (b instanceof ICPPUsingDeclaration) {
 					if (data.forDeclaration() == null) {
 						for (IBinding d : ((ICPPUsingDeclaration) b).getDelegates()) {
-							if (d != null && !(data.typesOnly && isObject(d))) {
+							// Note on excluding constructors:
+							// Constructors are never found during name lookup ([class.ctor] p2).
+							// Binding resolution sometimes resolves names to constructors, and as
+							// such, the delegates of a using-declaration can include constructors,
+							// but when using these delegates in the process of name lookup,
+							// constructors are ignored. If the binding resolution triggering this
+							// name lookup wants to ultimately resolve to a constructor, it can do so
+							// after the name lookup phase, e.g. in the convertClassToConstructor()
+							// call in postResolution().
+							if (d != null && !(data.typesOnly && isObject(d)) && 
+									!(d instanceof ICPPConstructor)) {
 								result.add(d);
 							}
 						}

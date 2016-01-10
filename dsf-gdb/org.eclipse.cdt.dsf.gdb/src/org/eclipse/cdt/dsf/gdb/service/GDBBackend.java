@@ -144,37 +144,43 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
     }
 
     private void doInitialize(final RequestMonitor requestMonitor) {
-
+        getExecutor().execute(getStartupSequence(requestMonitor));
+    }
+    
+	/** @since 5.0 */
+	protected Sequence getStartupSequence(final RequestMonitor requestMonitor) {
         final Sequence.Step[] initializeSteps = new Sequence.Step[] {
                 new GDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new MonitorJobStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
             };
 
-        Sequence startupSequence = new Sequence(getExecutor(), requestMonitor) {
+        return new Sequence(getExecutor(), requestMonitor) {
             @Override public Step[] getSteps() { return initializeSteps; }
         };
-        getExecutor().execute(startupSequence);
     }
 
     @Override
     public void shutdown(final RequestMonitor requestMonitor) {
+        getExecutor().execute(getShutdownSequence(new RequestMonitor(getExecutor(), requestMonitor) {
+        	@Override
+        	protected void handleCompleted() {
+				GDBBackend.super.shutdown(requestMonitor);
+        	}
+        }));
+    }
+    
+	/** @since 5.0 */
+    protected Sequence getShutdownSequence(RequestMonitor requestMonitor) {
         final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
                 new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new MonitorJobStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new GDBProcessStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
             };
-        Sequence shutdownSequence = 
-        	new Sequence(getExecutor(), 
-        				 new RequestMonitor(getExecutor(), requestMonitor) {
-        					@Override
-        					protected void handleCompleted() {
-        						GDBBackend.super.shutdown(requestMonitor);
-        					}
-        				}) {
+        
+        return new Sequence(getExecutor(), requestMonitor) {
             @Override public Step[] getSteps() { return shutdownSteps; }
         };
-        getExecutor().execute(shutdownSequence);
     }        
 
     
@@ -563,251 +569,280 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
         
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
-            class GDBLaunchMonitor {
-                boolean fLaunched = false;
-                boolean fTimedOut = false;
-            }
-            final GDBLaunchMonitor fGDBLaunchMonitor = new GDBLaunchMonitor(); 
-
-            final RequestMonitor gdbLaunchRequestMonitor = new RequestMonitor(getExecutor(), requestMonitor) {
-                @Override
-                protected void handleCompleted() {
-                    if (!fGDBLaunchMonitor.fTimedOut) {
-                        fGDBLaunchMonitor.fLaunched = true;
-                        if (!isSuccess()) {
-                            requestMonitor.setStatus(getStatus());
-                        }
-                        requestMonitor.done();
-                    }
-                }
-            };
-            
-            final Job startGdbJob = new Job("Start GDB Process Job") { //$NON-NLS-1$
-                {
-                    setSystem(true);
-                }
-
-                @Override
-                protected IStatus run(IProgressMonitor monitor) {
-                    if (gdbLaunchRequestMonitor.isCanceled()) {
-                        gdbLaunchRequestMonitor.setStatus(new Status(IStatus.CANCEL, GdbPlugin.PLUGIN_ID, -1, "Canceled starting GDB", null)); //$NON-NLS-1$
-                        gdbLaunchRequestMonitor.done();
-                        return Status.OK_STATUS;
-                    }
-                    
-                    try {                        
-                        fProcess = launchGDBProcess();
-                    	// Need to do this on the executor for thread-safety
-                    	getExecutor().submit(
-                                new DsfRunnable() {
-                                	@Override
-                                    public void run() { fBackendState = State.STARTED; }
-                                });
-                        // Don't send the backendStarted event yet.  We wait until we have registered this service
-                        // so that other services can have access to it.
-                    } catch(CoreException e) {
-                        gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, e.getMessage(), e));
-                        gdbLaunchRequestMonitor.done();
-                        return Status.OK_STATUS;
-                    }
-                    
-                    BufferedReader inputReader = null;
-                    BufferedReader errorReader = null;
-                    boolean success = false;
-                    try {
-                    	// Read initial GDB prompt
-                        inputReader = new BufferedReader(new InputStreamReader(getMIInputStream()));
-                        String line;
-                        while ((line = inputReader.readLine()) != null) {
-                            line = line.trim();
-                            if (line.endsWith("(gdb)")) { //$NON-NLS-1$
-                            	success = true;
-                                break;
-                            }
-                        }
-                        
-                        // Failed to read initial prompt, check for error
-                        if (!success) {
-                        	errorReader = new BufferedReader(new InputStreamReader(getMIErrorStream()));
-                        	String errorInfo = errorReader.readLine();
-                        	if (errorInfo == null) {
-                        		errorInfo = "GDB prompt not read"; //$NON-NLS-1$
-                        	}
-    	                    gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, errorInfo, null));
-                        }
-                    } catch (IOException e) {
-                    	success = false;
-	                    gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Error reading GDB output", e)); //$NON-NLS-1$
-                    }
-
-                    // In the case of failure, close the MI streams so
-                    // they are not leaked.
-                    if (!success)
-                    {
-	                	if (inputReader != null) {
-	                		try {
-								inputReader.close();
-							} catch (IOException e) {
-							}
-	                	}
-	                	if (errorReader != null) {
-	                		try {
-								errorReader.close();
-							} catch (IOException e) {
-							}
-	                	}
-                    }
-                    
-                    gdbLaunchRequestMonitor.done();
-                    return Status.OK_STATUS;
-                }
-            };
-            startGdbJob.schedule();
-                
-            getExecutor().schedule(new Runnable() { 
-            	@Override
-                public void run() {
-                    // Only process the event if we have not finished yet (hit the breakpoint).
-                    if (!fGDBLaunchMonitor.fLaunched) {
-                        fGDBLaunchMonitor.fTimedOut = true;
-                        Thread jobThread = startGdbJob.getThread();
-                        if (jobThread != null) {
-                            jobThread.interrupt();
-                        }
-                        requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
-                        requestMonitor.done();
-                    }
-                }},
-                fGDBLaunchTimeout, TimeUnit.SECONDS);
+        	doGDBProcessStep(requestMonitor);
         }
         
         @Override
         protected void shutdown(final RequestMonitor requestMonitor) {
-        	if (getState() != State.STARTED) {
-        		// gdb not started yet or already killed, don't bother starting
-        		// a job to kill it
-        		requestMonitor.done();
-        		return;
-        	}
-
-            new Job("Terminating GDB process.") {  //$NON-NLS-1$
-                {
-                    setSystem(true);
-                }
-                
-                @Override
-                protected IStatus run(IProgressMonitor monitor) {
-                	try {
-                		// Need to do this on the executor for thread-safety
-                		// And we should wait for it to complete since we then
-                		// check if the killing of GDB worked.
-						getExecutor().submit(
-						        new DsfRunnable() {
-						        	@Override
-						            public void run() { 
-						            	destroy();
-						            	
-						            	if (fMonitorJob.fMonitorExited) {
-						            		// Now that we have destroyed the process,
-						            		// and that the monitoring thread was killed,
-						            		// we need to set our state and send the event
-						            		fBackendState = State.TERMINATED; 
-						            		getSession().dispatchEvent(
-						            				new BackendStateChangedEvent(getSession().getId(), getId(), State.TERMINATED), 
-						            				getProperties());
-						            	}
-						            }
-						        }).get();
-					} catch (InterruptedException e1) {
-					} catch (ExecutionException e1) {
-					}
-        
-                    int attempts = 0;
-                    while (attempts < 10) {
-                        try {
-                            // Don't know if we really need the exit value... but what the heck.
-                            fGDBExitValue = fProcess.exitValue(); // throws exception if process not exited
-        
-                            requestMonitor.done();
-                            return Status.OK_STATUS;
-                        } catch (IllegalThreadStateException ie) {
-                        }
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                        }
-                        attempts++;
-                    }
-                    requestMonitor.setStatus(new Status(
-                        IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "GDB terminate failed", null));      //$NON-NLS-1$
-                    requestMonitor.done();
-                    return Status.OK_STATUS;
-                }
-            }.schedule();
+        	undoGDBProcessStep(requestMonitor);
         }
     }
-    
+
     protected class MonitorJobStep extends InitializationShutdownStep {
         MonitorJobStep(Direction direction) { super(direction); }
 
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
-            fMonitorJob = new MonitorJob(
-                fProcess, 
-                new DsfRunnable() {
-                	@Override
-                    public void run() {
-                        requestMonitor.done();
-                    }
-                });
-            fMonitorJob.schedule();
+        	doMonitorJobStep(requestMonitor);
         }
 
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
-            if (fMonitorJob != null) {
-            	fMonitorJob.kill();
-            }
-            requestMonitor.done();
+        	undoMonitorJobStep(requestMonitor);
         }
     }
-
+    
     protected class RegisterStep extends InitializationShutdownStep {
         RegisterStep(Direction direction) { super(direction); }
         @Override
-        public void initialize(final RequestMonitor requestMonitor) {
-            register(
-                new String[]{ IMIBackend.class.getName(), 
-                		      IMIBackend2.class.getName(),
-                              IGDBBackend.class.getName() }, 
-                new Hashtable<String,String>());
-            
-            getSession().addServiceEventListener(GDBBackend.this, null);
-
-            /*
-			 * This event is not consumed by any one at present, instead it's
-			 * the GDBControlInitializedDMEvent that's used to indicate that GDB
-			 * back end is ready for MI commands. But we still fire the event as
-			 * it does no harm and may be needed sometime.... 09/29/2008
-			 * 
-			 * We send the event in the register step because that is when
-			 * other services have access to it.
-			 */
-            getSession().dispatchEvent(
-                new BackendStateChangedEvent(getSession().getId(), getId(), State.STARTED), 
-                getProperties());
-            
-            requestMonitor.done();
+        public void initialize(RequestMonitor requestMonitor) {
+        	doRegisterStep(requestMonitor);
         }
 
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
-            unregister();
-            getSession().removeServiceEventListener(GDBBackend.this);
-            requestMonitor.done();
+        	undoRegisterStep(requestMonitor);
         }
     }
 
+	/** @since 5.0 */
+	protected void doGDBProcessStep(final RequestMonitor requestMonitor) {
+        class GDBLaunchMonitor {
+            boolean fLaunched = false;
+            boolean fTimedOut = false;
+        }
+        final GDBLaunchMonitor fGDBLaunchMonitor = new GDBLaunchMonitor(); 
+
+        final RequestMonitor gdbLaunchRequestMonitor = new RequestMonitor(getExecutor(), requestMonitor) {
+            @Override
+            protected void handleCompleted() {
+                if (!fGDBLaunchMonitor.fTimedOut) {
+                    fGDBLaunchMonitor.fLaunched = true;
+                    if (!isSuccess()) {
+                        requestMonitor.setStatus(getStatus());
+                    }
+                    requestMonitor.done();
+                }
+            }
+        };
+        
+        final Job startGdbJob = new Job("Start GDB Process Job") { //$NON-NLS-1$
+            {
+                setSystem(true);
+            }
+
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+                if (gdbLaunchRequestMonitor.isCanceled()) {
+                    gdbLaunchRequestMonitor.setStatus(new Status(IStatus.CANCEL, GdbPlugin.PLUGIN_ID, -1, "Canceled starting GDB", null)); //$NON-NLS-1$
+                    gdbLaunchRequestMonitor.done();
+                    return Status.OK_STATUS;
+                }
+                
+                try {                        
+                    fProcess = launchGDBProcess();
+                	// Need to do this on the executor for thread-safety
+                	getExecutor().submit(
+                            new DsfRunnable() {
+                            	@Override
+                                public void run() { fBackendState = State.STARTED; }
+                            });
+                    // Don't send the backendStarted event yet.  We wait until we have registered this service
+                    // so that other services can have access to it.
+                } catch(CoreException e) {
+                    gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, e.getMessage(), e));
+                    gdbLaunchRequestMonitor.done();
+                    return Status.OK_STATUS;
+                }
+                
+                BufferedReader inputReader = null;
+                BufferedReader errorReader = null;
+                boolean success = false;
+                try {
+                	// Read initial GDB prompt
+                    inputReader = new BufferedReader(new InputStreamReader(getMIInputStream()));
+                    String line;
+                    while ((line = inputReader.readLine()) != null) {
+                        line = line.trim();
+                        if (line.endsWith("(gdb)")) { //$NON-NLS-1$
+                        	success = true;
+                            break;
+                        }
+                    }
+                    
+                    // Failed to read initial prompt, check for error
+                    if (!success) {
+                    	errorReader = new BufferedReader(new InputStreamReader(getMIErrorStream()));
+                    	String errorInfo = errorReader.readLine();
+                    	if (errorInfo == null) {
+                    		errorInfo = "GDB prompt not read"; //$NON-NLS-1$
+                    	}
+	                    gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, errorInfo, null));
+                    }
+                } catch (IOException e) {
+                	success = false;
+                    gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Error reading GDB output", e)); //$NON-NLS-1$
+                }
+
+                // In the case of failure, close the MI streams so
+                // they are not leaked.
+                if (!success)
+                {
+                	if (inputReader != null) {
+                		try {
+							inputReader.close();
+						} catch (IOException e) {
+						}
+                	}
+                	if (errorReader != null) {
+                		try {
+							errorReader.close();
+						} catch (IOException e) {
+						}
+                	}
+                }
+                
+                gdbLaunchRequestMonitor.done();
+                return Status.OK_STATUS;
+            }
+        };
+        startGdbJob.schedule();
+            
+        getExecutor().schedule(new Runnable() { 
+        	@Override
+            public void run() {
+                // Only process the event if we have not finished yet (hit the breakpoint).
+                if (!fGDBLaunchMonitor.fLaunched) {
+                    fGDBLaunchMonitor.fTimedOut = true;
+                    Thread jobThread = startGdbJob.getThread();
+                    if (jobThread != null) {
+                        jobThread.interrupt();
+                    }
+                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
+                    requestMonitor.done();
+                }
+            }},
+            fGDBLaunchTimeout, TimeUnit.SECONDS);		
+	}
+
+	/** @since 5.0 */
+	protected void undoGDBProcessStep(final RequestMonitor requestMonitor) {
+    	if (getState() != State.STARTED) {
+    		// gdb not started yet or already killed, don't bother starting
+    		// a job to kill it
+    		requestMonitor.done();
+    		return;
+    	}
+
+        new Job("Terminating GDB process.") {  //$NON-NLS-1$
+            {
+                setSystem(true);
+            }
+            
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+            	try {
+            		// Need to do this on the executor for thread-safety
+            		// And we should wait for it to complete since we then
+            		// check if the killing of GDB worked.
+					getExecutor().submit(
+					        new DsfRunnable() {
+					        	@Override
+					            public void run() { 
+					            	destroy();
+					            	
+					            	if (fMonitorJob.fMonitorExited) {
+					            		// Now that we have destroyed the process,
+					            		// and that the monitoring thread was killed,
+					            		// we need to set our state and send the event
+					            		fBackendState = State.TERMINATED; 
+					            		getSession().dispatchEvent(
+					            				new BackendStateChangedEvent(getSession().getId(), getId(), State.TERMINATED), 
+					            				getProperties());
+					            	}
+					            }
+					        }).get();
+				} catch (InterruptedException e1) {
+				} catch (ExecutionException e1) {
+				}
+    
+                int attempts = 0;
+                while (attempts < 10) {
+                    try {
+                        // Don't know if we really need the exit value... but what the heck.
+                        fGDBExitValue = fProcess.exitValue(); // throws exception if process not exited
+    
+                        requestMonitor.done();
+                        return Status.OK_STATUS;
+                    } catch (IllegalThreadStateException ie) {
+                    }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                    }
+                    attempts++;
+                }
+                requestMonitor.setStatus(new Status(
+                    IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "GDB terminate failed", null));      //$NON-NLS-1$
+                requestMonitor.done();
+                return Status.OK_STATUS;
+            }
+        }.schedule();
+	}
+	
+	/** @since 5.0 */
+    protected void doMonitorJobStep(final RequestMonitor requestMonitor) {
+        fMonitorJob = new MonitorJob(
+            fProcess, 
+            new DsfRunnable() {
+            	@Override
+                public void run() {
+                    requestMonitor.done();
+                }
+            });
+        fMonitorJob.schedule();
+    }
+    
+	/** @since 5.0 */
+    protected void undoMonitorJobStep(RequestMonitor requestMonitor) {
+    	if (fMonitorJob != null) {
+        	fMonitorJob.kill();
+        }
+        requestMonitor.done();
+    }
+
+	/** @since 5.0 */
+    protected void doRegisterStep(RequestMonitor requestMonitor) {
+        register(new String[]{ IMIBackend.class.getName(), 
+                		       IMIBackend2.class.getName(),
+                               IGDBBackend.class.getName() }, 
+                 new Hashtable<String,String>());
+            
+        getSession().addServiceEventListener(GDBBackend.this, null);
+
+        /*
+         * This event is not consumed by any one at present, instead it's
+         * the GDBControlInitializedDMEvent that's used to indicate that GDB
+         * back end is ready for MI commands. But we still fire the event as
+         * it does no harm and may be needed sometime.... 09/29/2008
+         * 
+         * We send the event in the register step because that is when
+         * other services have access to it.
+         */
+        getSession().dispatchEvent(
+        		new BackendStateChangedEvent(getSession().getId(), getId(), State.STARTED), 
+        		getProperties());
+
+        requestMonitor.done();
+    }
+
+	/** @since 5.0 */
+    protected void undoRegisterStep(RequestMonitor requestMonitor) {
+        unregister();
+        getSession().removeServiceEventListener(GDBBackend.this);
+        requestMonitor.done();
+    }
+    
     /**
      * Monitors a system process, waiting for it to terminate, and
      * then notifies the associated runtime process.

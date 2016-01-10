@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Mentor Graphics and others.
+ * Copyright (c) 2011, 2016 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Vladimir Prus (Mentor Graphics) - initial API and implementation
+ *     Teodor Madan (Freescale Semiconductor) - Bug 486521: attaching to selected process
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.internal.ui.osview;
@@ -120,7 +121,7 @@ implements ITableLabelProvider, IStructuredContentProvider
 
 	@Override
 	public String getColumnText(Object obj, int index) {
-		return ((String[]) obj)[remap.get(index)];
+		return ((IResourcesInformation) obj).getContent()[0][remap.get(index)];
 	}
 
 	@Override
@@ -143,6 +144,23 @@ implements ITableLabelProvider, IStructuredContentProvider
 
 	@Override
 	public Object[] getElements(Object parent) {
-		return data.getContent();
+		// split into array of resource information for each raw
+		String[][] content = data.getContent();
+		IResourcesInformation[] split_ri = new IResourcesInformation[content.length];
+		for (int i = 0; i< content.length; ++i) {
+			final String[][] row_content = new String[1][content[i].length];
+			row_content[0] = content[i];
+			split_ri[i]=new IResourcesInformation() {
+				@Override
+				public String[] getColumnNames() {
+					return data.getColumnNames();
+				}
+				@Override
+				public String[][] getContent() {
+					return row_content;
+				}
+			};
+		}
+		return split_ri;
 	}
 }

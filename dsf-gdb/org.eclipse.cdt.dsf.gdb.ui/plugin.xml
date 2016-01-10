@@ -321,6 +321,11 @@
           id="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord"
           name="%command.prevTraceRecord.name">
       </command>
+      <command
+            description="%command.attach.description"
+            id="org.eclipse.cdt.dsf.gdb.ui.command.osview.attach"
+            name="%command.attach.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -380,6 +385,18 @@
             </with>
             </activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.osview.AttachProcessHandler"
+            commandId="org.eclipse.cdt.dsf.gdb.ui.command.osview.attach">
+            <activeWhen>
+            <with variable="selection">
+               <iterate operator="and">
+                  <adapt type="org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2$IResourcesInformation"/>
+               </iterate>
+               <count value="+"/>
+            </with>
+            </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -416,6 +433,28 @@
                style="push">
          </command>
       </menuContribution>
+         <menuContribution
+               locationURI="toolbar:org.eclipse.cdt.dsf.gdb.ui.osresources.view?after=additions">
+            <command
+                  commandId="org.eclipse.cdt.dsf.gdb.ui.command.osview.attach"
+                  icon="platform:/plugin/org.eclipse.cdt.debug.ui/icons/obj16/connect.gif"
+                  label="%command.attach.label"
+                  style="push"
+                  tooltip="%command.attach.tooltip">
+            </command>
+         </menuContribution>
+         
+          <menuContribution allPopups="true" locationURI="popup:org.eclipse.cdt.dsf.gdb.ui.osresources.view?after=additions">                
+            <command
+                  commandId="org.eclipse.cdt.dsf.gdb.ui.command.osview.attach"
+                  icon="platform:/plugin/org.eclipse.cdt.debug.ui/icons/obj16/connect.gif"
+                  label="%command.attach.label"
+                  style="push"
+                  tooltip="%command.attach.tooltip">
+               <visibleWhen checkEnabled="true">
+               </visibleWhen>
+            </command>
+         </menuContribution>
    </extension>
    <extension
          point="org.eclipse.cdt.debug.ui.BreakpointActionPage">

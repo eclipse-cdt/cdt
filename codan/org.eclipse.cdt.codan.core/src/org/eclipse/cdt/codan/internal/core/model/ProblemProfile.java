@@ -109,6 +109,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	}
 
 	@Override
+	@Deprecated
 	public void addProfileChangeListener(IProblemProfileChangeListener listener) {
 		if (preferenceChangeListeners == null)
 			preferenceChangeListeners = new ListenerList();
@@ -116,6 +117,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	}
 
 	@Override
+	@Deprecated
 	public void removeProfileChangeListener(IProblemProfileChangeListener listener) {
 		if (preferenceChangeListeners == null)
 			return;
@@ -127,6 +129,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	/**
 	 * Convenience method for notifying preference change listeners.
 	 */
+	@Deprecated
 	protected void fireProfileChangeEvent(String key, Object oldValue, Object newValue) {
 		if (preferenceChangeListeners == null)
 			return;

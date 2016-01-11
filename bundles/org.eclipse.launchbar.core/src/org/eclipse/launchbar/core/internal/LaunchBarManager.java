@@ -474,7 +474,6 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			setActiveLaunchTarget(null);
 			return;
 		}
-
 		// last stored target from persistent storage
 		String activeTargetId = getPerDescriptorStore().get(PREF_ACTIVE_LAUNCH_TARGET, null);
 		if (activeTargetId != null) {
@@ -482,6 +481,12 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			ILaunchTarget storedTarget = launchTargetManager.getLaunchTarget(id.getFirst(), id.getSecond());
 			if (storedTarget != null && supportsTarget(activeLaunchDesc, storedTarget)) {
 				setActiveLaunchTarget(storedTarget);
+				return;
+			}
+		} else {
+			// current active target, check if it is supported
+			if (activeLaunchTarget != null && supportsTarget(activeLaunchDesc, activeLaunchTarget)) {
+				setActiveLaunchTarget(activeLaunchTarget);
 				return;
 			}
 		}
@@ -721,7 +726,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 
 	private ILaunchTarget getDefaultLaunchTarget(ILaunchDescriptor descriptor) {
 		List<ILaunchTarget> targets = getLaunchTargets(descriptor);
-		return targets.isEmpty() ? ILaunchTarget.NULL_TARGET : targets.get(0);
+		// chances are that better target is most recently added, rather then the oldest
+		return targets.isEmpty() ? ILaunchTarget.NULL_TARGET : targets.get(targets.size()-1);
 	}
 
 	public ILaunchConfiguration getActiveLaunchConfiguration() throws CoreException {

@@ -11,14 +11,10 @@
 package org.eclipse.cdt.codan.examples.uicontrib;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
-import org.eclipse.cdt.codan.core.model.IProblem;
-import org.eclipse.cdt.codan.core.model.IProblemProfile;
-import org.eclipse.cdt.codan.core.model.IProblemProfileChangeListener;
-import org.eclipse.cdt.codan.core.model.ProblemProfileChangeEvent;
+import org.eclipse.cdt.codan.examples.Activator;
 import org.eclipse.cdt.codan.examples.checkers.GrepChecker;
 import org.eclipse.cdt.codan.internal.core.CodanPreferencesLoader;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -28,23 +24,27 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 
 /**
- * Example of property change listener for changing error profiles
+ * Example of property change listener for changing error profiles using eclipse preferences.
+ * Too see debug prints uncomment printout line in {@link #trace(String) function }
+ * In this examples plugin this listener is activated on startup by calling ProfileChangeListener.getInstance(), see
+ * {@link Activator#start(org.osgi.framework.BundleContext)}
+ * Note: this example will not properly listen on properties for new or deleted projects
  */
-public class ProfileChangeListener implements INodeChangeListener, IPreferenceChangeListener, IProblemProfileChangeListener {
-	static ProfileChangeListener instance;
+public class GrepCheckerExamplePreferenceChangeListener implements INodeChangeListener, IPreferenceChangeListener {
+	static GrepCheckerExamplePreferenceChangeListener instance;
 
-	public static ProfileChangeListener getInstance() {
+	public static GrepCheckerExamplePreferenceChangeListener getInstance() {
 		if (instance == null)
-			instance = new ProfileChangeListener();
+			instance = new GrepCheckerExamplePreferenceChangeListener();
 		return instance;
 	}
 	private IProject project;
 
-	private ProfileChangeListener(IProject project) {
+	private GrepCheckerExamplePreferenceChangeListener(IProject project) {
 		this.project = project;
 	}
 
-	private ProfileChangeListener() {
+	private GrepCheckerExamplePreferenceChangeListener() {
 		CodanCorePlugin.getDefault().getStorePreferences().addNodeChangeListener(this);
 		CodanCorePlugin.getDefault().getStorePreferences().addPreferenceChangeListener(this);
 		IWorkspace root = ResourcesPlugin.getWorkspace();
@@ -53,75 +53,48 @@ public class ProfileChangeListener implements INodeChangeListener, IPreferenceCh
 			IProject project = projects[i];
 			IEclipsePreferences prefs = CodanPreferencesLoader.getProjectNode(project);
 			if (prefs != null)
-				prefs.addPreferenceChangeListener(new ProfileChangeListener(project));
+				prefs.addPreferenceChangeListener(new GrepCheckerExamplePreferenceChangeListener(project));
 		}
-		// cannot do on plugin startup
-		// CheckersRegistry.getInstance().getWorkspaceProfile().addProfileChangeListener(this);
 	}
 
-
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getSource() instanceof IEclipsePreferences) {
 			//IEclipsePreferences ep = (IEclipsePreferences) event.getSource();
 			if (GrepChecker.ID.equals(event.getKey())) {
 				// severity or enablement has changed
 				String val = (String) event.getNewValue();
-				if (!val.startsWith("-")) {
-					System.err.print("grep checker enabled :)");
+				String fors = (" for " + ((project == null) ? "workspace" : project.getName()));
+				if (val != null && !val.startsWith("-")) {
+					trace("grep checker enabled :)"+fors);
 				} else {
-					System.err.print("grep checker disabled :(");
+					trace("grep checker disabled :("+fors);
 				}
-				System.err.println(" for "+((project==null)?"workspace":project.getName()));
+
 			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener
-	 * #added(org.eclipse.core.runtime.preferences.IEclipsePreferences.
-	 * NodeChangeEvent)
-	 */
-	public void added(NodeChangeEvent event) {
-		System.err.println("node added " + event);
+	private void trace(String message) {
+		// NOTE: uncomment this to see what this guy is listening on
+		//	System.err.print("example codan pref listener: " + message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener
-	 * #removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.
-	 * NodeChangeEvent)
-	 */
+	@Override
+	public void added(NodeChangeEvent event) {
+		trace("node added " + event);
+	}
+
+	@Override
 	public void removed(NodeChangeEvent event) {
-		System.err.println("node removed " + event);
+		trace("node removed " + event);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void dispose() {
 		CodanCorePlugin.getDefault().getStorePreferences().removeNodeChangeListener(this);
 		CodanCorePlugin.getDefault().getStorePreferences().removePreferenceChangeListener(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.internal.core.CheckersRegistry.
-	 * IProblemProfileChangeListener
-	 * #profileChange(org.eclipse.cdt.codan.internal
-	 * .core.CheckersRegistry.ProblemProfileChangeEvent)
-	 */
-	public void profileChange(ProblemProfileChangeEvent event) {
-		if (event.getKey().equals(ProblemProfileChangeEvent.PROBLEM_KEY)) {
-			IResource resource = (IResource) event.getSource();
-			IProblemProfile profile = (IProblemProfile) event.getNewValue();
-			IProblem pp = profile.findProblem(GrepChecker.ID);
-			System.err.println(pp.getName() + " enabled " + pp.isEnabled());
-		}
 	}
 }

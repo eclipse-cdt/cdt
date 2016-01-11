@@ -386,16 +386,18 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fCloseButton.addSelectionListener(fEventHandler);
 		fCloseButton.setEnabled(false);
 
-		String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
-		if ("".equals(id)) { //$NON-NLS-1$
-			id = fServiceIDs[0];
-		}
-		for (int i = 0; i < fServiceIDs.length; i++) {
-			if (id.equals(fServiceIDs[i])) {
-				fServicesCombo.select(i);
+		if (fServiceIDs.length > 0) {
+			String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
+			if ("".equals(id)) { //$NON-NLS-1$
+				id = fServiceIDs[0];
 			}
+			for (int i = 0; i < fServiceIDs.length; i++) {
+				if (id.equals(fServiceIDs[i])) {
+					fServicesCombo.select(i);
+				}
+			}
+			selectServices(id);
 		}
-		selectServices(id);
 
 		return preferencePane;
 	}

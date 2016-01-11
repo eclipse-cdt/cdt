@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.examples;
 
-import org.eclipse.cdt.codan.examples.uicontrib.ProfileChangeListener;
+import org.eclipse.cdt.codan.examples.uicontrib.GrepCheckerExamplePreferenceChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -33,31 +33,33 @@ public class Activator extends Plugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		ProfileChangeListener.getInstance();
+		GrepCheckerExamplePreferenceChangeListener.getInstance();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
-		ProfileChangeListener.getInstance().dispose();
+		GrepCheckerExamplePreferenceChangeListener.getInstance().dispose();
 	}
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {

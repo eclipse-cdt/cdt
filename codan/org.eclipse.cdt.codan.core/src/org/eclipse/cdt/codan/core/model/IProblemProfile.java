@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.core.model;
 
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 /**
  * Problem Profile contains tree of categories and problems. For the user
@@ -25,12 +26,12 @@ import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
  * with the same id can exist in the same profile (i.e. two category can have
  * same problem listed in both,
  * but they both should point to the same problem instance).
- * 
+ *
  * To obtain read-only profile use method
  * {@link CheckersRegistry#getResourceProfile},
  * {@link CheckersRegistry#getDefaultProfile()} or
  * {@link CheckersRegistry#getWorkspaceProfile()}
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -42,7 +43,7 @@ public interface IProblemProfile extends IProblemElement {
 
 	/**
 	 * Find and return problem by id if it contained in this profile
-	 * 
+	 *
 	 * @param id
 	 *        - problem id
 	 * @return problem instance
@@ -51,7 +52,7 @@ public interface IProblemProfile extends IProblemElement {
 
 	/**
 	 * Find and return category by id if it is contained in this profile
-	 * 
+	 *
 	 * @param id
 	 *        - category id
 	 * @return category instance
@@ -61,30 +62,34 @@ public interface IProblemProfile extends IProblemElement {
 	/**
 	 * Get all problems defined in this profile (if problem duplicated in a
 	 * category tree, it returns only one instance of each)
-	 * 
+	 *
 	 * @return array of problems defined in profile
 	 */
 	IProblem[] getProblems();
 
 	/**
 	 * Add a listener for profile changes
-	 * 
+	 *
 	 * @param listener
 	 * @since 2.0
+	 * @deprecated use {@link IEclipsePreferences} listener instead.
 	 */
+	@Deprecated
 	public void addProfileChangeListener(IProblemProfileChangeListener listener);
 
 	/**
 	 * Remove a lister for profile changes
-	 * 
+	 *
 	 * @param listener
 	 * @since 2.0
+	 * @deprecated use {@link IEclipsePreferences} listener instead.
 	 */
+	@Deprecated
 	public void removeProfileChangeListener(IProblemProfileChangeListener listener);
 
 	/**
 	 * Get an object associated with profile, usually the resource
-	 * 
+	 *
 	 * @return resource of another object associated with this profile
 	 * @since 2.0
 	 */

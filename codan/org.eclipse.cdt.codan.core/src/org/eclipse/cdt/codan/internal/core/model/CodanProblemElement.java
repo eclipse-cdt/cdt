@@ -24,7 +24,7 @@ public class CodanProblemElement implements IProblemElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblemElement#getProfile()
 	 */
 	@Override
@@ -34,7 +34,7 @@ public class CodanProblemElement implements IProblemElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblemElement#getCategory()
 	 */
 	@Override
@@ -90,6 +90,7 @@ public class CodanProblemElement implements IProblemElement {
 	/**
 	 * @param problemKey
 	 */
+	@Deprecated
 	protected void notifyChanged(String key) {
 		if (getProfile() instanceof ProblemProfile) {
 			((ProblemProfile) getProfile()).fireProfileChangeEvent(key, null, this);

@@ -8,7 +8,7 @@
 package org.eclipse.launchbar.core.internal.target;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 
 	private Map<String, Map<String, ILaunchTarget>> targets;
 	private Map<String, IConfigurationElement> typeElements;
-	private Map<String, ILaunchTargetProvider> typeProviders = new HashMap<>();
+	private Map<String, ILaunchTargetProvider> typeProviders = new LinkedHashMap<>();
 	private List<ILaunchTargetListener> listeners = new LinkedList<>();
 
 	private static final String DELIMETER1 = ","; //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	private synchronized void initTargets() {
 		if (targets == null) {
 			// load target type elements from registry
-			typeElements = new HashMap<>();
+			typeElements = new LinkedHashMap<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint point = registry
 					.getExtensionPoint(Activator.getDefault().getBundle().getSymbolicName() + ".launchTargetTypes"); //$NON-NLS-1$
@@ -63,13 +63,13 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			}
 
 			// load targets from preference store
-			targets = new HashMap<>();
+			targets = new LinkedHashMap<>();
 			Preferences prefs = getTargetsPref();
 			try {
 				for (String typeId : prefs.keys()) {
 					Map<String, ILaunchTarget> type = targets.get(typeId);
 					if (type == null) {
-						type = new HashMap<>();
+						type = new LinkedHashMap<>();
 						targets.put(typeId, type);
 					}
 
@@ -160,7 +160,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 		initTargets();
 		Map<String, ILaunchTarget> type = targets.get(typeId);
 		if (type == null) {
-			type = new HashMap<>();
+			type = new LinkedHashMap<>();
 			targets.put(typeId, type);
 		}
 

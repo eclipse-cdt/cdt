@@ -8955,6 +8955,23 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template <typename> struct S {};
+	//	struct U {};
+	//
+	//	struct outer {
+	//		struct inner {
+	//			S<U> foo() {
+	//				return waldo<42>(0);
+	//			}
+	//		};
+	//
+	//		template <int>
+	//		static S<U> waldo(int);
+	//	};
+	public void testAmbiguityResolutionInNestedClassMethodBody_485388() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template <typename>
 	//	struct Base {
 	//	    template <typename>

@@ -9016,6 +9016,60 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template <typename> struct S {};
+	//	struct U {};
+	//
+	//	struct outer {
+	//		struct inner {
+	//			S<U> foo() {
+	//				return waldo<42>(0);
+	//			}
+	//		};
+	//
+	//		template <int>
+	//		static S<U> waldo(int);
+	//	};
+	public void testAmbiguityResolutionInNestedClassMethodBody_485388() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template<typename T, T v>
+	//	struct F {
+	//	  static constexpr T val = v;
+	//	};
+	//
+	//	template<typename T>
+	//	struct E : public F<bool, __is_class(T)> {};
+	//
+	//	template<bool, typename T = void>
+	//	struct D {};
+	//
+	//	template<typename T>
+	//	struct D<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template<typename T> struct C {
+	//	  static constexpr int c = 0;
+	//	};
+	//
+	//	template<typename T, T a>
+	//	struct B {
+	//	  template<typename U>
+	//	  typename D<E<U>::val>::type waldo(U);
+	//	};
+	//
+	//	template<typename T, T a>
+	//	template<typename U>
+	//	typename D<E<U>::val>::type
+	//	B<T, a>::waldo(U) { // problems on B<T, a>::waldo and on U
+	//	  C<T>::c; // problems on C, T and ::c
+	//	}
+	public void testRegression_485388() throws Exception {
+		CPPASTNameBase.sAllowRecursionBindings = true;  // bug 486144
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+	
 	//	template <typename>
 	//	struct Base {
 	//	    template <typename>

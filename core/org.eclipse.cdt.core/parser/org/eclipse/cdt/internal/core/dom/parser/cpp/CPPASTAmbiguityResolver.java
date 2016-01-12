@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Stack;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -48,9 +48,26 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 final class CPPASTAmbiguityResolver extends ASTVisitor {
 	private int fSkipInitializers= 0;
-	private int fDeferFunctions= 1;
+	/*
+	 * The current nesting level of class definitions.
+	 * Used to handle processing of method bodies, which are deferred
+	 * until the end of the outermost class definition. 
+	 */
+	private int fClassNestingLevel= 0;
 	private HashSet<IASTDeclaration> fRepopulate= new HashSet<>();
-	private Deque<Deque<IASTNode>> fDeferredNodes= new ArrayDeque<>();
+	/*
+	 * Nodes that have been deferred for later processing.
+	 * Currently used only for method bodies.
+	 */
+	private Deque<IASTNode> fDeferredNodes = new ArrayDeque<>();
+	
+	/*
+	 * Used by visit(IASTDeclaration) to determine whether it should
+	 * process a function declaration now instead of deferring it
+	 * to later. There is a stack of them because, thanks to local
+	 * classes, function definitions can be nested inside each other.
+	 */
+	private Stack<IASTFunctionDefinition> fProcessNow = new Stack<>();
 
 	public CPPASTAmbiguityResolver() {
 		super(false);
@@ -98,8 +115,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-			fDeferFunctions++;
-			fDeferredNodes.add(new ArrayDeque<IASTNode>());
+			fClassNestingLevel++;
 		}
 		return PROCESS_CONTINUE;
 	}
@@ -107,7 +123,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	@Override
 	public int leave(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-			fDeferFunctions--;
+			fClassNestingLevel--;
 
 			// Resolve class type definitions, such that the scope is available
 			// during ambiguity resolution.
@@ -117,14 +133,24 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			if (declSpec instanceof CPPASTCompositeTypeSpecifier)
 				((CPPASTCompositeTypeSpecifier) declSpec).setAmbiguitiesResolved();
 
-			processDeferredNodes(fDeferredNodes.removeLast());
+			// If we are leaving the outermost class, process the bodies of
+			// methods of the class and its nested classes.
+			if (fClassNestingLevel == 0) {
+				while (!fDeferredNodes.isEmpty()) {
+					fDeferredNodes.removeFirst().accept(this);
+				}
+			}
 		}
 		return PROCESS_CONTINUE;
 	}
 
+	private boolean shouldProcessNow(IASTFunctionDefinition func) {
+		return !fProcessNow.isEmpty() && fProcessNow.peek() == func; 
+	}
+	
 	@Override
 	public int visit(IASTDeclaration decl) {
-		if (fDeferFunctions > 0 && decl instanceof IASTFunctionDefinition) {
+		if (decl instanceof IASTFunctionDefinition && !shouldProcessNow((IASTFunctionDefinition) decl)) {
 			final IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
 
 			// Visit the declarator first, it may contain ambiguous template arguments needed 
@@ -139,8 +165,19 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 				// Visit initializers inside the trailing return type that were skipped earlier.
 				trailingReturnType.accept(this);
 			}
-			// Defer visiting the body of the function until the class body has been visited.
-			fDeferredNodes.getLast().add(decl);
+			if (fClassNestingLevel > 0) {
+				// If this is a method defined inline inside a class declaration, defer visiting 
+				// the remaining parts of the method (notably the body) until the end of the 
+				// class declaration has been reached.
+				fDeferredNodes.add(decl);
+			} else {
+				// Otherwise, visit the remaining parts of the method now. To avoid duplicating
+				// code in CPPASTFunctionDefinition.accept(), call accept() on the entire
+				// definition, but push the function definition onto fProcessNow to avoid recursion.
+				fProcessNow.push(fdef);
+				decl.accept(this);
+				fProcessNow.pop();
+			}
 			return PROCESS_SKIP;
 		} 
 		return PROCESS_CONTINUE;
@@ -188,30 +225,13 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 
 	@Override
-	public int visit(IASTTranslationUnit tu) {
-		fDeferredNodes.add(new ArrayDeque<IASTNode>());
-		return PROCESS_CONTINUE;
-	}
-
-	@Override
 	public int leave(IASTTranslationUnit tu) {
-		fDeferFunctions= 0;
-		while (!fDeferredNodes.isEmpty()) {
-			processDeferredNodes(fDeferredNodes.removeLast());
-		}
+		// As deferred method bodies are processed at the end of outermost 
+		// class definitions, there should be none left when the end of
+		// the translation unit is reached.
+		assert fDeferredNodes.isEmpty();
+		assert fProcessNow.isEmpty();
 		return PROCESS_CONTINUE;
-	}
-
-	private void processDeferredNodes(Deque<IASTNode> deferredNodes) {
-		int deferFunctions = fDeferFunctions;
-		fDeferFunctions = 0;
-		try {
-			while (!deferredNodes.isEmpty()) {
-				deferredNodes.removeFirst().accept(this);
-			}
-		} finally {
-			fDeferFunctions = deferFunctions;
-		}
 	}
 
 	private void repopulateScope(IASTDeclaration declaration) {
@@ -232,21 +252,19 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	 * If 'node' has been deferred for later processing, process it now. 
 	 */
 	public void resolvePendingAmbiguities(IASTNode node) {
-		Iterator<Deque<IASTNode>> iterator = fDeferredNodes.descendingIterator();
-		while (iterator.hasNext()) {
-			Deque<IASTNode> deferred = iterator.next();
-			for (IASTNode deferredNode : deferred) {
-				if (deferredNode == node) {
-					int deferFunctions = fDeferFunctions;
-					fDeferFunctions = 0;
-					try {
-						deferredNode.accept(this);
-					} finally {
-						fDeferFunctions = deferFunctions;
-					}
-					deferred.remove(deferredNode);
-					break;
+		for (IASTNode deferredNode : fDeferredNodes) {
+			if (deferredNode == node) {
+				// Temporarily set the class nesting level to 0,
+				// to prevent the node just being deferred again. 
+				int classNestingLevel = fClassNestingLevel;
+				fClassNestingLevel = 0;
+				try {
+					deferredNode.accept(this);
+				} finally {
+					fClassNestingLevel = classNestingLevel;
 				}
+				fDeferredNodes.remove(deferredNode);
+				break;
 			}
 		}
 	}

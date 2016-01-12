@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2011, 2016 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * Wind River Systems - initial API and implementation
+ * Kaloyan Raev - Bug 485658 - NPE prevents displaying the actual error
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.process;
 
@@ -241,7 +242,9 @@ public class ProcessConnector extends AbstractStreamsConnector {
 	@Override
 	public void doDisconnect() {
 		// Stop monitoring the process
-		monitor.dispose();
+		if (monitor != null) {
+			monitor.dispose();
+		}
 
 		boolean isWindows = Platform.OS_WIN32.equals(Platform.getOS());
 

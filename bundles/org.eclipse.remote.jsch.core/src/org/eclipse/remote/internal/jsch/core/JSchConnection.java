@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.osgi.util.NLS;
@@ -924,6 +925,8 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 				return session;
 			}
 			return null;
+		} catch (OperationCanceledException e) {
+			throw new RemoteConnectionException(Messages.JSchConnection_0);
 		} catch (JSchException e) {
 			throw new RemoteConnectionException(e.getMessage());
 		}

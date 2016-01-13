@@ -10582,6 +10582,19 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPMethod foo = bh.assertNonProblem("foo");
 		assertTrue(foo.isFinal());
 	}
+	
+	//	struct S {};
+	//	bool b1 = __is_trivially_copyable(S);
+	//	bool b2 = __is_trivially_assignable(S, S&);
+	//	bool b3 = __is_trivially_constructible(S, int, char*);
+	//	// Test that __is_trivially_constructible can take parameter packs
+	//	template <typename... Args>
+	//	struct U {
+	//		static const bool value = __is_trivially_constructible(S, Args...);
+	//	};
+	public void testParsingOfGcc5TypeTraitIntrinsics_485713() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+	}
 
 	//	struct S1 {};
 	//	S1 s1;

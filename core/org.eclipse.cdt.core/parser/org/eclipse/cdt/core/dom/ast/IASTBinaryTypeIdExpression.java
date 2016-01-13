@@ -20,9 +20,13 @@ public interface IASTBinaryTypeIdExpression extends IASTExpression {
 	public static final ASTNodeProperty OPERAND2 = new ASTNodeProperty("IASTBinaryTypeIdExpression.OPERAND2 [IASTTypeId]"); //$NON-NLS-1$
 
 	/**
-	 * Built-in type trait of g++.
+	 * Built-in type traits of g++.
 	 */
-	public static enum Operator {__is_base_of}
+	public static enum Operator {
+		__is_base_of,
+		/** @since 5.12 */
+		__is_trivially_assignable
+		}
 	
 	/**
 	 * Returns the operator for the expression.

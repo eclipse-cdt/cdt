@@ -261,6 +261,12 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName);
 
 	public ICPPASTNamespaceDefinition newNamespaceDefinition(IASTName name);
+	
+	/**
+	 * @since 5.12
+	 */
+	public ICPPASTNaryTypeIdExpression newNaryTypeIdExpression(ICPPASTNaryTypeIdExpression.Operator operator,
+			ICPPASTTypeId[] operands);
 
 	/**
 	 * @deprecated Replaced by {@link #newNewExpression(IASTInitializerClause[], IASTInitializer, IASTTypeId)}

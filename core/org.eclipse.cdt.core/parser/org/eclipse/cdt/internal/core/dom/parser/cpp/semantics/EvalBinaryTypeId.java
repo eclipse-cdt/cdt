@@ -76,6 +76,7 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	public IType getType(IASTNode point) {
 		switch (fOperator) {
 		case __is_base_of:
+		case __is_trivially_assignable:
 			return CPPBasicType.BOOLEAN;
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;

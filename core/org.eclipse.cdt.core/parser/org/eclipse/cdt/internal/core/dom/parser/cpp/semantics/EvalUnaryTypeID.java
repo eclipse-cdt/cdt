@@ -31,6 +31,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_pod;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_polymorphic;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_standard_layout;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_trivial;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_trivially_copyable;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_union;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeof;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeofParameterPack;
@@ -116,6 +117,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 		case op_is_polymorphic:
 		case op_is_standard_layout:
 		case op_is_trivial:
+		case op_is_trivially_copyable:
 		case op_is_union:
 			return CPPTemplates.isDependentType(fOrigType);
 
@@ -163,6 +165,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 		case op_is_polymorphic:
 		case op_is_standard_layout:
 		case op_is_trivial:
+		case op_is_trivially_copyable:
 		case op_is_union:
 			return CPPBasicType.BOOLEAN;
 		case op_typeof:

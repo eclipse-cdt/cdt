@@ -64,6 +64,13 @@ public class BaseTestCase extends TestCase {
 			Integer.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
 	protected static final int INDEXER_TIMEOUT_MILLISEC= INDEXER_TIMEOUT_SEC * 1000;
 	
+	/**
+	 * The GCC version to emulate when running tests.
+	 * We emulate the latest version whose extensions we support.
+	 */
+	protected static final int GCC_MAJOR_VERSION_FOR_TESTS = 5;
+	protected static final int GCC_MINOR_VERSION_FOR_TESTS = 1;
+	
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;

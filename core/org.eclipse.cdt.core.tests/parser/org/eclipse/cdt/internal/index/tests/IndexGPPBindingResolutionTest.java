@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.index.tests;
 
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 
@@ -24,8 +23,8 @@ import junit.framework.TestSuite;
 public abstract class IndexGPPBindingResolutionTest extends IndexBindingResolutionTestBase {
 
 	private static void gnuSetUp() {
-		TestScannerProvider.sDefinedSymbols.put("__GNUC__", Integer.toString(GPPLanguage.GNU_LATEST_VERSION_MAJOR));
-		TestScannerProvider.sDefinedSymbols.put("__GNUC_MINOR__", Integer.toString(GPPLanguage.GNU_LATEST_VERSION_MINOR));
+		TestScannerProvider.sDefinedSymbols.put("__GNUC__", Integer.toString(GCC_MAJOR_VERSION_FOR_TESTS));
+		TestScannerProvider.sDefinedSymbols.put("__GNUC_MINOR__", Integer.toString(GCC_MINOR_VERSION_FOR_TESTS));
 	}
 	
 	private static void gnuTearDown() {

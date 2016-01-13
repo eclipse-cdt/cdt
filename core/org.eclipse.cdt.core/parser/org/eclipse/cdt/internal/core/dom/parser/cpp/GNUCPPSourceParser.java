@@ -118,6 +118,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpandable;
@@ -1488,6 +1489,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IGCCToken.tTT_is_standard_layout:
 		case IGCCToken.tTT_is_trivial:
 		case IGCCToken.tTT_is_union:
+		case IGCCToken.tTT_is_trivially_copyable:
+		case IGCCToken.tTT_is_trivially_constructible:
+		case IGCCToken.tTT_is_trivially_assignable:
 			return parseTypeTrait();
 
 		default:
@@ -1498,22 +1502,39 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private IASTExpression parseTypeTrait() throws EndOfFileException, BacktrackException {
 		IToken first= consume();
 		final boolean isBinary= isBinaryTrait(first);
+		final boolean isNary = isNaryTrait(first);
 
 		consume(IToken.tLPAREN);
-		IASTTypeId typeId= typeId(DeclarationOptions.TYPEID);
-		IASTTypeId secondTypeId= null;
+		ICPPASTTypeId[] operands = new ICPPASTTypeId[isBinary ? 2 : 1];
+		operands[0] = typeId(DeclarationOptions.TYPEID);
 		if (isBinary) {
 			consumeOrEOC(IToken.tCOMMA);
 			if (LT(1) != IToken.tEOC) {
-				secondTypeId= typeId(DeclarationOptions.TYPEID);
+				operands[1] = typeId(DeclarationOptions.TYPEID);
 			}
+		} else if (isNary) {
+			while (LTcatchEOF(1) == IToken.tCOMMA) {
+				consume();
+				if (LT(1) != IToken.tEOC) {
+					ICPPASTTypeId operand = typeId(DeclarationOptions.TYPEID);
+					// n-ary type traits can contain pack expansions
+					if (LT(1) == IToken.tELLIPSIS) {
+						addPackExpansion(operand, consume());
+					}
+					operands = ArrayUtil.append(operands, operand);
+				}
+			}
+			operands = ArrayUtil.removeNulls(operands);
 		}
 		int endOffset= consumeOrEOC(IToken.tRPAREN).getEndOffset();
 		IASTExpression result;
-		if (isBinary) {
-			result= getNodeFactory().newBinaryTypeIdExpression(getBinaryTypeTraitOperator(first), typeId, secondTypeId);
+		if (isNary) {
+			result= getNodeFactory().newNaryTypeIdExpression(getNaryTypeTraitOperator(first), operands);
+		} else if (isBinary) {
+			result= getNodeFactory().newBinaryTypeIdExpression(getBinaryTypeTraitOperator(first), operands[0],
+					operands[1]);
 		} else {
-			result= getNodeFactory().newTypeIdExpression(getUnaryTypeTraitOperator(first), typeId);
+			result= getNodeFactory().newTypeIdExpression(getUnaryTypeTraitOperator(first), operands[0]);
 		}
 		return setRange(result, first.getOffset(), endOffset);
 	}
@@ -1521,6 +1542,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private boolean isBinaryTrait(IToken first) {
 		switch (first.getType()) {
 		case IGCCToken.tTT_is_base_of:
+		case IGCCToken.tTT_is_trivially_assignable:
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isNaryTrait(IToken operatorToken) {
+		switch (operatorToken.getType()) {
+		case IGCCToken.tTT_is_trivially_constructible:
 			return true;
 		}
 		return false;
@@ -1530,8 +1560,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		switch (first.getType()) {
 		case IGCCToken.tTT_is_base_of:
 			return IASTBinaryTypeIdExpression.Operator.__is_base_of;
+		case IGCCToken.tTT_is_trivially_assignable:
+			return IASTBinaryTypeIdExpression.Operator.__is_trivially_assignable;
 		}
 
+		assert false;
+		return null;
+	}
+	
+	private ICPPASTNaryTypeIdExpression.Operator getNaryTypeTraitOperator(IToken operatorToken) {
+		switch (operatorToken.getType()) {
+		case IGCCToken.tTT_is_trivially_constructible:
+			return ICPPASTNaryTypeIdExpression.Operator.__is_trivially_constructible;
+		}
+		
 		assert false;
 		return null;
 	}
@@ -1576,6 +1618,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			return IASTTypeIdExpression.op_is_trivial;
 		case IGCCToken.tTT_is_union:
 			return IASTTypeIdExpression.op_is_union;
+		case IGCCToken.tTT_is_trivially_copyable:
+			return IASTTypeIdExpression.op_is_trivially_copyable;
 		}
 		assert false;
 		return 0;

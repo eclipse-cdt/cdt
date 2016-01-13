@@ -32,11 +32,15 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static final int VERSION_4_3 = version(4, 3);
 	private static final int VERSION_4_6 = version(4, 6);
 	private static final int VERSION_4_7 = version(4, 7);
+	// From version 5 onwards, GCC started incrementing the major version 
+	// number every release.
+	private static final int VERSION_5 = version(5, 0);
 	private static GPPScannerExtensionConfiguration CONFIG= new GPPScannerExtensionConfiguration();
 	private static GPPScannerExtensionConfiguration CONFIG_4_2= new GPPScannerExtensionConfiguration(VERSION_4_2);
 	private static GPPScannerExtensionConfiguration CONFIG_4_3= new GPPScannerExtensionConfiguration(VERSION_4_3);
 	private static GPPScannerExtensionConfiguration CONFIG_4_6= new GPPScannerExtensionConfiguration(VERSION_4_6);
 	private static GPPScannerExtensionConfiguration CONFIG_4_7= new GPPScannerExtensionConfiguration(VERSION_4_7);
+	private static GPPScannerExtensionConfiguration CONFIG_5= new GPPScannerExtensionConfiguration(VERSION_5);
 	
 	public static GPPScannerExtensionConfiguration getInstance() {
 		return CONFIG;
@@ -52,6 +56,9 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				int major= Integer.valueOf(definedSymbols.get("__GNUC__")); //$NON-NLS-1$
 				int minor= Integer.valueOf(definedSymbols.get("__GNUC_MINOR__")); //$NON-NLS-1$
 				int version= version(major, minor);
+				if (version >= VERSION_5) {
+					return CONFIG_5;
+				}
 				if (version >= VERSION_4_7) {
 					return CONFIG_4_7;
 				}
@@ -119,6 +126,11 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			addKeyword(GCCKeywords.cp__int128, IGCCToken.t__int128);
 			addKeyword(GCCKeywords.cp__is_final, IGCCToken.tTT_is_final);
 			addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
+		}
+		if (version >= VERSION_5) {
+			addKeyword(GCCKeywords.cp__is_trivially_copyable, IGCCToken.tTT_is_trivially_copyable);
+			addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
+			addKeyword(GCCKeywords.cp__is_trivially_assignable, IGCCToken.tTT_is_trivially_assignable);
 		}
 	}
 	

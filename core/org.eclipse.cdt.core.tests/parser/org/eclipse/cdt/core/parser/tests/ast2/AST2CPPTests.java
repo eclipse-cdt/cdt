@@ -10609,6 +10609,33 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testADLForFunctionObject_388287() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	namespace A {
+	//		template <typename T>
+	//		void foo(T);
+	//	}
+	//
+	//	namespace B {
+	//		template <typename T>
+	//		void foo(T);
+	//		
+	//		struct S {};
+	//	}
+	//
+	//	struct outer : B::S {
+	//		struct waldo {};
+	//		enum E { };
+	//	};
+	//
+	//	using A::foo;
+	//
+	//	int main() {
+	//		foo(outer::waldo{});
+	//		foo(outer::E{});
+	//	}
+	public void testADL_485710() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <bool> struct A {};
 	//	template <>

@@ -54,4 +54,8 @@ public interface IGCCToken extends IToken {
 	/** @since 5.10 */ int t_decimal32=					FIRST_RESERVED_IGCCToken + 29;
 	/** @since 5.10 */ int t_decimal64=					FIRST_RESERVED_IGCCToken + 30;
 	/** @since 5.10 */ int t_decimal128=				FIRST_RESERVED_IGCCToken + 31;
+	
+	/** @since 5.12 */ int tTT_is_trivially_copyable=	FIRST_RESERVED_IGCCToken + 32;
+	/** @since 5.12 */ int tTT_is_trivially_constructible=	FIRST_RESERVED_IGCCToken + 33;
+	/** @since 5.12 */ int tTT_is_trivially_assignable=	FIRST_RESERVED_IGCCToken + 34;
 }

@@ -29,6 +29,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_pod;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_polymorphic;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_standard_layout;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_trivial;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_trivially_copyable;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_union;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeof;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeid;
@@ -350,6 +351,8 @@ public class Value implements IValue {
 			case op_is_trivial:
 				return type instanceof ICPPClassType &&
 						TypeTraits.isTrivial((ICPPClassType) type, point) ? 1 : 0;
+			case op_is_trivially_copyable:
+				break;  // TODO: Implement
 			case op_is_union:
 				return type instanceof ICompositeType &&
 						((ICompositeType) type).getKey() == ICompositeType.k_union ? 1 : 0;
@@ -371,6 +374,8 @@ public class Value implements IValue {
 				return 1;
 			}
 			return 0;
+		case __is_trivially_assignable:
+			return VALUE_CANNOT_BE_DETERMINED;  // TODO: Implement.
 		}
 		return VALUE_CANNOT_BE_DETERMINED;
 	}

@@ -6,13 +6,13 @@
   <parent>
     <groupId>org.eclipse.remote</groupId>
     <artifactId>remote-parent</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <relativePath>../../releng/org.eclipse.remote.build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.remote.features</groupId>
   <artifactId>org.eclipse.remote.serial</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.0.2-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 
   <build>

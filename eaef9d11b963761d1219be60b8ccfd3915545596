@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_9d659296",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/gnu/cpp/GPPLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-01-14T03:37:19Z",
+      "side": 1,
+      "message": "There\u0027s no \u0027internal\u0027 in the package name, and API tooling gives me an error if I remove them.",
+      "parentUuid": "07d9433e_bd3fb671",
+      "range": {
+        "startLine": 48,
+        "startChar": 2,
+        "endLine": 48,
+        "endChar": 12
+      },
+      "revId": "eaef9d11b963761d1219be60b8ccfd3915545596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_fd393e8c",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
         "patchSetId": 1

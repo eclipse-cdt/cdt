@@ -352,7 +352,7 @@ public class Value implements IValue {
 				return type instanceof ICPPClassType &&
 						TypeTraits.isTrivial((ICPPClassType) type, point) ? 1 : 0;
 			case op_is_trivially_copyable:
-				break;  // TODO: Implement
+				return TypeTraits.isTriviallyCopyable(type, point) ? 1 : 0;
 			case op_is_union:
 				return type instanceof ICompositeType &&
 						((ICompositeType) type).getKey() == ICompositeType.k_union ? 1 : 0;

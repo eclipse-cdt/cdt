@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -291,5 +292,37 @@ public class TypeTraitsTests extends AST2TestBase {
 		assertFalse(TypeTraits.isTrivial(classH, null));
 		ICPPClassType classI = helper.assertNonProblemOnFirstIdentifier("I {");
 		assertFalse(TypeTraits.isTrivial(classI, null));
+	}
+
+	//	int a;
+	//	char* const b;
+	//	void* volatile c;
+	//	char* const d[42];
+	//	enum E {} e;
+	//	struct F {
+	//		int x, y;
+	//		F();
+	//	} f;
+	//	struct G {
+	//		int x, y;
+	//		G();
+	//		G(const G&);
+	//	} g;
+	public void testIsTriviallyCopyable() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable a = helper.assertNonProblemOnFirstIdentifier("a;");
+		assertTrue(TypeTraits.isTriviallyCopyable(a.getType(), null));
+		IVariable b = helper.assertNonProblemOnFirstIdentifier("b;");
+		assertTrue(TypeTraits.isTriviallyCopyable(b.getType(), null));
+		IVariable c = helper.assertNonProblemOnFirstIdentifier("c;");
+		assertFalse(TypeTraits.isTriviallyCopyable(c.getType(), null));
+		IVariable d = helper.assertNonProblemOnFirstIdentifier("d[");
+		assertTrue(TypeTraits.isTriviallyCopyable(d.getType(), null));
+		IVariable e = helper.assertNonProblemOnFirstIdentifier("e;");
+		assertTrue(TypeTraits.isTriviallyCopyable(e.getType(), null));
+		IVariable f = helper.assertNonProblemOnFirstIdentifier("f;");
+		assertTrue(TypeTraits.isTriviallyCopyable(f.getType(), null));
+		IVariable g = helper.assertNonProblemOnFirstIdentifier("g;");
+		assertFalse(TypeTraits.isTriviallyCopyable(g.getType(), null));
 	}
 }

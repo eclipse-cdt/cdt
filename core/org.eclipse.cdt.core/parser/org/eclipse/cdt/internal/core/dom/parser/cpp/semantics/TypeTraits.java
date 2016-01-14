@@ -15,7 +15,10 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -58,11 +61,20 @@ public class TypeTraits {
 	 * C++11: 9-6
 	 */
 	public static boolean isTrivial(ICPPClassType classType, IASTNode point) {
+		return isTrivialImpl(classType, point, true);
+	}
+	
+	private static boolean isTrivialImpl(ICPPClassType classType, IASTNode point, 
+			boolean checkDefaultConstructors) {
 		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
 			if (method.isVirtual())
 				return false;
 			switch (ClassTypeHelper.getMethodKind(classType, method)) {
 			case DEFAULT_CTOR:
+				if (checkDefaultConstructors) {
+					return false;
+				}
+				break;
 			case COPY_CTOR:
 			case MOVE_CTOR:
 			case COPY_ASSIGNMENT_OP:
@@ -431,5 +443,54 @@ public class TypeTraits {
 			}
 		}
 		return types[types.length - 1];  // Assume it fits into the largest type provided.
+	}
+	
+	/**
+	 * Returns true if 'type' is scalar, as defined in [basic.types] p9:
+	 * 
+	 * "Arithmetic types, enumeration types, pointer types, pointer to member
+	 * types, std::nullptr_t, and cv-qualified versions of these types are
+	 * collectively called scalar types."
+	 */
+	private static boolean isScalar(IType type) {
+		type = SemanticUtil.getNestedType(type, SemanticUtil.ALLCVQ);
+		return type instanceof IBasicType || type instanceof IEnumeration || type instanceof IPointerType;
+	}
+	
+	/**
+	 * Returns true if 'type' is a trivially copyable class, as defined in [class] p6:
+	 * 
+	 * "A trivially copyable class is a class that:
+	 *    - has no non-trivial copy constructors,
+	 *    - has no non-trivial move constructors,
+	 *    - has no non-trivial copy assignment operators,
+	 *    - has no non-trivial move assignment operators, and
+	 *    - has a trivial destructor."
+	 */
+	private static boolean isTriviallyCopyableClass(ICPPClassType type, IASTNode point) {
+		return isTrivialImpl(type, point, false);
+	}
+	
+	/**
+	 * Returns true if 'type' is trivially copyable, as defined in [basic.types] p9:
+	 * 
+	 * "Cv-unqualified scalar types, trivially copyable class types, arrays
+	 * of such types, and non-volatile const-qualified versions of these
+	 * types are collectively called trivially copyable types."
+	 */
+	public static boolean isTriviallyCopyable(IType type, IASTNode point) {
+		type = SemanticUtil.getSimplifiedType(type);
+		CVQualifier qualifier = SemanticUtil.getCVQualifier(type);
+		if (qualifier.isVolatile()) {
+			return false;
+		} else if (qualifier.isConst()) {
+			return isTriviallyCopyable(SemanticUtil.getNestedType(type, SemanticUtil.ALLCVQ), point);
+		} else if (type instanceof IArrayType) {
+			return isTriviallyCopyable(((IArrayType) type).getType(), point);
+		} else if (type instanceof ICPPClassType) {
+			return isTriviallyCopyableClass((ICPPClassType) type, point);
+		} else {
+			return isScalar(type);
+		}
 	}
 }

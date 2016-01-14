@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_dd347a96",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTNaryTypeIdExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-14T03:13:27Z",
+      "side": 1,
+      "message": "It\u0027s already 2016 :-)",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 21
+      },
+      "revId": "eaef9d11b963761d1219be60b8ccfd3915545596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_bd3fb671",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/gnu/cpp/GPPLanguage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-14T03:13:27Z",
+      "side": 1,
+      "message": "The constants can be removed since the class is in an internal package.",
+      "range": {
+        "startLine": 48,
+        "startChar": 2,
+        "endLine": 48,
+        "endChar": 12
+      },
+      "revId": "eaef9d11b963761d1219be60b8ccfd3915545596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_fd393e8c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-01-14T03:13:27Z",
+      "side": 1,
+      "message": "What if they change that? For consistency it\u0027s still better to call this version 5_0.",
+      "range": {
+        "startLine": 35,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 24
+      },
+      "revId": "eaef9d11b963761d1219be60b8ccfd3915545596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

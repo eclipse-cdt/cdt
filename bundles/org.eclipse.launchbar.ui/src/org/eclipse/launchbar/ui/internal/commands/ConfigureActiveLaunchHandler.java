@@ -26,12 +26,12 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
-import org.eclipse.launchbar.ui.internal.dialogs.LaunchConfigurationEditDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
@@ -135,15 +135,13 @@ public class ConfigureActiveLaunchHandler extends AbstractHandler {
 			ILaunchConfigurationType configType = manager.getLaunchConfigurationType(desc, target);
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configType,
 					mode.getIdentifier());
-			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-					.getLaunchGroup(group.getIdentifier());
 			ILaunchConfiguration config = manager.getLaunchConfiguration(desc, target);
 			if (config.isWorkingCopy() && ((ILaunchConfigurationWorkingCopy) config).isDirty()) {
 				config = ((ILaunchConfigurationWorkingCopy) config).doSave();
 			}
-			final LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, config, groupExt);
-			dialog.setInitialStatus(Status.OK_STATUS);
-			dialog.open();
+			// open real eclipse launch configurations dialog
+			DebugUIPlugin.openLaunchConfigurationsDialog(shell, new StructuredSelection(config),
+					group.getIdentifier(), false);
 		} catch (CoreException e2) {
 			Activator.log(e2);
 		}

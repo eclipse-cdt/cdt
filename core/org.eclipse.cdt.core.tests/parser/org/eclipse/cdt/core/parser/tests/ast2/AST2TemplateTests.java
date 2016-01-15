@@ -7792,6 +7792,19 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPartialSpecializationForVarargFunctionType_402807() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	struct waldo {
+	//		typedef int type;
+	//	};
+	//
+	//	template <typename R>
+	//	struct waldo<R () &>;
+	//
+	//	typedef waldo<int ()>::type Type;
+	public void testPartialSpecializationForRefQualifiedFunctionType_485888() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename>
 	//	struct meta {

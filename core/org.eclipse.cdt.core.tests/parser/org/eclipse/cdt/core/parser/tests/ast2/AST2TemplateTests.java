@@ -8189,6 +8189,28 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <int... Is> struct A {
+	//	  typedef A t;
+	//	};
+	//
+	//	template <class P, int I> struct B;
+	//
+	//	template <int... Is, int I>
+	//	struct B<A<Is...>, I> : A<Is..., I> {};
+	//
+	//	template <typename, typename = void>
+	//	struct prober {};
+	//
+	//	template <typename T>
+	//	struct prober<A<0>, T> {
+	//	  typedef T t;
+	//	};
+	//
+	//	prober<B<A<>, 0>::t>::t g();
+	public void testParameterPack_485806() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename... Args>
 	//	void waldo(Args...);
 	//

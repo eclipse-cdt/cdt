@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
@@ -182,6 +183,9 @@ public class EvalFixed extends CPPEvaluation {
 		// propagate that error.
 		if (value == Value.ERROR)
 			return EvalFixed.INCOMPLETE;
+		// Resolve the parameter pack type to the underlying type if the instantiated value is not dependent. 
+		if (type instanceof ICPPParameterPackType && value.numericalValue() != null)
+			type = ((ICPPParameterPackType) type).getType();
 		return new EvalFixed(type, fValueCategory, value);
 	}
 

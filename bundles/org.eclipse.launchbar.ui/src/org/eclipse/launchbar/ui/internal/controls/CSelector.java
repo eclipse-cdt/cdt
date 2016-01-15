@@ -522,7 +522,7 @@ public abstract class CSelector extends Composite {
 		if (currentLabel != null) {
 			currentLabel.getText();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	protected boolean hasActionArea() {

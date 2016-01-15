@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer
- *     Torkild U. Resheim - add preference to control target selector     
+ *     Torkild U. Resheim - add preference to control target selector
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.controls;
 
@@ -106,20 +106,19 @@ public class LaunchBarControl implements Listener {
 		manager.removeListener(this);
 	}
 
-	private void createButton(Composite parent, String imageName, String toolTipText, final String command) {
+	private ToolItem createButton(Composite parent, String imageName, String toolTipText, final String command) {
 		ToolItem button = new ToolItem((ToolBar) parent, SWT.FLAT);
-		// button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		Image srcImage = Activator.getDefault().getImage(imageName);
-		// Image image = new Image(parent.getDisplay(), srcImage,
-		// SWT.IMAGE_COPY);
 		button.setImage(srcImage);
 		button.setToolTipText(toolTipText);
+		button.setData("command", command); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				Activator.runCommand(command);
 			};
 		});
+		return button;
 	}
 
 	@Override

@@ -42,6 +42,7 @@ public class Messages extends NLS {
 	public static String LaunchConfigurationEditDialog_5;
 	public static String LaunchConfigurationEditDialog_6;
 	public static String ModeSelector_0;
+	public static String ModeSelector_ToolTip;
 	public static String NewLaunchConfigEditPage_0;
 	public static String NewLaunchConfigEditPage_1;
 	public static String NewLaunchConfigEditPage_2;

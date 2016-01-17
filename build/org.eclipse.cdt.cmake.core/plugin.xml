@@ -32,7 +32,7 @@
       <descriptorType
             class="org.eclipse.cdt.cmake.core.internal.CMakeLaunchDescriptorType"
             id="org.eclipse.cdt.cmake.core.descriptorType"
-            priority="org.eclipse.cdt.cmake.core.descriptorType">
+            priority="10">
          <enablement>
             <instanceof
                   value="org.eclipse.core.resources.IProject">

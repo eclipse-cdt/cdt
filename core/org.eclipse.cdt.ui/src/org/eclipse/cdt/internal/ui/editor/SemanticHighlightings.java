@@ -998,6 +998,9 @@ public class SemanticHighlightings {
 		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
+				if (node instanceof ICPPASTQualifiedName) {
+					return false;
+				}
 				IBinding binding= token.getBinding();
 				if (binding instanceof IEnumeration) {
 					return true;

@@ -462,4 +462,17 @@ public class SemanticHighlightingTest extends TestCase {
     public void testAliasTemplates_416748() throws Exception {
     	makeAssertions();
     }
+    
+    //	namespace N {                                    //$namespace
+    //		class C {                                    //$class
+    //			enum E1 {};                              //$enum
+    //		};
+    //		C::E1 e1;                                    //$class,enum,globalVariable
+    //		enum E2 {};                                  //$enum
+    //	}
+    //	N::C::E1 e1;                                     //$namespace,class,enum,globalVariable
+    //	N::E2 e2;                                        //$namespace,enum,globalVariable
+    public void testQualifiedEnum_XXXXXX() throws Exception {
+    	makeAssertions();
+    }
 }

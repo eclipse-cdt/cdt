@@ -27,7 +27,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.core,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.cdt.dsf.gdb.internal.ui;x-friends:="org.eclipse.cdt.docker.launcher",
  org.eclipse.cdt.dsf.gdb.internal.ui.actions;x-friends:="org.eclipse.cdt.examples.dsf.gdb",
  org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;x-internal:=true,

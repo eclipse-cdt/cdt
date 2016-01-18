@@ -402,8 +402,18 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		} catch (CoreException e) {
 			LaunchUIPlugin.log(e);
 		}
-		if (configAuto)
+		if (configAuto) {
 			updateBuildConfigCombo(AUTO_CONFIG);
+		} else {
+			String configName = EMPTY_STRING;
+			try {
+				configName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID,
+						configName);
+			} catch (CoreException ce) {
+				LaunchUIPlugin.log(ce);
+			}
+			updateBuildConfigCombo(configName);
+		}
 		updateComboTooltip();
 		if (fDisableBuildButton != null)
 			fDisableBuildButton
@@ -578,16 +588,13 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
 		String projectName = EMPTY_STRING;
-		String configName = EMPTY_STRING;
 		try {
 			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
-			configName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STRING);
 		} catch (CoreException ce) {
 			LaunchUIPlugin.log(ce);
 		}
 		if (!fProjText.getText().equals(projectName))
 			fProjText.setText(projectName);
-		updateBuildConfigCombo(configName);
 	}
 
 	protected void updateProgramFromConfig(ILaunchConfiguration config) {

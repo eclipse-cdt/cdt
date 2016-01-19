@@ -8,6 +8,7 @@
 package org.eclipse.cdt.build.core;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 
 import org.eclipse.cdt.build.core.internal.Activator;
@@ -17,11 +18,13 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
@@ -41,7 +44,7 @@ public abstract class CBuildConfiguration extends PlatformObject {
 	private final IBuildConfiguration config;
 	private final IToolChain toolChain;
 
-	private ScannerInfoData scannerInfoData;
+	private ScannerInfoData scannerInfoCache;
 
 	protected CBuildConfiguration(IBuildConfiguration config) {
 		this.config = config;
@@ -78,6 +81,35 @@ public abstract class CBuildConfiguration extends PlatformObject {
 		return config.getProject();
 	}
 
+	public IFolder getBuildFolder() {
+		String configName = getBuildConfiguration().getName();
+		if (configName.isEmpty()) {
+			configName = "default"; //$NON-NLS-1$
+		}
+
+		try {
+			// TODO should really be passing a monitor in here or create this in
+			// a better spot. should also throw the core exception
+			// TODO make the name of this folder a project property
+			IFolder buildRootFolder = getProject().getFolder("build"); //$NON-NLS-1$
+			if (!buildRootFolder.exists()) {
+				buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, new NullProgressMonitor());
+			}
+			IFolder buildFolder = buildRootFolder.getFolder(configName);
+			if (!buildFolder.exists()) {
+				buildFolder.create(true, true, new NullProgressMonitor());
+			}
+			return buildFolder;
+		} catch (CoreException e) {
+			Activator.log(e);
+		}
+		return null;
+	}
+
+	public Path getBuildDirectory() {
+		return getBuildFolder().getLocation().toFile().toPath();
+	}
+
 	public void setActive(IProgressMonitor monitor) throws CoreException {
 		IProject project = config.getProject();
 		if (config.equals(project.getActiveBuildConfig())) {
@@ -100,26 +132,30 @@ public abstract class CBuildConfiguration extends PlatformObject {
 	}
 
 	public IScannerInfo getScannerInfo(IResource resource) throws IOException {
-		return getScannerInfoData().getScannerInfo(resource);
+		return getCachedScannerInfo(resource);
+	}
+
+	protected IScannerInfo getCachedScannerInfo(IResource resource) throws IOException {
+		return getScannerInfoCache().getScannerInfo(resource);
 	}
 
 	public void putScannerInfo(ILanguage language, IExtendedScannerInfo info) {
-		getScannerInfoData().putScannerInfo(language, info);
+		getScannerInfoCache().putScannerInfo(language, info);
 	}
 
 	public void putScannerInfo(IResource resource, ToolChainScannerInfo info) {
-		getScannerInfoData().putScannerInfo(resource, info);
+		getScannerInfoCache().putScannerInfo(resource, info);
 	}
 
-	private ScannerInfoData getScannerInfoData() {
-		if (scannerInfoData == null) {
-			scannerInfoData = ScannerInfoData.load(this);
+	private ScannerInfoData getScannerInfoCache() {
+		if (scannerInfoCache == null) {
+			scannerInfoCache = ScannerInfoData.load(this);
 		}
-		return scannerInfoData;
+		return scannerInfoCache;
 	}
 
-	public void clearScannerInfo() throws CoreException {
-		scannerInfoData = null;
+	public void clearScannerInfoCache() throws CoreException {
+		scannerInfoCache = null;
 	}
 
 	public Collection<CConsoleParser> getConsoleParsers() throws CoreException {

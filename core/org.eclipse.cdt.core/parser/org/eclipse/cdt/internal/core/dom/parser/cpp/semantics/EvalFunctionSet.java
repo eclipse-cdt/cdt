@@ -132,7 +132,9 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isValueDependent() {
-		return false;
+		// The value of the function set (which function it resolves to) is
+		// dependent under the same circumstances when its type is dependent.
+		return isTypeDependent();
 	}
 
 	@Override

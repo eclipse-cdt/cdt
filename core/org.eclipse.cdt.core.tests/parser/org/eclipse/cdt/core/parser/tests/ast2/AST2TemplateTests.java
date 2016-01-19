@@ -8709,6 +8709,32 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertNonProblem("waldo<T>", ICPPDeferredFunction.class);
 	}
+	
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <typename T>
+	//	constexpr bool F() {
+	//	  return false;
+	//	}
+	//
+	//	template <typename T>
+	//	typename enable_if<!F<T>(), void>::type waldo(T p); // problem on the return type
+	//
+	//	struct A {};
+	//
+	//	void test() {
+	//	  A a;
+	//	  waldo(a); // problem on waldo
+	//	}
+	public void testDependentFunctionSet_485985() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename>
 	//	struct C {

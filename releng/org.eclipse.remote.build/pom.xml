@@ -20,7 +20,7 @@
 		<tycho-version>0.20.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git</tycho.scmUrl>
-		<platform-version>4.5milestones</platform-version>
+		<platform-version>4.5</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}/</platform-site>
 		<license-site>http://download.eclipse.org/cbi/updates/license/</license-site>
 		<tm-site>http://download.eclipse.org/tm/terminal/builds/development/nightly/</tm-site>

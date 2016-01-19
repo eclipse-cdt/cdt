@@ -45,7 +45,7 @@
 		</repository>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.5milestones/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.5/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

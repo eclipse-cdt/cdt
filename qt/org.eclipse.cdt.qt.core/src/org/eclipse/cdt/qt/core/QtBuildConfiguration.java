@@ -28,10 +28,7 @@ import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.resources.IBuildConfiguration;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -110,34 +107,6 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	private IFolder getBuildFolder() {
-		String configName = getBuildConfiguration().getName();
-		if (configName.isEmpty()) {
-			configName = "default"; //$NON-NLS-1$
-		}
-
-		try {
-			// TODO should really be passing a monitor in here or create this in
-			// a better spot. should also throw the core exception
-			IFolder buildRootFolder = getProject().getFolder("build"); //$NON-NLS-1$
-			if (!buildRootFolder.exists()) {
-				buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, new NullProgressMonitor());
-			}
-			IFolder buildFolder = buildRootFolder.getFolder(configName);
-			if (!buildFolder.exists()) {
-				buildFolder.create(true, true, new NullProgressMonitor());
-			}
-			return buildFolder;
-		} catch (CoreException e) {
-			Activator.log(e);
-		}
-		return null;
-	}
-
-	public Path getBuildDirectory() {
-		return getBuildFolder().getLocation().toFile().toPath();
-	}
-
 	public String getProperty(String key) {
 		if (properties == null) {
 			List<String> cmd = new ArrayList<>();
@@ -176,7 +145,7 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 
 	@Override
 	public IScannerInfo getScannerInfo(IResource resource) throws IOException {
-		IScannerInfo info = super.getScannerInfo(resource);
+		IScannerInfo info = getCachedScannerInfo(resource);
 		if (info == null) {
 			String cxx = getProperty("QMAKE_CXX"); //$NON-NLS-1$
 			if (cxx == null) {

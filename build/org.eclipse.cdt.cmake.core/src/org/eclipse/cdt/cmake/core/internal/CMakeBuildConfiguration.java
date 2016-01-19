@@ -22,10 +22,7 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class CMakeBuildConfiguration extends CBuildConfiguration {
 
@@ -37,37 +34,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		super(config, toolChain);
 	}
 
-	private IFolder getBuildFolder() {
-		String configName = getBuildConfiguration().getName();
-		if (configName.isEmpty()) {
-			configName = "default"; //$NON-NLS-1$
-		}
-
-		try {
-			// TODO should really be passing a monitor in here or create this in
-			// a better spot. should also throw the core exception
-			IFolder buildRootFolder = getProject().getFolder("build"); //$NON-NLS-1$
-			if (!buildRootFolder.exists()) {
-				buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, new NullProgressMonitor());
-			}
-			IFolder buildFolder = buildRootFolder.getFolder(configName);
-			if (!buildFolder.exists()) {
-				buildFolder.create(true, true, new NullProgressMonitor());
-			}
-			return buildFolder;
-		} catch (CoreException e) {
-			Activator.log(e);
-		}
-		return null;
-	}
-
-	public Path getBuildDirectory() {
-		return getBuildFolder().getLocation().toFile().toPath();
-	}
-
 	@Override
 	public IScannerInfo getScannerInfo(IResource resource) throws IOException {
-		IScannerInfo info = super.getScannerInfo(resource);
+		IScannerInfo info = getCachedScannerInfo(resource);
 		if (info == null) {
 			ILanguage language = LanguageManager.getInstance()
 					.getLanguage(CCorePlugin.getContentType(getProject(), resource.getName()), getProject()); // $NON-NLS-1$

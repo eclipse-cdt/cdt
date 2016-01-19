@@ -7515,19 +7515,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testExpressionLabelReference_84144() throws Exception {
 		parseAndCheckBindings(true);
 	}
-
-	//	void f()
-	//	{
-	//		unsigned long long labelPtr;
-	//		labelPtr = (unsigned long long) &&L;
-	//		goto *labelPtr;
-	//	L:
-	//		return;
-	//	}
-	public void testExpressionLabelReferenceCast_84144() throws Exception {
-		parseAndCheckBindings(true);
-	}
-
+	
 	//	int version = 0;
 	//	int NextVersion() {
 	//		return __atomic_add_fetch(&version, 1, 5);

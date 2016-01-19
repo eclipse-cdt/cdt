@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -20,6 +17,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -571,14 +570,13 @@ public class SourceLookupTest extends BaseTestCase {
 	protected IBinary createMockIBinary(String path) {
 		IPath absPath = new Path(new File(path).getAbsolutePath());
 
-		IResource exeResource = createNiceMock(IResource.class);
-		expect(exeResource.getFullPath()).andReturn(absPath);
-		expect(exeResource.getProject()).andReturn(null);
-		replay(exeResource);
+		IResource exeResource = mock(IResource.class);
+		when(exeResource.getFullPath()).thenReturn(absPath);
+		when(exeResource.getProject()).thenReturn(null);
 
-		IBinary exeBin = createNiceMock(IBinary.class);
-		expect(exeBin.getPath()).andReturn(absPath);
-		expect(exeBin.getAdapter(IResource.class)).andReturn(exeResource);
+		IBinary exeBin = mock(IBinary.class);
+		when(exeBin.getPath()).thenReturn(absPath);
+		when(exeBin.getAdapter(IResource.class)).thenReturn(exeResource);
 		/*
 		 * we use the adapter factory CSourceFinderFactory to convert IBinary to
 		 * ISourceFinder. The way the adapter is resolved it will first try and
@@ -587,8 +585,7 @@ public class SourceLookupTest extends BaseTestCase {
 		 * explicitly provide the null, an exception would be raised because an
 		 * unexpected method is invoked.
 		 */
-		expect(exeBin.getAdapter(ISourceFinder.class)).andReturn(null);
-		replay(exeBin);
+		when(exeBin.getAdapter(ISourceFinder.class)).thenReturn(null);
 		return exeBin;
 	}
 

@@ -9,8 +9,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -24,6 +22,8 @@ import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
 
+import junit.framework.TestCase;
+
 public class FileStoreTests extends TestCase {
 	private static final String CONNECTION_NAME = "test_connection";
 	private static final String USERNAME = "test";
@@ -33,7 +33,9 @@ public class FileStoreTests extends TestCase {
 	private static final String REMOTE_DIR = "/tmp/ptp_" + USERNAME + "/filestore_tests";
 	private static final String LOCAL_FILE = "local_file";
 	private static final String REMOTE_FILE = "remote_file";
+	private static final String REMOTE_FILE2 = "remote_file2";
 	private static final String TEST_STRING = "a string containing fairly *()(*&^$%## random text";
+	private static final String TEST_STRING2 = "a different string containing fairly *()(*&^$%## random text";
 
 	private IRemoteConnectionType fConnectionType;
 	private IRemoteConnection fRemoteConnection;
@@ -76,6 +78,67 @@ public class FileStoreTests extends TestCase {
 				String line = buf.readLine().trim();
 				assertTrue(line.equals(TEST_STRING));
 				buf.close();
+			} catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+
+	public void testMultiStreams() {
+		IFileStore remoteFileStore = fRemoteDir.getChild(REMOTE_FILE);
+		IFileStore remoteFileStore2 = fRemoteDir.getChild(REMOTE_FILE2);
+
+		try {
+			createFile(remoteFileStore, TEST_STRING);
+			createFile(remoteFileStore2, TEST_STRING2);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+
+		assertTrue(remoteFileStore.fetchInfo().exists());
+		assertTrue(remoteFileStore2.fetchInfo().exists());
+
+		/*
+		 * Check how many streams we can open
+		 */
+		InputStream streams[] = new InputStream[100];
+		int streamCount = 0;
+
+		for (; streamCount < streams.length; streamCount++) {
+			try {
+				streams[streamCount] = remoteFileStore.openInputStream(EFS.NONE, null);
+			} catch (Exception e) {
+				if (!e.getMessage().endsWith("channel is not opened.")) {
+					fail(e.getMessage());
+				}
+				break;
+			}
+		}
+
+		for (int i = 0; i < streamCount; i++) {
+			try {
+				streams[i].close();
+			} catch (IOException e) {
+				// No need to deal with this
+			}
+		}
+
+		for (int i = 0; i < streamCount / 2; i++) {
+			try {
+				InputStream stream = remoteFileStore.openInputStream(EFS.NONE, null);
+				assertNotNull(stream);
+				BufferedReader buf = new BufferedReader(new InputStreamReader(stream));
+				String line = buf.readLine().trim();
+				assertTrue(line.equals(TEST_STRING));
+
+				InputStream stream2 = remoteFileStore2.openInputStream(EFS.NONE, null);
+				assertNotNull(stream2);
+				BufferedReader buf2 = new BufferedReader(new InputStreamReader(stream2));
+				String line2 = buf2.readLine().trim();
+				assertTrue(line2.equals(TEST_STRING2));
+
+				stream.close();
+				stream2.close();
 			} catch (Exception e) {
 				fail(e.getMessage());
 			}

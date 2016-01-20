@@ -188,7 +188,7 @@ public abstract class AbstractRemoteCommand<T> {
 		private ChannelSftp fSftpChannel;
 
 		private Future<T1> asyncCmdInThread() throws RemoteConnectionException {
-			setChannel(fConnection.getSftpChannel());
+			setChannel(fConnection.getSftpCommandChannel());
 			return fPool.submit(this);
 		}
 
@@ -244,7 +244,6 @@ public abstract class AbstractRemoteCommand<T> {
 					if (e.getCause() instanceof SftpException) {
 						throw (SftpException) e.getCause();
 					}
-					getChannel().disconnect();
 					throw new RemoteConnectionException(e.getMessage());
 				}
 				getProgressMonitor().worked(1);
@@ -253,7 +252,6 @@ public abstract class AbstractRemoteCommand<T> {
 				Thread.currentThread().interrupt(); // set current thread flag
 			}
 			future.cancel(true);
-			getChannel().disconnect();
 			throw new RemoteConnectionException(Messages.AbstractRemoteCommand_Operation_cancelled_by_user);
 		}
 	}

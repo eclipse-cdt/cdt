@@ -34,7 +34,6 @@ import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
-import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.gdb.service.macos.MacOSGdbDebugServicesFactory;
@@ -487,11 +486,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	 * A subclass can override this method and provide its own ServiceFactory.
 	 * @since 4.1
 	 */
-	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
-		if (LaunchUtils.getIsNonStopMode(config) && isNonStopSupportedInGdbVersion(version)) {
-			return new GdbDebugServicesFactoryNS(version);
-		}
-		
+	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {		
 		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
 			// The version string at this point should look like
 			// 6.3.50-20050815APPLE1346, we extract the gdb version and apple version
@@ -501,7 +496,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 			}
 		}
 
-		return new GdbDebugServicesFactory(version);
+		return new GdbDebugServicesFactory(version, config);
 	}
 
 	@Override

@@ -18,7 +18,6 @@ package org.eclipse.cdt.debug.gdbjtag.core;
  */
 
 import org.eclipse.cdt.debug.gdbjtag.core.dsf.gdb.service.GdbJtagDebugServicesFactory;
-import org.eclipse.cdt.debug.gdbjtag.core.dsf.gdb.service.macos.MacOSGdbJtagDebugServicesFactory;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
@@ -46,15 +45,6 @@ public class GDBJtagDSFLaunchConfigurationDelegate extends GdbLaunchDelegate {
 
 	@Override
 	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
-		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
-			// The version string at this point should look like
-			// 6.3.50-20050815APPLE1346, we extract the gdb version and apple version
-			String versions [] = version.split(LaunchUtils.MACOS_GDB_MARKER);
-			if (versions.length == 2) {
-				return new MacOSGdbJtagDebugServicesFactory(versions[0], versions[1]);
-			}
-		}
-
 		return new GdbJtagDebugServicesFactory(version);
 	}
 	

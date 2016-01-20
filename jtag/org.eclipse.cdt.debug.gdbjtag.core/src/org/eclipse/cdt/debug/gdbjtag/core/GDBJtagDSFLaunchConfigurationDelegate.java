@@ -45,7 +45,7 @@ public class GDBJtagDSFLaunchConfigurationDelegate extends GdbLaunchDelegate {
 
 	@Override
 	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
-		return new GdbJtagDebugServicesFactory(version);
+		return new GdbJtagDebugServicesFactory(version, config);
 	}
 	
 	@Override

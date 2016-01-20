@@ -37,7 +37,6 @@ import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.gdb.service.macos.MacOSGdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate2;
@@ -457,11 +456,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	 * @since 4.0
 	 */
 	protected boolean isNonStopSupportedInGdbVersion(String version) {
-		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
-			// Mac OS's GDB does not support Non-Stop
-			return false;
-		}
-		
 		if (NON_STOP_FIRST_VERSION.compareTo(version) <= 0) {
 			return true;
 		}
@@ -474,11 +468,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	 * @since 4.0
 	 */
 	protected boolean isPostMortemTracingSupportedInGdbVersion(String version) {
-		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
-			// Mac OS's GDB does not support post-mortem tracing
-			return false;
-		}
-		
 		if (TRACING_FIRST_VERSION.compareTo(version) <= 0
 			// This feature will be available for GDB 7.2. But until that GDB is itself available
 			// there is a pre-release that has a version of 6.8.50.20090414
@@ -498,15 +487,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 			return new GdbDebugServicesFactoryNS(version);
 		}
 		
-		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
-			// The version string at this point should look like
-			// 6.3.50-20050815APPLE1346, we extract the gdb version and apple version
-			String versions [] = version.split(LaunchUtils.MACOS_GDB_MARKER);
-			if (versions.length == 2) {
-				return new MacOSGdbDebugServicesFactory(versions[0], versions[1]);
-			}
-		}
-
 		return new GdbDebugServicesFactory(version);
 	}
 

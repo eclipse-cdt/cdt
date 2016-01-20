@@ -1,0 +1,8 @@
+Code-Review-1: Hudson CI
+Code-Review+2: Doug Schaefer <cdtdoug@gmail.com>
+Verified+1: Doug Schaefer <cdtdoug@gmail.com>
+Submitted-by: Doug Schaefer <cdtdoug@gmail.com>
+Submitted-at: Wed, 20 Jan 2016 10:30:24 -0500
+Reviewed-on: https://git.eclipse.org/r/64698
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

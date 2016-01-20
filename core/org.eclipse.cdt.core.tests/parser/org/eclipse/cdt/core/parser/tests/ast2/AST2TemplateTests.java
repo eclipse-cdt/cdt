@@ -9066,7 +9066,6 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  C<T>::c; // problems on C, T and ::c
 	//	}
 	public void testRegression_485388() throws Exception {
-		CPPASTNameBase.sAllowRecursionBindings = true;  // bug 486144
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 	

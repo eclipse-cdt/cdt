@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,11 +91,19 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
 
 	private final String fVersion;
-	
-	public GdbDebugServicesFactory(String version) {
+	private final ILaunchConfiguration fConfiguration;
+		
+	/** @since 5.0 */
+	public GdbDebugServicesFactory(String version, ILaunchConfiguration config) {
 		fVersion = version;
+		fConfiguration = config;
 	}
 	
+	/** @since 5.0 */
+	public ILaunchConfiguration getConfiguration() {
+		return fConfiguration;
+	}
+
 	public String getVersion() { return fVersion; }
 	
 	@Override
@@ -261,6 +269,15 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
+		// First check for the non-stop case
+		if (LaunchUtils.getIsNonStopMode(getConfiguration())) {
+			if (compareVersionWith(GDB_7_2_VERSION) >= 0) {
+				return new GDBRunControl_7_2_NS(session);
+			}
+			return new GDBRunControl_7_0_NS(session);
+		}
+
+		// Else, handle all-stop mode
 		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
 			return new GDBRunControl_7_10(session);
 		}

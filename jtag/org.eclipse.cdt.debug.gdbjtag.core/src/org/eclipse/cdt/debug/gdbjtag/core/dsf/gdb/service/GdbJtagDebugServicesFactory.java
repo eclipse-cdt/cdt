@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011,2015 Ericsson and others.
+ * Copyright (c) 2011, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,10 +23,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 
-
-	public GdbJtagDebugServicesFactory(String version) {
-		super(version);
-	}
+	/** @since 9.0 */
+	public GdbJtagDebugServicesFactory(String version, ILaunchConfiguration config) {
+		super(version, config);
+	}	
 
 	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {

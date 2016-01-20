@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Ericsson and others.
+ * Copyright (c) 2014, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GdbExtendedDebugServicesFactory extends GdbDebugServicesFactory {
 	
-	public GdbExtendedDebugServicesFactory(String version) {
-		super(version);
+	public GdbExtendedDebugServicesFactory(String version, ILaunchConfiguration config) {
+		super(version, config);
 	}
 	
 	@Override

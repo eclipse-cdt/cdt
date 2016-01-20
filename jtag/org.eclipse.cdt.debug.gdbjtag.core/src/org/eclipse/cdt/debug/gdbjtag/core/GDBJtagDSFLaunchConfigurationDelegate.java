@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2016 QNX Software Systems and others.
+ * Copyright (c) 2007, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class GDBJtagDSFLaunchConfigurationDelegate extends GdbLaunchDelegate {
 
 	@Override
 	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
-		return new GdbJtagDebugServicesFactory(version);
+		return new GdbJtagDebugServicesFactory(version, config);
 	}
 	
 	@Override

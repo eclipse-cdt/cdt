@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_8bdc555b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-01-20T21:54:09Z",
+      "side": 1,
+      "message": "The copyright year, now needs to be updated to 2016",
+      "revId": "56712685bbd4e8ef9b4b0a9074d481146bb146ca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

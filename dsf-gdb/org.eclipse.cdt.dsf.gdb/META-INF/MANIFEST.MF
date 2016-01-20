@@ -36,13 +36,10 @@ Export-Package: org.eclipse.cdt.dsf.gdb,
  org.eclipse.cdt.dsf.gdb.service,
  org.eclipse.cdt.dsf.gdb.service.command,
  org.eclipse.cdt.dsf.gdb.service.extensions,
- org.eclipse.cdt.dsf.gdb.service.macos,
  org.eclipse.cdt.dsf.mi.service,
  org.eclipse.cdt.dsf.mi.service.breakpoint.actions,
  org.eclipse.cdt.dsf.mi.service.command,
  org.eclipse.cdt.dsf.mi.service.command.commands,
- org.eclipse.cdt.dsf.mi.service.command.commands.macos,
  org.eclipse.cdt.dsf.mi.service.command.events,
- org.eclipse.cdt.dsf.mi.service.command.output,
- org.eclipse.cdt.dsf.mi.service.command.output.macos
+ org.eclipse.cdt.dsf.mi.service.command.output
 Import-Package: com.ibm.icu.text

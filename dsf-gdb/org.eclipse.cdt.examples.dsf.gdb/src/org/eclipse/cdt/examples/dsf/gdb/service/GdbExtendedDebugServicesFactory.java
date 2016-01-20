@@ -23,8 +23,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GdbExtendedDebugServicesFactory extends GdbDebugServicesFactory {
 	
-	public GdbExtendedDebugServicesFactory(String version) {
-		super(version);
+	public GdbExtendedDebugServicesFactory(String version, ILaunchConfiguration config) {
+		super(version, config);
 	}
 	
 	@Override

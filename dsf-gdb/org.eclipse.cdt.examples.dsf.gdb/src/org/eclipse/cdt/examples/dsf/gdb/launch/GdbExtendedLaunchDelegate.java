@@ -14,11 +14,9 @@ import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
-import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.gdb.GDBExamplePlugin;
 import org.eclipse.cdt.examples.dsf.gdb.service.GdbExtendedDebugServicesFactory;
-import org.eclipse.cdt.examples.dsf.gdb.service.GdbExtendedDebugServicesFactoryNS;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -42,11 +40,7 @@ public class GdbExtendedLaunchDelegate extends GdbLaunchDelegate {
 
     @Override
 	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
-		boolean nonStop = LaunchUtils.getIsNonStopMode(config);
-		if (nonStop && isNonStopSupportedInGdbVersion(version)) {
-			return new GdbExtendedDebugServicesFactoryNS(version);
-		}
-		return new GdbExtendedDebugServicesFactory(version);
+		return new GdbExtendedDebugServicesFactory(version, config);
 	}
 
 	@Override

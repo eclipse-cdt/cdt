@@ -23,7 +23,15 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 
+	/** @since 9.0 */
+	public GdbJtagDebugServicesFactory(String version, ILaunchConfiguration config) {
+		super(version, config);
+	}	
 
+	/**
+	 * @deprecated Replaced with GdbJtagDebugServicesFactory(String, ILaunchConfiguration)
+	 */
+	@Deprecated
 	public GdbJtagDebugServicesFactory(String version) {
 		super(version);
 	}

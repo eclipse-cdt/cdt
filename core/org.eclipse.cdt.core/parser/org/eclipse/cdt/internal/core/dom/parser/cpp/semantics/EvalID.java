@@ -308,6 +308,13 @@ public class EvalID extends CPPDependentEvaluation {
 		}
 		if (parent instanceof ICPPASTFunctionDefinition) {
 			ICPPASTFunctionDefinition fdef= (ICPPASTFunctionDefinition) parent;
+			// Resolution of the method name triggers name resolution inside the
+			// decl-specifier of the method definition. If we are currently
+			// resolving something inside the decl-specifier, this can lead to
+			// recursion.
+			if (ASTQueries.isAncestorOf(fdef.getDeclSpecifier(), expr)) {
+				return null;
+			}
 			final IBinding methodBinding = fdef.getDeclarator().getName().resolvePreBinding();
 			if (methodBinding instanceof ICPPMethod && !((ICPPMethod) methodBinding).isStatic()) {
 				IScope scope = CPPVisitor.getContainingScope(expr);

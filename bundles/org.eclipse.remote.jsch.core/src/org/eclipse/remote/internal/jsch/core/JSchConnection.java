@@ -257,7 +257,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	private final Map<String, String> fProperties = new HashMap<String, String>();
 	private final List<Session> fSessions = new ArrayList<Session>();
 
-	private ChannelSftp fSftpChannel;
+	private ChannelSftp fSftpCommandChannel;
 	private boolean isFullySetup; // including sftp channel and environment
 
 	private static final Map<IRemoteConnection, JSchConnection> connectionMap = new HashMap<>();
@@ -363,11 +363,11 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	}
 
 	private synchronized void cleanup() {
-		if (fSftpChannel != null) {
-			if (fSftpChannel.isConnected()) {
-				fSftpChannel.disconnect();
+		if (fSftpCommandChannel != null) {
+			if (fSftpCommandChannel.isConnected()) {
+				fSftpCommandChannel.disconnect();
 			}
-			fSftpChannel = null;
+			fSftpCommandChannel = null;
 		}
 		for (Session session : fSessions) {
 			if (session.isConnected()) {
@@ -677,24 +677,40 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	}
 
 	/**
-	 * Open an sftp channel to the remote host. Always use the second session if available.
+	 * Open an sftp command channel to the remote host. This channel is for commands that do not require any
+	 * state being preserved and should not be closed. Long running commands (such as get/put) should use a separate channel
+	 * obtained via {#link #newSftpChannel()}.
+	 * 
+	 * Always use the second session if available.
 	 *
-	 * @return sftp channel or null if the progress monitor was cancelled
+	 * @return sftp channel
 	 * @throws RemoteConnectionException
 	 *             if a channel could not be opened
 	 */
-	public ChannelSftp getSftpChannel() throws RemoteConnectionException {
-		if (fSftpChannel == null || fSftpChannel.isClosed()) {
-			Session session = fSessions.get(0);
-			if (fSessions.size() > 1) {
-				session = fSessions.get(1);
-			}
-			fSftpChannel = openSftpChannel(session);
-			if (fSftpChannel == null) {
-				throw new RemoteConnectionException(Messages.JSchConnection_Unable_to_open_sftp_channel);
-			}
+	public ChannelSftp getSftpCommandChannel() throws RemoteConnectionException {
+		if (fSftpCommandChannel == null || fSftpCommandChannel.isClosed()) {
+			fSftpCommandChannel = newSftpChannel();
 		}
-		return fSftpChannel;
+		return fSftpCommandChannel;
+	}
+
+	/**
+	 * Open a channel for long running commands. This channel should be closed when the command is completed.
+	 * 
+	 * @return sftp channel
+	 * @throws RemoteConnectionException
+	 *             if a channel could not be opened
+	 */
+	public ChannelSftp newSftpChannel() throws RemoteConnectionException {
+		Session session = fSessions.get(0);
+		if (fSessions.size() > 1) {
+			session = fSessions.get(1);
+		}
+		ChannelSftp channel = openSftpChannel(session);
+		if (channel == null) {
+			throw new RemoteConnectionException(Messages.JSchConnection_Unable_to_open_sftp_channel);
+		}
+		return channel;
 	}
 
 	public Channel getStreamForwarder(String host, int port) throws RemoteConnectionException {

@@ -37,7 +37,7 @@ public class JSchFileManager implements IRemoteFileService {
 			if (IRemoteFileService.class.equals(service)) {
 				if (remoteConnection instanceof JSchConnection)
 					try {
-						((JSchConnection) remoteConnection).getSftpChannel();
+						((JSchConnection) remoteConnection).getSftpCommandChannel();
 					} catch (RemoteConnectionException e) {
 						throw new UnsupportedOperationException(
 								Messages.JSchConnection_Remote_host_does_not_support_sftp);

@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Composite;
 
+@SuppressWarnings("restriction")
 public class AutotoolsBuildWizardHandler extends MBSWizardHandler {
 	public AutotoolsBuildWizardHandler(Composite p, IWizard w) {
 		super(AutotoolsWizardMessages.getResourceString("AutotoolsBuildWizard.0"), p, w); //$NON-NLS-1$
@@ -37,7 +38,6 @@ public class AutotoolsBuildWizardHandler extends MBSWizardHandler {
 		super(pt, parent, wizard);
 	}
 
-	@SuppressWarnings("restriction")
 	@Override
 	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
 		super.createProject(project, defaults, onFinish, monitor);
@@ -58,6 +58,7 @@ public class AutotoolsBuildWizardHandler extends MBSWizardHandler {
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
 		ICfgScannerConfigBuilderInfo2Set cbi = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
 		IScannerConfigBuilderInfo2Set baseCbi = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(project);
+		@SuppressWarnings("unused")
 		Map<InfoContext, IScannerConfigBuilderInfo2> baseInfoMap = baseCbi.getInfoMap();
 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> infoMap = cbi.getInfoMap();
 		for (Map.Entry<CfgInfoContext, IScannerConfigBuilderInfo2> e : infoMap.entrySet()) {

@@ -69,7 +69,7 @@ public class QtLocalDebugLaunchConfigDelegate extends QtLaunchConfigurationDeleg
 		Path exeFile = qtBuildConfig.getProgramPath();
 		gdbLaunch.setProgramPath(exeFile.toString());
 
-		gdbLaunch.setServiceFactory(new GdbDebugServicesFactory(gdbVersion));
+		gdbLaunch.setServiceFactory(new GdbDebugServicesFactory(gdbVersion, configuration));
 
 		Sequence servicesLaunchSequence = new ServicesLaunchSequence(gdbLaunch.getSession(), gdbLaunch, monitor);
 		gdbLaunch.getSession().getExecutor().execute(servicesLaunchSequence);

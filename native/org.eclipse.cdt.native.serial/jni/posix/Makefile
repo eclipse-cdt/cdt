@@ -10,73 +10,49 @@
 #     Alex Blewitt - MacOSX with a 64-bit vm 
 #*******************************************************************************/
 
+ifeq ($(JAVA_HOME),)
+$(error Please define JAVA_HOME)
+endif
+
+OS_DIR = ../../os
+
 UNAME = $(shell uname)
-
-# Defaults which can be overridden.
-ifeq ($(UNAME),Darwin)
-JAVA_HOME = $(shell echo /Library/Java/JavaVirtualMachines/jdk1.8.0_*.jdk/Contents/Home)
-OS = macosx
-JNI_OS = darwin
-ARCHS = x86_64
-ARCH_FLAG_X86 = -arch i386
-ARCH_FLAG_X86_64 = -arch x86_64
-LDFLAGS = -dynamiclib
-LIBEXT = jnilib
-else
 ifeq ($(UNAME),Linux)
-JAVA_HOME = /usr/lib/jvm/java-8-oracle
-OS = linux
-JNI_OS = linux
-ARCHS = x86 x86_64
-ARCH_FLAG_X86 = -m32
-ARCH_FLAG_X86_64 = -m64
-LDFLAGS = -shared
-LIBEXT = so
+LIBS = \
+	$(OS_DIR)/win32/x86/serial.dll \
+	$(OS_DIR)/win32/x86_64/serial.dll \
+	$(OS_DIR)/linux/x86/libserial.so \
+	$(OS_DIR)/linux/x86_64/libserial.so
+else
+ifeq ($(UNAME),Darwin)
+LIBS = \
+	$(OS_DIR)/macosx/x86_64/libserial.jnilib
 endif
 endif
 
-ARCH_X86 = x86
-ARCH_X86_64 = x86_64
+all:	$(LIBS)
 
-CC=gcc
-LD=libtool
-CPPFLAGS = -I. -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(JNI_OS)
-CFLAGS +=-fPIC -D_REENTRANT
-
-INSTALL_DIR_X86 = ../../os/$(OS)/$(ARCH_X86)
-INSTALL_DIR_X86_64 = ../../os/$(OS)/$(ARCH_X86_64)
-
-LIB_NAME_FULL_SERIAL_X86 = $(INSTALL_DIR_X86)/libserial.$(LIBEXT)
-LIB_NAME_FULL_SERIAL_X86_64 = $(INSTALL_DIR_X86_64)/libserial.$(LIBEXT)
-
-OBJS_SERIAL_X86 = serial_$(ARCH_X86).o
-OBJS_SERIAL_X86_64 = serial_$(ARCH_X86_64).o
-
-OBJS_X86 = $(OBJS_SERIAL_X86)
-OBJS_X86_64 = $(OBJS_SERIAL_X86_64)
-
-all: $(ARCHS)
-
-x86: $(LIB_NAME_FULL_SERIAL_X86)
-
-x86_64:  $(LIB_NAME_FULL_SERIAL_X86_64)
+clean :
+	rm $(LIBS)
 
 rebuild: clean all
 
-$(LIB_NAME_FULL_SERIAL_X86): $(OBJS_SERIAL_X86)
-	mkdir -p $(INSTALL_DIR_X86)
-	$(CC) $(LDFLAGS)  $(ARCH_FLAG_X86) -o $(LIB_NAME_FULL_SERIAL_X86) $(OBJS_SERIAL_X86)
+$(OS_DIR)/win32/x86/serial.dll:	serial.c
+	mkdir -p $(dir $@)
+	i686-w64-mingw32-gcc -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32 -shared -o $@ serial.c
 
-$(LIB_NAME_FULL_SERIAL_X86_64): $(OBJS_SERIAL_X86_64)
-	mkdir -p $(INSTALL_DIR_X86_64)
-	$(CC) $(LDFLAGS)  $(ARCH_FLAG_X86_64) -o $(LIB_NAME_FULL_SERIAL_X86_64) $(OBJS_SERIAL_X86_64)
+$(OS_DIR)/win32/x86_64/serial.dll:	serial.c
+	mkdir -p $(dir $@)
+	x86_64-w64-mingw32-gcc -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32 -shared -o $@ serial.c
 
-serial_$(ARCH_X86).o: serial.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ serial.c
+$(OS_DIR)/linux/x86/libserial.so:	serial.c
+	mkdir -p $(dir $@)
+	gcc -m32 -fPIC -D_REENTRANT -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -shared -o $@ serial.c
 
-serial_$(ARCH_X86_64).o: serial.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ serial.c
+$(OS_DIR)/linux/x86_64/libserial.so:	serial.c
+	mkdir -p $(dir $@)
+	gcc -m64 -fPIC -D_REENTRANT -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -shared -o $@ serial.c
 
-clean :
-	$(RM) $(OBJS_X86)
-	$(RM) $(OBJS_X86_64)
+$(OS_DIR)/macosx/x86_64/libserial.jnilib:	serial.c
+	mkdir -p $(dir $@)
+	clang --arch x86_64 -fPIC -D_REENTRANT -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -dynamiclib -o $@ serial.c

@@ -13,22 +13,45 @@
 #include <sys/stat.h>
 #include <sys/uio.h>
 #endif
+#ifndef __MINGW32__
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <strings.h>
+#include <errno.h>
+#else
+#define WIN32_LEAN_AND_MEAN
+#define UNICODE
+#include <windows.h>
+#endif
 #include <jni.h>
 
 #define FUNC(x) Java_org_eclipse_cdt_serial_SerialPort_ ## x
 
+static void throwIOException(JNIEnv *env, const char *msg)
+{
+	char buff[256];
+#ifndef __MINGW32__
+	sprintf(buff, "%s: %s", msg, strerror(errno));
+#else
+	sprintf_s(buff, sizeof(buff), "%s: %d", msg, GetLastError());
+#endif
+	jclass cls = (*env)->FindClass(env, "java/io/IOException");
+	(*env)->ThrowNew(env, cls, buff);
+}
+
 JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName, jint baudRate, jint byteSize, jint parity, jint stopBits)
 {
+#ifndef __MINGW32__
 	const char * cportName = (*env)->GetStringUTFChars(env, portName, NULL);
 	int fd = open(cportName, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (fd < 0) {
-		perror(cportName);
+		char msg[256];
+		sprintf(msg, "Error opening %s", cportName);
+		throwIOException(env, msg);
 		return fd;
 	}
 
@@ -97,41 +120,275 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	tcsetattr(fd, TCSANOW, &options);
 
 	return fd;
+#else // __MINGW32__
+	const wchar_t * cportName = (const wchar_t *)(*env)->GetStringChars(env, portName, NULL);
+	HANDLE handle = CreateFile(cportName,
+		GENERIC_READ | GENERIC_WRITE,
+		0,
+		NULL,
+		OPEN_EXISTING,
+		FILE_FLAG_OVERLAPPED,
+		NULL);
+
+	if (handle == INVALID_HANDLE_VALUE) {
+		char msg[256];
+		sprintf_s(msg, sizeof(msg), "Error opening %s", cportName);
+		throwIOException(env, msg);
+		return -1;
+	}
+
+	DCB dcb = { 0 };
+
+	if (!GetCommState(handle, &dcb)) {
+		throwIOException(env, "Error getting DCB");
+		return -1;
+	}
+
+	dcb.BaudRate = baudRate;
+	dcb.ByteSize = (BYTE)byteSize;
+
+	switch (parity) {
+	case 0: // None
+		dcb.fParity = FALSE;
+		break;
+	case 1: // Even
+		dcb.fParity = TRUE;
+		dcb.Parity = EVENPARITY;
+		break;
+	case 2: // Odd
+		dcb.fParity = TRUE;
+		dcb.Parity = ODDPARITY;
+		break;
+	}
+
+	switch (stopBits) {
+	case 0:
+		dcb.StopBits = ONESTOPBIT;
+		break;
+	case 1:
+		dcb.StopBits = TWOSTOPBITS;
+		break;
+	}
+
+	if (!SetCommState(handle, &dcb)) {
+		throwIOException(env, "Error setting DCB");
+		return -1;
+	}
+
+	COMMTIMEOUTS timeouts = { 0 };
+	timeouts.ReadIntervalTimeout = MAXDWORD;
+	timeouts.ReadTotalTimeoutMultiplier = MAXDWORD;
+	timeouts.ReadTotalTimeoutConstant = 200;
+	if (!SetCommTimeouts(handle, &timeouts)) {
+		throwIOException(env, "Error setting timeouts");
+		return -1;
+	}
+
+#ifdef _WIN64
+	return (jlong)handle;
+#else
+	return (jlong)(unsigned)handle;
+#endif
+#endif // __MINGW32__
 }
 
 JNIEXPORT void JNICALL FUNC(close0)(JNIEnv *env, jobject jobj, jlong handle)
 {
+#ifndef __MINGW32__
 	close(handle);
+#else
+#ifdef _WIN64
+	CloseHandle((HANDLE)handle);
+#else
+	CloseHandle((HANDLE)(unsigned)handle);
+#endif
+#endif
 }
 
-JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong handle, jbyteArray bytes, jint offset, jint size)
+JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong jhandle, jbyteArray bytes, jint offset, jint size)
 {
+#ifndef __MINGW32__
 	jbyte buff[256];
 	int n = size < sizeof(buff) ? size : sizeof(buff);
-	n = read(handle, buff, n);
+	n = read(jhandle, buff, n);
 	if (n > 0) {
 		(*env)->SetByteArrayRegion(env, bytes, offset, n, buff);
 	}
 	return n;
+#else
+	OVERLAPPED olp = { 0 };
+
+	olp.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	if (olp.hEvent == NULL) {
+		throwIOException(env, "Error creating event");
+		return -1;
+	}
+
+	char buff[256];
+	DWORD nread = sizeof(buff) < size ? sizeof(buff) : size;
+#ifdef _WIN64
+	HANDLE handle = (HANDLE)jhandle;
+#else
+	HANDLE handle = (HANDLE)(unsigned)jhandle;
+#endif
+
+	if (!ReadFile(handle, buff, sizeof(buff), &nread, &olp)) {
+		if (GetLastError() != ERROR_IO_PENDING) {
+			throwIOException(env, "Error reading from port");
+			CloseHandle(olp.hEvent);
+			return -1;
+		}
+		else {
+			switch (WaitForSingleObject(olp.hEvent, INFINITE)) {
+			case WAIT_OBJECT_0:
+				if (!GetOverlappedResult(handle, &olp, &nread, FALSE)) {
+					if (GetLastError() != ERROR_OPERATION_ABORTED) {
+						throwIOException(env, "Error waiting for read");
+					}
+					CloseHandle(olp.hEvent);
+					return -1;
+				}
+				break;
+			}
+		}
+	}
+
+	if (nread > 0) {
+		(*env)->SetByteArrayRegion(env, bytes, offset, nread, (jbyte *)buff);
+	}
+	CloseHandle(olp.hEvent);
+	return nread;
+#endif
 }
 
-JNIEXPORT void JNICALL FUNC(write0)(JNIEnv *env, jobject jobj, jlong handle, jint b)
+JNIEXPORT void JNICALL FUNC(write0)(JNIEnv *env, jobject jobj, jlong jhandle, jint b)
 {
+#ifndef __MINGW32__
 	char buff = b;
-	write(handle, &buff, 1);
+	write(jhandle, &buff, 1);
+#else
+	OVERLAPPED olp = { 0 };
+
+	olp.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	if (olp.hEvent == NULL) {
+		throwIOException(env, "Error creating event");
+		return;
+	}
+
+	char buff = (char)b;
+	DWORD nwritten;
+#ifdef _WIN64
+	HANDLE handle = (HANDLE)jhandle;
+#else
+	HANDLE handle = (HANDLE)(unsigned)jhandle;
+#endif
+
+	if (!WriteFile(handle, &buff, sizeof(buff), &nwritten, &olp)) {
+		if (GetLastError() != ERROR_IO_PENDING) {
+			throwIOException(env, "Error writing to port");
+		}
+		else {
+			switch (WaitForSingleObject(olp.hEvent, INFINITE)) {
+			case WAIT_OBJECT_0:
+				if (!GetOverlappedResult(handle, &olp, &nwritten, FALSE)) {
+					throwIOException(env, "Error waiting for write");
+				}
+			}
+		}
+	}
+
+	CloseHandle(olp.hEvent);
+#endif
 }
 
-JNIEXPORT void JNICALL FUNC(write1)(JNIEnv *env, jobject jobj, jlong handle, jbyteArray bytes, jint offset, jint size)
+JNIEXPORT void JNICALL FUNC(write1)(JNIEnv *env, jobject jobj, jlong jhandle, jbyteArray bytes, jint offset, jint size)
 {
+#ifndef __MINGW32__
 	while (size > 0) {
 		jbyte buff[256];
 		int n = size < sizeof(buff) ? size : sizeof(buff);
 		(*env)->GetByteArrayRegion(env, bytes, offset, n, buff);
-		n = write(handle, buff, n);
+		n = write(jhandle, buff, n);
 		if (n < 0) {
 			return;
 		}
 		size -= n;
 		offset += n;
 	}
+#else
+	OVERLAPPED olp = { 0 };
+
+	olp.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	if (olp.hEvent == NULL) {
+		throwIOException(env, "Error creating event");
+		return;
+	}
+
+	while (size > 0) {
+		char buff[256];
+		DWORD nwritten = sizeof(buff) < size ? sizeof(buff) : size;
+		(*env)->GetByteArrayRegion(env, bytes, offset, nwritten, (jbyte *)buff);
+#ifdef _WIN64
+		HANDLE handle = (HANDLE)jhandle;
+#else
+		HANDLE handle = (HANDLE)(unsigned)jhandle;
+#endif
+
+		if (!WriteFile(handle, buff, nwritten, &nwritten, &olp)) {
+			if (GetLastError() != ERROR_IO_PENDING) {
+				throwIOException(env, "Error writing to port");
+				return;
+			}
+			else {
+				switch (WaitForSingleObject(olp.hEvent, INFINITE)) {
+				case WAIT_OBJECT_0:
+					if (!GetOverlappedResult(handle, &olp, &nwritten, FALSE)) {
+						throwIOException(env, "Error waiting for write");
+						return;
+					}
+				}
+			}
+		}
+		size -= nwritten;
+		offset += nwritten;
+	}
+
+	CloseHandle(olp.hEvent);
+#endif
 }
+
+#ifdef __MINGW32__
+JNIEXPORT jstring FUNC(getPortName)(JNIEnv *env, jclass cls, jint i)
+{
+	HKEY key;
+
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\DEVICEMAP\\SERIALCOMM", 0, KEY_READ, &key) != ERROR_SUCCESS) {
+		throwIOException(env, "Can not find registry key");
+		return NULL;
+	}
+
+	wchar_t name[256];
+	DWORD len = sizeof(name);
+	LONG rc = RegEnumValue(key, (DWORD)i, name, &len, NULL, NULL, NULL, NULL);
+	if (rc != ERROR_SUCCESS) {
+		if (rc != ERROR_NO_MORE_ITEMS) {
+			throwIOException(env, "Can not enum value");
+		}
+		RegCloseKey(key);
+		return NULL;
+	}
+
+	wchar_t value[256];
+	DWORD type;
+	len = sizeof(value);
+	if (RegQueryValueEx(key, name, NULL, &type, (BYTE *)value, &len) != ERROR_SUCCESS) {
+		throwIOException(env, "Can not query value");
+		RegCloseKey(key);
+		return NULL;
+	}
+
+	jstring result = (*env)->NewString(env, (jchar *)value, (jsize) wcslen(value));
+	RegCloseKey(key);
+	return result;
+}
+#endif

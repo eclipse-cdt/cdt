@@ -18,17 +18,34 @@
 #include <termios.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <strings.h>
 #include <jni.h>
+#include <errno.h>
 
 #define FUNC(x) Java_org_eclipse_cdt_serial_SerialPort_ ## x
+
+jint throwIOException(JNIEnv *env, const char *cportName, int err) 
+{
+	jclass exClass;
+	char *className = "java/io/IOException";
+	char buf[256];
+
+	exClass = (*env)->FindClass(env, className);
+	if(exClass != NULL) {
+		snprintf(buf, sizeof(buf), "Error opening %s (%s)", cportName, strerror(err));
+		return (*env)->ThrowNew(env, exClass, buf);
+	}
+	perror(cportName);
+	return -1;
+}
 
 JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName, jint baudRate, jint byteSize, jint parity, jint stopBits)
 {
 	const char * cportName = (*env)->GetStringUTFChars(env, portName, NULL);
 	int fd = open(cportName, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (fd < 0) {
-		perror(cportName);
+		throwIOException(env, cportName, errno);
 		return fd;
 	}
 

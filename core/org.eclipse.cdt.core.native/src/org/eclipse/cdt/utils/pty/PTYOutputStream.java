@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.eclipse.cdt.utils.pty.PTY.MasterFD;
-import org.eclipse.core.runtime.Platform;
 
 public class PTYOutputStream extends OutputStream {
 
@@ -85,8 +84,7 @@ public class PTYOutputStream extends OutputStream {
 	public void close() throws IOException {
 		if (master.getFD() == -1)
 			return;
-		// For non-windows platforms, send EOT instead of closing
-		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+		if (!sendEotBeforeClose) {
 			int status = close0(master.getFD());
 			if (status == -1)
 				throw new IOException("close error"); //$NON-NLS-1$

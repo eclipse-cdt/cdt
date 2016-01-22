@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -25,8 +26,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPConstructor {
 
-	public CPPImplicitConstructor(ICPPClassScope scope, char[] name, ICPPParameter[] params) {
-        super(scope, name, createFunctionType(params), params);
+	public CPPImplicitConstructor(ICPPClassScope scope, char[] name, ICPPParameter[] params, boolean isConstexpr) {
+        super(scope, name, createFunctionType(params), params, isConstexpr);
     }
 
 	private static ICPPFunctionType createFunctionType(IParameter[] params) {

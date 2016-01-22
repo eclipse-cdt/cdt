@@ -79,25 +79,26 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		ICPPMethod[] result= new ICPPMethod[needConversionOperator ? 6 : 5];
 
 		// Deleted default constructor: A()
-		CPPImplicitConstructor ctor= new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY);
+		CPPImplicitConstructor ctor=
+				new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false);
 		ctor.setDeleted(true);
 		result[0]= ctor;
 		
 		// Copy constructor: A(const A &)
 		IType pType = new CPPReferenceType(SemanticUtil.constQualify(this), false);
 		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
-		ctor = new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ps);
+		ctor = new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ps, false);
 		result[1]= ctor;
 		
 		// Deleted copy assignment operator: A& operator = (const A &)
 		IType refType = new CPPReferenceType(this, false);
 		ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, ps, false, false);
-		ICPPMethod m = new CPPImplicitMethod(scope, OverloadableOperator.ASSIGN.toCharArray(), ft, ps);
+		ICPPMethod m = new CPPImplicitMethod(scope, OverloadableOperator.ASSIGN.toCharArray(), ft, ps, false);
 		result[2]= m;
 
 		// Destructor: ~A()
 		ft= CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false, false);
-		m = new CPPImplicitMethod(scope, new char[] {'~'}, ft, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY);
+		m = new CPPImplicitMethod(scope, new char[] {'~'}, ft, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false);
 		result[3]= m;
 		
 		// Function call operator
@@ -109,7 +110,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		for (int i = 0; i < params.length; i++) {
 			params[i]= new CPPParameter(parameterTypes[i], i);
 		}
-		m= new CPPImplicitMethod(scope, OverloadableOperator.PAREN.toCharArray(), ft, params) {
+		m= new CPPImplicitMethod(scope, OverloadableOperator.PAREN.toCharArray(), ft, params, false) {
 			@Override
 			public boolean isImplicit() { return false; }
 		};
@@ -119,7 +120,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		if (needConversionOperator) {
 			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes);
 			ft= new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false);
-			m= new CPPImplicitMethod(scope, CPPASTConversionName.createName(conversionTarget, null), ft, params);
+			m= new CPPImplicitMethod(scope, CPPASTConversionName.createName(conversionTarget, null), ft, params, false);
 			result[5]= m;
 		}
 		return result;

@@ -3794,7 +3794,7 @@ public class CPPSemantics {
 			theParms[i]= new CPPBuiltinParameter(t);
 		}
 		ICPPFunctionType functionType = new CPPFunctionType(returnType, parms);
-		return new CPPImplicitFunction(CALL_FUNCTION, scope, functionType, theParms, false);
+		return new CPPImplicitFunction(CALL_FUNCTION, scope, functionType, theParms, false, false);
 	}
 
 	static boolean isUserDefined(IType type) {

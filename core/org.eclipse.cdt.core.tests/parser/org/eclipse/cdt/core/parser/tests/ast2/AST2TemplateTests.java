@@ -8736,6 +8736,29 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template<typename>
+	//	struct A {
+	//	  constexpr operator int() const { return false; }
+	//	};
+	//
+	//	template <class T>
+	//	typename enable_if<!A<T>()>::type waldo(T a);
+	//
+	//	void test() {
+	//	  waldo(0);
+	//	}
+	public void testDependentConversionOperator_486149() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename>
 	//	struct C {
 	//	    friend bool operator==(C, C);

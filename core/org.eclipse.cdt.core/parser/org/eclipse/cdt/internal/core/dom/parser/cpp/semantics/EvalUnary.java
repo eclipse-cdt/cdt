@@ -37,6 +37,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -46,7 +47,9 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -61,6 +64,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -276,9 +280,34 @@ public class EvalUnary extends CPPDependentEvaluation {
 		if (isValueDependent())
 			return Value.create(this);
 
-		if (getOverload(point) != null) {
-			// TODO(sprigogin): Simulate execution of a function call.
-			return Value.create(this);
+		ICPPEvaluation arg = fArgument;
+		ICPPFunction overload = getOverload(point);
+		if (overload != null) {
+			ICPPFunctionType functionType = overload.getType();
+			IType targetType = functionType.getParameterTypes()[0];
+			ValueCategory valueCategory = fArgument.getValueCategory(point);
+			IType type = fArgument.getType(point);
+			ICPPFunction conversion = null;
+			try {
+				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) type, targetType, false, point);
+				conversion = cost.getUserDefinedConversion();
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+
+			if (conversion != null) {
+				if (!conversion.isConstexpr())
+					return Value.ERROR;
+				ICPPEvaluation eval = new EvalBinding(conversion, null, (IBinding) null);
+				arg = new EvalFunctionCall(new ICPPEvaluation[] {eval, arg}, (IBinding) null);
+			}
+			if (!(overload instanceof CPPImplicitFunction)) {
+				if (!overload.isConstexpr())
+					return Value.ERROR;
+				ICPPEvaluation eval = new EvalBinding(overload, null, (IBinding) null);
+				arg = new EvalFunctionCall(new ICPPEvaluation[] {eval, arg}, (IBinding) null);
+				return arg.getValue(point);
+			}
 		}
 
 		switch (fOperator) {
@@ -302,7 +331,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 		}
 
-		IValue val = fArgument.getValue(point);
+		IValue val = arg.getValue(point);
 		if (val == null)
 			return Value.UNKNOWN;
 

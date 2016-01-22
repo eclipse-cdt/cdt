@@ -113,14 +113,15 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredConstructor()) {
 			// Default constructor: A(void)
-			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY);
+			boolean isConstexpr = ia.isDefaultConstructorConstexpr();
+			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY, isConstexpr);
 			implicits[i++] = m;
 			addBinding(m);
 		}
 
 		if (!ia.hasUserDeclaredCopyConstructor()) {
 			// Copy constructor: A(const A &)
-			ICPPMethod m = new CPPImplicitConstructor(this, className, params);
+			ICPPMethod m = new CPPImplicitConstructor(this, className, params, false);
 			implicits[i++] = m;
 			addBinding(m);
 		}
@@ -129,7 +130,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			// Copy assignment operator: A& operator = (const A &)
 			IType refType = new CPPReferenceType(classType, false);
 			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, params, false, false);
-			ICPPMethod m = new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, params);
+			ICPPMethod m =
+					new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, params, false);
 			implicits[i++] = m;
 			addBinding(m);
 		}
@@ -137,7 +139,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (!ia.hasUserDeclaredDestructor()) {
 			// Destructor: ~A()
 			char[] dtorName = CharArrayUtils.concat("~".toCharArray(), className);  //$NON-NLS-1$
-			ICPPMethod m = new CPPImplicitMethod(this, dtorName, DESTRUCTOR_FUNCTION_TYPE, EMPTY_CPPPARAMETER_ARRAY);
+			ICPPMethod m = new CPPImplicitMethod(this, dtorName, DESTRUCTOR_FUNCTION_TYPE, EMPTY_CPPPARAMETER_ARRAY,
+					false);
 			implicits[i++] = m;
 			addBinding(m);
 		}

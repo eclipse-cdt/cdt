@@ -70,7 +70,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 	
 	/**
 	 * If the given node is contained in some template declaration,
-	 * return the binding for that template. Otherwise return null. 
+	 * returns the binding for that template. Otherwise returns null. 
 	 */
 	protected static IBinding findEnclosingTemplate(IASTNode node) {
 		while (node != null) {

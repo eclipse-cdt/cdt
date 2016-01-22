@@ -473,7 +473,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 
 		IBinding b = fCpp ?
 				new CPPImplicitFunction(toCharArray(name), fScope, (ICPPFunctionType) ft,
-						(ICPPParameter[]) theParms, varargs) :
+						(ICPPParameter[]) theParms, false, varargs) :
 				new CImplicitFunction(toCharArray(name), fScope, ft, theParms, varargs);
 		fBindingList.add(b);
 	}

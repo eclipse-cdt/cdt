@@ -9,6 +9,7 @@
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -42,8 +43,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod {
     
-    public CPPImplicitMethod(ICPPClassScope scope, char[] name, ICPPFunctionType type, ICPPParameter[] params) {
-		super(name, scope, type, params, false);
+    public CPPImplicitMethod(ICPPClassScope scope, char[] name, ICPPFunctionType type, ICPPParameter[] params,
+    		boolean isConstexpr) {
+		super(name, scope, type, params, isConstexpr, false);
 	}
    
 	@Override

@@ -566,7 +566,7 @@ class BuiltinOperators {
 			if (fResult == null) {
 				fResult= new ArrayList<>();
 			}
-			fResult.add(new CPPImplicitFunction(fOperator.toCharArray(), fFileScope, functionType, parameter, false));
+			fResult.add(new CPPImplicitFunction(fOperator.toCharArray(), fFileScope, functionType, parameter, true, false));
 		}
 	}
 		

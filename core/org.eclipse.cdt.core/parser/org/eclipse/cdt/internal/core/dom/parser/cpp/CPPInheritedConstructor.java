@@ -28,7 +28,7 @@ public class CPPInheritedConstructor extends CPPImplicitMethod implements ICPPCo
 
 	public CPPInheritedConstructor(ICPPClassScope scope, char[] name, ICPPConstructor prototype,
 			ICPPParameter[] params) {
-		super(scope, name, createFunctionType(params), params);
+		super(scope, name, createFunctionType(params), params, false);
 		this.prototype = prototype;
     }
 

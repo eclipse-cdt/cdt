@@ -135,6 +135,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isValueDependent() {
+		if (CPPTemplates.isDependentType(fInputType))
+			return true;
 		for (ICPPEvaluation arg : fArguments) {
 			if (arg.isValueDependent())
 				return true;

@@ -23,15 +23,19 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -48,14 +52,17 @@ final class ImplicitsAnalysis {
 	private static final IASTParameterDeclaration[][] EMPTY_ARRAY_OF_PARAMETER_ARRAYS = {};
 
 	private final ICPPClassType classType;
+	private final ICPPASTCompositeTypeSpecifier compositeTypeSpecifier;
 	private boolean hasConstructor;
 	private boolean hasCopyConstructor;
 	private boolean hasCopyAssignmentOperator;
 	private boolean hasDestructor;
 	private IASTParameterDeclaration[][] parametersOfNontrivialConstructors = EMPTY_ARRAY_OF_PARAMETER_ARRAYS;
+	private boolean hasNonStaticFields;
 
 	ImplicitsAnalysis(ICPPASTCompositeTypeSpecifier compositeTypeSpecifier, ICPPClassType classType) {
 		this.classType= classType;
+		this.compositeTypeSpecifier = compositeTypeSpecifier;
 		analyzeMembers(compositeTypeSpecifier);
 	}
 
@@ -124,43 +131,45 @@ final class ImplicitsAnalysis {
 			    spec = ((IASTFunctionDefinition) member).getDeclSpecifier();
 			}
 
-			if (!(dcltor instanceof ICPPASTFunctionDeclarator))
-				continue;
-
-			IASTName memberName = ASTQueries.findInnermostDeclarator(dcltor).getName();
-			char[] declName = memberName.getLookupKey();
-
-			if (spec instanceof IASTSimpleDeclSpecifier &&
-					((IASTSimpleDeclSpecifier) spec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
-				if (CharArrayUtils.equals(declName, name)) {
-					hasConstructor = true;
+			if (dcltor instanceof ICPPASTFunctionDeclarator) {
+				IASTName memberName = ASTQueries.findInnermostDeclarator(dcltor).getName();
+				char[] declName = memberName.getLookupKey();
+	
+				if (spec instanceof IASTSimpleDeclSpecifier &&
+						((IASTSimpleDeclSpecifier) spec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+					if (CharArrayUtils.equals(declName, name)) {
+						hasConstructor = true;
+						IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
+			        	if (params.length != 0) {
+			        		if (hasTypeReferenceToClassType(params[0])) {
+			        			if (parametersHaveInitializers(params, 1)) {
+			        				hasCopyConstructor = true;
+			        			}
+			        			if (params.length > 1) {
+			        				parametersOfNontrivialConstructors =
+			        						appendAt(parametersOfNontrivialConstructors, numNontrivialConstructors++, params);
+			        			}
+			        		} else {
+			        			parametersOfNontrivialConstructors =
+			        					appendAt(parametersOfNontrivialConstructors, numNontrivialConstructors++, params);
+			        		}
+			        	}
+					} if (declName.length != 0 && declName[0] == '~' &&
+							CharArrayUtils.equals(declName, 1, name.length, name)) {
+						hasDestructor = true;
+					}
+				} if (CharArrayUtils.equals(declName, OverloadableOperator.ASSIGN.toCharArray())) {
 					IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
-		        	if (params.length != 0) {
-		        		if (hasTypeReferenceToClassType(params[0])) {
-		        			if (parametersHaveInitializers(params, 1)) {
-		        				hasCopyConstructor = true;
-		        			}
-		        			if (params.length > 1) {
-		        				parametersOfNontrivialConstructors =
-		        						appendAt(parametersOfNontrivialConstructors, numNontrivialConstructors++, params);
-		        			}
-		        		} else {
-		        			parametersOfNontrivialConstructors =
-		        					appendAt(parametersOfNontrivialConstructors, numNontrivialConstructors++, params);
-		        		}
-		        	}
-				} if (declName.length != 0 && declName[0] == '~' &&
-						CharArrayUtils.equals(declName, 1, name.length, name)) {
-					hasDestructor = true;
+		        	if (params.length == 1 && hasTypeReferenceToClassType(params[0]))
+		        		hasCopyAssignmentOperator = true;
 				}
-			} if (CharArrayUtils.equals(declName, OverloadableOperator.ASSIGN.toCharArray())) {
-				IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
-	        	if (params.length == 1 && hasTypeReferenceToClassType(params[0]))
-	        		hasCopyAssignmentOperator = true;
-			}
-
-			if (hasCopyConstructor && hasDestructor && hasCopyAssignmentOperator &&	baseSpecifiers.length == 0) {
-				break;  // Nothing else to look for.
+	
+				if (hasCopyConstructor && hasDestructor && hasCopyAssignmentOperator &&	baseSpecifiers.length == 0) {
+					break;  // Nothing else to look for.
+				}
+			} else if (dcltor instanceof ICPPASTFieldDeclarator &&
+					spec != null && spec.getStorageClass() != IASTDeclSpecifier.sc_static) {
+				hasNonStaticFields = true;
 			}
         }
 
@@ -191,5 +200,39 @@ final class ImplicitsAnalysis {
 			}
 		}
 		return true;
+	}
+
+	public boolean isDefaultConstructorConstexpr() {
+		// The following condition is stronger than necessary. It is sufficient if the class doesn't contain
+		// non-static fields that don't have constexpr default constructors.
+		// TODO(sprigogin): Relax the condition in accordance with [dcl.constexpr] 7.1.5-4.
+		if (hasNonStaticFields)
+			return false;
+
+		ICPPBase[] bases = ClassTypeHelper.getBases(classType, compositeTypeSpecifier);
+		for (ICPPBase base : bases) {
+			if (base.isVirtual())
+				return true;
+		}
+
+		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType, compositeTypeSpecifier);
+		for (ICPPClassType baseClass : baseClasses) {
+			ICPPConstructor ctor = getDefaultConstructor(baseClass, compositeTypeSpecifier);
+			if (ctor == null || !ctor.isConstexpr()) {
+				return false;
+			} 
+		}
+		return true;
+	}
+
+	/**
+	 * Returns a user-defined or implicit default constructor for the given class.
+	 */
+	private static ICPPConstructor getDefaultConstructor(ICPPClassType classType, IASTNode point) {
+		for (ICPPConstructor ctor : ClassTypeHelper.getConstructors(classType, point)) {
+			if (ClassTypeHelper.getMethodKind(classType, ctor) == ClassTypeHelper.MethodKind.DEFAULT_CTOR)
+				return ctor;
+		}
+		return null;
 	}
 }

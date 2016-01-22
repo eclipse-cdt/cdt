@@ -91,12 +91,12 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         ICPPFunctionType newFunctionType = new CPPFunctionType(cpp_void_p, newParms);
         ICPPParameter[] newTheParms = new ICPPParameter[1];
         newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
-        temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms, false);
+        temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms, false, false);
         theScope.addBinding(temp);
 		
 		// void* operator new[](std::size_t);
 		temp = null;
-        temp = new CPPImplicitFunction(OverloadableOperator.NEW_ARRAY.toCharArray(), theScope, newFunctionType, newTheParms, false);
+        temp = new CPPImplicitFunction(OverloadableOperator.NEW_ARRAY.toCharArray(), theScope, newFunctionType, newTheParms, false, false);
         theScope.addBinding(temp);
 		
 		// void operator delete(void*);
@@ -106,12 +106,14 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         ICPPFunctionType deleteFunctionType = new CPPFunctionType(cpp_void, deleteParms);
         ICPPParameter[] deleteTheParms = new ICPPParameter[1];
         deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);
-        temp = new CPPImplicitFunction(OverloadableOperator.DELETE.toCharArray(), theScope, deleteFunctionType, deleteTheParms, false);
+        temp = new CPPImplicitFunction(OverloadableOperator.DELETE.toCharArray(), theScope,
+        		deleteFunctionType, deleteTheParms, false, false);
         theScope.addBinding(temp);
 		
 		// void operator delete[](void*);
 		temp = null;
-        temp = new CPPImplicitFunction(OverloadableOperator.DELETE_ARRAY.toCharArray(), theScope, deleteFunctionType, deleteTheParms, false);
+        temp = new CPPImplicitFunction(OverloadableOperator.DELETE_ARRAY.toCharArray(), theScope,
+        		deleteFunctionType, deleteTheParms, false, false);
         theScope.addBinding(temp);
 	}
 	

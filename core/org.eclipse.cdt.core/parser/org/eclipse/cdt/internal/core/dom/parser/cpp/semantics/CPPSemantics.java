@@ -2549,7 +2549,8 @@ public class CPPSemantics {
 			if (fn == null)
 				continue;
 
-			final FunctionCost fnCost= costForFunctionCall(fn, allowUDC, data);
+			UDCMode udc = allowUDC ? UDCMode.DEFER : UDCMode.FORBIDDEN;
+			final FunctionCost fnCost= costForFunctionCall(fn, udc, data);
 			if (fnCost == null)
 				continue;
 
@@ -2779,7 +2780,7 @@ public class CPPSemantics {
 		}
 	}
 
-	private static FunctionCost costForFunctionCall(ICPPFunction fn, boolean allowUDC, LookupData data)
+	private static FunctionCost costForFunctionCall(ICPPFunction fn, UDCMode udc, LookupData data)
 			throws DOMException {
 		IType[] argTypes= data.getFunctionArgumentTypes();
 		ValueCategory[] argValueCategories= data.getFunctionArgumentValueCategories();
@@ -2854,7 +2855,6 @@ public class CPPSemantics {
 			result.setCost(k++, cost, impliedObjectValueCategory);
 		}
 
-		final UDCMode udc = allowUDC ? UDCMode.DEFER : UDCMode.FORBIDDEN;
 		for (int j = 0; j < sourceLen; j++) {
 			final IType argType= SemanticUtil.getNestedType(argTypes[j + skipArg], TDEF | REF);
 			if (argType == null)
@@ -3683,8 +3683,7 @@ public class CPPSemantics {
 			}
 
 			if (operator == OverloadableOperator.NEW || operator == OverloadableOperator.DELETE
-		    	|| operator == OverloadableOperator.NEW_ARRAY || operator == OverloadableOperator.DELETE_ARRAY) {
-
+					|| operator == OverloadableOperator.NEW_ARRAY || operator == OverloadableOperator.DELETE_ARRAY) {
 				// Those operators replace the built-in operator
 				Object[] items= (Object[]) funcData.foundItems;
 				int j= 0;

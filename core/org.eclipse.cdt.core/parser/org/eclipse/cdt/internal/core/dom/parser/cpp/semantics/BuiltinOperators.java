@@ -327,7 +327,7 @@ class BuiltinOperators {
 				final IPointerType ptrType = (IPointerType) type;
 				if (SemanticUtil.getNestedType(ptrType.getType(), TDEF | CVTYPE) instanceof ICPPClassType) {
 					if (classPointers == null) {
-						classPointers= new ArrayList<IPointerType>();
+						classPointers= new ArrayList<>();
 					}
 					classPointers.add(ptrType);
 				}
@@ -341,7 +341,7 @@ class BuiltinOperators {
 			type= SemanticUtil.getNestedType(type, TDEF | REF);
 			if (type instanceof ICPPPointerToMemberType) {
 				if (memberPointers == null) {
-					memberPointers= new ArrayList<ICPPPointerToMemberType>();
+					memberPointers= new ArrayList<>();
 				}
 				memberPointers.add((ICPPPointerToMemberType) type);
 			}
@@ -419,7 +419,7 @@ class BuiltinOperators {
 		}
 		if (type != null) {
 			if (p1 == null) {
-				p1= new ArrayList<IType>();
+				p1= new ArrayList<>();
 			}
 			p1.add(type);
 		}
@@ -549,11 +549,11 @@ class BuiltinOperators {
 		ICPPFunctionType functionType = new CPPFunctionType(returnType, parameterTypes);
 		String sig= ASTTypeUtil.getType(functionType, true);
 		if (fSignatures == null) {
-			fSignatures= new HashSet<String>();
+			fSignatures= new HashSet<>();
 			if (fGlobalCandidates != null) {
 				for (Object cand : fGlobalCandidates) {
 					if (cand instanceof IFunction && !(cand instanceof ICPPMethod)) {
-						fSignatures.add(ASTTypeUtil.getType(((IFunction)cand).getType(), true));
+						fSignatures.add(ASTTypeUtil.getType(((IFunction) cand).getType(), true));
 					}
 				}
 			}
@@ -564,7 +564,7 @@ class BuiltinOperators {
 				parameter[i]= new CPPBuiltinParameter(t);
 			}
 			if (fResult == null) {
-				fResult= new ArrayList<ICPPFunction>();
+				fResult= new ArrayList<>();
 			}
 			fResult.add(new CPPImplicitFunction(fOperator.toCharArray(), fFileScope, functionType, parameter, false));
 		}

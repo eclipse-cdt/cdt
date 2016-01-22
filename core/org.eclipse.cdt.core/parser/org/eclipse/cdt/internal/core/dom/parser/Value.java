@@ -58,7 +58,6 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -93,7 +92,6 @@ public class Value implements IValue {
 	// Value.ERROR indicates that an error, such as a substitution failure, occurred during evaluation.
 	public static final Value ERROR= new Value("<error>".toCharArray(), null); //$NON-NLS-1$
 	public static final Value NOT_INITIALIZED= new Value("<__>".toCharArray(), null); //$NON-NLS-1$
-	private static final IType INT_TYPE= new CPPBasicType(ICPPBasicType.Kind.eInt, 0);
 
 	private static final Number VALUE_CANNOT_BE_DETERMINED = new Number() {
 		@Override
@@ -300,7 +298,7 @@ public class Value implements IValue {
 			return create(val.longValue() + increment);
 		}
 		ICPPEvaluation arg1 = value.getEvaluation();
-		EvalFixed arg2 = new EvalFixed(INT_TYPE, ValueCategory.PRVALUE, create(increment));
+		EvalFixed arg2 = new EvalFixed(CPPBasicType.INT, ValueCategory.PRVALUE, create(increment));
 		return create(new EvalBinary(IASTBinaryExpression.op_plus, arg1, arg2, arg1.getTemplateDefinition()));
 	}
 

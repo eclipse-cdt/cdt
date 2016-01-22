@@ -277,8 +277,7 @@ public class CElementSorter extends ViewerSorter {
 
 		// cat1 == cat2
 
-		@SuppressWarnings("unchecked")
-		final Comparator<Object> comparator = getComparator();
+		final Comparator<? super String> comparator = getComparator();
 		if (cat1 == PROJECTS) {
 			IWorkbenchAdapter a1= ((IAdaptable)e1).getAdapter(IWorkbenchAdapter.class);
 			IWorkbenchAdapter a2= ((IAdaptable)e2).getAdapter(IWorkbenchAdapter.class);
@@ -415,8 +414,7 @@ public class CElementSorter extends ViewerSorter {
 				String name1 = lprov.getText(e1);
 				String name2 = lprov.getText(e2);
 				if (name1 != null && name2 != null) {
-					@SuppressWarnings("unchecked")
-					final Comparator<Object> comparator = getComparator();
+					final Comparator<? super String> comparator = getComparator();
 					return comparator.compare(name1, name2);
 				}
 			}

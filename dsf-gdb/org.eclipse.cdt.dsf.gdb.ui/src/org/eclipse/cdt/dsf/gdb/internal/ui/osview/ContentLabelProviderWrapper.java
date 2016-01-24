@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Mentor Graphics and others.
+ * Copyright (c) 2011, 2016 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,11 @@ implements ITableLabelProvider, IStructuredContentProvider
 	public void setData(U realProvider)
 	{
 		this.realProvider = realProvider;
+	}
+
+	public U getData()
+	{
+		return realProvider;
 	}
 
 	@Override

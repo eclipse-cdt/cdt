@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.IResourcesInformation;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -53,11 +54,15 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
@@ -65,7 +70,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Bundle;
@@ -189,6 +197,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
         } catch (Exception e) {
         }
         bars.getToolBarManager().add(fRefreshAction);
+        bars.setGlobalActionHandler(ActionFactory.COPY.getId(), new CopyAction());
         bars.updateActionBars();
 
         createContextMenu();
@@ -209,6 +218,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		menuMgr.addMenuListener(new IMenuListener() {
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {
+				manager.add(new CopyAction());
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			}
 		});
@@ -716,5 +726,51 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 	 */
 	public ICommandControlDMContext getSessionContext() {
 		return fSessionData != null ? fSessionData.getContext() : null;
+	}
+
+	/**
+	 * Retargetted copy to clipboard action
+	 */
+	private final class CopyAction extends Action {
+		private static final char COLUMN_SEPARATOR = ',';
+		private final String EOL_CHAR = System.getProperty("line.separator"); //$NON-NLS-1$
+
+		private CopyAction() {
+			setText(Messages.OSView_CopyAction);
+			setImageDescriptor(
+					PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return !fViewer.getSelection().isEmpty();
+		}
+
+		@Override
+		public void run() {
+			ISelection selection = fViewer.getSelection();
+			if (selection.isEmpty())
+				return;
+
+			if (selection instanceof IStructuredSelection) {
+				@SuppressWarnings("unchecked")
+				OSData data = ((ContentLabelProviderWrapper<OSData>) fViewer.getContentProvider()).getData();
+				StringBuilder exportStr = new StringBuilder();
+				for (Object elmnt : ((IStructuredSelection) selection).toList()) {
+					assert elmnt instanceof IResourcesInformation;
+					if (elmnt instanceof IResourcesInformation) {
+						IResourcesInformation ri = (IResourcesInformation) elmnt;
+						exportStr.append(data.getColumnText(ri, 0));
+						for (int i = 1; i < data.getColumnCount(); i++) {
+							exportStr.append(COLUMN_SEPARATOR).append(data.getColumnText(ri, i));
+						}
+						exportStr.append(EOL_CHAR);
+					}
+				}
+				Clipboard cb = new Clipboard(Display.getDefault());
+				TextTransfer textTransfer = TextTransfer.getInstance();
+				cb.setContents(new Object[] { exportStr.toString() }, new Transfer[] { textTransfer });
+			}
+		}
 	}
 }

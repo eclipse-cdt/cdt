@@ -164,7 +164,8 @@ final class ImplicitsAnalysis {
 		        		hasCopyAssignmentOperator = true;
 				}
 	
-				if (hasCopyConstructor && hasDestructor && hasCopyAssignmentOperator &&	baseSpecifiers.length == 0) {
+				if (hasCopyConstructor && hasDestructor && hasCopyAssignmentOperator &&	baseSpecifiers.length == 0
+						&& hasNonStaticFields) {
 					break;  // Nothing else to look for.
 				}
 			} else if (dcltor instanceof ICPPASTFieldDeclarator &&
@@ -212,7 +213,7 @@ final class ImplicitsAnalysis {
 		ICPPBase[] bases = ClassTypeHelper.getBases(classType, compositeTypeSpecifier);
 		for (ICPPBase base : bases) {
 			if (base.isVirtual())
-				return true;
+				return false;
 		}
 
 		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType, compositeTypeSpecifier);

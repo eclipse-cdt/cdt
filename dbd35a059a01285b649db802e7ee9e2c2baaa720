@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_0ae756d1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ImplicitsAnalysis.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-01-24T06:47:12Z",
+      "side": 1,
+      "message": "We probably want to add \u0027hasNonStaticFields\u0027 to this condition, otherwise we might break before we saw the first non-static field.",
+      "range": {
+        "startLine": 168,
+        "startChar": 5,
+        "endLine": 168,
+        "endChar": 10
+      },
+      "revId": "dbd35a059a01285b649db802e7ee9e2c2baaa720",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_eaf07288",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ImplicitsAnalysis.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-01-24T06:47:12Z",
+      "side": 1,
+      "message": "Should this be \"return false\"?",
+      "range": {
+        "startLine": 215,
+        "startChar": 11,
+        "endLine": 215,
+        "endChar": 15
+      },
+      "revId": "dbd35a059a01285b649db802e7ee9e2c2baaa720",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

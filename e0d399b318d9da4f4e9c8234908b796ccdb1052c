@@ -1,0 +1,344 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_ea8dd286",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/ReverseTraceMethod.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Can you put this class directly in IChangeReverseMethodHandler.java?",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_ea9232aa",
+        "filename": "debug/org.eclipse.cdt.debug.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 20
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "The two above are not needed I believe.  Please remove.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_0aa916dc",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 20
+      },
+      "lineNbr": 1609,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "The software vs hardware support for reverse debugging seems to be a GDB-specific concept, no?  Or do you feel it would be supported by other backends that are not GDB?  If it is GDB-specific, how about moving the preference page one level down, under the GDB preference page?  It would mean also moving the above change to the dsf.gdb.ui/plugin.xml.\n\nIf you feel these options are generic and not gdb-specific, then we shouldn\u0027t use the word \"GDB\" in the options.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_4aa31efa",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 20
+      },
+      "lineNbr": 1921,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Please give appropriate id e.g., org.eclipse.cdt.debug.ui.command.reverseToggle.parameter.traceMethod",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_2aa41a02",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 20
+      },
+      "lineNbr": 1922,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Please add this string to plugin.properties so it can be translated",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_6a9e22b6",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 20
+      },
+      "lineNbr": 1926,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Please give appropriate id e.g., org.eclipse.cdt.debug.ui.command.reverseToggle.state.traceMethod",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_8a67e643",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/CDebugUIPreferenceInitializer.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "If we move the preference page to dsf.gdb.ui then the above change should go in GdbPreferenceInitializer.java",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_aa6aea09",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ICDebugPreferenceConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "If we move the preference page to dsf.gdb.ui, the above changes should go in IGdbDebugPreferenceConstants.\n\nRight now they are being used in ReverseToggleCommandHandler, which would prevent such a move.  We\u0027ll have to see if using them in that class is appropriate once we agree on where the preference page should go.\n\nFurthermore, since you want to use them in a non-UI plugin, they will need to go in some non-UI plugin as well.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_2a56da55",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/Messages.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "If we move the preference page to dsf.gdb.ui, the below can go into MessagesForPreferences of the same plugin",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_0a5bd67f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Should this move to dsf.gdb.ui in the same package as GdbDebugPreferencePage?",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_4a55de46",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/messages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Missing copyright header (if this file is kept and not integrated in MessagesForPreferences.properties of dsf.gdb.ui)",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_65e2d50e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbDebuggerPage.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Please remove.  I assume this was test code.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_a5dcdd5a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/LaunchUIMessages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Although I like the clarity, these strings are too long for the launch dialog.  Replace with something like\n\n\"Software reverse. Detailed but slower\"\n\"Hardware reverse. No details but faster\"",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_6a50e256",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 20
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "A core plugin cannot depend on UI plugins.  Please remove the above.  We\u0027ll fix the code that will break.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_e5d6e536",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Use the below constant DEBUGGER_REVERSE_MODE_SOFT instead of duplicating the hard-coded string",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_25e8cdee",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Please name DEBUGGER_REVERSE_MODE_SOFTWARE",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_45e7911e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Please name DEBUGGER_REVERSE_MODE_HARDWARE",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_c5bc8107",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_10.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "You cannot depend on CDebugUIPlugin.  However, you can read the preferences using Platform.getPreferencesService().get...\n\nYou can see an example in GDBProcesses_7_0 reading preference IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB\n\nAs the first parameter to the above call, you may need to hard-code the plugin id if that plugin is a UI plugin.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_05c66990",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_10.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Cannot depend on UI plugin.  See comment in GDBProcesses_7_10.java",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_85043955",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIRecord.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T03:32:59Z",
+      "side": 1,
+      "message": "Please add comment that this is only available from GDB \u003e\u003d 7.10",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

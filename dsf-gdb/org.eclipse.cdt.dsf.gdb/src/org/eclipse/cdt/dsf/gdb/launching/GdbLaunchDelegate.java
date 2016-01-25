@@ -296,11 +296,12 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	}
 
 	/**
-	 * Returns the GDB version. 
-	 * Subclass can override for special need.
-     *
+	 * Returns the GDB version. Subclass can override for special need.
+	 *
 	 * @since 2.0
+	 * @deprecated Replaced by GdbLaunch.getGDBVersion() which can also be overridden
 	 */
+	@Deprecated
 	protected String getGDBVersion(ILaunchConfiguration config) throws CoreException {
 		return LaunchUtils.getGDBVersion(config);
 	}

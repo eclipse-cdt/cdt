@@ -86,6 +86,13 @@
              class="org.eclipse.cdt.internal.qt.ui.launch.QtLocalLaunchConfigurationTabGroup"
              id="org.eclipse.cdt.qt.ui.launchConfigurationTabGroup"
              type="org.eclipse.cdt.qt.core.launchConfigurationType">
+          <launchMode
+                mode="run">
+          </launchMode>
+          <launchMode
+                mode="debug"
+                perspective="org.eclipse.debug.ui.DebugPerspective">
+          </launchMode>
        </launchConfigurationTabGroup>
     </extension>
     <extension

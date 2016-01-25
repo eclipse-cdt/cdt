@@ -22,14 +22,17 @@ import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.target.ILaunchTargetUIManager;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 public class LaunchTargetUIManager implements ILaunchTargetUIManager {
-
 	private Map<String, IConfigurationElement> typeElements;
 	private Map<String, ILabelProvider> labelProviders = new HashMap<>();
+	private IWizardDescriptor[] wizards;
 
 	@Override
-	public ILabelProvider getLabelProvider(ILaunchTarget target) {
+	public synchronized ILabelProvider getLabelProvider(ILaunchTarget target) {
 		if (typeElements == null) {
 			// Load them up
 			typeElements = new HashMap<>();
@@ -45,7 +48,6 @@ public class LaunchTargetUIManager implements ILaunchTargetUIManager {
 				}
 			}
 		}
-
 		String typeId = target.getTypeId();
 		ILabelProvider labelProvider = labelProviders.get(typeId);
 		if (labelProvider == null) {
@@ -57,9 +59,9 @@ public class LaunchTargetUIManager implements ILaunchTargetUIManager {
 					Activator.log(e);
 				}
 			}
-
 			if (labelProvider == null) {
 				labelProvider = new LabelProvider() {
+					@Override
 					public String getText(Object element) {
 						if (element instanceof ILaunchTarget) {
 							return ((ILaunchTarget) element).getName();
@@ -74,12 +76,20 @@ public class LaunchTargetUIManager implements ILaunchTargetUIManager {
 						}
 						return super.getImage(element);
 					}
-
 				};
 			}
-
 		}
 		return labelProvider;
 	}
 
+	@Override
+	public synchronized IWizardDescriptor[] getLaunchTargetWizards() {
+		if (wizards != null)
+			return wizards;
+		WizardsRegistryReader reader = new WizardsRegistryReader(Activator.PLUGIN_ID, "launchTargetTypeUI"); //$NON-NLS-1$
+		WizardCollectionElement wizardElements = reader.getWizardElements();
+		WizardCollectionElement otherCategory = (WizardCollectionElement) wizardElements.getChildren(null)[0];
+		wizards = otherCategory.getWizards();
+		return wizards;
+	}
 }

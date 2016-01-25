@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.launchbar.core,
  org.eclipse.debug.ui,
  org.eclipse.ui.ide,
- org.eclipse.e4.core.contexts
+ org.eclipse.e4.core.contexts,
+ org.eclipse.ui.workbench
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

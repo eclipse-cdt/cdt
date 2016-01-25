@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -36,14 +38,9 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
@@ -163,32 +160,16 @@ public class ConfigSelector extends CSelector {
 
 	@Override
 	public void createActionArea(Composite parent) {
-		Composite actionArea = new Composite(parent, SWT.NONE);
-		GridLayout actionLayout = new GridLayout();
-		actionLayout.marginWidth = actionLayout.marginHeight = 0;
-		actionArea.setLayout(actionLayout);
-		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-
-		final Composite createButton = new Composite(actionArea, SWT.NONE);
-		createButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		GridLayout buttonLayout = new GridLayout();
-		buttonLayout.marginWidth = buttonLayout.marginHeight = 7;
-		createButton.setLayout(buttonLayout);
+		final Composite createButton = new Composite(parent, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(createButton);
+		GridLayoutFactory.fillDefaults().margins(7, 7).applyTo(createButton);
 		createButton.setBackground(getBackground());
-		createButton.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				Point size = createButton.getSize();
-				GC gc = e.gc;
-				gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-				gc.drawLine(0, 0, size.x, 0);
-			}
-		});
 
-		final Label createLabel = new Label(createButton, SWT.None);
-		createLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		createLabel.setText(Messages.ConfigSelector_2);
+		final Label createLabel = new Label(createButton, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(createLabel);
 		createLabel.setBackground(getBackground());
+		createLabel.setText(Messages.ConfigSelector_2);
+
 
 		MouseListener mouseListener = new MouseAdapter() {
 			@Override

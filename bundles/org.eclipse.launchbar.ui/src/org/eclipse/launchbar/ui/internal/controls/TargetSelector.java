@@ -12,8 +12,9 @@ package org.eclipse.launchbar.ui.internal.controls;
 
 import java.util.Comparator;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -34,11 +35,20 @@ import org.eclipse.launchbar.core.target.TargetStatus.Code;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.launchbar.ui.internal.Messages;
+import org.eclipse.launchbar.ui.internal.target.NewLaunchTargetWizardAction;
 import org.eclipse.launchbar.ui.target.ILaunchTargetUIManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -179,6 +189,54 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 	public void handleEdit(Object element) {
 		// opens property dialog on a selected target
 		new PropertyDialogAction(new SameShellProvider(getShell()), getSelectionProvider()).run();
+	}
+
+	@Override
+	public boolean hasActionArea() {
+		return true;
+	}
+
+	@Override
+	public void createActionArea(final Composite parent) {
+		final Composite createButton = new Composite(parent, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(createButton);
+		GridLayoutFactory.fillDefaults().margins(7, 7).applyTo(createButton);
+		createButton.setBackground(getBackground());
+
+		final Label createLabel = new Label(createButton, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(createLabel);
+		createLabel.setBackground(getBackground());
+		createLabel.setText(Messages.TargetSelector_CreateNewTarget);
+
+		MouseListener mouseListener = new MouseAdapter() {
+			@Override
+			public void mouseUp(org.eclipse.swt.events.MouseEvent event) {
+				NewLaunchTargetWizardAction newWizardAction = new NewLaunchTargetWizardAction(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
+						targetUIManager.getLaunchTargetWizards());
+				newWizardAction.run();
+			}
+		};
+
+		createButton.addMouseListener(mouseListener);
+		createLabel.addMouseListener(mouseListener);
+
+		MouseTrackListener mouseTrackListener = new MouseTrackAdapter() {
+			@Override
+			public void mouseEnter(MouseEvent e) {
+				Color highlightColor = getHighlightColor();
+				createButton.setBackground(highlightColor);
+				createLabel.setBackground(highlightColor);
+			}
+			@Override
+			public void mouseExit(MouseEvent e) {
+				Color backgroundColor = getBackground();
+				createButton.setBackground(backgroundColor);
+				createLabel.setBackground(backgroundColor);
+			}
+		};
+		createButton.addMouseTrackListener(mouseTrackListener);
+		createLabel.addMouseTrackListener(mouseTrackListener);
 	}
 
 	@Override

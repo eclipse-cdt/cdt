@@ -19,6 +19,7 @@
       <complexType>
          <sequence>
             <element ref="launchTargetTypeUI" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="wizard" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -70,6 +71,100 @@
             </annotation>
          </attribute>
       </complexType>
+   </element>
+
+   <element name="wizard">
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that can be used to identify this wizard
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name of the wizard that will be used in the dialog box
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will be used together with the name to represent the wizard 
+as one of the choices in the creation dialog box.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the Java class implementing &lt;samp&gt;org.eclipse.ui.INewWizard&lt;/samp&gt;.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.INewWizard"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="helpHref" type="string">
+            <annotation>
+               <documentation>
+                  a help url that can describe this wizard in detail.
+&lt;p&gt;
+Since 3.0
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="descriptionImage" type="string">
+            <annotation>
+               <documentation>
+                  a larger image that can help describe this wizard.
+&lt;p&gt;
+Since 3.0
+&lt;/p&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="canFinishEarly" type="boolean">
+            <annotation>
+               <documentation>
+                  whether the wizard is capable of finishing without ever showing pages to the user.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="hasPages" type="boolean">
+            <annotation>
+               <documentation>
+                  whether the wizard provides any pages.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <appinfo>
+            <meta.element translatable="true"/>
+         </appinfo>
+         <documentation>
+            an optional subelement whose body contains a short text describing what the wizard will do when started
+         </documentation>
+      </annotation>
    </element>
 
    <annotation>

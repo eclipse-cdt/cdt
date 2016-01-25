@@ -71,5 +71,14 @@
             labelProvider="org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider">
       </descriptorUI>
    </extension>
+   
+   <!-- Category for launch targets, wizard that creates a launch target should belong to this category -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.eclipse.launchbar.ui.targetWizards"
+            name="Launch Target">
+      </category>
+   </extension>
 
 </plugin>

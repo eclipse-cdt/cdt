@@ -8278,6 +8278,50 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testMemberAccessViaReferenceInPackExpansion_466845() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <int... I>
+	//	struct C {};
+	//
+	//	template <class... T>
+	//	struct B {
+	//	  typedef void type;
+	//	};
+	//
+	//	template <class T, int... I>
+	//	typename B<decltype(T::template operator()<I>())...>::type
+	//	waldo(T f, C<I...>);
+	//
+	//	struct A {};
+	//
+	//	void test() {
+	//	  A a;
+	//	  waldo(a, C<>()); // problem on waldo
+	//	}	
+	public void testDecltypeInPackExpansion_486425a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <int... I>
+	//	struct C {};
+	//
+	//	template <class... T>
+	//	struct B {
+	//	  typedef void type;
+	//	};
+	//
+	//	template <class T, int... I>
+	//	typename B<decltype(T::template undefined<I>())...>::type
+	//	waldo(T f, C<I...>);
+	//
+	//	struct A {};
+	//
+	//	void test() {
+	//	  A a;
+	//	  waldo(a, C<>()); // problem on waldo
+	//	}
+	public void testDecltypeInPackExpansion_486425b() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T>
 	//	struct A {};

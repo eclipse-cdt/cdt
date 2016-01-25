@@ -1120,6 +1120,10 @@ public class CPPTemplates {
 		if (type instanceof ICPPTemplateParameter) {
 			return determinePackSize((ICPPTemplateParameter) type, tpMap);
 		}
+		
+		if (type instanceof TypeOfDependentExpression){
+			return ((TypeOfDependentExpression) type).getEvaluation().determinePackSize(tpMap);
+		}
 
 		if (type instanceof ICPPUnknownBinding) {
 			return determinePackSize((ICPPUnknownBinding) type, tpMap);

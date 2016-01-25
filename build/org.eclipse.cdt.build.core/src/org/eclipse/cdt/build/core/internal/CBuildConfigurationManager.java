@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.build.core.CBuildConfiguration;
 import org.eclipse.cdt.build.core.IBuildConfigurationManager;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -42,7 +43,7 @@ public class CBuildConfigurationManager
 		// TODO
 		CBuildConfiguration config = null;
 
-		//configMap.put(config.getBuildConfiguration(), config);
+		// configMap.put(config.getBuildConfiguration(), config);
 		return config;
 	}
 
@@ -67,6 +68,13 @@ public class CBuildConfigurationManager
 		if (event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE) {
 			if (event.getResource().getType() == IResource.PROJECT) {
 				IProject project = event.getResource().getProject();
+				try {
+					if (!project.hasNature(CProjectNature.C_NATURE_ID))
+						return;
+				} catch (CoreException e) {
+					Activator.log(e.getStatus());
+					return;
+				}
 
 				// Clean up the configMap
 				try {

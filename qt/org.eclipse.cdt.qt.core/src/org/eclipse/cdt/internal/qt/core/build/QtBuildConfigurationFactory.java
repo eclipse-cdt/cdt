@@ -124,7 +124,7 @@ public class QtBuildConfigurationFactory implements IAdapterFactory {
 				for (IBuildConfiguration config : project.getBuildConfigs()) {
 					configNames.add(config.getName());
 				}
-				String baseName = qtInstall.getSpec() + ":" + launchMode; //$NON-NLS-1$
+				String baseName = qtInstall.getSpec() + "." + launchMode; //$NON-NLS-1$
 				String newName = baseName;
 				int n = 0;
 				while (configNames.contains(newName)) {

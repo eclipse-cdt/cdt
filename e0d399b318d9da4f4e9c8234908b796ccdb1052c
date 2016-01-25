@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_49dc0b5a",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/ReverseTraceMethod.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-25T13:42:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_ea8dd286",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_ea9232aa",
         "filename": "debug/org.eclipse.cdt.debug.ui/META-INF/MANIFEST.MF",
         "patchSetId": 20
@@ -30,6 +48,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "The two above are not needed I believe.  Please remove.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_69d38f48",
+        "filename": "debug/org.eclipse.cdt.debug.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 20
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-25T13:42:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_ea9232aa",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -132,6 +168,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "If we move the preference page to dsf.gdb.ui, the above changes should go in IGdbDebugPreferenceConstants.\n\nRight now they are being used in ReverseToggleCommandHandler, which would prevent such a move.  We\u0027ll have to see if using them in that class is appropriate once we agree on where the preference page should go.\n\nFurthermore, since you want to use them in a non-UI plugin, they will need to go in some non-UI plugin as well.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_a9ecb705",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ICDebugPreferenceConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-25T13:42:34Z",
+      "side": 1,
+      "message": "Hello,\nI moved these constants to IGdbDebugPreferenceConstants , I agree these can be moved to the GDB Preference page, but then the feature requires accessing the preferences from the ReverseToggleCommandHandler. Any suggestions ?",
+      "parentUuid": "07d9433e_aa6aea09",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.CoreException;
  * Evaluation for a pack expansion expression.
  */
 public class EvalParameterPack extends CPPDependentEvaluation {
-
 	private ICPPEvaluation fExpansionPattern;
 	private IType fType;
 	

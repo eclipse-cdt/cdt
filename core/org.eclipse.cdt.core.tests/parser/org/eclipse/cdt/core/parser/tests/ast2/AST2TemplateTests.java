@@ -3625,7 +3625,7 @@ public class AST2TemplateTests extends AST2TestBase {
     //    template<> class A<float> {
     //    	  template<typename T> void f(T);
     //    };
-    //    template<typename T> void A<float>::f(T){}   //problem on f
+    //    template<typename T> void A<float>::f(T){}
     public void testClassTemplateMemberFunctionTemplate_104262() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code);
@@ -7594,7 +7594,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	template <class T> void waldo(function f);
 	//
 	//	void test() {
-	//	    waldo<A>(""); // problem on waldo
+	//	    waldo<A>("");
 	//	}
 	public void testSfinaeInIdExpression_459940() throws Exception {
 		parseAndCheckBindings();
@@ -7951,7 +7951,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	template <class T> void waldo(function<T()> generator);
 	//
 	//	void test() {
-	//	    waldo<A>("");  // problem on waldo
+	//	    waldo<A>("");
 	//	}
 	public void testPackExpansionInNestedTemplate_459844() throws Exception {
 		parseAndCheckBindings();
@@ -8295,7 +8295,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	void test() {
 	//	  A a;
-	//	  waldo(a, C<>()); // problem on waldo
+	//	  waldo(a, C<>());
 	//	}	
 	public void testDecltypeInPackExpansion_486425a() throws Exception {
 		parseAndCheckBindings();
@@ -8317,7 +8317,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	void test() {
 	//	  A a;
-	//	  waldo(a, C<>()); // problem on waldo
+	//	  waldo(a, C<>());
 	//	}
 	public void testDecltypeInPackExpansion_486425b() throws Exception {
 		parseAndCheckBindings();
@@ -8768,13 +8768,13 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	}
 	//
 	//	template <typename T>
-	//	typename enable_if<!F<T>(), void>::type waldo(T p); // problem on the return type
+	//	typename enable_if<!F<T>(), void>::type waldo(T p);
 	//
 	//	struct A {};
 	//
 	//	void test() {
 	//	  A a;
-	//	  waldo(a); // problem on waldo
+	//	  waldo(a);
 	//	}
 	public void testDependentFunctionSet_485985() throws Exception {
 		parseAndCheckBindings();
@@ -8835,7 +8835,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	A<int>::B d;
 	//
 	//	void test() {
-	//	  waldo(foo(c, d)); // problem on waldo
+	//	  waldo(foo(c, d));
 	//	}
 	public void testInstantiationOfFriendOfNestedClassInsideTemplate_484162() throws Exception {
 		parseAndCheckBindings();

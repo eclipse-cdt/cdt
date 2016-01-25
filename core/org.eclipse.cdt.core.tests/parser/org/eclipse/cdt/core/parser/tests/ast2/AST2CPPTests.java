@@ -7486,7 +7486,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void f(int const volatile * const *) {}
 	//	void test() {
 	//	   int ** x;
-	//	   f(x);  // problem binding here
+	//	   f(x);
 	//	}
 	public void testRankingOfQualificationConversion_269321() throws Exception {
 		final String code = getAboveComment();
@@ -7601,8 +7601,8 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void xx() {
 	//	   D d1;
 	//	   const D d2= D();
-	//	   test(d1); // problem binding here although test(C c) has to be selected
-	//	   test(d2); // problem binding here although test(C c) has to be selected
+	//	   test(d1); // test(C c) has to be selected
+	//	   test(d2); // test(C c) has to be selected
 	//	}
 	public void testDerivedToBaseConversion_269318() throws Exception {
 		final String code = getAboveComment();
@@ -7626,7 +7626,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	        operator fp() { return foo; }
 	//	} a;
 	//
-	//	int i = bar(a(1));  // problem on bar
+	//	int i = bar(a(1));
 	public void testCallToObjectOfClassType_267389() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);

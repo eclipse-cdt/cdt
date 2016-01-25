@@ -192,6 +192,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_c9badbb5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ICDebugPreferenceConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T16:55:24Z",
+      "side": 1,
+      "message": "How about moving the code that checks the preferences inside GdbReverseToggleCommand?  In ReverseToggleCommand we would just specify if the trace was hardware or software and leave it to GdbReverseToggleCommand to figure out what kind of hardware trace.\n\nIChangeReverseMethodHandler.setTraceMethod() would need to be adapted for this.",
+      "parentUuid": "07d9433e_a9ecb705",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_2a56da55",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/Messages.java",
         "patchSetId": 20
@@ -289,6 +307,24 @@
       "side": 1,
       "message": "How about ?\nSoftware Trace . Slower, detailed information\nHardware Trace. Faster, less information",
       "parentUuid": "07d9433e_a5dcdd5a",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_cc1909af",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/LaunchUIMessages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-25T16:55:24Z",
+      "side": 1,
+      "message": "I\u0027m not sure about the \u0027trace\u0027 wording.  Won\u0027t it confuse the user that we are talking about tracing when we are doing reverse debugging?  Remember that CDT support GDB tracing (tracepoints).",
+      "parentUuid": "07d9433e_e944ff1f",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

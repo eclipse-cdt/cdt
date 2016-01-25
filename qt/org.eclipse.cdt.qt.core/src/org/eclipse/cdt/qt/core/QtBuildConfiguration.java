@@ -29,6 +29,10 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -104,6 +108,48 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 			return proFiles[0].toPath();
 		} else {
 			return null;
+		}
+	}
+
+	public Path getProgramPath() throws CoreException {
+		switch (Platform.getOS()) {
+		case Platform.OS_MACOSX:
+			// TODO this is mac local specific and really should be
+			// in the config
+			// TODO also need to pull the app name out of the pro
+			// file name
+			Path appFolder = getBuildDirectory().resolve("main.app");
+			Path contentsFolder = appFolder.resolve("Contents");
+			Path macosFolder = contentsFolder.resolve("MacOS");
+			return macosFolder.resolve("main");
+		case Platform.OS_WIN32:
+			Path releaseFolder = getBuildDirectory().resolve("release");
+			return releaseFolder.resolve("main.exe");
+		default:
+			throw new CoreException(
+					new Status(IStatus.ERROR, Activator.ID, "platform not supported: " + Platform.getOS()));
+		}
+	}
+
+	public void setProgramEnvironment(Map<String, String> env) {
+		Path libPath = getQtInstall().getLibPath();
+		switch (Platform.getOS()) {
+		case Platform.OS_MACOSX:
+			String libPathEnv = env.get("DYLD_LIBRARY_PATH");
+			if (libPathEnv == null) {
+				libPathEnv = libPath.toString();
+			} else {
+				libPathEnv = libPath.toString() + File.pathSeparator + libPathEnv;
+			}
+			env.put("DYLD_LIBRARY_PATH", libPathEnv);
+			break;
+		case Platform.OS_WIN32:
+			String path = env.get("PATH");
+			// TODO really need a bin path
+			// and resolve doesn't work properly on Windows
+			path = "C:/Qt/5.5/mingw492_32/bin;" + path;
+			env.put("PATH", path);
+			break;
 		}
 	}
 

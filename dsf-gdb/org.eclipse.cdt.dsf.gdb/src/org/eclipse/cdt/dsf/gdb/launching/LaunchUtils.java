@@ -273,7 +273,10 @@ public class LaunchUtils {
 	 * only once per session and the resulting version string stored for future uses.
 	 * 
 	 * A timeout is scheduled which will kill the process if it takes too long.
+	 * 
+ 	 * @deprecated Replaced with GdbLaunch.getLaunchEnvironment()
 	 */
+	@Deprecated
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
         String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$
         
@@ -476,7 +479,9 @@ public class LaunchUtils {
 	 * Gets the CDT environment from the CDT project's configuration referenced by the
 	 * launch
 	 * @since 3.0
+	 * @deprecated Replaced with GdbLaunch.getLaunchEnvironment()
 	 */
+	@Deprecated
 	public static String[] getLaunchEnvironment(ILaunchConfiguration config) throws CoreException {
 		// Get the project
 		String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);

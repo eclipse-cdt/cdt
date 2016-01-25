@@ -18,7 +18,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.debug.core,
  org.freemarker;bundle-version="2.3.22",
  org.eclipse.cdt.build.core;bundle-version="1.0.0",
- org.eclipse.cdt.build.gcc.core;bundle-version="1.0.0"
+ org.eclipse.cdt.build.gcc.core;bundle-version="1.0.0",
+ org.eclipse.cdt.dsf.gdb;bundle-version="5.0.0",
+ org.eclipse.cdt.dsf;bundle-version="2.6.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

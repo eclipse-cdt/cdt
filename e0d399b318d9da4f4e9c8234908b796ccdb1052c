@@ -277,6 +277,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_e944ff1f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/LaunchUIMessages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-25T14:58:24Z",
+      "side": 1,
+      "message": "How about ?\nSoftware Trace . Slower, detailed information\nHardware Trace. Faster, less information",
+      "parentUuid": "07d9433e_a5dcdd5a",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_6a50e256",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
         "patchSetId": 20

@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_fdb03574",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "In case you missed my comment in Mattermost, LaunchUtils is evil. I\u0027d rather remove that but since it\u0027s API, it\u0027s not worth it. This should be the master copy of the algorithm.",
+      "parentUuid": "07d9433e_ef8cffc0",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_0f8843a8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -70,6 +88,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_3da29d2b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "We can deprecate LaunchUtils if you want.",
+      "parentUuid": "07d9433e_2f0a67b1",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_4fbb2b5e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -81,6 +117,24 @@
       "writtenOn": "2016-01-26T04:11:01Z",
       "side": 1,
       "message": "If we recompute this every time, instead of storing the result the first time, isn\u0027t there a risk that if the user changes the preference, we may get a different result in the middle of a session?  Probably academic in this case, but you never know.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_5d9921ff",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "How often is the init file accessed? Isn\u0027t it only once per launch anyway?",
+      "parentUuid": "07d9433e_4fbb2b5e",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +158,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_7d9c25f0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "I don\u0027t understand how multi-process works. I\u0027m just copying what we had in GDBBackend to it\u0027s proper home. Feel free to change it after I\u0027m done.",
+      "parentUuid": "07d9433e_ef5a3fc8",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_0f5683a3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -115,6 +187,24 @@
       "writtenOn": "2016-01-26T04:11:01Z",
       "side": 1,
       "message": "As above, this API does not support multi-process, so let\u0027s not move it to GdbLaunch.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_9d92c9d8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "Same comment as above.",
+      "parentUuid": "07d9433e_0f5683a3",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -138,6 +228,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_bd8dcdbd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "How often are they computed?",
+      "parentUuid": "07d9433e_2fb8a761",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_0fb12376",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -149,6 +257,24 @@
       "writtenOn": "2016-01-26T04:11:01Z",
       "side": 1,
       "message": "Will we need to be calling this method for our other launch delegates?",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_dd8c51c1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 892,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "Nope, only launch delegates that care about ILaunchTargets.",
+      "parentUuid": "07d9433e_0fb12376",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -172,6 +298,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_5d14c1cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "OK.",
+      "parentUuid": "07d9433e_afabd70b",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_cfa65b43",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
         "patchSetId": 3
@@ -183,6 +327,24 @@
       "writtenOn": "2016-01-26T04:11:01Z",
       "side": 1,
       "message": "The below change reverts recent changes to this class (commit 9f9c54764c041e7340503c04879e5f3dad17d45f).  Could you put them back please? They are small actually.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_dd27f13c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "Oops. I had a merge conflict. I thought I had fixed everything up. It seems not.",
+      "parentUuid": "07d9433e_cfa65b43",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -206,6 +368,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_3d345d64",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "The formatting is the default Eclipse formatting. It\u0027s prett dumb when formatting comments like this. After a while you get used to not putting comments after a line of code. I\u0027ll clean this up.",
+      "parentUuid": "07d9433e_efb5df64",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_6f146fd0",
         "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/launch/QtLocalDebugLaunchConfigDelegate.java",
         "patchSetId": 3
@@ -217,6 +397,24 @@
       "writtenOn": "2016-01-26T04:34:28Z",
       "side": 1,
       "message": "This service factory does not support non-stop.  Do you want to support non-stop?\n\nActually, I have a patch that will unify both service factories to avoid this issue.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_9d4489d1",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/launch/QtLocalDebugLaunchConfigDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-01-26T15:25:01Z",
+      "side": 1,
+      "message": "Keeping things simple for now. But if you can unify it so every launch delegate doesn\u0027t need to worry about this, that would be great. I also wonder if all this code should go into GDBLaunch and reused by the delegates. But GDBLaunch shouldn\u0027t really have behavior, I guess. It\u0027s just a data store.",
+      "parentUuid": "07d9433e_6f146fd0",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -330,6 +330,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_18040753",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T16:16:00Z",
+      "side": 1,
+      "message": "I thought about that too, but registering both will require some gymnastics to avoid creating GdbReverseToggleCommand twice.  So instead, I put comments in the other files to keep using IReverseToggleHandler everywhere as before, but then in the new code that needs to use IChangeReverseMethodHandler, you do an insteaceof and cast to it explicitly.  There will be a bit of complexity for the case where the instanceof fails, but it should not be too bad (I hope).\n\nYou can look at the relevant comments within the global comment dated Jan 25 10:18 PM",
+      "parentUuid": "07d9433e_3d98ddcc",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_2f4d0719",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 20

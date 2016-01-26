@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_4fbb2b5e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:11:01Z",
+      "side": 1,
+      "message": "If we recompute this every time, instead of storing the result the first time, isn\u0027t there a risk that if the user changes the preference, we may get a different result in the middle of a session?  Probably academic in this case, but you never know.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_ef5a3fc8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:11:01Z",
+      "side": 1,
+      "message": "Program arguments are per process.  GDBBackend was never changed properly for that.  We should not put it in GdbLaunch as that API is wrong.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_0f5683a3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:11:01Z",
+      "side": 1,
+      "message": "As above, this API does not support multi-process, so let\u0027s not move it to GdbLaunch.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_2fb8a761",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:11:01Z",
+      "side": 1,
+      "message": "Why recompute every time?  Previously we would store the result to avoid recomputing.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_0fb12376",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 892,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:11:01Z",
+      "side": 1,
+      "message": "Will we need to be calling this method for our other launch delegates?",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_afabd70b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:11:01Z",
+      "side": 1,
+      "message": "Let\u0027s not create this new API.  Instead, in doInitialize() set a member variable to store the launch.\n\nOr make this method private.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_cfa65b43",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:11:01Z",
+      "side": 1,
+      "message": "The below change reverts recent changes to this class (commit 9f9c54764c041e7340503c04879e5f3dad17d45f).  Could you put them back please? They are small actually.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_efb5df64",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:11:01Z",
+      "side": 1,
+      "message": "That formatting is no good",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

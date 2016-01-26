@@ -72,13 +72,22 @@
       </descriptorUI>
    </extension>
    
-   <!-- Category for launch targets, wizard that creates a launch target should belong to this category -->
+
    <extension
          point="org.eclipse.ui.newWizards">
       <category
             id="org.eclipse.launchbar.ui.targetWizards"
-            name="Launch Target">
+            name="Launch Targets">
       </category>
+      <wizard
+            category="org.eclipse.launchbar.ui.targetWizards"
+            class="org.eclipse.launchbar.ui.internal.target.NewLaunchTargetWizard"
+            icon="icons/localTarget.png"
+            id="org.eclipse.launchbar.ui.superTargetWizard"
+            name="Launch Target"
+            project="false">
+      </wizard>
+
    </extension>
 
 </plugin>

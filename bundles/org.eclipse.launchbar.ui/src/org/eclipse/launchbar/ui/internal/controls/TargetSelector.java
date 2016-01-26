@@ -211,10 +211,7 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 		MouseListener mouseListener = new MouseAdapter() {
 			@Override
 			public void mouseUp(org.eclipse.swt.events.MouseEvent event) {
-				NewLaunchTargetWizardAction newWizardAction = new NewLaunchTargetWizardAction(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
-						targetUIManager.getLaunchTargetWizards());
-				newWizardAction.run();
+				new NewLaunchTargetWizardAction().run();
 			}
 		};
 

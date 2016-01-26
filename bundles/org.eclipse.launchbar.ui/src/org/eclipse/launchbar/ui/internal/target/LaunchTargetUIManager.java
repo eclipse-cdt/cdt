@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.target;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -88,8 +90,22 @@ public class LaunchTargetUIManager implements ILaunchTargetUIManager {
 			return wizards;
 		WizardsRegistryReader reader = new WizardsRegistryReader(Activator.PLUGIN_ID, "launchTargetTypeUI"); //$NON-NLS-1$
 		WizardCollectionElement wizardElements = reader.getWizardElements();
-		WizardCollectionElement otherCategory = (WizardCollectionElement) wizardElements.getChildren(null)[0];
-		wizards = otherCategory.getWizards();
+		List<IWizardDescriptor> result = collectWizards(wizardElements, new ArrayList<>());
+		wizards = result.toArray(new IWizardDescriptor[result.size()]);
 		return wizards;
+	}
+
+	/* we don't show categories we have to flatten the wizards */
+	private List<IWizardDescriptor> collectWizards(WizardCollectionElement element, List<IWizardDescriptor> result) {
+		Object[] children = element.getChildren(null); // children are categories
+		IWizardDescriptor[] wizards = element.getWizards();
+		for (IWizardDescriptor desc : wizards) {
+			result.add(desc);
+		}
+		for (Object cat : children) {
+			WizardCollectionElement category = (WizardCollectionElement) cat;
+			collectWizards(category, result);
+		}
+		return result;
 	}
 }

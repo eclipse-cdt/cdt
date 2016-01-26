@@ -21,7 +21,6 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -59,20 +58,17 @@ public class NewLaunchTargetWizardAction extends Action implements
 	 * action has been <code>dispose</code>d.
 	 */
 	private IWorkbenchWindow workbenchWindow;
-	private IWizardDescriptor[] desc;
 
 	/**
 	 * Create a new instance of this class.
-	 * @param window
-	 * @param iWizardDescriptors
 	 */
-	public NewLaunchTargetWizardAction(IWorkbenchWindow window, IWizardDescriptor[] desc) {
+	public NewLaunchTargetWizardAction() {
 		super(WorkbenchMessages.NewWizardAction_text);
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
-		this.desc = desc;
 		// @issues should be IDE-specific images
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(images
@@ -110,20 +106,14 @@ public class NewLaunchTargetWizardAction extends Action implements
 			// action has been disposed
 			return;
 		}
-		NewLaunchTargetWizard wizard = new NewLaunchTargetWizard() {
-			@Override
-			public IWizardDescriptor[] getWizardDescriptors() {
-				return desc;
-			}
-		};
+		NewLaunchTargetWizard wizard = new NewLaunchTargetWizard();
 		wizard.setWindowTitle(windowTitle);
 		wizard.init(workbenchWindow.getWorkbench(), null);
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
-				.getDialogSettings();
-		IDialogSettings wizardSettings = workbenchSettings
-				.getSection("NewLaunchTargetWizardAction"); //$NON-NLS-1$
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		String settingsSection = getClass().getSimpleName();
+		IDialogSettings wizardSettings = workbenchSettings.getSection(settingsSection);
 		if (wizardSettings == null) {
-			wizardSettings = workbenchSettings.addNewSection("NewLaunchTargetWizardAction"); //$NON-NLS-1$
+			wizardSettings = workbenchSettings.addNewSection(settingsSection);
 		}
 		wizard.setDialogSettings(wizardSettings);
 		wizard.setForcePreviousAndNextButtons(true);

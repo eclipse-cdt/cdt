@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.target;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.target.ILaunchTargetUIManager;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -26,9 +29,10 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * (nested) wizard to run. The set of available new wizards comes from the new
  * extension point.
  */
-public class NewLaunchTargetWizard extends Wizard {
+public class NewLaunchTargetWizard extends Wizard implements IWorkbenchWizard {
 	private NewLaunchTargetWizardSelectionPage mainPage;
 	private IWorkbench workbench;
+	private final ILaunchTargetUIManager targetUIManager = Activator.getService(ILaunchTargetUIManager.class);
 
 	/**
 	 * Create the wizard pages
@@ -40,11 +44,7 @@ public class NewLaunchTargetWizard extends Wizard {
 	}
 
 	public IWizardDescriptor[] getWizardDescriptors() {
-		IWizardCategory launchCategory = WorkbenchPlugin.getDefault().getNewWizardRegistry()
-				.findCategory("org.eclipse.launchbar.ui.targetWizards"); //$NON-NLS-1$
-		if (launchCategory != null)
-			return launchCategory.getWizards();
-		return new IWizardDescriptor[0];
+		return targetUIManager.getLaunchTargetWizards();
 	}
 
 	/**
@@ -52,6 +52,7 @@ public class NewLaunchTargetWizard extends Wizard {
 	 * @param aWorkbench the workbench
 	 * @param currentSelection the current selection
 	 */
+	@Override
 	public void init(IWorkbench aWorkbench,
 			IStructuredSelection currentSelection) {
 		this.workbench = aWorkbench;
@@ -82,6 +83,21 @@ public class NewLaunchTargetWizard extends Wizard {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public IDialogSettings getDialogSettings() {
+		IDialogSettings wizardSettings = super.getDialogSettings();
+		if (wizardSettings == null) {
+			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+			String settingsSection = getClass().getSimpleName();
+			wizardSettings = workbenchSettings.getSection(settingsSection);
+			if (wizardSettings == null) {
+				wizardSettings = workbenchSettings.addNewSection(settingsSection);
+			}
+			setDialogSettings(wizardSettings);
+		}
+		return wizardSettings;
 	}
 
 	@Override

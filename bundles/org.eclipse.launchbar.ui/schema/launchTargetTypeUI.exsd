@@ -6,7 +6,8 @@
          <meta.schema plugin="org.eclipse.launchbar.ui" id="launchTargetTypeUI" name="Launch Target Type UI"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point allow to contribute UI element for launch targets, specifically target label provider
+and target creation wizard.
       </documentation>
    </annotation>
 
@@ -74,6 +75,11 @@
    </element>
 
    <element name="wizard">
+      <annotation>
+         <documentation>
+            Contribute a wizard that can create a launch target, normally it would be a wizard per target type.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -181,7 +187,19 @@ Since 3.0
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+            &lt;extension
+         point=&quot;org.eclipse.launchbar.ui.launchTargetTypeUI&quot;&gt;
+      &lt;launchTargetTypeUI
+            id=&quot;com.qnx.tools.ide.target.qconn&quot;
+            labelProvider=&quot;com.qnx.tools.ide.target.qconn.internal.ui.QConnLaunchTargetLabelProvider&quot;&gt;
+
+      &lt;/launchTargetTypeUI&gt;
+      &lt;wizard
+            class=&quot;com.qnx.tools.ide.target.qconn.internal.ui.wizards.NewQconnTargetWizard&quot;
+            id=&quot;com.qnx.tools.ide.target.qconn.ui.NewQNXTarget&quot;
+            name=&quot;New QNX Target&quot;&gt;
+      &lt;/wizard&gt;
+   &lt;/extension&gt;
       </documentation>
    </annotation>
 

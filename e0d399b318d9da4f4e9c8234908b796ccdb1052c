@@ -312,6 +312,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_3d98ddcc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-26T15:56:03Z",
+      "side": 1,
+      "message": "Ok but then the commandhandler for IChangeReverseMethodHandler will not work if I dont register this. Should I register both maybe ?",
+      "parentUuid": "07d9433e_0f7f631d",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_2f4d0719",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 20

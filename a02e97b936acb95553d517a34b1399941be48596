@@ -203,6 +203,23 @@
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_6f146fd0",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/launch/QtLocalDebugLaunchConfigDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T04:34:28Z",
+      "side": 1,
+      "message": "This service factory does not support non-stop.  Do you want to support non-stop?\n\nActually, I have a patch that will unify both service factories to avoid this issue.",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

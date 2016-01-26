@@ -157,6 +157,40 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_cf749b43",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T03:18:59Z",
+      "side": 1,
+      "message": "This class is meant to allow to \u0027retarget\u0027 it to a different target.  If anyone has done that already, then the above change would no longer find their own class.\n\nLet\u0027s leave the above line returning IReverseToggleHandler",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_ef831fa4",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T03:18:59Z",
+      "side": 1,
+      "message": "For the same reason as above let\u0027s leave this as IReverseToggleHandler.\n\nIn the rest of the file let\u0027s do an instanceof IChangeReverseMethodHandler to use it when we have it, but if the instanceof fails, then we need to some default behavior; probably to use software reverse.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_aa6aea09",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ICDebugPreferenceConstants.java",
         "patchSetId": 20
@@ -255,6 +289,57 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "Missing copyright header (if this file is kept and not integrated in MessagesForPreferences.properties of dsf.gdb.ui)",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_0f7f631d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T03:18:59Z",
+      "side": 1,
+      "message": "This needs to remain IReverseToggleHandler for the other changes not to break things.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_2f4d0719",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T03:18:59Z",
+      "side": 1,
+      "message": "This needs to remain IReverseToggleHandler for the other changes not to break things.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_af79173c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/ReverseDebuggingPropertyTester.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-26T03:18:59Z",
+      "side": 1,
+      "message": "I\u0027ve been thinking about this and I am worried that this can affect people that provide their own IReverseToggleHandler.  Suddenly, with this change, their adapter will no longer be found.\n\nSince the new IChangeReverseMethodHandler is also an IReverseToggleHanlder, let\u0027s not change this file and still request an IReverseToggleHandler.\n\nThis will require other changes as well, which I\u0027ll put comments on.",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

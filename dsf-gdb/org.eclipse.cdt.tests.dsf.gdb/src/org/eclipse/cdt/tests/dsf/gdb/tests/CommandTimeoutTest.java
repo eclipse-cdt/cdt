@@ -129,6 +129,11 @@ public class CommandTimeoutTest extends BaseTestCase {
 		
 		// Make sure we receive a shutdown event to confirm we have aborted the session
         shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
+
+        // It can take a moment from when the shutdown event is received to when
+        // the launch is actually terminated. Make sure that the launch does
+        // terminate itself.
+        assertLaunchTerminates();
 	}
 
 	/**

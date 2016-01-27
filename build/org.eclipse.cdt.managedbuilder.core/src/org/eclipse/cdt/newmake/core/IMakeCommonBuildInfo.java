@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IMakeCommonBuildInfo {
 	public final static String ARGS_PREFIX = "org.eclipse.cdt.make.core"; //$NON-NLS-1$
-	
+
 	public final static String BUILD_LOCATION = ARGS_PREFIX + ".build.location"; //$NON-NLS-1$
 	public final static String BUILD_COMMAND = ARGS_PREFIX + ".build.command"; //$NON-NLS-1$
 	public final static String BUILD_ARGUMENTS = ARGS_PREFIX + ".build.arguments"; //$NON-NLS-1$
@@ -34,11 +34,11 @@ public interface IMakeCommonBuildInfo {
 	IPath getBuildLocation();
 
 	/**
-	 * @deprecated - use setBuildString(BUILD_LOCATION...)
+	 * @deprecated - use {@link #setBuildAttribute(BUILD_LOCATION, String)}
 	 */
 	@Deprecated
 	void setBuildLocation(IPath location) throws CoreException;
-	
+
 	boolean isStopOnError();
 	void setStopOnError(boolean on) throws CoreException;
 	boolean supportsStopOnError(boolean on);
@@ -52,7 +52,7 @@ public interface IMakeCommonBuildInfo {
 	 * Sets maximum number of parallel threads/jobs to be used by builder.
 	 * Note that this number can be interpreted by builder in a special way.
 	 * @see Builder#setParallelizationNum(int)
-	 * 
+	 *
 	 * @param jobs - maximum number of jobs.
 	 */
 	void setParallelizationNum(int jobs) throws CoreException;
@@ -73,14 +73,14 @@ public interface IMakeCommonBuildInfo {
 	/**
 	 * Set parallel execution mode for the builder.
 	 * @see Builder#setParallelBuildOn(boolean)
-	 * 
+	 *
 	 * @param on - the flag to enable or disable parallel mode.
 	 */
 	void setParallelBuildOn(boolean on) throws CoreException;
 
 	boolean isDefaultBuildCmd();
 	void setUseDefaultBuildCmd(boolean on) throws CoreException;
-	
+
 	IPath getBuildCommand();
 
 	/**
@@ -104,10 +104,10 @@ public interface IMakeCommonBuildInfo {
 
 	Map<String, String> getEnvironment();
 	void setEnvironment(Map<String, String> env) throws CoreException;
-	
+
 	boolean appendEnvironment();
 	void setAppendEnvironment(boolean append) throws CoreException;
-	
+
 	boolean isManagedBuildOn();
 	void setManagedBuildOn(boolean on) throws CoreException;
 	boolean supportsBuild(boolean managed);

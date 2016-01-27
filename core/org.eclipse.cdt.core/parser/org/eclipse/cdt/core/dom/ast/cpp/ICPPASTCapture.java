@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
@@ -21,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTCapture extends IASTNode, ICPPASTPackExpandable {
+public interface ICPPASTCapture extends IASTNode, ICPPASTPackExpandable, IASTNameOwner {
 	ASTNodeProperty IDENTIFIER = new ASTNodeProperty("ICPPASTCapture - IDENTIFIER [IASTName]"); //$NON-NLS-1$
 
 	@Override

@@ -24,10 +24,12 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
 		// Set it as active
-		IProject project = qtBuildConfig.getProject();
-		IProjectDescription desc = project.getDescription();
-		desc.setActiveBuildConfig(qtBuildConfig.getBuildConfiguration().getName());
-		project.setDescription(desc, monitor);
+		if (qtBuildConfig != null) {
+			IProject project = qtBuildConfig.getProject();
+			IProjectDescription desc = project.getDescription();
+			desc.setActiveBuildConfig(qtBuildConfig.getBuildConfiguration().getName());
+			project.setDescription(desc, monitor);
+		}
 
 		// And build
 		return superBuildForLaunch(configuration, mode, monitor);

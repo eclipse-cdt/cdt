@@ -107,10 +107,12 @@ public class QtBuildConfigurationFactory implements IAdapterFactory {
 		// return it if it exists already
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
 			QtBuildConfiguration qtConfig = config.getAdapter(QtBuildConfiguration.class);
-			IQtInstall qtInstall = qtConfig.getQtInstall();
-			if (qtInstall != null && qtInstallManager.supports(qtInstall, target)
-					&& launchMode.equals(qtConfig.getLaunchMode())) {
-				return qtConfig;
+			if (qtConfig != null) {
+				IQtInstall qtInstall = qtConfig.getQtInstall();
+				if (qtInstall != null && qtInstallManager.supports(qtInstall, target)
+						&& launchMode.equals(qtConfig.getLaunchMode())) {
+					return qtConfig;
+				}
 			}
 		}
 

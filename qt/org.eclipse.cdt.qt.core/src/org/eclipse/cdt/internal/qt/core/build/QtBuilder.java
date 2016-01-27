@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.cdt.build.core.IConsoleService;
 import org.eclipse.cdt.build.core.IToolChain;
 import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.cdt.internal.qt.core.Messages;
 import org.eclipse.cdt.qt.core.QtBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,6 +38,11 @@ public class QtBuilder extends IncrementalProjectBuilder {
 		try {
 			IConsoleService console = Activator.getService(IConsoleService.class);
 			QtBuildConfiguration qtConfig = getBuildConfig().getAdapter(QtBuildConfiguration.class);
+			if (qtConfig == null) {
+				// Qt hasn't been configured yet print a message and bale
+				console.writeError(Messages.QtBuilder_0);
+				return null;
+			}
 			IToolChain toolChain = qtConfig.getToolChain();
 
 			Path buildDir = qtConfig.getBuildDirectory();
@@ -50,7 +56,7 @@ public class QtBuilder extends IncrementalProjectBuilder {
 					command.add(config);
 				}
 
-				IFile projectFile = qtConfig.getProject().getFile("main.pro");
+				IFile projectFile = qtConfig.getProject().getFile("main.pro"); //$NON-NLS-1$
 				command.add(projectFile.getLocation().toOSString());
 
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
@@ -68,14 +74,14 @@ public class QtBuilder extends IncrementalProjectBuilder {
 			// run make
 			// TODO obviously hardcoding here
 			boolean isWin = Platform.getOS().equals(Platform.OS_WIN32);
-			String make = isWin ? "C:/Qt/Tools/mingw492_32/bin/mingw32-make" : "make";
+			String make = isWin ? "C:/Qt/Tools/mingw492_32/bin/mingw32-make" : "make"; //$NON-NLS-1$ //$NON-NLS-2$
 			ProcessBuilder procBuilder = new ProcessBuilder(make).directory(buildDir.toFile());
 			if (isWin) {
 				// Need to put the toolchain into env
 				Map<String, String> env = procBuilder.environment();
-				String path = env.get("PATH");
-				path = "C:/Qt/Tools/mingw492_32/bin;" + path;
-				env.put("PATH", path);
+				String path = env.get("PATH"); //$NON-NLS-1$
+				path = "C:/Qt/Tools/mingw492_32/bin;" + path; //$NON-NLS-1$
+				env.put("PATH", path); //$NON-NLS-1$
 			}
 			toolChain.setEnvironment(procBuilder.environment());
 			Process process = procBuilder.start();
@@ -85,7 +91,7 @@ public class QtBuilder extends IncrementalProjectBuilder {
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			return new IProject[] { project };
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Building " + project.getName(), e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Building " + project.getName(), e)); //$NON-NLS-1$
 		}
 	}
 

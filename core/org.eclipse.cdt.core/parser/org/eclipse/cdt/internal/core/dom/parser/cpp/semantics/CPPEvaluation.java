@@ -13,9 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -114,5 +117,35 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 
 	protected static boolean isNullOrConstexprFunc(ICPPFunction function) {
 		return function == null || function.isConstexpr();
+	}
+
+	/**
+	 * If a user-defined conversion is required to convert 'argument' to type 'targetType',
+	 * return 'argument' wrapped in an evaluation representing the conversion.
+	 * Otherwise, return 'argument' unmodified.
+	 * @param point point of instantiation for name lookups
+	 */
+	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType, 
+			IASTNode point) {
+		IType type = argument.getType(point);
+		ValueCategory valueCategory = argument.getValueCategory(point);
+		ICPPFunction conversion = null;
+		if (type instanceof ICPPClassType) {
+			try {
+				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) type, 
+						targetType, false, point);
+				conversion = cost.getUserDefinedConversion();
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		if (conversion != null) {
+			if (!conversion.isConstexpr()) {
+				return EvalFixed.INCOMPLETE;
+			}
+			ICPPEvaluation eval = new EvalBinding(conversion, null, (IBinding) null);
+			argument = new EvalFunctionCall(new ICPPEvaluation[] {eval, argument}, (IBinding) null);
+		}
+		return argument;
 	}
 }

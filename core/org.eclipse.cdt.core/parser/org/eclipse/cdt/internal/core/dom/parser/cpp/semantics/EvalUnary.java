@@ -37,7 +37,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -47,7 +46,6 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -285,22 +283,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 		if (overload != null) {
 			ICPPFunctionType functionType = overload.getType();
 			IType targetType = functionType.getParameterTypes()[0];
-			ValueCategory valueCategory = fArgument.getValueCategory(point);
-			IType type = fArgument.getType(point);
-			ICPPFunction conversion = null;
-			try {
-				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) type, targetType, false, point);
-				conversion = cost.getUserDefinedConversion();
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
-
-			if (conversion != null) {
-				if (!conversion.isConstexpr())
-					return Value.ERROR;
-				ICPPEvaluation eval = new EvalBinding(conversion, null, (IBinding) null);
-				arg = new EvalFunctionCall(new ICPPEvaluation[] {eval, arg}, (IBinding) null);
-			}
+			arg = maybeApplyConversion(arg, targetType, point);
+			
 			if (!(overload instanceof CPPImplicitFunction)) {
 				if (!overload.isConstexpr())
 					return Value.ERROR;

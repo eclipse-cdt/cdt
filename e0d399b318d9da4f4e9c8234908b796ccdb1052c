@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_bd55cd4a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 20
+      },
+      "lineNbr": 1609,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_0aa916dc",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_4aa31efa",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 20
@@ -100,6 +118,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "Please give appropriate id e.g., org.eclipse.cdt.debug.ui.command.reverseToggle.parameter.traceMethod",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_fd4f55b8",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 20
+      },
+      "lineNbr": 1921,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "I tried that but the eclipse does not identify if the id is changed.",
+      "parentUuid": "07d9433e_4aa31efa",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -123,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_58bccf04",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 20
+      },
+      "lineNbr": 1922,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_2aa41a02",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_6a9e22b6",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 20
@@ -140,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_78bfd3f8",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 20
+      },
+      "lineNbr": 1926,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "I tried that but the eclipse does not identify if the id is changed.",
+      "parentUuid": "07d9433e_6a9e22b6",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_8a67e643",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/CDebugUIPreferenceInitializer.java",
         "patchSetId": 20
@@ -151,6 +223,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "If we move the preference page to dsf.gdb.ui then the above change should go in GdbPreferenceInitializer.java",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_b8c07b73",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/CDebugUIPreferenceInitializer.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "I moved PREF_REVERSE_TRACE_METHOD_HARDWARE but not the Error message property since I thought the later is not GDB specific and other debuggers could also have multiple trace methods.",
+      "parentUuid": "07d9433e_8a67e643",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -185,6 +275,24 @@
       "writtenOn": "2016-01-26T03:18:59Z",
       "side": 1,
       "message": "For the same reason as above let\u0027s leave this as IReverseToggleHandler.\n\nIn the rest of the file let\u0027s do an instanceof IChangeReverseMethodHandler to use it when we have it, but if the instanceof fails, then we need to some default behavior; probably to use software reverse.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_75f6f986",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_ef831fa4",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -244,6 +352,42 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_decb67b5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ICDebugPreferenceConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_aa6aea09",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_fec66bac",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ICDebugPreferenceConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_c9badbb5",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_2a56da55",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/Messages.java",
         "patchSetId": 20
@@ -255,6 +399,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "If we move the preference page to dsf.gdb.ui, the below can go into MessagesForPreferences of the same plugin",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_1e95cf95",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/Messages.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_2a56da55",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -278,6 +440,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_5e8f5787",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/ReverseDebugPreferencePage.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_0a5bd67f",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_4a55de46",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/messages.properties",
         "patchSetId": 20
@@ -289,6 +469,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "Missing copyright header (if this file is kept and not integrated in MessagesForPreferences.properties of dsf.gdb.ui)",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_3e98d3cc",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/messages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_4a55de46",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -348,6 +546,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_92047323",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_18040753",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_2f4d0719",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 20
@@ -359,6 +575,24 @@
       "writtenOn": "2016-01-26T03:18:59Z",
       "side": 1,
       "message": "This needs to remain IReverseToggleHandler for the other changes not to break things.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_b207b724",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_2f4d0719",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -382,6 +616,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_3278079b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/ReverseDebuggingPropertyTester.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_af79173c",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_65e2d50e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbDebuggerPage.java",
         "patchSetId": 20
@@ -393,6 +645,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "Please remove.  I assume this was test code.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_d20d1b46",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbDebuggerPage.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_65e2d50e",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -452,6 +722,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_528f4b39",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/LaunchUIMessages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Ok How about the following wording -\u003e\n\"Software Reverse Debugging. Detailed but slower\"\n\"Hardware Reverse Debugging. No details but faster\"",
+      "parentUuid": "07d9433e_cc1909af",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_6a50e256",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
         "patchSetId": 20
@@ -463,6 +751,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "A core plugin cannot depend on UI plugins.  Please remove the above.  We\u0027ll fix the code that will break.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_3e83735c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 20
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_6a50e256",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -486,6 +792,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_f2085f35",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_e5d6e536",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_25e8cdee",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
         "patchSetId": 20
@@ -497,6 +821,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "Please name DEBUGGER_REVERSE_MODE_SOFTWARE",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_1218637f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_25e8cdee",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -520,6 +862,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_3213a764",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_45e7911e",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_c5bc8107",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_10.java",
         "patchSetId": 20
@@ -531,6 +891,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "You cannot depend on CDebugUIPlugin.  However, you can read the preferences using Platform.getPreferencesService().get...\n\nYou can see an example in GDBProcesses_7_0 reading preference IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB\n\nAs the first parameter to the above call, you may need to hard-code the plugin id if that plugin is a UI plugin.",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_f22f7f8e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_10.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_c5bc8107",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -554,6 +932,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_122f8390",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_10.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_05c66990",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_85043955",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIRecord.java",
         "patchSetId": 20
@@ -565,6 +961,24 @@
       "writtenOn": "2016-01-25T03:32:59Z",
       "side": 1,
       "message": "Please add comment that this is only available from GDB \u003e\u003d 7.10",
+      "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_de11a70c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIRecord.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-01-27T15:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_85043955",
       "revId": "e0d399b318d9da4f4e9c8234908b796ccdb1052c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

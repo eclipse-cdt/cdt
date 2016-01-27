@@ -101,4 +101,14 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 		assertNotFrozen();
 		fPackExpansion= val;
 	}
+
+	@Override
+	public int getRoleForName(IASTName name) {
+		if (name == fIdentifier) {
+			// Treat the capture as a reference to the captured variable.
+			// This choice may be revisited when C++14 init-captures are implemented.
+			return r_reference;
+		}
+		return r_unclear;
+	}
 }

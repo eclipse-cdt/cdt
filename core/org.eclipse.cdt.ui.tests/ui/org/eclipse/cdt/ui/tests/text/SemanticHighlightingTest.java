@@ -483,4 +483,12 @@ public class SemanticHighlightingTest extends TestCase {
     public void testInheritingConstructor_484898() throws Exception {
     	makeAssertions();
     }
+    
+	//	void foo(int param) {                            //$functionDeclaration,parameterVariable
+	//		int local;                                   //$localVariableDeclaration
+	//		[local, param](){};                          //$class,localVariable,parameterVariable
+	//	}    
+    public void testLocalVariableInLambdaCapture_486679() throws Exception {
+    	makeAssertions();
+    }
 }

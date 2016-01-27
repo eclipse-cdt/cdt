@@ -77,6 +77,7 @@ public class Messages extends NLS {
 	public static String CMainWizardPage_1;
 	public static String CNewWizard_0;
 	public static String CPropertyVarsTab_0;
+	public static String CPropertyVarsTab_Description;
 	public static String CWizardHandler_0;
 	public static String CWizardHandler_1;
 	public static String CWizardHandler_2;

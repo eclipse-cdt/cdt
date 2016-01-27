@@ -8803,6 +8803,22 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	constexpr bool negate(bool arg) {
+	//	  return !arg;
+	//	}
+	//	    
+	//	template <bool B>
+	//	struct boolean {
+	//	  constexpr operator bool() { return B; } 
+	//	};
+	//	    
+	//	constexpr bool waldo = negate(boolean<true>());
+	public void testDependentConversionOperator_486426() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPVariable waldo = helper.assertNonProblem("waldo");
+		assertConstantValue(0, waldo);
+	}
+	
 	//	template <typename>
 	//	struct C {
 	//	    friend bool operator==(C, C);

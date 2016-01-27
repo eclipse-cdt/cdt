@@ -247,11 +247,11 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		ICPPEvaluation eval = CPPFunction.getReturnExpression(function, context.getPoint());
 		if (eval == null)
 			return EvalFixed.INCOMPLETE;
-		CPPFunctionParameterMap parameterMap = buildParameterMap(function);
+		CPPFunctionParameterMap parameterMap = buildParameterMap(function, context.getPoint());
 		return eval.computeForFunctionCall(parameterMap, context.recordStep());
 	}
 
-	private CPPFunctionParameterMap buildParameterMap(ICPPFunction function) {
+	private CPPFunctionParameterMap buildParameterMap(ICPPFunction function, IASTNode point) {
 		ICPPParameter[] parameters = function.getParameters();
 		CPPFunctionParameterMap map = new CPPFunctionParameterMap(parameters.length);
 		int j = 1;
@@ -262,7 +262,8 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 				j = fArguments.length;
 			} else {
 				if (j < fArguments.length) {
-					map.put(i, fArguments[j++]);
+					ICPPEvaluation argument = maybeApplyConversion(fArguments[j++], param.getType(), point);
+					map.put(i, argument);
 				} else if (param.hasDefaultValue()) {
 					IValue value = param.getDefaultValue();
 					ICPPEvaluation eval = value.getEvaluation();

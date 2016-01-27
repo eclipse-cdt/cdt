@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
@@ -62,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -481,7 +483,8 @@ public class SemanticHighlightings {
 				return false;
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
-				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
+				boolean qualified = name instanceof ICPPASTQualifiedName; 
+				if (qualified && name.isReference()) {
 					return false;
 				}
 				IBinding binding= token.getBinding();
@@ -496,9 +499,43 @@ public class SemanticHighlightings {
 							}
 						}
 					}
+				} else if (!qualified && isInheritingConstructorDeclaration(binding)) {
+					return true;
 				}
 			}
 			return false;
+		}
+		
+		private boolean isInheritingConstructorDeclaration(IBinding binding) {
+			if (!(binding instanceof ICPPUsingDeclaration)) {
+				return false;
+			}
+			IBinding[] delegates = ((ICPPUsingDeclaration) binding).getDelegates();
+			// The delegates of an inheriting constructor declaration
+			// include the class type and the constructors.
+			ICPPClassType classType = null;
+			boolean foundConstructors = false;
+			for (IBinding delegate : delegates) {
+				if (delegate instanceof ICPPClassType) {
+					if (classType != null) {
+						// Multiple classes among delegates.
+						return false;
+					}
+					classType = (ICPPClassType) delegate;
+				} else if (delegate instanceof ICPPConstructor) {
+					foundConstructors = true;
+					if (classType != null) {
+						if (!delegate.getOwner().equals(classType)) {
+							// Constructor does not belong to class.
+							return false;
+						}
+					}
+				} else {
+					// Delegate other than class or constructor.
+					return false;
+				}
+			}
+			return foundConstructors;
 		}
 	}
 

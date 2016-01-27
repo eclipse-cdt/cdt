@@ -472,7 +472,15 @@ public class SemanticHighlightingTest extends TestCase {
     //	}
     //	N::C::E1 e1;                                     //$namespace,class,enum,globalVariable
     //	N::E2 e2;                                        //$namespace,enum,globalVariable
-    public void testQualifiedEnum_XXXXXX() throws Exception {
+    public void testQualifiedEnum_485709() throws Exception {
+    	makeAssertions();
+    }
+    
+    //	class Base {};                                   //$class
+    //	class Derived : Base {                           //$class,class
+    //		using Base::Base;                            //$class,method
+    //	};
+    public void testInheritingConstructor_484898() throws Exception {
     	makeAssertions();
     }
 }

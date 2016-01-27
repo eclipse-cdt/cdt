@@ -89,58 +89,6 @@
        </launchConfigurationTabGroup>
     </extension>
     <extension
-          point="org.eclipse.ui.handlers">
-       <handler
-             class="org.eclipse.cdt.qt.ui.handlers.ReloadAnalyzerHandler"
-             commandId="org.eclipse.cdt.qt.ui.commands.sampleCommand">
-       </handler>
-    </extension>
-    <extension
-          point="org.eclipse.ui.bindings">
-       <key
-             commandId="org.eclipse.cdt.qt.ui.commands.sampleCommand"
-             contextId="org.eclipse.ui.contexts.window"
-             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-             sequence="M1+6">
-       </key>
-    </extension>
-    <extension
-          point="org.eclipse.ui.menus">
-       <menuContribution
-             locationURI="menu:help">
-          <command
-                commandId="org.eclipse.cdt.qt.ui.commands.sampleCommand"
-                id="org.eclipse.cdt.qt.ui.menus.sampleCommand"
-                mnemonic="R"
-                style="push">
-          </command>
-       </menuContribution>
-       <menuContribution
-             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-          <toolbar
-                id="org.eclipse.cdt.qt.ui.toolbars.sampleToolbar">
-             <command
-                   commandId="org.eclipse.cdt.qt.ui.commands.sampleCommand"
-                   icon="icons/sample.gif"
-                   id="org.eclipse.cdt.qt.ui.toolbars.sampleCommand"
-                   tooltip="Reloads the QML Anayzer Tern Server">
-             </command>
-          </toolbar>
-       </menuContribution>
-    </extension>
-    <extension
-          point="org.eclipse.ui.commands">
-       <category
-             id="org.eclipse.cdt.qt.ui.commands.category"
-             name="Qt Commands">
-       </category>
-       <command
-             categoryId="org.eclipse.cdt.qt.ui.commands.category"
-             id="org.eclipse.cdt.qt.ui.commands.sampleCommand"
-             name="Reload QML Analyzer">
-       </command>
-    </extension>
-    <extension
           point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
        <target
              id="org.eclipse.cdt.qt.ui.qml"

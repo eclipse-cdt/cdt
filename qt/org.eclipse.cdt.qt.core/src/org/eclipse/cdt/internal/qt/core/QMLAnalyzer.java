@@ -45,23 +45,25 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 		engine = new ScriptEngineManager().getEngineByName("nashorn");
 		invoke = (Invocable) engine;
 
-		load("/tern-qml/node_modules/acorn/dist/acorn.js");
-		load("/tern-qml/node_modules/acorn/dist/acorn_loose.js");
-		load("/tern-qml/node_modules/acorn/dist/walk.js");
-		load("/tern-qml/node_modules/acorn-qml/inject.js");
-		load("/tern-qml/node_modules/acorn-qml/index.js");
-		load("/tern-qml/node_modules/acorn-qml/loose/inject.js");
-		load("/tern-qml/node_modules/acorn-qml/loose/index.js");
-		load("/tern-qml/node_modules/acorn-qml/walk/index.js");
+		loadDep("/tern-qml/node_modules/acorn/dist/acorn.js");
+		loadDep("/tern-qml/node_modules/acorn/dist/acorn_loose.js");
+		loadDep("/tern-qml/node_modules/acorn/dist/walk.js");
 
-		load("/tern-qml/node_modules/tern/lib/signal.js");
-		load("/tern-qml/node_modules/tern/lib/tern.js");
-		load("/tern-qml/node_modules/tern/lib/def.js");
-		load("/tern-qml/node_modules/tern/lib/comment.js");
-		load("/tern-qml/node_modules/tern/lib/infer.js");
+		loadDep("/tern-qml/node_modules/tern/lib/signal.js");
+		loadDep("/tern-qml/node_modules/tern/lib/tern.js");
+		loadDep("/tern-qml/node_modules/tern/lib/def.js");
+		loadDep("/tern-qml/node_modules/tern/lib/comment.js");
+		loadDep("/tern-qml/node_modules/tern/lib/infer.js");
+
+		load("/acorn-qml/inject.js");
+		load("/acorn-qml/index.js");
+		load("/acorn-qml/loose/inject.js");
+		load("/acorn-qml/loose/index.js");
+		load("/acorn-qml/walk/index.js");
 
 		load("/tern-qml/qml.js");
 		load("/tern-qml/qml-nsh.js");
+
 		Bindings options = (Bindings) engine.eval("new Object()");
 		options.put("ecmaVersion", 5);
 
@@ -111,6 +113,14 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 		}
 		engine.getContext().setAttribute(ScriptEngine.FILENAME, file, ScriptContext.ENGINE_SCOPE);
 		return engine.eval(new BufferedReader(new InputStreamReader(scriptURL.openStream(), StandardCharsets.UTF_8)));
+	}
+
+	private Object loadDep(String file) throws ScriptException, IOException {
+		try {
+			return load(file);
+		} catch (FileNotFoundException e) {
+			return load(file.replaceAll("^/tern-qml/node_modules/", "/tern-qml/dist/"));
+		}
 	}
 
 	private void waitUntilLoaded() {

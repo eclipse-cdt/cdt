@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.core.source"
       label="%featureName"
-      version="3.7.0.qualifier"
+      version="3.7.1.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">

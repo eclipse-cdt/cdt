@@ -119,7 +119,7 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 		try {
 			return load(file);
 		} catch (FileNotFoundException e) {
-			return load(file.replaceAll("^/tern-qml/node_modules/", "/tern-qml/dist/"));
+			return load(file.replace("/tern-qml/node_modules/", "/tern-qml/dist/"));
 		}
 	}
 

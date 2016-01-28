@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_eb45ca1b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "I tried doing that but it turned out to be tricky because there is another coreException that can be thrown when doing variable substitution.  So I gave up, not worth the time.",
+      "parentUuid": "07d9433e_af92f7d7",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_ef8cffc0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -54,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_0b458e19",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "I deprecated the methods in LaunchUtils and confirmed nobody was still using them (except in one place, which I also deprecated)",
+      "parentUuid": "07d9433e_fdb03574",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_0f8843a8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -65,6 +101,24 @@
       "writtenOn": "2016-01-26T04:29:13Z",
       "side": 1,
       "message": "This should go away by avoid the above code duplication",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_2b409207",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "Taken care of by deprecation in LaunchUtils.",
+      "parentUuid": "07d9433e_0f8843a8",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -106,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_4bc23601",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "Did it for the relevant methods and those using them.",
+      "parentUuid": "07d9433e_3da29d2b",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_4fbb2b5e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -135,6 +207,24 @@
       "side": 1,
       "message": "How often is the init file accessed? Isn\u0027t it only once per launch anyway?",
       "parentUuid": "07d9433e_4fbb2b5e",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_6b5a9aff",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "That is why it is academic :) Ok to leave as is.",
+      "parentUuid": "07d9433e_5d9921ff",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -176,6 +266,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_8b519ee1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "I\u0027ve been thinking about this and I don\u0027t know what the proper API would look like.  If we have a UI that accepts multiple binaries for example.\n\nI guess we have to leave this as is for now.",
+      "parentUuid": "07d9433e_7d9c25f0",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_0f5683a3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -211,6 +319,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_ab54a2cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "Same realization as above.",
+      "parentUuid": "07d9433e_9d92c9d8",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_2fb8a761",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 3
@@ -240,6 +366,24 @@
       "side": 1,
       "message": "How often are they computed?",
       "parentUuid": "07d9433e_2fb8a761",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_cb4ac62c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "No idea...  We used to store the result, so I was asking why the change.  Ok to leave as is.",
+      "parentUuid": "07d9433e_bd8dcdbd",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -351,6 +495,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_8bcc3e34",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "Looks good in the last patch, thanks.",
+      "parentUuid": "07d9433e_dd27f13c",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_efb5df64",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
         "patchSetId": 3
@@ -380,6 +542,24 @@
       "side": 1,
       "message": "The formatting is the default Eclipse formatting. It\u0027s prett dumb when formatting comments like this. After a while you get used to not putting comments after a line of code. I\u0027ll clean this up.",
       "parentUuid": "07d9433e_efb5df64",
+      "revId": "a02e97b936acb95553d517a34b1399941be48596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_abcf4225",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-01-28T03:40:50Z",
+      "side": 1,
+      "message": "For next time, can you turn off your save actions?  I would have saved me a lot of time, even with Gerrit\u0027s help.",
+      "parentUuid": "07d9433e_3d345d64",
       "revId": "a02e97b936acb95553d517a34b1399941be48596",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

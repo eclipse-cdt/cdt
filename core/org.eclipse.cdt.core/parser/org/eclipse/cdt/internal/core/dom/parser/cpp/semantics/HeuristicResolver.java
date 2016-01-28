@@ -23,11 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMember;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 
 public class HeuristicResolver {
@@ -107,11 +109,17 @@ public class HeuristicResolver {
 					lookupType = null;
 				}
 			}
+			IScope lookupScope = null;
 			if (lookupType instanceof ICPPClassType) {
+				lookupScope = ((ICPPClassType) lookupType).getCompositeScope();
+			} else if (lookupType instanceof ICPPEnumeration) {
+				lookupScope = ((ICPPEnumeration) lookupType).asScope();
+			}
+			if (lookupScope != null) {
 				LookupData lookup = new LookupData(name, templateArgs, point);
 				lookup.fHeuristicBaseLookup = true;
 				try {
-					CPPSemantics.lookup(lookup, ((ICPPClassType) lookupType).getCompositeScope());
+					CPPSemantics.lookup(lookup, lookupScope);
 					IBinding[] foundBindings = lookup.getFoundBindings();
 					if (foundBindings.length > 0) {
 						return foundBindings;
@@ -179,6 +187,15 @@ public class HeuristicResolver {
 				}
 			}
 			// TODO(nathanridge): Handle more cases.
+		} else if (type instanceof ICPPUnknownMemberClass) {
+			ICPPUnknownMemberClass member = (ICPPUnknownMemberClass) type;
+			IBinding[] candidates = lookInside(member.getOwnerType(), false, member.getNameCharArray(), 
+					null, point);
+			if (candidates.length == 1) { 
+				if (candidates[0] instanceof IType) {
+					return (IType) candidates[0];
+				}
+			}
 		}
 		return null;
 	}

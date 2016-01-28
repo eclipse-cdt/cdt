@@ -76,6 +76,7 @@ import org.eclipse.cdt.ui.text.ISemanticToken;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
 
 /**
  * Semantic highlightings.
@@ -304,6 +305,11 @@ public class SemanticHighlightings {
 				}
 				IBinding binding= token.getBinding();
 				if (binding instanceof IField) {
+					if (binding instanceof ICPPUnknownBinding) {
+						if (heuristicallyResolvesToEnumerator((ICPPUnknownBinding) binding, node)) {
+							return false;
+						}
+					}
 					return true;
 				}
 			}
@@ -990,6 +996,11 @@ public class SemanticHighlightings {
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
 				if (binding instanceof ICompositeType && !(binding instanceof ICPPTemplateParameter)) {
+					if (binding instanceof ICPPUnknownBinding) {
+						if (heuristicallyResolvesToEnumeration((ICPPUnknownBinding) binding, node)) {
+							return false;
+						}
+					}
 					return true;
 				}
 			}
@@ -1041,6 +1052,11 @@ public class SemanticHighlightings {
 				IBinding binding= token.getBinding();
 				if (binding instanceof IEnumeration) {
 					return true;
+				}
+				if (binding instanceof ICPPUnknownBinding) {
+					if (heuristicallyResolvesToEnumeration((ICPPUnknownBinding) binding, node)) {
+						return true;
+					}
 				}
 			}
 			return false;
@@ -1338,6 +1354,11 @@ public class SemanticHighlightings {
 				if (binding instanceof IEnumerator) {
 					return true;
 				}
+				if (binding instanceof ICPPUnknownBinding) {
+					if (heuristicallyResolvesToEnumerator((ICPPUnknownBinding) binding, node)) {
+						return true;
+					}
+				}
 			}
 			return false;
 		}
@@ -1595,7 +1616,17 @@ public class SemanticHighlightings {
 					|| token.getNode() instanceof ICPPASTClassVirtSpecifier;
 		}
 	}
-
+	
+	private static boolean heuristicallyResolvesToEnumeration(ICPPUnknownBinding binding, IASTNode point) {
+		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding, point);
+		return resolved.length == 1 && resolved[0] instanceof IEnumeration;
+	}
+	
+	private static boolean heuristicallyResolvesToEnumerator(ICPPUnknownBinding binding, IASTNode point) {
+		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding, point);
+		return resolved.length == 1 && resolved[0] instanceof IEnumerator;
+	}
+	
 	// Note on the get___PreferenceKey() functions below:
 	//  - For semantic highlightings deriving from SemanticHighlightingWithOwnPreference,
 	//    these functions return keys for accessing the highlighting's own preferences.

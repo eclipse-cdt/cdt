@@ -491,4 +491,20 @@ public class SemanticHighlightingTest extends TestCase {
     public void testLocalVariableInLambdaCapture_486679() throws Exception {
     	makeAssertions();
     }
+    
+    //	template <typename T>                            //$templateParameter
+    //	struct Base {                                    //$class
+    //		enum E { A };                                //$enum,enumerator
+    //		enum class F { B };                          //$enum,enumerator
+    //	};
+    //	template <typename T>                            //$templateParameter
+    //	struct Derived : Base<T> {                       //$class,class,templateParameter
+    //		static typename Base<T>::E x                 //$class,templateParameter,enum,staticField
+    //          = Base<T>::A;                            //$class,templateParameter,enumerator
+    //		static typename Base<T>::F y                 //$class,templateParameter,enum,staticField
+    //          = Base<T>::F::B;                         //$class,templateParameter,enum,enumerator
+    //	};
+    public void testDependentEnum_486688() throws Exception {
+    	makeAssertions();
+    }
 }

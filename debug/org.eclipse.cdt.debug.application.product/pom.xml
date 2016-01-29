@@ -54,6 +54,7 @@
 							<rootFolder>cdt-stand-alone-debugger</rootFolder>
 						</product>
 					</products>
+					<source>repository</source>
 				</configuration>
 			</plugin>
 			<plugin>

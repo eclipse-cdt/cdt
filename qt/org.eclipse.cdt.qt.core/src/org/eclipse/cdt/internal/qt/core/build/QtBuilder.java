@@ -89,6 +89,13 @@ public class QtBuilder extends IncrementalProjectBuilder {
 			console.monitor(process, null, buildDir);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+			// clear the scanner info cache
+			// TODO be more surgical about what to clear based on what was
+			// built.
+			qtConfig.clearScannerInfoCache();
+
+			console.writeOutput("Complete.\n");
 			return new IProject[] { project };
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Building " + project.getName(), e)); //$NON-NLS-1$

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 
@@ -43,6 +44,14 @@ public class QtLocalRunLaunchConfigDelegate extends QtLaunchConfigurationDelegat
 		// set up the environment
 		Map<String, String> env = builder.environment();
 		qtBuildConfig.setProgramEnvironment(env);
+
+		Map<String, String> configEnv = configuration.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,
+				(Map<String, String>) null);
+		if (configEnv != null) {
+			for (Map.Entry<String, String> entry : configEnv.entrySet()) {
+				env.put(entry.getKey(), entry.getValue());
+			}
+		}
 
 		try {
 			Process process = builder.start();

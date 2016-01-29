@@ -52,7 +52,7 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 					// Only traverse children of Qt Projects
 					try {
 						IProject project = (IProject) resource;
-						if (project.exists() && project.hasNature(QtNature.ID)) {
+						if (project.exists() && project.isOpen() && project.hasNature(QtNature.ID)) {
 							return true;
 						}
 					} catch (CoreException e) {
@@ -119,7 +119,8 @@ public class QtResourceChangeListener implements IResourceChangeListener {
 		if (!deltaList.isEmpty()) {
 			new QtProjectFileUpdateJob(deltaList).schedule();
 		}
-		// Schedule the job to update the tern server with added/deleted qml files
+		// Schedule the job to update the tern server with added/deleted qml
+		// files
 		if (!qmlDeltaList.isEmpty()) {
 			new QMLTernFileUpdateJob(qmlDeltaList).schedule();
 		}

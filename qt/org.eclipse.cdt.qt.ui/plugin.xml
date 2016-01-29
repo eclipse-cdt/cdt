@@ -96,6 +96,15 @@
        </launchConfigurationTabGroup>
     </extension>
     <extension
+          point="org.eclipse.debug.ui.launchConfigurationTabs">
+       <tab
+             class="org.eclipse.debug.ui.EnvironmentTab"
+             group="org.eclipse.cdt.qt.ui.launchConfigurationTabGroup"
+             id="org.eclipse.cdt.qt.ui.tab.env"
+             name="Environment">
+       </tab>
+    </extension>
+    <extension
           point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
        <target
              id="org.eclipse.cdt.qt.ui.qml"

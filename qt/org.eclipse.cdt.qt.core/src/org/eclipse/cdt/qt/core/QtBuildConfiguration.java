@@ -211,6 +211,12 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 			args.add(resource.getLocation().toString());
 
 			String[] includePaths = getProperty("INCLUDEPATH").split(" "); //$NON-NLS-1$ //$NON-NLS-2$
+			for (int i = 0; i < includePaths.length; ++i) {
+				Path path = Paths.get(includePaths[i]);
+				if (!path.isAbsolute()) {
+					includePaths[i] = getBuildDirectory().resolve(path).toString();
+				}
+			}
 
 			ILanguage language = LanguageManager.getInstance()
 					.getLanguage(CCorePlugin.getContentType(getProject(), resource.getName()), getProject()); // $NON-NLS-1$
@@ -221,6 +227,12 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 			info = extendedInfo;
 		}
 		return info;
+	}
+
+	@Override
+	public void clearScannerInfoCache() throws CoreException {
+		super.clearScannerInfoCache();
+		properties = null;
 	}
 
 }

@@ -38,6 +38,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.launchbar.core.ILaunchBarListener;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
@@ -54,23 +55,7 @@ import org.osgi.service.prefs.Preferences;
  * The brains of the launch bar.
  */
 public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListener {
-	public interface Listener {
-		default void activeLaunchDescriptorChanged() {
-		}
-
-		default void activeLaunchModeChanged() {
-		}
-
-		default void activeLaunchTargetChanged() {
-		}
-
-		default void launchDescriptorRemoved(ILaunchDescriptor descriptor) {
-		}
-
-		default void launchTargetsChanged() {
-		}
-	}
-	private final List<Listener> listeners = new LinkedList<>();
+	private final List<ILaunchBarListener> listeners = new LinkedList<>();
 	// The launch object providers
 	private final List<ILaunchObjectProvider> objectProviders = new ArrayList<>();
 	// The descriptor types
@@ -615,9 +600,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private void fireActiveLaunchDescriptorChanged() {
 		if (!initialized)
 			return;
-		for (Listener listener : listeners) {
+		for (ILaunchBarListener listener : listeners) {
 			try {
-				listener.activeLaunchDescriptorChanged();
+				listener.activeLaunchDescriptorChanged(activeLaunchDesc);
 			} catch (Exception e) {
 				Activator.log(e);
 			}
@@ -671,9 +656,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private void fireActiveLaunchModeChanged() {
 		if (!initialized)
 			return;
-		for (Listener listener : listeners) {
+		for (ILaunchBarListener listener : listeners) {
 			try {
-				listener.activeLaunchModeChanged();
+				listener.activeLaunchModeChanged(activeLaunchMode);
 			} catch (Exception e) {
 				Activator.log(e);
 			}
@@ -759,9 +744,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private void fireActiveLaunchTargetChanged() {
 		if (!initialized)
 			return;
-		for (Listener listener : listeners) {
+		for (ILaunchBarListener listener : listeners) {
 			try {
-				listener.activeLaunchTargetChanged();
+				listener.activeLaunchTargetChanged(activeLaunchTarget);
 			} catch (Exception e) {
 				Activator.log(e);
 			}
@@ -811,13 +796,16 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		return null;
 	}
 
-	public void addListener(Listener listener) {
+	@Override
+	public void addListener(ILaunchBarListener listener) {
 		if (listener == null)
 			return;
-		listeners.add(listener);
+		if (!listeners.contains(listener)) // cannot add duplicates
+			listeners.add(listener);
 	}
 
-	public void removeListener(Listener listener) {
+	@Override
+	public void removeListener(ILaunchBarListener listener) {
 		if (listener == null)
 			return;
 		listeners.remove(listener);
@@ -901,7 +889,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private void fireLaunchTargetsChanged() {
 		if (!initialized)
 			return;
-		for (Listener listener : listeners) {
+		for (ILaunchBarListener listener : listeners) {
 			try {
 				listener.launchTargetsChanged();
 			} catch (Exception e) {

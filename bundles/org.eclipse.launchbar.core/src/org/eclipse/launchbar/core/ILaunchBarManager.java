@@ -23,7 +23,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 	/**
 	 * A launch object has been added. Create a matching launch descriptor if
 	 * available.
-	 * 
+	 *
 	 * @param element
 	 *            launch object
 	 * @return the launch descriptor that got created, null of none was
@@ -34,7 +34,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 	/**
 	 * A launch object has been removed. Remove the associated launch descriptor
 	 * if there is one.
-	 * 
+	 *
 	 * @param element
 	 *            launch object
 	 * @throws CoreException
@@ -43,10 +43,22 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * A launch object has changed in some way that affects the launch bar.
-	 * 
+	 *
 	 * @param launchObject
 	 * @throws CoreException
 	 */
 	void launchObjectChanged(Object launchObject) throws CoreException;
 
+
+	/**
+	 * Add a linstener that can react to launch bar changes
+	 * @param listener
+	 */
+	public void addListener(ILaunchBarListener listener);
+
+	/**
+	 * Remove a linstener
+	 * @param listener
+	 */
+	public void removeListener(ILaunchBarListener listener);
 }

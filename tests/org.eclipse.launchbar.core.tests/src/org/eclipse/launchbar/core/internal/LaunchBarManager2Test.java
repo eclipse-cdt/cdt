@@ -50,12 +50,12 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.launchbar.core.DefaultLaunchConfigProvider;
+import org.eclipse.launchbar.core.ILaunchBarListener;
 import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.launchbar.core.ProjectLaunchDescriptor;
 import org.eclipse.launchbar.core.ProjectPerTargetLaunchConfigProvider;
-import org.eclipse.launchbar.core.internal.LaunchBarManager.Listener;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.junit.Before;
@@ -670,12 +670,12 @@ public class LaunchBarManager2Test {
 
 	@Test
 	public void testGetActiveLaunchDescriptor() throws CoreException {
-		Listener lis = mock(Listener.class);
+		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
 		manager.launchObjectAdded(launchObject);
 		// manager.setActiveLaunchDescriptor(desc);
 		assertEquals(descriptor, manager.getActiveLaunchDescriptor());
-		verify(lis).activeLaunchDescriptorChanged();
+		verify(lis).activeLaunchDescriptorChanged(descriptor);
 	}
 
 	@Test
@@ -697,12 +697,12 @@ public class LaunchBarManager2Test {
 
 	@Test
 	public void testSetActiveLaunchDescriptorLisBad() throws CoreException {
-		Listener lis = mock(Listener.class);
+		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
-		doThrow(new NullPointerException()).when(lis).activeLaunchDescriptorChanged();
+		doThrow(new NullPointerException()).when(lis).activeLaunchDescriptorChanged(any(ILaunchDescriptor.class));
 		manager.launchObjectAdded(launchObject);
 		manager.launchConfigurationAdded(launchConfig);
-		verify(lis).activeLaunchDescriptorChanged();
+		verify(lis).activeLaunchDescriptorChanged(descriptor);
 	}
 
 	@Test
@@ -774,22 +774,23 @@ public class LaunchBarManager2Test {
 	public void testSetActiveLaunchModeLis() throws CoreException {
 		ILaunchMode mode = mock(ILaunchMode.class);
 		doReturn("bla").when(mode).getIdentifier();
-		Listener lis = mock(Listener.class);
+		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
 		manager.setActiveLaunchMode(mode);
 		manager.setActiveLaunchMode(null);
-		verify(lis, times(2)).activeLaunchModeChanged();
+		verify(lis, times(1)).activeLaunchModeChanged(mode);
+		verify(lis, times(1)).activeLaunchModeChanged(null);
 	}
 
 	@Test
 	public void testSetActiveLaunchModeLisBad() throws CoreException {
 		ILaunchMode mode = mock(ILaunchMode.class);
 		doReturn("bla").when(mode).getIdentifier();
-		Listener lis = mock(Listener.class);
+		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
-		doThrow(new NullPointerException()).when(lis).activeLaunchModeChanged();
+		doThrow(new NullPointerException()).when(lis).activeLaunchModeChanged(mode);
 		manager.setActiveLaunchMode(mode);
-		verify(lis).activeLaunchModeChanged();
+		verify(lis).activeLaunchModeChanged(mode);
 	}
 
 	@Test
@@ -857,28 +858,28 @@ public class LaunchBarManager2Test {
 
 	@Test
 	public void testAddListener() throws CoreException {
-		Listener lis = mock(Listener.class);
+		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
 		// check events
 		manager.launchObjectAdded(launchObject);
 		manager.setActiveLaunchDescriptor(descriptor);
-		verify(lis).activeLaunchTargetChanged();
+		verify(lis).activeLaunchTargetChanged(any(ILaunchTarget.class));
 	}
 
 	@Test
 	public void testAddListenerBad() throws CoreException {
-		Listener lis = mock(Listener.class);
+		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
-		doThrow(new NullPointerException()).when(lis).activeLaunchTargetChanged();
+		doThrow(new NullPointerException()).when(lis).activeLaunchTargetChanged(any(ILaunchTarget.class));
 		// check events
 		manager.launchObjectAdded(launchObject);
 		manager.setActiveLaunchDescriptor(descriptor);
-		verify(lis).activeLaunchTargetChanged();
+		verify(lis).activeLaunchTargetChanged(any(ILaunchTarget.class));
 	}
 
 	@Test
 	public void testRemoveListener() {
-		Listener lis = mock(Listener.class);
+		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
 		manager.removeListener(lis);
 		verifyZeroInteractions(lis);

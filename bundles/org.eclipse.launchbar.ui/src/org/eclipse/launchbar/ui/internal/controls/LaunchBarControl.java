@@ -16,9 +16,9 @@ import javax.annotation.PreDestroy;
 
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.launchbar.core.ILaunchBarListener;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
-import org.eclipse.launchbar.core.internal.LaunchBarManager.Listener;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class LaunchBarControl implements Listener {
+public class LaunchBarControl implements ILaunchBarListener {
 	public static final String ID = "org.eclipse.launchbar"; //$NON-NLS-1$
 	public static final String CLASS_URI = "bundleclass://" + Activator.PLUGIN_ID + "/" //$NON-NLS-1$ //$NON-NLS-2$
 			+ LaunchBarControl.class.getName();
@@ -122,33 +122,24 @@ public class LaunchBarControl implements Listener {
 	}
 
 	@Override
-	public void activeLaunchDescriptorChanged() {
+	public void activeLaunchDescriptorChanged(ILaunchDescriptor descriptor) {
 		if (configSelector != null) {
-			final ILaunchDescriptor descriptor = manager.getActiveLaunchDescriptor();
 			configSelector.setDelayedSelection(descriptor, SELECTION_DELAY);
 		}
 	}
 
 	@Override
-	public void activeLaunchModeChanged() {
+	public void activeLaunchModeChanged(ILaunchMode mode) {
 		if (modeSelector != null) {
-			final ILaunchMode mode = manager.getActiveLaunchMode();
 			modeSelector.setDelayedSelection(mode, SELECTION_DELAY);
 		}
 	}
 
 	@Override
-	public void activeLaunchTargetChanged() {
+	public void activeLaunchTargetChanged(ILaunchTarget target) {
 		if (targetSelector != null) {
-			final ILaunchTarget target = manager.getActiveLaunchTarget();
 			targetSelector.setDelayedSelection(target, SELECTION_DELAY);
 		}
-	}
-
-	@Override
-	public void launchDescriptorRemoved(ILaunchDescriptor descriptor) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

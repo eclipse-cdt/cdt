@@ -47,6 +47,14 @@ public abstract class AbstractLaunchConfigProvider implements ILaunchConfigurati
 		workingCopy.setAttribute(ATTR_PROVIDER_CLASS, getClass().getName());
 	}
 
+	@Override
+	public boolean launchDescriptorMatches(ILaunchDescriptor descriptor, ILaunchConfiguration configuration, ILaunchTarget target) throws CoreException {
+		ILaunchConfiguration lc = descriptor.getAdapter(ILaunchConfiguration.class);
+		if (lc == null)
+			return false;
+		return configuration.getName().equals(lc.getName());
+	}
+
 	protected boolean ownsLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
 		if (!configuration.exists()) {
 			// can't own it if it doesn't exist

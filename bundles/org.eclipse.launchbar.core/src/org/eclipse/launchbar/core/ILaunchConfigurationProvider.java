@@ -18,7 +18,7 @@ import org.eclipse.launchbar.core.target.ILaunchTarget;
 /**
  * The provider of launch configurations of a given type for a given descriptor
  * type and a given target type.
- * 
+ *
  * It is recommended to extend {@link AbstractLaunchConfigProvider} or one of
  * it's subclasses instead of implementing this directly.
  */
@@ -26,10 +26,10 @@ public interface ILaunchConfigurationProvider {
 	/**
 	 * Does this config provider provide launch configurations for the
 	 * combination of descriptor and target.
-	 * 
+	 *
 	 * Note: this is called when filtering targets for a descriptor. Processing
 	 * should be minimal.
-	 * 
+	 *
 	 * @param descriptor
 	 * @param target
 	 * @return true if target is supported, false otherwise.
@@ -38,7 +38,7 @@ public interface ILaunchConfigurationProvider {
 
 	/**
 	 * Return the launch configuation type for the descriptor and target.
-	 * 
+	 *
 	 * @param descriptor
 	 * @param target
 	 *            launch configuration type or null if not supported
@@ -62,10 +62,28 @@ public interface ILaunchConfigurationProvider {
 			throws CoreException;
 
 	/**
+	 * Return true if given descriptor is associated with given launch configuration.
+	 * I.e. if getLaunchConfiguration(descriptor, target) returns a launch configuration,
+	 * calling launchDescriptorMatches(descriptor, configuration, target) should return true.
+	 *
+	 * This method is used to activate descriptor when launch happens, return false all the time would mean
+	 * launch would track launches of this specific descriptor (if they occur outside of launchbar).
+	 * @param configuration
+	 *            launch configuration in question
+	 * @param target - target to match, it can be null if launch bar cannot determine target,
+	 * 			in this case it should act as wildcard
+	 *
+	 * @return launch configuration
+	 * @throws CoreException
+	 */
+	boolean launchDescriptorMatches(ILaunchDescriptor descriptor, ILaunchConfiguration configuration, ILaunchTarget target)
+			throws CoreException;
+
+	/**
 	 * A launch configuration has been added. Provider can inspect it and
 	 * associate with internal map. Provider should make sure it owns this
 	 * launch configuration or it can modify it to take over.
-	 * 
+	 *
 	 * @return true of provider owns this launch configuration
 	 */
 	boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException;
@@ -76,7 +94,7 @@ public interface ILaunchConfigurationProvider {
 	 * configuration has been removed from file system, so accessing its
 	 * attributes won't work. If provider cannot determine if it owns it it
 	 * should return false.
-	 * 
+	 *
 	 * @param configuration
 	 * @return true if provider owns this launch configuration
 	 * @throws CoreException
@@ -87,7 +105,7 @@ public interface ILaunchConfigurationProvider {
 	 * A launch configuration has been changed. Provider can inspect it to
 	 * re-evaluate its internal map. Provider should make sure it owns this
 	 * launch configuration or it can modify it to take over.
-	 * 
+	 *
 	 * @return true of provider owns this launch configuration
 	 */
 	boolean launchConfigurationChanged(ILaunchConfiguration configuration) throws CoreException;
@@ -95,7 +113,7 @@ public interface ILaunchConfigurationProvider {
 	/**
 	 * A launch descriptor has been removed. Remove any launch configurations
 	 * that were created for it.
-	 * 
+	 *
 	 * @param descriptor
 	 * @throws CoreException
 	 */
@@ -104,7 +122,7 @@ public interface ILaunchConfigurationProvider {
 	/**
 	 * A launch target has been removed. Remove any launch configurations that
 	 * were created for it.
-	 * 
+	 *
 	 * @param target
 	 * @throws CoreException
 	 */

@@ -19,12 +19,11 @@ import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 /**
  * The launch config provider for the default descriptor which is the launch
  * config itself.
- * 
+ *
  * Override this class and register an extension if you want to support targets
  * other than the local connection.
  */
 public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider {
-
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
 		// Only supports Local connection
@@ -69,4 +68,11 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 		// nothing to do
 	}
 
+	@Override
+	public boolean launchDescriptorMatches(ILaunchDescriptor descriptor, ILaunchConfiguration configuration, ILaunchTarget target) throws CoreException {
+		ILaunchConfiguration lc = descriptor.getAdapter(ILaunchConfiguration.class);
+		if (lc == null)
+			return false;
+		return configuration.getName().equals(lc.getName());
+	}
 }

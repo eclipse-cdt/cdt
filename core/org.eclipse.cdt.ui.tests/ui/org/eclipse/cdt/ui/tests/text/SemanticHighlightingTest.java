@@ -507,4 +507,13 @@ public class SemanticHighlightingTest extends TestCase {
     public void testDependentEnum_486688() throws Exception {
     	makeAssertions();
     }
+    
+    //	#define MACRO(Name, Type) Type Name();           //$macroDefinition
+    //	typedef int Int;                                 //$typedef
+    //	class S {                                        //$class
+    //		MACRO(foo, Int)                              //$macroSubstitution,methodDeclaration,typedef
+    //	};
+    public void testMethodNameInsideMacro_486682() throws Exception {
+    	makeAssertions();
+    }
 }

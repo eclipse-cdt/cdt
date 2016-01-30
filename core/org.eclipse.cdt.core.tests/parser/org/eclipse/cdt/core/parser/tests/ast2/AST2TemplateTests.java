@@ -7226,7 +7226,27 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testAliasTemplate_416280_2() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
+	//	struct A {
+	//	  static constexpr bool val = true;
+	//	};
+	//
+	//	struct C {
+	//	  template <typename T>
+	//	  using AC = A;
+	//	};
+	//
+	//	template <class T>
+	//	struct D {
+	//	  template <class U>
+	//	  struct AD : T::template AC<U> {};
+	//	};
+	//
+	//	bool b = D<C>::template AD<int>::val;
+	public void testAliasTemplate_486618() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename T>
 	//	struct Struct {};
 	//

@@ -2844,6 +2844,11 @@ public class CPPTemplates {
 	            	if (unknown instanceof ICPPUnknownMemberClassInstance && result instanceof ICPPTemplateDefinition) {
 	            		ICPPTemplateArgument[] args1 = instantiateArguments(
 	            				((ICPPUnknownMemberClassInstance) unknown).getArguments(), tpMap, packOffset, within, point, false);
+	            		if (result instanceof ICPPAliasTemplate) {
+							IType aliasedType = ((ICPPAliasTemplate) result).getType();
+							if (aliasedType instanceof IBinding)
+								result = (IBinding) aliasedType;
+						}
 	            		if (result instanceof ICPPClassTemplate) {
 	            			result = instantiate((ICPPClassTemplate) result, args1, point);
 	            		}

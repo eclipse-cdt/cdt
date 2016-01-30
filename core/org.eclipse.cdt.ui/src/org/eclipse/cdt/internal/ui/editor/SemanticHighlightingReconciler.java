@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
@@ -179,10 +180,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			for (int i= 0, n= fJobSemanticHighlightings.length; i < n; ++i) {
 				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
 				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
-					if (node instanceof IASTName) {
-						addNameLocation((IASTName) node, fJobHighlightings[i]);
-					} else {
-						addNodeLocation(node.getFileLocation(), fJobHighlightings[i]);
+					IASTNodeLocation location = getLocationToHighlight(node);
+					if (location != null) {
+						highlightLocation(location, fJobHighlightings[i]);
 					}
 					consumed= true;
 					break;
@@ -193,40 +193,42 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 
 		/**
-		 * Add the a location range for the given name.
+		 * Gets the location to highlight for a given node.
 		 * 
-		 * @param name  The name
-		 * @param highlighting The highlighting
+		 * @param node the node
 		 */
-		private void addNameLocation(IASTName name, HighlightingStyle highlightingStyle) {
-			IASTImageLocation imageLocation= name.getImageLocation();
+		private IASTNodeLocation getLocationToHighlight(IASTNode node) {
+			IASTImageLocation imageLocation = null;
+			if (node instanceof IASTName) {
+				imageLocation = ((IASTName) node).getImageLocation();
+			} else if (node instanceof ASTNode) {
+				// Non-names can still have image locations, they're just not exposed in IASTNode.
+				imageLocation = ((ASTNode) node).getImageLocation();
+			}
 			if (imageLocation != null) {
 				if (imageLocation.getLocationKind() != IASTImageLocation.MACRO_DEFINITION) {
-					int offset= imageLocation.getNodeOffset();
-					int length= imageLocation.getNodeLength();
-					if (offset >= 0 && length > 0) {
-						addPosition(offset, length, highlightingStyle);
-					}
+					return imageLocation;
 				}
 			} else {
 				// Fallback in case no image location available.
-				IASTNodeLocation[] nodeLocations= name.getNodeLocations();
-				if (nodeLocations.length == 1 && !(nodeLocations[0] instanceof IASTMacroExpansionLocation)) {
-					addNodeLocation(nodeLocations[0], highlightingStyle);
+				IASTNodeLocation[] nodeLocations= node.getNodeLocations();
+				if (nodeLocations.length == 1) {
+					IASTNodeLocation nodeLocation = nodeLocations[0];
+					if (!(nodeLocation instanceof IASTMacroExpansionLocation)) {
+						return nodeLocation;
+					}
 				}
 			}
+			return null;
 		}
-
+		
 		/**
-		 * Adds the a location range for the given highlighting.
+		 * Highlights the given node location with the given highlighting.
 		 * 
-		 * @param nodeLocation  The node location
-		 * @param highlighting The highlighting
+		 * @param nodeLocation the node location to highlight
+		 * @param highlightingStyle the highlighting style to apply
 		 */
-		private void addNodeLocation(IASTNodeLocation nodeLocation, HighlightingStyle highlightingStyle) {
-			if (nodeLocation == null) {
-				return;
-			}
+		private void highlightLocation(IASTNodeLocation nodeLocation, HighlightingStyle highlightingStyle) {
 			int offset= nodeLocation.getNodeOffset();
 			int length= nodeLocation.getNodeLength();
 			if (offset > -1 && length > 0) {

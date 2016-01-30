@@ -516,4 +516,22 @@ public class SemanticHighlightingTest extends TestCase {
     public void testMethodNameInsideMacro_486682() throws Exception {
     	makeAssertions();
     }
+    
+	//	#define WALDO(name) const char* Name() override { return name; }  //$macroDefinition
+	//	class S {                                        //$class
+	//		WALDO("name")                                //$macroSubstitution
+	//	};
+    public void testOverrideInMacroExpansion_486683a() throws Exception {
+    	// This tests that the 'override' does not cause the entire invocation
+    	// to be colored with the keyword highlighting.
+    	makeAssertions();
+    }
+    
+    //	#define MIRROR(arg) arg                          //$macroDefinition
+    //	MIRROR(class S { void foo() override; })         //$macroSubstitution,class,methodDeclaration,c_keyword
+    public void testOverrideInMacroExpansion_486683b() throws Exception {
+    	// This tests that the 'override' *does* cause the 'override' keyword
+    	// in the argument to be colored with the keyword highlighting.
+    	makeAssertions();
+    }
 }

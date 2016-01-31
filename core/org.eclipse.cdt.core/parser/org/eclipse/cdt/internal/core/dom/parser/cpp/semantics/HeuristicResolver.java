@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -40,42 +39,12 @@ public class HeuristicResolver {
 	 * @param point the point of instantiation for name lookups
 	 */
 	public static IScope findConcreteScopeForType(IType type, IASTNode point) {
-		if (type instanceof ICPPDeferredClassInstance) {
-			// If this scope is for a deferred-class-instance, use the scope of the primary template.
-			ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) type;
-			return instance.getClassTemplate().getCompositeScope();
-		} else if (type instanceof TypeOfDependentExpression) {
-			// If this scope is for the id-expression of a field reference, and the field owner
-			// is a deferred-class-instance, look up the field in the scope of the primary template,
-			// and use the scope of the resulting field type.
-			ICPPEvaluation evaluation = ((TypeOfDependentExpression) type).getEvaluation();
-			if (evaluation instanceof EvalID) {
-				EvalID evalId = (EvalID) evaluation;
-				ICPPEvaluation fieldOwner = evalId.getFieldOwner();
-				if (fieldOwner != null) {
-					IType fieldOwnerType = fieldOwner.getType(point);
-					if (fieldOwnerType instanceof ICPPDeferredClassInstance) {
-						ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) fieldOwnerType;
-						IScope scope = instance.getClassTemplate().getCompositeScope();
-						LookupData lookup = new LookupData(evalId.getName(), evalId.getTemplateArgs(), point);
-						lookup.qualified = evalId.isQualified();
-						try {
-							CPPSemantics.lookup(lookup, scope);
-						} catch (DOMException e) {
-							return null;
-						}
-						IBinding[] bindings = lookup.getFoundBindings();
-						if (bindings.length == 1 && bindings[0] instanceof IField) {
-							IType fieldType = ((IField) bindings[0]).getType();
-							if (fieldType instanceof ICompositeType) {
-								return ((ICompositeType) fieldType).getCompositeScope(); 
-							}
-						}
-					}
-				}
-			}
+		if (type instanceof ICPPUnknownType) {
+			type = resolveUnknownType((ICPPUnknownType) type, point);
 		}
-		// TODO(nathanridge): Handle more cases.
+		if (type instanceof ICompositeType) {
+			return ((ICompositeType) type).getCompositeScope();
+		}
 		return null;
 	}
 	

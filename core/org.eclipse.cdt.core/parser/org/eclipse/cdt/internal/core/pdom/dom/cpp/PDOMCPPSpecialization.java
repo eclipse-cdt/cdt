@@ -40,7 +40,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 	
-	private volatile IBinding fSpecializedCache= null;
+	private volatile IBinding fSpecializedCache;
 	private volatile ICPPTemplateParameterMap fArgMap;
 	
 	public PDOMCPPSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPSpecialization spec,

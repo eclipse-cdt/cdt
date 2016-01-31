@@ -124,7 +124,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 			return false;
 		
 		if (type instanceof ITypedef) {
-			type= ((ITypedef)type).getType();
+			type= ((ITypedef) type).getType();
 			if (type == null) {
 				return false;
 			}

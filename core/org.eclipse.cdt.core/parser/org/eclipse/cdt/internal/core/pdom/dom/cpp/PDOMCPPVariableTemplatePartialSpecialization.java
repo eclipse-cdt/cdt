@@ -88,7 +88,8 @@ public class PDOMCPPVariableTemplatePartialSpecialization extends PDOMCPPVariabl
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			return PDOMCPPArgumentList.getArguments(this, getPDOM().getDB().getRecPtr(record + ARGUMENTS));
+			long rec = getPDOM().getDB().getRecPtr(record + ARGUMENTS);
+			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log("Failed to load template arguments for " + getName(), e); //$NON-NLS-1$
 			return ICPPTemplateArgument.EMPTY_ARGUMENTS;

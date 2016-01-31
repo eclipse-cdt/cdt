@@ -121,7 +121,7 @@ public class CPPAliasTemplateInstance extends PlatformObject
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		char[] name = buffer.getCharArray();
 		IType unmarshalledAliasedTypeInstance = buffer.unmarshalType();
-		ICPPAliasTemplate unmarshalledAlias = (ICPPAliasTemplate)buffer.unmarshalBinding();
+		ICPPAliasTemplate unmarshalledAlias = (ICPPAliasTemplate) buffer.unmarshalBinding();
 		return new CPPAliasTemplateInstance(name, unmarshalledAlias, unmarshalledAliasedTypeInstance);
 	}
 

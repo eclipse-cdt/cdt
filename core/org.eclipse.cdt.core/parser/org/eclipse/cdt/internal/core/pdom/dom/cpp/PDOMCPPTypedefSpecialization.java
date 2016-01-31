@@ -25,9 +25,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITypedef, ITypeContainer,
-		IIndexType {
-
+class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
+		implements ITypedef, ITypeContainer, IIndexType {
 	private static final int TYPE_OFFSET = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	
 	@SuppressWarnings("hiding")
@@ -89,9 +88,6 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITyp
 		throw new UnsupportedOperationException(); 
 	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
 	public Object clone() {
 		return new CPPTypedefClone(this);

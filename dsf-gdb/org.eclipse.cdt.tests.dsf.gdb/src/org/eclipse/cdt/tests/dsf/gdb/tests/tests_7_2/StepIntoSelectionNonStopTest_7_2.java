@@ -12,10 +12,18 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_2;
 
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class StepIntoSelectionNonStopTest_7_2 extends StepIntoSelectionTest_7_2 {
+
+	@BeforeClass
+	public static void beforeClass() {
+		Assume.assumeTrue(supportsNonStop());
+	}
+
     @Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();

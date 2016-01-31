@@ -484,6 +484,10 @@ public class BaseTestCase {
  		setGlobalLaunchAttribute(ATTR_DEBUG_SERVER_NAME, debugServerName);
  	}
 
+ 	public static boolean supportsNonStop() {
+ 		return !(runningOnWindows() || runningOnMac());
+ 	}
+
  	protected void setGdbVersion() {
  		// Leave empty for the base class
  	}
@@ -506,6 +510,10 @@ public class BaseTestCase {
 
  	protected static boolean runningOnWindows() {
  		return Platform.getOS().equals(Platform.OS_WIN32);
+ 	}
+
+ 	protected static boolean runningOnMac() {
+ 		return Platform.getOS().equals(Platform.OS_MACOSX);
  	}
 
 	@BeforeClass

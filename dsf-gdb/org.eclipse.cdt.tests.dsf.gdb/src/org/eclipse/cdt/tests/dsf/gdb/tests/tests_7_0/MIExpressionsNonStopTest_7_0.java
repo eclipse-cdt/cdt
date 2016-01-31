@@ -13,10 +13,18 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class MIExpressionsNonStopTest_7_0 extends MIExpressionsTest_7_0 {
+
+	@BeforeClass
+	public static void beforeClass() {
+		Assume.assumeTrue(supportsNonStop());
+	}
+
 	@Override
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);

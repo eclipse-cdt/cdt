@@ -38,6 +38,8 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,6 +57,11 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	private DsfServicesTracker fServicesTracker;    
 
 	private IMultiRunControl fMultiRun;
+
+	@BeforeClass
+	public static void beforeClass() {
+		Assume.assumeTrue(supportsNonStop());
+	}
 
 	/*
 	 * Name of the executable

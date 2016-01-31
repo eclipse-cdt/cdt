@@ -2844,13 +2844,12 @@ public class CPPTemplates {
 	            	if (unknown instanceof ICPPUnknownMemberClassInstance && result instanceof ICPPTemplateDefinition) {
 	            		ICPPTemplateArgument[] args1 = instantiateArguments(
 	            				((ICPPUnknownMemberClassInstance) unknown).getArguments(), tpMap, packOffset, within, point, false);
-	            		if (result instanceof ICPPAliasTemplate) {
-							IType aliasedType = ((ICPPAliasTemplate) result).getType();
-							if (aliasedType instanceof IBinding)
-								result = (IBinding) aliasedType;
-						}
 	            		if (result instanceof ICPPClassTemplate) {
 	            			result = instantiate((ICPPClassTemplate) result, args1, point);
+	            		} else if (result instanceof ICPPAliasTemplate) {
+		            		ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) result;
+		    				IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(within), point);
+		    			    result = new CPPAliasTemplateInstance(aliasTemplate.getNameCharArray(), aliasTemplate, type);
 	            		}
 	            	}
 	            }

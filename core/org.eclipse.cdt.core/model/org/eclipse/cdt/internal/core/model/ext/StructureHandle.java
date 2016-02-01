@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -27,7 +26,7 @@ public class StructureHandle extends CElementHandle implements IStructure {
 	}
 
 	private static int convertKey(int astKey) {
-		switch(astKey) {
+		switch (astKey) {
 		case ICompositeType.k_struct:
 			return ICElement.C_STRUCT;
 		case ICompositeType.k_union:

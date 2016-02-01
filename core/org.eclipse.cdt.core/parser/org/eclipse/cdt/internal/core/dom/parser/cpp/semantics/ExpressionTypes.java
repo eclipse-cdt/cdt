@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 
 /**
@@ -60,6 +61,18 @@ public class ExpressionTypes {
 			return ValueCategory.XVALUE;
 		}
 		return ValueCategory.PRVALUE;
+	}
+	
+	public static IType typeFromFunctionCall(IType functionType) {
+		IType t= SemanticUtil.getNestedType(functionType, TDEF | REF | CVTYPE);
+		if (t instanceof IPointerType) {
+			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
+		}
+		if (t instanceof IFunctionType) {
+			t = typeFromReturnType(((IFunctionType) t).getReturnType());
+			return t;
+		}
+		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	public static IType typeFromFunctionCall(ICPPFunction function) {

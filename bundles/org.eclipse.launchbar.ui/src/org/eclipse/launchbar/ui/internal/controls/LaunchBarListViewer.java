@@ -75,7 +75,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 	private String historyPref;
 
 	private static class LaunchBarListViewerComparator extends ViewerComparator {
-		public LaunchBarListViewerComparator(Comparator<?> comp) {
+		public LaunchBarListViewerComparator(Comparator comp) {
 			super(comp);
 		}
 
@@ -83,7 +83,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 		@SuppressWarnings("unchecked")
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			return getComparator().compare(e1, e2);
+			return ((Comparator)getComparator()).compare(e1, e2);
 		}
 	}
 

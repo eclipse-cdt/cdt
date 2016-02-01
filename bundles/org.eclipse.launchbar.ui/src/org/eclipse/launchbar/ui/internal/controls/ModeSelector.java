@@ -225,7 +225,7 @@ public class ModeSelector extends CSelector {
 	}
 
 	private void updateLaunchButton(ToolItem toolItem) {
-		if (toolItem == null) {
+		if (toolItem == null || isDisposed()) {
 			return;
 		}
 		toolItem.setImage(Activator.getDefault().getImage(Activator.IMG_BUTTON_LAUNCH));

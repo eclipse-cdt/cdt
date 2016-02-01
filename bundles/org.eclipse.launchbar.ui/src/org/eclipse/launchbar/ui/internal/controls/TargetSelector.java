@@ -261,6 +261,8 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 
 	@Override
 	public void setSelection(Object element) {
+		if (isDisposed())
+			return;
 		if (element == null) {
 			element = noTargets[0];
 		} else if (element instanceof ILaunchTarget) {

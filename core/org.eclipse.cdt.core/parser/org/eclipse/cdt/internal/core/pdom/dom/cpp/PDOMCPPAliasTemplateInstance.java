@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
+import org.eclipse.cdt.internal.core.index.CPPAliasTemplateInstanceClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -62,5 +63,10 @@ class PDOMCPPAliasTemplateInstance extends PDOMCPPTypedef implements ICPPAliasTe
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
+	}
+
+	@Override
+	public Object clone() {
+		return new CPPAliasTemplateInstanceClone(this);
 	}
 }

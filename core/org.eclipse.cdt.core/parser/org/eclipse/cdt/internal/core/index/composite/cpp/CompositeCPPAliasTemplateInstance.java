@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.internal.core.index.CPPAliasTemplateInstanceClone;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -22,13 +23,13 @@ class CompositeCPPAliasTemplateInstance extends CompositeCPPTypedef implements I
 	}
 
 	@Override
-	public Object clone() {
-		fail(); return null;
-	}
-
-	@Override
 	public ICPPAliasTemplate getTemplateDefinition() {
 		ICPPAliasTemplate templateDefinition = ((ICPPAliasTemplateInstance) rbinding).getTemplateDefinition();
 		return (ICPPAliasTemplate) cf.getCompositeBinding((IIndexFragmentBinding) templateDefinition);
+	}
+
+	@Override
+	public Object clone() {
+		return new CPPAliasTemplateInstanceClone(this);
 	}
 }

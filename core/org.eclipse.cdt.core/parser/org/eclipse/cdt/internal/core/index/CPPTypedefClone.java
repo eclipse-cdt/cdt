@@ -19,6 +19,9 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
+/**
+ * Delegating clone implementation for index classes implementing {@link ITypedef} interface.
+ */
 public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, ICPPBinding {
 	protected final ITypedef delegate;
 	private IType type;

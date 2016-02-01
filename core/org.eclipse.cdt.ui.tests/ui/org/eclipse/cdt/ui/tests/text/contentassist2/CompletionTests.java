@@ -1736,4 +1736,88 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected = {};
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
+	
+	//	template <typename T>
+	//	struct vector {
+	//	    T& front();
+	//	};
+	//	template <class T>
+	//	void foo(vector<vector<T>> a) {
+	//	    a.front()./*cursor*/
+	//	}
+	public void testDependentScopes_bug472818a() throws Exception {
+		final String[] expected = { "vector<typename T>", "front(void)" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+
+	//	template <typename T>
+	//	struct vector {
+	//	    T& front();
+	//	};
+	//	template <class T>
+	//	void foo(vector<vector<vector<T>>> a) {
+	//	    a.front().front()./*cursor*/
+	//	}
+	public void testDependentScopes_bug472818b() throws Exception {
+		final String[] expected = { "vector<typename T>", "front(void)" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+
+	//	// This is a simplification of the actual std::vector implementation
+	//	// that ships with gcc 5.1's libstdc++.
+	//	template <typename T>
+	//	struct allocator {
+	//	    typedef T value_type;
+	//		template <typename U>
+	//		struct rebind {
+	//			typedef allocator<U> other;
+	//		};
+	//	};
+	//	template <typename Alloc, typename T>
+	//	struct alloctr_rebind {
+	//		typedef typename Alloc::template rebind<T>::other type;
+	//	};
+	//	template <typename Alloc>
+	//	struct allocator_traits {
+	//	    typedef typename Alloc::value_type value_type;
+	//		template <typename T>
+	//		using rebind_alloc = typename alloctr_rebind<Alloc, T>::type;
+	//	};
+	//	template <typename Alloc>
+	//	struct alloc_traits {
+	//	    typedef allocator_traits<Alloc> base_type;
+	//	    typedef typename base_type::value_type value_type;
+	//	    typedef value_type& reference;
+	//		template <typename T>
+	//		struct rebind {
+	//			typedef typename base_type::template rebind_alloc<T> other;
+	//		};
+	//	};
+	//	template <typename T, typename Alloc>
+	//	struct vector_base {
+	//	    typedef typename alloc_traits<Alloc>::template rebind<T>::other allocator_type;
+	//	};
+	//	template <typename T, typename Alloc = allocator<T>>
+	//	struct vector {
+	//	    typedef vector_base<T, Alloc> base_type;
+	//	    typedef typename base_type::allocator_type allocator_type;
+	//	    typedef alloc_traits<allocator_type> alloc_traits_type;
+	//	    typedef typename alloc_traits_type::reference reference;
+	//	    reference front();
+	//	};
+	//	template <class T>
+	//	void foo(vector<vector<vector<T>>> a) {
+	//	    a.front().front()./*cursor*/
+	//	}
+	public void testDependentScopes_bug472818c() throws Exception {
+		final String[] expected = { 
+			"vector<typename T, typename Alloc = allocator<T>>",
+			"base_type",
+			"allocator_type",
+			"alloc_traits_type",
+			"reference",
+			"front(void)" 
+		};
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
 }

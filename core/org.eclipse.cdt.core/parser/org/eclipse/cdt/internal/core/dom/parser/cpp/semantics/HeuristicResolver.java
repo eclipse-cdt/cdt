@@ -16,19 +16,30 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 
 public class HeuristicResolver {
@@ -40,7 +51,7 @@ public class HeuristicResolver {
 	 */
 	public static IScope findConcreteScopeForType(IType type, IASTNode point) {
 		if (type instanceof ICPPUnknownType) {
-			type = resolveUnknownType((ICPPUnknownType) type, point);
+			type = resolveUnknownType((ICPPUnknownType) type, point, SemanticUtil.TDEF | SemanticUtil.REF);
 		}
 		if (type instanceof ICompositeType) {
 			return ((ICompositeType) type).getCompositeScope();
@@ -49,8 +60,101 @@ public class HeuristicResolver {
 	}
 	
 	/**
+	 * Helper function for lookInside().
+	 * Specializes the given bindings in the given context.
+	 *
+	 * @param point the point of instantiation for name lookups
+	 */
+	private static IBinding[] specializeBindings(IBinding[] bindings, ICPPClassSpecialization context, 
+			IASTNode point) {
+		IBinding[] result = new IBinding[bindings.length];
+		for (int i = 0; i < bindings.length; ++i) {
+			result[i] = context.specializeMember(bindings[i], point);
+		}
+		return result;
+	}
+	
+	/**
+	 * An extension of CPPDeferredClassInstance that implements ICPPClassSpecialization,
+	 * allowing its members to be specialized via specializeMember().
+	 */
+	private static class CPPDependentClassInstance extends CPPDeferredClassInstance
+			implements ICPPClassSpecialization {
+
+		public CPPDependentClassInstance(ICPPDeferredClassInstance deferredInstance) {
+			super(deferredInstance.getClassTemplate(), deferredInstance.getTemplateArguments());
+		}
+
+		@Override
+		public ICPPClassType getSpecializedBinding() {
+			return (ICPPClassType) super.getSpecializedBinding();
+		}
+
+		// This overload of specializeMember() is all we're interested in.
+		// Everything else is unsupported.
+		@Override
+		public IBinding specializeMember(IBinding binding, IASTNode point) {
+			return CPPTemplates.createSpecialization(this, binding, point);
+		}
+		
+		@Override
+		public IBinding specializeMember(IBinding binding) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ICPPBase[] getBases(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ICPPConstructor[] getConstructors(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ICPPField[] getDeclaredFields(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ICPPMethod[] getMethods(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ICPPMethod[] getAllDeclaredMethods(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ICPPMethod[] getDeclaredMethods(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public IBinding[] getFriends(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public IField[] getFields(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ICPPClassType[] getNestedClasses(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+	}
+	
+	/**
 	 * Helper function for resolveUnknownType() and resolveUnknownBinding().
 	 * Heuristically resolves the given unknown type and performs name lookup inside it.
+	 * 
+	 * If name lookup is performed inside a template scope to approximate lookup
+	 * in the scope of a dependent instantiation, the lookup results are
+	 * specialized in the context of the dependent instantiation.
 	 * 
 	 * @param ownerType the type to perform name lookup inside
 	 * @param isPointerDeref true if 'ownerType' is a pointer type
@@ -61,23 +165,50 @@ public class HeuristicResolver {
 	 */
 	private static IBinding[] lookInside(IType ownerType, boolean isPointerDeref, char[] name, 
 			ICPPTemplateArgument[] templateArgs, IASTNode point) {
-		// The pointer type might be outside of the dependent type...
+		// If this is a pointer dereference, the pointer type might be outside of the dependent type.
 		ownerType = SemanticUtil.getSimplifiedType(ownerType);
 		if (isPointerDeref && ownerType instanceof IPointerType) {
 			ownerType = ((IPointerType) ownerType).getType();
 			isPointerDeref = false;
 		}
 		if (ownerType instanceof ICPPUnknownType) {
-			IType lookupType = resolveUnknownType((ICPPUnknownType) ownerType, point);
-			// ... or inside the dependent type.
+			// Here we have a loop similar to the one in resolveUnknownType(), but we stop when 
+			// we get a result that's an ICPPClassSpecialization or an ICPPDeferredClassInstance, 
+			// so we can use it to specialize the lookup results as appropriate.
+			IType lookupType;
+			ICPPClassSpecialization specializationContext = null;
+			while (true) {
+				if (ownerType instanceof ICPPClassSpecialization) {
+					specializationContext = (ICPPClassSpecialization) ownerType;
+					lookupType = specializationContext.getSpecializedBinding();
+					break;
+				} else if (ownerType instanceof ICPPDeferredClassInstance) {
+					specializationContext = new CPPDependentClassInstance(
+							(ICPPDeferredClassInstance) ownerType);
+					lookupType = specializationContext.getSpecializedBinding();
+					break;
+				}
+				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) ownerType, point);
+				resolvedType = SemanticUtil.getNestedType(resolvedType, SemanticUtil.TDEF | SemanticUtil.REF);
+				if (resolvedType == ownerType || !(resolvedType instanceof ICPPUnknownType)) {
+					lookupType = resolvedType;
+					break;
+				} else {
+					ownerType = resolvedType;
+					continue;
+				}
+			}
+
+			// If this is a pointer dereference, and the pointer type wasn't outside the
+			// dependent type, it might be inside the dependent type.
 			if (isPointerDeref) {
-				lookupType = SemanticUtil.getSimplifiedType(lookupType);
 				if (lookupType instanceof IPointerType) {
 					lookupType = ((IPointerType) lookupType).getType();
 				} else {
 					lookupType = null;
 				}
 			}
+			
 			IScope lookupScope = null;
 			if (lookupType instanceof ICPPClassType) {
 				lookupScope = ((ICPPClassType) lookupType).getCompositeScope();
@@ -91,6 +222,9 @@ public class HeuristicResolver {
 					CPPSemantics.lookup(lookup, lookupScope);
 					IBinding[] foundBindings = lookup.getFoundBindings();
 					if (foundBindings.length > 0) {
+						if (specializationContext != null) {
+							foundBindings = specializeBindings(foundBindings, specializationContext, point);
+						}
 						return foundBindings;
 					}
 				} catch (DOMException e) {
@@ -102,7 +236,7 @@ public class HeuristicResolver {
 	
 	/**
 	 * Helper function for resolveUnknownType(). 
-	 * Returns the type of a binding, or if the binding is a type, that type.
+	 * Returns the type of a binding.
 	 */
 	private static IType typeForBinding(IBinding binding) {
 		if (binding instanceof IType) {
@@ -118,16 +252,47 @@ public class HeuristicResolver {
 	}
 	
 	/**
-	 * Given an unknown type, heuristically tries to find a concrete type (i.e. not an unknown type)
-	 * corresponding to it.
+	 * Given an unknown type, heuristically tries to find a concrete type 
+	 * (i.e. not an unknown type) corresponding to it.
 	 * 
 	 * Returns null if no heuristic resolution could be performed.
-
+	 * 
+	 * Multiple rounds of resolution are performed, as the result of a single
+	 * round may yield a type which is still dependent. Resolution stops when
+	 * a concrete type is found, or the resolution of the last resolution
+	 * round is the same as the result of the previous resolution round.
+	 * In between each round, typedefs are unwrapped.
+	 * 
 	 * @param point the point of instantiation for lookups
 	 */
 	private static IType resolveUnknownType(ICPPUnknownType type, IASTNode point) {
+		return resolveUnknownType(type, point, SemanticUtil.TDEF);
+	}
+	
+	/**
+	 * Similar to resolveUnknownType(type, point), but allows specifying
+	 * things other than typedefs to unwrap between rounds of resolution
+	 * (e.g. references). 
+	 */
+	private static IType resolveUnknownType(ICPPUnknownType type, IASTNode point, int unwrapOptions) {
+		while (true) {
+			IType resolvedType = resolveUnknownTypeOnce(type, point);
+			resolvedType = SemanticUtil.getNestedType(resolvedType, unwrapOptions);
+			if (resolvedType != type && resolvedType instanceof ICPPUnknownType) {
+				type = (ICPPUnknownType) resolvedType;
+				continue;
+			}
+			return resolvedType;
+		}
+	}
+	
+	/**
+	 * Helper function for resolveUnknownType() which does one round of resolution.
+	 */
+	private static IType resolveUnknownTypeOnce(ICPPUnknownType type, IASTNode point) {
 		if (type instanceof ICPPDeferredClassInstance) {
-			return ((ICPPDeferredClassInstance) type).getClassTemplate();
+			ICPPDeferredClassInstance deferredInstance = (ICPPDeferredClassInstance) type;
+			return deferredInstance.getClassTemplate();
 		} else if (type instanceof TypeOfDependentExpression) {
 			ICPPEvaluation evaluation = ((TypeOfDependentExpression) type).getEvaluation();
 			if (evaluation instanceof EvalUnary) {
@@ -138,7 +303,6 @@ public class HeuristicResolver {
 					IType argument = unary.getArgument().getType(point);
 					if (argument instanceof ICPPUnknownType) {
 						IType resolved = resolveUnknownType((ICPPUnknownType) argument, point);
-						resolved = SemanticUtil.getSimplifiedType(resolved);
 						if (resolved instanceof IPointerType) {
 							return ((IPointerType) resolved).getType();
 						}
@@ -148,8 +312,9 @@ public class HeuristicResolver {
 				EvalID id = (EvalID) evaluation;
 				ICPPEvaluation fieldOwner = id.getFieldOwner();
 				if (fieldOwner != null) {
-					IBinding[] candidates = lookInside(fieldOwner.getType(point), 
-							id.isPointerDeref(), id.getName(), id.getTemplateArgs(), point);
+					IType fieldOwnerType = fieldOwner.getType(point);
+					IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(), 
+							id.getTemplateArgs(), point);
 					if (candidates.length == 1) {
 						return typeForBinding(candidates[0]);
 					}
@@ -166,11 +331,27 @@ public class HeuristicResolver {
 			// TODO(nathanridge): Handle more cases.
 		} else if (type instanceof ICPPUnknownMemberClass) {
 			ICPPUnknownMemberClass member = (ICPPUnknownMemberClass) type;
-			IBinding[] candidates = lookInside(member.getOwnerType(), false, member.getNameCharArray(), 
-					null, point);
+			IType ownerType = member.getOwnerType();
+			IBinding[] candidates = lookInside(ownerType, false, member.getNameCharArray(), null, point);
 			if (candidates.length == 1) { 
 				if (candidates[0] instanceof IType) {
-					return (IType) candidates[0];
+					IType result = (IType) candidates[0];
+					if (type instanceof ICPPUnknownMemberClassInstance) {
+						ICPPTemplateArgument[] args = ((ICPPUnknownMemberClassInstance) type).getArguments();
+						if (result instanceof ICPPClassTemplate) {
+							result = (IType) CPPTemplates.instantiate((ICPPClassTemplate) result, args, point);
+						} else if (result instanceof ICPPAliasTemplate) {
+							result = (IType) CPPTemplates.instantiateAliasTemplate((ICPPAliasTemplate) result,
+									args, point); 
+						} else if (result instanceof ICPPAliasTemplateInstance) {
+							// TODO(nathanridge): Remove this branch once we properly represent
+							// specializations of alias templates (which will then implement
+							// ICPPAliasTemplate and be caught by the previous branch).
+							result = (IType) CPPTemplates.instantiateAliasTemplateInstance(
+									(ICPPAliasTemplateInstance) result, args, point);
+						}
+					}
+					return result;
 				}
 			}
 		}

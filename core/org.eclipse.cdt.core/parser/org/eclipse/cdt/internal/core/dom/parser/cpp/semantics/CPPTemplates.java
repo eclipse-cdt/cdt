@@ -2847,9 +2847,7 @@ public class CPPTemplates {
 	            		if (result instanceof ICPPClassTemplate) {
 	            			result = instantiate((ICPPClassTemplate) result, args1, point);
 	            		} else if (result instanceof ICPPAliasTemplate) {
-		            		ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) result;
-		    				IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(within), point);
-		    			    result = new CPPAliasTemplateInstance(aliasTemplate.getNameCharArray(), aliasTemplate, type);
+	            			result = createSpecialization(getSpecializationContext(within), result, point);
 	            		}
 	            	}
 	            }

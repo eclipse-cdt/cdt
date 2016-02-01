@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
@@ -35,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -124,24 +122,13 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		ICPPFunction overload = getOverload(point);
 		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
-
-		final ICPPEvaluation arg0 = fArguments[0];
-		IType t= SemanticUtil.getNestedType(arg0.getType(point), TDEF | REF | CVTYPE);
-		if (t instanceof ICPPClassType) {
-			return ProblemType.UNKNOWN_FOR_EXPRESSION;
+		
+		ICPPEvaluation function = fArguments[0];
+		IType result = ExpressionTypes.typeFromFunctionCall(function.getType(point));
+		if (function instanceof EvalMemberAccess) {
+			result = ExpressionTypes.restoreTypedefs(result, ((EvalMemberAccess) function).getOwnerType());
 		}
-
-		if (t instanceof IPointerType) {
-			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
-		}
-		if (t instanceof IFunctionType) {
-			t = typeFromReturnType(((IFunctionType) t).getReturnType());
-			if (arg0 instanceof EvalMemberAccess) {
-				t= ExpressionTypes.restoreTypedefs(t, ((EvalMemberAccess) arg0).getOwnerType());
-			}
-			return t;
-		}
-		return ProblemType.UNKNOWN_FOR_EXPRESSION;
+		return result;
 	}
 
 	@Override

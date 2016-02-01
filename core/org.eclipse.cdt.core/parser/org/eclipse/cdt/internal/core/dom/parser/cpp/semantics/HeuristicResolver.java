@@ -154,6 +154,14 @@ public class HeuristicResolver {
 						return typeForBinding(candidates[0]);
 					}
 				}
+			} else if (evaluation instanceof EvalFunctionCall) {
+				EvalFunctionCall evalFunctionCall = (EvalFunctionCall) evaluation;
+				ICPPEvaluation function = evalFunctionCall.getArguments()[0];
+				IType functionType = function.getType(point);
+				if (functionType instanceof ICPPUnknownType) {
+					functionType = resolveUnknownType((ICPPUnknownType) functionType, point);
+				}
+				return ExpressionTypes.typeFromFunctionCall(functionType);
 			}
 			// TODO(nathanridge): Handle more cases.
 		} else if (type instanceof ICPPUnknownMemberClass) {

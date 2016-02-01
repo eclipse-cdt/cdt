@@ -689,6 +689,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				result = new CompositeCPPFunction(this, (ICPPFunction) binding);				
 			} else if (binding instanceof ICPPInternalEnumerator) {
 				result = new CompositeCPPEnumerator(this, (ICPPInternalEnumerator) binding);
+			} else if (binding instanceof ICPPAliasTemplateInstance) {
+				return new CompositeCPPAliasTemplateInstance(this, (ICPPBinding) binding);
 			} else if (binding instanceof ITypedef) {
 				result = new CompositeCPPTypedef(this, (ICPPBinding) binding);
 			} else if (binding instanceof IIndexMacroContainer) {

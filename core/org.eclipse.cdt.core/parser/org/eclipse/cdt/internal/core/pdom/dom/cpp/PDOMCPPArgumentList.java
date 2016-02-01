@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -67,6 +68,11 @@ public class PDOMCPPArgumentList {
 	 * Restores an array of template arguments from the database.
 	 */
 	public static ICPPTemplateArgument[] getArguments(PDOMNode parent, long rec) throws CoreException {
+		if (rec == 0) {
+			CCorePlugin.log(new IllegalArgumentException(
+					"Trying to access template arguments before they have been stored.")); //$NON-NLS-1$
+			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
+		}
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);

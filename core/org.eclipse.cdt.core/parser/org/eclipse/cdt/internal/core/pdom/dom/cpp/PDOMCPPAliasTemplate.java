@@ -64,12 +64,12 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 
 	@Override
 	public int getNodeType() {
-		return IIndexCPPBindingConstants.CPP_TEMPLATE_ALIAS;
+		return IIndexCPPBindingConstants.CPP_ALIAS_TEMPLATE;
 	}
 
 	@Override
 	public boolean isSameType(IType type) {
-		if(type == null){
+		if (type == null){
 			return false;
 		}
 		IType aliasedType = getType();

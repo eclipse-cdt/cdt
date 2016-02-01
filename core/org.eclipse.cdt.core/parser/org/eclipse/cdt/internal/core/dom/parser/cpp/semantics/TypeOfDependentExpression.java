@@ -30,7 +30,7 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 	private final ICPPEvaluation fEvaluation;
 
 	public TypeOfDependentExpression(ICPPEvaluation evaluation) {
-		super(evaluation.getSignature());
+		super(null);
 		fEvaluation= evaluation;
 	}
 	
@@ -77,5 +77,10 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 	public IBinding getOwner() {
 		// We won't know until instantiation.
 		return null;
+	}
+
+	@Override
+	public char[] getNameCharArray() {
+		return fEvaluation.getSignature();
 	}
 }

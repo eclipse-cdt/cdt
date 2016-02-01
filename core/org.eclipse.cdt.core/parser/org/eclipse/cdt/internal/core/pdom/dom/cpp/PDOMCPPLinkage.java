@@ -164,6 +164,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	// Only used when writing to database, which is single-threaded
 	private final LinkedList<Runnable> postProcesses = new LinkedList<Runnable>();
+	
+	// The point of instantiation for name lookups.
+	// This is set by onCreateName() and the top-level addBinding() call for 
+	// their duration, and picked up by nested addBinding() calls. This avoids 
+	// having to pass it around to every function that is called between
+	// (which is a lot of functions).
+	private IASTName pointOfInstantiation = null;  
 
 	public PDOMCPPLinkage(PDOM pdom, long record) {
 		super(pdom, record);
@@ -417,28 +424,36 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		IBinding binding = name.resolveBinding();
 
-		PDOMBinding pdomBinding = addBinding(binding, name);
-
-		// Some nodes schedule some of their initialization to be done
-		// after the binding has been added to the PDOM, to avoid
-		// infinite recursion. We run those post-processes now.
-		// Note that we need to run it before addImplicitMethods() is
-		// called, since addImplicitMethods() expects the binding to
-		// be fully initialized.
-		handlePostProcesses();
-
-		if (pdomBinding instanceof PDOMCPPClassType || pdomBinding instanceof PDOMCPPClassSpecialization) {
-			if (binding instanceof ICPPClassType && name.isDefinition()) {
-				addImplicitMethods(pdomBinding, (ICPPClassType) binding, name);
+		try {
+			// For the duration of this call, record the name being added 
+			// to the index as the point of instantiation for name lookups.
+			pointOfInstantiation = name;
+			
+			PDOMBinding pdomBinding = addBinding(binding, name);
+	
+			// Some nodes schedule some of their initialization to be done
+			// after the binding has been added to the PDOM, to avoid
+			// infinite recursion. We run those post-processes now.
+			// Note that we need to run it before addImplicitMethods() is
+			// called, since addImplicitMethods() expects the binding to
+			// be fully initialized.
+			handlePostProcesses();
+	
+			if (pdomBinding instanceof PDOMCPPClassType || pdomBinding instanceof PDOMCPPClassSpecialization) {
+				if (binding instanceof ICPPClassType && name.isDefinition()) {
+					addImplicitMethods(pdomBinding, (ICPPClassType) binding, name);
+				}
 			}
+	
+			// Some of the nodes created during addImplicitMethods() can
+			// also schedule post-processes, so we need to run through
+			// them again.
+			handlePostProcesses();
+
+			return pdomBinding;
+		} finally {
+			pointOfInstantiation = null;
 		}
-
-		// Some of the nodes created during addImplicitMethods() can
-		// also schedule post-processes, so we need to run through
-		// them again.
-		handlePostProcesses();
-
-		return pdomBinding;
 	}
 
 	/**
@@ -446,6 +461,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 * then an existing binding is updated with the properties of the name.
 	 */
 	private PDOMBinding addBinding(IBinding inputBinding, IASTName fromName) throws CoreException {
+		IASTNode point = fromName != null ? fromName : pointOfInstantiation;
+		
 		if (inputBinding instanceof CompositeIndexBinding) {
 			inputBinding= ((CompositeIndexBinding) inputBinding).getRawBinding();
 		}
@@ -469,11 +486,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding = adaptBinding(parent, binding, fileLocalRec);
 			if (pdomBinding == null) {
 				try {
-					pdomBinding = createBinding(parent, binding, fileLocalRec[0], fromName);
+					pdomBinding = createBinding(parent, binding, fileLocalRec[0], point);
 					if (pdomBinding != null) {
 						getPDOM().putCachedResult(inputBinding, pdomBinding);
 						if (inputBinding instanceof CPPClosureType) {
-							addImplicitMethods(pdomBinding, (ICPPClassType) binding, fromName);
+							addImplicitMethods(pdomBinding, (ICPPClassType) binding, point);
 						}
 
 						// Synchronize the tags associated with the persistent binding to match
@@ -1155,7 +1172,16 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	@Override
 	public void onCreateName(PDOMFile file, IASTName name, PDOMName pdomName) throws CoreException {
 		super.onCreateName(file, name, pdomName);
+		
+		try {
+			pointOfInstantiation = name;
+			onCreateNameHelper(file, name, pdomName);
+		} finally {
+			pointOfInstantiation = null;
+		}
+	}
 
+	private void onCreateNameHelper(PDOMFile file, IASTName name, PDOMName pdomName) throws CoreException {
 		IASTNode parentNode= name.getParent();
 		if (parentNode instanceof ICPPASTQualifiedName) {
 			if (name != ((ICPPASTQualifiedName) parentNode).getLastName())

@@ -269,8 +269,59 @@ public class CPPTemplates {
 			return e.getProblem();
 		}
 	}
+	
+	/**
+	 * Instantiates an alias template with the given arguments. 
+	 */
+	public static IBinding instantiateAliasTemplate(ICPPAliasTemplate aliasTemplate, 
+			ICPPTemplateArgument[] args, IASTNode point) {
+		try {
+			args = addDefaultArguments(aliasTemplate, args, point);
+			if (args == null) {
+				return createProblem(aliasTemplate, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
+			}
+			ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args, point);
+			if (parameterMap == null) {
+				return createProblem(aliasTemplate, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
+			}
+			IType aliasedType = aliasTemplate.getType();
+			IBinding owner = aliasTemplate.getOwner();
+			return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, point);
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+	}
+	
+	/**
+	 * Instantiate a specialization of an alias template with the given arguments.
+	 * 
+	 * TODO(nathanridge): The reason we have this method is that we (incorrectly) represent
+	 * specializations of alias templates as alias template instances. A specialization of
+	 * an alias template is an alias template, so it needs to be instantiated to produce
+	 * an actual alias template instance. Actual alias template instances do not need to be
+	 * instantiated.
+	 */
+	public static IBinding instantiateAliasTemplateInstance(ICPPAliasTemplateInstance aliasTemplateInstance,
+			ICPPTemplateArgument[] args, IASTNode point) {
+		ICPPAliasTemplate aliasTemplate = aliasTemplateInstance.getTemplateDefinition();
+		try {
+			args = addDefaultArguments(aliasTemplate, args, point);
+			if (args == null) {
+				return createProblem(aliasTemplate, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
+			}
+			ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args, point);
+			if (parameterMap == null) {
+				return createProblem(aliasTemplate, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
+			}
+			IType aliasedType = aliasTemplateInstance.getType();
+			IBinding owner = aliasTemplateInstance.getOwner();
+			return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, point);
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+	}
 
-	private static IBinding createProblem(ICPPPartiallySpecializable template, int id, IASTNode point) {
+	private static IBinding createProblem(ICPPTemplateDefinition template, int id, IASTNode point) {
 		return new ProblemBinding(point, id, template.getNameCharArray());
 	}
 
@@ -711,35 +762,17 @@ public class CPPTemplates {
 			if (template instanceof ICPPAliasTemplate) {
 				ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) template;
 				ICPPTemplateArgument[] args = createTemplateArgumentArray(id);
-				args = addDefaultArguments(aliasTemplate, args, id);
-				if (args == null) {
-					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
-				}
-				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args, id);
-				if (parameterMap == null) {
-					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
-				}
-				IType aliasedType = aliasTemplate.getType();
-				IBinding owner = template.getOwner();
-				return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, id);
+				return instantiateAliasTemplate(aliasTemplate, args, id);
 			}
 
 			// Alias template instance.
 			if (template instanceof ICPPAliasTemplateInstance) {
+				// TODO(nathanridge): Remove this branch once we properly represent
+				// specializations of alias templates (which will then implement
+				// ICPPAliasTemplate and be caught by the previous branch).
 				ICPPAliasTemplateInstance aliasTemplateInstance = (ICPPAliasTemplateInstance) template;
 				ICPPTemplateArgument[] args = createTemplateArgumentArray(id);
-				ICPPAliasTemplate aliasTemplate = aliasTemplateInstance.getTemplateDefinition();
-				args = addDefaultArguments(aliasTemplate, args, id);
-				if (args == null) {
-					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
-				}
-				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args, id);
-				if (parameterMap == null) {
-					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
-				}
-				IType aliasedType = aliasTemplateInstance.getType();
-				IBinding owner = aliasTemplateInstance.getOwner();
-				return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, id);
+				return instantiateAliasTemplateInstance(aliasTemplateInstance, args, id);
 			}
 
 			// Class or variable template.
@@ -811,14 +844,14 @@ public class CPPTemplates {
 			return e.getProblem();
 		}
 	}
-
+	
 	private static IBinding createAliasTemplaceInstance(ICPPAliasTemplate aliasTemplate,
 			ICPPTemplateArgument[] args, ICPPTemplateParameterMap parameterMap, IType aliasedType,
-			IBinding owner, ICPPASTTemplateId id) {
+			IBinding owner, IASTNode point) {
 		ICPPClassSpecialization within = getSpecializationContext(owner);
-		IType instantiatedType = instantiateType(aliasedType, parameterMap, -1,	within, id);
+		IType instantiatedType = instantiateType(aliasedType, parameterMap, -1, within, point);
 		StringBuilder buf= new StringBuilder();
-		buf.append(id.getSimpleID()).append(ASTTypeUtil.getArgumentListString(args, false));
+		buf.append(aliasTemplate.getName()).append(ASTTypeUtil.getArgumentListString(args, false));
 		char[] name = new char[buf.length()];
 		buf.getChars(0, buf.length(), name, 0);
 		return new CPPAliasTemplateInstance(name, aliasTemplate, instantiatedType);

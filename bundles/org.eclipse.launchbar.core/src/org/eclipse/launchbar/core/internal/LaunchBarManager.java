@@ -315,10 +315,12 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			return null;
 		for (LaunchConfigProviderInfo providerInfo : configProviders.get(getDescriptorTypeId(descriptor.getType()))) {
 			if (providerInfo.enabled(descriptor) && providerInfo.enabled(target)) {
-				ILaunchConfigurationType type = providerInfo.getProvider().getLaunchConfigurationType(descriptor,
-						target);
-				if (type != null) {
-					return type;
+				ILaunchConfigurationProvider provider = providerInfo.getProvider();
+				if (provider != null && provider.supports(descriptor, target)) {
+					ILaunchConfigurationType type = provider.getLaunchConfigurationType(descriptor, target);
+					if (type != null) {
+						return type;
+					}
 				}
 			}
 		}
@@ -420,7 +422,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		ILaunchDescriptor descriptor = getLaunchDescriptor(config, target);
 		if (descriptor == null)
 			return; // not found
-		// we do not call setActiveLaunchTarget because it will cause mode/target switch and cause flickering
+		// we do not call setActiveLaunchTarget because it will cause
+		// mode/target switch and cause flickering
 		boolean changeDesc = activeLaunchDesc != descriptor;
 		boolean changeTarget = target != null && activeLaunchTarget != target;
 		if (changeDesc) {
@@ -755,7 +758,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 
 	private ILaunchTarget getDefaultLaunchTarget(ILaunchDescriptor descriptor) {
 		List<ILaunchTarget> targets = getLaunchTargets(descriptor);
-		// chances are that better target is most recently added, rather then the oldest
+		// chances are that better target is most recently added, rather then
+		// the oldest
 		return targets.isEmpty() ? ILaunchTarget.NULL_TARGET : targets.get(targets.size() - 1);
 	}
 
@@ -932,7 +936,10 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		if (launchDescriptorMatches(activeLaunchDesc, configuration, target)) {
 			return activeLaunchDesc;
 		}
-		for (ILaunchDescriptor desc : getLaunchDescriptors()) { // this should be in MRU, most used first
+		for (ILaunchDescriptor desc : getLaunchDescriptors()) { // this should
+																// be in MRU,
+																// most used
+																// first
 			if (launchDescriptorMatches(desc, configuration, target)) {
 				return desc;
 			}

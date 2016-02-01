@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2012, 2016 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -21,16 +21,14 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPAliasTemplateInstance extends PlatformObject
-		implements ICPPAliasTemplateInstance, ITypeContainer, ISerializableType {
+		implements ICPPAliasTemplateInstance, ITypeContainer {
 	private final char[] name;
 	private final ICPPAliasTemplate aliasTemplate;
 	private IType aliasedType;
@@ -85,7 +83,7 @@ public class CPPAliasTemplateInstance extends PlatformObject
 		if (name != null) {
 			return name;
 		}
-		return new char[0];
+		return CharArrayUtils.EMPTY_CHAR_ARRAY;
 	}
 
 	@Override
@@ -107,22 +105,6 @@ public class CPPAliasTemplateInstance extends PlatformObject
 			return aliasTemplate.getScope();
 		}
 		return null;
-	}
-
-	@Override
-	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes = ITypeMarshalBuffer.ALIAS_TEMPLATE;
-		buffer.putShort(firstBytes);
-		buffer.putCharArray(name);
-		buffer.marshalType(aliasedType);
-		buffer.marshalBinding(aliasTemplate);
-	}
-
-	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		char[] name = buffer.getCharArray();
-		IType unmarshalledAliasedTypeInstance = buffer.unmarshalType();
-		ICPPAliasTemplate unmarshalledAlias = (ICPPAliasTemplate) buffer.unmarshalBinding();
-		return new CPPAliasTemplateInstance(name, unmarshalledAlias, unmarshalledAliasedTypeInstance);
 	}
 
 	@Override

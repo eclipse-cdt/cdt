@@ -72,8 +72,8 @@ public abstract class CPPUnknownBinding extends PlatformObject
     }
 
     @Override
-	public String getName() {
-        return new String(name);
+	public final String getName() {
+        return new String(getNameCharArray());
     }
 
     @Override

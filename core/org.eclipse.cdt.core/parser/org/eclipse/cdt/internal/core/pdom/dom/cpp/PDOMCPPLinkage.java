@@ -89,7 +89,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
@@ -622,10 +621,17 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					parent2= this;
 				}
 			}
-		} else if (binding instanceof ITypedef) {
-			pdomBinding = new PDOMCPPTypedef(this, parent, (ITypedef) binding);
 		} else if (binding instanceof ICPPAliasTemplate) {
 			pdomBinding = new PDOMCPPAliasTemplate(this, parent, (ICPPAliasTemplate) binding);
+		} else if (binding instanceof ICPPAliasTemplateInstance) {
+			IBinding template = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
+			PDOMBinding pdomTemplate = addBinding(template, null);
+			if (pdomTemplate  == null)
+				return null;
+			pdomBinding = new PDOMCPPAliasTemplateInstance(this, parent, pdomTemplate,
+					(ICPPAliasTemplateInstance) binding);
+		} else if (binding instanceof ITypedef) {
+			pdomBinding = new PDOMCPPTypedef(this, parent, (ITypedef) binding);
 		}
 
 		if (pdomBinding != null) {
@@ -899,7 +905,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ITypedef) {
 			return CPPTYPEDEF;
 		} else if (binding instanceof ICPPAliasTemplate) {
-			return CPP_TEMPLATE_ALIAS;
+			return CPP_ALIAS_TEMPLATE;
+		} else if (binding instanceof ICPPAliasTemplateInstance) {
+			return CPP_ALIAS_TEMPLATE_INSTANCE;
 		}
 
 		return 0;
@@ -907,7 +915,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	@Override
 	protected boolean cannotAdapt(final IBinding inputBinding) throws CoreException {
-		return super.cannotAdapt(inputBinding) || inputBinding instanceof ICPPAliasTemplateInstance;
+		return super.cannotAdapt(inputBinding);
 	}
 
 	@Override
@@ -1119,8 +1127,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPTypedefSpecialization(this, record);
 		case CPP_USING_DECLARATION_SPECIALIZATION:
 			return new PDOMCPPUsingDeclarationSpecialization(this, record);
-		case CPP_TEMPLATE_ALIAS:
+		case CPP_ALIAS_TEMPLATE:
 			return new PDOMCPPAliasTemplate(this, record);
+		case CPP_ALIAS_TEMPLATE_INSTANCE:
+			return new PDOMCPPAliasTemplateInstance(this, record);
 		case CPP_ENUMERATION_SPECIALIZATION:
 			return new PDOMCPPEnumerationSpecialization(this, record);
 		case CPP_ENUMERATOR_SPECIALIZATION:
@@ -1370,8 +1380,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE:
 			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
-		case ITypeMarshalBuffer.ALIAS_TEMPLATE:
-			return CPPAliasTemplateInstance.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.TYPE_TRANSFORMATION:
 			return CPPUnaryTypeTransformation.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.UNKNOWN_MEMBER_TYPE:

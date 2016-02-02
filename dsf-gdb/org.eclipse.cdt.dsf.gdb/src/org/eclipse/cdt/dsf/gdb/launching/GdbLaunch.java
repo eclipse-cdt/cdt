@@ -438,27 +438,38 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	}
 
 	/**
+	 * Get the default GDB path if not specified in the launch or launch config.
+	 * 
+	 * @since 5.0
+	 */
+	protected String getDefaultGDBPath() {
+		return Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
+				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT, null);
+	}
+
+	/**
 	 * Returns the path to gdb.
 	 * 
 	 * @since 5.0
 	 */
 	public IPath getGDBPath() {
-		String defaultGdbCommand = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
-				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
-				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT, null);
-
-		IPath retVal = new Path(defaultGdbCommand);
 		try {
 			String gdb = getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME);
 			if (gdb == null) {
 				gdb = getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
-						defaultGdbCommand);
+						getDefaultGDBPath());
 			}
-			gdb = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdb, false);
-			retVal = new Path(gdb);
+			if (gdb != null) {
+				gdb = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdb, false);
+				return new Path(gdb);
+			} else {
+				return null;
+			}
 		} catch (CoreException e) {
+			GdbPlugin.log(e.getStatus());
+			return null;
 		}
-		return retVal;
 	}
 
 	/**

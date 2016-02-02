@@ -185,27 +185,22 @@
     <extension
           point="org.eclipse.debug.core.launchConfigurationTypes">
        <launchConfigurationType
+             delegate="org.eclipse.cdt.internal.qt.core.launch.QtLocalRunLaunchConfigDelegate"
              id="org.eclipse.cdt.qt.core.launchConfigurationType"
+             modes="run"
              name="Qt Local Application"
-             public="true">
+             public="true"
+             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
        </launchConfigurationType>
     </extension>
     <extension
           point="org.eclipse.debug.core.launchDelegates">
        <launchDelegate
-             delegate="org.eclipse.cdt.internal.qt.core.launch.QtLocalRunLaunchConfigDelegate"
-             id="org.eclipse.cdt.qt.core.launchDelegate.run.local"
-             modes="run"
-             name="Qt Local Run launcher"
-             type="org.eclipse.cdt.qt.core.launchConfigurationType">
-       </launchDelegate>
-       <launchDelegate
              delegate="org.eclipse.cdt.internal.qt.core.launch.QtLocalDebugLaunchConfigDelegate"
              id="org.eclipse.cdt.qt.core.launchDelegate.debug.local"
              modes="debug"
              name="Qt Local Debug launcher"
-             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
              type="org.eclipse.cdt.qt.core.launchConfigurationType">
        </launchDelegate>
     </extension>

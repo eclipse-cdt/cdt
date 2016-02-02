@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
@@ -26,6 +28,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.IResourcesInformation;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -41,13 +44,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -189,7 +196,7 @@ public class AttachProcessHandler extends AbstractHandler implements IHandler {
 						session.getExecutor().execute(sequence);
 						try {
 							sequence.get();
-						} catch (InterruptedException | java.util.concurrent.ExecutionException e) {
+						} catch (InterruptedException | java.util.concurrent.ExecutionException | CancellationException e ) {
 							// ignore here.
 						}
 					}
@@ -199,42 +206,88 @@ public class AttachProcessHandler extends AbstractHandler implements IHandler {
 		return null;
 	}
 
-	private void attachToProcess(final ICommandControlDMContext context, final String pid, RequestMonitor rm) {
+	private void attachToProcess(final ICommandControlDMContext context, final String pid, RequestMonitor prm) {
 		BundleContext c = GdbUIPlugin.getDefault().getBundle().getBundleContext();
 		DsfServicesTracker tracker = new DsfServicesTracker(c, context.getSessionId());
 		try {
 			IGDBProcesses procService = tracker.getService(IGDBProcesses.class);
 			if (procService != null) {
-				// attach directly without looking for the binary
-				// since GDB will figure it out by itself
+				final DsfExecutor executor = DsfSession.getSession(context.getSessionId()).getExecutor();
+				Sequence sequence = new Sequence(executor, prm) {
+					boolean supportsRemoteFile = false;
+					String binaryPath = null;
 
-				// TODO: update with asking user for the binary for cases
-				// not covered by GDB (e.g. GDB version < 7.10)
-
-				IProcessDMContext procDmc = procService.createProcessContext(context, pid);
-				procService.attachDebuggerToProcess(procDmc, new DataRequestMonitor<IDMContext>(
-						DsfSession.getSession(context.getSessionId()).getExecutor(), rm) {
-					@Override
-					protected void handleErrorOrWarning() {
-						IStatus status = getStatus();
-						if (status != null && !status.isOK()) {
-							IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-							if (statusHandler != null) {
-								try {
-									statusHandler.handleStatus(status, null);
-								} catch (CoreException ex) {
-									GdbUIPlugin.getDefault().getLog().log(ex.getStatus());
+					private Step[] steps = new Step[] {
+	                		// first check attach with remote file supported property
+							new Step() {
+								@Override
+								public void execute(RequestMonitor rm) {
+									procService.canAttachWithoutBinary(context, new DataRequestMonitor<Boolean>(executor, rm){
+										@Override
+										protected void handleCompleted() {
+											Boolean isSupported = getData();
+											supportsRemoteFile = Boolean.TRUE.equals(isSupported);
+											rm.done();
+										}
+									});
 								}
-							} else {
-								GdbUIPlugin.getDefault().getLog().log(status);
+							},
+							// ask for binary if needed
+							new Step() {
+								@Override
+								public void execute(RequestMonitor rm) {
+									if (supportsRemoteFile) {
+										// nothing to do, just move to next step
+										rm.done();
+										return;
+									}
+									// create an UI job to query user:
+									Display.getDefault().asyncExec(new Runnable(){
+										@Override
+										public void run() {
+							    			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+							    			if (shell != null) {
+							    				FileDialog fd = new FileDialog(shell, SWT.NONE);
+							    				fd.setText(LaunchUIMessages.getString("ProcessPrompterDialog.TitlePrefix") + pid); //$NON-NLS-1$
+							    				binaryPath = fd.open();
+							    				if (binaryPath == null) {
+							    					// user cancels the dialog. abort the whole sequence
+							    					rm.done(Status.CANCEL_STATUS);
+							    					return;
+							    				}
+							    			}
+											rm.done();
+										}
+									});
+								}
+							},
+							// finally call proc service will all needed info
+							new Step() {
+								@Override
+								public void execute(RequestMonitor rm) {
+									IProcessDMContext procDmc = procService.createProcessContext(context, pid);
+									procService.attachDebuggerToProcess(procDmc, binaryPath, new DataRequestMonitor<IDMContext>(
+											executor, rm) {
+										@Override
+										protected void handleErrorOrWarning() {
+											IStatus status = getStatus();
+											if (status != null && !status.isOK()) {
+												StatusManager.getManager().handle(getStatus(), StatusManager.SHOW);
+											}
+											handleSuccess(); // mark as success even if fail.
+										}
+									});
+								}
 							}
-						}
-						handleSuccess(); // mark as success even if fail.
-					}
-
-				});
+					};
+					@Override
+					public Step[] getSteps() {
+						return steps;
+					}					
+				};
+				executor.execute(sequence);
 			} else {
-				rm.done();
+				prm.done();
 				GdbUIPlugin.log(new Throwable("Could not retreive process service for context" + context)); //$NON-NLS-1$
 			}
 		} finally {

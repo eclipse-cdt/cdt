@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -482,40 +482,45 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     								// Can attach to process
 
     								// Remove process from list and attach to it. 
-    								IProcessExtendedInfo process = procList.remove(0);
-    								String pidStr = Integer.toString(process.getPid());
+    								final IProcessExtendedInfo process = procList.remove(0);
+    								final String pidStr = Integer.toString(process.getPid());
 
-    								if (backend.getSessionType() == SessionType.REMOTE) {
-    									// For remote attach, we must set the binary first so we need to prompt the user.
-    									
-    									// If this is the very first attach of a remote session, check if the user
-    									// specified the binary in the launch.  If so, let's add it to our map to 
-    						    		// avoid having to prompt the user for that binary.
-    						    		// This would be particularly annoying since we didn't use to have
-    									// to do that before we supported multi-process.
-    									// Must do this here to be in the executor
-    									// Bug 350365
-    									if (fProcessNameToBinaryMap.isEmpty()) {
-   											IPath binaryPath = backend.getProgramPath();
-   											if (binaryPath != null && !binaryPath.isEmpty()) {
-   												fProcessNameToBinaryMap.put(binaryPath.lastSegment(), binaryPath.toOSString());
-   											}
-    									}
-    									
-    									// Because the prompt is a very long operation, we need to run outside the
-    									// executor, so we don't lock it.
-    									// Bug 344892
-    									IPath processPath = new Path(process.getName());
-    									String processShortName = processPath.lastSegment();
-    									new PromptAndAttachToProcessJob(pidStr, 
-    											                        LaunchUIMessages.getString("ProcessPrompterDialog.TitlePrefix") + process.getName(), //$NON-NLS-1$
-    											                        processShortName, new AttachToProcessRequestMonitor()).schedule();
-    								} else {
-    									// For a local attach, we can attach directly without looking for the binary
-    									// since GDB will figure it out by itself
-    									IProcessDMContext procDmc = procService.createProcessContext(controlDmc, pidStr);
-    									procService.attachDebuggerToProcess(procDmc, null, new AttachToProcessRequestMonitor());
-    								}
+    								procService.canAttachWithoutBinary(controlDmc,  new ImmediateDataRequestMonitor<Boolean>() {
+    		    						@Override
+    		    						protected void handleCompleted() {
+    		    							if (isSuccess() && getData()) {
+	    										// GDB can locate the binary by itself. Some GDB versions can also mean retrieve binary 
+    		    								// from remote location, so need to specify in that case       
+	    										IProcessDMContext procDmc = procService.createProcessContext(controlDmc, pidStr);
+	    										procService.attachDebuggerToProcess(procDmc, null, new AttachToProcessRequestMonitor());    		    								
+    		    							} else {
+	    										// For remote attach, we must set the binary first so we need to prompt the user.
+	    										
+	    										// If this is the very first attach of a remote session, check if the user
+	    										// specified the binary in the launch.  If so, let's add it to our map to 
+	    										// avoid having to prompt the user for that binary.
+	    										// This would be particularly annoying since we didn't use to have
+	    										// to do that before we supported multi-process.
+	    										// Must do this here to be in the executor
+	    										// Bug 350365
+	    										if (fProcessNameToBinaryMap.isEmpty()) {
+	    											IPath binaryPath = backend.getProgramPath();
+	    											if (binaryPath != null && !binaryPath.isEmpty()) {
+	    												fProcessNameToBinaryMap.put(binaryPath.lastSegment(), binaryPath.toOSString());
+	    											}
+	    										}
+	    										
+	    										// Because the prompt is a very long operation, we need to run outside the
+	    										// executor, so we don't lock it.
+	    										// Bug 344892
+	    										IPath processPath = new Path(process.getName());
+	    										String processShortName = processPath.lastSegment();
+	    										new PromptAndAttachToProcessJob(pidStr, 
+	    												LaunchUIMessages.getString("ProcessPrompterDialog.TitlePrefix") + process.getName(), //$NON-NLS-1$
+	    												processShortName, new AttachToProcessRequestMonitor()).schedule();
+	    									}
+    		    						}
+    								});
     							} else {
     								// Not allowed to attach to another process.  Just stop.
     								rm.done();

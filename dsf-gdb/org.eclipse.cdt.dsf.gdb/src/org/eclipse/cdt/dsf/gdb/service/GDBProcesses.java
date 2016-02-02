@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Ericsson and others.
+ * Copyright (c) 2008, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,6 +220,17 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	    } else {
 	    	rm.setData(false);
 	    }
+		rm.done();
+	}
+
+	
+	/**
+	 * @since 5.0
+	 */
+	@Override
+	public void canAttachWithoutBinary(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+		// only for local session 
+		rm.setData(fBackend.getSessionType() == SessionType.LOCAL);
 		rm.done();
 	}
 

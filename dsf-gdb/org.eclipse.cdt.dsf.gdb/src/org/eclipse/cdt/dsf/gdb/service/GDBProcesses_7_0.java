@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1058,6 +1058,17 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	rm.setData(doIsDebuggerAttachSupported());
     	rm.done();
     }
+	
+	/**
+	 * @since 5.0
+	 */
+	@Override
+	public void canAttachWithoutBinary(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+		// only for local session 
+		rm.setData(fBackend.getSessionType() == SessionType.LOCAL);
+		rm.done();
+	}
+
 
 	@Override
     public void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm) {

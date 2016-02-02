@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Intel Corporation and others.
+ * Copyright (c) 2015, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowRemotePacketInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -47,6 +48,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Adding support for reverse trace method selection with GDB 7.10
@@ -57,6 +60,7 @@ public class GDBProcesses_7_10 extends GDBProcesses_7_4 {
 
     private CommandFactory fCommandFactory;
     private IGDBControl fCommandControl;
+	private IGDBBackend fBackend;
 
     public GDBProcesses_7_10(DsfSession session) {
         super(session);
@@ -85,6 +89,7 @@ public class GDBProcesses_7_10 extends GDBProcesses_7_4 {
 
 		fCommandControl = getServicesTracker().getService(IGDBControl.class);
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+    	fBackend = getServicesTracker().getService(IGDBBackend.class);
     	
     	requestMonitor.done();
 	}
@@ -114,6 +119,38 @@ public class GDBProcesses_7_10 extends GDBProcesses_7_4 {
                 private IMIContainerDMContext fContainerDmc;
 
                 private Step[] steps = new Step[] {
+                		// first check if requested process is already targeted
+						new Step() {
+							@Override
+							public void execute(final RequestMonitor rm) {
+								getProcessesBeingDebugged(procCtx, new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
+									@Override
+									protected void handleSuccess() {
+										assert getData() != null;
+
+										boolean found = false;
+										for (IDMContext dmc : getData()) {
+											IProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc,
+													IProcessDMContext.class);
+											if (procCtx.equals(procDmc)) {
+												found = true;
+											}
+										}
+										if (found) {
+											// abort the sequence
+											Status failedStatus = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+													REQUEST_FAILED,
+													MessageFormat.format(Messages.Already_connected_process_err,
+															((IMIProcessDMContext) procCtx).getProcId()),
+													null);
+											rm.done(failedStatus);
+											return;
+										}
+										super.handleSuccess();
+									}
+								});
+							}
+						},
                         // If this is not the very first inferior, we first need create the new inferior
                         new Step() {
                             @Override
@@ -265,5 +302,23 @@ public class GDBProcesses_7_10 extends GDBProcesses_7_4 {
             dataRm.done();
         }
     }
+
+	@Override
+	public void canAttachWithoutBinary(final IDMContext dmc, final DataRequestMonitor<Boolean> drm) {
+		if (fBackend.getSessionType() == SessionType.LOCAL) {
+			// do not need to check for remote capabilities. Always supported
+			drm.done(Boolean.TRUE);
+			return;
+		}
+		
+		fCommandControl.queueCommand(fCommandFactory.createCLIShowRemotePacket(dmc, "pid-to-exec-file-packet"), //$NON-NLS-1$
+				new DataRequestMonitor<CLIShowRemotePacketInfo>(ImmediateExecutor.getInstance(), drm) {
+					@Override
+					protected void handleSuccess() {
+						drm.setData(Boolean.valueOf(CLIShowRemotePacketInfo.State.ENABLED == getData().getPacketState()));
+						drm.done();
+					}
+				});
+	}
 }
 

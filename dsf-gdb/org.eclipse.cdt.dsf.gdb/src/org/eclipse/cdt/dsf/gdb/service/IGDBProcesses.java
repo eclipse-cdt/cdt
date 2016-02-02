@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,5 +126,16 @@ public interface IGDBProcesses extends IMIProcesses {
      * @since 4.0
      */    
     void attachDebuggerToProcess(IProcessDMContext procCtx, String file, DataRequestMonitor<IDMContext> rm);
-
+    
+    /**
+     * Checks whether it is possible to attach the debugger to a new process without specifying a binary file. 
+     * It is expected that debugger will be able to locate binary corresponding to attached process.
+     * 
+     * @param dmc The processor or core on which we want to attach to a process.
+     * @param rm Return if it is possible to attach without specifying a file
+     * @since 5.0
+     */
+    default void canAttachWithoutBinary(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+    	rm.done(Boolean.FALSE);
+    }
 }

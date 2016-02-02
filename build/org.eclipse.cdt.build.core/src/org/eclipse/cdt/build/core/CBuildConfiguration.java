@@ -155,7 +155,9 @@ public abstract class CBuildConfiguration extends PlatformObject {
 	}
 
 	public void clearScannerInfoCache() throws CoreException {
-		scannerInfoCache.clear();
+		if (scannerInfoCache != null) {
+			scannerInfoCache.clear();
+		}
 	}
 
 	public Collection<CConsoleParser> getConsoleParsers() throws CoreException {

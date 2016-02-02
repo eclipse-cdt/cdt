@@ -27,6 +27,8 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
@@ -147,7 +149,10 @@ public class QtBuildConfigurationFactory implements IAdapterFactory {
 				}
 			}
 		}
-		return null;
+
+		// No appropriate Qt Install
+		throw new CoreException(
+				new Status(IStatus.ERROR, Activator.ID, "No appropriate Qt SDK found for target " + target.getId()));
 	}
 
 	public static class Cleanup implements IResourceChangeListener {

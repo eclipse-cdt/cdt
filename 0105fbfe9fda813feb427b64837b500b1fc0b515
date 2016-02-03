@@ -1,0 +1,146 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_ed8eb505",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-03T19:33:06Z",
+      "side": 1,
+      "message": "the variable name \"pid_ids\" seems a little redundant. alternative suggestions: pids, process_ids",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_6d8385e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-03T19:33:06Z",
+      "side": 1,
+      "message": "Very minor, but it seems that this inner for loop will waste a bit of CPU re-finding the pid column for each selected element. Even more minor since pid will likely always be the first column. \n\nI am fine leaving this code as-is :)",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_7fc16675",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-03T19:33:06Z",
+      "side": 1,
+      "message": "If this happens, it might not be easy to figure-out what is causing the attach to fail, even if one things of looking into the .metadata/.log file. \n\nWould it be good to have a slightly more detailed error message, so that it can be mapped to this file/method?",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_065bb302",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-03T19:33:06Z",
+      "side": 1,
+      "message": "\"backend\" doesn\u0027t seem to be used, other than being checked for being not null. Was that intended?",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_4655bbc9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-03T19:33:06Z",
+      "side": 1,
+      "message": "With the right GDB session configuration (non-stop mode, extended-remote, etc) the feature also seems to work on a remote target. That might make the comment a bit confusing, since it only refers to local attach.",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_059008a2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-03T19:33:06Z",
+      "side": 1,
+      "message": "With this error handling in place, there is very little missing to be able to display attach error messages, for the users. \n\nMarc K and I have a quick working prototype that we plan to productify (bug 487128). When we merge this, I have confirmed that this code is ready.",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_468e9b83",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-03T19:33:06Z",
+      "side": 1,
+      "message": "Elsewhere in Eclipse, the term \"connect\" is used, instead of \"attach\". \"Attach\" is the correct gdb term for what\u0027s happening, but I wonder if it would be better to be consistent? See for example the context menu of the DBG view, where \"Connect\" and \"Disconnect\" are used.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 42
+      },
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_87a98ade",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-03T19:33:06Z",
+      "side": 1,
+      "message": "I have previously noticed that, in parts of CDT I was involved with, the practice seems to be to have a year range in copyright headers. So the above would be \"2011, 2016\". Not sure which is right/better, if any.",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

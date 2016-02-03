@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_81032dc6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-02-03T15:34:59Z",
+      "side": 1,
+      "message": "Is that better?  Previously, if fetching the path from the launch config failed with an exception, we\u0027d return the default path.  Now we will fail the debug session.  I\u0027m not sure what would trigger an exception and if we should actually let the user know the failure...",
+      "revId": "50249aaac884a982f7e290e4bc3890459718ac9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

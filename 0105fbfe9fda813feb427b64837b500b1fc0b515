@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_884b4d7e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-03T22:49:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_ed8eb505",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_6d8385e1",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2016-02-03T19:33:06Z",
       "side": 1,
       "message": "Very minor, but it seems that this inner for loop will waste a bit of CPU re-finding the pid column for each selected element. Even more minor since pid will likely always be the first column. \n\nI am fine leaving this code as-is :)",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_a8465173",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-03T22:49:13Z",
+      "side": 1,
+      "message": "Done. Moved in outer loop. \n\nStill compute its column to be isolated from column layout for different resource classes. e.g. \"Process groups\" for which I was thinking to extend \"attach\" action",
+      "parentUuid": "07d9433e_6d8385e1",
       "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_c8a8f596",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-03T22:49:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_7fc16675",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_065bb302",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
         "patchSetId": 3
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_e8abf98d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-03T22:49:13Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "07d9433e_065bb302",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_4655bbc9",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
         "patchSetId": 3
@@ -81,6 +153,24 @@
       "writtenOn": "2016-02-03T19:33:06Z",
       "side": 1,
       "message": "With the right GDB session configuration (non-stop mode, extended-remote, etc) the feature also seems to work on a remote target. That might make the comment a bit confusing, since it only refers to local attach.",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_6897e951",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-03T22:49:13Z",
+      "side": 1,
+      "message": "Remote use-cases is my next intended step.\n\nWith the right configuration it works seamlessly. The main difference from \"Connect\" action from debug view is that it does not handle asking user for a binary. Even this go unnoticed when using GDB \u003e\u003d 7.10.",
+      "parentUuid": "07d9433e_4655bbc9",
       "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -127,6 +217,30 @@
     },
     {
       "key": {
+        "uuid": "07d9433e_687e098c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-03T22:49:13Z",
+      "side": 1,
+      "message": "\"Attach\" seems more natural to me. I might be biased though.\n\nTerminology consistency is one important aspect of usability. I will update to \"connect\" verbs.\n\nI suspect the comment is about command and menu registered in OS Resources as well, not just the progress details.",
+      "parentUuid": "07d9433e_468e9b83",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 42
+      },
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07d9433e_87a98ade",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
         "patchSetId": 3
@@ -138,6 +252,24 @@
       "writtenOn": "2016-02-03T19:33:06Z",
       "side": 1,
       "message": "I have previously noticed that, in parts of CDT I was involved with, the practice seems to be to have a year range in copyright headers. So the above would be \"2011, 2016\". Not sure which is right/better, if any.",
+      "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_887d0d8f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-03T22:49:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07d9433e_87a98ade",
       "revId": "0105fbfe9fda813feb427b64837b500b1fc0b515",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

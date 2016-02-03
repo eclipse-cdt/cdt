@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_0141dd61",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 462,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-02-03T14:28:35Z",
+      "side": 1,
+      "message": "Putting null instead of defaultGdbCommand means that the defaultGDBPath no longer goes through variable substitution below.\n\nHow about have the new getDefaultGDBPath() method above return a String instead of a Path?  Then we can keep doing what was done before.",
+      "revId": "a144a96dccc3f0ee39661076c783abb4bf1b5a06",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

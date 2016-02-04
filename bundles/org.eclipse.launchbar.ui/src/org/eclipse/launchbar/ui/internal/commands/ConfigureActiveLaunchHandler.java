@@ -136,7 +136,7 @@ public class ConfigureActiveLaunchHandler extends AbstractHandler {
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configType,
 					mode.getIdentifier());
 			ILaunchConfiguration config = manager.getLaunchConfiguration(desc, target);
-			if (config.isWorkingCopy() && ((ILaunchConfigurationWorkingCopy) config).isDirty()) {
+			if (config instanceof ILaunchConfigurationWorkingCopy && ((ILaunchConfigurationWorkingCopy) config).isDirty()) {
 				config = ((ILaunchConfigurationWorkingCopy) config).doSave();
 			}
 			// open real eclipse launch configurations dialog

@@ -74,10 +74,9 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 		return false;
 	}
 
-	 @Override
+	@Override
 	public CPPDeferredClassInstance clone() {
-		 CPPDeferredClassInstance cloned= (CPPDeferredClassInstance) super.clone();
-		 return cloned;
+		 return (CPPDeferredClassInstance) super.clone();
     }
 
 	@Override

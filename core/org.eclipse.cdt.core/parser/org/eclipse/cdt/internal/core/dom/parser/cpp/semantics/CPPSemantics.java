@@ -258,7 +258,7 @@ public class CPPSemantics {
 	private static final ICPPEvaluation[] NO_INITCLAUSE_EVALUATION = {};
 
 	// Set to true for debugging.
-	public static boolean traceBindingResolution = false;
+	public static boolean traceBindingResolution = true; //XXX
 	public static int traceIndent= 0;
 
 	// special return value for costForFunctionCall

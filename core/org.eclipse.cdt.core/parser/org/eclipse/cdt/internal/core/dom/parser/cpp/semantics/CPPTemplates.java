@@ -135,6 +135,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplateSpecializati
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerationSpecialization;
@@ -172,6 +173,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplatePartialSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalTemplateDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
@@ -270,7 +272,7 @@ public class CPPTemplates {
 		}
 	}
 
-	private static IBinding createProblem(ICPPPartiallySpecializable template, int id, IASTNode point) {
+	private static IBinding createProblem(ICPPTemplateDefinition template, int id, IASTNode point) {
 		return new ProblemBinding(point, id, template.getNameCharArray());
 	}
 
@@ -532,7 +534,7 @@ public class CPPTemplates {
 		return new CPPDeferredClassInstance(ct, args, (ICPPScope) ct.getCompositeScope());
 	}
 
-	public static ICPPTemplateArgument[] templateParametersAsArguments(ICPPClassTemplate template) {
+	public static ICPPTemplateArgument[] templateParametersAsArguments(ICPPTemplateDefinition template) {
 		ICPPTemplateParameter[] tpars = template.getTemplateParameters();
 		ICPPTemplateArgument[] args;
 		args = new ICPPTemplateArgument[tpars.length];
@@ -714,6 +716,9 @@ public class CPPTemplates {
 				args = addDefaultArguments(aliasTemplate, args, id);
 				if (args == null) {
 					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
+				}
+				if (hasDependentArgument(args)) {
+					return new CPPDeferredAliasTemplateInstance(aliasTemplate, args);
 				}
 				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args, id);
 				if (parameterMap == null) {
@@ -2808,6 +2813,10 @@ public class CPPTemplates {
         	if (type instanceof IBinding)
         		return (IBinding) type;
         }
+        if (unknown instanceof ICPPDeferredAliasTemplateInstance) {
+        	return resolveDeferredAliasTemplateInstance((ICPPDeferredAliasTemplateInstance) unknown, tpMap,
+        			packOffset, within, point);
+        }
         return unknown;
 	}
 
@@ -2887,15 +2896,42 @@ public class CPPTemplates {
 		return dci;
 	}
 
-	public static boolean haveSameArguments(ICPPTemplateInstance i1, ICPPTemplateInstance i2) {
-		final ICPPTemplateArgument[] m1= i1.getTemplateArguments();
-		final ICPPTemplateArgument[] m2= i2.getTemplateArguments();
+	private static IBinding resolveDeferredAliasTemplateInstance(ICPPDeferredAliasTemplateInstance deferred,
+			ICPPTemplateParameterMap tpMap, int packOffset, ICPPTypeSpecialization within, IASTNode point) {
+		ICPPAliasTemplate template = deferred.getTemplateDefinition();
+		ICPPTemplateArgument[] arguments = deferred.getTemplateArguments();
+		ICPPTemplateArgument[] newArgs;
+		try {
+			newArgs = instantiateArguments(arguments, tpMap, packOffset, within, point, true);
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+		if (newArgs == null)
+			return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
 
-		if (m1 == null || m2 == null || m1.length != m2.length)
+		if (newArgs == arguments)
+			return deferred;
+
+		if (hasDependentArgument(newArgs))
+			return new CPPDeferredAliasTemplateInstance(template, newArgs);
+
+		IType aliasedType = template.getType();
+		aliasedType = instantiateType(aliasedType, tpMap, packOffset, within, point);
+	    return new CPPAliasTemplateInstance(template.getNameCharArray(), template, aliasedType);
+	}
+
+	public static boolean haveSameArguments(ICPPTemplateInstance i1, ICPPTemplateInstance i2) {
+		ICPPTemplateArgument[] m1= i1.getTemplateArguments();
+		ICPPTemplateArgument[] m2= i2.getTemplateArguments();
+		return areSameTemplateArguments(m1, m2);
+	}
+
+	public static boolean areSameTemplateArguments(ICPPTemplateArgument[] args1, ICPPTemplateArgument[] args2) {
+		if (args1 == null || args2 == null || args1.length != args2.length)
 			return false;
 
-		String s1 = ASTTypeUtil.getArgumentListString(m1, true);
-		String s2 = ASTTypeUtil.getArgumentListString(m2, true);
+		String s1 = ASTTypeUtil.getArgumentListString(args1, true);
+		String s2 = ASTTypeUtil.getArgumentListString(args2, true);
 		return s1.equals(s2);
 	}
 

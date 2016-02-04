@@ -505,7 +505,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			getPDOM().putCachedResult(inputBinding, pdomBinding);
 		}
 
-		if (shouldUpdate(pdomBinding, fromName)) {
+		if (fromName != null && shouldUpdate(pdomBinding, fromName)) {
 			IBinding fromBinding = fromName.getBinding();
 
 			pdomBinding.update(this, fromBinding, null);
@@ -520,32 +520,29 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	private boolean shouldUpdate(PDOMBinding pdomBinding, IASTName fromName) throws CoreException {
-		if (fromName != null) {
-			if (pdomBinding instanceof IParameter || pdomBinding instanceof ICPPTemplateParameter)
-				return false;
-			if (fromName.isReference()) {
-				return false;
-			}
-			if (pdomBinding instanceof ICPPMember) {
-				IASTNode node= fromName.getParent();
-				while (node != null) {
-					if (node instanceof IASTCompositeTypeSpecifier) {
-						return true;
-					}
-					node= node.getParent();
-				}
-				return false;
-			}
-			if (fromName.isDefinition()) {
-				return true;
-			}
-			// Update opaque enums.
-			if (pdomBinding instanceof ICPPEnumeration && fromName.isDeclaration()) {
-				return true;
-			}
-			return !getPDOM().hasLastingDefinition(pdomBinding);
+		if (pdomBinding instanceof IParameter || pdomBinding instanceof ICPPTemplateParameter)
+			return false;
+		if (fromName.isReference()) {
+			return false;
 		}
-		return false;
+		if (pdomBinding instanceof ICPPMember) {
+			IASTNode node= fromName.getParent();
+			while (node != null) {
+				if (node instanceof IASTCompositeTypeSpecifier) {
+					return true;
+				}
+				node= node.getParent();
+			}
+			return false;
+		}
+		if (fromName.isDefinition()) {
+			return true;
+		}
+		// Update opaque enums.
+		if (pdomBinding instanceof ICPPEnumeration && fromName.isDeclaration()) {
+			return true;
+		}
+		return !getPDOM().hasLastingDefinition(pdomBinding);
 	}
 
 	PDOMBinding createBinding(PDOMNode parent, IBinding binding, long fileLocalRec, IASTNode point) 

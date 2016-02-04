@@ -630,7 +630,7 @@ public class TemplateArgumentDeduction {
 
 	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate, int maxdepth, HashSet<Object> handled, IASTNode point) throws DOMException {
 		if (a instanceof ICPPTemplateInstance) {
-			final ICPPTemplateInstance inst = (ICPPTemplateInstance) a;
+			ICPPTemplateInstance inst = (ICPPTemplateInstance) a;
 			ICPPClassTemplate tmpl= getPrimaryTemplate(inst);
 			if (pTemplate.isSameType(tmpl))
 				return a;

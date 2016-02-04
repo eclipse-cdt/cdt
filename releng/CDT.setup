@@ -123,6 +123,8 @@
         <requirement
             name="org.mockito"/>
         <requirement
+            name="org.hamcrest"/>
+        <requirement
             name="org.hamcrest.core"/>
         <requirement
             name="org.eclipse.swtbot.eclipse.feature.group"/>
@@ -160,7 +162,7 @@
         <repositoryList
             name="Mars">
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20151221205849/repository/"/>
           <repository
               url="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
           <repository
@@ -181,7 +183,7 @@
         <repositoryList
             name="Neon">
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20151221205849/repository/"/>
           <repository
               url="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
           <repository

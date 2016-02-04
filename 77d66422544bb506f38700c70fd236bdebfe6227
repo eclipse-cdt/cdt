@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07d9433e_54bd5c1c",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/extractlocalvariable/ExtractLocalVariableRefactoringTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-04T20:18:26Z",
+      "side": 1,
+      "message": "Would it make sense to add little more variation to the types, something like int(const char*, float)?",
+      "range": {
+        "startLine": 579,
+        "startChar": 8,
+        "endLine": 579,
+        "endChar": 11
+      },
+      "revId": "77d66422544bb506f38700c70fd236bdebfe6227",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

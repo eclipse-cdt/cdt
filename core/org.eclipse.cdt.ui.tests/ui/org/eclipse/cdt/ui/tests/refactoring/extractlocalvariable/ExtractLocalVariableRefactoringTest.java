@@ -571,4 +571,24 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
+	//A.cpp
+	//template<typename T>
+	//struct Tpl {};
+	//
+	//void func() {
+	//	Tpl<int(int, int)> t;
+	//	/*$*/t/*$$*/;
+	//}
+	//====================
+	//template<typename T>
+	//struct Tpl {};
+	//
+	//void func() {
+	//	Tpl<int(int, int)> t;
+	//	Tpl<int(int, int)> t0 = t;
+	//	t0;
+	//}
+	public void testTemplateWithFunctionArgument_487186() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

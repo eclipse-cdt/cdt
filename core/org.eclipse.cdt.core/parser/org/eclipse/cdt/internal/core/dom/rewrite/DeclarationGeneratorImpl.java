@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -126,6 +127,10 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 
 	@Override
 	public IASTDeclarator createDeclaratorFromType(IType type, char[] name) {
+		return createDeclaratorFromType(type, name, true);
+	}
+
+	public IASTDeclarator createDeclaratorFromType(IType type, char[] name, boolean changeInitialFunctionToFuncPtr) {
 		IASTDeclarator returnedDeclarator = null;
 
 		try {
@@ -143,14 +148,14 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 			// If the type is a function, create a declaration of a pointer to this function
 			// (shorthand notation for function address).
 
-			boolean changeInitialFunctionToFuncPtr = true;
+			boolean changeNextFunctionToFuncPtr = changeInitialFunctionToFuncPtr;
 
 			while (typeNeedsNontrivialDeclarator(type)) {
 				if (replaceInitialArrayWithPointer && type instanceof IArrayType) {
 					returnedDeclarator = factory.newDeclarator(newName);
 					returnedDeclarator.addPointerOperator(factory.newPointer());
 					type = ((IArrayType) type).getType();
-				} else if (changeInitialFunctionToFuncPtr && type instanceof IFunctionType) {
+				} else if (changeNextFunctionToFuncPtr && type instanceof IFunctionType) {
 					returnedDeclarator = factory.newDeclarator(newName);
 					returnedDeclarator.addPointerOperator(factory.newPointer());
 					// Leave type as it is, next iteration will handle the function.
@@ -204,7 +209,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 					type = funcType.getReturnType();
 				}
 				replaceInitialArrayWithPointer = false;
-				changeInitialFunctionToFuncPtr = false;
+				changeNextFunctionToFuncPtr = false;
 			}
 			
 			finalizePointerOperators(pointerOperatorMap);
@@ -313,12 +318,24 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		ICPPNodeFactory cppFactory = (ICPPNodeFactory) factory;
 		ICPPASTTemplateId tempId = cppFactory.newTemplateId(templateName.copy(CopyStyle.withLocations));
 		for (ICPPTemplateArgument arg : type.getTemplateArguments()) {
-			IASTDeclSpecifier argDeclSpec = createDeclSpecFromType(arg.isTypeValue() ?
-					arg.getTypeValue() : arg.getTypeOfNonTypeValue());
-			IASTTypeId typeId = cppFactory.newTypeId(argDeclSpec, null);
+			IASTTypeId typeId = getTypeIdForTemplateArgument(arg);
 			tempId.addTemplateArgument(typeId);
 		}
 		return tempId;
+	}
+
+	private IASTTypeId getTypeIdForTemplateArgument(ICPPTemplateArgument argument) {
+		IASTDeclSpecifier argDeclSpec;
+		IASTDeclarator typeDeclarator = null;
+		if (argument.isTypeValue()) {
+			IType argumentType = argument.getTypeValue();
+			argDeclSpec = createDeclSpecFromType(argumentType);
+			typeDeclarator = createDeclaratorFromType(argumentType, CharArrayUtils.EMPTY, false);
+		} else {
+			argDeclSpec = createDeclSpecFromType(argument.getTypeOfNonTypeValue());
+		}
+		IASTTypeId typeId = factory.newTypeId(argDeclSpec, typeDeclarator);
+		return typeId;
 	}
 
 	private IASTNamedTypeSpecifier getDeclSpecForBinding(IBinding binding) {

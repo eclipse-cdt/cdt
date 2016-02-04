@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,6 +10,7 @@
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable;
 
@@ -571,4 +572,24 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
+	//A.cpp
+	//template<typename T>
+	//struct Tpl {};
+	//
+	//void func() {
+	//	Tpl<int(const char*, long int (*)(float))> t;
+	//	/*$*/t/*$$*/;
+	//}
+	//====================
+	//template<typename T>
+	//struct Tpl {};
+	//
+	//void func() {
+	//	Tpl<int(const char*, long int (*)(float))> t;
+	//	Tpl<int(const char*, long int (*)(float))> t0 = t;
+	//	t0;
+	//}
+	public void testTemplateWithFunctionArgument_487186() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

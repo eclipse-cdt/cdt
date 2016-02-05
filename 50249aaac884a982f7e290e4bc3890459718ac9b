@@ -16,6 +16,24 @@
       "revId": "50249aaac884a982f7e290e4bc3890459718ac9b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07d9433e_2148a105",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-02-05T16:06:39Z",
+      "side": 1,
+      "message": "Well, I think if that exception is thrown, you\u0027re in for a world of hurt anyway. Means the launch config is corrupt. I\u0027ve never seen that happen and you probably wouldn\u0027t have gotten this far if it did. Again, these should all be throwing CoreExceptions up the stack but that\u0027s an API change I\u0027m not interested in making right now. And that\u0027s what I meant by oversolving it. Don\u0027t want to spend to much time on something that never happens.",
+      "parentUuid": "07d9433e_81032dc6",
+      "revId": "50249aaac884a982f7e290e4bc3890459718ac9b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1820,4 +1820,21 @@ public class CompletionTests extends AbstractContentAssistTest {
 		};
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
+	
+	//	template <int k>
+	//	struct D {
+	//		struct C {
+	//			C* c;
+	//		};
+	//		C c;
+	//		void f() {
+	//			c.c->c->c./*cursor*/
+	//		}
+	//	};
+	public void testDependentMemberChain_bug478121() throws Exception {
+		setReplaceDotWithArrow(true);
+		final String[] expected = { "C", "c" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+		assertDotReplacedWithArrow();
+	}
 }

@@ -53,6 +53,7 @@ public class HeuristicResolver {
 		if (type instanceof ICPPUnknownType) {
 			type = resolveUnknownType((ICPPUnknownType) type, point, SemanticUtil.TDEF | SemanticUtil.REF);
 		}
+		type = SemanticUtil.getNestedType(type, SemanticUtil.PTR);
 		if (type instanceof ICompositeType) {
 			return ((ICompositeType) type).getCompositeScope();
 		}
@@ -171,30 +172,31 @@ public class HeuristicResolver {
 			ownerType = ((IPointerType) ownerType).getType();
 			isPointerDeref = false;
 		}
-		if (ownerType instanceof ICPPUnknownType) {
+		
+		IType lookupType = ownerType;
+		ICPPClassSpecialization specializationContext = null;
+		if (lookupType instanceof ICPPUnknownType) {
 			// Here we have a loop similar to the one in resolveUnknownType(), but we stop when 
 			// we get a result that's an ICPPClassSpecialization or an ICPPDeferredClassInstance, 
 			// so we can use it to specialize the lookup results as appropriate.
-			IType lookupType;
-			ICPPClassSpecialization specializationContext = null;
 			while (true) {
-				if (ownerType instanceof ICPPClassSpecialization) {
-					specializationContext = (ICPPClassSpecialization) ownerType;
+				if (lookupType instanceof ICPPClassSpecialization) {
+					specializationContext = (ICPPClassSpecialization) lookupType;
 					lookupType = specializationContext.getSpecializedBinding();
 					break;
-				} else if (ownerType instanceof ICPPDeferredClassInstance) {
+				} else if (lookupType instanceof ICPPDeferredClassInstance) {
 					specializationContext = new CPPDependentClassInstance(
-							(ICPPDeferredClassInstance) ownerType);
+							(ICPPDeferredClassInstance) lookupType);
 					lookupType = specializationContext.getSpecializedBinding();
 					break;
 				}
-				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) ownerType, point);
+				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) lookupType, point);
 				resolvedType = SemanticUtil.getNestedType(resolvedType, SemanticUtil.TDEF | SemanticUtil.REF);
-				if (resolvedType == ownerType || !(resolvedType instanceof ICPPUnknownType)) {
+				if (resolvedType == lookupType || !(resolvedType instanceof ICPPUnknownType)) {
 					lookupType = resolvedType;
 					break;
 				} else {
-					ownerType = resolvedType;
+					lookupType = resolvedType;
 					continue;
 				}
 			}
@@ -208,27 +210,27 @@ public class HeuristicResolver {
 					lookupType = null;
 				}
 			}
+		}
 			
-			IScope lookupScope = null;
-			if (lookupType instanceof ICPPClassType) {
-				lookupScope = ((ICPPClassType) lookupType).getCompositeScope();
-			} else if (lookupType instanceof ICPPEnumeration) {
-				lookupScope = ((ICPPEnumeration) lookupType).asScope();
-			}
-			if (lookupScope != null) {
-				LookupData lookup = new LookupData(name, templateArgs, point);
-				lookup.fHeuristicBaseLookup = true;
-				try {
-					CPPSemantics.lookup(lookup, lookupScope);
-					IBinding[] foundBindings = lookup.getFoundBindings();
-					if (foundBindings.length > 0) {
-						if (specializationContext != null) {
-							foundBindings = specializeBindings(foundBindings, specializationContext, point);
-						}
-						return foundBindings;
+		IScope lookupScope = null;
+		if (lookupType instanceof ICPPClassType) {
+			lookupScope = ((ICPPClassType) lookupType).getCompositeScope();
+		} else if (lookupType instanceof ICPPEnumeration) {
+			lookupScope = ((ICPPEnumeration) lookupType).asScope();
+		}
+		if (lookupScope != null) {
+			LookupData lookup = new LookupData(name, templateArgs, point);
+			lookup.fHeuristicBaseLookup = true;
+			try {
+				CPPSemantics.lookup(lookup, lookupScope);
+				IBinding[] foundBindings = lookup.getFoundBindings();
+				if (foundBindings.length > 0) {
+					if (specializationContext != null) {
+						foundBindings = specializeBindings(foundBindings, specializationContext, point);
 					}
-				} catch (DOMException e) {
+					return foundBindings;
 				}
+			} catch (DOMException e) {
 			}
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
@@ -265,7 +267,7 @@ public class HeuristicResolver {
 	 * 
 	 * @param point the point of instantiation for lookups
 	 */
-	private static IType resolveUnknownType(ICPPUnknownType type, IASTNode point) {
+	public static IType resolveUnknownType(ICPPUnknownType type, IASTNode point) {
 		return resolveUnknownType(type, point, SemanticUtil.TDEF);
 	}
 	
@@ -327,6 +329,11 @@ public class HeuristicResolver {
 					functionType = resolveUnknownType((ICPPUnknownType) functionType, point);
 				}
 				return ExpressionTypes.typeFromFunctionCall(functionType);
+			} else if (evaluation instanceof EvalMemberAccess) {
+				IBinding member = ((EvalMemberAccess) evaluation).getMember();
+				// Presumably the type will be unknown. That's fine, it will be
+				// resolved during subsequent resolution rounds.
+				return typeForBinding(member);
 			}
 			// TODO(nathanridge): Handle more cases.
 		} else if (type instanceof ICPPUnknownMemberClass) {

@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.CoreModelMessages;
+import org.eclipse.cdt.internal.core.model.ext.StructureTemplateHandle;
 
 // Most parts of this file were previously located in CElementLabels.
 // FlexibleBuffer and sub-types are taken from JDTs JavaElementLabelComposer.
@@ -865,7 +866,17 @@ public class CElementLabelComposer {
 			}
 		}
 
-		String typeName= elem.getElementName();
+		String typeName = null;
+		if (elem instanceof StructureTemplateHandle) {
+			try {
+				typeName = ((StructureTemplateHandle) elem).getTemplateSignature();
+			} catch (CModelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			typeName= elem.getElementName();
+		}
 		if (typeName.length() == 0) { // anonymous
 			typeName = CoreModelMessages.getString("CElementLabels.anonymous");	//$NON-NLS-1$
 		}

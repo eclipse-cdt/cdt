@@ -20,19 +20,25 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructureTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.model.Template;
 
 public class StructureTemplateHandle extends StructureHandle implements IStructureTemplate {
 
 	private Template fTemplate;
+	
+	private final int hash;
 
 	public StructureTemplateHandle(ICElement parent, ICPPClassTemplate classTemplate) throws DOMException {
 		super(parent, classTemplate);
+		hash = classTemplate.hashCode();
 		fTemplate= new Template(classTemplate.getName());
 		ICPPTemplateParameter[] tpars = classTemplate.getTemplateParameters();
 		String[] args= new String[tpars.length];
@@ -44,6 +50,7 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 
 	public StructureTemplateHandle(ICElement parent, ICPPClassTemplatePartialSpecialization classTemplate) throws DOMException {
 		super(parent, classTemplate);
+		hash = classTemplate.hashCode();
 		fTemplate= new Template(classTemplate.getName());
 		ICPPTemplateArgument[] targs = classTemplate.getTemplateArguments();
 		String[] args= new String[targs.length];
@@ -55,7 +62,8 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 
 	public StructureTemplateHandle(ICElement parent, ICPPClassSpecialization classBinding, ICPPClassTemplate ct) throws DOMException {
 		super(parent, classBinding);
-		fTemplate= new Template(classBinding.getName());
+		hash = classBinding.hashCode();
+		fTemplate = new Template(classBinding.getName());
 		ICPPTemplateParameterMap map = classBinding.getTemplateParameterMap();
 		ICPPTemplateParameter[] tpars = ct.getTemplateParameters();
 		List<String> args= new ArrayList<String>(tpars.length);
@@ -95,4 +103,8 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 		return fTemplate.getTemplateSignature();
 	}
 
+	@Override
+	public int hashCode() {
+		return hash;
+	}
 }

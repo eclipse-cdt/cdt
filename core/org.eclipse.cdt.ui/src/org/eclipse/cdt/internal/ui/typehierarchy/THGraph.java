@@ -23,16 +23,23 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
@@ -57,10 +64,10 @@ class THGraph {
 	}
 
 	private THGraphNode addNode(ICElement input) {
-		THGraphNode node= fNodes.get(input); 
+		THGraphNode node = fNodes.get(input);
 
 		if (node == null) {
-			node= new THGraphNode(input);
+			node = new THGraphNode(input);
 			fNodes.put(input, node);
 			fRootNodes.add(node);
 			fLeafNodes.add(node);
@@ -137,109 +144,106 @@ class THGraph {
 		}
 	}
 
-	public void addSuperClasses(IIndex index, IProgressMonitor monitor) {
-		if (fInputNode == null) {
+	private void addSuperClasses(THGraphNode graphNode, IBinding subClass, IIndex index, IProgressMonitor monitor,
+ int depth) {
+		if (depth > CPPSemantics.MAX_INHERITANCE_DEPTH || monitor.isCanceled())
 			return;
-		}
-		HashSet<ICElement> handled= new HashSet<>();
-		ArrayList<ICElement> stack= new ArrayList<>();
-		stack.add(fInputNode.getElement());
-		handled.add(fInputNode.getElement());
-		while (!stack.isEmpty()) {
-			if (monitor.isCanceled()) {
-				return;
-			}
-			ICElement elem= stack.remove(stack.size() - 1);
-			THGraphNode graphNode= addNode(elem);
+		if (subClass instanceof ICPPClassType) {
 			try {
-				IIndexBinding binding = IndexUI.elementToBinding(index, elem);
-				if (binding != null) {
-					addMembers(index, graphNode, binding);
-				}
-				if (binding instanceof ICPPClassType) {
-					ICPPClassType ct= (ICPPClassType) binding;
-					ICPPBase[] bases= ct.getBases();
-					for (ICPPBase base : bases) {
-						if (monitor.isCanceled()) {
-							return;
+				addMembers(index, graphNode, subClass);
+				ICPPBase[] bases = ((ICPPClassType) subClass).getBases();
+				for (ICPPBase base : bases) {
+					IType baseType = base.getBaseClassType();
+
+					if (baseType instanceof ICPPTemplateTypeParameter) {
+						if (baseType instanceof ICPPTemplateInstance) {
+							ICPPTemplateArgument[] args = ((ICPPTemplateInstance) subClass)
+									.getTemplateArguments();
+							baseType = args[((ICPPTemplateTypeParameter) baseType).getParameterID()]
+									.getTypeValue();
 						}
-						IType baseType= base.getBaseClassType();
-						if (baseType instanceof IBinding) {
-							final IBinding baseBinding = (IBinding) baseType;
-							ICElementHandle[] baseElems= IndexUI.findRepresentative(index, baseBinding);
+					} else if (baseType instanceof ICPPDeferredClassInstance) {
+						if (subClass instanceof ICPPTemplateInstance) {
+							ICPPTemplateArgument[] args = ((ICPPTemplateInstance) subClass)
+									.getTemplateArguments();
+							baseType = (IType) CPPTemplates.instantiate(
+									((ICPPDeferredClassInstance) baseType).getClassTemplate(), args, null);
+						} else if (baseType instanceof ICPPAliasTemplateInstance) {
+							// TODO how can we depict the template
+							// parameter arguments?
+						}
+					}
+
+					if (baseType instanceof IBinding) {
+						IBinding baseBinding = (IBinding) baseType;
+						try {
+							ICElementHandle[] baseElems = IndexUI.findRepresentative(index, baseBinding);
 							for (ICElementHandle baseElem : baseElems) {
-								THGraphNode baseGraphNode= addNode(baseElem);
-								addMembers(index, baseGraphNode, baseBinding);							
+								THGraphNode baseGraphNode = addNode(baseElem);
 								addEdge(graphNode, baseGraphNode);
-								if (handled.add(baseElem)) {
-									stack.add(baseElem);
-								}
+								addSuperClasses(baseGraphNode, baseBinding, index, monitor, depth + 1);
 							}
-						}
-					}
-				} else if (binding instanceof ITypedef) {
-					ITypedef ct= (ITypedef) binding;
-					IType type= ct.getType();
-					if (type instanceof IBinding) {
-						IBinding basecl= (IBinding) type;
-						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
-						if (baseElems.length > 0) {
-							ICElementHandle baseElem= baseElems[0];
-							THGraphNode baseGraphNode= addNode(baseElem);
-							addMembers(index, baseGraphNode, basecl);							
-							addEdge(graphNode, baseGraphNode);
-							if (handled.add(baseElem)) {
-								stack.add(baseElem);
-							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
 				}
-			} catch (CoreException e) {
-				CUIPlugin.log(e);
+
+			} catch (CoreException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else if (subClass instanceof IType) {
+			IType resolved = SemanticUtil.getSimplifiedType((IType) subClass);
+			if (resolved != subClass && resolved instanceof IBinding) {
+				IBinding baseBinding = (IBinding) resolved;
+				try {
+					ICElementHandle[] baseElems = IndexUI.findRepresentative(index, baseBinding);
+					for (ICElementHandle baseElem : baseElems) {
+						THGraphNode baseGraphNode = addNode(baseElem);
+						addEdge(graphNode, baseGraphNode);
+						addSuperClasses(baseGraphNode, baseBinding, index, monitor, depth + 1);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
-	public void addSubClasses(IIndex index, IProgressMonitor monitor) {
-		if (fInputNode == null) {
+	private void addSubClasses(THGraphNode graphNode, IBinding superCLass, IIndex index, IProgressMonitor monitor,
+			int depth) {
+		if (depth > CPPSemantics.MAX_INHERITANCE_DEPTH || monitor.isCanceled())
 			return;
-		}
-		HashSet<ICElement> handled= new HashSet<>();
-		ArrayList<ICElement> stack= new ArrayList<>();
-		ICElement element = fInputNode.getElement();
-		stack.add(element);
-		handled.add(element);
-		while (!stack.isEmpty()) {
-			if (monitor.isCanceled()) {
-				return;
-			}
-			ICElement elem= stack.remove(stack.size() - 1);
-			THGraphNode graphNode= addNode(elem);
+		if (superCLass != null) {
+			// TODO(nathanridge): Also find subclasses referenced via
+			// decltype-specifiers rather than names.
 			try {
-				IBinding binding = IndexUI.elementToBinding(index, elem);
-				if (binding != null) {
-					// TODO(nathanridge): Also find subclasses referenced via decltype-specifiers rather than names.
-					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
-					for (IIndexName indexName : names) {
-						if (monitor.isCanceled()) {
-							return;
-						}
+			IIndexName[] names = index.findNames(superCLass,
+						IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
+				for (IIndexName indexName : names) {
+					if (monitor.isCanceled()) {
+						return;
+					}
+					try {
 						if (indexName.isBaseSpecifier()) {
-							IIndexName subClassDef= indexName.getEnclosingDefinition();
+							IIndexName subClassDef = indexName.getEnclosingDefinition();
 							if (subClassDef != null) {
-								IBinding subClass= index.findBinding(subClassDef);
-								ICElementHandle[] subClassElems= IndexUI.findRepresentative(index, subClass);
+								IBinding subClass = index.findBinding(subClassDef);
+								ICElementHandle[] subClassElems = IndexUI.findRepresentative(index, subClass);
 								if (subClassElems.length > 0) {
-									ICElementHandle subClassElem= subClassElems[0];
-									THGraphNode subGraphNode= addNode(subClassElem);
-									addMembers(index, subGraphNode, subClass);							
+									ICElementHandle subClassElem = subClassElems[0];
+									THGraphNode subGraphNode = addNode(subClassElem);
+									addMembers(index, subGraphNode, subClass);
 									addEdge(subGraphNode, graphNode);
-									if (handled.add(subClassElem)) {
-										stack.add(subClassElem);
-									}
+									addSubClasses(subGraphNode, subClass, index, monitor, depth + 1);
 								}
 							}
 						}
+					} catch (CoreException e) {
+						CUIPlugin.log(e);
 					}
 				}
 			} catch (CoreException e) {
@@ -248,6 +252,21 @@ class THGraph {
 		}
 	}
 	
+	public void addClassNodes(IIndex index, IProgressMonitor monitor) {
+		if (fInputNode == null) {
+			return;
+		}
+		ICElement elem = fInputNode.getElement();
+		try {
+			IBinding binding = IndexUI.elementToBinding(index, elem);
+			addSuperClasses(fInputNode, binding, index, monitor, 0);
+			addSubClasses(fInputNode, binding, index, monitor, 0);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws CoreException {
 		if (graphNode.getMembers(false) == null) {
 			ArrayList<ICElement> memberList= new ArrayList<>();

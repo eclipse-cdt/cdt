@@ -90,6 +90,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -110,9 +111,12 @@ public class IndexUI {
 			ISourceReference sf = ((ISourceReference) element);
 			ISourceRange range= sf.getSourceRange();
 			if (range.getIdLength() != 0) {
-				IIndexName name= elementToName(index, element, linkageID);
+				IIndexName name = elementToName(index, element, linkageID);
 				if (name != null) {
-					return index.findBinding(name);
+					IIndexBinding binding = index.findBinding(name);
+					if (checkBinding(binding, element)) {
+						return binding;
+					}
 				}
 			} else {
 				String name= element.getElementName();
@@ -201,7 +205,7 @@ public class IndexUI {
 							IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
 							for (IIndexName name2 : names) {
 								IIndexName name = name2;
-								if (!name.isReference() && elementName.endsWith(new String(name.getSimpleID()))) {
+								if (elementName.endsWith(new String(name.getSimpleID()))) {
 									return name;
 								}
 							}
@@ -275,17 +279,26 @@ public class IndexUI {
 
 	public static ICElementHandle[] findRepresentative(IIndex index, IBinding binding) throws CoreException {
 		ICElementHandle[] defs;
-		while (true) {
-			defs = findAllDefinitions(index, binding);
-			if (defs.length == 0) {
-				ICElementHandle elem = findAnyDeclaration(index, null, binding);
+		defs = findAllDefinitions(index, binding);
+		if (defs.length == 0) {
+			ICElementHandle elem = findAnyDeclaration(index, null, binding);
+			if (elem != null) {
+				defs = new ICElementHandle[] { elem };
+			}
+		}
+		if (defs.length == 0) {
+			IBinding specialized = SemanticUtil.resolveSpecialization(binding, false);
+			IIndexName[] names = index.findNames(specialized,
+					IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+			Set<ICElementHandle> result = new LinkedHashSet<>();
+			for (IIndexName in : names) {
+				ICElementHandle elem = getCElementForImplicitSpecialization((ICProject) null, index, in,
+						binding);
 				if (elem != null) {
-					defs = new ICElementHandle[] { elem };
+					result.add(elem);
 				}
 			}
-			if (defs.length != 0 || !(binding instanceof ICPPSpecialization))
-				break;
-			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+			defs = result.toArray(new ICElementHandle[result.size()]);
 		}
 		return defs;
 	}
@@ -304,6 +317,26 @@ public class IndexUI {
 			return result.toArray(new ICElementHandle[result.size()]);
 		}
 		return EMPTY_ELEMENT_ARRAY;
+	}
+	
+	public static ICElementHandle getCElementForImplicitSpecialization(ICProject preferProject, IIndex index,
+			IIndexName in, IBinding instanceBinding) throws CoreException {
+		assert !in.isReference();
+		if (instanceBinding != null) {
+			ITranslationUnit tu= getTranslationUnit(preferProject, in);
+			if (tu != null) {
+				IFile file= (IFile) tu.getResource();
+				long timestamp= file != null ? file.getLocalTimeStamp() : 0;
+				IASTFileLocation loc= in.getFileLocation();
+				IRegion region= new Region(loc.getNodeOffset(), loc.getNodeLength());
+				IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, timestamp);
+				if (converter != null) {
+					region= converter.actualToHistoric(region);
+				}
+				return CElementHandleFactory.create(tu, instanceBinding, in.isDefinition(), region, timestamp);
+			}
+		}
+		return null;
 	}
 
 	/**

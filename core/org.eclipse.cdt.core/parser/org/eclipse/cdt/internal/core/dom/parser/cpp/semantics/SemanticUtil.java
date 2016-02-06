@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
@@ -53,7 +54,9 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -854,5 +857,46 @@ public class SemanticUtil {
 			return Value.create((IASTExpression) clause);
 		}
 		return Value.UNKNOWN;
+	}
+
+	/**
+	 * Follows typedefs and aliases to their underlying type declaration.
+	 * 
+	 * @param binding
+	 * @return
+	 */
+	public static IBinding getSimplifiedBinding(IBinding binding) throws IllegalArgumentException {
+		if (binding instanceof IType) {
+			IType type = SemanticUtil.getSimplifiedType((IType) binding);
+			if (type instanceof IProblemType)
+				throw new IllegalArgumentException(((IProblemType) type).getMessage());
+			binding = (IBinding) type;
+		}
+		return binding;
+	}
+	
+	/**
+	 * Resolves template specializations.
+	 * 
+	 * @param binding
+	 * @return a composite type that contains declarations
+	 */
+	public static IBinding resolveSpecialization(IBinding binding, boolean keepAlias)
+			throws IllegalArgumentException {
+		if (!keepAlias) {
+			binding = getSimplifiedBinding(binding);
+		}
+		while (binding instanceof ICPPSpecialization) {
+			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+		}
+		if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+			// A class template partial specialization inherits the
+			// visibility of its primary class template.
+			binding = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
+		}
+		if (binding instanceof ICPPAliasTemplateInstance) {
+			binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
+		}
+		return binding;
 	}
 }

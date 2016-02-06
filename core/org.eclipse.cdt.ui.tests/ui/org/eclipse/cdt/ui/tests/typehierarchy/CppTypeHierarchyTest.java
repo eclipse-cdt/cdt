@@ -834,7 +834,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		openTypeHierarchy(editor);
 		tree= getHierarchyViewer().getTree();
 
-		item1= checkTreeNode(tree, 0, "SimpleTemplate");
+		item1= checkTreeNode(tree, 0, "SimpleTemplate<T>");
 		assertEquals(1, tree.getItemCount());
 		assertEquals(0, item1.getItemCount());
 		checkMethodTable(new String[] {"field1 : T", "method1() : T"});
@@ -868,7 +868,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		openTypeHierarchy(editor);
 		tree= getHierarchyViewer().getTree();
 
-		item1= checkTreeNode(tree, 0, "ns::A");
+		item1= checkTreeNode(tree, 0, "ns::A<T>");
 		assertEquals(1, tree.getItemCount());
 		getHierarchyViewer().expandAll();
 
@@ -880,7 +880,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("B"), 1);
 		openTypeHierarchy(editor);
 		tree= getHierarchyViewer().getTree();
-		item1= checkTreeNode(tree, 0, "ns::A");
+		item1= checkTreeNode(tree, 0, "ns::A<int>");
 		assertEquals(1, tree.getItemCount());
 
 		item2= checkTreeNode(item1, 0, "B");

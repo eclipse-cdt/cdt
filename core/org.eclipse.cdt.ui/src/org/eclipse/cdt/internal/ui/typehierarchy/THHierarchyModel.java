@@ -155,10 +155,7 @@ class THHierarchyModel {
 				if (monitor.isCanceled()) 
 					return Status.CANCEL_STATUS;
 				graph.defineInputNode(index, fInput);
-				graph.addSuperClasses(index, monitor);
-				if (monitor.isCanceled()) 
-					return Status.CANCEL_STATUS;
-				graph.addSubClasses(index, monitor);
+				graph.addClassNodes(index, monitor);
 				if (monitor.isCanceled()) 
 					return Status.CANCEL_STATUS;
 			} finally {

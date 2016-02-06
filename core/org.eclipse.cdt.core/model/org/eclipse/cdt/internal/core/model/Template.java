@@ -73,7 +73,18 @@ public class Template implements ITemplate {
 			sig.append(">"); //$NON-NLS-1$
 		}
 		else{
-			sig.append("<>"); //$NON-NLS-1$
+			if (fTemplateArgs .length > 0) {
+				sig.append("<"); //$NON-NLS-1$
+				int i = 0;
+				sig.append(fTemplateArgs[i++]);
+				while (i < fTemplateArgs.length){
+					sig.append(", "); //$NON-NLS-1$
+					sig.append(fTemplateArgs[i++]);
+				}
+				sig.append(">"); //$NON-NLS-1$
+			} else {
+				sig.append("<>"); //$NON-NLS-1$
+			}
 		}
 		return sig.toString();
 	}

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -30,38 +31,66 @@ import org.eclipse.cdt.internal.core.model.Template;
 public class StructureTemplateHandle extends StructureHandle implements IStructureTemplate {
 
 	private Template fTemplate;
+	
+	private final int hash;
+
+
+	private static int convertDeclarationType(ICPPClassTemplate template) {
+		switch (template.getKey()) {
+		case ICompositeType.k_struct:
+			return ICElement.C_TEMPLATE_STRUCT_DECLARATION;
+		case ICompositeType.k_union:
+			return ICElement.C_TEMPLATE_UNION_DECLARATION;
+		}
+		return ICElement.C_TEMPLATE_CLASS_DECLARATION;
+	}
 
 	public StructureTemplateHandle(ICElement parent, ICPPClassTemplate classTemplate) throws DOMException {
-		super(parent, classTemplate);
-		fTemplate= new Template(classTemplate.getName());
+		super(parent, convertDeclarationType(classTemplate), classTemplate.getName());
+		hash = classTemplate.hashCode();
+		fTemplate = new Template(classTemplate.getName());
 		ICPPTemplateParameter[] tpars = classTemplate.getTemplateParameters();
-		String[] args= new String[tpars.length];
+		String[] args = new String[tpars.length];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= tpars[i].getName();
+			args[i] = tpars[i].getName();
 		}
 		fTemplate.setTemplateInfo(null, args);
 	}
 
-	public StructureTemplateHandle(ICElement parent, ICPPClassTemplatePartialSpecialization classTemplate) throws DOMException {
-		super(parent, classTemplate);
-		fTemplate= new Template(classTemplate.getName());
+	public StructureTemplateHandle(ICElement parent, ICPPClassTemplatePartialSpecialization classTemplate)
+			throws DOMException {
+		super(parent, convertDeclarationType(classTemplate), classTemplate.getName());
+		hash = classTemplate.hashCode();
+		fTemplate = new Template(classTemplate.getName());
 		ICPPTemplateArgument[] targs = classTemplate.getTemplateArguments();
-		String[] args= new String[targs.length];
+		String[] args = new String[targs.length];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= ASTTypeUtil.getArgumentString(targs[i], false);
+			args[i] = ASTTypeUtil.getArgumentString(targs[i], false);
 		}
 		fTemplate.setTemplateInfo(null, args);
 	}
 
-	public StructureTemplateHandle(ICElement parent, ICPPClassSpecialization classBinding, ICPPClassTemplate ct) throws DOMException {
-		super(parent, classBinding);
-		fTemplate= new Template(classBinding.getName());
+	private static int convertSpecializationType(ICPPClassSpecialization specialization) {
+		switch (specialization.getKey()) {
+		case ICompositeType.k_struct:
+			return ICElement.C_TEMPLATE_STRUCT;
+		case ICompositeType.k_union:
+			return ICElement.C_TEMPLATE_UNION;
+		}
+		return ICElement.C_TEMPLATE_CLASS;
+	}
+
+	public StructureTemplateHandle(ICElement parent, ICPPClassSpecialization classBinding,
+			ICPPClassTemplate ct) throws DOMException {
+		super(parent, convertSpecializationType(classBinding), classBinding.getName());
+		hash = classBinding.hashCode();
+		fTemplate = new Template(classBinding.getName());
 		ICPPTemplateParameterMap map = classBinding.getTemplateParameterMap();
 		ICPPTemplateParameter[] tpars = ct.getTemplateParameters();
-		List<String> args= new ArrayList<String>(tpars.length);
+		List<String> args = new ArrayList<String>(tpars.length);
 		for (ICPPTemplateParameter par : tpars) {
 			if (par.isParameterPack()) {
-				ICPPTemplateArgument[] pack= map.getPackExpansion(par);
+				ICPPTemplateArgument[] pack = map.getPackExpansion(par);
 				if (pack != null) {
 					for (ICPPTemplateArgument p : pack) {
 						args.add(ASTTypeUtil.getArgumentString(p, false));
@@ -95,4 +124,8 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 		return fTemplate.getTemplateSignature();
 	}
 
+	@Override
+	public int hashCode() {
+		return hash;
+	}
 }

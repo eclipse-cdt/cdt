@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -204,6 +205,9 @@ public class CIndex implements IIndex {
 				}
 			}
 		}
+//		if (result.size() == 0 && binding instanceof ICPPTemplateInstance) {
+//			return findNames(((ICPPTemplateInstance) binding).getSpecializedBinding(), flags);
+//		}
 		return result.toArray(new IIndexName[result.size()]);
 	}
 

@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.CoreModelMessages;
+import org.eclipse.cdt.internal.core.model.ext.StructureTemplateHandle;
 
 // Most parts of this file were previously located in CElementLabels.
 // FlexibleBuffer and sub-types are taken from JDTs JavaElementLabelComposer.
@@ -217,15 +218,19 @@ public class CElementLabelComposer {
 			break;
 		case ICElement.C_METHOD : 
 		case ICElement.C_METHOD_DECLARATION:
+			appendMethodLabel((IMethodDeclaration) element, flags);
+			break;
 		case ICElement.C_TEMPLATE_METHOD:
 		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
-			appendMethodLabel((IMethodDeclaration) element, flags);
+			appendMethodLabel((IMethodDeclaration) element, flags | CElementLabels.TEMPLATE_ARGUMENTS);
 			break;
 		case ICElement.C_FUNCTION:
 		case ICElement.C_FUNCTION_DECLARATION:
+			appendFunctionLabel((IFunctionDeclaration) element, flags);
+			break;
 		case ICElement.C_TEMPLATE_FUNCTION:
 		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
-			appendFunctionLabel((IFunctionDeclaration) element, flags);
+			appendFunctionLabel((IFunctionDeclaration) element, flags | CElementLabels.TEMPLATE_ARGUMENTS);
 			break;
 		case ICElement.C_FIELD : 
 			appendFieldLabel((IField) element, flags);
@@ -241,14 +246,16 @@ public class CElementLabelComposer {
 		case ICElement.C_STRUCT:
 		case ICElement.C_UNION:
 		case ICElement.C_ENUMERATION:
+		case ICElement.C_NAMESPACE:
+			appendTypeLabel(element, flags);
+			break;
 		case ICElement.C_TEMPLATE_CLASS:
 		case ICElement.C_TEMPLATE_STRUCT:
 		case ICElement.C_TEMPLATE_UNION:
 		case ICElement.C_TEMPLATE_CLASS_DECLARATION:
 		case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
 		case ICElement.C_TEMPLATE_UNION_DECLARATION:
-		case ICElement.C_NAMESPACE:
-			appendTypeLabel(element, flags);
+			appendTypeLabel(element, flags | CElementLabels.TEMPLATE_ARGUMENTS);
 			break;
 		case ICElement.C_TYPEDEF:
 			appendTypeDefLabel((ITypeDef)element, flags);
@@ -442,11 +449,17 @@ public class CElementLabelComposer {
 
 		fBuffer.append('<');
 		if (args != null) {
-			for (int i= 0; i < args.length; i++) {
+			for (int i = 0; i < args.length; i++) {
 				if (i > 0) {
 					fBuffer.append(',');
 				}
-				fBuffer.append(args[i]);
+				if (args[i].contentEquals("bool0")) { //$NON-NLS-1$
+					fBuffer.append("false"); //$NON-NLS-1$
+				} else if (args[i].contentEquals("bool1")) { //$NON-NLS-1$
+					fBuffer.append("true"); //$NON-NLS-1$
+				} else {
+					fBuffer.append(args[i]);
+				}
 			}
 		}
 		fBuffer.append('>');
@@ -865,9 +878,9 @@ public class CElementLabelComposer {
 			}
 		}
 
-		String typeName= elem.getElementName();
+		String typeName = elem.getElementName();
 		if (typeName.length() == 0) { // anonymous
-			typeName = CoreModelMessages.getString("CElementLabels.anonymous");	//$NON-NLS-1$
+			typeName = CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$
 		}
 		fBuffer.append(typeName);
 

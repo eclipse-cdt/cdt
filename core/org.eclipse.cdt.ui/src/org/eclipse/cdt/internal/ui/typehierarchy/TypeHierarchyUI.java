@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -26,7 +27,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -34,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
@@ -42,6 +47,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -103,34 +109,53 @@ public class TypeHierarchyUI {
 		return null;
 	}
 
-    public static void open(final ITextEditor editor, final ITextSelection sel) {
+	public static void open(final ITextEditor editor, final ITextSelection sel) {
 		if (editor != null) {
-			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager()
+					.getWorkingCopy(editor.getEditorInput());
 			if (inputCElement != null) {
-				final ICProject project= inputCElement.getCProject();
+				final ICProject project = inputCElement.getCProject();
 				final IEditorInput editorInput = editor.getEditorInput();
-				final Display display= Display.getCurrent();
+				final Display display = Display.getCurrent();
+				ITextSelection templateSelection = null;
+				try {
+					IASTNodeSelector nodeSelector = ((ITranslationUnit) inputCElement).getAST()
+							.getNodeSelector(null);
+					IASTName name = nodeSelector.findEnclosingName(sel.getOffset(), sel.getLength());
+					if (name != null) {
+						IASTNode parent = name.getParent();
+						if (parent instanceof ICPPASTTemplateId) {
+							name = (IASTName) parent;
+							IASTFileLocation loc = name.getFileLocation();
+							templateSelection = new TextSelection(loc.getNodeOffset(), loc.getNodeLength());
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				final ITextSelection selection = (templateSelection != null) ? templateSelection : sel;
 
-				Job job= new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
+				Job job = new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							StatusLineHandler.clearStatusLine(editor.getSite());
-							IRegion reg= new Region(sel.getOffset(), sel.getLength());
-							final ICElement[] elems= findInput(project, editorInput, reg);
+							IRegion reg = new Region(selection.getOffset(), selection.getLength());
+							final ICElement[] elems = findInput(project, editorInput, reg);
 							if (elems != null && elems.length == 2) {
 								display.asyncExec(new Runnable() {
 									@Override
 									public void run() {
-										openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0], elems[1]);
-									}});
+										openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0],
+												elems[1]);
+									}
+								});
 							} else {
-								StatusLineHandler.showStatusLineMessage(editor.getSite(), 
+								StatusLineHandler.showStatusLineMessage(editor.getSite(),
 										Messages.TypeHierarchyUI_OpenFailure_message);
 							}
 							return Status.OK_STATUS;
-						} 
-						catch (CoreException e) {
+						} catch (CoreException e) {
 							return e.getStatus();
 						}
 					}
@@ -139,8 +164,8 @@ public class TypeHierarchyUI {
 				job.schedule();
 			}
 		}
-    }
-    
+	}
+
 	private static ICElement[] findInput(ICProject project, IEditorInput editorInput, IRegion sel) throws CoreException {
 		try {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
@@ -229,7 +254,9 @@ public class TypeHierarchyUI {
 		if (name != null && name.isDefinition()) {
 			return IndexUI.getCElementForName(project, index, name);
 		}
-
+		if (name instanceof ICPPASTTemplateId) {
+			return IndexUI.getCElementForName(project, index, name);
+		}
 		ICElement[] elems= IndexUI.findAllDefinitions(index, binding);
 		if (elems.length > 0) {
 			return elems[0];

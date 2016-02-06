@@ -25,6 +25,10 @@ public class StructureHandle extends CElementHandle implements IStructure {
 		super(parent, convertKey(type.getKey()), type.getName());
 	}
 
+	protected StructureHandle(ICElement parent, int type, String name) {
+		super(parent, type, name);
+	}
+
 	private static int convertKey(int astKey) {
 		switch (astKey) {
 		case ICompositeType.k_struct:

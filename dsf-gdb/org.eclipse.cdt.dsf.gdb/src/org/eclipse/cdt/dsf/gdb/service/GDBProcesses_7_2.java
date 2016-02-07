@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 TUBITAK BILGEM-ITI and others.
+ * Copyright (c) 2010, 2016 TUBITAK BILGEM-ITI and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Adding support for multi-process with GDB 7.2
@@ -253,18 +255,52 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	@Override
 	public void attachDebuggerToProcess(final IProcessDMContext procCtx, final String binaryPath, final DataRequestMonitor<IDMContext> dataRm) {
 		if (procCtx instanceof IMIProcessDMContext) {
-	    	if (!doIsDebuggerAttachSupported()) {
-	            dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
-	            dataRm.done();    		
-	    		return;
-	    	}
-	    	
+			if (!doIsDebuggerAttachSupported()) {
+				dataRm.setStatus(
+						new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
+				dataRm.done();
+				return;
+			}
+
 	    	// Use a sequence for better control of each step
 	    	ImmediateExecutor.getInstance().execute(new Sequence(getExecutor(), dataRm) {
 	    		private IMIContainerDMContext fContainerDmc;
 
 		        private Step[] steps = new Step[] {
-		        		// If this is not the very first inferior, we first need create the new inferior
+	    				// first check if requested process is already targetted
+						new Step() {
+							@Override
+							public void execute(final RequestMonitor rm) {
+								getProcessesBeingDebugged(procCtx, new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
+									@Override
+									protected void handleSuccess() {
+										assert getData() != null;
+
+										boolean found = false;
+										for (IDMContext dmc : getData()) {
+											IProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc,
+													IProcessDMContext.class);
+											if (procCtx.equals(procDmc)) {
+												found = true;
+											}
+										}
+										if (found) {
+											// abort the sequence
+											Status failedStatus = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+													REQUEST_FAILED,
+													MessageFormat.format(Messages.Already_connected_process_err,
+															((IMIProcessDMContext) procCtx).getProcId()),
+													null);
+											rm.done(failedStatus);
+											return;
+										}
+										super.handleSuccess();
+									}
+								});
+							}
+						},
+
+	    				// If this is not the very first inferior, we first need create the new inferior
 		                new Step() { 
 		                    @Override
 		                    public void execute(final RequestMonitor rm) {

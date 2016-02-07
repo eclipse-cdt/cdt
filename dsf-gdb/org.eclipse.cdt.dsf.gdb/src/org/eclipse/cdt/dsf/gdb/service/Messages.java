@@ -18,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
  * @since 4.1
  */
 class Messages extends NLS {
+	public static String Already_connected_process_error;
 	public static String Tracing_not_supported_error;
 	public static String Invalid_post_mortem_type_error;
 	public static String Cannot_get_post_mortem_file_path_error;

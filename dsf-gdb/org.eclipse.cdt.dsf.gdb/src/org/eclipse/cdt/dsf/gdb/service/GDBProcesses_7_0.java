@@ -103,6 +103,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.osgi.framework.BundleContext;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * This class implements the IProcesses interface for GDB 7.0
  * which supports the new -list-thread-groups command.
@@ -1082,6 +1084,39 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    		private IMIContainerDMContext fContainerDmc;
 	    		
 	    		private Step[] steps = new Step[] {
+	    				// first check if requested process is already targetted
+						new Step() {
+							@Override
+							public void execute(final RequestMonitor rm) {
+								getProcessesBeingDebugged(procCtx, new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
+									@Override
+									protected void handleSuccess() {
+										assert getData() != null;
+
+										boolean found = false;
+										for (IDMContext dmc : getData()) {
+											IProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc,
+													IProcessDMContext.class);
+											if (procCtx.equals(procDmc)) {
+												found = true;
+											}
+										}
+										if (found) {
+											// abort the sequence
+											Status failedStatus = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+													REQUEST_FAILED,
+													MessageFormat.format(Messages.Already_connected_process_error,
+															((IMIProcessDMContext) procCtx).getProcId()),
+													null); // $NON-NLS-1$
+											rm.done(failedStatus);
+											return;
+										}
+										super.handleSuccess();
+									}
+								});
+							}
+						},
+	    				
 	    				// For remote attach, we must set the binary first
 	    				// For a local attach, GDB can figure out the binary automatically,
 	    				// so we don't specify it.

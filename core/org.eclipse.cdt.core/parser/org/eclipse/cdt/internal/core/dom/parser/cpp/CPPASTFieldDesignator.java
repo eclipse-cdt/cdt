@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2016 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Sergey Prigogin (Google) - Initial API and implementation
+ * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -59,7 +59,7 @@ public class CPPASTFieldDesignator extends ASTNode
 	}
 
 	@Override
-	public boolean accept( ASTVisitor action) {
+	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
 				case ASTVisitor.PROCESS_ABORT: return false;
@@ -77,7 +77,7 @@ public class CPPASTFieldDesignator extends ASTNode
 
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		return findBindings(n, isPrefix);
+		return findBindings(n, isPrefix, null);
 	}
 
 	@Override

@@ -10,7 +10,6 @@ package org.eclipse.cdt.build.gcc.core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
@@ -151,22 +151,25 @@ public class GCCToolChain implements IToolChain {
 				if (files.length > 0) {
 					// replace it with a temp file
 					Path parentPath = filePath.getParent();
-					int n = 0;
-					while (true) {
-						// TODO need to know the language
-						tmpFile = parentPath.resolve(".sc" + n + ".cpp"); //$NON-NLS-1$ //$NON-NLS-2$
-						commandLine.set(i, tmpFile.toString());
-						try {
-							Files.createFile(tmpFile);
-							break;
-						} catch (FileAlreadyExistsException e) {
-							// try again
-							++n;
-						}
+					String extension = files[0].getFileExtension();
+					if (extension == null) {
+						// Not sure if this is a reasonable choice when there's
+						// no extension
+						extension = ".cpp"; //$NON-NLS-1$
+					} else {
+						extension = '.' + extension;
 					}
-					break;
+					tmpFile = Files.createTempFile(parentPath, ".sc", extension); //$NON-NLS-1$
+					commandLine.set(i, tmpFile.toString());
 				}
 			}
+		}
+		if (tmpFile == null) {
+			// Have to assume there wasn't a source file. Add one in the
+			// resource's container
+			IPath parentPath = resource instanceof IFile ? resource.getParent().getLocation() : resource.getLocation();
+			tmpFile = Files.createTempFile(parentPath.toFile().toPath(), ".sc", ".cpp"); //$NON-NLS-1$ //$NON-NLS-2$
+			commandLine.add(tmpFile.toString());
 		}
 
 		Files.createDirectories(buildDirectory);

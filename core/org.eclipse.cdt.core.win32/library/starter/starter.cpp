@@ -302,6 +302,10 @@ int main() {
 	// to our own job object.
 	BOOL f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE,
 	        CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &si, &pi);
+	// If breaking away from job is not permitted, retry without breakaway flag
+    if (!f)
+        f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE,
+            0, NULL, NULL, &si, &pi);
 
 	// We don't need them any more
 	CloseHandle(stdHandles[0]);

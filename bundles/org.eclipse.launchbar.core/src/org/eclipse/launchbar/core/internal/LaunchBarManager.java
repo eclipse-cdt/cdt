@@ -179,6 +179,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 					if (launch instanceof ITargetedLaunch) {
 						target = ((ITargetedLaunch) launch).getLaunchTarget();
 					}
+					if (target == null)
+						return;
 					if (launchDescriptorMatches(activeLaunchDesc, lc, target)) {
 						// active launch delegate may have changed target
 						try {

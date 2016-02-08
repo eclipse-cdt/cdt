@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
@@ -156,7 +157,7 @@ public class ModeSelector extends CSelector {
 		});
 	}
 
-	protected ILaunchGroup getDefaultLaunchGroup(String mode) throws CoreException {
+	protected ILaunchGroup getDefaultLaunchGroup(String mode) {
 		String groupId = null;
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			groupId = IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
@@ -205,7 +206,9 @@ public class ModeSelector extends CSelector {
 		if (element == null)
 			element = noModes[0];
 		super.setSelection(element);
-		updateLaunchButton(findLaunchButton());
+		if ("true".equals(Platform.getDebugOption(Activator.OPTION_LAUNCH_ICON_UPDATER))) { //$NON-NLS-1$
+			updateLaunchButton(findLaunchButton());
+		}
 	}
 
 	private ToolItem findLaunchButton() {
@@ -229,6 +232,7 @@ public class ModeSelector extends CSelector {
 			return;
 		}
 		toolItem.setImage(Activator.getDefault().getImage(Activator.IMG_BUTTON_LAUNCH));
+
 		Object selection = getSelection();
 		if (selection instanceof ILaunchMode) {
 			ILaunchMode lmode = (ILaunchMode) selection;

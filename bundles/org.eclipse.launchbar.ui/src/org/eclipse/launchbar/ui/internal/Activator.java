@@ -19,6 +19,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -43,10 +44,17 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.launchbar.ui"; //$NON-NLS-1$
 
+	// Options
+	public static final String OPTION_ICON_SIZE32 = Activator.PLUGIN_ID + "/iconSize32"; //$NON-NLS-1$
+	public static final String OPTION_LAUNCH_ICON_UPDATER = Activator.PLUGIN_ID + "/launchIconUpdater"; //$NON-NLS-1$
+
 	// Images
 	public static final String IMG_BUTTON_BUILD = "build"; //$NON-NLS-1$
+	public static final String IMG_BUTTON_BUILD_HOT = "build.hot"; //$NON-NLS-1$
 	public static final String IMG_BUTTON_LAUNCH = "launch"; //$NON-NLS-1$
+	public static final String IMG_BUTTON_LAUNCH_HOT = "launch.hot"; //$NON-NLS-1$
 	public static final String IMG_BUTTON_STOP = "stop"; //$NON-NLS-1$
+	public static final String IMG_BUTTON_STOP_HOT = "stop.hot"; //$NON-NLS-1$
 	public static final String IMG_LOCAL_TARGET = "localTarget"; //$NON-NLS-1$
 
 	// Command ids
@@ -72,19 +80,33 @@ public class Activator extends AbstractUIPlugin {
 	public Activator() {
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 
 		ImageRegistry imageRegistry = getImageRegistry();
-		imageRegistry.put(IMG_BUTTON_BUILD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build.png")); //$NON-NLS-1$
-		imageRegistry.put(IMG_BUTTON_LAUNCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch.png")); //$NON-NLS-1$
-		imageRegistry.put(IMG_BUTTON_STOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop.png")); //$NON-NLS-1$
+		if ("true".equals(Platform.getDebugOption(OPTION_ICON_SIZE32))) { //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_BUILD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_BUILD_HOT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_LAUNCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_LAUNCH_HOT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_STOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_STOP_HOT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop.png")); //$NON-NLS-1$
+		} else {
+			imageRegistry.put(IMG_BUTTON_BUILD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build2_24.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_BUILD_HOT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build2_hot_24.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_LAUNCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch2_24.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_LAUNCH_HOT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch2_hot_24.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_STOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop2_24.png")); //$NON-NLS-1$
+			imageRegistry.put(IMG_BUTTON_STOP_HOT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop2_hot_24.png")); //$NON-NLS-1$
+		}
 		imageRegistry.put(IMG_LOCAL_TARGET, imageDescriptorFromPlugin(PLUGIN_ID, "icons/localTarget.png")); //$NON-NLS-1$
 
 		context.registerService(ILaunchTargetUIManager.class, new LaunchTargetUIManager(), null);
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -124,12 +146,10 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public static void runCommand(String commandId, String... params) {
-		final ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-				.getService(ICommandService.class);
+		final ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = commandService.getCommand(commandId);
 		final Event trigger = new Event();
-		final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench()
-				.getService(IHandlerService.class);
+		final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		ExecutionEvent executionEvent = handlerService.createExecutionEvent(command, trigger);
 		if (params.length == 0) {
 			try {

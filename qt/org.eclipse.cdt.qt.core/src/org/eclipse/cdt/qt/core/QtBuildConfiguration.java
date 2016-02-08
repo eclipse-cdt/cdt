@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -208,7 +209,16 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 			args.addAll(Arrays.asList(getProperty("QMAKE_CXXFLAGS").split(" "))); //$NON-NLS-1$ //$NON-NLS-2$
 			args.add("-o"); //$NON-NLS-1$
 			args.add("-"); //$NON-NLS-1$
-			args.add(resource.getLocation().toString());
+
+			String srcFile;
+			if (resource instanceof IFile) {
+				srcFile = resource.getLocation().toOSString();
+				// Only add file if it's an IFile
+				args.add(srcFile);
+			} else {
+				// Doesn't matter, the toolchain will create a tmp file for this
+				srcFile = "scannerInfo.cpp"; //$NON-NLS-1$
+			}
 
 			String[] includePaths = getProperty("INCLUDEPATH").split(" "); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int i = 0; i < includePaths.length; ++i) {
@@ -219,7 +229,7 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 			}
 
 			ILanguage language = LanguageManager.getInstance()
-					.getLanguage(CCorePlugin.getContentType(getProject(), resource.getName()), getProject()); // $NON-NLS-1$
+					.getLanguage(CCorePlugin.getContentType(getProject(), srcFile), getProject()); // $NON-NLS-1$
 			Path dir = Paths.get(getProject().getLocationURI());
 			IExtendedScannerInfo extendedInfo = getToolChain().getScannerInfo(command, args,
 					Arrays.asList(includePaths), resource, dir);

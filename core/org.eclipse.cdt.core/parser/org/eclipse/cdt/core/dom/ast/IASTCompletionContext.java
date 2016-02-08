@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * Interface for a code completion's context. Used for context-sensitive
  * finding of bindings with a certain name or prefix.
@@ -20,7 +19,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @since 4.0
  */
 public interface IASTCompletionContext {
-	
 	/**
 	 * Returns bindings that start with the given name or prefix, only
 	 * considering those that are valid for this context.

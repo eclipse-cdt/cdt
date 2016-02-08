@@ -142,7 +142,7 @@ public class CPPASTFieldReference extends ASTNode
     			return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
     		// Collect the function bindings
-			List<ICPPFunction> functionBindings = new ArrayList<ICPPFunction>();
+			List<ICPPFunction> functionBindings = new ArrayList<>();
 			EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, this, functionBindings, false);
 			if (functionBindings.isEmpty())
 				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
@@ -228,7 +228,7 @@ public class CPPASTFieldReference extends ASTNode
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
-		List<IBinding> filtered = new ArrayList<IBinding>();
+		List<IBinding> filtered = new ArrayList<>();
 
 		for (IBinding binding : bindings) {
 			if (binding instanceof ICPPMethod) {

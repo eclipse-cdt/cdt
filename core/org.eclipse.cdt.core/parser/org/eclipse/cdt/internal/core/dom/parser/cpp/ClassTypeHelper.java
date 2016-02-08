@@ -310,28 +310,31 @@ public class ClassTypeHelper {
 	 * @param point the point of instantiation for name lookups
 	 */
 	public static ICPPClassType[] getVirtualBases(ICPPClassType classType, IASTNode point) {
-		Set<ICPPClassType> result = new HashSet<>();
-		result.add(classType);
-		getVirtualBases(classType, result, point);
-		result.remove(classType);
-		return result.toArray(new ICPPClassType[result.size()]);
+		Set<ICPPClassType> virtualBases = new HashSet<>();
+		Set<ICPPClassType> nonvirtualBases = new HashSet<>();
+		nonvirtualBases.add(classType);
+		getVirtualBases(classType, virtualBases, nonvirtualBases, point);
+		return virtualBases.toArray(new ICPPClassType[virtualBases.size()]);
 	}
-	
-	// Helper function for getVirtualBases(classType, point).
-	private static void getVirtualBases(ICPPClassType classType, Set<ICPPClassType> result, IASTNode point) {
+
+	/**
+	 * Helper function for #getVirtualBases(classType, point).
+	 */
+	private static void getVirtualBases(ICPPClassType classType, Set<ICPPClassType> virtualBases,
+			Set<ICPPClassType> nonvirtualBases, IASTNode point) {
 		ICPPBase[] bases = getBases(classType, point);
 		for (ICPPBase base : bases) {
 			IBinding b = base.getBaseClass();
 			if (b instanceof ICPPClassType) {
 				final ICPPClassType baseClass = (ICPPClassType) b;
 				if (base.isVirtual()) {
-					if (result.add(baseClass)) {
-						getVirtualBases(baseClass, result, point);
+					if (virtualBases.add(baseClass)) {
+						getVirtualBases(baseClass, virtualBases, nonvirtualBases, point);
 					}
 				} else {
 					// A non-virtual base could have virtual bases in its hierarchy. 
-					if (!result.contains(baseClass)) {
-						getVirtualBases(baseClass, result, point);
+					if (nonvirtualBases.add(baseClass)) {
+						getVirtualBases(baseClass, virtualBases, nonvirtualBases, point);
 					}
 				}
 			}

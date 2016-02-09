@@ -51,6 +51,10 @@ public class Messages extends NLS {
 	
 	public static String GdbReverseDebugging_HardwareTracingNotAvailable;
 
+	public static String GdbConnectCommand_Error;
+	
+	public static String GdbConnectCommand_FailureMessage;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages( Messages.class.getName(), Messages.class );

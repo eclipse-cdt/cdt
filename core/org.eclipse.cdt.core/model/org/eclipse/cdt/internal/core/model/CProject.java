@@ -528,6 +528,30 @@ public class CProject extends Openable implements ICProject {
 		return outputs;
 	}
 
+
+	private boolean isParentOfOutputEntry(IResource resource) {
+		IPath path = resource.getFullPath();
+
+		// ensure that folders are only excluded if all of their children are excluded
+		if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
+			try {
+				IOutputEntry[] entries = getOutputEntries();
+				for (IOutputEntry entry : entries) {
+
+					if (path.isPrefixOf(entry.getPath())) {
+						return true;
+					}
+				}
+			} catch (CModelException e) {
+				//
+			}
+			return false;
+		}
+
+		return false;
+
+	}
+
 	@Override
 	public boolean isOnOutputEntry(IResource resource) {
 		IPath path = resource.getFullPath();
@@ -630,7 +654,7 @@ public class CProject extends Openable implements ICProject {
 					// Not in source folder, check if it's a container on output entry
 					// Also make sure I'm not a source root since my SourceRoot object would
 					// have already added this.
-					if (!found && isOnOutputEntry(child) && !projectIsSourceRoot)
+					if (!found && !projectIsSourceRoot && (isParentOfOutputEntry(child) || isOnOutputEntry(child)))
 						children.add(new CContainer(this, child));
 				}
 			}

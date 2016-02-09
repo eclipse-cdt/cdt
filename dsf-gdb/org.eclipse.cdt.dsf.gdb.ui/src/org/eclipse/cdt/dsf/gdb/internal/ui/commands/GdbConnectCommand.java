@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -28,8 +30,11 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateInDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
@@ -50,6 +55,7 @@ import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -149,13 +155,15 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     	DataRequestMonitor<Object> fRequestMonitor;
     	boolean fNewProcessSupported;
     	boolean fRemote;
+		private List<String> fDebuggedProcesses;
 
-    	public PromptForPidJob(String name, boolean newProcessSupported, boolean remote, IProcessExtendedInfo[] procs, DataRequestMonitor<Object> rm) {
+    	public PromptForPidJob(String name, boolean newProcessSupported, boolean remote, IProcessExtendedInfo[] procs, List<String> debuggedProcesses, DataRequestMonitor<Object> rm) {
     		super(name);
     		fNewProcessSupported = newProcessSupported;
     		fRemote = remote;
     		fProcessList = procs;
     		fRequestMonitor = rm;
+    		fDebuggedProcesses = debuggedProcesses;
     	}
 
     	@Override
@@ -165,7 +173,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     				null);
 
     		try {
-    			PrompterInfo info = new PrompterInfo(fNewProcessSupported, fRemote, fProcessList);
+    			PrompterInfo info = new PrompterInfo(fNewProcessSupported, fRemote, fProcessList, fDebuggedProcesses);
     			Object result = new ProcessPrompter().handleStatus(null, info);
     			 if (result == null) {
  					fRequestMonitor.cancel();
@@ -278,12 +286,87 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 			// Nothing to do, just ignore the command since the user
 			// cancelled it.
         } catch (RejectedExecutionException e) {
-        	// Can be thrown if the session is shutdown        	
+        	// Can be thrown if the session is shutdown
         } finally {
     		updateEnablement();
     	}
     }
-    
+
+    /**
+     * Get already debugged processes from all compatible sessions.
+     * "compatible" in current implementation means all sessions on local machine.
+     *
+     * @param currentCtx current session context
+     * @param allSessions true if all session to be queried, false to return result only for current execution session context 
+     * @param drm where result to be returned
+     */
+    private void getAllDebuggedProcesses(final IDMContext currentCtx, boolean allSessions, final DataRequestMonitor<List<String>> drm) {
+    	SessionType sessionType = fTracker.getService(IGDBBackend.class).getSessionType();
+
+    	final List<String> result = new LinkedList<>();
+    	final List<DsfSession> sessions = new LinkedList<>();
+    	// Only for local session types search in all debug sessions
+    	if (allSessions && sessionType == SessionType.LOCAL) {
+    		sessions.addAll(Arrays.asList(DsfSession.getActiveSessions()));
+    	} else {
+    		// For remote session just query current context.
+    		// 
+    		// cannot reliably match two remote debug session that are connected to same target machine.
+    		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=486408#c7
+    		
+    		sessions.add(DsfSession.getSession(currentCtx.getSessionId()));
+    	}
+
+    	// Query each sessions for existing processes in a sequential fashion.  
+    	// We must do this as each session will require different executor.
+    	final class ProcessRequestMonitor extends DataRequestMonitor<IDMContext[]> {
+			public ProcessRequestMonitor(Executor executor) { super(executor, null);}
+			public ProcessRequestMonitor(DsfExecutor executor) {
+				super(new ImmediateInDsfExecutor(executor), null);
+			}
+			@Override
+			protected void handleCompleted() {
+				// if succeeded and has data, add process ids to result, 
+				// otherwise proceed to next debug session (aka DsfSession)
+				if (isSuccess() && getData() != null) {
+					for (IDMContext dmc : getData()) {
+						IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc,
+								IMIProcessDMContext.class);
+						if (procDmc != null) {
+							result.add(procDmc.getProcId());
+						}
+					}
+				}
+				if (!sessions.isEmpty()) {
+					final DsfSession nextSession = sessions.remove(0);
+					final boolean sameSession = currentCtx.getSessionId().equals(nextSession.getId());
+					nextSession.getExecutor().execute(new DsfRunnable() {
+						@Override
+						public void run() {
+		    				DsfServicesTracker nextTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), nextSession.getId());
+	    					IGDBBackend nextSessionBackend = nextTracker.getService(IGDBBackend.class);
+	    					if (sameSession || nextSessionBackend.getSessionType() == SessionType.LOCAL) {
+	    						ICommandControlService nextCommandControl = nextTracker.getService(ICommandControlService.class);
+	    						IProcesses nextProcService = nextTracker.getService(IProcesses.class);
+	    						nextProcService.getProcessesBeingDebugged(
+	    								nextCommandControl.getContext(), new ProcessRequestMonitor(nextSession.getExecutor()));
+	    					} else {
+	    						// proceed to next session context query passing an error (that will be ignored)
+	    						new ProcessRequestMonitor(nextSession.getExecutor()).done(
+	    								new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Only local session", null)); //$NON-NLS-1$
+	    					}
+	    					nextTracker.dispose();
+		    			}
+					});
+				} else {
+					// done with querying all session. Copy the result
+					drm.done(result);
+				}
+			}
+    	};
+    	// Trigger the first query
+    	new ProcessRequestMonitor(ImmediateExecutor.getInstance()).done();
+    }
     /* 
      * This method should not be called from the UI thread.
      * (non-Javadoc)
@@ -291,7 +374,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
      */
     @Override
     public void connect(final RequestMonitor rm)
-    { 
+    {
     	fExecutor.execute(new DsfRunnable() {
             @Override
     		public void run() {
@@ -318,35 +401,43 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
     								final List<IProcessExtendedInfo> procInfoList = new ArrayList<IProcessExtendedInfo>();
 
-									final CountingRequestMonitor countingRm = 
+									final CountingRequestMonitor countingRm =
 										new CountingRequestMonitor(fExecutor, rm) {
 										@Override
 										protected void handleSuccess() {
-											// Prompt the user to choose one or more processes, or to start a new one
-											new PromptForPidJob(
-													LaunchUIMessages.getString("ProcessPrompter.PromptJob"),    //$NON-NLS-1$
-													newProcessSupported,
-													remote,
-													procInfoList.toArray(new IProcessExtendedInfo[procInfoList.size()]),
-													new DataRequestMonitor<Object>(fExecutor, rm) {
-														@Override
-														protected void handleCancel() {
-															rm.cancel();
-															rm.done();
-														}
-														@Override
-														protected void handleSuccess() {
-															Object data = getData();
-															if (data instanceof NewExecutableInfo) {
-																// User wants to start a new process
-																startNewProcess(controlCtx, (NewExecutableInfo)data, rm);
-															} else if (data instanceof IProcessExtendedInfo[]) {
-																attachToProcesses(controlCtx, (IProcessExtendedInfo[])data, rm);
-															} else {
-																rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
-															}
-														}
-													}).schedule();
+											getAllDebuggedProcesses(controlCtx, true, new ImmediateDataRequestMonitor<List<String>>(rm) {
+												@Override
+												protected void handleSuccess() {
+													List<String> dbgPids = getData();
+													
+													// Prompt the user to choose one or more processes, or to start a new one
+													new PromptForPidJob(
+															LaunchUIMessages.getString("ProcessPrompter.PromptJob"),    //$NON-NLS-1$
+															newProcessSupported,
+															remote,
+															procInfoList.toArray(new IProcessExtendedInfo[procInfoList.size()]),
+															dbgPids,
+															new DataRequestMonitor<Object>(fExecutor, rm) {
+																@Override
+																protected void handleCancel() {
+																	rm.cancel();
+																	rm.done();
+																}
+																@Override
+																protected void handleSuccess() {
+																	Object data = getData();
+																	if (data instanceof NewExecutableInfo) {
+																		// User wants to start a new process
+																		startNewProcess(controlCtx, (NewExecutableInfo)data, rm);
+																	} else if (data instanceof IProcessExtendedInfo[]) {
+																		attachToProcesses(controlCtx, (IProcessExtendedInfo[])data, rm);
+																	} else {
+																		rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
+																	}
+																}
+															}).schedule();													
+												}
+											});
 										}
 									};
 

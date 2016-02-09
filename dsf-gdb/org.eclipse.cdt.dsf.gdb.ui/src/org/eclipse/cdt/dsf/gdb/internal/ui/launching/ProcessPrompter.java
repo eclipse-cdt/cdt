@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 QNX Software Systems and others.
+ * Copyright (c) 2008, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *     Marc Khouzam (Ericsson) - Add support for multi-attach (Bug 293679)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
+
+import java.util.List;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
@@ -29,6 +31,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class ProcessPrompter implements IStatusHandler {
 
@@ -36,11 +41,13 @@ public class ProcessPrompter implements IStatusHandler {
 		public boolean supportsNewProcess;
 		public boolean remote;
 		public IProcessExtendedInfo[] processList;
+		public List<String> debuggedProcesses;
 		
-		public PrompterInfo(boolean supportsNew, boolean remote, IProcessExtendedInfo[] list) {
+		public PrompterInfo(boolean supportsNew, boolean remote, IProcessExtendedInfo[] list, List<String> debuggedProcs) {
 			supportsNewProcess = supportsNew;
 			this.remote = remote;
 			processList = list;
+			this.debuggedProcesses = debuggedProcs;
 		}
 	}
 	
@@ -60,7 +67,7 @@ public class ProcessPrompter implements IStatusHandler {
 			throw new CoreException(error);
 		}
 
-		PrompterInfo prompterInfo = (PrompterInfo) info;
+		final PrompterInfo prompterInfo = (PrompterInfo) info;
 		IProcessExtendedInfo[] plist = prompterInfo.processList;		
 		if (plist == null) {
 			MessageDialog.openError(
@@ -178,7 +185,21 @@ public class ProcessPrompter implements IStatusHandler {
 
 			// Allow for multiple selection
 			dialog.setMultipleSelection(true);
-
+			dialog.setStatusLineAboveButtons(true);
+			
+			dialog.setValidator(new ISelectionStatusValidator() {
+				@Override
+				public IStatus validate(Object[] selection) {
+					for (Object sel : selection) {
+						String pid = Integer.toString(((IProcessExtendedInfo)sel).getPid(), 10);
+						if (prompterInfo.debuggedProcesses.contains(pid)) {
+							return new Status(IStatus.ERROR, GdbUIPlugin.getUniqueIdentifier(),
+									MessageFormat.format(LaunchUIMessages.getString("ProcessPrompter.ErrProcessConected"), pid)); //$NON-NLS-1$
+						}
+					}
+					return new Status(IStatus.OK, GdbUIPlugin.getUniqueIdentifier(), ""); //$NON-NLS-1$
+				}
+			});
 			dialog.setElements(plist);
 			if (dialog.open() == Window.OK) {
 				// First check if the user pressed the New button

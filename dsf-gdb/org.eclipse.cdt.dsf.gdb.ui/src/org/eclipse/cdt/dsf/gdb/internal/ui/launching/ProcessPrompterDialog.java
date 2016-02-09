@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Ericsson and others.
+ * Copyright (c) 2011, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
@@ -22,6 +24,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 /**
@@ -130,4 +134,29 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
     public NewExecutableInfo getExecutableInfo() {
     	return fExecInfo;
     }
+
+	/**
+	 * Validate only upper selected elements. Lower list is always disabled.
+	 * 
+	 * @see #createLowerList(Composite)
+	 */
+	@Override
+	protected boolean validateCurrentSelection() {
+		ISelectionStatusValidator validator = getValidator();
+		Object[] elements = getSelectedElements();
+
+		if (elements.length > 0) {
+			IStatus status;
+			if (validator != null) {
+				status = validator.validate(elements);
+			} else {
+				status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
+						null);
+			}
+			updateStatus(status);
+			return status.isOK();
+		}
+
+		return super.validateCurrentSelection();
+	}
 }

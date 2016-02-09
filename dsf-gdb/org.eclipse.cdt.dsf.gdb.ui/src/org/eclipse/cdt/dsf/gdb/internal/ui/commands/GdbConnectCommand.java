@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -149,13 +151,15 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     	DataRequestMonitor<Object> fRequestMonitor;
     	boolean fNewProcessSupported;
     	boolean fRemote;
+		private List<String> fDebuggedProcesses;
 
-    	public PromptForPidJob(String name, boolean newProcessSupported, boolean remote, IProcessExtendedInfo[] procs, DataRequestMonitor<Object> rm) {
+    	public PromptForPidJob(String name, boolean newProcessSupported, boolean remote, IProcessExtendedInfo[] procs, List<String> debuggedProcesses, DataRequestMonitor<Object> rm) {
     		super(name);
     		fNewProcessSupported = newProcessSupported;
     		fRemote = remote;
     		fProcessList = procs;
     		fRequestMonitor = rm;
+    		fDebuggedProcesses = debuggedProcesses;
     	}
 
     	@Override
@@ -165,7 +169,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     				null);
 
     		try {
-    			PrompterInfo info = new PrompterInfo(fNewProcessSupported, fRemote, fProcessList);
+    			PrompterInfo info = new PrompterInfo(fNewProcessSupported, fRemote, fProcessList, fDebuggedProcesses);
     			Object result = new ProcessPrompter().handleStatus(null, info);
     			 if (result == null) {
  					fRequestMonitor.cancel();
@@ -322,31 +326,45 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 										new CountingRequestMonitor(fExecutor, rm) {
 										@Override
 										protected void handleSuccess() {
-											// Prompt the user to choose one or more processes, or to start a new one
-											new PromptForPidJob(
-													LaunchUIMessages.getString("ProcessPrompter.PromptJob"),    //$NON-NLS-1$
-													newProcessSupported,
-													remote,
-													procInfoList.toArray(new IProcessExtendedInfo[procInfoList.size()]),
-													new DataRequestMonitor<Object>(fExecutor, rm) {
-														@Override
-														protected void handleCancel() {
-															rm.cancel();
-															rm.done();
+											procService.getProcessesBeingDebugged(controlCtx, new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
+												@Override
+												protected void handleSuccess() {
+													List<String> dbgPids = new ArrayList<>(getData().length);
+													for (IDMContext dmc : getData()) {
+														IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc,
+																IMIProcessDMContext.class);
+														if (procDmc != null) {
+															dbgPids.add(procDmc.getProcId());
 														}
-														@Override
-														protected void handleSuccess() {
-															Object data = getData();
-															if (data instanceof NewExecutableInfo) {
-																// User wants to start a new process
-																startNewProcess(controlCtx, (NewExecutableInfo)data, rm);
-															} else if (data instanceof IProcessExtendedInfo[]) {
-																attachToProcesses(controlCtx, (IProcessExtendedInfo[])data, rm);
-															} else {
-																rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
-															}
-														}
-													}).schedule();
+													}
+													// Prompt the user to choose one or more processes, or to start a new one
+													new PromptForPidJob(
+															LaunchUIMessages.getString("ProcessPrompter.PromptJob"),    //$NON-NLS-1$
+															newProcessSupported,
+															remote,
+															procInfoList.toArray(new IProcessExtendedInfo[procInfoList.size()]),
+															dbgPids,
+															new DataRequestMonitor<Object>(fExecutor, rm) {
+																@Override
+																protected void handleCancel() {
+																	rm.cancel();
+																	rm.done();
+																}
+																@Override
+																protected void handleSuccess() {
+																	Object data = getData();
+																	if (data instanceof NewExecutableInfo) {
+																		// User wants to start a new process
+																		startNewProcess(controlCtx, (NewExecutableInfo)data, rm);
+																	} else if (data instanceof IProcessExtendedInfo[]) {
+																		attachToProcesses(controlCtx, (IProcessExtendedInfo[])data, rm);
+																	} else {
+																		rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
+																	}
+																}
+															}).schedule();													
+												}
+											});
 										}
 									};
 

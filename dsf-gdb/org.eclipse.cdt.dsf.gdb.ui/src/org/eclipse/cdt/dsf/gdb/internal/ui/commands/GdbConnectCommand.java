@@ -262,11 +262,20 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     }
 
     @Override
-	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
+	protected void doExecute(Object[] targets, IProgressMonitor monitor, final IRequest request) throws CoreException {
        	Query<Boolean> connectQuery = new Query<Boolean>() {
             @Override
-            public void execute(DataRequestMonitor<Boolean> rm) {
-       			connect(rm);
+            public void execute(final DataRequestMonitor<Boolean> rm) {
+       			connect(new RequestMonitor(fExecutor, rm) { 
+       				@Override
+       				protected void handleCompleted() {
+       					// pass any error to the caller
+       					if (!isSuccess()) {
+       						request.setStatus(getStatus());
+       					}
+       					rm.done();
+       				}
+       			});
        		}
        	};
     	try {
@@ -448,6 +457,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     	// so we don't need to prompt for it.
     	final IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
     	final IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+    	final StringBuilder errors = new StringBuilder();
 
     	if (procService != null && backend != null) {
     		// Attach to each process in a sequential fashion.  We must do this
@@ -466,7 +476,8 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     			@Override
     			protected void handleCompleted() {
     				if (!isSuccess()) {
-    					// Failed to attach to a process.  Just ignore it and move on.
+    					// Failed to attach to a process.  Remember the error message.
+    					errors.append(getStatus().getMessage());
     				}
 
     				// Check that we have a process to attach to
@@ -523,6 +534,10 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     						}
     					});
     				} else {
+    					// If there were errors, pass them-on to the caller
+    					if (errors.length() != 0) {
+    						rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, errors.toString()));
+    					}
     					// No other process to attach to
     					rm.done();
     				}
@@ -552,5 +567,4 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 		return false;
 	}
 }
-
 

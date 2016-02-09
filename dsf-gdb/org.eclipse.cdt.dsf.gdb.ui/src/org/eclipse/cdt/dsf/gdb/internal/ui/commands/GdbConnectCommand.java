@@ -262,11 +262,20 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     }
 
     @Override
-	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
+	protected void doExecute(Object[] targets, IProgressMonitor monitor, final IRequest request) throws CoreException {
        	Query<Boolean> connectQuery = new Query<Boolean>() {
             @Override
-            public void execute(DataRequestMonitor<Boolean> rm) {
-       			connect(rm);
+            public void execute(final DataRequestMonitor<Boolean> rm) {
+       			connect(new RequestMonitor(fExecutor, rm) { 
+       				@Override
+       				protected void handleCompleted() {
+       					// pass any error to the caller
+       					if (!isSuccess()) {
+       						request.setStatus(getStatus());
+       					}
+       					rm.done();
+       				}
+       			});
        		}
        	};
     	try {
@@ -448,6 +457,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     	// so we don't need to prompt for it.
     	final IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
     	final IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+    	final StringBuilder errors = new StringBuilder();
 
     	if (procService != null && backend != null) {
     		// Attach to each process in a sequential fashion.  We must do this
@@ -457,6 +467,9 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     		// Create a list of all our processes so we can attach to one at a time.
     		// We need to create a new list so that we can remove elements from it.
     		final List<IProcessExtendedInfo> procList = new ArrayList<IProcessExtendedInfo>(Arrays.asList(processes));
+    		// Create a one element array to remember what process we are trying to attach to, so that we can
+    		// use it in case of error.
+    		final IProcessExtendedInfo[] previousProcAttempt = new IProcessExtendedInfo[1];
 
     		class AttachToProcessRequestMonitor extends ImmediateDataRequestMonitor<IDMContext> {
     			public AttachToProcessRequestMonitor() {
@@ -465,8 +478,9 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     			
     			@Override
     			protected void handleCompleted() {
+    				// Failed to attach to a process.  Remember the error message.
     				if (!isSuccess()) {
-    					// Failed to attach to a process.  Just ignore it and move on.
+    					formatErrorMessage(errors, previousProcAttempt[0], getStatus().getMessage());
     				}
 
     				// Check that we have a process to attach to
@@ -483,6 +497,8 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
     								// Remove process from list and attach to it. 
     								IProcessExtendedInfo process = procList.remove(0);
+    								// Store process in case of error
+    								previousProcAttempt[0] = process;
     								String pidStr = Integer.toString(process.getPid());
 
     								if (backend.getSessionType() == SessionType.REMOTE) {
@@ -523,6 +539,10 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     						}
     					});
     				} else {
+    					// If there were errors, pass them-on to the caller
+    					if (errors.length() != 0) {
+    						rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, errors.toString()));
+    					}
     					// No other process to attach to
     					rm.done();
     				}
@@ -551,6 +571,29 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 	protected boolean isRemainEnabled(IDebugCommandRequest request) {
 		return false;
 	}
+    
+	private void formatErrorMessage(StringBuilder errors, IProcessExtendedInfo process, String errorMsg) {
+		// Extract process name from full path.
+		// On windows host, paths of style "sendmail:", "udisk-daemon:" 
+		// is treated as device id with no path segments 
+		String name;
+		IPath path = new Path(process.getName());
+		if (path.lastSegment() == null) {
+			name = process.getName();
+		} else {
+			name = path.lastSegment();
+		}
+		
+		if (errors.length() != 0) {
+			errors.append(System.lineSeparator()).append(System.lineSeparator());
+		}
+		
+		errors.append(Messages.GdbConnectCommand_FailureMessage).append(" ") //$NON-NLS-1$
+		      .append(name).append(" [").append(process.getPid()).append("]") //$NON-NLS-1$ //$NON-NLS-2$
+		      .append(System.lineSeparator())
+		      .append(Messages.GdbConnectCommand_Error)
+		      .append(System.lineSeparator())
+		      .append(errorMsg);
+	}
 }
-
 

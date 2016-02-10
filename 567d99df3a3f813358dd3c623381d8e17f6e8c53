@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_d3c1f677",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1087,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-10T14:17:26Z",
+      "side": 1,
+      "message": "https://wiki.eclipse.org/CDT/User/FAQ#How_do_I_use_multi-process_debugging.3F\n\nAccording to the link above, multi-process, in CDT, requires at least gdb 7.2. So I think it may not be necessary to make a change to this file. Unless I am missing a case where the code would still be exercised / useful?",
+      "revId": "567d99df3a3f813358dd3c623381d8e17f6e8c53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_33d85a66",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-10T14:17:26Z",
+      "side": 1,
+      "message": "Update the date in copyright header?",
+      "revId": "567d99df3a3f813358dd3c623381d8e17f6e8c53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

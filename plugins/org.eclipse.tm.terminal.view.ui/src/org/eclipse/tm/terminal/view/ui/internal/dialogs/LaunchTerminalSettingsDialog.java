@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 - 2015 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2011, 2016 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,7 @@
  * Contributors:
  * Wind River Systems - initial API and implementation
  * Max Weninger (Wind River) - [361352] [TERMINALS][SSH] Add SSH terminal support
+ * Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460496
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.internal.dialogs;
 
@@ -41,10 +42,13 @@ import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl;
 import org.eclipse.tm.terminal.view.ui.help.IContextHelpIds;
 import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
+import org.eclipse.tm.terminal.view.ui.interfaces.IExternalExecutablesProperties;
 import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.interfaces.tracing.ITraceIds;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
+import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesManager;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -62,6 +66,9 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 
 	// Map the label added to the combo box to the corresponding launcher delegate.
 	/* default */ final Map<String, ILauncherDelegate> label2delegate = new HashMap<String, ILauncherDelegate>();
+
+	// Map the label added to the combo box to the corresponding launcher properties for external executables.
+	/* default */ final Map<String, Map<String, Object>> label2properties = new HashMap<String, Map<String, Object>>();
 
 	// The data object containing the currently selected settings
 	private Map<String, Object> data = null;
@@ -402,6 +409,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
     protected List<String> getTerminals() {
     	List<String> items = new ArrayList<String>();
 
+    	ILauncherDelegate localLauncher = null;
+
     	if(selection==null || selection.isEmpty()){
     		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
     			UIPlugin.getTraceHandler().trace("Getting launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
@@ -421,6 +430,10 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
     			if (label == null || "".equals(label.trim())) label = delegate.getId(); //$NON-NLS-1$
     			label2delegate.put(label, delegate);
     			items.add(label);
+
+    			if ("org.eclipse.tm.terminal.connector.local.launcher.local".equals(delegate.getId())) { //$NON-NLS-1$
+    				localLauncher = delegate;
+    			}
     		}
     	} else {
     		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
@@ -441,7 +454,43 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
     			if (label == null || "".equals(label.trim())) label = delegate.getId(); //$NON-NLS-1$
     			label2delegate.put(label, delegate);
     			items.add(label);
+
+    			if ("org.eclipse.tm.terminal.connector.local.launcher.local".equals(delegate.getId())) { //$NON-NLS-1$
+    				localLauncher = delegate;
+    			}
     		}
+    	}
+
+    	// if the local launcher was found, check for configured external executables
+    	if (localLauncher != null) {
+			List<Map<String, String>> l = ExternalExecutablesManager.load();
+			if (l != null && !l.isEmpty()) {
+				for (Map<String, String> executableData : l) {
+					String name = executableData.get(IExternalExecutablesProperties.PROP_NAME);
+					String path = executableData.get(IExternalExecutablesProperties.PROP_PATH);
+					String args = executableData.get(IExternalExecutablesProperties.PROP_ARGS);
+
+					String strTranslate = executableData.get(IExternalExecutablesProperties.PROP_TRANSLATE);
+					boolean translate = strTranslate != null ? Boolean.parseBoolean(strTranslate) : false;
+
+					if (name != null && !"".equals(name) && path != null && !"".equals(path)) { //$NON-NLS-1$ //$NON-NLS-2$
+						ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
+						ISelection selection = service != null ? service.getSelection() : null;
+						if (selection != null && selection.isEmpty()) selection = null;
+
+						Map<String, Object> properties = new HashMap<String, Object>();
+				    	properties.put(ITerminalsConnectorConstants.PROP_PROCESS_PATH, path);
+				    	properties.put(ITerminalsConnectorConstants.PROP_PROCESS_ARGS, args);
+				    	properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE, Boolean.valueOf(translate));
+
+				    	// store external executable and properties
+		    			label2delegate.put(name, localLauncher);
+		    			label2properties.put(name, properties);
+		    			items.add(name);
+					}
+				}
+			}
+
     	}
 
     	return items;
@@ -533,6 +582,11 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
     	if (delegateId != null) data.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegateId);
     	// Store the selection
     	data.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);
+
+    	// Add the properties for external executables if there are any
+    	if (label2properties.containsKey(terminalLabel)) {
+    		data.putAll(label2properties.get(terminalLabel));
+    	}
 
     	// Store the delegate specific settings
    		panel.extractData(data);

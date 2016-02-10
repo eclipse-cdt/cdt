@@ -128,13 +128,23 @@ public class ExternalExecutablesManager {
 								gitPath = f2.getAbsolutePath();
 							}
 
-							f2 = new File(f.getParentFile().getParentFile(), "etc/git.ico"); //$NON-NLS-1$
-							if (f2.canRead()) {
-								iconPath = f2.getAbsolutePath();
-							}
+							iconPath = getGitIconPath(f.getParentFile().getParentFile());
 
 							break;
 						}
+					}
+				}
+
+				// if it is not found in the PATH, check the default install locations
+				if (gitPath == null) {
+					File f = new File("C:/Program Files (x86)/Git/bin/sh.exe"); //$NON-NLS-1$
+					if (!f.exists()) {
+						f = new File("C:/Program Files/Git/bin/sh.exe"); //$NON-NLS-1$
+					}
+
+					if (f.exists() && f.canExecute()) {
+						gitPath = f.getAbsolutePath();
+						iconPath = getGitIconPath(f.getParentFile().getParentFile());
 					}
 				}
 
@@ -156,6 +166,27 @@ public class ExternalExecutablesManager {
 		}
 
 		return l;
+	}
+
+	private static String getGitIconPath(File parent) {
+		File f = new File(parent, "etc/git.ico"); //$NON-NLS-1$
+		if (f.canRead()) {
+			return f.getAbsolutePath();
+		}
+
+		// check for icon in newer versions of Git for Windows 32 bit
+		f = new File(parent, "mingw32/share/git/git-for-windows.ico"); //$NON-NLS-1$
+		if (f.canRead()) {
+			return f.getAbsolutePath();
+		}
+
+		// check for icon in newer versions of Git for Windows 64 bit
+		f = new File(parent, "mingw64/share/git/git-for-windows.ico"); //$NON-NLS-1$
+		if (f.canRead()) {
+			return f.getAbsolutePath();
+		}
+
+		return null;
 	}
 
 	/**
@@ -228,6 +259,7 @@ public class ExternalExecutablesManager {
 		Assert.isNotNull(path);
 
 		ImageData id = null;
+		ImageData biggest = null;
 
 		ImageLoader loader = new ImageLoader();
 		ImageData[] data = loader.load(path);
@@ -243,11 +275,19 @@ public class ExternalExecutablesManager {
 				} else {
 					if (id == null) {
 						id = d;
+						biggest = d;
 					} else if (id.height != 16 && d.height < id.height && id.width != 16 && d.width < id.width) {
 						id = d;
+					} else if (d.height > biggest.height && d.width > biggest.width) {
+						biggest = d;
 					}
 				}
 			}
+		}
+
+		// if the icon is still to big -> downscale the biggest
+		if (id.height > 16 && id.width > 16) {
+			id = biggest.scaledTo(16, 16);
 		}
 
 		return id;

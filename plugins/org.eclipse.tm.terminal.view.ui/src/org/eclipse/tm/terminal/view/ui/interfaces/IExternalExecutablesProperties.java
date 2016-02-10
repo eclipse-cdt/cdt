@@ -7,7 +7,7 @@
  * Contributors:
  * Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.terminal.connector.local.showin.interfaces;
+package org.eclipse.tm.terminal.view.ui.interfaces;
 
 /**
  * External executables data property names.

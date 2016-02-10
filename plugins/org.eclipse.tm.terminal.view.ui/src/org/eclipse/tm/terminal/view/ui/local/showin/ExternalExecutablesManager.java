@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2014, 2016 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * Wind River Systems - initial API and implementation
+ * Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460496
  *******************************************************************************/
-package org.eclipse.tm.terminal.connector.local.showin;
+package org.eclipse.tm.terminal.view.ui.local.showin;
 
 import java.io.File;
 import java.io.FileReader;
@@ -27,9 +28,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.tm.terminal.connector.local.activator.UIPlugin;
-import org.eclipse.tm.terminal.connector.local.showin.interfaces.IExternalExecutablesProperties;
-import org.eclipse.tm.terminal.connector.local.showin.internal.ExternalExecutablesState;
+import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
+import org.eclipse.tm.terminal.view.ui.interfaces.IExternalExecutablesProperties;
+import org.eclipse.tm.terminal.view.ui.internal.ExternalExecutablesState;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.ISourceProviderService;
 

@@ -7,7 +7,7 @@
  * Contributors:
  * Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.terminal.connector.local.showin.preferences;
+package org.eclipse.tm.terminal.view.ui.preferences;
 
 import java.io.File;
 import java.net.URI;
@@ -62,13 +62,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tm.terminal.connector.local.activator.UIPlugin;
-import org.eclipse.tm.terminal.connector.local.nls.Messages;
-import org.eclipse.tm.terminal.connector.local.showin.ExternalExecutablesDialog;
-import org.eclipse.tm.terminal.connector.local.showin.ExternalExecutablesManager;
-import org.eclipse.tm.terminal.connector.local.showin.interfaces.IExternalExecutablesProperties;
-import org.eclipse.tm.terminal.connector.local.showin.interfaces.IPreferenceKeys;
+import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.controls.NoteCompositeHelper;
+import org.eclipse.tm.terminal.view.ui.interfaces.IExternalExecutablesProperties;
+import org.eclipse.tm.terminal.view.ui.interfaces.IPreferenceKeys;
+import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesDialog;
+import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesManager;
+import org.eclipse.tm.terminal.view.ui.nls.Messages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.osgi.framework.Bundle;

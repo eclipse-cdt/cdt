@@ -6,4 +6,7 @@
    <context id="EncodingSelectionDialog">
       <description>Select the new encoding for the active terminal.</description>
    </context>
+   <context id="ExternalExecutablesDialog">
+      <description>Add or modify an external executable added to the 'Show in Local Terminal' context menu.</description>
+   </context>
 </contexts>

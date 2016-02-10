@@ -7,7 +7,7 @@
  * Contributors:
  * Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.terminal.connector.local.showin;
+package org.eclipse.tm.terminal.view.ui.local.showin;
 
 import java.io.File;
 import java.util.HashMap;
@@ -34,9 +34,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tm.terminal.connector.local.help.IContextHelpIds;
-import org.eclipse.tm.terminal.connector.local.nls.Messages;
-import org.eclipse.tm.terminal.connector.local.showin.interfaces.IExternalExecutablesProperties;
+import org.eclipse.tm.terminal.view.ui.help.IContextHelpIds;
+import org.eclipse.tm.terminal.view.ui.interfaces.IExternalExecutablesProperties;
+import org.eclipse.tm.terminal.view.ui.nls.Messages;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 

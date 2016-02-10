@@ -20,11 +20,5 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="5.6.0";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
-Export-Package: org.eclipse.tm.terminal.connector.local.activator;x-internal:=true,
- org.eclipse.tm.terminal.connector.local.controls,
- org.eclipse.tm.terminal.connector.local.help,
- org.eclipse.tm.terminal.connector.local.launcher,
- org.eclipse.tm.terminal.connector.local.nls;x-internal:=true,
- org.eclipse.tm.terminal.connector.local.showin,
- org.eclipse.tm.terminal.connector.local.showin.interfaces,
- org.eclipse.tm.terminal.connector.local.showin.preferences
+Export-Package: org.eclipse.tm.terminal.connector.local.controls,
+ org.eclipse.tm.terminal.connector.local.launcher

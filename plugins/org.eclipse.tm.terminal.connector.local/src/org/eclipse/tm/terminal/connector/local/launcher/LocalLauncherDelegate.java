@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2012, 2016 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * Wind River Systems - initial API and implementation
+ * Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460496
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.local.launcher;
 
@@ -37,7 +38,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
 import org.eclipse.tm.terminal.connector.local.activator.UIPlugin;
 import org.eclipse.tm.terminal.connector.local.controls.LocalWizardConfigurationPanel;
-import org.eclipse.tm.terminal.connector.local.showin.interfaces.IPreferenceKeys;
 import org.eclipse.tm.terminal.connector.process.ProcessSettings;
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory;
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
@@ -47,6 +47,7 @@ import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnecto
 import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
 import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler;
+import org.eclipse.tm.terminal.view.ui.interfaces.IPreferenceKeys;
 import org.eclipse.tm.terminal.view.ui.internal.SettingsStore;
 import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 import org.eclipse.ui.ISelectionService;

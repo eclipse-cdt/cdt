@@ -55,7 +55,7 @@
 		                 </iterate>
 		              </with>
 	                  <with
-	                        variable="org.eclipse.tm.terminal.connector.local.external.configured">
+	                        variable="org.eclipse.tm.terminal.external.executable.configured">
 	                     <equals
 	                           value="TRUE">
 	                     </equals>
@@ -64,43 +64,6 @@
                </or>
             </visibleWhen>
          </command>
-         <dynamic
-               class="org.eclipse.tm.terminal.connector.local.showin.DynamicContributionItems"
-               id="org.eclipse.tm.terminal.connector.local.LocalLauncherDynamicContributionItems">
-            <visibleWhen
-                  checkEnabled="false">
-               <or>
-	              <with variable="selection">
-	                 <iterate operator="and" ifEmpty="false">
-	                    <adapt type="org.eclipse.core.resources.IResource">
-	                      <not>
-	                         <!-- The JDT Project Explorer contributions are adding the "Navigate -> Show In" quick menu.
-	                              See o.e.jdt.internal.ui.navigator.JavaNavigatorActionProvider -->
-	                         <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.jdt.core.javanature" />
-	                      </not> 
-	                    </adapt>
-	                 </iterate>
-	              </with>
-                  <and>
-		              <with variable="selection">
-		                 <iterate operator="and" ifEmpty="false">
-		                    <adapt type="org.eclipse.core.resources.IResource">
-		                         <!-- The JDT Project Explorer contributions are adding the "Navigate -> Show In" quick menu.
-		                              See o.e.jdt.internal.ui.navigator.JavaNavigatorActionProvider -->
-		                         <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.jdt.core.javanature" />
-		                    </adapt>
-		                 </iterate>
-		              </with>
-	                  <with
-	                        variable="org.eclipse.tm.terminal.connector.local.external.configured">
-	                     <equals
-	                           value="TRUE">
-	                     </equals>
-	                  </with>
-                  </and>
-               </or>
-            </visibleWhen>
-         </dynamic>
       </menuContribution>
    </extension>
 
@@ -138,38 +101,4 @@
       </handler>
    </extension>
    
-<!-- Preference page contributions -->
-   <extension point="org.eclipse.ui.preferencePages">
-      <page
-            category="org.eclipse.tm.terminal.TerminalPreferencePage"
-            class="org.eclipse.tm.terminal.connector.local.showin.preferences.PreferencePage"
-            id="org.eclipse.tm.terminal.connector.local.showin.preferences"
-            name="%preference.page.name">
-      </page>
-   </extension>
-
-<!-- Preferences contributions -->
-   <extension point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.eclipse.tm.terminal.connector.local.showin.preferences.PreferencesInitializer">
-      </initializer>
-   </extension>
-   
-<!-- Help Context contributions -->
-   <extension point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
-   </extension>
-   <extension
-         point="org.eclipse.ui.services">
-      <sourceProvider
-            provider="org.eclipse.tm.terminal.connector.local.showin.internal.ExternalExecutablesState">
-         <variable
-               name="org.eclipse.tm.terminal.connector.local.external.configured"
-               priorityLevel="workbench">
-         </variable>
-      </sourceProvider>
-   </extension>
-
 </plugin>

@@ -29,6 +29,9 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.tm.terminal.connector.local.activator.UIPlugin;
 import org.eclipse.tm.terminal.connector.local.showin.interfaces.IExternalExecutablesProperties;
+import org.eclipse.tm.terminal.connector.local.showin.internal.ExternalExecutablesState;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * External executables manager implementation.
@@ -160,12 +163,19 @@ public class ExternalExecutablesManager {
 	 * @param l The list of external executables or <code>null</code>.
 	 */
 	public static void save(List<Map<String, String>> l) {
+		ISourceProviderService sourceProviderService =
+						PlatformUI.getWorkbench().getService(ISourceProviderService.class);
+		ExternalExecutablesState stateService =
+						(ExternalExecutablesState) sourceProviderService.getSourceProvider(ExternalExecutablesState.CONFIGURED_STATE);
+
 		IPath stateLocation = UIPlugin.getDefault().getStateLocation();
 		if (stateLocation != null) {
 			File f = stateLocation.append(".executables/data.properties").toFile(); //$NON-NLS-1$
 			if (f.isFile() && (l == null || l.isEmpty())) {
 				@SuppressWarnings("unused")
                 boolean s = f.delete();
+
+				stateService.disable();
 			} else {
 				FileWriter w = null;
 
@@ -186,6 +196,8 @@ public class ExternalExecutablesManager {
 					}
 					w = new FileWriter(f);
 					data.store(w, null);
+
+					stateService.enable();
 				} catch (Exception e) {
 					if (Platform.inDebugMode()) {
 						e.printStackTrace();

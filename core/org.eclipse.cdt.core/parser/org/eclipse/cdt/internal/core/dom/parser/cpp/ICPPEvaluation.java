@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionParameterMap;
 
@@ -81,10 +80,10 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	/**
 	 * Instantiates the evaluation with the provided template parameter map and pack offset.
 	 * The context is used to replace templates with their specialization, where appropriate.
+	 *
 	 * @return a fully or partially instantiated evaluation, or the original evaluation
 	 */
-	ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point);
+	ICPPEvaluation instantiate(InstantiationContext context, int maxDepth);
 
 	/**
 	 * Keeps track of state during a constexpr evaluation.

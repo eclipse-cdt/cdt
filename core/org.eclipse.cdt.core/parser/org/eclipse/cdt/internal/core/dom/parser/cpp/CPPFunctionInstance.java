@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
@@ -30,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPFunctionInstance extends CPPFunctionSpecialization implements ICPPFunctionInstance {
 	private final ICPPTemplateArgument[] fArguments;
 
-	public CPPFunctionInstance(ICPPFunction orig, IBinding owner, CPPTemplateParameterMap argMap,
+	public CPPFunctionInstance(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap,
 			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap, type, exceptionSpecs);
 		fArguments = args;

@@ -49,15 +49,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
 public class EvalID extends CPPDependentEvaluation {
@@ -339,24 +340,23 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
+	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		ICPPTemplateArgument[] templateArgs = fTemplateArgs;
 		if (templateArgs != null) {
-			templateArgs = instantiateArguments(templateArgs, tpMap, packOffset, within, point);
+			templateArgs = instantiateArguments(templateArgs, context);
 		}
 
 		ICPPEvaluation fieldOwner = fFieldOwner;
 		if (fieldOwner != null) {
-			fieldOwner = fieldOwner.instantiate(tpMap, packOffset, within, maxdepth, point);
+			fieldOwner = fieldOwner.instantiate(context, maxDepth);
 		}
 
 		IBinding nameOwner = fNameOwner;
 		if (nameOwner instanceof ICPPClassTemplate) {
-			nameOwner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner),
-					tpMap, packOffset, within, point);
+			ICPPDeferredClassInstance deferred = CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner);
+			nameOwner = resolveUnknown(deferred, context);
 		} else if (nameOwner instanceof IType) {
-			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
+			IType type = CPPTemplates.instantiateType((IType) nameOwner, context);
 			type = getNestedType(type, TDEF | REF | CVTYPE);
 			if (!(type instanceof IBinding))
 				return EvalFixed.INCOMPLETE;
@@ -370,7 +370,7 @@ public class EvalID extends CPPDependentEvaluation {
 			return this;
 
 		if (nameOwner instanceof ICPPClassType) {
-			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, null, point);
+			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, null, context.getPoint());
 			if (eval != null)
 				return eval;
 			if (!CPPTemplates.isDependentType((ICPPClassType) nameOwner))
@@ -378,7 +378,7 @@ public class EvalID extends CPPDependentEvaluation {
 		}
 		
 		if (fieldOwner != null && !fieldOwner.isTypeDependent()) {
-			IType fieldOwnerType = fieldOwner.getType(point);
+			IType fieldOwnerType = fieldOwner.getType(context.getPoint());
 			if (fIsPointerDeref) {
 				fieldOwnerType = SemanticUtil.getSimplifiedType(fieldOwnerType);
 				if (fieldOwnerType instanceof IPointerType) {
@@ -390,7 +390,8 @@ public class EvalID extends CPPDependentEvaluation {
 			IType fieldOwnerClassTypeCV = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF);
 			IType fieldOwnerClassType = SemanticUtil.getNestedType(fieldOwnerClassTypeCV, CVTYPE);
 			if (fieldOwnerClassType instanceof ICPPClassType) {
-				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, templateArgs, fieldOwnerClassTypeCV, point);
+				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, templateArgs,
+						fieldOwnerClassTypeCV, context.getPoint());
 				if (eval != null)
 					return eval;
 			}

@@ -17,13 +17,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * The result of instantiating a method template.
  */
 public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod {
 
-	public CPPMethodInstance(ICPPMethod orig, ICPPClassType owner, CPPTemplateParameterMap tpmap,
+	public CPPMethodInstance(ICPPMethod orig, ICPPClassType owner, ICPPTemplateParameterMap tpmap,
 			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, tpmap, args, type, exceptionSpecs);
 	}

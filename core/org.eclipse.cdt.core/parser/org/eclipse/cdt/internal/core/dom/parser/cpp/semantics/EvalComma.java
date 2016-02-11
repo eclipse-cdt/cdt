@@ -22,11 +22,11 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
 public class EvalComma extends CPPDependentEvaluation {
@@ -184,11 +184,10 @@ public class EvalComma extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
+	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
-			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			ICPPEvaluation arg = fArguments[i].instantiate(context, maxDepth);
 			if (arg != fArguments[i]) {
 				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];

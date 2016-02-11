@@ -18,10 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -34,13 +33,13 @@ import org.eclipse.core.runtime.PlatformObject;
 public abstract class CPPDependentEvaluation extends CPPEvaluation {
 	private IBinding fTemplateDefinition;
 	private IScope fTemplateDefinitionScope;
-	
+
 	CPPDependentEvaluation(IBinding templateDefinition) {
 		fTemplateDefinition = templateDefinition;
 	}
-	
+
 	@Override
-	public IBinding getTemplateDefinition() {	
+	public IBinding getTemplateDefinition() {
 		if (fTemplateDefinition instanceof DeferredResolutionBinding) {
 			IBinding toResolve = fTemplateDefinition;
 			// While resolve() is called, set fTemplateDefinition to null to avoid
@@ -51,7 +50,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 		}
 		return fTemplateDefinition;
 	}
-	
+
 	protected IScope getTemplateDefinitionScope() {
 		if (fTemplateDefinitionScope == null) {
 			IBinding templateDefinition = getTemplateDefinition();
@@ -62,15 +61,15 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 				try {
 					fTemplateDefinitionScope = templateDefinition.getScope();
 				} catch (DOMException e) {
-				}		
+				}
 			}
 		}
 		return fTemplateDefinitionScope;
 	}
-	
+
 	/**
 	 * If the given node is contained in some template declaration,
-	 * returns the binding for that template. Otherwise returns null. 
+	 * returns the binding for that template. Otherwise returns null.
 	 */
 	protected static IBinding findEnclosingTemplate(IASTNode node) {
 		while (node != null) {
@@ -85,7 +84,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 		}
 		return null;
 	}
-	
+
 	protected void marshalTemplateDefinition(ITypeMarshalBuffer buffer) throws CoreException {
 		// Don't marshal the template definition when building a signature.
 		// While the template definition needs to be stored in the index, it does not
@@ -95,20 +94,19 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 		if (!(buffer instanceof SignatureBuilder))
 			buffer.marshalBinding(getTemplateDefinition());
 	}
-	
+
 	/**
 	 * Instantiate evaluations that represent subexpressions separated by commas.
 	 * If a subexpression is a pack expansion expression, and the template parameter map
 	 * contains a mapping for the parameter pack(s) that occur in its expansion pattern,
 	 * the expansion pattern is instantiated once for each mapped template argument,
-	 * and the resulting evaluations are returned in place of the pack expansion.  
-	 * 
+	 * and the resulting evaluations are returned in place of the pack expansion.
+	 *
 	 * This code is similar to CPPTemplates.instantiateArguments(), but applies to evaluations
-	 * rather than template arguments. 
+	 * rather than template arguments.
 	 */
 	protected static ICPPEvaluation[] instantiateCommaSeparatedSubexpressions(
-			ICPPEvaluation[] subexpressions, ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
+			ICPPEvaluation[] subexpressions, InstantiationContext context, int maxDepth) {
 		ICPPEvaluation[] result = subexpressions;
 		int resultShift = 0;
 		for (int i = 0; i < subexpressions.length; i++) {
@@ -119,7 +117,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 				if (pattern == null) {
 					newEval = EvalFixed.INCOMPLETE;
 				} else {
-					int packSize = pattern.determinePackSize(tpMap);
+					int packSize = pattern.determinePackSize(context.getParameterMap());
 					if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
 						newEval = EvalFixed.INCOMPLETE;
 					} else if (packSize == CPPTemplates.PACK_SIZE_DEFER) {
@@ -128,19 +126,22 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 						int shift = packSize - 1;
 						ICPPEvaluation[] newResult = new ICPPEvaluation[subexpressions.length + resultShift + shift];
 						System.arraycopy(result, 0, newResult, 0, i + resultShift);
+						int oldPackOffset = context.getPackOffset();
 						for (int j = 0; j < packSize; ++j) {
-							newEval = pattern.instantiate(tpMap, j, within, maxdepth, point);
+							context.setPackOffset(j);
+							newEval = pattern.instantiate(context, maxDepth);
 							newResult[i + resultShift + j] = newEval;
 						}
+						context.setPackOffset(oldPackOffset);
 						result = newResult;
 						resultShift += shift;
 						continue;
 					}
 				}
 			} else {
-				newEval = origEval.instantiate(tpMap, packOffset, within, maxdepth, point);
+				newEval = origEval.instantiate(context, maxDepth);
 			}
-			
+
 			if (result != subexpressions) {
 				result[i + resultShift] = newEval;
 			} else if (newEval != origEval) {
@@ -152,22 +153,22 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Used to defer the resolution of a template definition until it is needed, 
+	 * Used to defer the resolution of a template definition until it is needed,
 	 * to avoid recursion. The only valid operation on this binding is resolve().
 	 */
 	private static class DeferredResolutionBinding extends PlatformObject implements IBinding {
 		private final IASTName fName;
-		
+
 		public DeferredResolutionBinding(IASTName name) {
 			fName = name;
 		}
-		
+
 		public IBinding resolve() {
 			return fName.resolveBinding();
 		}
-		
+
 		@Override
 		public String getName() {
 			throw new UnsupportedOperationException();

@@ -56,7 +56,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -65,6 +64,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.core.runtime.CoreException;
 
@@ -355,10 +355,9 @@ public class EvalBinary extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation arg1 = fArg1.instantiate(tpMap, packOffset, within, maxdepth, point);
-		ICPPEvaluation arg2 = fArg2.instantiate(tpMap, packOffset, within, maxdepth, point);
+	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
+		ICPPEvaluation arg1 = fArg1.instantiate(context, maxDepth);
+		ICPPEvaluation arg2 = fArg2.instantiate(context, maxDepth);
 		if (arg1 == fArg1 && arg2 == fArg2)
 			return this;
 		return new EvalBinary(fOperator, arg1, arg2, getTemplateDefinition());

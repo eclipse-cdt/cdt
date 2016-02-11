@@ -21,13 +21,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -173,10 +173,9 @@ public class EvalFixed extends CPPEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
-		IType type = CPPTemplates.instantiateType(fType, tpMap, packOffset, within, point);
-		IValue value = CPPTemplates.instantiateValue(fValue, tpMap, packOffset, within, maxdepth, point);
+	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
+		IType type = CPPTemplates.instantiateType(fType, context);
+		IValue value = CPPTemplates.instantiateValue(fValue, context, maxDepth);
 		if (type == fType && value == fValue)
 			return this;
 		// If an error occurred while instantiating the value (such as a substitution failure), 

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f4c17577",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/InstantiationContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-11T23:03:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_a874f443",
+      "range": {
+        "startLine": 33,
+        "startChar": 48,
+        "endLine": 33,
+        "endChar": 63
+      },
+      "revId": "fc8530c57e4809970c94ff56f9d0b4809e38cfba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_c8786039",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/InstantiationContext.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-02-11T08:57:17Z",
       "side": 1,
       "message": "We are not supplying a map.",
+      "range": {
+        "startLine": 83,
+        "startChar": 22,
+        "endLine": 83,
+        "endChar": 43
+      },
+      "revId": "fc8530c57e4809970c94ff56f9d0b4809e38cfba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_14cfc1a4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/InstantiationContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-11T23:03:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_c8786039",
       "range": {
         "startLine": 83,
         "startChar": 22,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_34ccbdad",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/InstantiationContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-11T23:03:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_e8751c3e",
+      "range": {
+        "startLine": 93,
+        "startChar": 22,
+        "endLine": 93,
+        "endChar": 43
+      },
+      "revId": "fc8530c57e4809970c94ff56f9d0b4809e38cfba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_68510cb0",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 2
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_5403094c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-11T23:03:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_68510cb0",
+      "range": {
+        "startLine": 368,
+        "startChar": 46,
+        "endLine": 368,
+        "endChar": 47
+      },
+      "revId": "fc8530c57e4809970c94ff56f9d0b4809e38cfba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_884658f9",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 2
@@ -105,6 +201,30 @@
       "writtenOn": "2016-02-11T08:57:17Z",
       "side": 1,
       "message": "Since resolveTemplateTypeParameter() doesn\u0027t use the contextTypeSpecialization, can we pass in \u0027context\u0027 unchanged?",
+      "range": {
+        "startLine": 2805,
+        "startChar": 82,
+        "endLine": 2805,
+        "endChar": 125
+      },
+      "revId": "fc8530c57e4809970c94ff56f9d0b4809e38cfba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_74080568",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2805,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-11T23:03:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_884658f9",
       "range": {
         "startLine": 2805,
         "startChar": 82,

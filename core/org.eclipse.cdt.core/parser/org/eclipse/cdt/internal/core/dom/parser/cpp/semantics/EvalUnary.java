@@ -51,7 +51,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -67,6 +66,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
@@ -362,14 +362,12 @@ public class EvalUnary extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation argument = fArgument.instantiate(tpMap, packOffset, within, maxdepth, point);
+	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
+		ICPPEvaluation argument = fArgument.instantiate(context, maxDepth);
 		IBinding binding = fAddressOfQualifiedNameBinding;
 		if (binding instanceof ICPPUnknownBinding) {
 			try {
-				binding= CPPTemplates.resolveUnknown((ICPPUnknownBinding) binding, tpMap, packOffset,
-						within, point);
+				binding= CPPTemplates.resolveUnknown((ICPPUnknownBinding) binding, context);
 			} catch (DOMException e) {
 			}
 		}

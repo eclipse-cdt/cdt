@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
@@ -47,6 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
 public class EvalBinding extends CPPDependentEvaluation {
@@ -384,12 +384,11 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
+	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		IBinding origBinding = getBinding();
 		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
-			if (tpMap != null) {
-				ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding, packOffset);
+			if (context != null) {
+				ICPPTemplateArgument argument = context.getArgument((ICPPTemplateNonTypeParameter) origBinding);
 				if (argument != null && argument.isNonTypeValue()) {
 					return argument.getNonTypeEvaluation();
 				}
@@ -397,15 +396,15 @@ public class EvalBinding extends CPPDependentEvaluation {
 		} else if (origBinding instanceof ICPPParameter) {
 			ICPPParameter parameter = (ICPPParameter) origBinding;
 			IType origType = parameter.getType();
-			if (origType instanceof ICPPParameterPackType && packOffset != -1) {
+			if (origType instanceof ICPPParameterPackType && context.hasPackOffset()) {
 				origType = ((ICPPParameterPackType) origType).getType();
 			}
-			IType instantiatedType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within, point);
+			IType instantiatedType = CPPTemplates.instantiateType(origType, context);
 			if (origType != instantiatedType) {
 				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this));
 			}
 		} else {
-			IBinding instantiatedBinding = instantiateBinding(origBinding, tpMap, packOffset, within, maxdepth, point);
+			IBinding instantiatedBinding = instantiateBinding(origBinding, context, maxDepth);
 			if (instantiatedBinding != origBinding)
 				return new EvalBinding(instantiatedBinding, null, getTemplateDefinition());
 		}

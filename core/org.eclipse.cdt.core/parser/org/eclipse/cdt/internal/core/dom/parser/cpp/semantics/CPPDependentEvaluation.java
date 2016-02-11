@@ -18,10 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -107,8 +106,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 	 * rather than template arguments. 
 	 */
 	protected static ICPPEvaluation[] instantiateCommaSeparatedSubexpressions(
-			ICPPEvaluation[] subexpressions, ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
+			ICPPEvaluation[] subexpressions, InstantiationContext context, int maxDepth) {
 		ICPPEvaluation[] result = subexpressions;
 		int resultShift = 0;
 		for (int i = 0; i < subexpressions.length; i++) {
@@ -119,7 +117,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 				if (pattern == null) {
 					newEval = EvalFixed.INCOMPLETE;
 				} else {
-					int packSize = pattern.determinePackSize(tpMap);
+					int packSize = pattern.determinePackSize(context.getParameterMap());
 					if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
 						newEval = EvalFixed.INCOMPLETE;
 					} else if (packSize == CPPTemplates.PACK_SIZE_DEFER) {
@@ -129,7 +127,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 						ICPPEvaluation[] newResult = new ICPPEvaluation[subexpressions.length + resultShift + shift];
 						System.arraycopy(result, 0, newResult, 0, i + resultShift);
 						for (int j = 0; j < packSize; ++j) {
-							newEval = pattern.instantiate(tpMap, j, within, maxdepth, point);
+							newEval = pattern.instantiate(context.withPackOffset(j), maxDepth);
 							newResult[i + resultShift + j] = newEval;
 						}
 						result = newResult;
@@ -138,7 +136,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 					}
 				}
 			} else {
-				newEval = origEval.instantiate(tpMap, packOffset, within, maxdepth, point);
+				newEval = origEval.instantiate(context, maxDepth);
 			}
 			
 			if (result != subexpressions) {

@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -50,6 +49,7 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
@@ -342,16 +342,15 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
-		IType ownerType = CPPTemplates.instantiateType(fOwnerType, tpMap, packOffset, within, point);
+	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
+		IType ownerType = CPPTemplates.instantiateType(fOwnerType, context);
 		if (ownerType == fOwnerType)
 			return this;
 
 		IBinding member = fMember;
 		IType ownerClass = SemanticUtil.getNestedType(ownerType, ALLCVQ);
 		if (ownerClass instanceof ICPPClassSpecialization) {
-			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerClass, fMember, point);
+			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerClass, fMember, context.getPoint());
 		}
 		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref, getTemplateDefinition());
 	}

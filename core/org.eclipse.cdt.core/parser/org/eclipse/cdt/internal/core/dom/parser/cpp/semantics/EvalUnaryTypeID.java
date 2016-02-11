@@ -44,13 +44,13 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
 public class EvalUnaryTypeID extends CPPDependentEvaluation {
@@ -205,17 +205,17 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
+	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		if (fOperator == op_sizeofParameterPack) {
-			int packSize = determinePackSize(tpMap);
+			int packSize = determinePackSize(context.getParameterMap());
 			if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
 				return EvalFixed.INCOMPLETE;
 			} else if (packSize != CPPTemplates.PACK_SIZE_DEFER) {
+				IASTNode point = context.getPoint();
 				return new EvalFixed(getType(point), getValueCategory(point), Value.create(packSize));
 			}
 		}
-		IType type = CPPTemplates.instantiateType(fOrigType, tpMap, packOffset, within, point);
+		IType type = CPPTemplates.instantiateType(fOrigType, context);
 		if (type == fOrigType)
 			return this;
 		return new EvalUnaryTypeID(fOperator, type, getTemplateDefinition());

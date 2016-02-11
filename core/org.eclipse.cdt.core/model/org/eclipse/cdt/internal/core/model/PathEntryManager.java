@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000-2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	 * pathentry containers pool accessing the Container is done synch with the
 	 * class
 	 */
-	private static HashMap<ICProject, Map<IPath, IPathEntryContainer>> Containers = new HashMap<ICProject, Map<IPath, IPathEntryContainer>>(
+	private static HashMap<ICProject, Map<IPath, IPathEntryContainer>> Containers = new HashMap<>(
 			5);
 
 	static final IPathEntry[] NO_PATHENTRIES = {};
@@ -113,16 +113,17 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	static final IPathEntryContainer[] NO_PATHENTRYCONTAINERS = {};
 
 	// Synchronized the access of the cache entries.
-	protected Map<ICProject, ArrayList<IPathEntry>> resolvedMap = new Hashtable<ICProject, ArrayList<IPathEntry>>();
-	private Map<ICProject, PathEntryResolveInfo> resolvedInfoMap = new Hashtable<ICProject, PathEntryResolveInfo>();
-	private ThreadLocalMap resolveInfoValidState = new ThreadLocalMap();
+	private final Map<ICProject, Object> cacheComputationMarkers = new HashMap<>();
+	protected Map<ICProject, ArrayList<IPathEntry>> resolvedMap = new Hashtable<>();
+	private final Map<ICProject, PathEntryResolveInfo> resolvedInfoMap = new Hashtable<>();
+	private final ThreadLocalMap resolveInfoValidState = new ThreadLocalMap();
 
 	// Accessing the map is synch with the class
-	private Map<IProject, IPathEntryStore> storeMap = new HashMap<IProject, IPathEntryStore>();
+	private final Map<IProject, IPathEntryStore> storeMap = new HashMap<>();
 
 	private static PathEntryManager pathEntryManager;
 
-	protected ConcurrentLinkedQueue<PathEntryProblem> markerProblems = new ConcurrentLinkedQueue<PathEntryProblem>();
+	protected ConcurrentLinkedQueue<PathEntryProblem> markerProblems = new ConcurrentLinkedQueue<>();
 
 	// Setting up a generate markers job, it does not get scheduled
 	Job markerTask = new GenerateMarkersJob("PathEntry Marker Job"); //$NON-NLS-1$
@@ -185,12 +186,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		if (celement != null) {
 			// Get project include file entries.
-			List<IPathEntry> entryList = new ArrayList<IPathEntry>();
+			List<IPathEntry> entryList = new ArrayList<>();
 			ICProject cproject = celement.getCProject();
 			ArrayList<IPathEntry> resolvedListEntries = getResolvedPathEntries(cproject, false);
 			IPathEntry[] pathEntries = getCachedResolvedPathEntries(resolvedListEntries, cproject);
-			for (int i = 0; i < pathEntries.length; ++i) {
-				IPathEntry entry = pathEntries[i];
+			for (IPathEntry entry : pathEntries) {
 				if ((entry.getEntryKind() & IPathEntry.CDT_INCLUDE_FILE) != 0) {
 					entryList.add(entry);
 				}
@@ -214,12 +214,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		if (celement != null) {
 			// get project include entries
-			List<IPathEntry> entryList = new ArrayList<IPathEntry>();
+			List<IPathEntry> entryList = new ArrayList<>();
 			ICProject cproject = celement.getCProject();
 			ArrayList<IPathEntry> resolvedListEntries = getResolvedPathEntries(cproject, false);
 			IPathEntry[] pathEntries = getCachedResolvedPathEntries(resolvedListEntries, cproject);
-			for (int i = 0; i < pathEntries.length; ++i) {
-				IPathEntry entry = pathEntries[i];
+			for (IPathEntry entry : pathEntries) {
 				if ((entry.getEntryKind() & IPathEntry.CDT_INCLUDE) != 0) {
 					entryList.add(entry);
 				}
@@ -243,12 +242,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		if (celement != null) {
 			// get project macro entries
-			List<IPathEntry> entryList = new ArrayList<IPathEntry>();
+			List<IPathEntry> entryList = new ArrayList<>();
 			ICProject cproject = celement.getCProject();
 			ArrayList<IPathEntry> resolvedListEntries = getResolvedPathEntries(cproject, false);
 			IPathEntry[] pathEntries = getCachedResolvedPathEntries(resolvedListEntries, cproject);
-			for (int i = 0; i < pathEntries.length; ++i) {
-				IPathEntry entry = pathEntries[i];
+			for (IPathEntry entry : pathEntries) {
 				if ((entry.getEntryKind() & IPathEntry.CDT_MACRO) != 0) {
 					entryList.add(entry);
 				}
@@ -260,7 +258,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	private IMacroEntry[] getMacroEntries(ITranslationUnit cunit) throws CModelException {
-		ArrayList<IPathEntry> macroList = new ArrayList<IPathEntry>();
+		ArrayList<IPathEntry> macroList = new ArrayList<>();
 		ICProject cproject = cunit.getCProject();
 		IPath resPath = cunit.getPath();
 		// Do this first so the containers get inialized.
@@ -272,9 +270,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		}
 		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
-		for (int i = 0; i < containers.length; ++i) {
-			if (containers[i] instanceof IPathEntryContainerExtension) {
-				IPathEntryContainerExtension extension = (IPathEntryContainerExtension) containers[i];
+		for (IPathEntryContainer container : containers) {
+			if (container instanceof IPathEntryContainerExtension) {
+				IPathEntryContainerExtension extension = (IPathEntryContainerExtension) container;
 				IPathEntry[] incs = extension.getPathEntries(resPath, IPathEntry.CDT_MACRO);
 				macroList.addAll(Arrays.asList(incs));
 			}
@@ -289,7 +287,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		//
 		// We will use NDEBUG=1 only
 		int count = resPath.segmentCount();
-		Map<String, IMacroEntry> symbolMap = new HashMap<String, IMacroEntry>();
+		Map<String, IMacroEntry> symbolMap = new HashMap<>();
 		for (int i = 0; i < count; i++) {
 			IPath newPath = resPath.removeLastSegments(i);
 			for (IMacroEntry macro : macros) {
@@ -346,7 +344,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	private List<IPathEntry> getPathEntries(ITranslationUnit cunit, int type) throws CModelException {
-		ArrayList<IPathEntry> entryList = new ArrayList<IPathEntry>();
+		ArrayList<IPathEntry> entryList = new ArrayList<>();
 		ICProject cproject = cunit.getCProject();
 		IPath resPath = cunit.getPath();
 		// Do this first so the containers get inialized.
@@ -358,9 +356,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		}
 		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
-		for (int i = 0; i < containers.length; ++i) {
-			if (containers[i] instanceof IPathEntryContainerExtension) {
-				IPathEntryContainerExtension extension = (IPathEntryContainerExtension) containers[i];
+		for (IPathEntryContainer container : containers) {
+			if (container instanceof IPathEntryContainerExtension) {
+				IPathEntryContainerExtension extension = (IPathEntryContainerExtension) container;
 				IPathEntry[] incs = extension.getPathEntries(resPath, type);
 				entryList.addAll(Arrays.asList(incs));
 			}
@@ -453,7 +451,13 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	protected IPathEntry[] removeCachedResolvedPathEntries(ICProject cproject) {
-		ArrayList<IPathEntry> resolvedListEntries = resolvedMap.remove(cproject);
+		ArrayList<IPathEntry> resolvedListEntries;
+		synchronized (cacheComputationMarkers) {
+			// Remove a potential marker, such that a result in progress is not
+			// written to the cache.
+			cacheComputationMarkers.remove(cproject);
+			resolvedListEntries = resolvedMap.remove(cproject);
+		}
 		resolvedInfoMap.remove(cproject);
 		if (resolvedListEntries != null) {
 			try {
@@ -481,10 +485,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		if (hasContainerExtension) {
 			IPath projectPath = cproject.getPath();
-			ArrayList<IPathEntry> listEntries = new ArrayList<IPathEntry>(entries.length);
-			for (int i = 0; i < entries.length; ++i) {
-				if (entries[i].getEntryKind() == IPathEntry.CDT_CONTAINER) {
-					IContainerEntry centry = (IContainerEntry) entries[i];
+			ArrayList<IPathEntry> listEntries = new ArrayList<>(entries.length);
+			for (IPathEntry entrie : entries) {
+				if (entrie.getEntryKind() == IPathEntry.CDT_CONTAINER) {
+					IContainerEntry centry = (IContainerEntry) entrie;
 					IPathEntryContainer container = getPathEntryContainer(centry, cproject);
 					if (container != null) {
 						IPathEntry[] containerEntries = container.getPathEntries();
@@ -497,7 +501,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						}
 					}
 				} else {
-					listEntries.add(entries[i]);
+					listEntries.add(entrie);
 				}
 			}
 			entries = listEntries.toArray(NO_PATHENTRIES);
@@ -524,8 +528,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private ArrayList<IPathEntry> getResolvedPathEntries(ICProject cproject, boolean generateMarkers)
 			throws CModelException {
 		Object[] result = getResolvedPathEntries(cproject, generateMarkers, true);
-		if (result != null)
+		if (result != null) {
 			return (ArrayList<IPathEntry>) result[0];
+		}
 		return null;
 	}
 
@@ -538,10 +543,19 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			rInfo = resolvedInfoMap.get(cproject);
 		}
 		if (resolvedEntries == null) {
-			List<PathEntryResolveInfoElement> resolveInfoList = new ArrayList<PathEntryResolveInfoElement>();
+			Object marker = null;
+			if (useCache) {
+				// Mark the fact that we are computing a result for the cache
+				marker = new Object();
+				synchronized (cacheComputationMarkers) {
+					cacheComputationMarkers.put(cproject, marker);
+				}
+			}
+			
+			List<PathEntryResolveInfoElement> resolveInfoList = new ArrayList<>();
 			IPath projectPath = cproject.getPath();
 			IPathEntry[] rawEntries = getRawPathEntries(cproject);
-			resolvedEntries = new ArrayList<IPathEntry>();
+			resolvedEntries = new ArrayList<>();
 			for (IPathEntry entry : rawEntries) {
 				// Expand the containers.
 				if (entry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
@@ -553,7 +567,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						// are not IPathEntryContainerExtension.
 						if (!(container instanceof IPathEntryContainerExtension)) {
 							IPathEntry[] containerEntries = container.getPathEntries();
-							List<IPathEntry> resolvedList = new ArrayList<IPathEntry>();
+							List<IPathEntry> resolvedList = new ArrayList<>();
 							if (containerEntries != null) {
 								for (IPathEntry containerEntry : containerEntries) {
 									IPathEntry newEntry = PathEntryUtil.cloneEntryAndExpand(projectPath,
@@ -582,7 +596,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 			if (generateMarkers) {
 				IPathEntry[] finalEntries = resolvedEntries.toArray(NO_PATHENTRIES);
-				ArrayList<ICModelStatus> problemList = new ArrayList<ICModelStatus>();
+				ArrayList<ICModelStatus> problemList = new ArrayList<>();
 				ICModelStatus status = validatePathEntry(cproject, finalEntries);
 				if (!status.isOK()) {
 					problemList.add(status);
@@ -615,8 +629,15 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 			rInfo = new PathEntryResolveInfo(resolveInfoList);
 			if (useCache) {
-				resolvedMap.put(cproject, resolvedEntries);
-				resolvedInfoMap.put(cproject, rInfo);
+				synchronized (cacheComputationMarkers) {
+					// Only if our marker is still here we are allowed to cache the result
+					// Otherwise, the cache may have been cleared after we started our computation.
+					if (cacheComputationMarkers.get(cproject) == marker) {
+						cacheComputationMarkers.remove(cproject);
+						resolvedMap.put(cproject, resolvedEntries);
+						resolvedInfoMap.put(cproject, rInfo);
+					}
+				}
 			}
 		}
 		return new Object[] { resolvedEntries, rInfo };
@@ -823,7 +844,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			boolean bCreateLock) {
 		Map<IPath, IPathEntryContainer> projectContainers = Containers.get(cproject);
 		if (projectContainers == null) {
-			projectContainers = new HashMap<IPath, IPathEntryContainer>();
+			projectContainers = new HashMap<>();
 			Containers.put(cproject, projectContainers);
 		}
 		IPathEntryContainer container = projectContainers.get(containerPath);
@@ -838,7 +859,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	synchronized void containerPut(ICProject cproject, IPath containerPath, IPathEntryContainer container) {
 		Map<IPath, IPathEntryContainer> projectContainers = Containers.get(cproject);
 		if (projectContainers == null) {
-			projectContainers = new HashMap<IPath, IPathEntryContainer>();
+			projectContainers = new HashMap<>();
 			Containers.put(cproject, projectContainers);
 		}
 		IPathEntryContainer oldContainer;
@@ -870,7 +891,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	public String[] projectPrerequisites(IPathEntry[] entries) throws CModelException {
 		if (entries != null) {
-			ArrayList<String> prerequisites = new ArrayList<String>();
+			ArrayList<String> prerequisites = new ArrayList<>();
 			for (IPathEntry entry : entries) {
 				if (entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
 					IProjectEntry projectEntry = (IProjectEntry) entry;
@@ -893,7 +914,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			entries = NO_PATHENTRIES;
 		}
 
-		ArrayList<IPathEntry> list = new ArrayList<IPathEntry>(entries.length);
+		ArrayList<IPathEntry> list = new ArrayList<>(entries.length);
 		IPath projectPath = cproject.getPath();
 		for (IPathEntry pathEntry : entries) {
 			int kind = pathEntry.getEntryKind();
@@ -1047,8 +1068,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				IProject project = problem.project;
 				ICModelStatus[] problems = problem.problems;
 				PathEntryUtil.flushPathEntryProblemMarkers(project);
-				for (int i = 0; i < problems.length; ++i) {
-					PathEntryUtil.createPathEntryProblemMarker(project, problems[i]);
+				for (ICModelStatus problem2 : problems) {
+					PathEntryUtil.createPathEntryProblemMarker(project, problem2);
 				}
 			}
 			return Status.OK_STATUS;
@@ -1069,7 +1090,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (!needDelta(cproject))
 			return new ICElementDelta[0];
 
-		ArrayList<ICElementDelta> list = new ArrayList<ICElementDelta>();
+		ArrayList<ICElementDelta> list = new ArrayList<>();
 
 		// If nothing was known before do not generate any deltas.
 		if (oldEntries == null) {
@@ -1221,7 +1242,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (core == null) {
 			return null;
 		}
-		ArrayList<String> containerIDList = new ArrayList<String>(5);
+		ArrayList<String> containerIDList = new ArrayList<>(5);
 		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
 				CONTAINER_INITIALIZER_EXTPOINT_ID);
 		if (extension != null) {
@@ -1454,16 +1475,16 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		final ICProject cproject = sourceRoot.getCProject();
 		IPathEntry[] rawEntries = getRawPathEntries(cproject);
 		boolean change = false;
-		ArrayList<IPathEntry> list = new ArrayList<IPathEntry>(rawEntries.length);
-		for (int i = 0; i < rawEntries.length; ++i) {
-			if (rawEntries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
-				if (sourceRoot.getPath().equals(rawEntries[i].getPath())) {
+		ArrayList<IPathEntry> list = new ArrayList<>(rawEntries.length);
+		for (IPathEntry rawEntrie : rawEntries) {
+			if (rawEntrie.getEntryKind() == IPathEntry.CDT_SOURCE) {
+				if (sourceRoot.getPath().equals(rawEntrie.getPath())) {
 					change = true;
 				} else {
-					list.add(rawEntries[i]);
+					list.add(rawEntrie);
 				}
 			} else {
-				list.add(rawEntries[i]);
+				list.add(rawEntrie);
 			}
 		}
 		if (change) {

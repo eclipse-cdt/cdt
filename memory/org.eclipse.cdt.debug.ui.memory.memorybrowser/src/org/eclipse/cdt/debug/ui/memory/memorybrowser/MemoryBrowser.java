@@ -320,6 +320,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					if (activeFolder != null) {	
 						final Object context = activeFolder.getData(KEY_CONTEXT);
 				        fGotoAddressBar.loadSavedExpressions(context, fGotoMemorySpaceControl.getText());
+				        performGo(false);
 					}
 				}
 			}

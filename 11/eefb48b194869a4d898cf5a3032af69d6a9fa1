@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+2: Marc Dumais <marc.dumais@ericsson.com>
+Verified+1: Marc Dumais <marc.dumais@ericsson.com>
+Submitted-by: Teodor Madan <teodor.madan@nxp.com>
+Submitted-at: Thu, 11 Feb 2016 16:53:46 -0500
+Reviewed-on: https://git.eclipse.org/r/66076
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

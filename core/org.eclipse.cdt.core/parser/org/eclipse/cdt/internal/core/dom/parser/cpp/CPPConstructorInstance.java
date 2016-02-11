@@ -16,14 +16,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * Instantiation of a constructor template
  */
 public class CPPConstructorInstance extends CPPMethodInstance implements ICPPConstructor {
 
-	public CPPConstructorInstance(ICPPConstructor orig, ICPPClassType owner, 
-			CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpec) {
+	public CPPConstructorInstance(ICPPConstructor orig, ICPPClassType owner, ICPPTemplateParameterMap tpmap,
+			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpec) {
 		super(orig, owner, tpmap, args, type, exceptionSpec);
 	}
 }

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -334,8 +335,10 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if (f instanceof ICPPComputableFunction) {
 			ICPPEvaluation eval = ((ICPPComputableFunction) f).getReturnExpression(point);
 			if (eval != null) {
-				eval = eval.instantiate(getTemplateParameterMap(), -1, 
-						CPPTemplates.getSpecializationContext(getOwner()), Value.MAX_RECURSION_DEPTH, point);
+				ICPPClassSpecialization within = CPPTemplates.getSpecializationContext(getOwner());
+				InstantiationContext context =
+						new InstantiationContext(getTemplateParameterMap(), within, point);
+ 				eval = eval.instantiate(context, Value.MAX_RECURSION_DEPTH);
 			}
 			return eval;
 		}

@@ -169,7 +169,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 						IBinding origClass = base.getBaseClass();
 						if (origClass instanceof ICPPTemplateParameter && ((ICPPTemplateParameter) origClass).isParameterPack()) {
 							IType[] specClasses= CPPTemplates.instantiateTypes(new IType[] { new CPPParameterPackType((IType) origClass) },
-									tpmap, -1, specialClass, point);
+									new InstantiationContext(tpmap, specialClass, point));
 							if (specClasses.length == 1 && specClasses[0] instanceof ICPPParameterPackType) {
 								result= ArrayUtil.append(result, base);
 							} else {
@@ -191,7 +191,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 							if (owner instanceof ICPPClassSpecialization) {
 								specializationContext = (ICPPClassSpecialization) owner;
 							}
-							IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specializationContext, point);
+							IType specClass= CPPTemplates.instantiateType((IType) origClass,
+									new InstantiationContext(tpmap, specializationContext, point));
 							specClass = SemanticUtil.getUltimateType(specClass, false);
 							if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
 								specBase.setBaseClass((IBinding) specClass);

@@ -40,10 +40,12 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 
 	public static IBinding createInstance(ICPPEnumeration enumeration,
 			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpMap, IASTNode point) {
-		ICPPClassSpecialization within = CPPTemplates.getSpecializationContext(owner);
 		IType fixedType = enumeration.getFixedType();
-		if (fixedType != null)
-			fixedType = CPPTemplates.instantiateType(fixedType, tpMap, -1, within, point);
+		if (fixedType != null) {
+			ICPPClassSpecialization within = CPPTemplates.getSpecializationContext(owner);
+			InstantiationContext context = new InstantiationContext(tpMap, within, point);
+			fixedType = CPPTemplates.instantiateType(fixedType, context);
+		}
 		CPPEnumerationSpecialization specializedEnumeration =
 				new CPPEnumerationSpecialization(enumeration, owner, tpMap, fixedType);
 		specializedEnumeration.initialize(point);
@@ -63,13 +65,14 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 		IType previousInternalType = CPPBasicType.INT;
 		for (int i = 0; i < enumerators.length; ++i) {
 			IEnumerator enumerator = enumerators[i];
-			IValue specializedValue = CPPTemplates.instantiateValue(enumerator.getValue(), tpMap, -1,
-					this, Value.MAX_RECURSION_DEPTH, point);
+			InstantiationContext context = new InstantiationContext(tpMap, this, point);
+			IValue specializedValue =
+					CPPTemplates.instantiateValue(enumerator.getValue(), context, Value.MAX_RECURSION_DEPTH);
 			IType internalType = null;
 			if (fFixedType == null && enumerator instanceof ICPPInternalEnumerator) {
 				internalType = ((ICPPInternalEnumerator) enumerator).getInternalType();
 				if (internalType != null) {
-					internalType = CPPTemplates.instantiateType(internalType, tpMap, -1, this, point);
+					internalType = CPPTemplates.instantiateType(internalType, context);
 				} else if (previousInternalType instanceof IBasicType) {
 					internalType = ASTEnumerator.getTypeOfIncrementedValue(
 							(IBasicType) previousInternalType, specializedValue);

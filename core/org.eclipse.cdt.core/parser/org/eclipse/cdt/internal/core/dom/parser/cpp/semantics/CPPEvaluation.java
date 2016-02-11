@@ -21,10 +21,9 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
 public abstract class CPPEvaluation implements ICPPEvaluation {
@@ -49,10 +48,9 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		return buf.getSignature();
 	}
 
-	protected static IBinding resolveUnknown(ICPPUnknownBinding unknown, ICPPTemplateParameterMap tpMap,
-			int packOffset, ICPPTypeSpecialization within, IASTNode point) {
+	protected static IBinding resolveUnknown(ICPPUnknownBinding unknown, InstantiationContext context) {
 		try {
-			return CPPTemplates.resolveUnknown(unknown, tpMap, packOffset, within, point);
+			return CPPTemplates.resolveUnknown(unknown, context);
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}
@@ -60,19 +58,18 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	}
 
 	protected static ICPPTemplateArgument[] instantiateArguments(ICPPTemplateArgument[] args,
-			ICPPTemplateParameterMap tpMap, int packOffset, ICPPTypeSpecialization within, IASTNode point) {
+			InstantiationContext context) {
 		try {
-			return CPPTemplates.instantiateArguments(args, tpMap, packOffset, within, point, false);
+			return CPPTemplates.instantiateArguments(args, context, false);
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}
 		return args;
 	}
 
-	protected static IBinding instantiateBinding(IBinding binding, ICPPTemplateParameterMap tpMap,
-			int packOffset, ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
+	protected static IBinding instantiateBinding(IBinding binding, InstantiationContext context, int maxDepth) {
 		try {
-			return CPPTemplates.instantiateBinding(binding, tpMap, packOffset, within, maxdepth, point);
+			return CPPTemplates.instantiateBinding(binding, context, maxDepth);
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}

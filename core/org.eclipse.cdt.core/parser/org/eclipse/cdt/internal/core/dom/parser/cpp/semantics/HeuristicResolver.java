@@ -42,6 +42,59 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 
+/**
+ * The purpose of this class is to perform heuristic binding resolution
+ * in contexts where the results of ordinary binding resolution (whose
+ * approach to templates is "defer actual resolution until template
+ * arguments become available") are undesirable.
+ * 
+ * Usually, this comes up in cases where the user is trying to invoke
+ * certain editor functionality inside a template.
+ * 
+ * For example, consider the following code:
+ * 
+ *   struct Cat {
+ *       void meow();
+ *   };
+ *   
+ *   template <typename T>
+ *   struct B {
+ *       Cat foo();
+ *   };
+ *   
+ *   template <typename T>
+ *   void foo(B<T> a) {
+ *       a.foo(). 
+ *   }
+ *
+ * and suppose content assist is invoked after the "a.foo().".
+ * To determine what completions to provide in that context, we try
+ * to determine the type of 'a.foo()', and then look to see what
+ * members are inside that type.
+ * 
+ * However, because we're in a template, the type of 'a.foo()' is
+ * a deferred / unknown type (in this case, a TypeOfDependentExpression),
+ * so we don't know what memebers it has.
+ * 
+ * HeuristicResolver maps that unknown type to a concrete type
+ * (in this case, 'Cat') by applying the following heuristic:
+ * whenever name lookup is deferred because the lookup scope is
+ * the scope of a dependent template instantiation, assume the
+ * instantiation uses the primary template (as opposed to a partial
+ * or explicit specialization), and perform the lookup in the
+ * primary template scope. This heuristics gives the right answer
+ * in many cases, including this one.
+ * 
+ * HeuristicResolver can handle some more complex situations as well, 
+ * such as metafunction calls, typedefs, and nested templates. See
+ * CompletionTests.testDependentScopes_bug472818c for a test case
+ * that pushes it to its limit.
+ * 
+ * However, due to the nature of its heuristic, it cannot handle
+ * cases where the correct answer requires selecting a specialization
+ * rather than the primary template. Bug 487700 is one file for
+ * implementing more advanced heuristics that could deal with this.
+ */
 public class HeuristicResolver {
 	/**
 	 * Given a dependent type, heuristically tries to find a concrete scope (i.e. not an unknown scope)

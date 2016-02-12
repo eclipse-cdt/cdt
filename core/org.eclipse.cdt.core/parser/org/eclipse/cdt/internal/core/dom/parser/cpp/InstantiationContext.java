@@ -27,6 +27,8 @@ public class InstantiationContext {
 	private int packOffset;
 	private final ICPPTypeSpecialization contextTypeSpecialization;
 	private final IASTNode point;
+	private boolean expandPack;
+	private boolean packExpanded;
 
 	/**
 	 * @param parameterMap mapping of template parameters to arguments, may be {@code null}.
@@ -135,7 +137,7 @@ public class InstantiationContext {
 	}
 
 	/**
-	 * Returns true if the pack offset is specified.
+	 * Returns {@code true} if the pack offset is specified.
 	 */
 	public final boolean hasPackOffset() {
 		return packOffset != -1;
@@ -156,10 +158,49 @@ public class InstantiationContext {
 	}
 
 	/**
+	 * Returns {@code true} if a parameter pack should be expanded by substituting individual template
+	 * arguments in place of a template parameter that represents a pack.
+	 */
+	public boolean shouldExpandPack() {
+		return expandPack;
+	}
+
+	/**
+	 * Sets the flag that indicates that a parameter pack should be expanded by substituting individual
+	 * template arguments in place of a template parameter that represents a pack.
+	 */
+	public void setExpandPack(boolean expand) {
+		this.expandPack = expand;
+	}
+
+	/**
+	 * Returns {@code true} if individual template argument substitution in place of a template parameter that
+	 * represents a pack actually happened.
+	 */
+	public boolean isPackExpanded() {
+		return packExpanded;
+	}
+
+	/**
+	 * Indicates that individual template argument substitution in place of a template parameter that
+	 * represents a pack actually happened.
+	 */
+	public void setPackExpanded(boolean expanded) {
+		this.packExpanded = expanded;
+	}
+
+	/**
 	 * @see ICPPTemplateParameterMap#getArgument(ICPPTemplateParameter, int)
 	 */
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param) {
-		return parameterMap.getArgument(param, packOffset);
+		return parameterMap == null ? null : parameterMap.getArgument(param, packOffset);
+	}
+
+	/**
+	 * @see ICPPTemplateParameterMap#getPackExpansion(ICPPTemplateParameter)
+	 */
+	public ICPPTemplateArgument[] getPackExpansion(ICPPTemplateParameter param) {
+		return parameterMap == null ? null : parameterMap.getPackExpansion(param);
 	}
 
 	/**

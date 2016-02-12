@@ -1322,6 +1322,7 @@ public class CPPTemplates {
 					int shift = packSize - 1;
 					ICPPTemplateArgument[] newResult= new ICPPTemplateArgument[args.length + resultShift + shift];
 					System.arraycopy(result, 0, newResult, 0, i + resultShift);
+					context.setExpandPack(true);
 					int oldPackOffset = context.getPackOffset();
 					for (int j= 0; j < packSize; j++) {
 						context.setPackOffset(j);
@@ -1334,9 +1335,18 @@ public class CPPTemplates {
 							shift = 0;
 							break;
 						}
+						if (context.isPackExpanded()) {
+							IType type = newArg.getTypeValue();
+							if (type != null) {
+								type = new CPPParameterPackType(type);
+								newArg = new CPPTemplateTypeArgument(type);
+							}
+							context.setPackExpanded(false);
+						}
 						newResult[i + resultShift + j]= newArg;
 					}
 					context.setPackOffset(oldPackOffset);
+					context.setExpandPack(false);
 					result= newResult;
 					resultShift += shift;
 					continue;
@@ -1668,7 +1678,7 @@ public class CPPTemplates {
 		ICPPTemplateArgument arg= null;
 		if (tpar.isParameterPack()) {
 			if (context.hasPackOffset()) {
-				ICPPTemplateArgument[] args = context.getParameterMap().getPackExpansion(tpar);
+				ICPPTemplateArgument[] args = context.getPackExpansion(tpar);
 				if (args != null) {
 					if (context.getPackOffset() >= args.length) {
 						return new ProblemBinding(context.getPoint(), IProblemBinding.SEMANTIC_INVALID_TYPE,
@@ -1676,9 +1686,18 @@ public class CPPTemplates {
 					}
 					arg= args[context.getPackOffset()];
 				}
+				if (context.shouldExpandPack()) {
+					if (arg != null) {
+						IType type = arg.getTypeValue();
+						if (type instanceof ICPPParameterPackType) {
+							arg = new CPPTemplateTypeArgument(((ICPPParameterPackType) type).getType());
+							context.setPackExpanded(true);
+						}
+					}
+				}
 			}
 		} else {
-			arg= context.getParameterMap().getArgument(tpar);
+			arg= context.getArgument(tpar);
 		}
 
 		if (arg != null) {

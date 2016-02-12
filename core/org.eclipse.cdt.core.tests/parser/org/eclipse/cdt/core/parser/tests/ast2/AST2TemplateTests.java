@@ -7247,6 +7247,44 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template<typename T>
+	//	struct B {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <class... T>
+	//	class C {};
+	//
+	//	template <class... T>
+	//	using D = C<typename B<T>::type...>;
+	//
+	//	template <class... T>
+	//	class Group {};
+	//
+	//	template <class... U>
+	//	D<U...> waldo1(Group<U...>);
+	//
+	//	template <class U, class... V>
+	//	D<U, V...> waldo2(Group<U>, Group<V...>);
+	//
+	//	template <class... U, class V>
+	//	D<U..., V> waldo3(Group<U...>, Group<V>);
+	//
+	//	template <class... U, class... V>
+	//	D<U..., V...> waldo4(Group<U...>, Group<V...>);
+	//
+	//	void test() {
+	//		Group<int> one;
+	//		Group<int, int> two;
+	//	    waldo1(two);
+	//		waldo2(one, two);
+	//		waldo3(two, one);
+	//		waldo4(two, two);
+	//	}
+	public void testAliasTemplate_486971() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename T>
 	//	struct Struct {};
 	//

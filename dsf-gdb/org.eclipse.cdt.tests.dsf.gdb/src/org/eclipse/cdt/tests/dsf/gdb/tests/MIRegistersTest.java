@@ -502,8 +502,9 @@ public class MIRegistersTest extends BaseTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);
 		int depth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-		// validate expected stack depth
-		assertEquals(4, depth);
+		// we need at least 2 levels of stack frame to continue this test.
+		// note: the depth is glibc-version-dependent
+		assertTrue(depth >= 2);
 
 		// Resolve the register name of the stack pointer
 		String sp_name = resolveStackPointerName();

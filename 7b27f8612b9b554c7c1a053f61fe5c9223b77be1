@@ -22,6 +22,30 @@
       "revId": "7b27f8612b9b554c7c1a053f61fe5c9223b77be1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b4c60de0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-02-12T01:51:06Z",
+      "side": 1,
+      "message": "I added a Javadoc in a new commit: https://git.eclipse.org/r/66445",
+      "parentUuid": "e7dfcf21_c4569255",
+      "range": {
+        "startLine": 34,
+        "startChar": 13,
+        "endLine": 34,
+        "endChar": 30
+      },
+      "revId": "7b27f8612b9b554c7c1a053f61fe5c9223b77be1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

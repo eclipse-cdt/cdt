@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
+import org.eclipse.core.resources.IMarker;
 
 /**
  * Test for {@see AssignmentToItselfChecker} class
@@ -63,5 +64,18 @@ public class AssignmentToItselfCheckerTest extends CheckerTestCase {
 	public void testNoError_Bug321933() {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
+	}
+
+	// void foo() {
+	// int x = 0;
+	// int y = 0;
+	// y *= 2; x =
+	// x;
+	// }
+	public void testStartOffset() { // Bug 486610
+		loadCodeAndRun(getAboveComment());
+		IMarker marker = checkErrorLine(4);
+		// The Offset should start at the beginning of the expression
+		assertTrue(marker.getAttribute(IMarker.CHAR_START, -1) == 46);
 	}
 }

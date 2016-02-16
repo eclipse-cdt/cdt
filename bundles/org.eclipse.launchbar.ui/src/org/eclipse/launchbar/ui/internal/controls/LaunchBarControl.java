@@ -16,6 +16,8 @@ import javax.annotation.PreDestroy;
 
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.launchbar.core.ILaunchBarListener;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
@@ -27,6 +29,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -65,12 +69,9 @@ public class LaunchBarControl implements ILaunchBarListener {
 		});
 
 		ToolBar toolBar = new ToolBar(container, SWT.FLAT);
-		createButton(toolBar, Activator.IMG_BUTTON_BUILD, Activator.IMG_BUTTON_BUILD_HOT,
-				Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
-		createButton(toolBar, Activator.IMG_BUTTON_LAUNCH, Activator.IMG_BUTTON_LAUNCH_HOT,
-				Messages.LaunchBarControl_Launch, Activator.CMD_LAUNCH);
-		createButton(toolBar, Activator.IMG_BUTTON_STOP, Activator.IMG_BUTTON_STOP_HOT, Messages.LaunchBarControl_Stop,
-				Activator.CMD_STOP);
+		createButton(toolBar, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
+		createButton(toolBar, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch, Activator.CMD_LAUNCH);
+		createButton(toolBar, Activator.IMG_BUTTON_STOP, Messages.LaunchBarControl_Stop, Activator.CMD_STOP);
 
 		modeSelector = new ModeSelector(container, SWT.NONE);
 		modeSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
@@ -109,13 +110,32 @@ public class LaunchBarControl implements ILaunchBarListener {
 		manager.removeListener(this);
 	}
 
-	private ToolItem createButton(Composite parent, String imageName, String hotImageName, String toolTipText,
-			final String command) {
+	private ToolItem createButton(Composite parent, String imageName, String toolTipText, final String command) {
 		ToolItem button = new ToolItem((ToolBar) parent, SWT.FLAT);
-		Image srcImage = Activator.getDefault().getImage(imageName);
-		button.setImage(srcImage);
-		Image hotImage = Activator.getDefault().getImage(hotImageName);
-		button.setHotImage(hotImage);
+
+		Image bgImage = Activator.getDefault().getImage(Activator.IMG_BUTTON_BACKGROUND);
+		Image fgImage = Activator.getDefault().getImage(imageName);
+
+		ImageDescriptor imageDesc = new CompositeImageDescriptor() {
+			@Override
+			protected Point getSize() {
+				Rectangle bounds = bgImage.getBounds();
+				return new Point(bounds.width - bounds.y, bounds.height - bounds.x);
+			}
+
+			@Override
+			protected void drawCompositeImage(int width, int height) {
+				drawImage(bgImage.getImageData(), 0, 0);
+
+				Rectangle bgBounds = bgImage.getBounds();
+				Rectangle modeBounds = fgImage.getBounds();
+				int x = ((bgBounds.width - bgBounds.x) - (modeBounds.width - modeBounds.x)) / 2;
+				int y = ((bgBounds.height - bgBounds.y) - (modeBounds.height - modeBounds.y)) / 2;
+				drawImage(fgImage.getImageData(), x, y);
+			}
+		};
+
+		button.setImage(imageDesc.createImage());
 		button.setToolTipText(toolTipText);
 		button.setData("command", command); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {

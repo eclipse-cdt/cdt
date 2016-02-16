@@ -86,6 +86,7 @@ public abstract class CSelector extends Composite {
 		}
 		return control == this;
 	}
+
 	private Listener focusOutListener = new Listener() {
 		private Job closingJob;
 
@@ -105,9 +106,8 @@ public abstract class CSelector extends Composite {
 			case SWT.FocusOut:
 				if (isPopUpInFocus()) {
 					// we about to loose focus from popup children, but it may
-					// go
-					// to another child, lets schedule a job to wait before we
-					// close
+					// go to another child, lets schedule a job to wait before
+					// we close
 					if (closingJob != null)
 						closingJob.cancel();
 					closingJob = new Job(Messages.CSelector_0) {
@@ -123,7 +123,7 @@ public abstract class CSelector extends Composite {
 					closingJob.schedule(300);
 				}
 				break;
-			case SWT.MouseUp: {
+			case SWT.MouseUp:
 				if (popup != null && !popup.isDisposed()) {
 					Point loc = getDisplay().getCursorLocation();
 					if (!popup.getBounds().contains(loc) && !getBounds().contains(getParent().toControl(loc))) {
@@ -131,7 +131,8 @@ public abstract class CSelector extends Composite {
 					}
 				}
 				break;
-			}
+			default:
+				break;
 			}
 		}
 	};
@@ -491,7 +492,8 @@ public abstract class CSelector extends Composite {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (isDisposed()) return;
+				if (isDisposed())
+					return;
 				update(selection); // update current selection - name or icon
 									// may have changed
 				if (popup != null && !popup.isDisposed()) {

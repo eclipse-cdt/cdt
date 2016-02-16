@@ -197,10 +197,22 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 				return locFactory.createProblemLocation(getFile(), start, end, line);
 			}
 		}
+		int offset = astLocation.getNodeOffset();
 		if (line == astLocation.getEndingLineNumber()) {
-			return locFactory.createProblemLocation(getFile(), astLocation.getNodeOffset(),
-					astLocation.getNodeOffset() + astLocation.getNodeLength(), line);
+			return locFactory.createProblemLocation(getFile(), offset, offset
+					+ astLocation.getNodeLength(), line);
 		}
+		// searching for the end of the first line.
+		int eol = astNode.getRawSignature().indexOf('\n');
+		if (eol>0) {
+			// If the raw signature has more than one line, we highlight the
+			// code from the beginning of the node until the end of the first
+			// line, to avoid reporting instructions not related to the
+			// problem.
+			return locFactory.createProblemLocation(getFile(), offset, offset + eol, line);
+		}
+		// If we are unable to determine the position of the problem, we report
+		// the entire line.
 		return locFactory.createProblemLocation(getFile(), line);
 	}
 

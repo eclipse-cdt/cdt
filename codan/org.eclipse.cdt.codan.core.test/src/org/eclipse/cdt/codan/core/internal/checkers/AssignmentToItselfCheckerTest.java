@@ -11,9 +11,11 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
+import org.eclipse.core.resources.IMarker;
 
 /**
  * Test for {@see AssignmentToItselfChecker} class
+ *
  */
 public class AssignmentToItselfCheckerTest extends CheckerTestCase {
 	// void main() {
@@ -62,5 +64,19 @@ public class AssignmentToItselfCheckerTest extends CheckerTestCase {
 	public void testNoError_Bug321933() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
+	}
+
+	// void foo() {
+	//    int x = 0; x
+	//       = x;
+	// }
+	public void testMarkerOffset_Bug486610() throws Exception {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		IMarker marker = checkErrorLine(2);
+		int start = marker.getAttribute(IMarker.CHAR_START, -1);
+		int end = marker.getAttribute(IMarker.CHAR_END, -1);
+		// The offset should start at the beginning of the expression "x = x"
+		assertTrue(code.substring(start, end).equals("x\n       = x"));
 	}
 }

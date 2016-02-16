@@ -197,11 +197,11 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 				return locFactory.createProblemLocation(getFile(), start, end, line);
 			}
 		}
-		if (line == astLocation.getEndingLineNumber()) {
-			return locFactory.createProblemLocation(getFile(), astLocation.getNodeOffset(),
-					astLocation.getNodeOffset() + astLocation.getNodeLength(), line);
-		}
-		return locFactory.createProblemLocation(getFile(), line);
+		// If the raw signature has more than one line, we highlight only the code
+		// related to the problem.
+		int start = astLocation.getNodeOffset();
+		int end = start + astLocation.getNodeLength();
+		return locFactory.createProblemLocation(getFile(), start, end, line);
 	}
 
 	protected static boolean enclosedInMacroExpansion(IASTNode node) {

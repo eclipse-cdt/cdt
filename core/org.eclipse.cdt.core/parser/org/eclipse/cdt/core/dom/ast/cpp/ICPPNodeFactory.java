@@ -55,12 +55,12 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTArrayDeclarator newArrayDeclarator(IASTName name);
 
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public ICPPASTArrayDesignator newArrayDesignator(ICPPASTExpression exp);
 
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public IGPPASTArrayRangeDesignator newArrayRangeDesignatorGPP(ICPPASTExpression floor, ICPPASTExpression ceiling);
 
@@ -85,7 +85,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTAttributeSpecifier newAttributeSpecifier();
 	
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public ICPPASTAttributeList newAttributeList();
 
@@ -166,7 +166,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
 
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public ICPPASTDesignatedInitializer newDesignatedInitializer(ICPPASTInitializerClause initializer);
 
@@ -196,7 +196,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize);
 
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public ICPPASTFieldDesignator newFieldDesignator(IASTName name);
 
@@ -263,7 +263,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTNamespaceDefinition newNamespaceDefinition(IASTName name);
 	
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public ICPPASTNaryTypeIdExpression newNaryTypeIdExpression(ICPPASTNaryTypeIdExpression.Operator operator,
 			ICPPASTTypeId[] operands);

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
@@ -30,7 +29,4 @@ public interface ICPPTemplateScope extends ICPPScope {
 	 * @since 5.1
 	 */
 	public ICPPASTTemplateDeclaration getTemplateDeclaration();
-
-	@Deprecated
-	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException;
 }

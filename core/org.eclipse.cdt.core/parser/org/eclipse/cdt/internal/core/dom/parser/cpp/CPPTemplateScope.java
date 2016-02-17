@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -32,11 +31,6 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 		return EScopeKind.eTemplateDeclaration;
 	}
 
-	@Override
-	public ICPPTemplateDefinition getTemplateDefinition() {
-		return null;
-	}
-	
 	@Override
 	public ICPPASTTemplateDeclaration getTemplateDeclaration() {
 		return (ICPPASTTemplateDeclaration) getPhysicalNode();

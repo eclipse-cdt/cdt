@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_47118b0a",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/model/AbstractIndexAstChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 61801
+      },
+      "writtenOn": "2016-02-17T19:57:47Z",
+      "side": 1,
+      "message": "Sorry",
+      "parentUuid": "e7dfcf21_e78377df",
+      "range": {
+        "startLine": 205,
+        "startChar": 5,
+        "endLine": 205,
+        "endChar": 14
+      },
+      "revId": "ec13d68381479238a2c2ba433cb83576cbca4c53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_67b847ac",
         "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_c7503bde",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 61801
+      },
+      "writtenOn": "2016-02-17T19:57:47Z",
+      "side": 1,
+      "message": "The indentation is intentional \"x \u003d\nx;\"!\n\nThis bug appears in different forms, but I decide to use AssignmentToItsel problem, instead of creating another checker to report a structure declaration or a more common expression.",
+      "parentUuid": "e7dfcf21_67b847ac",
+      "range": {
+        "startLine": 70,
+        "startChar": 7,
+        "endLine": 70,
+        "endChar": 8
+      },
+      "revId": "ec13d68381479238a2c2ba433cb83576cbca4c53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_a7896f05",
         "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2016-02-17T18:58:19Z",
       "side": 1,
       "message": "It\u0027s not clear what location in the code corresponds to the offset 46. Better to find the node offset and to use it in the assert. Please add an assert for the end offset too.",
+      "range": {
+        "startLine": 79,
+        "startChar": 60,
+        "endLine": 79,
+        "endChar": 62
+      },
+      "revId": "ec13d68381479238a2c2ba433cb83576cbca4c53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_87139319",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 61801
+      },
+      "writtenOn": "2016-02-17T19:57:47Z",
+      "side": 1,
+      "message": "46 is the offset of \"x \u003d x\" the problem this test is reporting.\n\nWe can\u0027t use the marker to recover this node because the CHAR_START is invalid in this situation. So, do I need to create a visitor to search for this expression and then compare the node offest with the CHAR_START?\n\nPs.: you can see this bug visually, if you enable the AssignmentToItselfChecker and use this test case.",
+      "parentUuid": "e7dfcf21_a7896f05",
       "range": {
         "startLine": 79,
         "startChar": 60,

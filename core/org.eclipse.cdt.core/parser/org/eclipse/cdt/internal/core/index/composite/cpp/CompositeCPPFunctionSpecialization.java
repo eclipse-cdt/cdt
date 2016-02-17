@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -60,10 +59,4 @@ public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction imp
 		}
 		return result;
 	}
-
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
-	}	
 }

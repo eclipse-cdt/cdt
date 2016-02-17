@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSp
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -133,12 +132,6 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 			CCorePlugin.log(e);
 			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
-	}
-
-	@Override
-	@Deprecated
-	public IType[] getArguments() {
-		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 
 	@Override

@@ -130,18 +130,6 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	}
 
 	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return CPPTemplates.getArgumentMap(getPrimaryClassTemplate(), getTemplateParameterMap());
-	}
-
-	@Override
-	@Deprecated
-	public IType[] getArguments() throws DOMException {
-		return CPPTemplates.getArguments(getTemplateArguments());
-	}
-
-	@Override
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
 		// No default arguments for partial specializations
 		return null;

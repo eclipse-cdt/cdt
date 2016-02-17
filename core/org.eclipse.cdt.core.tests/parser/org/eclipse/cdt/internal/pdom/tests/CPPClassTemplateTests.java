@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.Arrays;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -30,15 +28,17 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+
+import junit.framework.Test;
 
 /**
  * Tests PDOM class template related bindings
@@ -85,17 +85,16 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		ICPPSpecialization asp= (ICPPSpecialization) a.getType();
 		ICPPSpecialization bsp= (ICPPSpecialization) b.getType();
 		
-		assertEquals(1, asp.getArgumentMap().size());
-		assertEquals(1, bsp.getArgumentMap().size());
+		ICPPTemplateParameterMap aArgs = asp.getTemplateParameterMap();
+		ICPPTemplateParameterMap bArgs = bsp.getTemplateParameterMap();
+		assertEquals(1, aArgs.getAllParameterPositions().length);
+		assertEquals(1, bArgs.getAllParameterPositions().length);
 		
-		assertInstance(asp.getArgumentMap().keyAt(0), ICPPTemplateParameter.class);
-		assertInstance(bsp.getArgumentMap().keyAt(0), ICPPTemplateParameter.class);
+		assertInstance(aArgs.getArgument(0).getTypeValue(), ICPPClassType.class);
+		assertInstance(bArgs.getArgument(0).getTypeValue(), ICPPClassType.class);
 		
-		assertInstance(asp.getArgumentMap().getAt(0), ICPPClassType.class);
-		assertInstance(bsp.getArgumentMap().getAt(0), ICPPClassType.class);
-		
-		assertEquals("A", ((ICPPClassType) asp.getArgumentMap().getAt(0)).getName());
-		assertEquals("B", ((ICPPClassType) bsp.getArgumentMap().getAt(0)).getName());
+		assertEquals("A", ((ICPPClassType) aArgs.getArgument(0).getTypeValue()).getName());
+		assertEquals("B", ((ICPPClassType) bArgs.getArgument(0).getTypeValue()).getName());
 		
 		assertDeclarationCount(pdom, "a", 1);
 		assertDeclarationCount(pdom, "b", 1);
@@ -237,7 +236,6 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// D<N> dn;
 	// D<int> dint;
 	public void testExplicitInstantiation() throws Exception {
-		
 		{
 			// template
 			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, npm());
@@ -263,13 +261,11 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 			assertInstance(var.getType(), ICPPClassType.class);
 			assertInstance(var.getType(), ICPPSpecialization.class);
 			ICPPSpecialization cp= (ICPPSpecialization) var.getType();
-			ObjectMap m= cp.getArgumentMap();
-			assertEquals(1, m.size());
-			Object key= m.keyAt(0), val= m.get(key);
-			assertInstance(key, ICPPTemplateTypeParameter.class);
-			assertInstance(val, ICPPClassType.class);
-			assertEquals(new String[] {"D","C"}, ((ICPPTemplateTypeParameter)key).getQualifiedName());
-			assertEquals(new String[] {"N"}, ((ICPPClassType)val).getQualifiedName());
+			ICPPTemplateParameterMap m= cp.getTemplateParameterMap();
+			assertEquals(1, m.getAllParameterPositions().length);
+			ICPPTemplateArgument arg = m.getArgument(0);
+			assertInstance(arg.getTypeValue(), ICPPClassType.class);
+			assertEquals(new String[] {"N"}, ((ICPPClassType) arg.getTypeValue()).getQualifiedName());
 		}
 		
 		{
@@ -281,14 +277,11 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 			assertInstance(var.getType(), ICPPClassType.class);
 			assertInstance(var.getType(), ICPPSpecialization.class);
 			ICPPSpecialization cp= (ICPPSpecialization) var.getType();
-			ObjectMap m= cp.getArgumentMap();
-			assertEquals(1, m.size());
-			Object key= m.keyAt(0), val= m.get(key);
-			assertInstance(key, ICPPTemplateTypeParameter.class);
-			assertInstance(val, IBasicType.class);
-			assertEquals(new String[] {"D","C"}, ((ICPPTemplateTypeParameter)key).getQualifiedName());
-			assertEquals(IBasicType.t_int, ((IBasicType)val).getType());
-
+			ICPPTemplateParameterMap m= cp.getTemplateParameterMap();
+			assertEquals(1, m.getAllParameterPositions().length);
+			ICPPTemplateArgument arg = m.getArgument(0);
+			assertInstance(arg.getTypeValue(), IBasicType.class);
+			assertEquals(IBasicType.Kind.eInt, ((IBasicType) arg.getTypeValue()).getKind());
 		}
 	}
 	

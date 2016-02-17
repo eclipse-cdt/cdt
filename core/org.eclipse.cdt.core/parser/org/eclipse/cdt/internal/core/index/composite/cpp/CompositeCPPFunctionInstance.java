@@ -13,14 +13,12 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 /**
@@ -55,17 +53,5 @@ public class CompositeCPPFunctionInstance extends CompositeCPPFunction implement
 	@Override
 	public boolean isExplicitSpecialization() {
 		return ((ICPPTemplateInstance) rbinding).isExplicitSpecialization();
-	}
-
-	@Override
-	@Deprecated
-	public IType[] getArguments() {
-		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);
-	}
-
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
 	}
 }

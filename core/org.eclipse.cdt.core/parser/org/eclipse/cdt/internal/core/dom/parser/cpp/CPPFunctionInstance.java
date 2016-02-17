@@ -43,12 +43,6 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 	}
 
 	@Override
-	@Deprecated
-	public IType[] getArguments() {
-		return CPPTemplates.getArguments(fArguments);
-	}
-
-	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
 	}

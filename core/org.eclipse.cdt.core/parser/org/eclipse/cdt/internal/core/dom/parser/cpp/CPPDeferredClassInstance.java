@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -170,12 +169,6 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 	}
 	
 	@Override
-	@Deprecated
-	public IType[] getArguments() {
-		return CPPTemplates.getArguments(getTemplateArguments());
-	}
-
-	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
 	}
@@ -185,11 +178,6 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 		return fClassTemplate;
 	}
 
-	@Override
-	public ObjectMap getArgumentMap() {
-		return ObjectMap.EMPTY_MAP;
-	}
-	
 	@Override
 	public CPPTemplateParameterMap getTemplateParameterMap() {
 		ICPPTemplateParameter[] params = fClassTemplate.getTemplateParameters();

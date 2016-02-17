@@ -88,12 +88,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -3075,24 +3075,14 @@ public class AST2TemplateTests extends AST2TestBase {
 
 		ICPPVariable t= ba.assertNonProblem("t;", 1, ICPPVariable.class);
 		ICPPTemplateInstance ci1= assertInstance(t.getType(), ICPPTemplateInstance.class, ICPPClassType.class);
-		ObjectMap args1= ci1.getArgumentMap();
-		assertEquals(1, args1.size());
-		assertInstance(args1.keyAt(0), ICPPTemplateNonTypeParameter.class);
-
-		// non-type arguments are currently modelled as a type with attached expression
-		ICPPBasicType bt0= assertInstance(args1.getAt(0), ICPPBasicType.class);
-		assertEquals(bt0.getType(), IBasicType.t_int);
-		assertEquals(256, ci1.getTemplateArguments()[0].getNonTypeValue().numericalValue().intValue());
+		ICPPTemplateParameterMap args1= ci1.getTemplateParameterMap();
+		assertEquals(1, args1.getAllParameterPositions().length);
+		assertEquals(256, args1.getArgument(0).getNonTypeValue().numericalValue().intValue());
 
 		ICPPTemplateInstance ct= ba.assertNonProblem("C<_256> ", 7, ICPPTemplateInstance.class, ICPPClassType.class);
-		ObjectMap args= ct.getArgumentMap();
-		assertEquals(1, args.size());
-		assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
-
-		// non-type arguments are currently modelled as a type with attached expression
-		ICPPBasicType bt= assertInstance(args.getAt(0), ICPPBasicType.class);
-		assertEquals(bt.getType(), IBasicType.t_int);
-		assertEquals(256, ct.getTemplateArguments()[0].getNonTypeValue().numericalValue().intValue());
+		ICPPTemplateParameterMap args= ct.getTemplateParameterMap();
+		assertEquals(1, args.getAllParameterPositions().length);
+		assertEquals(256, args.getArgument(0).getNonTypeValue().numericalValue().intValue());
 
 		ba.assertNonProblem("foo(t)", 3);
 		ba.assertNonProblem("bar(t)", 3);

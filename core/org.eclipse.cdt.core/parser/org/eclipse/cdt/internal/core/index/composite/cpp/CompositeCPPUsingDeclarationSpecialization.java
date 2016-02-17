@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -35,11 +34,5 @@ class CompositeCPPUsingDeclarationSpecialization extends CompositeCPPUsingDeclar
 			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}
 		return CPPTemplateParameterMap.EMPTY;
-	}
-
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
 	}
 }

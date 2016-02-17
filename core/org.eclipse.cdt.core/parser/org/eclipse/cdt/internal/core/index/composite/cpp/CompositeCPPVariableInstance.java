@@ -12,13 +12,11 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -46,12 +44,6 @@ public class CompositeCPPVariableInstance extends CompositeCPPVariable implement
 	}
 
 	@Override
-	@Deprecated
-	public IType[] getArguments() {
-		return TemplateInstanceUtil.getArguments(cf, delegate);
-	}
-
-	@Override
 	public IBinding getSpecializedBinding() {
 		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}
@@ -63,11 +55,5 @@ public class CompositeCPPVariableInstance extends CompositeCPPVariable implement
 			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 
 		return CPPTemplateParameterMap.EMPTY;
-	}
-
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
 	}
 }

@@ -22,7 +22,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -3016,67 +3015,6 @@ public class CPPTemplates {
 			map.put(param, pack);
 		}
 		return map;
-	}
-
-	/**
-	 * @deprecated for backwards compatibility, only.
-	 */
-	@Deprecated
-	public static IType[] getArguments(ICPPTemplateArgument[] arguments) {
-		IType[] types= new IType[arguments.length];
-		for (int i = 0; i < types.length; i++) {
-			final ICPPTemplateArgument arg= arguments[i];
-			if (arg == null) {
-				types[i]= null;
-			} else if (arg.isNonTypeValue()) {
-				types[i]= arg.getTypeOfNonTypeValue();
-			} else {
-				types[i]= arg.getTypeValue();
-			}
-		}
-		return types;
-	}
-
-	/**
-	 * @deprecated for backwards compatibility, only.
-	 */
-	@Deprecated
-	public static ObjectMap getArgumentMap(IBinding b, ICPPTemplateParameterMap tpmap) {
-		// backwards compatibility
-		Integer[] keys= tpmap.getAllParameterPositions();
-		if (keys.length == 0)
-			return ObjectMap.EMPTY_MAP;
-
-		List<ICPPTemplateDefinition> defs= new ArrayList<>();
-		IBinding owner= b;
-		while (owner != null) {
-			if (owner instanceof ICPPTemplateDefinition) {
-				defs.add((ICPPTemplateDefinition) owner);
-			} else if (owner instanceof ICPPTemplateInstance) {
-				defs.add(((ICPPTemplateInstance) owner).getTemplateDefinition());
-			}
-			owner= owner.getOwner();
-		}
-		Collections.reverse(defs);
-
-		ObjectMap result= new ObjectMap(keys.length);
-		for (int key : keys) {
-			int nestingLevel= key >> 16;
-			int numParam= key & 0xffff;
-
-			if (0 <= numParam && 0 <= nestingLevel && nestingLevel < defs.size()) {
-				ICPPTemplateDefinition tdef= defs.get(nestingLevel);
-				ICPPTemplateParameter[] tps= tdef.getTemplateParameters();
-				if (numParam < tps.length) {
-					ICPPTemplateArgument arg= tpmap.getArgument(key);
-					if (arg != null) {
-						IType type= arg.isNonTypeValue() ? arg.getTypeOfNonTypeValue() : arg.getTypeValue();
-						result.put(tps[numParam], type);
-					}
-				}
-			}
-		}
-		return result;
 	}
 
 	public static IBinding findDeclarationForSpecialization(IBinding binding) {

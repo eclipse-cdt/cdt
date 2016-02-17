@@ -18,8 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
@@ -86,12 +84,6 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		return (IPDOMBinding) PDOMNode.load(getPDOM(), specializedRec);
 	}
 		
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return CPPTemplates.getArgumentMap(this, getTemplateParameterMap());
-	}
-	
 	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		if (fArgMap == null) {

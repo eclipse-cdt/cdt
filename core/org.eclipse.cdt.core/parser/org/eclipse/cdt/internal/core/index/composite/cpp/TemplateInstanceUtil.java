@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
@@ -110,53 +108,6 @@ public class TemplateInstanceUtil {
 			}
 		}
 		return arg;
-	}
-
-	@Deprecated
-	public static ObjectMap getArgumentMap(ICompositesFactory cf, IIndexBinding rbinding) {
-		ICPPSpecialization specn= (ICPPSpecialization) rbinding;
-		IBinding specd= ((CPPCompositesFactory) cf).findOneBinding(specn.getSpecializedBinding());
-		if (specd == null)
-			specd= specn.getSpecializedBinding();
-
-		ObjectMap preresult= specn.getArgumentMap();
-		ObjectMap result= new ObjectMap(preresult.size());
-		Object[] keys= preresult.keyArray();
-		Object[] keysToAdapt= keys;
-
-		if (specd instanceof ICPPTemplateDefinition) {
-			keysToAdapt= ((ICPPTemplateDefinition) specd).getTemplateParameters();
-		}
-		for (int i= 0; i < keys.length && i < keysToAdapt.length; i++) {
-			IType type= (IType) preresult.get(keys[i]);
-			result.put(
-					cf.getCompositeBinding((IIndexFragmentBinding) keysToAdapt[i]), cf.getCompositeType(type));
-		}
-
-		return result;
-	}
-
-	@Deprecated
-	public static IType[] getArguments(ICompositesFactory cf, ICPPTemplateInstance rbinding) {
-		return getArguments(cf, rbinding.getArguments());
-	}
-
-	@Deprecated
-	public static IType[] getArguments(ICompositesFactory cf, ICPPClassTemplatePartialSpecialization rbinding) {
-		try {
-			return getArguments(cf, rbinding.getArguments());
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
-			return IType.EMPTY_TYPE_ARRAY;
-		}
-	}
-
-	@Deprecated
-	private static IType[] getArguments(ICompositesFactory cf, IType[] result) {
-		for (int i= 0; i < result.length; i++) {
-			result[i] = cf.getCompositeType(result[i]);
-		}
-		return result;
 	}
 
 	public static ICPPTemplateParameter[] convert(ICompositesFactory cf, ICPPTemplateParameter[] preResult) {

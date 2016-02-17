@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -22,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * A partial class template specialization.
@@ -83,12 +81,6 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	@Override
 	public String toString() {
 		return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
-	}
-
-	@Override
-	@Deprecated
-	public IType[] getArguments() throws DOMException {
-		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 
 	@Override

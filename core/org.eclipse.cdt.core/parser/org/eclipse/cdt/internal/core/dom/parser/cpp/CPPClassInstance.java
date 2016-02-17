@@ -73,12 +73,6 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 		return false;
 	}
 
-	@Override
-	@Deprecated
-	public IType[] getArguments() {
-		return CPPTemplates.getArguments(getTemplateArguments());
-	}
-
 	/**
 	 * For debugging only.
 	 */

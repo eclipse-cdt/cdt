@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -46,11 +45,5 @@ public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization i
 	@Override
 	public boolean isExplicitSpecialization() {
 		return ((ICPPTemplateInstance) rbinding).isExplicitSpecialization();
-	}
-
-	@Override
-	@Deprecated
-	public IType[] getArguments() {
-		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);
 	}
 }

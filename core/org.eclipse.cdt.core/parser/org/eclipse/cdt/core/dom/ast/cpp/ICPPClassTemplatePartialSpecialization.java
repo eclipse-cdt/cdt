@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IType;
-
 /**
  * This interface represents a class template partial specialization.  A partial specialization is
  * a class template in its own right.
@@ -43,10 +40,4 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	 */
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments();
-
-	/**
-	 * @deprecated use {@link #getTemplateArguments()}, instead.
-	 */
-	@Deprecated
-	public IType[] getArguments() throws DOMException;
 }

@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -36,11 +35,5 @@ class CompositeCPPTypedefSpecialization extends CompositeCPPTypedef implements I
 			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}
 		return CPPTemplateParameterMap.EMPTY;
-	}
-
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
 	}
 }

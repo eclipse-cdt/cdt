@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IType;
-
 /**
  * This interface represents an instantiation or an explicit specialization of a class or a function template.
  * The {@link #isExplicitSpecialization()} method is used to distinguish between the two cases.
@@ -31,23 +29,17 @@ public interface ICPPTemplateInstance extends ICPPSpecialization {
 	 * Returns the template that this instance was instantiated from.
 	 */
 	public ICPPTemplateDefinition getTemplateDefinition();
-	
+
 	/**
 	 * Returns the template arguments of this instance.
 	 * @since 5.1
 	 */
 	public ICPPTemplateArgument[] getTemplateArguments();
-	
+
 	/**
 	 * Explicit specializations are modeled as instances of a template. 
 	 * Returns {@code true} if this binding is an explicit specialization.
 	 * @since 5.2
 	 */
 	public boolean isExplicitSpecialization();
-	
-	/**
-	 * @deprecated Replaced by {@link #getTemplateArguments()}.
-	 */
-	@Deprecated
-	public IType[] getArguments();
 }

@@ -17,9 +17,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -93,12 +91,6 @@ public abstract class CPPTemplateParameterSpecialization extends PlatformObject
 	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		return fTemplateParameterMap;
-	}
-
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return CPPTemplates.getArgumentMap(this, getTemplateParameterMap());
 	}
 
 	@Override

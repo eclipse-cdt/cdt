@@ -263,10 +263,4 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 		ICPPClassType[] result = ClassTypeHelper.getNestedClasses((ICPPClassType) rbinding, point);
 		return wrapBindings(result);
 	}
-	
-	@Override
-	@Deprecated
-	public ObjectMap getArgumentMap() {
-		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
-	}
 }

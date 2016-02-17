@@ -64,11 +64,6 @@ public class CPPVariableInstance extends CPPSpecialization
 	}
 
 	@Override
-	public IType[] getArguments() {
-		return null;
-	}
-
-	@Override
 	public boolean isMutable() {
 		return false;
 	}

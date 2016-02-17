@@ -157,7 +157,7 @@ public interface ICPPParserExtensionConfiguration {
 	 *
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html"
 	 * @return {@code true} if support for the extension should be enabled
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public boolean supportGCCStyleDesignators();
 

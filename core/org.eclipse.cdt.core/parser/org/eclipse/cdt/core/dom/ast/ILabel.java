@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILabel extends IBinding {
-    /** @since 5.12 */
+    /** @since 6.0 */
     public static final ILabel[] EMPTY_ARRAY = {};
     /**
      * @since 5.4

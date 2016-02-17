@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
  * Specific designator that represents a field reference.
- * @since 5.12
+ * @since 6.0
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

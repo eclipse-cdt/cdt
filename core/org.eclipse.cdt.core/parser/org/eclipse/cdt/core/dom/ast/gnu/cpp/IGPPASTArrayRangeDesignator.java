@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
  * GCC-specific designator that allows for shorthand array range to be specified
  * in a designated initializer, e.g. in int a[6] = { [2 ... 4] = 29 }; or
  * struct ABC { int def[10]; } abc = { .def[4 ... 6] = 3 };
- * @since 5.12
+ * @since 6.0
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

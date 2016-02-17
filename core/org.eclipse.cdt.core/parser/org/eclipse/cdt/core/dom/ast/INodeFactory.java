@@ -130,7 +130,7 @@ public interface INodeFactory {
 	public org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier newGCCAttributeSpecifier();
 	
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public IGCCASTAttributeList newGCCAttributeList();
 

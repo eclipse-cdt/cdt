@@ -160,7 +160,7 @@ public class AddressBarContributionItem extends ContributionItem {
 	 *            true to enable, else false.
 	 */
 	public void enableAddressBox(boolean enable) {
-		if (addressBox != null) {
+		if (addressBox != null && !item.isDisposed()) {
 			item.setEnabled(enable);
 			addressBox.setEnabled(enable);
 		}

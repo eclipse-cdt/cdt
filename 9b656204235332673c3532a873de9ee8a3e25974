@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_496d24a6",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/model/AbstractIndexAstChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-17T00:42:26Z",
+      "side": 1,
+      "message": "Spaces are required around \u0027\u003e\u0027.",
+      "range": {
+        "startLine": 207,
+        "startChar": 10,
+        "endLine": 207,
+        "endChar": 11
+      },
+      "revId": "9b656204235332673c3532a873de9ee8a3e25974",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

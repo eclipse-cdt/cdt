@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 /**
  * A partially specialized variable or class template.
  *
- * @since 5.12
+ * @since 6.0
  */
 public interface ICPPPartialSpecialization extends ICPPTemplateDefinition {
 	public static final ICPPPartialSpecialization[] EMPTY_ARRAY = {};

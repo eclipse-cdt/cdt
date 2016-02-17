@@ -485,7 +485,7 @@ public abstract class ASTVisitor {
 	}
 
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public int leave(ICPPASTDesignator designator) {
 		return PROCESS_CONTINUE;

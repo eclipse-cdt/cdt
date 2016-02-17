@@ -160,7 +160,7 @@ public interface IASTTypeIdExpression extends IASTExpression {
 
 	/**
 	 * Built-in type trait of g++. 
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public static final int op_is_trivially_copyable = 24;
 	

@@ -24,7 +24,7 @@ public interface IASTBinaryTypeIdExpression extends IASTExpression {
 	 */
 	public static enum Operator {
 		__is_base_of,
-		/** @since 5.12 */
+		/** @since 6.0 */
 		__is_trivially_assignable
 		}
 	

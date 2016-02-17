@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
-	/** @since 5.12 */
+	/** @since 6.0 */
 	public static final IASTLabelStatement[] EMPTY_ARRAY = {};
 	/**
 	 * @since 5.4

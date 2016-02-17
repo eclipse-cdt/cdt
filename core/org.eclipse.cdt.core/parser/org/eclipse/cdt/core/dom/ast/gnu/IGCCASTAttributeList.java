@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.parser.util.InstanceOfPredicate;
 /**
  * Represents a GCC attribute specifier, introduced by __attribute__.
  *
- * @since 5.12
+ * @since 6.0
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

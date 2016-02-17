@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  */
 public interface ICASTDeclSpecifier extends IASTDeclSpecifier {
 	/**
-	 * @since 5.12
+	 * @since 6.0
 	 */
 	public static final ASTNodeProperty ALIGNMENT_SPECIFIER = new ASTNodeProperty(
 			"ICASTDeclSpecifier.ALIGNMENT_SPECIFIER - Alignment specifier");  //$NON-NLS-1$

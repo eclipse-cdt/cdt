@@ -19,10 +19,10 @@ Export-Package: org.eclipse.cdt.make.core,
  org.eclipse.cdt.make.internal.core.scannerconfig.jobs;x-internal:=true,
  org.eclipse.cdt.make.internal.core.scannerconfig.util;x-internal:=true,
  org.eclipse.cdt.make.internal.core.scannerconfig2;x-internal:=true
-Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
+Require-Bundle: org.eclipse.cdt.core;bundle-version="[5.0.0,7.0.0)",
+ org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.variables;bundle-version="[3.1.100,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.core.filesystem;bundle-version="1.2.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

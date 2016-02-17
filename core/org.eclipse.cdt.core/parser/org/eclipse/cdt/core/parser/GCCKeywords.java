@@ -103,7 +103,7 @@ public class GCCKeywords {
 		cp_decimal64=					_DECIMAL64.toCharArray(),
 		cp_decimal128=					_DECIMAL128.toCharArray();
 	
-	/** @since 5.12 */
+	/** @since 6.0 */
 	public static final char[]
 		cp__is_trivially_copyable=		"__is_trivially_copyable".toCharArray(),
 		cp__is_trivially_constructible=	"__is_trivially_constructible".toCharArray(),

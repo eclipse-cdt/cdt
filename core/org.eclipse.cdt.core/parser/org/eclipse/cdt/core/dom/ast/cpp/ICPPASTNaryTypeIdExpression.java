@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * @since 5.12
+ * @since 6.0
  */
 public interface ICPPASTNaryTypeIdExpression extends ICPPASTExpression {
 	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("ICPPASTNaryTypeIdExpression.OPERAND [IASTTypeId]"); //$NON-NLS-1$

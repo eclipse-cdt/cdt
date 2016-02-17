@@ -15,14 +15,6 @@ import static org.eclipse.cdt.internal.core.ByteUtils.makeInt;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeLong;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel.MapMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
@@ -33,6 +25,14 @@ import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.cdt.utils.Addr64Factory;
 import org.eclipse.cdt.utils.ERandomAccessFile;
 import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel.MapMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class Elf {
 	public final static int ELF32_ADDR_SIZE = 4;
@@ -148,7 +148,7 @@ public class Elf {
 
 		/** @since 5.4 */
 		public final static int EM_RL78 = 197; /* Renesas RL78 Microcontroller */
-		/** @since 5.12 */
+		/** @since 6.0 */
 		public final static int EM_AARCH64 = 183;
 
 		public final static int EM_NIOS = 0xFEBB;

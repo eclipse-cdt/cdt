@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * Something that can be partially specialized. Hence, a class or a variable template
  * but not a function template.
  * 
- * @since 5.12
+ * @since 6.0
  */
 public interface ICPPPartiallySpecializable extends ICPPTemplateDefinition {
 	/**

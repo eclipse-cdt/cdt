@@ -23,7 +23,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplate, ICPPPartialSpecialization {
-	/** @since 5.12 */
+	/** @since 6.0 */
 	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_ARRAY = {};
 	/** @deprecated Use {@link #EMPTY_ARRAY} */
 	@Deprecated

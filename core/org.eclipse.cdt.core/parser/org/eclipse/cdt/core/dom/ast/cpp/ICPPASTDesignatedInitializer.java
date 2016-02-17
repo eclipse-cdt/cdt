@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 /**
  * This interface represents a designated initializer,
  * e.g. in struct A y = { .z = 4, .t[1] = 3 };
- * @since 5.12
+ * @since 6.0
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

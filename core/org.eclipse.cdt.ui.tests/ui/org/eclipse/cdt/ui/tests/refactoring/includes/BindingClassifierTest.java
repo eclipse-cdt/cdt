@@ -436,6 +436,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	};
 	public void testFieldReference_487971() throws Exception {
 		assertDefined("A", "B");
+		assertDeclared();
 	}
 
 	//	typedef unsigned int size_t;
@@ -723,6 +724,15 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	MACRO(foo, bar);
 	public void testMacro_4() throws Exception {
 		assertDefined("MACRO");
+		assertDeclared();
+	}
+
+	//	#define bool bool
+	//	#define false false
+
+	//  bool b = false;
+	public void testIdentityMacro_487972() throws Exception {
+		assertDefined();
 		assertDeclared();
 	}
 }

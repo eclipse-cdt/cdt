@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -858,7 +859,11 @@ public class BindingClassifier {
 			for (IASTPreprocessorMacroExpansion macroExpansion : tu.getMacroExpansions()) {
 				IASTPreprocessorMacroDefinition macroDefinition = macroExpansion.getMacroDefinition();
 				IASTName name = macroDefinition.getName();
-				defineBinding(name.getBinding());
+				IMacroBinding macroBinding = (IMacroBinding) name.getBinding();
+				// Ignore trivial macros like '#define false false'
+				if (!CharArrayUtils.equals(name.getSimpleID(), macroBinding.getExpansion())) {
+					defineBinding(macroBinding);
+				}
 			}
 			return PROCESS_CONTINUE;
 		}

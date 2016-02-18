@@ -211,6 +211,8 @@ public class ModeSelector extends CSelector {
 	public void setSelection(Object element) {
 		if (element == null)
 			element = noModes[0];
+		if (isDisposed())
+			return;
 		super.setSelection(element);
 		updateLaunchButton(findLaunchButton());
 	}

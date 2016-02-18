@@ -162,7 +162,7 @@ public class QtBuildConfigurationFactory implements IAdapterFactory {
 					|| event.getType() == IResourceChangeEvent.PRE_DELETE) {
 				if (event.getResource().getType() == IResource.PROJECT) {
 					IProject project = event.getResource().getProject();
-					if (QtNature.hasNature(project)) {
+					if (project.isOpen() && project.exists() && QtNature.hasNature(project)) {
 						try {
 							for (IBuildConfiguration config : project.getBuildConfigs()) {
 								cache.remove(config);

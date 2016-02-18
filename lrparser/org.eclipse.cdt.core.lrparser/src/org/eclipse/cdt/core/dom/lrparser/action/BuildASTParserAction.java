@@ -16,8 +16,6 @@ import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
 
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -85,6 +83,8 @@ import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
+import lpg.lpgjavaruntime.IToken;
+
 /**
  * Parser semantic actions that are common to both C and C++.
  * 
@@ -149,7 +149,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 
 	public void consumeTranslationUnit() {
 		if(tu == null)
-			tu = nodeFactory.newTranslationUnit();
+			tu = nodeFactory.newTranslationUnit(null);
 		
 		// can't close the outermost scope
 		for(Object o : astStack.topScope()) {

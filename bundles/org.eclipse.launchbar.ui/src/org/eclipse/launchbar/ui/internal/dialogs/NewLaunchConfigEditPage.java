@@ -81,6 +81,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 				workingCopy = type.newInstance(null, name);
 				launchConfigurationDialog.doSetDefaults(workingCopy);
 				tabViewer.setInput(workingCopy);
+				setTitle(String.format(Messages.NewLaunchConfigEditPage_7, type.getName()));
 			}
 		} catch (CoreException e) {
 			Activator.log(e);
@@ -152,13 +153,14 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		public void updateButtons() {
 			// Launch button
 			getTabViewer().refresh();
-			//	getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates());
+			// getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch()
+			// & getTabViewer().canLaunchWithModes() &
+			// !getTabViewer().hasDuplicateDelegates());
 		}
 
 		@Override
-		public void run(boolean fork, boolean cancelable,
-				IRunnableWithProgress runnable)
-						throws InvocationTargetException, InterruptedException {
+		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+				throws InvocationTargetException, InterruptedException {
 			// ignore
 		}
 

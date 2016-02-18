@@ -19,6 +19,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -43,21 +45,27 @@ public class NewLaunchConfigTypePage extends WizardPage {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.heightHint = 500;
 		table.setLayoutData(data);
-
+		table.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				getContainer().showPage(getNextPage());
+			}
+		});
 		populateItems();
 
 		setControl(comp);
 	}
 
 	void populateItems() {
-		ILaunchGroup group = ((NewLaunchConfigWizard)getWizard()).modePage.selectedGroup;
+		ILaunchGroup group = ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup;
 		if (group == null)
 			return;
 
 		table.removeAll();
 
 		boolean haveItems = false;
-		for (ILaunchConfigurationType type : DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes()) {
+		for (ILaunchConfigurationType type : DebugPlugin.getDefault().getLaunchManager()
+				.getLaunchConfigurationTypes()) {
 			if (!type.isPublic() || type.getCategory() != null || !type.supportsMode(group.getMode()))
 				continue;
 

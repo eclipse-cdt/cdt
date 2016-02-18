@@ -50,6 +50,7 @@ public class Messages extends NLS {
 	public static String NewLaunchConfigEditPage_4;
 	public static String NewLaunchConfigEditPage_5;
 	public static String NewLaunchConfigEditPage_6;
+	public static String NewLaunchConfigEditPage_7;
 	public static String NewLaunchConfigModePage_0;
 	public static String NewLaunchConfigModePage_1;
 	public static String NewLaunchConfigModePage_2;

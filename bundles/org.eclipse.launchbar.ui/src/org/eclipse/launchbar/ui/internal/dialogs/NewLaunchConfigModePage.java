@@ -91,8 +91,14 @@ public class NewLaunchConfigModePage extends WizardPage {
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectedGroup = (ILaunchGroup)table.getSelection()[0].getData();
-				((NewLaunchConfigWizard)getWizard()).typePage.populateItems();
+				selectedGroup = (ILaunchGroup) table.getSelection()[0].getData();
+				((NewLaunchConfigWizard) getWizard()).typePage.populateItems();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+				getContainer().showPage(getNextPage());
 			}
 		});
 

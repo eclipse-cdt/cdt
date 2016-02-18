@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.ibm.icu.text.MessageFormat;
@@ -39,6 +37,8 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.includes.BindingClassifier;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeCreationContext;
+
+import junit.framework.TestSuite;
 
 /**
  * Tests for {@link BindingClassifier}.
@@ -418,6 +418,24 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	public void testFieldReference() throws Exception {
 		assertDefined("A");
 		assertDeclared("B");
+	}
+
+	//	namespace std {
+	//  template<typename T> class shared_ptr {};
+	//	}
+	//
+	//	struct A {
+	//	  int x;
+	//	};
+	//	struct B {
+	//	  const std::shared_ptr<A> y;
+	//	};
+
+	//	int test(B* b) {
+	//	  return b->y->x;
+	//	};
+	public void testFieldReference_487971() throws Exception {
+		assertDefined("A", "B");
 	}
 
 	//	typedef unsigned int size_t;

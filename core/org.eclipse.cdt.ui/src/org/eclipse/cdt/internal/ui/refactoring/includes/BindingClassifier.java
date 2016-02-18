@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -1377,12 +1378,12 @@ public class BindingClassifier {
 	 * allowing incomplete argument types, defines the argument type. 
 	 */
 	private void defineIndirectTypes(IType type) {
-		IType resolvedType = resolveTypedef(type);
+		IType resolvedType = removeQualifiers(resolveTypedef(type));
 		if (resolvedType instanceof IPointerType || resolvedType instanceof ICPPReferenceType) {
 			defineTypeExceptTypedefOrNonFixedEnum(resolvedType);
 		} else {
-			if (type instanceof ICPPTemplateInstance) {
-				ICPPTemplateInstance instance = (ICPPTemplateInstance) type;
+			if (resolvedType instanceof ICPPTemplateInstance) {
+				ICPPTemplateInstance instance = (ICPPTemplateInstance) resolvedType;
 				IBinding template = instance.getSpecializedBinding();
 				if (isTemplateAllowingIncompleteArgumentType(template)) {
 					ICPPTemplateArgument[] arguments = instance.getTemplateArguments();
@@ -1452,6 +1453,17 @@ public class BindingClassifier {
 	private IType resolveTypedef(IType type) {
 		while (type instanceof ITypedef) {
 			type = ((ITypedef) type).getType();
+		}
+		return type;
+	}
+
+	/**
+	 * If the given type is a qualified type, returns the corresponding unqualified type.
+	 * Otherwise returns the given type.
+	 */
+	private IType removeQualifiers(IType type) {
+		while (type instanceof IQualifierType) {
+			type = ((IQualifierType) type).getType();
 		}
 		return type;
 	}

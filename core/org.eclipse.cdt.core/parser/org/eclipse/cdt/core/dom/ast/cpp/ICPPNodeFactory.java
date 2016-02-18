@@ -409,13 +409,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTTemplateSpecialization newTemplateSpecialization(IASTDeclaration declaration);
 
 	/**
-	 * @deprecated Replaced by {@link #newTranslationUnit(IScanner)}.
-	 */
-	@Override
-	@Deprecated
-	public ICPPASTTranslationUnit newTranslationUnit();
-
-	/**
 	 * Creates a new translation unit that cooperates with the given scanner in order
 	 * to track macro-expansions and location information.
 	 * @scanner the preprocessor the translation unit interacts with.

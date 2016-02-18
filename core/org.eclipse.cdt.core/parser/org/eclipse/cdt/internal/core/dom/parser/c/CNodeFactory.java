@@ -435,11 +435,6 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	}
 
 	@Override
-	public IASTTranslationUnit newTranslationUnit() {
-		return newTranslationUnit(null);
-	}
-
-	@Override
 	public IASTTranslationUnit newTranslationUnit(IScanner scanner) {
 		CASTTranslationUnit tu = new CASTTranslationUnit();
 		

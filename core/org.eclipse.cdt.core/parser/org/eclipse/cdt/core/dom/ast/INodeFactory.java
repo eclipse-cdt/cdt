@@ -198,12 +198,6 @@ public interface INodeFactory {
 	public IASTTokenList newTokenList();
 
 	/**
-	 * @deprecated Replaced by {@link #newTranslationUnit(IScanner)}.
-	 */
-	@Deprecated
-	public IASTTranslationUnit newTranslationUnit();
-	
-	/**
 	 * Creates a new translation unit that cooperates with the given scanner in order
 	 * to track macro-expansions and location information.
 	 * @param scanner the preprocessor the translation unit interacts with.

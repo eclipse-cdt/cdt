@@ -791,11 +791,6 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public ICPPASTTranslationUnit newTranslationUnit() {
-		return newTranslationUnit(null);
-	}
-
-	@Override
 	public ICPPASTTranslationUnit newTranslationUnit(IScanner scanner) {
 		CPPASTTranslationUnit tu = new CPPASTTranslationUnit();
 

@@ -431,6 +431,11 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	@Override
 	public void launchRemoved(ILaunch launch) {
 		if (this.equals(launch)) {
+			// When the launch fails early, we may not have cleaned up
+			// properly.  Let's do it here if needed.
+			if (DsfSession.isSessionActive(fSession.getId())) {
+				DsfSession.endSession(fSession);
+			}
 			fExecutor.shutdown();
 			fExecutor = null;
 		}

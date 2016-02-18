@@ -403,16 +403,26 @@ public class BaseTestCase {
 
 	}
 
-	@After
-	public void doAfterTest() throws Exception {
+	/**
+	 * Assert that the launch terminates. Callers should have already
+	 * terminated the launch in some way.
+	 */
+	protected void assertLaunchTerminates() throws Exception {
 		if (fLaunch != null) {
-			fLaunch.terminate();
 			// Give a few seconds to allow the launch to terminate
 			int waitCount = 100;
 			while (!fLaunch.isTerminated() && --waitCount > 0) {
 				Thread.sleep(TestsPlugin.massageTimeout(100));
 			}
 			assertTrue("Launch failed to terminate before timeout", fLaunch.isTerminated());
+		}
+	}
+
+	@After
+	public void doAfterTest() throws Exception {
+		if (fLaunch != null) {
+			fLaunch.terminate();
+			assertLaunchTerminates();
 			fLaunch = null;
 		}
 	}

@@ -129,6 +129,11 @@ public class CommandTimeoutTest extends BaseTestCase {
 		
 		// Make sure we receive a shutdown event to confirm we have aborted the session
         shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
+
+        // It can take a moment from when the shutdown event is received to when
+        // the launch is actually terminated. Make sure that the launch does
+        // terminate itself.
+        assertLaunchTerminates();
 	}
 
 	/**
@@ -165,12 +170,15 @@ public class CommandTimeoutTest extends BaseTestCase {
 	/**
 	 * Checks whether the given exception is an instance of {@link CoreException} 
 	 * with the status code 20100 which indicates that a gdb command has been timed out.
+	 * 20100 comes from GDBControl.STATUS_CODE_COMMAND_TIMED_OUT which is private
 	 */
 	private void processException( Exception e ) {
 		Throwable t = getExceptionCause( e );
-		Assert.assertTrue(
-				"Unexpected exception",
-				t instanceof CoreException && ((CoreException)t).getStatus().getCode() == 20100 );
+		if (t instanceof CoreException && ((CoreException)t).getStatus().getCode() == 20100) {
+			// this is the exception we are looking for
+			return;
+		}
+		throw new AssertionError("Unexpected exception", e);
 	}
 
 	private Throwable getExceptionCause(Throwable e) {

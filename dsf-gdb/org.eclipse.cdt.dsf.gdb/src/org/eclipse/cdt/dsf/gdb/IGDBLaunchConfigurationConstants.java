@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013  Ericsson and others.
+ * Copyright (c) 2008, 2015  Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,16 +168,16 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String DEBUGGER_REVERSE_MODE_SOFTWARE = "UseSoftTrace"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_REVERSE_MODE.
-	 * @since 5.0
-	 */
-	public static final String DEBUGGER_REVERSE_MODE_DEFAULT = DEBUGGER_REVERSE_MODE_SOFTWARE;
-
-	/**
 	 * Possible attribute value for the key is ATTR_DEBUGGER_REVERSE_MODE.
 	 * @since 5.0
 	 */
 	public static final String DEBUGGER_REVERSE_MODE_HARDWARE = "UseHardTrace"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_REVERSE_MODE.
+	 * @since 5.0
+	 */
+	public static final String DEBUGGER_REVERSE_MODE_DEFAULT = DEBUGGER_REVERSE_MODE_SOFTWARE;
 
 	/**
 	 * Launch configuration attribute value. The key is

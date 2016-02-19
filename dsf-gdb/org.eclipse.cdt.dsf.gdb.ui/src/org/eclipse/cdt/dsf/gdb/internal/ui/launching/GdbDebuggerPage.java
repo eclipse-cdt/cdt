@@ -32,14 +32,12 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -54,11 +52,15 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected Text fGDBCommandText;
 	protected Text fGDBInitText;
 	protected Button fNonStopCheckBox;
+	
 	protected Button fReverseCheckBox;
+	protected Combo fReverseDebugMode;
+	protected static final String HW_REVERSE_MODE = LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodehard"); //$NON-NLS-1$
+	protected static final String SW_REVERSE_MODE = LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodesoft"); //$NON-NLS-1$
+	
 	protected Button fUpdateThreadlistOnSuspend;
 	protected Button fDebugOnFork;
-	protected Combo fReverseDebugMode;
-
+	
 	/**
 	 * A combo box to let the user choose if fast tracepoints should be used or not.
 	 */
@@ -149,7 +151,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		boolean reverseEnabled = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
 
-		updateRevereDebugModeFromConfig(configuration);
+		updateReverseDebugModeFromConfig(configuration);
 
 		boolean updateThreadsOnSuspend = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
@@ -193,15 +195,15 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		}
 	}
 
-	protected void updateRevereDebugModeFromConfig(ILaunchConfiguration config){
-		if (fReverseDebugMode != null){
+	protected void updateReverseDebugModeFromConfig(ILaunchConfiguration config){
+		if (fReverseDebugMode != null) {
 			String debugMode = getStringAttr(config, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT);
 
-			if(debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARDWARE)) {
-				fReverseDebugMode.setText(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodehard")); //$NON-NLS-1$
+			if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARDWARE)) {
+				fReverseDebugMode.setText(HW_REVERSE_MODE);
 			} else {
-				fReverseDebugMode.setText(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodesoft")); //$NON-NLS-1$
+				fReverseDebugMode.setText(SW_REVERSE_MODE);
 			}
 		}
 	}
@@ -225,9 +227,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected String getSelectedReverseDebugMode() {
 		if (fReverseDebugMode != null) {
 			int selectedIndex = fReverseDebugMode.getSelectionIndex();
-			if (fReverseDebugMode.getItem(selectedIndex).equals(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodehard"))) { //$NON-NLS-1$
+			if (fReverseDebugMode.getItem(selectedIndex).equals(HW_REVERSE_MODE)) {
 				return IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARDWARE;
-			} else if (fReverseDebugMode.getItem(selectedIndex).equals(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodesoft"))) { //$NON-NLS-1$
+			} else if (fReverseDebugMode.getItem(selectedIndex).equals(SW_REVERSE_MODE)) {
 				return IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_SOFTWARE;
 			} else {
 				assert false : "Unknown Reverse Debug mode: " + fReverseDebugMode.getItem(selectedIndex); //$NON-NLS-1$
@@ -313,15 +315,34 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.main_tab_name")); //$NON-NLS-1$
 		Composite comp = ControlFactory.createCompositeEx(tabFolder, 1, GridData.FILL_BOTH);
 		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
-		comp.setFont(tabFolder.getFont());
 		tabItem.setControl(comp);
+		
+		createGdbContent(comp);
+		
+		ControlFactory.createLabel(comp, LaunchUIMessages.getString("GDBDebuggerPage.cmdfile_warning"), //$NON-NLS-1$
+				200, SWT.DEFAULT, SWT.WRAP);
+
+		// TODO: Ideally, this field should be disabled if the back-end doesn't support non-stop debugging
+		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary
+		fNonStopCheckBox = addCheckbox(comp, LaunchUIMessages.getString("GDBDebuggerPage.nonstop_mode")); //$NON-NLS-1$
+
+		createReverseDebugModeCombo(comp);
+
+		fUpdateThreadlistOnSuspend = addCheckbox(comp, LaunchUIMessages.getString("GDBDebuggerPage.update_thread_list_on_suspend")); //$NON-NLS-1$
+		// This checkbox needs an explanation. Attach context help to it.
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
+
+		fDebugOnFork = addCheckbox(comp, LaunchUIMessages.getString("GDBDebuggerPage.Automatically_debug_forked_processes")); //$NON-NLS-1$
+		
+		createTracepointModeCombo(comp);
+	}
+
+	private void createGdbContent(Composite comp) {
+		// Create a sub-composite with 3 columns
 		Composite subComp = ControlFactory.createCompositeEx(comp, 3, GridData.FILL_HORIZONTAL);
 		((GridLayout) subComp.getLayout()).makeColumnsEqualWidth = false;
-		subComp.setFont(tabFolder.getFont());
-		Label label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger")); //$NON-NLS-1$
-		GridData gd = new GridData();
-		//		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
+
+		ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger")); //$NON-NLS-1$
 		fGDBCommandText = ControlFactory.createTextField(subComp, SWT.SINGLE | SWT.BORDER);
 		fGDBCommandText.addModifyListener(new ModifyListener() {
             @Override
@@ -353,13 +374,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				fGDBCommandText.setText(res);
 			}
 		});
-		label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_command_file")); //$NON-NLS-1$
-		gd = new GridData();
-		//		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
+		
+		ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_command_file")); //$NON-NLS-1$
 		fGDBInitText = ControlFactory.createTextField(subComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fGDBInitText.setLayoutData(gd);
 		fGDBInitText.addModifyListener(new ModifyListener() {
             @Override
 			public void modifyText(ModifyEvent evt) {
@@ -390,68 +407,47 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				fGDBInitText.setText(res);
 			}
 		});
-
-		label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.cmdfile_warning"), //$NON-NLS-1$
-				200, SWT.DEFAULT, SWT.WRAP);
-
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		gd.widthHint = 200;
-		label.setLayoutData(gd);
-
-		// TODO: Ideally, this field should be disabled if the back-end doesn't support non-stop debugging
-		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary
-		fNonStopCheckBox = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.nonstop_mode")); //$NON-NLS-1$
-
-		// TODO: Ideally, this field should be disabled if the back-end doesn't support reverse debugging
-		// TODO: Find a way to determine if reverse is supported (i.e. find the GDB version) then grey out the check box if necessary
-		fReverseCheckBox = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debugging")); //$NON-NLS-1$
-
-		createReverseDebugModeCombo(subComp);
-
-		fUpdateThreadlistOnSuspend = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.update_thread_list_on_suspend")); //$NON-NLS-1$
-		// This checkbox needs an explanation. Attach context help to it.
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
-
-		fDebugOnFork = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.Automatically_debug_forked_processes")); //$NON-NLS-1$
-		
-		createTracepointModeCombo(subComp);
 	}
 
 	protected void createTracepointModeCombo(Composite parent) {
-		// Add a combo to choose the type of tracepoint mode to use
-		Label label = ControlFactory.createLabel(parent, LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_label")); //$NON-NLS-1$
-		label.setLayoutData(new GridData());
+		// Create a sub-composite with 2 columns
+		Composite subComp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_HORIZONTAL);
+		((GridLayout) subComp.getLayout()).makeColumnsEqualWidth = false;
 
-		fTracepointModeCombo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
-		fTracepointModeCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
+		// Add a combo to choose the type of tracepoint mode to use
+		ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_label")); //$NON-NLS-1$
+
+		fTracepointModeCombo = new Combo(subComp, SWT.READ_ONLY | SWT.DROP_DOWN);
+		fTracepointModeCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		fTracepointModeCombo.add(TP_NORMAL_ONLY);
 		fTracepointModeCombo.add(TP_FAST_ONLY);
 		fTracepointModeCombo.add(TP_AUTOMATIC);
 
-		fTracepointModeCombo.addSelectionListener(new SelectionListener() {
+		fTracepointModeCombo.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
-			}
-
-            @Override
-			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 		fTracepointModeCombo.select(0);
 	}
 
-	protected void createReverseDebugModeCombo(Composite parent){
-		fReverseDebugMode = new Combo(parent,SWT.READ_ONLY | SWT.DROP_DOWN );
+	protected void createReverseDebugModeCombo(Composite parent) {
+		// Create a sub-composite with 2 columns with no indentation width- or height-wise
+		Composite subComp = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		subComp.setLayout(layout);
+		subComp.setFont(parent.getFont());
 
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		gd.verticalSpan = 1;
-		gd.horizontalIndent = 3;
-		fReverseDebugMode.setLayoutData(gd);
-		fReverseDebugMode.add(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodesoft")); //$NON-NLS-1$
-		fReverseDebugMode.add(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodehard")); //$NON-NLS-1$
+		fReverseCheckBox = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debugging")); //$NON-NLS-1$
+
+		fReverseDebugMode = new Combo(subComp, SWT.READ_ONLY | SWT.DROP_DOWN );
+		fReverseDebugMode.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+		fReverseDebugMode.add(HW_REVERSE_MODE);
+		fReverseDebugMode.add(SW_REVERSE_MODE);
+		
 		fReverseDebugMode.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -481,9 +477,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		button.setLayoutData(gd);
 
 		return button;
 	}

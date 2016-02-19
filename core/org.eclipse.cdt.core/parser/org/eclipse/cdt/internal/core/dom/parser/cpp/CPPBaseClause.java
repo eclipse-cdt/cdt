@@ -63,6 +63,9 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 	    			baseClass = new CPPClassType.CPPClassTypeProblem(nameSpec, ISemanticProblem.BINDING_NO_CLASS);
 	    		}
 	    	}
+	    	if (base.isPackExpansion()) {
+	    		baseClass = new CPPParameterPackType(baseClass);
+	    	}
 		}
 		return baseClass;
     }

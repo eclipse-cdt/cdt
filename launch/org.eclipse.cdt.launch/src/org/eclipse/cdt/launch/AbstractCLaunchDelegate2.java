@@ -76,7 +76,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	private boolean workspaceBuildBeforeLaunch;
 	/** Flag set to true if build before launch failed, or was cancelled. */
 	private boolean buildFailed;
-	private boolean requireCProject;
+	
+	/**
+	 * Flag specified at construction time to indicate if a project-less
+	 * launch is supported for this type of launch delegate.
+	 */
+	private final boolean requireCProject;
 
 	public AbstractCLaunchDelegate2() {
 		super();

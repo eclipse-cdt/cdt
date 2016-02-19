@@ -270,10 +270,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *
 	 *  CDT 9.0 development (versions not supported on the 8.8.x branch)
 	 *  200.0 - Added PDOMCPPAliasTemplateInstance, bug 486915.
+	 *  201.0 - PDOMCPPBase stores a CPPParameterPackType for pack expansions, bug 487703.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(200, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(200, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(200, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(201, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(201, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(201, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

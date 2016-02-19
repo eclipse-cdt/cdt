@@ -8004,6 +8004,19 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPackExpansionInNestedTemplate_459844() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	template <typename... T>
+	//	struct C : A<T>... {};
+	//
+	//	constexpr bool answer = __is_base_of(A<int>, C<int>);
+	public void testPackExpansionInBaseSpecifier_487703() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable answer = helper.assertNonProblem("answer");
+		assertVariableValue(answer, 1);
+	}
 
 	// struct S {
 	//     void kind();

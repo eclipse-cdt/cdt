@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -166,9 +165,9 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 				} else {
 					final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
 					for (ICPPBase base : bases) {
-						IBinding origClass = base.getBaseClass();
-						if (origClass instanceof ICPPTemplateParameter && ((ICPPTemplateParameter) origClass).isParameterPack()) {
-							IType[] specClasses= CPPTemplates.instantiateTypes(new IType[] { new CPPParameterPackType((IType) origClass) },
+						IType baseType = base.getBaseClassType();
+						if (baseType instanceof ICPPParameterPackType) {
+							IType[] specClasses= CPPTemplates.instantiateTypes(new IType[] { baseType },
 									new InstantiationContext(tpmap, specialClass, point));
 							if (specClasses.length == 1 && specClasses[0] instanceof ICPPParameterPackType) {
 								result= ArrayUtil.append(result, base);
@@ -182,16 +181,15 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 									}
 								}
 							}
-							continue;
 						}
-						if (origClass instanceof IType) {
+						else if (baseType != null) {
 							ICPPBase specBase = base.clone();
 							ICPPClassSpecialization specializationContext = specialClass;
 							IBinding owner = specialClass.getOwner();
 							if (owner instanceof ICPPClassSpecialization) {
 								specializationContext = (ICPPClassSpecialization) owner;
 							}
-							IType specClass= CPPTemplates.instantiateType((IType) origClass,
+							IType specClass= CPPTemplates.instantiateType(baseType,
 									new InstantiationContext(tpmap, specializationContext, point));
 							specClass = SemanticUtil.getUltimateType(specClass, false);
 							if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {

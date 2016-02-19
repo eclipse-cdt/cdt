@@ -1202,6 +1202,10 @@ public class CPPTemplates {
 		int r= PACK_SIZE_NOT_FOUND;
 		if (binding instanceof ICPPDeferredClassInstance) {
 			ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) binding;
+			if (dcl.getClassTemplate() instanceof ICPPTemplateTemplateParameter) {
+				r = combinePackSize(r, determinePackSize((ICPPTemplateParameter) dcl.getClassTemplate(), 
+						tpMap));
+			}
 			ICPPTemplateArgument[] args = dcl.getTemplateArguments();
 			for (ICPPTemplateArgument arg : args) {
 				r= combinePackSize(r, determinePackSize(arg, tpMap));

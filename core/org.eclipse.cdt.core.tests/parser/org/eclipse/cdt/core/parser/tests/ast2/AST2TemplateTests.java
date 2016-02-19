@@ -8017,6 +8017,34 @@ public class AST2TemplateTests extends AST2TestBase {
 		IVariable answer = helper.assertNonProblem("answer");
 		assertVariableValue(answer, 1);
 	}
+	
+
+	//	template <template <class> class ... Mixins>
+	//	struct C : Mixins<int>... {};
+	//	  
+	//	template <typename>
+	//	struct SpecificMixin {};
+	//	
+	//	constexpr bool answer = __is_base_of(SpecificMixin<int>, C<SpecificMixin>);
+	public void testTemplateTemplateParameterPack_487703a() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable answer = helper.assertNonProblem("answer");
+		assertVariableValue(answer, 1);
+	}
+	
+	//  template <template <class> class ... Mixins>
+	//  struct C : Mixins<C<Mixins...>>... {};
+	//
+	//  template <typename>
+	//  struct SpecificMixin {};
+	//
+	//  typedef C<SpecificMixin> Waldo;
+	//  constexpr bool answer = __is_base_of(SpecificMixin<Waldo>, Waldo);
+	public void testTemplateTemplateParameterPack_487703b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable answer = helper.assertNonProblem("answer");
+		assertVariableValue(answer, 1);
+	}
 
 	// struct S {
 	//     void kind();

@@ -840,8 +840,9 @@ public class TemplateArgumentDeduction {
 	}
 
 	private boolean fromType(IType p, IType a, boolean allowCVQConversion, IASTNode point) throws DOMException {
+		IType originalArgType = a;
+		a = SemanticUtil.getSimplifiedType(a);
 		while (p != null) {
-			IType argumentTypeBeforeTypedefResolution = a;
 			while (a instanceof ITypedef)
 				a = ((ITypedef) a).getType();
 			while (p instanceof ITypedef)
@@ -945,7 +946,7 @@ public class TemplateArgumentDeduction {
 				if (a == null)
 					return false;
 				return deduce(((ICPPTemplateParameter) p).getParameterID(),
-						new CPPTemplateTypeArgument(a, argumentTypeBeforeTypedefResolution));
+						new CPPTemplateTypeArgument(a, ExpressionTypes.restoreTypedefs(a, originalArgType)));
 			} else if (p instanceof ICPPTemplateInstance) {
 				if (!(a instanceof ICPPTemplateInstance))
 					return false;

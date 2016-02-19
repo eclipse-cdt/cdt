@@ -38,6 +38,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedList
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
@@ -733,6 +734,9 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         final CopyAction copyTextAction = new CopyTextAction(this.fRendering);
         final CopyAction copyAddressAction = new CopyAddressAction(this.fRendering);
         final CopyAction copyAllAction = new CopyAllAction(this.fRendering);
+        
+        // go-to address action
+        final IAction goToAddressAction = new GoToAddressAction(getMemoryRenderingContainer(), this);
 
         // reset to base address
         
@@ -1301,6 +1305,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 copyAllAction.checkStatus();
 
                 manager.add(gotoBaseAddressAction);
+                manager.add(goToAddressAction);
                 manager.add(refreshAction);
                 manager.add(new Separator());
                 manager.add(new Separator(

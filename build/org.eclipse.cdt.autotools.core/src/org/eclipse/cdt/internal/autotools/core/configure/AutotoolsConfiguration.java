@@ -102,6 +102,8 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		new Option(AutotoolsOptionConstants.OPT_PROGRAM_PREFIX, "program_prefix", IConfigureOption.STRING), // $NON-NLS-1$
 		new Option(AutotoolsOptionConstants.OPT_PROGRAM_SUFFIX, "program_suffix", IConfigureOption.STRING), // $NON-NLS-1$
 		new Option(AutotoolsOptionConstants.OPT_PROGRAM_TRANSFORM_NAME, "program_transform_name", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.CATEGORY_ENVVAR, IConfigureOption.CATEGORY),
+		new Option(AutotoolsOptionConstants.OPT_ENVVAR, IConfigureOption.ENVVAR),
 		new Option(AutotoolsOptionConstants.CATEGORY_FEATURES, IConfigureOption.CATEGORY),
 		new Option(AutotoolsOptionConstants.OPT_ENABLE_MAINTAINER_MODE, "enable_maintainer_mode", IConfigureOption.BIN), // $NON-NLS-1$
 		new Option(AutotoolsOptionConstants.FLAG_CFLAGS, "cflags", AutotoolsOptionConstants.FLAG_CFLAGS_FLAGS, IConfigureOption.FLAG), // $NON-NLS-1$
@@ -192,6 +194,12 @@ public class AutotoolsConfiguration implements IAConfiguration {
 					fv.setValue(defaultValue);
 				lastFlag.addChild(opt.name);
 				configOptions.put(opt.name, fv);
+				break;
+			case IConfigureOption.ENVVAR:
+				VariableConfigureOption v = new VariableConfigureOption(opt.name, opt.transformedName, this);
+				if (defaultValue != null)
+					v.setValue(defaultValue);
+				configOptions.put(opt.name, v);
 				break;
 			}
 		}

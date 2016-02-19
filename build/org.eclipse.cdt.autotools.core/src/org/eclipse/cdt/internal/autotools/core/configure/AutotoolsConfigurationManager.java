@@ -566,6 +566,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 			case FLAGVALUE:
 			case MULTIARG:
 			case INTERNAL:
+			case ENVVAR:
 				return true;
 			}
 			return false;

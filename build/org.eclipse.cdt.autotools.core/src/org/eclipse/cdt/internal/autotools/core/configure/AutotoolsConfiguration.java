@@ -109,6 +109,8 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
 		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
 		new Option(AutotoolsOptionConstants.OPT_USER, IConfigureOption.MULTIARG),
+		new Option(AutotoolsOptionConstants.CATEGORY_ENVVAR, IConfigureOption.CATEGORY),
+		new Option(AutotoolsOptionConstants.OPT_ENVVAR, IConfigureOption.VARIABLE), // $NON-NLS-1$
 		new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), // $NON-NLS-1$
 		new Option(AutotoolsOptionConstants.CATEGORY_OPTIONS, IConfigureOption.CATEGORY),
 		new Option(AutotoolsOptionConstants.OPT_AUTOGENOPTS, IConfigureOption.MULTIARG),
@@ -192,6 +194,12 @@ public class AutotoolsConfiguration implements IAConfiguration {
 					fv.setValue(defaultValue);
 				lastFlag.addChild(opt.name);
 				configOptions.put(opt.name, fv);
+				break;
+			case IConfigureOption.VARIABLE:
+				VariableConfigureOption v = new VariableConfigureOption(opt.name, opt.transformedName, this);
+				if (defaultValue != null)
+					v.setValue(defaultValue);
+				configOptions.put(opt.name, v);
 				break;
 			}
 		}

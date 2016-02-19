@@ -16,6 +16,24 @@
       "revId": "accb28a07ae79a532125ef89a3389bf66efe5b36",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f125eeb3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-02-19T21:34:20Z",
+      "side": 1,
+      "message": "I\u0027m never sure if such changes are affecting people or not.\n\nSince all the initialize() does that needs cleanup, is to allocate a DsfServicesTracker, another option would be to leave the initialize() where it was and cleanup the tracker in GdbLaunch.launchRemoved() like a do for the session, just in case.\n\nMaybe that is safer.  What do you think?",
+      "parentUuid": "e7dfcf21_31b756f1",
+      "revId": "accb28a07ae79a532125ef89a3389bf66efe5b36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

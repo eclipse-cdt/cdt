@@ -7853,6 +7853,30 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPartialSpecializationForRefQualifiedFunctionType_485888() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T>
+	//	struct term_traits;
+	//	
+	//	template<typename T>
+	//	struct term_traits<T const &> {
+	//	    typedef T value_type;
+	//	};
+	//	
+	//	template<typename T, int N>
+	//	struct term_traits<T const (&)[N]> {
+	//	    typedef T value_type[N];
+	//	};
+	//	
+	//	using T = const char(&)[4];
+	//	using ActualType = term_traits<T const &>::value_type;
+	//	
+	//	using ExpectedType = char[4];
+	public void testQualifierTypeThatCollapsesAfterTypedefSubstitution_487698() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ITypedef actualType = helper.assertNonProblem("ActualType");
+		ITypedef expectedType = helper.assertNonProblem("ExpectedType");
+		assertSameType(actualType, expectedType);
+	}
 
 	//	template <typename>
 	//	struct meta {

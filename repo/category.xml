@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <bundle id="org.eclipse.tools.templates.freemarker" version="1.0.0.qualifier">
+      <category name="main"/>
+   </bundle>
+   <bundle id="org.eclipse.tools.templates.ui" version="1.0.0.qualifier">
+      <category name="main"/>
+   </bundle>
+   <category-def name="main" label="IDE Commons Templates"/>
+</site>

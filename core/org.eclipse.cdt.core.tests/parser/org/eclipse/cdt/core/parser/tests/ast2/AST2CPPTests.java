@@ -8926,6 +8926,27 @@ public class AST2CPPTests extends AST2TestBase {
 		assertTrue(binding instanceof ICPPConstructor);
 		assertEquals(2, ((ICPPConstructor) binding).getType().getParameterTypes().length);
 	}
+	
+	//	struct S {
+	//	    int a;
+	//	    float b;
+	//	    char c;
+	//	};
+	//
+	//	struct T {
+	//	    char x;
+	//	    int y;
+	//	};
+	//
+	//	void foo(S);
+	//	void foo(T);
+	//
+	//	int main() {
+	//	    foo({3, 4.0, 'c'});  // 'foo' is ambiguous
+	//	}
+	public void testAggregateInitialization_487555() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	namespace std {
 	//		template<typename T> class initializer_list;

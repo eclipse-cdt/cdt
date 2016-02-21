@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSearch;
 
 
 public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
@@ -120,10 +121,52 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 				setOffsetAndLength(offset, 0);
 			}
 		} catch (ExpansionOverlapsBoundaryException e) {
-			ASTNode parent = (ASTNode) getParent();
-			setOffsetAndLength(parent.getOffset() + parent.getLength(), 0);
+			if (!computeOperatorOffsetsFallback(relativeNode, trailing)) {
+				// Fall-back for the fall-back
+				ASTNode parent = (ASTNode) getParent();
+				setOffsetAndLength(parent.getOffset() + parent.getLength(), 0);
+			}
 		}
     }
+	
+	// Fallback algorithm to use in computeOperatorOffsets() when the operator is
+	// in a macro expansion.
+	private boolean computeOperatorOffsetsFallback(IASTNode relativeNode, boolean trailing) {
+		if (!(relativeNode instanceof ASTNode)) {
+			return false;
+		}
+		ASTNode relative = (ASTNode) relativeNode;
+		
+		// Find the sequence numbers denoting the bounds of the leading or 
+		// trailing syntax, much as IASTNode.getLeadingSyntax() or 
+		// getTrailingSyntax() would. The code here follows the
+		// implementation of those functions closely.
+		ASTNodeSearch visitor = new ASTNodeSearch(relativeNode);
+		IASTNode sibling = trailing ? visitor.findRightSibling() : visitor.findLeftSibling();
+		IASTNode parent = sibling == null ? relativeNode.getParent() : null;
+		if (!((sibling == null || sibling instanceof ASTNode) && 
+			  (parent == null || parent instanceof ASTNode))) {
+			return false;
+		}
+		ASTNode sib = (ASTNode) sibling;
+		ASTNode par = (ASTNode) parent;
+		int start = trailing ? relative.getOffset() + relative.getLength() 
+		                     : sib != null ? sib.getOffset() + sib.getLength()
+		                                   : par.getOffset();
+		int end = trailing ? sib != null ? sib.getOffset()
+				                         : par.getOffset() + par.getLength()
+				           : relative.getOffset();
+				                         
+	    // If there is only one token within the bounds, it must be the
+	    // operator token, and we have our answer.
+		if (end == start + 1) {
+			setOffsetAndLength(start, 1);
+			return true;
+		}
+		
+		// Otherwise, give up.
+		return false;
+	}
 
 	public void setOperator(boolean isOperator) {
 		this.isOperator = isOperator;

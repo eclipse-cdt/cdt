@@ -534,4 +534,16 @@ public class SemanticHighlightingTest extends TestCase {
     	// in the argument to be colored with the keyword highlighting.
     	makeAssertions();
     }
+    
+    //	#define MIRROR(arg) arg                          //$macroDefinition
+    //	struct Foo {                                     //$class
+    //		bool operator==(const Foo&) const;           //$methodDeclaration,class
+    //	};
+    //	int main() {                                     //$functionDeclaration
+    //		Foo a, b;                                    //$class,localVariableDeclaration,localVariableDeclaration
+    //		MIRROR(a == b);                              //$macroSubstitution,localVariable,overloadedOperator,localVariable
+    //	}
+    public void testOverloadedOperatorInMacroExpansion_371839() throws Exception {
+    	makeAssertions();
+    }
 }

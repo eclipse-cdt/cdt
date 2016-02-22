@@ -39,6 +39,8 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions3;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.DecodeResult;
+import org.eclipse.cdt.dsf.debug.service.IMemorySpaces2;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -74,6 +76,7 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr64;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -597,6 +600,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     protected static class ExpressionDMAddress implements IExpressionDMAddress {
     	IAddress fAddr;
     	int fSize;
+    	String fMemSpace = ""; //$NON-NLS-1$
     	
     	public ExpressionDMAddress(IAddress addr, int size) {
     		fAddr = addr;
@@ -615,17 +619,34 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     		}
     	}
 
+		/**
+		 * @since 5.0
+		 */
+		public ExpressionDMAddress(String addrStr, int size, String memSpace) {
+			this(addrStr, size);
+			fMemSpace = memSpace;
+		}
+
     	@Override
     	public IAddress getAddress() { return fAddr; }
     	@Override
     	public int getSize() { return fSize; }
+
+		/**
+		 * @since 5.0
+		 */
+		@Override
+		public String getMemorySpace() {
+			return fMemSpace;
+		}
 		
 		@Override
 		public boolean equals(Object other) {
 			if (other instanceof ExpressionDMAddress) {
 				ExpressionDMAddress otherAddr = (ExpressionDMAddress) other;
-				return (fSize == otherAddr.getSize()) && 
-    				(fAddr == null ? otherAddr.getAddress() == null : fAddr.equals(otherAddr.getAddress()));
+				boolean sameAddr = fAddr == null ? otherAddr.getAddress() == null : fAddr.equals(otherAddr.getAddress());
+				boolean sameMemSpace = fMemSpace == null ? otherAddr.getMemorySpace() == null : fMemSpace.equals(otherAddr.getMemorySpace());
+				return (fSize == otherAddr.getSize()) && sameAddr && sameMemSpace;
 			}
 			return false;
 		}
@@ -662,8 +683,16 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		public String getLocation() {
 			return ""; //$NON-NLS-1$
 		}
-    }
-    
+
+		/**
+		 * @since 5.0
+		 */
+		@Override
+		public String getMemorySpace() {
+			return ""; //$NON-NLS-1$
+		}
+	}
+
 	/**
 	 * This class represents the static data referenced by an instance of ExpressionDMC,
 	 * such as its type and number of children; it does not contain the value or format
@@ -951,6 +980,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * In this case, some errors should not be reported.
 	 */
 	private boolean fTraceVisualization;
+	private IMemorySpaces2 fMemorySpaceService;
 	
 	public MIExpressions(DsfSession session) {
 		super(session);
@@ -1012,6 +1042,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         fExpressionCache.setContextAvailable(commandControl.getContext(), true);
         
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
+        fMemorySpaceService = getServicesTracker().getService(IMemorySpaces2.class);
 
 		requestMonitor.done();
 	}
@@ -1222,7 +1254,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 */
 	@Override
     public void getExpressionAddressData(
-    		IExpressionDMContext dmc, 
+    		final IExpressionDMContext dmc, 
     		final DataRequestMonitor<IExpressionDMAddress> rm) {
         
     	if (dmc instanceof MIExpressionDMC) {
@@ -1256,7 +1288,24 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     				@Override
     				protected void handleSuccess() {
     					String tmpAddrStr = getData().getValue();
-    					
+
+							DecodeResult memSpaceParsed = null;
+							if (fMemorySpaceService != null) {
+								try {
+									memSpaceParsed = fMemorySpaceService.decodeAddress(tmpAddrStr);
+								} catch (CoreException e1) {
+									// No memory space id found
+								}
+							}
+
+							String tMemSpace = ""; //$NON-NLS-1$
+							if (memSpaceParsed != null) {
+								tmpAddrStr = memSpaceParsed.getExpression();
+								tMemSpace = memSpaceParsed.getMemorySpaceId();
+							}
+
+							final String memSpaceId = tMemSpace;
+
     					// Deal with addresses of contents of a char* which is in
     					// the form of "0x12345678 \"This is a string\""
     					int split = tmpAddrStr.indexOf(' '); 
@@ -1270,7 +1319,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     							protected void handleSuccess() {
     								try {
     									int size = Integer.parseInt(getData().getValue());
-    									rm.setData(new ExpressionDMAddress(addrStr, size));
+    									rm.setData(new ExpressionDMAddress(addrStr, size, memSpaceId));
     								} catch (NumberFormatException e) {
     						            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
     						            		"Unexpected size format from backend: " + getData().getValue(), null)); //$NON-NLS-1$

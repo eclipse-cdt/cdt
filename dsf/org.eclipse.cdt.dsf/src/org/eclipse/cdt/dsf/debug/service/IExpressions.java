@@ -98,8 +98,14 @@ public interface IExpressions extends IFormattedValues {
     	 * Returns the size of the address.
     	 */
     	int getSize();
+
+    	/**
+    	 * @return The memory space 
+    	 * @since 3.0
+    	 */
+    	String getMemorySpace();
     }
- 
+
     /**
      * A representation of an expression location that does not correspond to 
      * an address.  

@@ -343,6 +343,10 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 				public String getLocation() {
 					return ""; //$NON-NLS-1$
 				}
+				@Override
+				public String getMemorySpace() {
+					return ""; //$NON-NLS-1$
+				}
     		});
     		return;
     	}

@@ -103,4 +103,24 @@ public interface IMemorySpaces extends IDsfService{
 	 * select a memory space when being prompted for a memory location.
 	 */
 	public boolean creatingBlockRequiresMemorySpaceID();
+
+    /**
+     * Provides the default memory space to be used in the given context.
+     * 
+     * @param ctx
+     *            a context which might <i>contain</i> one or more memory
+     *            spaces. Contexts that may be <i>associated</i> with a memory
+     *            space should not be passed in. E.g., an expression might be
+     *            associated with a memory space, but it does not contain memory
+     *            spaces, and is thus not an appropriate context for this
+     *            method.
+     * @param rm
+     *            the asynchronous data request monitor. Returns a memory space ID.
+     *            Never null, but may be empty.
+     * @since 2.7
+     */
+    default void getDefaultMemorySpace(IDMContext context, final DataRequestMonitor<String> rm) {
+        rm.setData(""); //$NON-NLS-1$
+        rm.done();
+    }
 }

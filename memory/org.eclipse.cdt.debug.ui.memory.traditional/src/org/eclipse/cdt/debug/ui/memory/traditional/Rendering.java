@@ -631,6 +631,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	        {
 	            public void run()
 	            {
+	            	archiveDeltas();
 	                refresh();
 	            }
 	        });

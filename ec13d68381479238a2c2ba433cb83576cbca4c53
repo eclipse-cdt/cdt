@@ -164,6 +164,30 @@
       "revId": "ec13d68381479238a2c2ba433cb83576cbca4c53",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_02c12378",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 61801
+      },
+      "writtenOn": "2016-02-22T19:47:59Z",
+      "side": 1,
+      "message": "Yes, this patch fix it!",
+      "parentUuid": "e7dfcf21_df60f82b",
+      "range": {
+        "startLine": 79,
+        "startChar": 60,
+        "endLine": 79,
+        "endChar": 62
+      },
+      "revId": "ec13d68381479238a2c2ba433cb83576cbca4c53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -34,6 +34,24 @@
       "revId": "accb28a07ae79a532125ef89a3389bf66efe5b36",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1f9260da",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-02-22T17:47:33Z",
+      "side": 1,
+      "message": "I just pointed to it as a theoretical breakage. There is nothing in the docs that indicates that initialize() is called from GdbLaunchDelegate::getLaunch(), so for me it\u0027s OK to leave the patch as it is.",
+      "parentUuid": "e7dfcf21_31b756f1",
+      "revId": "accb28a07ae79a532125ef89a3389bf66efe5b36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

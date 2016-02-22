@@ -8,4 +8,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/dsf/debug/service/IMemorySpaces.java" type="org.eclipse.cdt.dsf.debug.service.IMemorySpaces">
+        <filter id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.debug.service.IMemorySpaces"/>
+                <message_argument value="getDefaultMemorySpace(IDMContext, DataRequestMonitor&lt;String&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

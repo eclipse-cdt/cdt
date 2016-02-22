@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_bf840c64",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-22T18:59:17Z",
+      "side": 1,
+      "message": "Lack of indentation creates an impression that the test works only because indentation is not present.",
+      "range": {
+        "startLine": 70,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 8
+      },
+      "revId": "8bfa7885fdbd2ffcc6ed2345922a50dfc494a7e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_df89d87b",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-22T18:59:17Z",
+      "side": 1,
+      "message": "Rename the test to testMarkerOffset_Bug486610 and remove the comment.",
+      "range": {
+        "startLine": 73,
+        "startChar": 13,
+        "endLine": 73,
+        "endChar": 29
+      },
+      "revId": "8bfa7885fdbd2ffcc6ed2345922a50dfc494a7e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ff8e9481",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-22T18:59:17Z",
+      "side": 1,
+      "message": "Manipulations like this are simply wrong. If there is inconsistency between the code string and the actual code used by the test, it should be fixed elsewhere. You can also work around this inconsistency by removing the spaces immediately following //.",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 32
+      },
+      "revId": "8bfa7885fdbd2ffcc6ed2345922a50dfc494a7e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

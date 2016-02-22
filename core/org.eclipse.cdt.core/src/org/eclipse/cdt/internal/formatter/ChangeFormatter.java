@@ -90,7 +90,7 @@ public class ChangeFormatter {
 	
 			// Calculate formatting changes for the regions after the refactoring changes.
 			ICProject project = tu.getCProject();
-	        Map<String, Object> options = new HashMap<String, Object>(project.getOptions(true));
+	        Map<String, Object> options = new HashMap<>(project.getOptions(true));
 	        options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 			// Allow all comments to be indented.
 			options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_NEVER_INDENT_LINE_COMMENTS_ON_FIRST_COLUMN,
@@ -102,7 +102,8 @@ public class ChangeFormatter {
 	
 			TextEdit combinedFormatEdit = new MultiTextEdit();
 			for (TextEdit formatEdit : formatEdits) {
-				combinedFormatEdit = TextEditUtil.merge(combinedFormatEdit, formatEdit);
+				if (formatEdit != null)
+					combinedFormatEdit = TextEditUtil.merge(combinedFormatEdit, formatEdit);
 			}
 			formatEdits = TextEditUtil.flatten(combinedFormatEdit).removeChildren();
 	

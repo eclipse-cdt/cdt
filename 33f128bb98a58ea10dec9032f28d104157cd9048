@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_2269bfec",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-22T21:40:16Z",
+      "side": 1,
+      "message": "I\u0027ve removed the problematic trim call. You can restore the spaces after //\n\nTo make the code look natural write it as:\n//  void foo() {\n//    int x \u003d 0; x\n//        \u003d x;\n//  }",
+      "range": {
+        "startLine": 70,
+        "startChar": 6,
+        "endLine": 70,
+        "endChar": 9
+      },
+      "revId": "33f128bb98a58ea10dec9032f28d104157cd9048",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6273c7d8",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-22T21:40:16Z",
+      "side": 1,
+      "message": "Offset -\u003e offset",
+      "range": {
+        "startLine": 79,
+        "startChar": 9,
+        "endLine": 79,
+        "endChar": 15
+      },
+      "revId": "33f128bb98a58ea10dec9032f28d104157cd9048",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_4266cb1c",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-02-22T21:40:16Z",
+      "side": 1,
+      "message": "NON_NLS is not required in tests.",
+      "range": {
+        "startLine": 80,
+        "startChar": 66,
+        "endLine": 80,
+        "endChar": 67
+      },
+      "revId": "33f128bb98a58ea10dec9032f28d104157cd9048",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

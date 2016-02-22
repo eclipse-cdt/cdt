@@ -29,9 +29,6 @@ public class CDebugUIPreferenceInitializer extends AbstractPreferenceInitializer
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
     public void initializeDefaultPreferences() {
 		IPreferenceStore pstore = CDebugUIPlugin.getDefault().getPreferenceStore();
@@ -40,6 +37,6 @@ public class CDebugUIPreferenceInitializer extends AbstractPreferenceInitializer
         pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_OPEN_SOURCE_NOT_FOUND, false );
         pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS, true );
         pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE, true );
-        pstore.setDefault(ICDebugPreferenceConstants.PREF_SHOW_ERROR_REVERSE_TRACE_METHOD_NOT_AVAILABLE, true);
+        pstore.setDefault( ICDebugPreferenceConstants.PREF_SHOW_ERROR_REVERSE_TRACE_METHOD_NOT_AVAILABLE, true );
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 Alena Laskavaia 
+ * Copyright (c) 2009,2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,21 +12,21 @@ package org.eclipse.cdt.codan.core.param;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType;
+
+import junit.framework.TestCase;
 
 /**
  * Test for BasicProblemPreference
  */
 public class BasicProblemPreferenceTest extends TestCase {
-	private static final String TEST_STR = "aaa"; //$NON-NLS-1$
+	private static final String TEST_STR = "aaa";
 	BasicProblemPreference pref;
-	String key = "xxx"; //$NON-NLS-1$
+	String key = "xxx";
 
 	@Override
 	protected void setUp() throws Exception {
-		pref = new BasicProblemPreference(key, "My Value"); //$NON-NLS-1$
+		pref = new BasicProblemPreference(key, "My Value");
 	}
 
 	public void testIntegerExportValue() {
@@ -38,7 +38,7 @@ public class BasicProblemPreferenceTest extends TestCase {
 
 	public void testIntegerImportValue() {
 		pref.setType(PreferenceType.TYPE_INTEGER);
-		pref.importValue("22"); //$NON-NLS-1$
+		pref.importValue("22");
 		assertEquals(22, pref.getValue());
 	}
 
@@ -59,14 +59,14 @@ public class BasicProblemPreferenceTest extends TestCase {
 		pref.setType(PreferenceType.TYPE_BOOLEAN);
 		pref.setValue(Boolean.TRUE);
 		String value = pref.exportValue();
-		assertEquals("true", value); //$NON-NLS-1$
+		assertEquals("true", value);
 		pref.importValue(TEST_STR);
 		assertEquals(Boolean.FALSE, pref.getValue());
 	}
 
 	public void testFileImportValue() {
 		pref.setType(PreferenceType.TYPE_FILE);
-		File file = new File("file.c"); //$NON-NLS-1$
+		File file = new File("file.c");
 		pref.setValue(file);
 		String value = pref.exportValue();
 		assertEquals(file.getName(), value);
@@ -77,7 +77,7 @@ public class BasicProblemPreferenceTest extends TestCase {
 	public void testBadKey() {
 		try {
 			pref.setKey(null);
-			fail("Should be exception"); //$NON-NLS-1$
+			fail("Should be exception");
 		} catch (Exception e) {
 			assertTrue(true);
 		}
@@ -86,7 +86,7 @@ public class BasicProblemPreferenceTest extends TestCase {
 	public void testBadType() {
 		try {
 			pref.setType(null);
-			fail("Should be exception"); //$NON-NLS-1$
+			fail("Should be exception");
 		} catch (Exception e) {
 			assertTrue(true);
 		}

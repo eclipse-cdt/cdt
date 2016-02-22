@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Meisam Fathi and others 
+ * Copyright (c) 2010, 2011 Meisam Fathi and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 
 /**
  * Test for {@see FormatStringChecker} class
- * 
  */
 public class FormatStringCheckerTest extends CheckerTestCase {
 	@Override
@@ -26,7 +25,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// int f(){
 	// return 0;
 	// }
-	public void testBase() {
+	public void testBase() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -36,7 +35,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// scanf("%s", inputstr); // here
 	// return 0;
 	// }
-	public void testSimple() {
+	public void testSimple() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
@@ -49,7 +48,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testIntRight() {
+	public void testIntRight() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -62,7 +61,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testIntWrong() {
+	public void testIntWrong() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(5);
 	}
@@ -75,7 +74,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testRightInt() {
+	public void testRightInt() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -88,7 +87,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testRightWrong() {
+	public void testRightWrong() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(5);
 	}
@@ -101,7 +100,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testWrongInt() {
+	public void testWrongInt() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(5);
 	}
@@ -114,7 +113,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testWrongRight() {
+	public void testWrongRight() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(5);
 	}
@@ -126,7 +125,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testInfiniteSize() {
+	public void testInfiniteSize() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}
@@ -139,7 +138,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testRight() {
+	public void testRight() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -152,7 +151,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testRightRight() {
+	public void testRightRight() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -165,7 +164,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testWrongWrong() {
+	public void testWrongWrong() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(5);
 	}
@@ -182,7 +181,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testGlobalBeforeWrong() {
+	public void testGlobalBeforeWrong() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(9);
 	}
@@ -199,7 +198,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// char inputstr[5];
 	// return 0;
 	// }
-	public void testNonglobalAfterRight() {
+	public void testNonglobalAfterRight() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -215,7 +214,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// char inputstr[15];
 	// return 0;
 	// }
-	public void testNonglobalAfterWrong() {
+	public void testNonglobalAfterWrong() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}
@@ -231,7 +230,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testNonglobalBeforeRight() {
+	public void testNonglobalBeforeRight() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -247,7 +246,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testNonglobalBeforeWrong() {
+	public void testNonglobalBeforeWrong() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(8);
 	}
@@ -260,7 +259,7 @@ public class FormatStringCheckerTest extends CheckerTestCase {
 	// printf("%d" ,i);
 	// return 0;
 	// }
-	public void testGaurdedRight() {
+	public void testGaurdedRight() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}

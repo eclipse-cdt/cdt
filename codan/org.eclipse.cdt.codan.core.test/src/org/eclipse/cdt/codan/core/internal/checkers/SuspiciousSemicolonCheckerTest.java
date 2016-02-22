@@ -17,13 +17,13 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems("org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonProblem"); //$NON-NLS-1$
+		enableProblems("org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonProblem");
 	}
 
 	// void foo() {
 	// if(0);
 	// }
-	public void testIf1() {
+	public void testIf1() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(2);
 	}
@@ -33,7 +33,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// {
 	// }
 	// }
-	public void testIf2() {
+	public void testIf2() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(2);
 	}
@@ -42,7 +42,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// if(0)
 	// foo();
 	// }
-	public void testIf3() {
+	public void testIf3() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -51,7 +51,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// if(0)
 	// ;
 	// }
-	public void testIf4() {
+	public void testIf4() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
@@ -60,7 +60,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// if(0);{
 	// }
 	// }
-	public void testIf5() {
+	public void testIf5() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(2);
 	}
@@ -68,7 +68,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// void foo() {
 	// if(0) {};
 	// }
-	public void testIf6() {
+	public void testIf6() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -78,7 +78,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// );
 	// }
 	// }
-	public void testIf7() {
+	public void testIf7() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
@@ -88,7 +88,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// ;
 	// else if(0);
 	// }
-	public void testElseIf1() {
+	public void testElseIf1() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 		checkErrorLine(4);
@@ -102,7 +102,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	//
 	// }
 	// }
-	public void testElseIf2() {
+	public void testElseIf2() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 		checkErrorLine(4);
@@ -114,7 +114,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// else if(0);{
 	// }
 	// }
-	public void testElseIf3() {
+	public void testElseIf3() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 		checkErrorLine(4);
@@ -125,7 +125,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// ;
 	// else if(0){};
 	// }
-	public void testElseIf4() {
+	public void testElseIf4() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
@@ -136,7 +136,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// else if(0
 	// );
 	// }
-	public void testElseIf5() {
+	public void testElseIf5() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 		checkErrorLine(5);
@@ -147,7 +147,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	//   if(0)
 	//     OP;
 	// }
-	public void testMacro() {
+	public void testMacro() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -156,7 +156,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	// void foo() {
 	//   MACRO(true);
 	// }
-	public void testMacroExpansion() {
+	public void testMacroExpansion() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -167,7 +167,7 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	//	    else
 	//	        ;
 	// }
-	public void testIfElse() {
+	public void testIfElse() throws Exception {
 		setPreferenceValue(SuspiciousSemicolonChecker.ER_ID, SuspiciousSemicolonChecker.PARAM_ALFTER_ELSE, Boolean.TRUE);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3, 5);

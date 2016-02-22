@@ -195,7 +195,7 @@ public class CodanTestCase extends BaseTestCase {
 		return plugin;
 	}
 
-	public File loadcode(String code, boolean cpp) {
+	public File loadcode(String code, boolean cpp) throws CoreException {
 		String fileKey = "@file:";
 		int indf = code.indexOf(fileKey);
 		if (indf >= 0) {
@@ -218,19 +218,15 @@ public class CodanTestCase extends BaseTestCase {
 		return loadcode(code, testFile);
 	}
 
-	private File loadcode(String code, File testFile) {
+	private File loadcode(String code, File testFile) throws CoreException {
 		try {
 			tempFiles.add(testFile);
-			String trim = code.trim();
-			loadErrorComments(trim);
-			TestUtils.saveFile(new ByteArrayInputStream(trim.getBytes()), testFile);
+			loadErrorComments(code);
+			TestUtils.saveFile(new ByteArrayInputStream(code.getBytes()), testFile);
 			currentFile = testFile;
 			try {
 				cproject.getProject().refreshLocal(1, null);
 				waitForIndexer(cproject);
-			} catch (CoreException e) {
-				// hmm
-				fail(e.getMessage());
 			} catch (InterruptedException e) {
 			}
 			currentCElem = cproject.findElement(new Path(currentFile.toString()));
@@ -256,19 +252,19 @@ public class CodanTestCase extends BaseTestCase {
 		}
 	}
 
-	public File loadcode_c(String code) {
+	public File loadcode_c(String code) throws CoreException {
 		return loadcode(code, true);
 	}
 
-	public File loadcode_cpp(String code) {
+	public File loadcode_cpp(String code) throws CoreException {
 		return loadcode(code, false);
 	}
 
-	public File loadcode(String code) {
+	public File loadcode(String code) throws CoreException {
 		return loadcode(code, isCpp());
 	}
 
-	public File loadcode(CharSequence... more) {
+	public File loadcode(CharSequence... more) throws CoreException {
 		File file = null;
 		for (CharSequence cseq : more) {
 			file = loadcode(cseq.toString(), isCpp());

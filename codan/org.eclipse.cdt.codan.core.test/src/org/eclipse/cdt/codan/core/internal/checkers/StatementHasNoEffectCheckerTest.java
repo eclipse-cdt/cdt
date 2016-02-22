@@ -11,7 +11,6 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
@@ -20,7 +19,6 @@ import org.eclipse.core.resources.IMarker;
 
 /**
  * Test for {@see StatementHasNoEffectChecker} class
- *
  */
 public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	@Override
@@ -33,7 +31,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// int a;
 	// +a; // error here on line 3
 	// }
-	public void testUnaryExpression() throws IOException {
+	public void testUnaryExpression() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -42,7 +40,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//
 	// b+a; // error here on line 4
 	// }
-	public void testBinaryExpression() {
+	public void testBinaryExpression() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -51,7 +49,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//
 	// a=b+a; // no error here
 	// }
-	public void testNormalAssignment() {
+	public void testNormalAssignment() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -69,7 +67,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// a%=2;
 	// a>>=2;
 	// }
-	public void testFalsePositives() {
+	public void testFalsePositives() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -77,7 +75,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// int a;
 	// a; // error here on line 3
 	// }
-	public void testIdExpression() {
+	public void testIdExpression() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -85,14 +83,14 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// int a=({foo();a;}); // no error here on line 2
 	// char *p=({char s[]="Some string";&s[0];}); // no error here on line 3
 	// }
-	public void testGNUExpressionCompoundStmtFalsePositives() {
+	public void testGNUExpressionCompoundStmtFalsePositives() throws Exception {
 		checkSampleAbove();
 	}
 
 	// main() {
 	// int z=({int a=0; +a; a;}) // error here on line 2
 	// }
-	public void testGNUExpressionCompoundStmtInside() {
+	public void testGNUExpressionCompoundStmtInside() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -106,7 +104,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//
 	// +a; // error here on line 4
 	// }
-	public void test2FilesUnaryExpression() throws IOException {
+	public void test2FilesUnaryExpression() throws Exception {
 		/* This test is using two files */
 		CharSequence[] code = getContents(2);
 		File f1 = loadcode(code[0].toString());
@@ -119,7 +117,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// main() {
 	// 	for (a=b;a;a=a->next);
 	// }
-	public void testForTestExpression() {
+	public void testForTestExpression() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -129,7 +127,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// c z;
 	// 	 (a = z.foo(1)) || (a = z.foo(2));
 	// }
-	public void testLazyEvalHack() {
+	public void testLazyEvalHack() throws Exception {
 		checkSampleAboveCpp();
 	}
 
@@ -138,7 +136,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//
 	// b+=a; // no error here on line 4
 	// }
-	public void testOverloadedBinaryExpression() {
+	public void testOverloadedBinaryExpression() throws Exception {
 		checkSampleAboveCpp();
 	}
 
@@ -147,7 +145,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// int a;
 	//   FUNC(a); // error by default
 	// }
-	public void testInMacro() {
+	public void testInMacro() throws Exception {
 		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.TRUE);
 		checkSampleAbove();
@@ -158,7 +156,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// int x;
 	//   FUNC(x); //  error
 	// }
-	public void testMessageInMacro() throws IOException {
+	public void testMessageInMacro() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		IMarker m = checkErrorLine(4);
 		assertMessageMatch("'FUNC(x)'", m); //$NON-NLS-1$
@@ -169,7 +167,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// int a;
 	//   FUNC(a); // no error if macro exp turned off
 	// }
-	public void testInMacroParamOff() {
+	public void testInMacroParamOff() throws Exception {
 		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.FALSE);
 		checkSampleAbove();
@@ -179,7 +177,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// int a;
 	// +a; // error here on line 3
 	// }
-	public void testMessage() throws IOException {
+	public void testMessage() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		IMarker m = checkErrorLine(3);
 		assertMessageMatch("'\\+a'", m); //$NON-NLS-1$
@@ -193,7 +191,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//		S s;
 	//		*s;
 	//	}
-	public void testOverloadedOperator_bug399146() {
+	public void testOverloadedOperator_bug399146() throws Exception {
 		checkSampleAboveCpp();
 	}
 }

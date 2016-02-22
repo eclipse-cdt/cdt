@@ -18,7 +18,6 @@ import org.eclipse.cdt.codan.internal.checkers.ReturnChecker;
 
 /**
  * Test for {@see ReturnCheckerTest} class
- *
  */
 public class ReturnCheckerTest extends CheckerTestCase {
 	@Override
@@ -26,10 +25,11 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		super.setUp();
 		enableProblems(ReturnChecker.RET_NORET_ID,ReturnChecker.RET_ERR_VALUE_ID,ReturnChecker.RET_NO_VALUE_ID);
 	}
+
 	//	dummy() {
 	//	  return; // no error here on line 2
 	//	}
-	public void testDummyFunction() {
+	public void testDummyFunction() throws Exception {
 		checkSampleAbove();
 		// because return type if not defined, usually people don't care
 	}
@@ -37,7 +37,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	void void_function(void) {
 	//	  return; // no error here
 	//	}
-	public void testVoidFunction() {
+	public void testVoidFunction() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -48,7 +48,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		}
 	//	  }
 	//	}
-	public void testBasicTypeFunction() {
+	public void testBasicTypeFunction() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -60,7 +60,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	 struct My_Struct struct_return_function(void) {
 	//	return; // error here on line 6
 	//	}
-	public void testUserDefinedFunction() {
+	public void testUserDefinedFunction() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -69,7 +69,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	uint8_t return_typedef(void) {
 	//	return; // error here on line 4
 	//	}
-	public void testTypedefReturnFunction() {
+	public void testTypedefReturnFunction() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -80,7 +80,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	{
 	//			return; // error here on line 5
 	//	}
-	public void testFunctionPointerReturnFunction() {
+	public void testFunctionPointerReturnFunction() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -92,7 +92,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		    }
 	//		  };
 	//		}
-	public void testInnerFunction_Bug315525() {
+	public void testInnerFunction_Bug315525() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -104,7 +104,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		    }
 	//		  };
 	//		}
-	public void testInnerFunction_Bug316154() {
+	public void testInnerFunction_Bug316154() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -117,7 +117,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//			return;
 	//		}
 	//	};
-	public void testConstructorRetValue() {
+	public void testConstructorRetValue() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorLine(3, ReturnChecker.RET_ERR_VALUE_ID);
 	}
@@ -131,7 +131,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//			return;
 	//		}
 	//	};
-	public void testConstructor_Bug323602() {
+	public void testConstructor_Bug323602() throws Exception {
 		IProblemPreference macro = getPreference(ReturnChecker.RET_NO_VALUE_ID, ReturnChecker.PARAM_IMPLICIT);
 		macro.setValue(Boolean.TRUE);
 		loadCodeAndRunCpp(getAboveComment());
@@ -142,7 +142,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	{
 	//	    [](int r){return r;}(5);
 	//	}
-	public void testLambda_Bug332285() {
+	public void testLambda_Bug332285() throws Exception {
 		checkSampleAbove();
 	}
 //	void f()
@@ -150,7 +150,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	    if ([](int r){return r == 0;}(0))
 //	        ;
 //	}
-	public void testLambda2_Bug332285() {
+	public void testLambda2_Bug332285() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -159,21 +159,21 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		int r;
 	//	    ({return r;}); // error
 	//	}
-	public void testGccExtensions() {
+	public void testGccExtensions() throws Exception {
 		checkSampleAbove();
 	}
 
 	//	auto f() -> void
 	//	{
 	//	}
-	public void testVoidLateSpecifiedReturnType_Bug337677() {
+	public void testVoidLateSpecifiedReturnType_Bug337677() throws Exception {
 		checkSampleAboveCpp();
 	}
 
 	//	auto f() -> void* // error
 	//	{
 	//	}
-	public void testVoidPointerLateSpecifiedReturnType_Bug337677() {
+	public void testVoidPointerLateSpecifiedReturnType_Bug337677() throws Exception {
 		checkSampleAboveCpp();
 	}
 
@@ -184,7 +184,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	    else
 //	        return 0;
 //	}
-	public void testBranches_Bug342906() {
+	public void testBranches_Bug342906() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -195,7 +195,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	      case 2:
 //	        return 0;
 //	}
-	public void testSwitch() {
+	public void testSwitch() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -206,7 +206,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//    else
 	//        return 0;
 	//}
-	public void testBranches_Bug343767() {
+	public void testBranches_Bug343767() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -218,7 +218,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//        return 0;
 	//    foo++;
 	//}
-	public void testBranchesDeadCode_Bug343767() {
+	public void testBranchesDeadCode_Bug343767() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -229,7 +229,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	      case 2: return 0;
 //      }
 //	}
-	public void testBranchesSwitch_Bug343767a() {
+	public void testBranchesSwitch_Bug343767a() throws Exception {
 		checkSampleAbove();
 	}
 //	int f()
@@ -240,7 +240,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	      default: return -1;
 //      }
 //	}
-	public void testBranchesSwitch_Bug343767b() {
+	public void testBranchesSwitch_Bug343767b() throws Exception {
 		checkSampleAbove();
 	}
 	//int bar(int foo)
@@ -251,7 +251,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//        if (g()) return 0;
 	//        else return 1;
 	//}
-	public void testBranches2_Bug343767() {
+	public void testBranches2_Bug343767() throws Exception {
 		checkSampleAbove();
 	}
 	//int bar(int foo) // error
@@ -260,7 +260,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//        return 0;
 	//    }
 	//}
-	public void testWhile() {
+	public void testWhile() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -269,7 +269,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//			return 0;
 	//		}
 	//	}
-	public void testNextedBlock_Bug345687() {
+	public void testNextedBlock_Bug345687() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -282,7 +282,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	end:
 	//	return (a);
 	//	}
-	public void testGoto_Bug346559() {
+	public void testGoto_Bug346559() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -291,7 +291,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		char c;  // added so function body is non-empty
 	//		// no error since return value in main is optional
 	//	}
-	public void testMainFunction() {
+	public void testMainFunction() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -299,7 +299,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	// std::vector<int> f() {
 	//    return {1,2,3};
 	// }
-	public void testReturnInitializerList() {
+	public void testReturnInitializerList() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -308,7 +308,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	int test() {
 	//    f();
 	//	}
-	public void testNoReturn() {
+	public void testNoReturn() throws Exception {
 		checkSampleAbove();
 	}
 

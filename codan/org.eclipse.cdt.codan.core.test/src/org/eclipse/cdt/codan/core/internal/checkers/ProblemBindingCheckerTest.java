@@ -39,7 +39,7 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	//     struct X {} x;
 	//     fun(x.y);
 	// }
-	public void testFieldInFunctionCall_338683() {
+	public void testFieldInFunctionCall_338683() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ProblemBindingChecker.ERR_ID_FieldResolutionProblem);
 	}
@@ -51,7 +51,7 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	//	void test() {
 	//	  A a("hi", 1, 2);
 	//	}
-	public void testImplicitConstructorCall_404774() {
+	public void testImplicitConstructorCall_404774() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(6, ProblemBindingChecker.ERR_ID_InvalidArguments);
 	}
@@ -70,7 +70,7 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	//                   x.y,
 	//                   a.b()))));
 	// }
-	public void testVariousFieldMethodCombinations_338683() {
+	public void testVariousFieldMethodCombinations_338683() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ProblemBindingChecker.ERR_ID_MethodResolutionProblem);
 		checkErrorLine(4, ProblemBindingChecker.ERR_ID_MethodResolutionProblem);
@@ -90,14 +90,14 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	//   MACRO(foo());
 	//   return 0;
 	// }
-	public void testDontUnderlineWholeMacro_341089() {
+	public void testDontUnderlineWholeMacro_341089() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		IMarker marker = checkErrorLine(3, ProblemBindingChecker.ERR_ID_FunctionResolutionProblem);
-		assertFalse(marker.getAttribute(IMarker.MESSAGE, "").contains("MACRO"));  //$NON-NLS-1$//$NON-NLS-2$
+		assertFalse(marker.getAttribute(IMarker.MESSAGE, "").contains("MACRO"));
 	}
 
 	//	auto d = 42_waldo;
-	public void testNonexistentUDLOperator_484619() {
+	public void testNonexistentUDLOperator_484619() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1, ProblemBindingChecker.ERR_ID_FunctionResolutionProblem);
 	}
@@ -105,7 +105,7 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 	//	struct R {};
 	//	R operator "" _waldo(const char*, unsigned long);  // expects a string literal
 	//	auto d = 42_waldo;                                 // passing an integer
-	public void testUDLOperatorWithWrongType_484619() {
+	public void testUDLOperatorWithWrongType_484619() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ProblemBindingChecker.ERR_ID_InvalidArguments);
 	}

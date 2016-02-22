@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,14 +16,13 @@ import org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisChecker;
 
 /**
  * Test for {@see SuggestedParenthesisChecker} class
- * 
  */
 public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
 	//	 main() {
 	//	   int a=1,b=3;
 	//	   if (!a<10) b=4; // error here on line 3
-	//	 }	
-	public void test1() {
+	//	 }
+	public void test1() throws Exception {
 		IProblemPreference macro = getPreference(SuggestedParenthesisChecker.ER_ID, SuggestedParenthesisChecker.PARAM_NOT);
 		macro.setValue(Boolean.TRUE);
 		loadCodeAndRun(getAboveComment());
@@ -32,10 +31,10 @@ public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
 
 	//	 main() {
 	//	   int a=1,b=3;
-	//	   
+	//
 	//	   if (b+a && a>b || b-a) b--; // error here on line 4
 	//	 }
-	public void test2() {
+	public void test2() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}
@@ -44,7 +43,7 @@ public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
 	//     int a=1,b=3;
 	//	   if (!(a<10)) b=4; // no error here on line 3
 	//	 }
-	public void test3() {
+	public void test3() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -53,7 +52,7 @@ public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
 	//   int a=1,b=3;
 	//   if (a && !b) b=4; // no error here on line 3
 	// }
-	public void test_lastnot() {
+	public void test_lastnot() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -62,7 +61,7 @@ public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
 	//      int a=1,b=3;
 	//	    if ((!a) && 10) b=4; // no error here on line 3
 	//	 }
-	public void test_fixed() {
+	public void test_fixed() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -71,7 +70,7 @@ public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
 	//      int a=1,b=3;
 	//	    if (a && b & a) b=4; //  error here on line 3
 	//	 }
-	public void test_mixedbin() {
+	public void test_mixedbin() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}

@@ -30,7 +30,7 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 	//	  return; // error
 	//	}
 	@Test
-	public void testLineComment() {
+	public void testLineComment() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -38,7 +38,7 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 	//	  return;
 	//	}
 	@Test
-	public void testNoLineComment() {
+	public void testNoLineComment() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -46,7 +46,7 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 	//	  return "// this is a string";
 	//	}
 	@Test
-	public void testNoLineCommentInString() {
+	public void testNoLineCommentInString() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -54,13 +54,13 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 	//	  return; // not an error in c++
 	//	}
 	@Test
-	public void testLineCommentCpp() {
+	public void testLineCommentCpp() throws Exception {
 		checkSampleAboveCpp();
 	}
 
 	//	#define AAA // error even in prepro
 	@Test
-	public void testLineCommentInPrepro() {
+	public void testLineCommentInPrepro() throws Exception {
 		checkSampleAbove();
 	}
 

@@ -22,7 +22,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// void foo() {
 	// return; // no error
 	// }
-	public void testSimpleReturn() {
+	public void testSimpleReturn() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -31,7 +31,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// return
 	// ; // no error
 	// }
-	public void testSimpleReturnMultiLine() {
+	public void testSimpleReturnMultiLine() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -39,7 +39,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// int foo() {
 	// return(0); // no error
 	// }
-	public void testSimpleReturnValue() {
+	public void testSimpleReturnValue() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -47,7 +47,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// int foo() {
 	// return 0; // error line 2
 	// }
-	public void testSimpleReturnValueError() {
+	public void testSimpleReturnValueError() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(2);
 	}
@@ -58,7 +58,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// 0
 	// );
 	// }
-	public void testReturnValueMultiline() {
+	public void testReturnValueMultiline() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -68,7 +68,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// 0
 	// ;
 	// }
-	public void testReturnValueMultilineError() {
+	public void testReturnValueMultilineError() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(2);
 	}
@@ -76,7 +76,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// int foo() {
 	// return ((0));// no error
 	// }
-	public void testReturnValueMultipleBrackets() {
+	public void testReturnValueMultipleBrackets() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -87,7 +87,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// (0)
 	// );
 	// }
-	public void testReturnValueMultilineMultipleBrackets() {
+	public void testReturnValueMultilineMultipleBrackets() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -97,7 +97,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// int foo() {
 	// MY_RETURN // no error
 	// }
-	public void testReturnDefine() {
+	public void testReturnDefine() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -107,7 +107,7 @@ public class ReturnStyleCheckerTest extends CheckerTestCase {
 	// int foo() {
 	// MY_RETURN // error line 4
 	// }
-	public void testReturnDefineError() {
+	public void testReturnDefineError() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}

@@ -15,7 +15,6 @@ import org.eclipse.cdt.codan.internal.checkers.AbstractClassInstantiationChecker
 
 /**
  * Test for {@see AbstractClassInstantiationChecker} class
- *
  */
 public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	@Override
@@ -35,7 +34,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// void scope () {
 	//   C c;  // No errors.
 	// }
-	public void testNotAbstractClassCreationOnStack() {
+	public void testNotAbstractClassCreationOnStack() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -46,7 +45,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// void scope () {
 	//   C* c = new C();  // No errors.
 	// }
-	public void testNotAbstractClassCreationWithNew() {
+	public void testNotAbstractClassCreationWithNew() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -57,7 +56,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// void scope () {
 	//   C::C();  // No errors.
 	// }
-	public void testNotAbstractClassCreationWithDirectConstructorCall() {
+	public void testNotAbstractClassCreationWithDirectConstructorCall() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -69,7 +68,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//   C* c1;  // No errors.
 	//   C& c2;  // No errors.
 	// }
-	public void testAbstractClassPointerOrReverenceDeclaration() {
+	public void testAbstractClassPointerOrReverenceDeclaration() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -82,7 +81,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//   C c;         // 1 error for: C::f().
 	//   typedefC tc;  // 1 error for: C::f().
 	// }
-	public void testAbstractClassCreationOnStack() {
+	public void testAbstractClassCreationOnStack() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(6, 7);
 	}
@@ -95,7 +94,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//   C *c1, c2, &c3;            // 1 error for: C::f().
 	//   typedefC *tc1, tc2, &tc3;  // 1 error for: C::f().
 	// }
-	public void testAbstractClassCreationOnStackWithRefAndPtr() {
+	public void testAbstractClassCreationOnStackWithRefAndPtr() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(6, 7);
 	}
@@ -110,7 +109,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// void test4 ( C ) {}                  // 1 error for: C::f().
 	// void test5 ( C* _c ) {}              // No errors.
 	// void test6 ( typedefC& _c ) {}       // No errors.
-	public void testAbstractClassCreationAsFunctionParameter() {
+	public void testAbstractClassCreationAsFunctionParameter() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(5, 6, 7, 7, 8);
 	}
@@ -120,7 +119,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// };
 	// template <typename C>  // No errors.
 	// void test () {}
-	public void testAbstractClassCreationAsFunctionTemplateParameter() {
+	public void testAbstractClassCreationAsFunctionTemplateParameter() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -140,7 +139,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//   C** x1 = new C*();                // No errors.
 	//   typedefC** x2 = new typedefC*();  // No errors.
 	// }
-	public void testAbstractClassCreationWithNew() {
+	public void testAbstractClassCreationWithNew() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(6, 7, 8, 9, 10, 11, 12);
 	}
@@ -153,7 +152,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//   C::C();         // 1 error for: C::f().
 	//   typedefC::C();  // 1 error for: C::f().
 	// }
-	public void testAbstractClassCreationWithDirectConstructorCall() {
+	public void testAbstractClassCreationWithDirectConstructorCall() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(6, 7);
 	}
@@ -166,7 +165,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// void scope () {
 	//   N::C* c = new N::C();  // 1 error for: N::C::f().
 	// }
-	public void testAbstractClassFromNamespace() {
+	public void testAbstractClassFromNamespace() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
 	}
@@ -178,7 +177,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// void scope () {
 	//   C* c = new C();  // 2 errors for: C::f(), C::g().
 	// }
-	public void testAbstractClassWithAFewVirtualMethods() {
+	public void testAbstractClassWithAFewVirtualMethods() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(6, 6);
 	}
@@ -191,7 +190,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// void scope () {
 	//   Derived* d = new Derived();  // 1 error for: Base::f().
 	// }
-	public void testAbstractClassBecauseOfBaseClass() {
+	public void testAbstractClassBecauseOfBaseClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
 	}
@@ -206,7 +205,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// void scope () {
 	//   Derived* c = new Derived();  // 2 errors for: Base::f(), Derived::g().
 	// }
-	public void testAbstractClassWithVirtualRedefinition() {
+	public void testAbstractClassWithVirtualRedefinition() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(9, 9);
 	}
@@ -215,7 +214,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//   virtual void f() = 0;
 	// };
 	// typedef C typedefC;  // No errors.
-	public void testAbstractClassTypedef() {
+	public void testAbstractClassTypedef() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -224,7 +223,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//   virtual void f() = 0;
 	// };
 	// extern C typedefC;  // 1 error for: C::f().
-	public void testExternAbstractClassDeclaration() {
+	public void testExternAbstractClassDeclaration() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
 	}
@@ -240,7 +239,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// };
 	//
 	// B b;
-	public void testPureVirtualDestructorOverride_1() {
+	public void testPureVirtualDestructorOverride_1() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -254,7 +253,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	// };
 	//
 	// B b;
-	public void testPureVirtualDestructorOverride_2() {
+	public void testPureVirtualDestructorOverride_2() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -272,7 +271,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//	struct Multiple: public Empty, public Implementer {};
 	//
 	//	static Multiple sharedMultiple;
-	public void testDiamondInheritanceWithOneImplementor_bug351612a() {
+	public void testDiamondInheritanceWithOneImplementor_bug351612a() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -290,7 +289,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//	struct Multiple: public Empty, public Implementer {};
 	//
 	//	static Multiple sharedMultiple;
-	public void testDiamondInheritanceWithOneImplementor_bug351612b() {
+	public void testDiamondInheritanceWithOneImplementor_bug351612b() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(13);
 	}
@@ -308,7 +307,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//	struct Multiple: public Empty, public Implementer {};
 	//
 	//	static Multiple sharedMultiple;
-	public void testDiamondInheritanceWithOneImplementor_bug351612c() {
+	public void testDiamondInheritanceWithOneImplementor_bug351612c() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(13);
 	}
@@ -326,7 +325,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//	struct Multiple: virtual public Implementer, virtual public Empty {};
 	//
 	//	static Multiple sharedMultiple;
-	public void testDiamondInheritanceWithOneImplementor_bug419938() {
+	public void testDiamondInheritanceWithOneImplementor_bug419938() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -345,7 +344,7 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 	//	int main() {
 	//	    B c;
 	//	}
-	public void testUsingDeclarationInDerivedClass_bug414279() {
+	public void testUsingDeclarationInDerivedClass_bug414279() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}

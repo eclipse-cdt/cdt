@@ -28,7 +28,7 @@ public class CommentCheckerNestedTests extends CheckerTestCase {
 	//	  return; /* /* */ // error
 	//	}
 	@Test
-	public void testLineComment() {
+	public void testLineComment() throws Exception {
 		checkSampleAbove();
 	}
 	//	void foo() {
@@ -37,7 +37,7 @@ public class CommentCheckerNestedTests extends CheckerTestCase {
 	//    */
 	//	}
 	@Test
-	public void testLineComment2() {
+	public void testLineComment2() throws Exception {
 		checkSampleAbove();
 	}
 
@@ -45,7 +45,7 @@ public class CommentCheckerNestedTests extends CheckerTestCase {
 	//	  return; /* */
 	//	}
 	@Test
-	public void testNoLineComment() {
+	public void testNoLineComment() throws Exception {
 		checkSampleAbove();
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 Alena Laskavaia 
+ * Copyright (c) 2009,2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,24 +12,24 @@ package org.eclipse.cdt.codan.core.param;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType;
+
+import junit.framework.TestCase;
 
 /**
  * Test for BasicProblemPreference
  */
 public class ListProblemPreferenceTest extends TestCase {
-	private static final String PAR1 = "0"; //$NON-NLS-1$
-	private static final String PAR2 = "1"; //$NON-NLS-1$
+	private static final String PAR1 = "0";
+	private static final String PAR2 = "1";
 	private ListProblemPreference list;
-	private String key = "list"; //$NON-NLS-1$
+	private String key = "list";
 	private ListProblemPreference list2;
 
 	@Override
 	protected void setUp() throws Exception {
-		list = new ListProblemPreference(key, "My Value"); //$NON-NLS-1$
-		list2 = new ListProblemPreference(key, "My Value2"); //$NON-NLS-1$
+		list = new ListProblemPreference(key, "My Value");
+		list2 = new ListProblemPreference(key, "My Value2");
 	}
 
 	/**
@@ -57,22 +57,22 @@ public class ListProblemPreferenceTest extends TestCase {
 	}
 
 	public void testExportValueStr() {
-		BasicProblemPreference str = addPar(PAR1, "42.5"); //$NON-NLS-1$
+		BasicProblemPreference str = addPar(PAR1, "42.5");
 		String value = list.exportValue();
-		assertEquals("(42.5)", value); //$NON-NLS-1$ 
+		assertEquals("(42.5)", value);
 	}
 
 	public void testImportValue() {
-		addPar(PAR1, "xxx"); //$NON-NLS-1$
+		addPar(PAR1, "xxx");
 		String value = list.exportValue();
 		BasicProblemPreference str2 = new BasicProblemPreference(PAR1, PAR1);
 		list2.addChildDescriptor(str2);
 		list2.importValue(value);
-		assertEquals("xxx", list2.getChildValue(PAR1)); //$NON-NLS-1$
+		assertEquals("xxx", list2.getChildValue(PAR1));
 	}
 
 	public void testImportValueSpec() {
-		BasicProblemPreference str = addPar(PAR1, "a=b"); //$NON-NLS-1$
+		BasicProblemPreference str = addPar(PAR1, "a=b");
 		String value = list.exportValue();
 		BasicProblemPreference str2 = new BasicProblemPreference(PAR1, PAR1);
 		list2.addChildDescriptor(str2);
@@ -81,31 +81,31 @@ public class ListProblemPreferenceTest extends TestCase {
 	}
 
 	public void testImportValue2() {
-		addPar(PAR1, "a=b"); //$NON-NLS-1$
-		BasicProblemPreference p2 = addPar(PAR2, "2,\"2"); //$NON-NLS-1$
+		addPar(PAR1, "a=b");
+		BasicProblemPreference p2 = addPar(PAR2, "2,\"2");
 		String value = list.exportValue();
-		list = new ListProblemPreference(key, "My Value"); //$NON-NLS-1$
+		list = new ListProblemPreference(key, "My Value");
 		addPar(PAR1, null);
 		addPar(PAR2, null);
 		list.importValue(value);
-		assertEquals("a=b", list.getChildValue(PAR1)); //$NON-NLS-1$
+		assertEquals("a=b", list.getChildValue(PAR1));
 		assertEquals(p2.getValue(), list.getChildValue(PAR2));
 	}
 
 	public void testImportValue2_nosec() {
-		addPar(PAR1, "a=b"); //$NON-NLS-1$
-		BasicProblemPreference p2 = addPar(PAR2, "2' 2\""); //$NON-NLS-1$
+		addPar(PAR1, "a=b");
+		BasicProblemPreference p2 = addPar(PAR2, "2' 2\"");
 		String value = list.exportValue();
-		list = new ListProblemPreference(key, "My Value"); //$NON-NLS-1$
+		list = new ListProblemPreference(key, "My Value");
 		addPar(PAR1, null);
 		list.importValue(value);
-		assertEquals("a=b", list.getChildValue(PAR1)); //$NON-NLS-1$
+		assertEquals("a=b", list.getChildValue(PAR1));
 		assertEquals(p2.getValue(), list.getChildValue(PAR2));
 	}
 
 	public void testGetValue() {
-		list.setChildDescriptor(new BasicProblemPreference("#", "Value")); //$NON-NLS-1$//$NON-NLS-2$
-		String x[] = { "a", "b" }; //$NON-NLS-1$ //$NON-NLS-2$
+		list.setChildDescriptor(new BasicProblemPreference("#", "Value"));
+		String x[] = { "a", "b" };
 		list.addChildValue(x[0]);
 		list.addChildValue(x[1]);
 		Object[] values = list.getValues();
@@ -113,20 +113,20 @@ public class ListProblemPreferenceTest extends TestCase {
 	}
 
 	public void testSetValue() {
-		list.setChildDescriptor(new BasicProblemPreference("#", "Value")); //$NON-NLS-1$//$NON-NLS-2$
-		String x[] = { "a", "b" }; //$NON-NLS-1$ //$NON-NLS-2$
+		list.setChildDescriptor(new BasicProblemPreference("#", "Value"));
+		String x[] = { "a", "b" };
 		list.setValue(x);
 		Object[] values = list.getValues();
 		assertTrue(Arrays.deepEquals(x, values));
 	}
 
 	public void testSetValueImport() {
-		list.setChildDescriptor(new BasicProblemPreference("#", "Value")); //$NON-NLS-1$//$NON-NLS-2$
-		String x[] = { "a", "b" }; //$NON-NLS-1$ //$NON-NLS-2$
+		list.setChildDescriptor(new BasicProblemPreference("#", "Value"));
+		String x[] = { "a", "b" };
 		list.setValue(x);
-		list.importValue("(x)"); //$NON-NLS-1$
+		list.importValue("(x)");
 		Object[] values = list.getValues();
 		assertEquals(1, values.length);
-		assertEquals("x", values[0]); //$NON-NLS-1$
+		assertEquals("x", values[0]);
 	}
 }

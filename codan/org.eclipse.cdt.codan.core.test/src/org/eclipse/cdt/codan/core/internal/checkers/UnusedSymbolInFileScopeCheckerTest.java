@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.UnusedSymbolInFileScopeChecker;
 
@@ -35,7 +33,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 
 	// int test_fun();
 	// extern int test_efun();
-	public void testExternFunction_Declaration_Unused() throws IOException {
+	public void testExternFunction_Declaration_Unused() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 		checkErrorLine(2);
@@ -45,14 +43,14 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void fun() {
 	//   test_fun();
 	// }
-	public void testExternFunction_Declaration_Used() throws IOException {
+	public void testExternFunction_Declaration_Used() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
 	// void test_fun();
 	// void test_fun() {}
-	public void testExternFunction_Declaration_FollowedByDefinition() throws IOException {
+	public void testExternFunction_Declaration_FollowedByDefinition() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -62,7 +60,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	////////////////////////////////////////////////////////////////////////////
 
 	// void test_fun(void) {}
-	public void testExternFunction_Definition() throws IOException {
+	public void testExternFunction_Definition() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -72,14 +70,14 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	////////////////////////////////////////////////////////////////////////////
 
 	// static void test_fun(void);
-	public void testStaticFunction_Declaration_Unused() throws IOException {
+	public void testStaticFunction_Declaration_Unused() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
 
 	// static void test_fun(void);
 	// static void test_fun(void) {}
-	public void testStaticFunction_Declaration_FollowedByDefinition() throws IOException {
+	public void testStaticFunction_Declaration_FollowedByDefinition() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(2);
 	}
@@ -88,7 +86,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void fun() {
 	//   test_fun();
 	// }
-	public void testStaticFunction_Declaration_Used() throws IOException {
+	public void testStaticFunction_Declaration_Used() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
@@ -98,14 +96,14 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	////////////////////////////////////////////////////////////////////////////
 
 	// static void test_fun(void) {}
-	public void testStaticFunction_Definition_Unused() throws IOException {
+	public void testStaticFunction_Definition_Unused() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
 
 	// static void test_fun(void);
 	// static void test_fun(void) {}
-	public void testStaticFunction_Definition_Unused_WithDeclaration() throws IOException {
+	public void testStaticFunction_Definition_Unused_WithDeclaration() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(2);
 	}
@@ -114,7 +112,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void fun() {
 	//   test_fun();
 	// }
-	public void testStaticFunction_Definition_Used() throws IOException {
+	public void testStaticFunction_Definition_Used() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -123,7 +121,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	//   test_fun();
 	// }
 	// static int test_fun(void) {}
-	public void testStaticFunction_Definition_UsedBeforeDefinition() throws IOException {
+	public void testStaticFunction_Definition_UsedBeforeDefinition() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -133,7 +131,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void fun() {
 	//   test_fun(0);
 	// }
-	public void testStaticFunction_Definition_Signature() throws IOException {
+	public void testStaticFunction_Definition_Signature() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorLine(1);
 	}
@@ -142,7 +140,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void fun() {
 	//   int test_fun=0;
 	// }
-	public void testStaticFunction_Definition_SynonymLocalScope() throws IOException {
+	public void testStaticFunction_Definition_SynonymLocalScope() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
@@ -150,20 +148,20 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// static int test_fun(void) {}
 	// void fun(int test_fun) {
 	// }
-	public void testStaticFunction_Definition_SynonymArgs() throws IOException {
+	public void testStaticFunction_Definition_SynonymArgs() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
 
 	// static int (test_fun) ();
-	public void testStaticFunction_Definition_InParentheses() throws IOException {
+	public void testStaticFunction_Definition_InParentheses() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
 
 	// static int test_fun(int i) {}
 	// int i = test_fun(X);
-	public void testStaticFunction_Definition_UnknownParameterType() throws IOException {
+	public void testStaticFunction_Definition_UnknownParameterType() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
@@ -172,14 +170,14 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void Class::fun() {
 	//   test_fun();
 	// }
-	public void testStaticFunction_Definition_InQualifiedFunction() throws IOException {
+	public void testStaticFunction_Definition_InQualifiedFunction() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
 
 	// static int test_fun(X) {}
 	// int i = test_fun(X);
-	public void testStaticFunction_Definition_UnknownArgumentType() throws IOException {
+	public void testStaticFunction_Definition_UnknownArgumentType() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
@@ -189,7 +187,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	////////////////////////////////////////////////////////////////////////////
 
 	// extern int test_var;
-	public void testExternVariable_Declaration_Unused() throws IOException {
+	public void testExternVariable_Declaration_Unused() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
@@ -198,14 +196,14 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void fun() {
 	//   test_var=0;
 	// }
-	public void testExternVariable_Declaration_Used() throws IOException {
+	public void testExternVariable_Declaration_Used() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
 	// extern int i,
 	//   test_var;
-	public void testExternVariable_Declaration_Combined() throws IOException {
+	public void testExternVariable_Declaration_Combined() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 		checkErrorLine(2);
@@ -217,20 +215,20 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 
 	// int test_var;
 	// int test_var2=0;
-	public void testGlobalVariable_Definition() throws IOException {
+	public void testGlobalVariable_Definition() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
 	// extern const int test_var=0; // not quite legal but some compilers allow that
-	public void testExternVariable_Definition1() throws IOException {
+	public void testExternVariable_Definition1() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
 	// extern const int test_var;
 	// const int test_var = 0;
-	public void testExternVariable_Definition2() throws IOException {
+	public void testExternVariable_Definition2() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -240,20 +238,20 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	////////////////////////////////////////////////////////////////////////////
 
 	// static int test_var;
-	public void testStaticVariable_Unused() throws IOException {
+	public void testStaticVariable_Unused() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
 
 	// static int (*test_var)(float, char, char);
-	public void testStaticVariable_Unused_FunctionPointer() throws IOException {
+	public void testStaticVariable_Unused_FunctionPointer() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
 
 	// static int test_var;
 	// int i=test_var;
-	public void testStaticVariable_Used_GlobalScope() throws IOException {
+	public void testStaticVariable_Used_GlobalScope() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -262,7 +260,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void fun() {
 	//   int i=test_var;
 	// }
-	public void testStaticVariable_Used_LocalScope() throws IOException {
+	public void testStaticVariable_Used_LocalScope() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -271,38 +269,38 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// void Class::fun() {
 	//   test_var = 0;
 	// }
-	public void testStaticVariable_Used_InQualifiedFunction() throws IOException {
+	public void testStaticVariable_Used_InQualifiedFunction() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
 
 	// class Class;
 	// static Class test_var; // constructor is called here
-	public void testStaticVariable_Used_Constructor() throws IOException {
+	public void testStaticVariable_Used_Constructor() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
 
 	// static X test_var; // avoid possible false positive, binding checker would complain anyway
-	public void testExternVariable_Declaration_IgnoreUnresolved() throws IOException {
+	public void testExternVariable_Declaration_IgnoreUnresolved() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
 	// static char* test_var="$Id: UnusedSymbolInFileScopeCheckerTest.java,v 1.2 2011/04/29 11:17:42 agvozdev Exp $";
-	public void testExternVariable_Declaration_CvsIdent() throws IOException {
+	public void testExternVariable_Declaration_CvsIdent() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
 	// static char* test_var="@(#) $Header: /cvsroot/tools/org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/UnusedSymbolInFileScopeCheckerTest.java,v 1.2 2011/04/29 11:17:42 agvozdev Exp $";
-	public void testExternVariable_Declaration_SccsIdent() throws IOException {
+	public void testExternVariable_Declaration_SccsIdent() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
 	// static char test_var[]("@(#) $Id: UnusedSymbolInFileScopeCheckerTest.java,v 1.2 2011/04/29 11:17:42 agvozdev Exp $");
-	public void testExternVariable_Declaration_CvsIdentInitializer() throws IOException {
+	public void testExternVariable_Declaration_CvsIdentInitializer() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
@@ -313,7 +311,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// static void f3() __attribute__((unused));
 	// static void f4() __attribute__((unused));
 	// static void f4() __attribute__((unused)) {}
-	public void testAttributeUnused() throws IOException {
+	public void testAttributeUnused() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -323,7 +321,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	//	int main() {
 	//	    asm ("lds r26, pxCurrentTCB\n\t");
 	//	}
-	public void testUseInAsm_bug393129() throws IOException {
+	public void testUseInAsm_bug393129() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -339,7 +337,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	//	int main() {
 	//	    bar(0);
 	//	}
-	public void testOverloadedStaticFunctionUsedInTemplate_bug358694() throws IOException {
+	public void testOverloadedStaticFunctionUsedInTemplate_bug358694() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}

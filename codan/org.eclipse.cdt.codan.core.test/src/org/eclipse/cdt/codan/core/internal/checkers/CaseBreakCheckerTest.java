@@ -35,7 +35,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  case 1:
 	//  }
 	// }
-	public void testEmptyLastCaseBad() {
+	public void testEmptyLastCaseBad() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
 	}
@@ -46,7 +46,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  default:
 	//  }
 	// }
-	public void testEmptyLastCaseDefaultBad() {
+	public void testEmptyLastCaseDefaultBad() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
 	}
@@ -58,7 +58,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    b = 2;
 	//  }
 	// }
-	public void testLastCaseBad() {
+	public void testLastCaseBad() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(5);
 	}
@@ -72,7 +72,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    break;
 	//  }
 	// }
-	public void testEmptyCaseBad() {
+	public void testEmptyCaseBad() throws Exception {
 		setEmpty(true);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
@@ -85,7 +85,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    break;
 	//  }
 	// }
-	public void testEmptyLastCaseOKbreak() {
+	public void testEmptyLastCaseOKbreak() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -97,7 +97,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    return;
 	//  }
 	// }
-	public void testEmptyLastCaseWithReturn() {
+	public void testEmptyLastCaseWithReturn() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -109,7 +109,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    continue;
 	//  }
 	// }
-	public void testEmptyLastCaseWithContinue() {
+	public void testEmptyLastCaseWithContinue() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -121,7 +121,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    throw 1;
 	//  }
 	// }
-	public void testEmptyLastCaseWithThrow() {
+	public void testEmptyLastCaseWithThrow() throws Exception {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -134,7 +134,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    break;
 	//  }
 	// }
-	public void testLastCaseOKbreak() {
+	public void testLastCaseOKbreak() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -149,7 +149,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    break;
 	//  }
 	// }
-	public void testEmptyCaseOKbreak() {
+	public void testEmptyCaseOKbreak() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -161,7 +161,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    /* no break */
 	//  }
 	// }
-	public void testEmptyLastCaseOKcomment() {
+	public void testEmptyLastCaseOKcomment() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -177,7 +177,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//     break;
 	//  }
 	// }
-	public void testEmptyLastCaseTwoSwitches() {
+	public void testEmptyLastCaseTwoSwitches() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
 	}
@@ -190,7 +190,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    /* no break */
 	//  }
 	// }
-	public void testLastCaseOKcomment() {
+	public void testLastCaseOKcomment() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -204,7 +204,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    b = 2;
 	//    break;
 	//  }
-	public void testEmptyCaseOKcomment() {
+	public void testEmptyCaseOKcomment() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -218,7 +218,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    bye();
 	//  }
 	// }
-	public void testLastCaseBadCommentNotLast() {
+	public void testLastCaseBadCommentNotLast() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
 	}
@@ -249,7 +249,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    /* fallthrough */
 	//  }
 	// }
-	public void testDifferentComments() {
+	public void testDifferentComments() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(17,23);
 	}
@@ -307,7 +307,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  default: //err
 	//  }
 	// }
-	public void testGeneral1() {
+	public void testGeneral1() throws Exception {
 		setEmpty(true);
 		setLast(true);
 		loadCodeAndRun(getAboveComment());
@@ -339,7 +339,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    /* no break */
 	//  }
 	// }
-	public void testGeneralComments1() {
+	public void testGeneralComments1() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(9, 14);
 	}
@@ -375,7 +375,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    /* no break */
 	//  }
 	// }
-	public void testNestedSwitches() {
+	public void testNestedSwitches() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorComments();
 	}
@@ -387,7 +387,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//     b = 2;
 	//   }
 	// }
-	public void testLastCaseIgnore() {
+	public void testLastCaseIgnore() throws Exception {
 		setLast(false);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
@@ -406,7 +406,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    break;
 	//  }
 	// }
-	public void testEmptyCaseIgnore() {
+	public void testEmptyCaseIgnore() throws Exception {
 		setEmpty(false);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
@@ -418,7 +418,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  case 1:
 	//  }
 	// }
-	public void testEmptyLastCaseIgnore() {
+	public void testEmptyLastCaseIgnore() throws Exception {
 		String code = getAboveComment();
 		setLast(false);
 		loadCodeAndRun(code);
@@ -450,7 +450,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//     } // err
 	//   }
 	// }
-	public void testEmptyCaseWithLoopBreak() {
+	public void testEmptyCaseWithLoopBreak() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorComments();
 	}
@@ -466,7 +466,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//   }
 	//   }
 	// }
-	public void testCaseWithCurlyBrackets() {
+	public void testCaseWithCurlyBrackets() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
@@ -479,7 +479,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//   case 1:
 	//   }
 	// }
-	public void testEmptyLastCaseError() {
+	public void testEmptyLastCaseError() throws Exception {
 		String code = getAboveComment();
 		setLast(true);
 		setEmpty(false);
@@ -501,7 +501,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//     break;
 	//   }
 	// }
-	public void testIf() {
+	public void testIf() throws Exception {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrorsOfKind(ER_ID);
@@ -518,7 +518,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//     break;
 	//   }
 	// }
-	public void testIfErr() {
+	public void testIfErr() throws Exception {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkErrorLine(7, ER_ID);
@@ -531,7 +531,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//	      DEFINE_BREAK  // No warning here
 	//	  }
 	//	}
-	public void testBreakInBraces() {
+	public void testBreakInBraces() throws Exception {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrorsOfKind(ER_ID);
@@ -547,7 +547,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//	    MY_MACRO(1)  // No warning here
 	//	  }
 	//	}
-	public void testInMacro() {
+	public void testInMacro() throws Exception {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrorsOfKind(ER_ID);
@@ -558,7 +558,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    default: {
 	//    }
 	//  }
-	public void testEmptyCompoundStatement() {
+	public void testEmptyCompoundStatement() throws Exception {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkErrorLine(4, ER_ID);
@@ -572,7 +572,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//			break;
 	//		}
 	//	}
-	public void testDoubleSemicolon_bug441714() {
+	public void testDoubleSemicolon_bug441714() throws Exception {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrorsOfKind(ER_ID);

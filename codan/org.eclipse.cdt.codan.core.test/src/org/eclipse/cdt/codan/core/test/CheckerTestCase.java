@@ -154,12 +154,12 @@ public class CheckerTestCase extends CodanTestCase {
 		runCodan();
 	}
 
-	public void loadCodeAndRun(String code) {
+	public void loadCodeAndRun(String code) throws CoreException {
 		loadcode(code);
 		runCodan();
 	}
 
-	public void loadCodeAndRunCpp(String code) {
+	public void loadCodeAndRunCpp(String code) throws CoreException {
 		loadcode(code, true);
 		runCodan();
 	}
@@ -249,12 +249,12 @@ public class CheckerTestCase extends CodanTestCase {
 		CodanRuntime.getInstance().getCheckersRegistry().updateProfile(cproject.getProject(), profile);
 	}
 
-	protected void checkSampleAbove() {
+	protected void checkSampleAbove() throws CoreException {
 		loadCodeAndRun(getAboveComment());
 		checkErrorComments();
 	}
 
-	protected void checkSampleAboveCpp() {
+	protected void checkSampleAboveCpp() throws CoreException {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorComments();
 	}

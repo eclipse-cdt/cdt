@@ -46,7 +46,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   int m;
 	//   C() : m(0) {}  // No warnings.
 	// };
-	public void testInitializationListShouldBeChecked() {
+	public void testInitializationListShouldBeChecked() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -55,7 +55,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   int m;
 	//   C() { m = 0; }  // No warnings.
 	// };
-	public void testAssignmentsInConstructorShouldBeChecked() {
+	public void testAssignmentsInConstructorShouldBeChecked() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -70,7 +70,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   long l;
 	//   C() {}  // 7 warnings for: m, ui, f, d, b, c, l.
 	// };
-	public void testBasicTypesShouldBeInitialized() {
+	public void testBasicTypesShouldBeInitialized() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkMultiErrorsOnLine(9, 7);
 	}
@@ -81,7 +81,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   Value* v;
 	//   C() {}  // 2 warnings for: i, v.
 	// }
-	public void testPointersShouldBeInitialized() {
+	public void testPointersShouldBeInitialized() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkMultiErrorsOnLine(5, 2);
 	}
@@ -92,7 +92,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   Value& v;
 	//   C() {}  // 2 warnings for: i, v.
 	// }
-	public void testReferencesShouldBeInitialized() {
+	public void testReferencesShouldBeInitialized() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkMultiErrorsOnLine(5, 2);
 	}
@@ -102,7 +102,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   Enum e;
 	//   C() {}  // 1 warning for: e.
 	// }
-	public void testEnumsShouldBeInitialized() {
+	public void testEnumsShouldBeInitialized() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkMultiErrorsOnLine(4, 1);
 	}
@@ -122,7 +122,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   ValueTypedef v;
 	//   C() {}  // 5 warnings for: i, ip, ir, e.
 	// }
-	public void testTypedefsShouldBeInitialized() {
+	public void testTypedefsShouldBeInitialized() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkMultiErrorsOnLine(14, 4);
 	}
@@ -132,7 +132,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   C(int) : i2(0) {}  // 1 warning for: i1.
 	//   int i1, i2;
 	// };
-	public void testAFewConstructorsHandling() {
+	public void testAFewConstructorsHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(2, 3);
 	}
@@ -144,7 +144,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   T1 t1;
 	//   T2 t2;
 	// };
-	public void testTemplateClassHandling() {
+	public void testTemplateClassHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3);
 	}
@@ -154,7 +154,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   C() : i1(0) {}  // 1 warning for: i2.
 	//   int i1, i2;
 	// };
-	public void testTemplateConstructorHandling() {
+	public void testTemplateConstructorHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3);
 	}
@@ -163,7 +163,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   C();  // No warnings.
 	//   int i;
 	// };
-	public void testTemplateConstructorDeclarationOnlyHandling() {
+	public void testTemplateConstructorDeclarationOnlyHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -173,7 +173,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   int i1, i2;
 	// };
 	// C::C() : i1(0) {}  // 1 warning for: i2.
-	public void testExternalConstructorHandling() {
+	public void testExternalConstructorHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(5);
 	}
@@ -187,7 +187,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	// };
 	// template <typename T1, typename T2>
 	// C<T1,T2>::C() : i1(0), t1(T1()) {}  // 1 warning for: i2.
-	public void testExternalConstructorOfTemplateClassHandling() {
+	public void testExternalConstructorOfTemplateClassHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(9);
 	}
@@ -199,7 +199,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	// };
 	// template <typename T>
 	// C::C() : i1(0) {}  // 1 warning for: i2.
-	public void testExternalTemplateConstructorHandling() {
+	public void testExternalTemplateConstructorHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
 	}
@@ -215,7 +215,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	// template <typename T1, typename T2>
 	// template <typename T>
 	// C<T1,T2>::C() : i1(0), t1(T1()) {}  // 1 warning for: i2.
-	public void testExternalTemplateConstructorOfTemplateClassHandling() {
+	public void testExternalTemplateConstructorOfTemplateClassHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(11);
 	}
@@ -228,7 +228,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   C() {}  // 1 warning for: i.
 	//   int i;
 	// };
-	public void testNestedClassesHandling() {
+	public void testNestedClassesHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(6);
 	}
@@ -243,7 +243,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   }
 	//   int i;
 	// };
-	public void testNestedClassInConstructorHandling() {
+	public void testNestedClassInConstructorHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(2);
 	}
@@ -260,7 +260,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//     int i;
 	//   };
 	// }
-	public void testNestedClassInExternalConstructorHandling() {
+	public void testNestedClassInExternalConstructorHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(6);
 	}
@@ -276,7 +276,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   }
 	//   int i;
 	// };
-	public void testNestedClassWithMethodNamedAsAnotherClassHandling() {
+	public void testNestedClassWithMethodNamedAsAnotherClassHandling() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(2);
 	}
@@ -286,7 +286,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   int someFunction() { i = 0; }  // No warnings.
 	//   int i;
 	// };
-	public void testAssignmentIsNotInConstructor() {
+	public void testAssignmentIsNotInConstructor() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(2);
 	}
@@ -299,7 +299,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   CDerived() : i2(0) {}  // No warnings.
 	//   int i2;
 	// };
-	public void testBaseClassMemberShouldNotBeTakenIntoAccount() {
+	public void testBaseClassMemberShouldNotBeTakenIntoAccount() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -311,7 +311,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	// int C::i1 = 0;
 	// // NOTE: Static members are always initialized with 0, so there should not be warning on C::i2
 	// int C::i2;
-	public void testNoErrorsOnStaticMembers() {
+	public void testNoErrorsOnStaticMembers() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -321,7 +321,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   C(const C& c) = delete;
 	//   int i1, i2;
 	// };
-	public void testNoErrorsOnDeletedConstructor() {
+	public void testNoErrorsOnDeletedConstructor() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -331,7 +331,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   C() { func(i); }  // No warnings.
 	//   int i;
 	// };
-	public void testNoErrorsOnFunctionCallInitialization() {
+	public void testNoErrorsOnFunctionCallInitialization() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -341,7 +341,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   C() { func(i); }  // 1 warning for: i.
 	//   int i;
 	// };
-	public void testNoErrorsOnReadingFunctionCall() {
+	public void testNoErrorsOnReadingFunctionCall() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3);
 	}
@@ -350,7 +350,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   C() { (i1) = 0; *&i2 = 0; }  // No warnings.
 	//   int i1, i2;
 	// };
-	public void testNoErrorsOnComplexAssignment() {
+	public void testNoErrorsOnComplexAssignment() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -363,7 +363,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   }
 	//   int i1, i2, i3;
 	// };
-	public void testNoErrorsOnChainInitialization() {
+	public void testNoErrorsOnChainInitialization() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -374,7 +374,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//       a = 1;
 	//   }
 	// };
-	public void testErrorOnProtectedConstructor() {
+	public void testErrorOnProtectedConstructor() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(1);
 	}
@@ -383,7 +383,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   int i;
 	//   S() {}  // 1 warning for: i.
 	// };
-	public void testCheckStructs() {
+	public void testCheckStructs() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3);
 	}
@@ -395,7 +395,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//      a=0;
 	//   }
 	// };
-	public void testSkipUnions() {
+	public void testSkipUnions() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -403,7 +403,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	// class C {
 	//   int c;
 	// };
-	public void testNoErrorsIfThereIsNoConstructorsDefined() {
+	public void testNoErrorsIfThereIsNoConstructorsDefined() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -416,7 +416,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//     // else - 'i' will be not initialized
 	//   }
 	// };
-	public void testNoErrorsIfMemberWasInitializedInOneOfTheIfBranch() {
+	public void testNoErrorsIfMemberWasInitializedInOneOfTheIfBranch() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -432,7 +432,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//     return a;
 	//   }
 	// };
-	public void testUsingMethodsInConstructorWithPreference() {
+	public void testUsingMethodsInConstructorWithPreference() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
 	}
@@ -449,7 +449,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   A(float a) { initializeA3(*this); }       // No warnings.
 	//   A(double a) { initializeA3(*(this)); }    // No warnings.
 	// };
-	public void testUsingConstMethodsInConstructorWithPreference() {
+	public void testUsingConstMethodsInConstructorWithPreference() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -466,7 +466,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//     return a;
 	//   }
 	// };
-	public void testUsingMethodsInConstructorWithoutPreference() {
+	public void testUsingMethodsInConstructorWithoutPreference() throws Exception {
 		disableSkipConstructorsWithFCalls();
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3,4);
@@ -484,7 +484,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   A(float a) { initializeA3(*this); }       // 1 warning for: a.
 	//   A(double a) { initializeA3(*(this)); }    // 1 warning for: a.
 	// };
-	public void testUsingConstMethodsInConstructorWithoutPreference() {
+	public void testUsingConstMethodsInConstructorWithoutPreference() throws Exception {
 		disableSkipConstructorsWithFCalls();
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(8,9,10,11);

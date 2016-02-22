@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.cdt.codan.internal.checkers.CatchByReference;
 
 /**
  * Test for {@see CatchByReference} class
- * 
  */
 public class CatchByReferenceTest extends CheckerTestCase {
 	@Override
@@ -35,43 +34,43 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		} catch (int e) {
 	//		}
 	//	}
-	public void test_int() {
+	public void test_int() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
-	// class C {};	
+	// class C {};
 	// void main() {
 	//		try {
 	//			foo();
 	//		} catch (C e) {
 	//		}
 	//	}
-	public void test_class() {
+	public void test_class() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(5);
 	}
 
-	// class C {};	
+	// class C {};
 	// void main() {
 	//		try {
 	//			foo();
 	//		} catch (C & e) {
 	//		}
 	//	}
-	public void test_class_ref() {
+	public void test_class_ref() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
-	// class C {};	
+	// class C {};
 	// void main() {
 	//		try {
 	//			foo();
 	//		} catch (C * e) {
 	//		}
 	//	}
-	public void test_class_point() {
+	public void test_class_point() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -83,7 +82,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		} catch (A e) {
 	//		}
 	//	}
-	public void test_int_typedef() {
+	public void test_int_typedef() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -96,7 +95,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		} catch (B e) {
 	//		}
 	//	}
-	public void test_int_typedef2() {
+	public void test_int_typedef2() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -107,7 +106,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		} catch (C e) {
 	//		}
 	//	}
-	public void test_class_unknown() {
+	public void test_class_unknown() throws Exception {
 		setPreferenceValue(CatchByReference.ER_ID, CatchByReference.PARAM_UNKNOWN_TYPE, false);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
@@ -119,7 +118,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		} catch (C e) {
 	//		}
 	//	}
-	public void test_class_unknown_on() {
+	public void test_class_unknown_on() throws Exception {
 		setPreferenceValue(CatchByReference.ER_ID, CatchByReference.PARAM_UNKNOWN_TYPE, true);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
@@ -133,7 +132,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		} catch (B e) {
 	//		}
 	//	}
-	public void test_class_typedef() {
+	public void test_class_typedef() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(6);
 	}

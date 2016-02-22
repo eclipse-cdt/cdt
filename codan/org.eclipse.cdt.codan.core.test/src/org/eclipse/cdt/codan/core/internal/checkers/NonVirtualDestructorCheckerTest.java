@@ -34,7 +34,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//   virtual void f() = 0;
 	//   virtual ~A(); // ok.
 	// };
-	public void testVirtualDtorInClass() {
+	public void testVirtualDtorInClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -44,7 +44,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	// protected:
 	//   ~A(); // ok.
 	// };
-	public void testNonPublicVirtualDtorInClass() {
+	public void testNonPublicVirtualDtorInClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -53,7 +53,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//   virtual void f() { };
 	//   ~A(); // warn! public non-virtual dtor.
 	// };
-	public void testPublicVirtualDtorInClass() {
+	public void testPublicVirtualDtorInClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3);
 	}
@@ -62,7 +62,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//   virtual void f() { };
 	//   // warn! implicit public non-virtual dtor.
 	// };
-	public void testImplicitPublicNonVirtualDtorInClass() {
+	public void testImplicitPublicNonVirtualDtorInClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(1);
 	}
@@ -75,7 +75,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//   friend class F;
 	//   ~A(); // warn! can be called from class F.
 	// };
-	public void testPublicNonVirtualDtorCanBeCalledFromFriendClass() {
+	public void testPublicNonVirtualDtorCanBeCalledFromFriendClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
 	}
@@ -88,7 +88,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	// struct B {
 	//   ~B(); // ok.
 	// };
-	public void testVirtualDtorInBaseClass1() {
+	public void testVirtualDtorInBaseClass1() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -105,7 +105,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	// struct D : public B, C { };
 	//
 	// struct E : public D { };
-	public void testVirtualDtorInBaseClass2() {
+	public void testVirtualDtorInBaseClass2() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -121,7 +121,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//	  virtual void m();
 	//	  friend class C;
 	//	};
-	public void testVirtualDtorInBaseClass3() {
+	public void testVirtualDtorInBaseClass3() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -140,7 +140,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//
 	// struct E : public D {
 	// };
-	public void testNonVirtualDtorInBaseClass() {
+	public void testNonVirtualDtorInBaseClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3, 7, 11, 13);
 	}
@@ -155,7 +155,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//   virtual void f2() { };
 	//   virtual ~B();
 	// };
-	public void testAbstractBaseClass() {
+	public void testAbstractBaseClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		// It doesn't matter if the class is abstract or not - dtor can be called polymorphically.
 		checkErrorLines(1);
@@ -166,7 +166,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//	struct Derived : Base {
 	//		virtual void bar();
 	//	};
-	public void testImplicitDtorInBaseClass() {
+	public void testImplicitDtorInBaseClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3);
 	}
@@ -177,7 +177,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//	struct Derived : Base {
 	//		virtual void bar();
 	//	};
-	public void testExplicitDtorInBaseClass() {
+	public void testExplicitDtorInBaseClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
 	}

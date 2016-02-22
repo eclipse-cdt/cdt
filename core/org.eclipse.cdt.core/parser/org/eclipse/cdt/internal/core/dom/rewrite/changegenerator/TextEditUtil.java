@@ -60,7 +60,7 @@ public class TextEditUtil {
 	 * @param edit1 the edit to merge with edit2
 	 * @param edit2 the edit to merge with edit1
 	 * @return the merged tree
-	 * @throws MalformedTreeException if the two edits ovelap
+	 * @throws MalformedTreeException if the two edits overlap
 	 */
 	public static TextEdit merge(TextEdit edit1, TextEdit edit2) {
 		if (edit1 instanceof MultiTextEdit && !edit1.hasChildren()) {

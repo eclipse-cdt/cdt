@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_dfec78b9",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 61801
+      },
+      "writtenOn": "2016-02-22T16:25:50Z",
+      "side": 1,
+      "message": "Without this fix, codan will mark \"int x \u003d 0; x\"  as a problem instead \"x\\n\u003d x\".",
+      "revId": "ce3200a11f02a399621ef4e069cc02bea85c96f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

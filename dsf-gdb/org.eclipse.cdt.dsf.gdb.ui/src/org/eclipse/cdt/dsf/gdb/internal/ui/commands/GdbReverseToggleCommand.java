@@ -340,7 +340,9 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
                 if (returnedTrace == ReverseTraceMethod.INVALID)
                 	return isReverseToggled(context) ? ReverseTraceMethod.FULL_TRACE : ReverseTraceMethod.STOP_TRACE ;
                 else 
-                	return returnedTrace;
+                	return (returnedTrace == ReverseTraceMethod.BRANCH_TRACE ||
+                			returnedTrace == ReverseTraceMethod.PROCESSOR_TRACE ||
+                			returnedTrace == ReverseTraceMethod.GDB_TRACE ) ? ReverseTraceMethod.HARDWARE_TRACE : returnedTrace;
             } catch (InterruptedException e) {
             } catch (ExecutionException e) {
             } catch (RejectedExecutionException e) {

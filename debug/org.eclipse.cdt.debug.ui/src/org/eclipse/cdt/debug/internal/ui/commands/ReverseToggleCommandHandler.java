@@ -187,6 +187,8 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
 
     		if (radioState.equals("UseSoftTrace")) { //$NON-NLS-1$
     			traceMethod = ReverseTraceMethod.FULL_TRACE;
+    		} else if (radioState.equals("TraceOff")) { //$NON-NLS-1$
+    			traceMethod = ReverseTraceMethod.STOP_TRACE;
     		} else if (radioState.equals("UseHardTrace")) { //$NON-NLS-1$
     			traceMethod = ReverseTraceMethod.HARDWARE_TRACE;
     		} else {
@@ -196,6 +198,9 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
 
     		// store the parameter in the gdb command handler class
     		if (fTargetAdapter != null && fTargetAdapter instanceof IChangeReverseMethodHandler) {
+    			ReverseTraceMethod currMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getTraceMethod(fActiveContext);
+    			if (currMethod == traceMethod)
+    				return null;
     			((IChangeReverseMethodHandler)fTargetAdapter).setTraceMethod(traceMethod);
     		}
 
@@ -212,7 +217,7 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     			if (fTargetAdapter.toggleNeedsUpdating()) {
     				ReverseTraceMethod currMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getTraceMethod(fActiveContext);
     				if (currMethod == ReverseTraceMethod.STOP_TRACE) {
-    					if (fLastTraceMethod != ReverseTraceMethod.STOP_TRACE && fLastTraceMethod != ReverseTraceMethod.FULL_TRACE) {
+    					if (fLastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
     						traceMethod = ReverseTraceMethod.HARDWARE_TRACE;
     					} else {
     						traceMethod = ReverseTraceMethod.FULL_TRACE;
@@ -289,7 +294,7 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                fTraceMethod = reverseMethod;
            }
            try{
-               if (fTraceMethod != ReverseTraceMethod.STOP_TRACE && fTraceMethod != ReverseTraceMethod.FULL_TRACE) {
+               if (fTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseHardTrace"); //$NON-NLS-1$
                    element.setTooltip("Toggle Hardware Trace"); //$NON-NLS-1$
                    element.setIcon(fTracemethodOnImages[1]);
@@ -299,11 +304,10 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                    element.setIcon(fTracemethodOnImages[0]);
                } else {
                    element.setTooltip("Toggle Reverse Debugging"); //$NON-NLS-1$
-                   if (fLastTraceMethod != ReverseTraceMethod.STOP_TRACE && fLastTraceMethod != ReverseTraceMethod.FULL_TRACE) {
-                       HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseHardTrace"); //$NON-NLS-1$
+                   HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "TraceOff"); //$NON-NLS-1$
+                   if (fLastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
                        element.setIcon(fTracemethodOffImages[1]);
                    } else if (fLastTraceMethod == ReverseTraceMethod.FULL_TRACE) {
-                       HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseSoftTrace"); //$NON-NLS-1$
                        element.setIcon(fTracemethodOffImages[0]);
                    } else {
                        element.setIcon(fTracemethodDefaultImage);

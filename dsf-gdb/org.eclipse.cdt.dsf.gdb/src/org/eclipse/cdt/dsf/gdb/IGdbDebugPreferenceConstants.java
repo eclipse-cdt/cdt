@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Ericsson and others.
+ * Copyright (c) 2009, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,21 +150,25 @@ public interface IGdbDebugPreferenceConstants {
 
 	/**
 	 * String preference controlling trace method used for hardware tracing.
+	 * @since 5.0
 	 */
 	public static final String PREF_REVERSE_TRACE_METHOD_HARDWARE = PREFIX + ".reversedebugpref.tracemethodHardware"; //$NON-NLS-1$
 
 	/**
 	 * String preference controlling trace method used for hardware tracing.
+	 * @since 5.0
 	 */
 	public static final String PREF_REVERSE_TRACE_METHOD_GDB_TRACE = "UseGdbTrace"; //$NON-NLS-1$
 
 	 /**
 	 * String preference controlling trace method used for hardware tracing.
+	 * @since 5.0
 	 */
 	public static final String PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE = "UseBranchTrace"; //$NON-NLS-1$
 
 	 /**
 	 * String preference controlling trace method used for hardware tracing.
+	 * @since 5.0
 	 */
 	public static final String PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE = "UseProcessorTrace"; //$NON-NLS-1$
 

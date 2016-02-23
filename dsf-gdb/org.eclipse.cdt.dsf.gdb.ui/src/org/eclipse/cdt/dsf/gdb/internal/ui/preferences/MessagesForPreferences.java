@@ -67,12 +67,11 @@ class MessagesForPreferences extends NLS {
 	/** @since 2.3 */
 	public static String GdbDebugPreferencePage_use_rtti_label2;
 	
-	public static String ReverseDebugPreferencePage_1;
-	public static String ReverseDebugPreferencePage_2;
-	public static String ReverseDebugPreferencePage_3;
-	public static String ReverseDebugPreferencePage_4;
-	public static String ReverseDebugPreferencePage_6;
-	public static String ReverseDebugPreferencePage_8;
+	public static String ReverseDebugPreferencePage_ReverseSettings;
+	public static String ReverseDebugPreferencePage_SelectHardwareTracingMethod;
+	public static String ReverseDebugPreferencePage_GDBPreference;
+	public static String ReverseDebugPreferencePage_BranchTrace;
+	public static String ReverseDebugPreferencePage_ProcessorTrace;
 
 	static {
 		// initialize resource bundle

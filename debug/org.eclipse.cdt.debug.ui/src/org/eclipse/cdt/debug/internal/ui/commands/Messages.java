@@ -14,7 +14,6 @@ public class Messages extends NLS {
 	public static String ReverseDebugging_Error;
 	public static String ReverseDebugging_UndefinedTraceMethod;
 	public static String ReverseDebugging_HardwareTracingNotAvailable;
-	public static String ReverseDebugging_DoNotShowAgain;
 	public static String ReverseDebugging_ToggleHardwareTrace;
 	public static String ReverseDebugging_ToggleSoftwareTrace;
 	public static String ReverseDebugging_ToggleReverseDebugging;

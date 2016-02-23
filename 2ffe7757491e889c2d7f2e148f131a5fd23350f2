@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_4e0a742d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-02-23T21:10:35Z",
+      "side": 1,
+      "message": "Looks good.  There is the same logic in the FloatingPoint Rendering class.  Shall we fix it as well?\nI can not reproduce the same problem with that rendering though.  As we looked together, we noticed\nthat the FloatingPoint renderer updates the cache boundaries instead of calling archiveDeltas().\nIt is not clear why they chose that way.\nSince it works, let\u0027s leave it alone.",
+      "revId": "2ffe7757491e889c2d7f2e148f131a5fd23350f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

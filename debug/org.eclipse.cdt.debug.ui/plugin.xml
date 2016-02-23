@@ -2531,6 +2531,16 @@
             </visibleWhen>
             <command
                 commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%ReverseDisable.label"
+                tooltip="%ReverseDisable.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="TraceOff">
+                </parameter>
+            </command>
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
                 label="%SoftwareTrace.label"
                 tooltip="%SoftwareTrace.description"
                 style="radio">
@@ -2636,6 +2646,16 @@
             </visibleWhen>
             <command
                 commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%ReverseDisable.label"
+                tooltip="%ReverseDisable.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="TraceOff">
+                </parameter>
+            </command>
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
                 label="%SoftwareTrace.label"
                 tooltip="%SoftwareTrace.description"
                 style="radio">
@@ -2660,6 +2680,16 @@
             locationURI="menu:org.eclipse.cdt.debug.ui.command.reverseToggle">
             <command
                 commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%ReverseDisable.label"
+                tooltip="%ReverseDisable.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="TraceOff">
+                </parameter>
+            </command>
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
                 label="%SoftwareTrace.label"
                 tooltip="%SoftwareTrace.description"
                 style="radio">
@@ -2679,6 +2709,18 @@
                 </parameter>
             </command>
         </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=threadGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.reverseResume"
+               icon="icons/obj16/reverse_resume.gif"
+               label="%ReverseResume.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=threadGroup">
          <command

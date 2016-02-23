@@ -22,6 +22,30 @@
       "revId": "f5513842d512578b9255500dfbda44836d2e36c0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ce2f64c3",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentToItselfCheckerTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 61801
+      },
+      "writtenOn": "2016-02-23T20:40:42Z",
+      "side": 1,
+      "message": "Sorry about that, I think the original code had a space after \"* \" (if you click on the patch set 5 you can see what I am talking about), and when I did the rebase this line was marked, because my vim deletes those  spaces at the end of a line. Anyway, I will delete this line and resend another patch set. Anything else to add?",
+      "parentUuid": "e7dfcf21_d318ef37",
+      "range": {
+        "startLine": 18,
+        "startChar": 1,
+        "endLine": 18,
+        "endChar": 2
+      },
+      "revId": "f5513842d512578b9255500dfbda44836d2e36c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

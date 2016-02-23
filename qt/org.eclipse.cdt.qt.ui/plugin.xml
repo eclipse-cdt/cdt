@@ -39,9 +39,9 @@
           point="org.eclipse.ui.newWizards">
        <wizard
              category="org.eclipse.cdt.ui.newCWizards"
-             class="org.eclipse.cdt.internal.qt.ui.NewQtProjectWizard"
+             class="org.eclipse.cdt.internal.qt.ui.wizards.NewQtProjectWizard"
              finalPerspective="org.eclipse.cdt.ui.CPerspective"
-             icon="icons/newcc_app.gif"
+             icon="icons/qt16.png"
              id="org.eclipse.cdt.qt.ui.newProject"
              name="%newProject.name"
              project="true">
@@ -123,5 +123,31 @@
              name="QML Hyperlink Detector"
              targetId="org.eclipse.cdt.qt.ui.qml">
        </hyperlinkDetector>
+    </extension>
+    <extension
+          point="org.eclipse.tools.templates.ui.templates">
+       <tag
+             id="org.eclipse.cdt.qt.ui.tag"
+             label="Qt">
+       </tag>
+       <template
+             icon="icons/HelloWorld48.png"
+             id="org.eclipse.cdt.qt.ui.template.helloWorld"
+             label="C++/QML HelloWorld"
+             wizard="org.eclipse.cdt.internal.qt.ui.wizards.HelloWorldWizard">
+          <tagReference
+                id="org.eclipse.cdt.qt.ui.tag">
+          </tagReference>
+          <description>
+             A simple Hello World App with main function in C++ and the UI in QML.
+          </description>
+       </template>
+    </extension>
+    <extension
+          point="org.eclipse.launchbar.ui.launchBarUIContributions">
+       <descriptorUI
+             descriptorTypeId="org.eclipse.cdt.qt.core.launchDescriptorType"
+             labelProvider="org.eclipse.cdt.internal.qt.ui.launch.QtLaunchDescriptorLabelProvider">
+       </descriptorUI>
     </extension>
 </plugin>

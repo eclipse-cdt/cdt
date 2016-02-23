@@ -94,6 +94,7 @@
    </feature>
    <feature id="org.eclipse.cdt.arduino">
    </feature>
-   <iu id="org.freemarker" version="0.0.0">
-   </iu>
+   <iu id="org.freemarker" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.ui" version="0.0.0"/>
 </site>

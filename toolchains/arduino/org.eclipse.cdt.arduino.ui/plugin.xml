@@ -136,4 +136,17 @@
             type="org.eclipse.cdt.arduino.core.launchConfigurationType">
       </launchConfigurationTabGroup>
    </extension>
+   <extension
+         point="org.eclipse.launchbar.ui.launchTargetTypeUI">
+      <launchTargetTypeUI
+            id="org.eclipse.cdt.arduino.core.connectionType"
+            labelProvider="org.eclipse.launchbar.remote.ui.RemoteLaunchTargetLabelProvider">
+      </launchTargetTypeUI>
+      <wizard
+            class="org.eclipse.cdt.arduino.ui.internal.remote.NewArduinoTargetWizard"
+            icon="icons/arduino.png"
+            id="org.eclipse.cdt.arduino.ui.launchTargetWizard"
+            name="Arduino">
+      </wizard>
+   </extension>
 </plugin>

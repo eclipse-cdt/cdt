@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.remote.serial.core;bundle-version="1.0.0",
  com.google.gson;bundle-version="2.2.4",
  org.apache.commons.compress;bundle-version="1.6.0",
- org.freemarker;bundle-version="2.3.22"
+ org.freemarker;bundle-version="2.3.22",
+ org.eclipse.launchbar.remote.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .

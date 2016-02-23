@@ -15,21 +15,16 @@ import org.eclipse.remote.core.IRemoteServicesManager;
 
 public class RemoteTargetAdapterFactory implements IAdapterFactory {
 
-	private static final IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
+	private static final IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof ILaunchTarget) {
 			ILaunchTarget target = (ILaunchTarget) adaptableObject;
-			if (target.getTypeId().equals(RemoteLaunchTargetProvider.TYPE_ID)) {
-				String[] list = target.getId().split("\\" + RemoteLaunchTargetProvider.DELIMITER); //$NON-NLS-1$
-				if (list.length == 2) {
-					IRemoteConnectionType type = manager.getConnectionType(list[0]);
-					if (type != null) {
-						return (T) type.getConnection(list[1]);
-					}
-				}
+			IRemoteConnectionType remoteType = remoteManager.getConnectionType(target.getTypeId());
+			if (remoteType != null) {
+				return (T) remoteType.getConnection(target.getId());
 			}
 		}
 		return null;

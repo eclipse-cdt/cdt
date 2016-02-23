@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.launchbar.remote.core.internal;
 
-import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -23,22 +22,14 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 
-	private static RemoteConnectionListener remoteConnectionListener;
-
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-
-		remoteConnectionListener = new RemoteConnectionListener();
-		getService(IRemoteServicesManager.class).addRemoteConnectionChangeListener(remoteConnectionListener);
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		getService(IRemoteServicesManager.class).removeRemoteConnectionChangeListener(remoteConnectionListener);
-		remoteConnectionListener = null;
-
 		plugin = null;
 		super.stop(context);
 	}

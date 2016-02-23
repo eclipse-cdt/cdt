@@ -17,8 +17,6 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler;
 import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
 import org.eclipse.cdt.debug.core.model.IReverseToggleHandler;
-import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.FileLocator;
@@ -37,7 +35,6 @@ import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -240,8 +237,7 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
         new WorkbenchJob("") { //$NON-NLS-1$
             @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
-                boolean prop = CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(ICDebugPreferenceConstants.PREF_SHOW_ERROR_REVERSE_TRACE_METHOD_NOT_AVAILABLE);
-                if (prop && request.getStatus() != null && request.getStatus().getCode() != 0) {
+                if (request.getStatus() != null && request.getStatus().getCode() != 0) {
                     IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                     Shell activeShell = null;
                     if (window != null) {
@@ -249,16 +245,10 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                     } else {
                         activeShell = new Shell(PlatformUI.getWorkbench().getDisplay());
                     }
-                    MessageDialogWithToggle dialogbox = new MessageDialogWithToggle(activeShell, Messages.ReverseDebugging_Error,
-                            null, Messages.ReverseDebugging_HardwareTracingNotAvailable, MessageDialog.QUESTION,
-                            new String[] {IDialogConstants.OK_LABEL}, 0,
-                            Messages.ReverseDebugging_DoNotShowAgain, false);
-                    dialogbox.setPrefStore(CDebugUIPlugin.getDefault().getPreferenceStore());
-                    dialogbox.setPrefKey(ICDebugPreferenceConstants.PREF_SHOW_ERROR_REVERSE_TRACE_METHOD_NOT_AVAILABLE);
-                    if (dialogbox.open() == 0) {
-                        boolean toggled = dialogbox.getToggleState();
-                        CDebugUIPlugin.getDefault().getPreferenceStore().setValue(ICDebugPreferenceConstants.PREF_SHOW_ERROR_REVERSE_TRACE_METHOD_NOT_AVAILABLE, !toggled);
-                    }
+                    MessageDialog dialogbox = new MessageDialog(activeShell, Messages.ReverseDebugging_Error,
+                            null, request.getStatus().getMessage(), MessageDialog.ERROR,
+                            new String[] {IDialogConstants.OK_LABEL}, 0);
+                    dialogbox.open();
                 }
                 // Request re-evaluation of property "org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled" to update 
                 // visibility of reverse stepping commands.

@@ -48,6 +48,9 @@ public class Messages extends NLS {
 	public static String GdbDebugNewExecutableCommand_Select_Binary;
 
 	public static String GdbDebugNewExecutableCommand_Select_binary_and_specify_arguments;
+	
+	public static String GdbReverseDebugging_HardwareTracingNotAvailable;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages( Messages.class.getName(), Messages.class );

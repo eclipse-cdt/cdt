@@ -109,4 +109,11 @@
          </adapter>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.cdt.arduino.core.connectionType"
+            provider="org.eclipse.cdt.arduino.core.internal.remote.ArduinoLaunchTargetProvider">
+      </launchTargetType>
+   </extension>
 </plugin>

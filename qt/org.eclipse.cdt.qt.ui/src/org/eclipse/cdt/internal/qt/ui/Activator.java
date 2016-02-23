@@ -16,6 +16,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -29,14 +30,10 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.qt.ui"; //$NON-NLS-1$
 
+	public static final String IMG_QT_16 = "qt16"; //$NON-NLS-1$
+
 	// The shared instance
 	private static Activator plugin;
-
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-	}
 
 	public static Image getQtLogo() {
 		return null;
@@ -51,12 +48,14 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 
+		ImageRegistry imageRegistry = getImageRegistry();
+		imageRegistry.put(IMG_QT_16, imageDescriptorFromPlugin(PLUGIN_ID, "icons/qt16.png")); //$NON-NLS-1$
+
 		// Use a save participant to grab any changed resources while this
 		// plugin was inactive
 		QtResourceChangeListener resourceManager = new QtResourceChangeListener();
 		ISaveParticipant saveParticipant = new QtWorkspaceSaveParticipant();
-		ISavedState lastState = ResourcesPlugin.getWorkspace().addSaveParticipant(Activator.PLUGIN_ID,
-				saveParticipant);
+		ISavedState lastState = ResourcesPlugin.getWorkspace().addSaveParticipant(Activator.PLUGIN_ID, saveParticipant);
 		if (lastState != null) {
 			lastState.processResourceChangeEvents(resourceManager);
 		}
@@ -123,6 +122,10 @@ public class Activator extends AbstractUIPlugin {
 		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
+	}
+
+	public static Image getImage(String key) {
+		return plugin.getImageRegistry().get(key);
 	}
 
 }

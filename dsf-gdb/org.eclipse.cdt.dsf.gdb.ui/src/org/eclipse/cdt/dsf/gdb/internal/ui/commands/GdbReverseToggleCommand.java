@@ -134,7 +134,7 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
                                        // avoid the default dialog box from eclipse and we propagate the error
                                        // with the plugin specific code of 1, here the ReverseToggleCommandHandler
                                        //  interprets it as, the selected trace method is not available
-                                       request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, null, null));
+                                       request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareTracingNotAvailable, null));
                                    }
                                });
 
@@ -143,7 +143,7 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
                        if (runControl_old != null) {
                            if(fTraceMethod != ReverseTraceMethod.STOP_TRACE && fTraceMethod != ReverseTraceMethod.FULL_TRACE) {
                                runControl_old.enableReverseMode(controlDmc, false, rm); // Swtich Off tracing
-                               request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, null, null));
+                               request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareTracingNotAvailable, null));
                                return;
                            }
                            runControl_old.isReverseModeEnabled(controlDmc,

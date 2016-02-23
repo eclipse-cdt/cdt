@@ -2856,7 +2856,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private ICPPASTFunctionDefinition functionDefinition(final int firstOffset, IASTDeclSpecifier declSpec,
 			IASTDeclarator outerDtor) throws EndOfFileException, BacktrackException {
-
 		final IASTDeclarator dtor= ASTQueries.findTypeRelevantDeclarator(outerDtor);
 		if (!(dtor instanceof ICPPASTFunctionDeclarator))
 			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
@@ -3985,7 +3984,36 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		List<ICPPASTInitializerClause> result= new ArrayList<>();
 		// List of initializer clauses
 		loop: while (true) {
-			List<ICPPASTDesignator> designators= allowDesignators ? designatorList() : null;
+			List<ICPPASTDesignator> designators = null;
+			IToken mark = mark();
+			if (allowDesignators) {
+				designators= designatorList();
+			}
+
+			if (designators != null) {
+				try {
+					ICPPASTDesignatedInitializer desigInitializer = getNodeFactory().newDesignatedInitializer(null);
+					setRange(desigInitializer, designators.get(0));
+					for (ICPPASTDesignator d : designators) {
+						desigInitializer.addDesignator(d);
+					}
+	
+					if (LT(1) != IToken.tEOC) {
+						// GNU extension: the assign operator is optional.
+						if (LT(1) == IToken.tASSIGN)
+							consume(IToken.tASSIGN);
+	
+						ICPPASTInitializerClause clause= initClause(false);
+						desigInitializer.setOperand(clause);
+						adjustLength(desigInitializer, clause);
+					}
+					result.add(desigInitializer);
+				} catch (BacktrackException e) {
+					backup(mark);
+					designators = null; // Retry without designators.
+				}
+			}
+
 			if (designators == null) {
 				// Clause may be null, add to initializer anyways, so that the size can be computed.
 				ICPPASTInitializerClause clause = initClause(allowSkipping);
@@ -4007,23 +4035,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					}
 				}
 				result.add(clause);
-			} else {
-				ICPPASTDesignatedInitializer desigInitializer = getNodeFactory().newDesignatedInitializer(null);
-				setRange(desigInitializer, designators.get(0));
-				for (ICPPASTDesignator d : designators) {
-					desigInitializer.addDesignator(d);
-				}
-
-				if (LT(1) != IToken.tEOC) {
-					// GNU extension: the assign operator is optional.
-					if (LT(1) == IToken.tASSIGN)
-						consume(IToken.tASSIGN);
-
-					ICPPASTInitializerClause clause= initClause(false);
-					desigInitializer.setOperand(clause);
-					adjustLength(desigInitializer, clause);
-				}
-				result.add(desigInitializer);
 			}
 
 			if (LT(1) != IToken.tCOMMA)

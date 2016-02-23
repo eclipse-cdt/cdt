@@ -25,7 +25,7 @@ public abstract class FMProjectGenerator extends FMGenerator {
 
 	private IProject project;
 
-	protected abstract String[] getProjectNatures();
+	protected abstract void initProjectDescription(IProjectDescription description);
 
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
@@ -65,7 +65,7 @@ public abstract class FMProjectGenerator extends FMGenerator {
 			if (referencedProjects != null) {
 				description.setReferencedProjects(referencedProjects);
 			}
-			description.setNatureIds(getProjectNatures());
+			initProjectDescription(description);
 			project.create(description, monitor);
 			project.open(monitor);
 		} else {

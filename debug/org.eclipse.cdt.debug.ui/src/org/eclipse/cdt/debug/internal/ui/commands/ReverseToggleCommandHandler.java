@@ -191,7 +191,7 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     			traceMethod = ReverseTraceMethod.HARDWARE_TRACE;
     		} else {
     			// undefined trace method
-    			throw new ExecutionException("Undefined trace method for Reverse Debugging."); //$NON-NLS-1$
+    			throw new ExecutionException(Messages.ReverseDebugging_UndefinedTraceMethod);
     		}
 
     		// store the parameter in the gdb command handler class
@@ -249,10 +249,10 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                     } else {
                         activeShell = new Shell(PlatformUI.getWorkbench().getDisplay());
                     }
-                    MessageDialogWithToggle dialogbox = new MessageDialogWithToggle(activeShell, "Error", //$NON-NLS-1$
-                            null, "Hardware Tracing Method not available, Reverse debugging is switched Off, please select another method", MessageDialog.QUESTION, //$NON-NLS-1$
+                    MessageDialogWithToggle dialogbox = new MessageDialogWithToggle(activeShell, Messages.ReverseDebugging_Error,
+                            null, Messages.ReverseDebugging_HardwareTracingNotAvailable, MessageDialog.QUESTION,
                             new String[] {IDialogConstants.OK_LABEL}, 0,
-                            "Don't show this message again", false); //$NON-NLS-1$
+                            Messages.ReverseDebugging_DoNotShowAgain, false);
                     dialogbox.setPrefStore(CDebugUIPlugin.getDefault().getPreferenceStore());
                     dialogbox.setPrefKey(ICDebugPreferenceConstants.PREF_SHOW_ERROR_REVERSE_TRACE_METHOD_NOT_AVAILABLE);
                     if (dialogbox.open() == 0) {
@@ -291,14 +291,14 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
            try{
                if (fTraceMethod != ReverseTraceMethod.STOP_TRACE && fTraceMethod != ReverseTraceMethod.FULL_TRACE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseHardTrace"); //$NON-NLS-1$
-                   element.setTooltip("Toggle Hardware Trace"); //$NON-NLS-1$
+                   element.setTooltip(Messages.ReverseDebugging_ToggleHardwareTrace);
                    element.setIcon(fTracemethodOnImages[1]);
                } else if (fTraceMethod == ReverseTraceMethod.FULL_TRACE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseSoftTrace"); //$NON-NLS-1$
-                   element.setTooltip("Toggle Software Trace"); //$NON-NLS-1$
+                   element.setTooltip(Messages.ReverseDebugging_ToggleSoftwareTrace);
                    element.setIcon(fTracemethodOnImages[0]);
                } else {
-                   element.setTooltip("Toggle Reverse Debugging"); //$NON-NLS-1$
+                   element.setTooltip(Messages.ReverseDebugging_ToggleReverseDebugging);
                    if (fLastTraceMethod != ReverseTraceMethod.STOP_TRACE && fLastTraceMethod != ReverseTraceMethod.FULL_TRACE) {
                        HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseHardTrace"); //$NON-NLS-1$
                        element.setIcon(fTracemethodOffImages[1]);

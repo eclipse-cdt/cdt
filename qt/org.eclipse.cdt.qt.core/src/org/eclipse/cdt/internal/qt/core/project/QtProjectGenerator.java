@@ -7,72 +7,60 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core.project;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.QtNature;
-import org.eclipse.cdt.internal.qt.core.QtTemplateGenerator;
 import org.eclipse.cdt.internal.qt.core.build.QtBuilder;
 import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.tools.templates.freemarker.FMProjectGenerator;
+import org.eclipse.tools.templates.freemarker.SourceRoot;
 
-public class QtProjectGenerator {
+public class QtProjectGenerator extends FMProjectGenerator {
 
-	private final IProject project;
+	@Override
+	protected void initProjectDescription(IProjectDescription description) {
+		// Natures
+		description
+				.setNatureIds(new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, QtNature.ID });
 
-	public QtProjectGenerator(IProject project) {
-		this.project = project;
-	}
-
-	public void generate(IProgressMonitor monitor) throws CoreException {
-		// Generate the files
-		IFolder sourceFolder = project.getFolder("src"); //$NON-NLS-1$
-		if (!sourceFolder.exists()) {
-			sourceFolder.create(true, true, monitor);
-		}
-
-		QtTemplateGenerator templateGen = new QtTemplateGenerator();
-		Map<String, Object> fmModel = new HashMap<>();
-		fmModel.put("projectName", project.getName()); //$NON-NLS-1$
-
-		IFile sourceFile = sourceFolder.getFile("main.cpp"); //$NON-NLS-1$
-		templateGen.generateFile(fmModel, "project2/appProject/main.cpp", sourceFile, monitor); //$NON-NLS-1$
-		sourceFile = project.getFile("main.qml"); //$NON-NLS-1$
-		templateGen.generateFile(fmModel, "project2/appProject/main.qml", sourceFile, monitor); //$NON-NLS-1$
-		sourceFile = project.getFile("main.qrc"); //$NON-NLS-1$
-		templateGen.generateFile(fmModel, "project2/appProject/main.qrc", sourceFile, monitor); //$NON-NLS-1$
-		sourceFile = project.getFile("main.pro"); //$NON-NLS-1$
-		templateGen.generateFile(fmModel, "project2/appProject/main.pro", sourceFile, monitor); //$NON-NLS-1$
-
-		// Set up the project
-		IProjectDescription projDesc = project.getDescription();
-		String[] oldIds = projDesc.getNatureIds();
-		String[] newIds = new String[oldIds.length + 3];
-		System.arraycopy(oldIds, 0, newIds, 0, oldIds.length);
-		newIds[newIds.length - 3] = CProjectNature.C_NATURE_ID;
-		newIds[newIds.length - 2] = CCProjectNature.CC_NATURE_ID;
-		newIds[newIds.length - 1] = QtNature.ID;
-		projDesc.setNatureIds(newIds);
-
-		ICommand command = projDesc.newCommand();
+		// Builders
+		ICommand command = description.newCommand();
 		command.setBuilderName(QtBuilder.ID);
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
-		projDesc.setBuildSpec(new ICommand[] { command });
+		description.setBuildSpec(new ICommand[] { command });
+	}
 
-		project.setDescription(projDesc, monitor);
+	@Override
+	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
+		setBundle(Activator.getDefault().getBundle());
+		super.generate(model, monitor);
 
-		IPathEntry[] entries = new IPathEntry[] { CoreModel.newOutputEntry(sourceFolder.getFullPath()) };
-		CoreModel.getDefault().create(project).setRawPathEntries(entries, monitor);
+		// Create the sourcefolders
+		IProject project = getProject();
+		List<IPathEntry> entries = new ArrayList<>();
+		for (SourceRoot srcRoot : getManifest().getSrcRoots()) {
+			IFolder sourceFolder = project.getFolder(srcRoot.getDir());
+			if (!sourceFolder.exists()) {
+				sourceFolder.create(true, true, monitor);
+			}
+
+			entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
+		}
+		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
+				monitor);
 	}
 
 }

@@ -11,17 +11,26 @@ import java.util.Set;
 
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
 
-public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectionWizard {
+public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectionWizard, INewWizard {
 
 	private NewArduinoTargetWizardPage page;
 	private IRemoteConnectionWorkingCopy workingCopy;
+	private boolean isNewWizard;
+
+	@Override
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		isNewWizard = true;
+	}
 
 	@Override
 	public void addPages() {
@@ -36,6 +45,16 @@ public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectio
 		}
 
 		page.performFinish(workingCopy);
+
+		if (isNewWizard) {
+			// if called as a new wizard, we need to do the save
+			try {
+				workingCopy.save();
+			} catch (RemoteConnectionException e) {
+				Activator.log(e);
+				return false;
+			}
+		}
 		return true;
 	}
 

@@ -56,7 +56,7 @@ public class QtBuilder extends IncrementalProjectBuilder {
 					command.add(config);
 				}
 
-				IFile projectFile = qtConfig.getProject().getFile("main.pro"); //$NON-NLS-1$
+				IFile projectFile = qtConfig.getProject().getFile(project.getName() + ".pro"); //$NON-NLS-1$
 				command.add(projectFile.getLocation().toOSString());
 
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());

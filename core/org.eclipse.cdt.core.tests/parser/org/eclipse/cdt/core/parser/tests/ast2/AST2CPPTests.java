@@ -8533,6 +8533,18 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template<typename T>
+	//	void f(T p);
+	//
+	//	class A {
+	//	  void m() {
+	//	    f([this] (int x) {});
+	//	  }
+	//	};
+	public void testLambdaWithCapture() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	int foo = 0;
 	//	auto bar = [foo] { return foo; };
 	public void testLambdaWithCapture_446225() throws Exception {
@@ -8544,14 +8556,25 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	//	template<typename T>
-	//	void f(T p);
+	//	class B;
 	//
-	//	class A {
-	//	  void m() {
-	//	    f([this] (int x) {});
-	//	  }
+	//	template<typename T, typename... U>
+	//	struct B<T(U...)> {
+	//	  template<typename V>
+	//	  B(V);
 	//	};
-	public void testLambdaWithCapture() throws Exception {
+	//
+	//	struct A {
+	//	  B<bool(int arg)> f;
+	//	};
+	//
+	//	void waldo(A a);
+	//
+	//	void test() {
+	//	  int p;
+	//	  waldo({[p](int arg) { return true; }});
+	//	}
+	public void testLambdaWithCaptureInInitializerList_488265() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -8582,7 +8605,6 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	//
 	//	S::S(int a) : f{a} {}		// Member initializer
-
 	public void testInitSyntax_302412() throws Exception {
 		parseAndCheckBindings();
 	}

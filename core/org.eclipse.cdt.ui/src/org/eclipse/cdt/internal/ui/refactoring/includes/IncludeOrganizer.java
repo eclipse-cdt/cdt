@@ -198,7 +198,7 @@ public class IncludeOrganizer {
 		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
 
 		// Use a map instead of a set to be able to retrieve existing elements using equal elements.
-		// Maps each element to itself. 
+		// Maps each element to itself.
 		Map<IncludePrototype, IncludePrototype> includePrototypes = new HashMap<>();
 		// Put the new includes into includePrototypes.
 		for (IPath header : fContext.getHeadersToInclude()) {
@@ -225,7 +225,7 @@ public class IncludeOrganizer {
 
 		IRegion includeReplacementRegion =
 				IncludeUtil.getSafeIncludeReplacementRegion(fContext.getSourceContents(), ast, commentedNodeMap);
-		
+
 		IncludePreferences preferences = fContext.getPreferences();
 		boolean allowReordering = preferences.allowReordering || existingIncludes.length == 0;
 
@@ -238,7 +238,7 @@ public class IncludeOrganizer {
 			if (prototype.getExistingInclude() == null
 					|| (allowReordering && isContainedInRegion(prototype.getExistingInclude(), includeReplacementRegion))) {
 				IncludeGroupStyle groupingStyle = prototype.getStyle().getGroupingStyle(preferences.includeStyles);
-				// If reordering is not allowed, group everything together. 
+				// If reordering is not allowed, group everything together.
 				int position = allowReordering ? groupingStyle.getOrder() : 0;
 				List<IncludePrototype> prototypes = groupedPrototypes[position];
 				if (prototypes == null) {
@@ -312,7 +312,7 @@ public class IncludeOrganizer {
 				if (offset != 0 && !TextUtil.isPreviousLineBlank(fContext.getSourceContents(), offset))
 					buf.insert(0, fContext.getLineDelimiter());  // Blank line before.
 			}
-			
+
 			String text = buf.toString();
 			// TODO(sprigogin): Add a diff algorithm and produce narrower replacements.
 			if (text.length() != length ||
@@ -333,7 +333,7 @@ public class IncludeOrganizer {
 
 	/**
 	 * Creates forward declarations by examining the list of bindings which have to be declared.
-	 * @param pendingBlankLine 
+	 * @param pendingBlankLine
 	 */
 	private void createForwardDeclarations(IASTTranslationUnit ast, BindingClassifier classifier,
 			int offset, boolean pendingBlankLine, MultiTextEdit rootEdit)	throws CoreException {
@@ -413,7 +413,7 @@ public class IncludeOrganizer {
 
 				// Append return type and function name.
 				IFunctionType functionType = function.getType();
-				// TODO(sprigogin): Switch to ASTWriter since ASTTypeUtil doesn't properly handle namespaces.  
+				// TODO(sprigogin): Switch to ASTWriter since ASTTypeUtil doesn't properly handle namespaces.
 				declarationText.append(ASTTypeUtil.getType(functionType.getReturnType(), false));
 				declarationText.append(' ');
 				declarationText.append(function.getName());
@@ -474,7 +474,7 @@ public class IncludeOrganizer {
 				ForwardDeclarationNode node = new ForwardDeclarationNode(ns);
 				parentNode = parentNode.findOrAddChild(node);
 			}
-			
+
 			ForwardDeclarationNode node =
 					new ForwardDeclarationNode(binding.getName(), declarationText.toString(), declarationType);
 			parentNode.findOrAddChild(node);
@@ -634,8 +634,8 @@ public class IncludeOrganizer {
 		for (InclusionRequest request : requests) {
 			if (!request.isResolved() && !isExportedBinding(request, headerSubstitutor)) {
 				List<IPath> candidatePaths = request.getCandidatePaths();
-				Set<IPath> representativeHeaders = new HashSet<IPath>();
-				Set<IPath> representedHeaders = new HashSet<IPath>();
+				Set<IPath> representativeHeaders = new HashSet<>();
+				Set<IPath> representedHeaders = new HashSet<>();
 				boolean allRepresented = true;
 				for (IPath path : candidatePaths) {
 					if (fContext.isIncluded(path)) {
@@ -719,7 +719,7 @@ public class IncludeOrganizer {
 					IPath header = fHeaderChooser.chooseHeader(request.getBinding().getName(), candidatePaths);
 					if (header == null)
 						throw new OperationCanceledException();
-	
+
 					request.resolve(header);
 					if (DEBUG_HEADER_SUBSTITUTION) {
 						System.out.println(request.toString() + " (user's choice)"); //$NON-NLS-1$
@@ -783,7 +783,7 @@ public class IncludeOrganizer {
 					IPath header = fHeaderChooser.chooseHeader(request.getBinding().getName(), candidatePaths);
 					if (header == null)
 						throw new OperationCanceledException();
-	
+
 					request.resolve(header);
 					if (DEBUG_HEADER_SUBSTITUTION) {
 						System.out.println(request.toString() +
@@ -813,7 +813,7 @@ public class IncludeOrganizer {
 	private List<InclusionRequest> createInclusionRequests(IASTTranslationUnit ast,
 			Set<IBinding> bindingsToInclude, boolean allowDeclarations,
 			IIndexFileSet reachableHeaders) throws CoreException {
-		List<InclusionRequest> requests = new ArrayList<InclusionRequest>(bindingsToInclude.size());
+		List<InclusionRequest> requests = new ArrayList<>(bindingsToInclude.size());
 		IIndex index = fContext.getIndex();
 
 		binding_loop: for (IBinding binding : bindingsToInclude) {
@@ -946,7 +946,7 @@ public class IncludeOrganizer {
 		}
 		return false;
 	}
-	
+
 	private String getTrimmedCommentText(IASTComment comment) {
 		char[] text = comment.getComment();
 		int end = text.length - (comment.isBlockComment() ? 2 : 0);

@@ -4,11 +4,8 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Marc Khouzam (Ericsson) - Initial implementation of Test cases
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_10;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_11;
 
 
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
@@ -19,7 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class OperationsWhileTargetIsRunningNonStopTest_7_10 extends OperationsWhileTargetIsRunningTest_7_10 {
+public class OperationsWhileTargetIsRunningNonStopTest_7_11 extends OperationsWhileTargetIsRunningTest_7_11 {
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -28,7 +25,7 @@ public class OperationsWhileTargetIsRunningNonStopTest_7_10 extends OperationsWh
 
     @Override
 	protected void setGdbVersion() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_10);
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_11);
 	}
 	
 	@Override

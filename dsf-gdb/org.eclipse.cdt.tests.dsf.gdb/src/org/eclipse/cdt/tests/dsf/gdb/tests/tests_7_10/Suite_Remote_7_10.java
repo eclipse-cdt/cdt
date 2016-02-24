@@ -4,13 +4,8 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Marc Khouzam (Ericsson) - Initial implementation of Test cases
- *     Jonah Graham (Kichwa Coders) - Bug 469007 - Add MIExpressionsNonStopTest_7_10 to suite
- *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_10;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_11;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseRemoteSuite;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
@@ -25,42 +20,42 @@ import org.junit.runners.Suite;
  * want to run.  When creating a new test class, it should be
  * added to the list below.
  * 
- * This suite is for tests to be run with GDB 7_10
+ * This suite is for tests to be run with GDB 7_11
  */
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// We need specific name for the tests of this suite, because of bug https://bugs.eclipse.org/172256
-	GDBMultiNonStopRunControlTest_7_10.class,
-	GDBRemoteTracepointsTest_7_10.class,
-	MIRegistersTest_7_10.class,
-	MIRunControlTest_7_10.class,
-	MIRunControlTargetAvailableTest_7_10.class,
-	MIRunControlNonStopTargetAvailableTest_7_10.class,
-	MIExpressionsTest_7_10.class,
-	MIExpressionsNonStopTest_7_10.class,
-	GDBPatternMatchingExpressionsTest_7_10.class,
-	MIMemoryTest_7_10.class,
-	MIBreakpointsTest_7_10.class,
-	MICatchpointsTest_7_10.class,
-	MIDisassemblyTest_7_10.class,
-	GDBProcessesTest_7_10.class,
-	OperationsWhileTargetIsRunningTest_7_10.class,
-	OperationsWhileTargetIsRunningNonStopTest_7_10.class,
-	CommandTimeoutTest_7_10.class,
-	GDBConsoleBreakpointsTest_7_10.class,
-	TraceFileTest_7_10.class,
-	GDBConsoleSynchronizingTest_7_10.class,
-	StepIntoSelectionTest_7_10.class,
-	StepIntoSelectionNonStopTest_7_10.class,
-	SourceLookupTest_7_10.class,
+	GDBMultiNonStopRunControlTest_7_11.class,
+	GDBRemoteTracepointsTest_7_11.class,
+	MIRegistersTest_7_11.class,
+	MIRunControlTest_7_11.class,
+	MIRunControlTargetAvailableTest_7_11.class,
+	MIRunControlNonStopTargetAvailableTest_7_11.class,
+	MIExpressionsTest_7_11.class,
+	MIExpressionsNonStopTest_7_11.class,
+	GDBPatternMatchingExpressionsTest_7_11.class,
+	MIMemoryTest_7_11.class,
+	MIBreakpointsTest_7_11.class,
+	MICatchpointsTest_7_11.class,
+	MIDisassemblyTest_7_11.class,
+	GDBProcessesTest_7_11.class,
+	OperationsWhileTargetIsRunningTest_7_11.class,
+	OperationsWhileTargetIsRunningNonStopTest_7_11.class,
+	CommandTimeoutTest_7_11.class,
+	GDBConsoleBreakpointsTest_7_11.class,
+	TraceFileTest_7_11.class,
+	GDBConsoleSynchronizingTest_7_11.class,
+	StepIntoSelectionTest_7_11.class,
+	StepIntoSelectionNonStopTest_7_11.class,
+	SourceLookupTest_7_11.class,
 	/* Add your test class here */
 })
 
-public class Suite_Remote_7_10 extends BaseRemoteSuite {
+public class Suite_Remote_7_11 extends BaseRemoteSuite {
 	@BeforeClass
 	public static void beforeClassMethod() {
-		BaseTestCase.setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_10);
+		BaseTestCase.setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_11);
 		BaseTestCase.ignoreIfGDBMissing();
 	}
 }

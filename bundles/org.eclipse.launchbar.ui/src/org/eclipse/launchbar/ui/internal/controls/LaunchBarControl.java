@@ -16,7 +16,6 @@ import javax.annotation.PreDestroy;
 
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.launchbar.core.ILaunchBarListener;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
@@ -29,8 +28,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -116,26 +113,9 @@ public class LaunchBarControl implements ILaunchBarListener {
 		Image bgImage = Activator.getDefault().getImage(Activator.IMG_BUTTON_BACKGROUND);
 		Image fgImage = Activator.getDefault().getImage(imageName);
 
-		ImageDescriptor imageDesc = new CompositeImageDescriptor() {
-			@Override
-			protected Point getSize() {
-				Rectangle bounds = bgImage.getBounds();
-				return new Point(bounds.width - bounds.y, bounds.height - bounds.x);
-			}
-
-			@Override
-			protected void drawCompositeImage(int width, int height) {
-				drawImage(bgImage.getImageData(), 0, 0);
-
-				Rectangle bgBounds = bgImage.getBounds();
-				Rectangle modeBounds = fgImage.getBounds();
-				int x = ((bgBounds.width - bgBounds.x) - (modeBounds.width - modeBounds.x)) / 2;
-				int y = ((bgBounds.height - bgBounds.y) - (modeBounds.height - modeBounds.y)) / 2;
-				drawImage(fgImage.getImageData(), x, y);
-			}
-		};
-
-		button.setImage(imageDesc.createImage());
+		ImageDescriptor imageDesc = new LaunchBarButtonImageDescriptor(fgImage, bgImage);
+		Image image = imageDesc.createImage();
+		button.setImage(image);
 		button.setToolTipText(toolTipText);
 		button.setData("command", command); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
@@ -143,6 +123,12 @@ public class LaunchBarControl implements ILaunchBarListener {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				Activator.runCommand(command);
 			};
+		});
+		button.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				image.dispose();
+			}
 		});
 		return button;
 	}

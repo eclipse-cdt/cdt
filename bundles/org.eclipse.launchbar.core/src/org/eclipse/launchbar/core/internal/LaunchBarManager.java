@@ -648,8 +648,12 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	public void setActiveLaunchMode(ILaunchMode mode) throws CoreException {
-		if (activeLaunchMode == mode)
+		if (activeLaunchMode == mode) {
+			// we have to modify listeners here because same mode does not mean
+			// same launch group. ModeSelector has to update.
+			fireActiveLaunchModeChanged(); // notify listeners
 			return;
+		}
 		if (activeLaunchDesc != null && mode != null && !supportsMode(mode))
 			throw new IllegalStateException(Messages.LaunchBarManager_2);
 		// change mode

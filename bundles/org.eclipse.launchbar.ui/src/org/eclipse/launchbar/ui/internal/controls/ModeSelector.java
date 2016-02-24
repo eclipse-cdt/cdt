@@ -21,7 +21,6 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -32,7 +31,6 @@ import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
@@ -83,24 +81,17 @@ public class ModeSelector extends CSelector {
 			public Image getImage(Object element) {
 				if (element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
-					try {
-						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
-						if (group == null) {
-							group = getDefaultLaunchGroup(mode.getIdentifier());
+					ILaunchGroup group = getLaunchGroup(mode);
+					if (group != null) {
+						ImageDescriptor imageDesc = group.getImageDescriptor();
+						if (imageDesc == null)
+							return null;
+						Image image = images.get(imageDesc);
+						if (image == null) {
+							image = imageDesc.createImage();
+							images.put(imageDesc, image);
 						}
-						if (group != null) {
-							ImageDescriptor imageDesc = group.getImageDescriptor();
-							if (imageDesc == null)
-								return null;
-							Image image = images.get(imageDesc);
-							if (image == null) {
-								image = imageDesc.createImage();
-								images.put(imageDesc, image);
-							}
-							return image;
-						}
-					} catch (CoreException e) {
-						Activator.log(e.getStatus());
+						return image;
 					}
 				}
 				return super.getImage(element);
@@ -110,16 +101,9 @@ public class ModeSelector extends CSelector {
 			public String getText(Object element) {
 				if (element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
-					try {
-						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
-						if (group == null) {
-							group = getDefaultLaunchGroup(mode.getIdentifier());
-						}
-						if (group != null) {
-							return group.getLabel().replace("&", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					} catch (CoreException e) {
-						Activator.log(e.getStatus());
+					ILaunchGroup group = getLaunchGroup(mode);
+					if (group != null) {
+						return group.getLabel().replace("&", ""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				return super.getText(element);
@@ -164,7 +148,7 @@ public class ModeSelector extends CSelector {
 	}
 
 	protected ILaunchGroup getDefaultLaunchGroup(String mode) {
-		String groupId = null;
+		String groupId;
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			groupId = IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
 		} else if (mode.equals(ILaunchManager.PROFILE_MODE)) {
@@ -172,9 +156,7 @@ public class ModeSelector extends CSelector {
 		} else {
 			groupId = IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
 		}
-		if (groupId != null)
-			return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupId);
-		return null;
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupId);
 	}
 
 	protected ILaunchGroup getLaunchGroup(String mode) throws CoreException {
@@ -237,42 +219,36 @@ public class ModeSelector extends CSelector {
 		if (toolItem == null || isDisposed()) {
 			return;
 		}
-
 		Object selection = getSelection();
 		if (selection instanceof ILaunchMode) {
 			ILaunchMode mode = (ILaunchMode) selection;
 			toolItem.setToolTipText(NLS.bind(Messages.ModeSelector_ToolTip, mode.getLabel()));
-
-			Image image = modeButtonImages.get(mode.getIdentifier());
+			ILaunchGroup group = getLaunchGroup(mode);
+			// we cannot use mode id as id, since external tool group and run group have same "run" id for the mode
+			// but different images
+			String id = group.getIdentifier();
+			Image image = modeButtonImages.get(id);
 			if (image == null) {
 				Image bgImage = Activator.getDefault().getImage(Activator.IMG_BUTTON_BACKGROUND);
 				Image modeImage = getLabelProvider().getImage(mode);
-
-				ImageDescriptor imageDesc = new CompositeImageDescriptor() {
-					@Override
-					protected Point getSize() {
-						Rectangle bounds = bgImage.getBounds();
-						return new Point(bounds.width - bounds.y, bounds.height - bounds.x);
-					}
-
-					@Override
-					protected void drawCompositeImage(int width, int height) {
-						drawImage(bgImage.getImageData(), 0, 0);
-
-						Rectangle bgBounds = bgImage.getBounds();
-						Rectangle modeBounds = modeImage.getBounds();
-						int x = ((bgBounds.width - bgBounds.x) - (modeBounds.width - modeBounds.x)) / 2;
-						int y = ((bgBounds.height - bgBounds.y) - (modeBounds.height - modeBounds.y)) / 2;
-						drawImage(modeImage.getImageData(), x, y);
-					}
-				};
-
+				ImageDescriptor imageDesc = new LaunchBarButtonImageDescriptor(modeImage, bgImage);
 				image = imageDesc.createImage();
-				modeButtonImages.put(mode.getIdentifier(), image);
+				modeButtonImages.put(id, image);
 			}
-
 			toolItem.setImage(image);
 		}
 	}
 
+	public ILaunchGroup getLaunchGroup(ILaunchMode mode) {
+		ILaunchGroup group = null;
+		try {
+			group = getLaunchGroup(mode.getIdentifier());
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
+		}
+		if (group == null) {
+			group = getDefaultLaunchGroup(mode.getIdentifier());
+		}
+		return group;
+	}
 }

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_19c27500",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-02-24T18:01:11Z",
+      "side": 1,
+      "message": "I\u0027ve reworked some of the naming in a way that I hope makes it a bit clearer.",
+      "revId": "8fc815e79475eec24f9d80bccbe3c02c9b6fcb63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f941490d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2680,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-02-24T18:01:11Z",
+      "side": 1,
+      "message": "It turns out that this menu contribution is shared between a couple of our reverse toggle menus.\nTo avoid duplicate code, I\u0027ve re-used it for the main toolbar, the debug tool bar and the run menu.\nI couldn\u0027t get it to work for the popup menu of the debug tool var, so I had to leave one\ncode duplication of the below.",
+      "revId": "8fc815e79475eec24f9d80bccbe3c02c9b6fcb63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_991e8596",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2735,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-02-24T18:01:11Z",
+      "side": 1,
+      "message": "This adds a second \"reverse resume button\" on the mail toolbar :)  I\u0027ve removed it.",
+      "revId": "8fc815e79475eec24f9d80bccbe3c02c9b6fcb63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

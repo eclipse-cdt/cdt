@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_ec36f00b",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/PDAPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-02-24T19:05:33Z",
+      "side": 1,
+      "message": "When we look for \"/\" I assume it is the root of the project, not the root of the filesystem?  If that is the case, then maybe keeping the variable name \u0027localURL\u0027 makes more sense than \u0027absoluteURL\u0027?",
+      "revId": "0fba75eba9bb30a0a3ffd5b16305bee102ea763a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

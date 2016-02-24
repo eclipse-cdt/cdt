@@ -9,15 +9,15 @@
  *   Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_10;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_11;
 
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_9.TraceFileTest_7_9;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_10.TraceFileTest_7_10;
 
-public class TraceFileTest_7_10 extends TraceFileTest_7_9 {
+public class TraceFileTest_7_11 extends TraceFileTest_7_10 {
 	
 	@Override
 	protected void setGdbVersion() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_10);
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_11);
 	}
 }

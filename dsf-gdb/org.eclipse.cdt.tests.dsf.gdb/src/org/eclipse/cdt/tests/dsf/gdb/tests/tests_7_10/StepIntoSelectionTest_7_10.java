@@ -8,18 +8,18 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - Support for Step into selection (bug 244865)
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_10;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_11;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_9.StepIntoSelectionTest_7_9;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_10.StepIntoSelectionTest_7_10;
 import org.junit.runner.RunWith;
 
 
 @RunWith(BackgroundRunner.class)
-public class StepIntoSelectionTest_7_10 extends StepIntoSelectionTest_7_9 {
+public class StepIntoSelectionTest_7_11 extends StepIntoSelectionTest_7_10 {
     @Override
 	protected void setGdbVersion() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_10);
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_11);
 	}
 }

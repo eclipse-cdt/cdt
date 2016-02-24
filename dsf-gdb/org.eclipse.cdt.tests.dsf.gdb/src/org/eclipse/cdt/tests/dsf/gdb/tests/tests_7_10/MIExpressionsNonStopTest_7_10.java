@@ -8,7 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial Implementation
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_10;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_11;
 
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
@@ -18,7 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MIExpressionsNonStopTest_7_10 extends MIExpressionsTest_7_10 {
+public class MIExpressionsNonStopTest_7_11 extends MIExpressionsTest_7_11 {
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -27,7 +27,7 @@ public class MIExpressionsNonStopTest_7_10 extends MIExpressionsTest_7_10 {
 
 	@Override
 	protected void setGdbVersion() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_10);
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_11);
 	}
 	
 	@Override

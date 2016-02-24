@@ -8,7 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - Support for Step into selection (bug 244865)
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_10;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_11;
 
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class StepIntoSelectionNonStopTest_7_10 extends StepIntoSelectionTest_7_10 {
+public class StepIntoSelectionNonStopTest_7_11 extends StepIntoSelectionTest_7_11 {
 
 	@BeforeClass
 	public static void beforeClass() {

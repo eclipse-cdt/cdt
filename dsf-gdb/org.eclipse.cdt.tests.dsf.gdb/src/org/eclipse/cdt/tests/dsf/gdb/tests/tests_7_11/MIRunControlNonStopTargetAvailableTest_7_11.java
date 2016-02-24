@@ -10,7 +10,6 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_11;
 
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -23,11 +22,6 @@ public class MIRunControlNonStopTargetAvailableTest_7_11 extends MIRunControlTar
 		Assume.assumeTrue(supportsNonStop());
 	}
 
-	@Override
-	protected void setGdbVersion() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_11);
-	}
-	
 	@Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();

@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - initial contribution
  *******************************************************************************/
-package org.eclipse.remote.serial.internal.ui;
+package org.eclipse.remote.serial.ui;
 
 import java.util.Set;
 
@@ -18,6 +18,7 @@ import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.serial.core.ISerialPortService;
+import org.eclipse.remote.serial.internal.ui.Activator;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
 import org.eclipse.swt.widgets.Shell;
 
@@ -45,11 +46,11 @@ public class NewSerialPortConnectionWizard extends Wizard implements IRemoteUICo
 			return false;
 		}
 
-		workingCopy.setAttribute(ISerialPortService.PORT_NAME_ATTR, page.portName);
-		workingCopy.setAttribute(ISerialPortService.BAUD_RATE_ATTR, Integer.toString(page.baudRateIndex));
-		workingCopy.setAttribute(ISerialPortService.BYTE_SIZE_ATTR, Integer.toString(page.byteSizeIndex));
-		workingCopy.setAttribute(ISerialPortService.PARITY_ATTR, Integer.toString(page.parityIndex));
-		workingCopy.setAttribute(ISerialPortService.STOP_BITS_ATTR, Integer.toString(page.stopBitsIndex));
+		workingCopy.setAttribute(ISerialPortService.PORT_NAME_ATTR, page.getPortName());
+		workingCopy.setAttribute(ISerialPortService.BAUD_RATE_ATTR, Integer.toString(page.getBaudRateIndex()));
+		workingCopy.setAttribute(ISerialPortService.BYTE_SIZE_ATTR, Integer.toString(page.getByteSizeIndex()));
+		workingCopy.setAttribute(ISerialPortService.PARITY_ATTR, Integer.toString(page.getParityIndex()));
+		workingCopy.setAttribute(ISerialPortService.STOP_BITS_ATTR, Integer.toString(page.getStopBitsIndex()));
 
 		return true;
 	}
@@ -68,7 +69,7 @@ public class NewSerialPortConnectionWizard extends Wizard implements IRemoteUICo
 	public IRemoteConnectionWorkingCopy getConnection() {
 		if (workingCopy == null) {
 			try {
-				workingCopy = connectionType.newConnection(page.name);
+				workingCopy = connectionType.newConnection(page.getName());
 			} catch (RemoteConnectionException e) {
 				Activator.log(e.getStatus());
 			}

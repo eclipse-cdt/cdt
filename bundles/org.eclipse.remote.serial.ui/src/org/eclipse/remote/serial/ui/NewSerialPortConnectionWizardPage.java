@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - initial contribution
  *******************************************************************************/
-package org.eclipse.remote.serial.internal.ui;
+package org.eclipse.remote.serial.ui;
 
 import java.io.IOException;
 
@@ -18,6 +18,8 @@ import org.eclipse.cdt.serial.Parity;
 import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.cdt.serial.StopBits;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.remote.serial.internal.ui.Activator;
+import org.eclipse.remote.serial.internal.ui.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -32,12 +34,12 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewSerialPortConnectionWizardPage extends WizardPage {
 
-	String name;
-	String portName;
-	int baudRateIndex;
-	int byteSizeIndex;
-	int parityIndex;
-	int stopBitsIndex;
+	private String name;
+	private String portName;
+	private int baudRateIndex;
+	private int byteSizeIndex;
+	private int parityIndex;
+	private int stopBitsIndex;
 
 	private String[] portNames;
 
@@ -48,7 +50,7 @@ public class NewSerialPortConnectionWizardPage extends WizardPage {
 	private Combo parityCombo;
 	private Combo stopBitsCombo;
 
-	protected NewSerialPortConnectionWizardPage() {
+	public NewSerialPortConnectionWizardPage() {
 		super(NewSerialPortConnectionWizardPage.class.getName());
 		setDescription(Messages.NewSerialPortConnectionWizardPage_Description);
 		setTitle(Messages.NewSerialPortConnectionWizardPage_Title);
@@ -178,6 +180,30 @@ public class NewSerialPortConnectionWizardPage extends WizardPage {
 		stopBitsIndex = stopBitsCombo.getSelectionIndex();
 
 		setPageComplete(!name.isEmpty() && portName != null);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getPortName() {
+		return portName;
+	}
+
+	public int getBaudRateIndex() {
+		return baudRateIndex;
+	}
+
+	public int getByteSizeIndex() {
+		return byteSizeIndex;
+	}
+
+	public int getParityIndex() {
+		return parityIndex;
+	}
+
+	public int getStopBitsIndex() {
+		return stopBitsIndex;
 	}
 
 }

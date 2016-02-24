@@ -20,6 +20,7 @@ import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionType.Service;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
+import org.eclipse.remote.serial.ui.NewSerialPortConnectionWizard;
 import org.eclipse.remote.ui.AbstractRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;

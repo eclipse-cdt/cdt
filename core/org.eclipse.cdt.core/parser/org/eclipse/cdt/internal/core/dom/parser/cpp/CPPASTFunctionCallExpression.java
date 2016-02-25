@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -240,42 +239,6 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		}
 	}
     
-	@Deprecated
-	@Override
-    public IASTExpression getParameterExpression() {
-    	if (fArguments.length == 0)
-    		return null;
-    	if (fArguments.length == 1) {
-    		IASTInitializerClause arg = fArguments[0];
-    		if (arg instanceof IASTExpression)
-    			return (IASTExpression) arg;
-    		return null;
-    	}
-    		
-    	CPPASTExpressionList result= new CPPASTExpressionList();
-    	for (IASTInitializerClause arg : fArguments) {
-    		if (arg instanceof IASTExpression) {
-    			result.addExpression(((IASTExpression) arg).copy());
-    		}
-    	}
-    	result.setParent(this);
-    	result.setPropertyInParent(ARGUMENT);
-        return result;
-    }
-
-	@Deprecated
-	@Override
-    public void setParameterExpression(IASTExpression expression) {
-        assertNotFrozen();
-        if (expression == null) {
-        	setArguments(null);
-        } else if (expression instanceof ICPPASTExpressionList) {
-        	setArguments(((ICPPASTExpressionList) expression).getExpressions());
-        } else {
-        	setArguments(new IASTExpression[] {expression});
-        }
-    }
-	
 	@Override
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();

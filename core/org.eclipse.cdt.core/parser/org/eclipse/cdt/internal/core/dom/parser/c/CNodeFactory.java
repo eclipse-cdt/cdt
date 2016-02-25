@@ -277,7 +277,13 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	@Deprecated
 	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList) {
 		CASTFunctionCallExpression result = new CASTFunctionCallExpression(idExpr, null);
-		result.setParameterExpression(argList);
+        if (argList == null) {
+        	result.setArguments(null);
+        } else if (argList instanceof IASTExpressionList) {
+        	result.setArguments(((IASTExpressionList) argList).getExpressions());
+        } else {
+        	result.setArguments(new IASTExpression[] {argList});
+        }
 		return result;
 	}
 	

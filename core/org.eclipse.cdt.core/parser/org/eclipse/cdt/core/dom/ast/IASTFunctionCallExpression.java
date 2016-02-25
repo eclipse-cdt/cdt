@@ -61,19 +61,4 @@ public interface IASTFunctionCallExpression extends IASTExpression {
 	 * @since 5.2
 	 */
 	public void setArguments(IASTInitializerClause[] args);
-
-	@Deprecated
-	public static final ASTNodeProperty PARAMETERS = ARGUMENT;
-
-	/**
-	 * @deprecated Replaced by {@link #setArguments(IASTInitializerClause[])}.
-	 */
-	@Deprecated
-	public void setParameterExpression(IASTExpression expression);
-
-	/**
-	 * @deprecated Replaced by {@link #getArguments()}.
-	 */
-	@Deprecated
-	public IASTExpression getParameterExpression();
 }

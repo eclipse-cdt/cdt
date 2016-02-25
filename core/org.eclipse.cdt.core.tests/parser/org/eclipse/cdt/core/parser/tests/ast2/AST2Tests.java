@@ -1091,7 +1091,7 @@ public class AST2Tests extends AST2TestBase {
 			IASTFunctionCallExpression fcall = (IASTFunctionCallExpression) expStatement.getExpression();
 			IASTIdExpression fcall_id = (IASTIdExpression) fcall.getFunctionNameExpression();
 			IASTName name_fcall = fcall_id.getName();
-			assertNull(fcall.getParameterExpression());
+			assertEquals(0, fcall.getArguments().length);
 
 			// void f() {}
 			IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations()[2];
@@ -4955,7 +4955,7 @@ public class AST2Tests extends AST2TestBase {
     	IASTFunctionDefinition func= (IASTFunctionDefinition) tu.getDeclarations()[0];
 
     	IASTFunctionCallExpression fcall= (IASTFunctionCallExpression) ((IASTExpressionStatement)((IASTCompoundStatement) func.getBody()).getStatements()[0]).getExpression();
-    	IASTLiteralExpression lit= (IASTLiteralExpression) fcall.getParameterExpression();
+    	IASTLiteralExpression lit= (IASTLiteralExpression) fcall.getArguments()[0];
     	assertEquals("\"this is a string\"", lit.toString());
     }
 
@@ -5397,8 +5397,11 @@ public class AST2Tests extends AST2TestBase {
 			IASTFunctionCallExpression f= (IASTFunctionCallExpression) expr;
 			polishNotation(f.getFunctionNameExpression(), buf);
 			buf.append(',');
-			polishNotation(f.getParameterExpression(), buf);
-			buf.append(",()");
+			for (IASTInitializerClause arg : f.getArguments()) {
+				polishNotation((IASTExpression) arg, buf);
+				buf.append(',');
+			}
+			buf.append("()");
 		} else if (expr instanceof IASTArraySubscriptExpression) {
 			IASTArraySubscriptExpression f= (IASTArraySubscriptExpression) expr;
 			polishNotation(f.getArrayExpression(), buf);

@@ -450,7 +450,13 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	@Deprecated
 	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList) {
 		CPPASTFunctionCallExpression result = new CPPASTFunctionCallExpression(idExpr, null);
-		result.setParameterExpression(argList);
+        if (argList == null) {
+        	result.setArguments(null);
+        } else if (argList instanceof ICPPASTExpressionList) {
+        	result.setArguments(((ICPPASTExpressionList) argList).getExpressions());
+        } else {
+        	result.setArguments(new IASTExpression[] {argList});
+        }
 		return result;
 	}
 

@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -157,40 +156,4 @@ public class CASTFunctionCallExpression extends ASTNode
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;
 	}
-	
-	@Override
-	@Deprecated
-    public IASTExpression getParameterExpression() {
-    	if (fArguments.length == 0)
-    		return null;
-    	if (fArguments.length == 1) {
-    		IASTInitializerClause arg = fArguments[0];
-    		if (arg instanceof IASTExpression)
-    			return (IASTExpression) arg;
-    		return null;
-    	}
-    		
-    	CASTExpressionList result= new CASTExpressionList();
-    	for (IASTInitializerClause arg : fArguments) {
-    		if (arg instanceof IASTExpression) {
-    			result.addExpression(((IASTExpression) arg).copy());
-    		}
-    	}
-    	result.setParent(this);
-    	result.setPropertyInParent(ARGUMENT);
-        return result;
-    }
-
-	@Override
-	@Deprecated
-    public void setParameterExpression(IASTExpression expression) {
-        assertNotFrozen();
-        if (expression == null) {
-        	setArguments(null);
-        } else if (expression instanceof IASTExpressionList) {
-        	setArguments(((IASTExpressionList) expression).getExpressions());
-        } else {
-        	setArguments(new IASTExpression[] {expression});
-        }
-    }
 }

@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -20,11 +17,11 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -34,6 +31,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 /**
@@ -109,8 +109,8 @@ public class LRDigraphTrigraphTests extends TestCase {
 		
 		// printf(\"%c??/n\", arr??(4??));
 		IASTFunctionCallExpression expr2 = (IASTFunctionCallExpression)((IASTExpressionStatement)statements[2]).getExpression();
-		IASTExpressionList params = (IASTExpressionList) expr2.getParameterExpression();
-		IASTArraySubscriptExpression arr_op2 = (IASTArraySubscriptExpression)params.getExpressions()[1];
+		IASTInitializerClause[] args = expr2.getArguments();
+		IASTArraySubscriptExpression arr_op2 = (IASTArraySubscriptExpression) args[1];
 		assertEquals("4", ((IASTLiteralExpression)arr_op2.getSubscriptExpression()).toString());
 	}
 

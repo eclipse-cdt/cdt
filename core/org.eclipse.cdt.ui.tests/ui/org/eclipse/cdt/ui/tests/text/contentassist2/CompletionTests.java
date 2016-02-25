@@ -741,6 +741,13 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
+	// namespace nsTest{}
+	// class NamespaceBaseClassTest : nsT/*cursor*/
+	public void testBaseClassWithNamespaceQualifier_XXX() throws Exception {
+		final String[] expected = { "nsTest::" };
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
+	}
+
 	//	template<typename T>
 	//	struct Parent {
 	//	protected:

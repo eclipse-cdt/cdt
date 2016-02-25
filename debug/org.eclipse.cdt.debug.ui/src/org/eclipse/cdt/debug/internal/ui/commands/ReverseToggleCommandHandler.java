@@ -109,10 +109,10 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                fTracemethodOnImages = new ImageDescriptor[2];
                fTracemethodOffImages = new ImageDescriptor[2];
                fTracemethodDefaultImage = getImageDescriptor("icons/obj16/reverse_toggle.gif"); //$NON-NLS-1$
-               fTracemethodOnImages[0] = getImageDescriptor("icons/obj16/full_trace_on.gif"); //$NON-NLS-1$
-               fTracemethodOnImages[1] = getImageDescriptor("icons/obj16/branch_trace_on.gif"); //$NON-NLS-1$
-               fTracemethodOffImages[0] = getImageDescriptor("icons/obj16/full_trace_off.gif"); //$NON-NLS-1$
-               fTracemethodOffImages[1] = getImageDescriptor("icons/obj16/branch_trace_off.gif"); //$NON-NLS-1$
+               fTracemethodOnImages[0] = getImageDescriptor("icons/obj16/reverse_toggle_sw_on.png"); //$NON-NLS-1$
+               fTracemethodOnImages[1] = getImageDescriptor("icons/obj16/reverse_toggle_hw_on.png"); //$NON-NLS-1$
+               fTracemethodOffImages[0] = getImageDescriptor("icons/obj16/reverse_toggle_sw_off.png"); //$NON-NLS-1$
+               fTracemethodOffImages[1] = getImageDescriptor("icons/obj16/reverse_toggle_hw_off.png"); //$NON-NLS-1$
 
                fTraceMethod = ReverseTraceMethod.STOP_TRACE;
                fLastTraceMethod = ReverseTraceMethod.STOP_TRACE;

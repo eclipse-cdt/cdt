@@ -46,6 +46,6 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putInt(IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS, false);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER, true);
-		node.put( IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE, IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE);
+		node.put(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE, IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE);
 	}
 }

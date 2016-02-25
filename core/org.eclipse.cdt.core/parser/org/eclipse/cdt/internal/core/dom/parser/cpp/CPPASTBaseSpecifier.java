@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -160,7 +161,11 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		int j = 0;
 		for (int i = 0; i < bindings.length; i++) {
 			IBinding binding = bindings[i];
-			if (binding instanceof IType) {
+			if (binding instanceof ICPPNamespace) {
+				if (i != j)
+					bindings[j] = binding;
+				j++;
+			} else if (binding instanceof IType) {
 				IType type = (IType) binding;
 
 				while (type instanceof ITypedef || type instanceof ICPPAliasTemplate) {

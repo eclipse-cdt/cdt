@@ -25,7 +25,6 @@ public class ReverseDebugPreferencePage extends FieldEditorPreferencePage implem
 		super( GRID );
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		setPreferenceStore( store );
-		setDescription( MessagesForPreferences.ReverseDebugPreferencePage_ReverseSettings );  
 	}
 
 	@Override

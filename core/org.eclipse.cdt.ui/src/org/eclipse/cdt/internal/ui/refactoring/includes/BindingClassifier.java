@@ -701,8 +701,9 @@ public class BindingClassifier {
 					return PROCESS_CONTINUE;
 
 				IASTInitializerClause[] arguments = functionCallExpression.getArguments();
-				IBinding binding = getBindingOfExpression(functionNameExpression);
-				if (binding != null) {
+				IASTName functionName = getNameOfIdOrFieldReferenceExpression(functionNameExpression);
+				if (functionName != null) {
+					IBinding binding = functionName.resolveBinding();
 					if (binding instanceof IProblemBinding) {
 						IBinding[] candidates = ((IProblemBinding) binding).getCandidateBindings();
 						if (candidates.length != 0) {
@@ -713,13 +714,18 @@ public class BindingClassifier {
 							defineBinding(binding);
 						}
 					} else {
+						LookupData data = new LookupData(functionName);
+						IType impliedObjectType = data.getImpliedObjectType();
+						if (impliedObjectType != null)
+							defineTypeExceptTypedefOrNonFixedEnum(impliedObjectType);
 						defineBindingForFunctionCall(binding, arguments);
 					}
 				}
+
 				if (functionCallExpression instanceof IASTImplicitNameOwner) {
 					IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) functionCallExpression).getImplicitNames();
 					for (IASTName name : implicitNames) {
-						binding = name.resolveBinding();
+						IBinding binding = name.resolveBinding();
 						if (binding instanceof IFunction) {
 							defineForFunctionCall((IFunction) binding, arguments);
 						}
@@ -739,8 +745,9 @@ public class BindingClassifier {
 				IASTExpression fieldOwner = ((IASTFieldReference) expression).getFieldOwner();
 				IType expressionType = fieldOwner.getExpressionType();
 				defineIndirectTypes(expressionType);
-				IBinding binding = getBindingOfExpression(fieldOwner);
-				if (binding != null) {
+				IASTName name = getNameOfIdOrFieldReferenceExpression(fieldOwner);
+				if (name != null) {
+					IBinding binding = name.resolveBinding();
 					defineTypeForBinding(binding, expressionType);
 				}
 			} else if (expression instanceof ICPPASTNewExpression) {
@@ -1422,13 +1429,13 @@ public class BindingClassifier {
 	}
 
 	/**
-	 * @return the binding corresponding to the ID or the field reference expression.
+	 * Returns the name corresponding to the ID or the field reference expression.
 	 */
-	private static IBinding getBindingOfExpression(IASTExpression expression) {
+	private static IASTName getNameOfIdOrFieldReferenceExpression(IASTExpression expression) {
 		if (expression instanceof IASTIdExpression) {
-			return ((IASTIdExpression) expression).getName().resolveBinding();
+			return ((IASTIdExpression) expression).getName();
 		} else if (expression instanceof IASTFieldReference) {
-			return ((IASTFieldReference) expression).getFieldName().resolveBinding();
+			return ((IASTFieldReference) expression).getFieldName();
 		}
 		return null;
 	}

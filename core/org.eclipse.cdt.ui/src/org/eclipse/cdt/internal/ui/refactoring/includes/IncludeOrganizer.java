@@ -836,8 +836,9 @@ public class IncludeOrganizer {
 				indexNames = index.findDeclarations(binding);
 			} else if (binding instanceof ICPPMethod) {
 				// Include the headers containing method definitions except the ones also containing
-				// the definition of the owner class. The headers defining the owner class are taken
-				// care of separately.
+				// the definition of the owner class. The definition of owner class will be included because
+				// BindingClassifier must add a binding that is either the owner itself, or its subclass, or
+				// a typedef pointing to it.
 				Set<IIndexFile> declarationFiles = new HashSet<>();
 				IIndexName[] declarations = index.findNames(binding, IIndex.FIND_DECLARATIONS);
 				for (IIndexName declaration : declarations) {

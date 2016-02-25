@@ -201,6 +201,23 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
+	//	struct A {
+	//	  void a() const;
+	//	};
+	//	struct B : public A {
+	//	}
+	//	struct C {
+	//	  const B& c() const;
+	//	};
+
+	//	void test(const C& x) {
+	//	  x.c().a();
+	//	}
+	public void testMethodCall_488349() throws Exception {
+		assertDefined("A::a", "B", "C", "C::c");
+		assertDeclared();
+	}
+
 	//	class Base {
 	//	public:
 	//	  void m();

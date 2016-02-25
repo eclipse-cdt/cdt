@@ -12,8 +12,6 @@ package org.eclipse.cdt.ui.tests.refactoring.includes;
 
 import java.util.Collections;
 
-import junit.framework.Test;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -28,6 +26,8 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeMap;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition;
 import org.eclipse.cdt.internal.ui.refactoring.includes.SymbolExportMap;
+
+import junit.framework.Test;
 
 /**
  * Tests for {@link IncludeOrganizer}.
@@ -568,6 +568,38 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//  b.m(1);
 	//}
 	public void testMethodDefinedInHeader() throws Exception {
+		assertExpectedResults();
+	}
+
+	//a.h
+	//struct A {
+	//  void a() const;
+	//};
+
+	//b.h
+	//#include "a.h"
+	//struct B : public A {
+	//}
+
+	//c.h
+	//class B;
+	//
+	//struct C {
+	//  const B& c() const;
+	//};
+
+	//source.cpp
+	//void test(const C& x) {
+	//  x.c().a();
+	//}
+	//====================
+	//#include "b.h"
+	//#include "c.h"
+	//
+	//void test(const C& x) {
+	//  x.c().a();
+	//}
+	public void testMethodCall_488349() throws Exception {
 		assertExpectedResults();
 	}
 

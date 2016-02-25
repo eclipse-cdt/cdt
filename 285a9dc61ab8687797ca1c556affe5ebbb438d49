@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_f74ced1e",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/IAutotoolsOption.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2016-02-25T21:15:00Z",
+      "side": 1,
+      "message": "I think ENVVAR would be more appropriate.",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_975d69c4",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/internal/autotools/core/configure/ConfigureMessages.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2016-02-25T21:15:00Z",
+      "side": 1,
+      "message": "Need to add a .tip message.  Something like - Environment variables to be used during configuration.",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b75a65c7",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/internal/autotools/core/configure/VariableConfigureOption.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2016-02-25T21:15:00Z",
+      "side": 1,
+      "message": "Mark this and all other strings in this file as //$NON-NLS-1$ so translation will not be attempted.",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d757f19d",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2016-02-25T21:15:00Z",
+      "side": 1,
+      "message": "Mark all strings in this file with //$NON-NLS-1$ //$NON-NLS-2$ etc.. so translation is not attempted.",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_971ac9f8",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2016-02-25T21:15:00Z",
+      "side": 1,
+      "message": "Don\u0027t you need a check for back-slash which negates a quote if directly after it?",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

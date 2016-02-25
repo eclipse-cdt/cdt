@@ -30,7 +30,8 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 	private final String[] expectedResults = {
 			"aClass",
 			"anotherClass",
-			"AStruct"
+			"AStruct",
+			"aNamespace"
 	};
 	
 	public CompletionTest_ClassReference_Prefix(String name) {

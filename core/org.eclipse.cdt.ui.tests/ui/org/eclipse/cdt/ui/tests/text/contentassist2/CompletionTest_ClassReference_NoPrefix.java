@@ -32,7 +32,9 @@ public class CompletionTest_ClassReference_NoPrefix  extends CompletionProposals
 		"anotherClass",
 		"xOtherClass",
 		"AStruct",
-		"XStruct"
+		"XStruct",
+		"aNamespace",
+		"xNamespace"
 	};
 	
 	public CompletionTest_ClassReference_NoPrefix(String name) {

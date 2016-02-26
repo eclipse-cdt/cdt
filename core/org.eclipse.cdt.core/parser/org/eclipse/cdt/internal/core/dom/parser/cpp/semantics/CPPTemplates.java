@@ -2904,7 +2904,9 @@ public class CPPTemplates {
 	            IScope s = ((ICPPClassType) ot1).getCompositeScope();
 	            if (s != null) {
 	            	result= CPPSemantics.resolveUnknownName(s, unknown, context.getPoint());
-	            	if (unknown instanceof ICPPUnknownMemberClassInstance && result instanceof ICPPTemplateDefinition) {
+	            	if (unknown instanceof ICPPUnknownMemberClassInstance && 
+	            			(result instanceof ICPPTemplateDefinition || 
+	            			 result instanceof ICPPAliasTemplateInstance)) {
 	            		ICPPTemplateArgument[] args1 = instantiateArguments(
 	            				((ICPPUnknownMemberClassInstance) unknown).getArguments(), context, false);
 	            		if (result instanceof ICPPClassTemplate) {
@@ -2912,6 +2914,12 @@ public class CPPTemplates {
 	            		} else if (result instanceof ICPPAliasTemplate) {
 	            			result = instantiateAliasTemplate((ICPPAliasTemplate) result, args1,
 	            					context.getPoint());
+	            		} else if (result instanceof ICPPAliasTemplateInstance) {
+							// TODO(nathanridge): Remove this branch once we properly represent
+							// specializations of alias templates (which will then implement
+							// ICPPAliasTemplate and be caught by the previous branch).
+							result = instantiateAliasTemplateInstance((ICPPAliasTemplateInstance) result, 
+									args1, context.getPoint());
 	            		}
 	            	}
 	            }

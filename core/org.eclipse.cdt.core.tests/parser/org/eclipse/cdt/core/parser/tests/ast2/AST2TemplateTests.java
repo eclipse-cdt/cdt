@@ -7288,6 +7288,22 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testTemplateIdNamingAliasTemplateInExpression_472615() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <class>
+	//	struct Traits {
+	//	    template <class U> 
+	//	    using rebind = U;
+	//	};
+	//	template <class T>
+	//	struct Meta {
+	//	    typedef typename Traits<T>::template rebind<int> type;
+	//	};
+	//	typedef Meta<int>::type Waldo;
+	public void testNestedAliasTemplate_488456() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ITypedef waldo = helper.assertNonProblem("Waldo");
+		assertSameType(waldo, CommonCPPTypes.int_);
+	}
 
 	//	template<typename U>
 	//	struct A {

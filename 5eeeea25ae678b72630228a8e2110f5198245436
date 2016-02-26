@@ -16,6 +16,24 @@
       "revId": "5eeeea25ae678b72630228a8e2110f5198245436",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6bc55483",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-26T15:32:10Z",
+      "side": 1,
+      "message": "Good catch. I added two new lines, as I think it helps distinguish that there are multiple error messages.",
+      "parentUuid": "e7dfcf21_2c69b8ec",
+      "revId": "5eeeea25ae678b72630228a8e2110f5198245436",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

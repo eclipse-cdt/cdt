@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
+
+import java.util.Map;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
@@ -76,6 +78,14 @@ public class TraditionalRenderingPreferencePage
 		
 		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, 
 				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_BackgroundColor"), getFieldEditorParent())); //$NON-NLS-1$
+		
+		// are there known memory spaces? If so make their background color configurable
+		IMemorySpacePreferencesHelper util = TraditionalMemoryRenderingFactory.getMemorySpacesPreferencesHelper();
+		
+		Map<String, String> memSpacesLabels = util.getMemorySpaceLabels();
+		for (String key : memSpacesLabels.keySet()) {
+		  addField(new ColorFieldEditor(key, memSpacesLabels.get(key), getFieldEditorParent()));
+		}
 
 		addField(new ColorAndEffectFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED,
 				TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOLD,

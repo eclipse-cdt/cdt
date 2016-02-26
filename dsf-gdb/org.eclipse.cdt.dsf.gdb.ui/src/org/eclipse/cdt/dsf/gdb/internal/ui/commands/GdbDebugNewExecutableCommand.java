@@ -180,6 +180,14 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 		catch( InterruptedException e ) {
 		}
 		catch( ExecutionException e ) {
+			// There was an error.  Propagate it to the user
+			String errorMessage;
+			if (e.getCause() != null) {
+				errorMessage = e.getCause().getMessage();
+			} else {
+				errorMessage = e.getMessage();
+			}
+			request.setStatus( new Status( IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, errorMessage ) );
 		}
 		catch( CancellationException e ) {
 			// Nothing to do, just ignore the command since the user

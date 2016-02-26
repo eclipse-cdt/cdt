@@ -365,9 +365,9 @@ public class BindingClassifier {
 				}
 				memberNode = memberNode.getParent();
 			}
-			if (memberName != null) {
+
+			if (memberName != null)
 				memberBinding = memberName.resolveBinding();
-			}
 
 			// Get the arguments of the initializer.
 			IASTInitializerClause[] arguments = IASTExpression.EMPTY_EXPRESSION_ARRAY;
@@ -411,7 +411,7 @@ public class BindingClassifier {
 				defineBinding(constructor.getOwner());
 
 				// Process the parameters.
-				processFunctionParameters(constructor, arguments);
+				processFunctionParameters(constructor, true, arguments);
 			}
 			return PROCESS_CONTINUE;
 		}
@@ -561,7 +561,7 @@ public class BindingClassifier {
 					if (unaryExpression instanceof ICPPASTUnaryExpression) {
 						ICPPFunction overload = ((ICPPASTUnaryExpression) unaryExpression).getOverload();
 						if (overload != null) {
-							defineForFunctionCall(overload, new IASTInitializerClause[] { operand });
+							defineForFunctionCall(overload, true, new IASTInitializerClause[] { operand });
 							return PROCESS_CONTINUE;
 						}
 					}
@@ -618,7 +618,9 @@ public class BindingClassifier {
 				if (binaryExpression instanceof ICPPASTBinaryExpression) {
 					ICPPFunction overload = ((ICPPASTBinaryExpression) binaryExpression).getOverload();
 					if (overload != null) {
-						defineForFunctionCall(overload, new IASTInitializerClause[] { binaryExpression.getOperand1(), binaryExpression.getOperand2() });
+						IASTInitializerClause[] arguments =	new IASTInitializerClause[]
+								{ binaryExpression.getOperand1(), binaryExpression.getOperand2() };
+						defineForFunctionCall(overload, true, arguments);
 						return PROCESS_CONTINUE;
 					}
 				}
@@ -703,22 +705,31 @@ public class BindingClassifier {
 				IASTInitializerClause[] arguments = functionCallExpression.getArguments();
 				IASTName functionName = getNameOfIdOrFieldReferenceExpression(functionNameExpression);
 				if (functionName != null) {
-					IBinding binding = functionName.resolveBinding();
-					if (binding instanceof IProblemBinding) {
-						IBinding[] candidates = ((IProblemBinding) binding).getCandidateBindings();
+					IBinding function = functionName.resolveBinding();
+					if (function instanceof IProblemBinding) {
+						IBinding[] candidates = ((IProblemBinding) function).getCandidateBindings();
 						if (candidates.length != 0) {
 							for (IBinding candidate : candidates) {
-								defineBindingForFunctionCall(candidate, arguments);
+								defineBindingForFunctionCall(candidate, true, arguments);
 							}
 						} else {
-							defineBinding(binding);
+							defineBinding(function);
 						}
 					} else {
-						LookupData data = new LookupData(functionName);
-						IType impliedObjectType = data.getImpliedObjectType();
-						if (impliedObjectType != null)
-							defineTypeExceptTypedefOrNonFixedEnum(impliedObjectType);
-						defineBindingForFunctionCall(binding, arguments);
+						IASTName name = functionName;
+						if (functionName instanceof ICPPASTTemplateId) {
+							name = ((ICPPASTTemplateId) functionName).getTemplateName();
+						}
+						boolean defineFunction = !isPartOfExternalMacroDefinition(name);
+
+						if (defineFunction) {
+							LookupData data = new LookupData(functionName);
+							IType impliedObjectType = data.getImpliedObjectType();
+							if (impliedObjectType != null)
+								defineTypeExceptTypedefOrNonFixedEnum(impliedObjectType);
+						}
+
+						defineBindingForFunctionCall(function, defineFunction, arguments);
 					}
 				}
 
@@ -727,7 +738,7 @@ public class BindingClassifier {
 					for (IASTName name : implicitNames) {
 						IBinding binding = name.resolveBinding();
 						if (binding instanceof IFunction) {
-							defineForFunctionCall((IFunction) binding, arguments);
+							defineForFunctionCall((IFunction) binding, true, arguments);
 						}
 					}
 				}
@@ -797,22 +808,28 @@ public class BindingClassifier {
 			return PROCESS_CONTINUE;
 		}
 
-		protected void defineBindingForFunctionCall(IBinding binding, IASTInitializerClause[] arguments) {
+		protected void defineBindingForFunctionCall(IBinding binding, boolean defineFunction,
+				IASTInitializerClause[] arguments) {
 			if (binding instanceof IFunction) {
-				defineForFunctionCall((IFunction) binding, arguments);
-			} else if (binding instanceof ICPPMember) {
-				try {
-					IType memberType = ((ICPPMember) binding).getType();
-					defineIndirectTypes(memberType);
-				} catch (DOMException e) {
+				defineForFunctionCall((IFunction) binding, defineFunction, arguments);
+			} else if (defineFunction) {
+				if (binding instanceof ICPPMember) {
+					try {
+						IType memberType = ((ICPPMember) binding).getType();
+						defineIndirectTypes(memberType);
+					} catch (DOMException e) {
+					}
+				} else if (binding instanceof ITypedef) {
+					defineBinding(binding);
 				}
-			} else if (binding instanceof ITypedef) {
-				defineBinding(binding);
 			}
 		}
 
 		@Override
 		public int leave(IASTName name) {
+			if (name instanceof ICPPASTQualifiedName || name instanceof ICPPASTTemplateId) {
+				return PROCESS_CONTINUE;
+			}
 			if (isPartOfExternalMacroDefinition(name))
 				return PROCESS_CONTINUE;
 
@@ -947,7 +964,8 @@ public class BindingClassifier {
 	 * Defines the required types of the parameters of a function or constructor call expression by
 	 * comparing the declared parameters with the actual arguments.
 	 */
-	private void processFunctionParameters(IFunction function, IASTInitializerClause[] arguments) {
+	private void processFunctionParameters(IFunction function, boolean defineFunction,
+			IASTInitializerClause[] arguments) {
 		boolean functionIsDeclared = fProcessedDefinedBindings.contains(function);
 		IParameter[] parameters = function.getParameters();
 		for (int i = 0; i < parameters.length && i < arguments.length; i++) {
@@ -959,7 +977,7 @@ public class BindingClassifier {
 					// A declaration is sufficient if the argument type matches the parameter type.
 					// We don't need to provide a declaration of the parameter type since it is
 					// a responsibility of the header declaring the function.
-					if (!functionIsDeclared) {
+					if (!functionIsDeclared && defineFunction) {
 						declareType(parameterType);
 					}
 					continue;
@@ -968,15 +986,17 @@ public class BindingClassifier {
 				// The type of the argument requires a full definition.
 				defineTypeExceptTypedefOrNonFixedEnum(argumentType);
 			}
-			// As a matter of policy, a header declaring the function is responsible for
-			// defining parameter types that allow implicit conversion.
-			parameterType = getNestedType(parameterType, REF | ALLCVQ);
-			if (!(parameterType instanceof ICPPClassType) ||
-					fAst.getDeclarationsInAST(function).length != 0 ||
-					!hasConvertingConstructor((ICPPClassType) parameterType, argument)) {
-				defineTypeExceptTypedefOrNonFixedEnum(parameterType);
-			} else if (!functionIsDeclared) {
-				declareType(parameterType);
+			if (defineFunction) {
+				// As a matter of policy, a header declaring the function is responsible for
+				// defining parameter types that allow implicit conversion.
+				parameterType = getNestedType(parameterType, REF | ALLCVQ);
+				if (!(parameterType instanceof ICPPClassType) ||
+						fAst.getDeclarationsInAST(function).length != 0 ||
+						!hasConvertingConstructor((ICPPClassType) parameterType, argument)) {
+					defineTypeExceptTypedefOrNonFixedEnum(parameterType);
+				} else if (!functionIsDeclared) {
+					declareType(parameterType);
+				}
 			}
 		}
 	}
@@ -1337,23 +1357,27 @@ public class BindingClassifier {
 		return true;
 	}
 
-	private void defineForFunctionCall(IFunction function, IASTInitializerClause[] arguments) {
-		if (!fProcessedDefinedBindings.contains(function)) {
-			if (!(function instanceof ICPPMethod) && (!canForwardDeclare(function) || isDefinedInHeaderFile(function))) {
-				// Since the function is defined in a header file, its definition has to be
-				// reachable through includes to make a function call.
-				defineBinding(function);
-			} else {
-				declareBinding(function);
+	private void defineForFunctionCall(IFunction function, boolean defineFunction,
+			IASTInitializerClause[] arguments) {
+		if (defineFunction) {
+			if (!fProcessedDefinedBindings.contains(function)) {
+				if (!(function instanceof ICPPMethod)
+						&& (!canForwardDeclare(function) || isDefinedInHeaderFile(function))) {
+					// Since the function is defined in a header file, its definition has to be
+					// reachable through includes to make a function call.
+					defineBinding(function);
+				} else {
+					declareBinding(function);
+				}
 			}
+	
+			// Handle return or expression type of the function or constructor call.
+			IType returnType = function.getType().getReturnType();
+			defineTypeForBinding(function, returnType);
 		}
 
-		// Handle return or expression type of the function or constructor call.
-		IType returnType = function.getType().getReturnType();
-		defineTypeForBinding(function, returnType);
-
 		// Handle parameters.
-		processFunctionParameters(function, arguments);
+		processFunctionParameters(function, defineFunction, arguments);
 
 		fProcessedDefinedBindings.add(function);
 	}

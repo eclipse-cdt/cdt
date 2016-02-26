@@ -1,0 +1,9 @@
+Verified+1: Hudson CI
+Code-Review+1: Ravitheja Addepally <ravitheja.addepally@intel.com>
+Code-Review+2: Marc Khouzam <marc.khouzam@ericsson.com>
+Verified+1: Marc Khouzam <marc.khouzam@ericsson.com>
+Submitted-by: Marc Khouzam <marc.khouzam@ericsson.com>
+Submitted-at: Fri, 26 Feb 2016 08:27:50 -0500
+Reviewed-on: https://git.eclipse.org/r/67370
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

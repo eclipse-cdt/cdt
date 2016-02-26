@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
+
+import java.util.Map;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -60,6 +62,18 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		Color systemBackground = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, systemBackground.getRed()
 				+ "," + systemBackground.getGreen() + "," + systemBackground.getBlue());
+		
+		// Set the default background colors, for known memory spaces 
+		IMemorySpacePreferencesHelper util = TraditionalMemoryRenderingFactory.getMemorySpacesPreferencesHelper();
+		Map<String, String> prefKeyToColor = util.getMemorySpaceDefaultColors();
+		
+		if (prefKeyToColor.size() > 0) {
+		    // If there are memory spaces present, set no global background as default
+			store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND, false);
+			for (String key : prefKeyToColor.keySet()) {
+				store.setDefault(key, prefKeyToColor.get(key));
+			}
+		}
 		
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, 
 				TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,5 +50,16 @@ public class TraditionalRenderingPreferenceConstants {
 	public static final String MEM_HISTORY_TRAILS_COUNT = "memoryHistoryTrailsCount";
 
 	public static final String MEM_DEFAULT_COPY_ACTION = "memoryDefaultCopyAction";
+	
+	// support for memory space - specific coloring
+	/**
+	 * @since 1.4
+	 */
+	public static final String MEM_KNOWN_MEMORY_SPACE_ID_LIST_CSV = "memorySpaceIdList";
+
+	/**
+	 * @since 1.4
+	 */
+	public static final String MEM_MEMORY_SPACE_ID_PREFIX = MEM_COLOR_BACKGROUND + "MemorySpace-";
 
 }

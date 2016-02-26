@@ -130,6 +130,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
         if (adapter.isAssignableFrom(DsfMemoryBlockRetrieval.class)) {
             return fRetrieval;
         }
+        if (adapter.isAssignableFrom(IMemoryDMContext.class)) {
+          return getContext();
+        }
         return super.getAdapter(adapter);
     }
 

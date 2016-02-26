@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,14 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		Color systemBackground = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, systemBackground.getRed()
 				+ "," + systemBackground.getGreen() + "," + systemBackground.getBlue());
+		
+		// Set the default background colors, for known memory spaces 
+		MemorySpacePreferencesUtil util = new MemorySpacePreferencesUtil();
+		String[] memSpaceKeys = util.getMemorySpaceKeys();
+		String[] memSpaceDefaultColors = util.getMemorySpaceDefaultColors();
+		for (int i = 0; i < memSpaceKeys.length; i++) {
+		  store.setDefault(memSpaceKeys[i], memSpaceDefaultColors[i]);
+		}
 		
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, 
 				TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY);

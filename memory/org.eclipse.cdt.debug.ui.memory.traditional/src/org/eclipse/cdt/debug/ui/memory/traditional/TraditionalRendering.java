@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
+import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlock;
+import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval;
+import org.eclipse.cdt.debug.internal.core.CRequest;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -29,6 +32,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -106,8 +110,22 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     
     private IWorkbenchAdapter fWorkbenchAdapter;
 	private IMemoryBlockConnection fConnection;
+	
+	String fCurrentMemorySpaceId;
     
     private final static int MAX_MENU_COLUMN_COUNT = 8;
+    
+    MemorySpacePreferencesUtil fMemSpacePrefsUtil;
+    
+    private class GetMemorySpacesRequest extends CRequest implements IMemorySpaceAwareMemoryBlockRetrieval.GetMemorySpacesRequest  {
+      String [] fMemorySpaces;
+      public String[] getMemorySpaces() {
+        return fMemorySpaces;
+      }
+      public void setMemorySpaces(String[] memorySpaceIds) {
+        fMemorySpaces = memorySpaceIds;
+      }
+    }
     
 	public TraditionalRendering(String id)
     {
@@ -253,6 +271,33 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	public void init(final IMemoryRenderingContainer container, final IMemoryBlock block)
     {
     	super.init(container, block);
+    	
+    	fMemSpacePrefsUtil = new MemorySpacePreferencesUtil();
+    	
+    	// extract current memory space, if any
+    	if (block instanceof IMemorySpaceAwareMemoryBlock) {
+    	  IMemorySpaceAwareMemoryBlock memBlock = (IMemorySpaceAwareMemoryBlock) block;
+    	  String id = memBlock.getMemorySpaceID();
+    	  fCurrentMemorySpaceId = id;
+    	}
+
+    	// extract memory space info, if applicable
+    	if (block instanceof IMemorySpaceAwareMemoryBlock) {
+    	  IMemoryBlockRetrieval retrieval = ((IMemorySpaceAwareMemoryBlock) block).getMemoryBlockRetrieval();
+    	  ((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).getMemorySpaces(block, new GetMemorySpacesRequest(){
+    	    @Override
+    	    public void done() {
+    	      final String[] spaces = isSuccess() ? getMemorySpaces() : new String[0];
+    	      // remember memory spaces
+    	      Display.getDefault().asyncExec(new Runnable() {
+    	        @Override
+    	        public void run() {
+    	          fMemSpacePrefsUtil.updateMemorySpaces(spaces);
+    	        }
+    	      });
+    	    }
+    	  }); 
+    	}
 
     	/*
          * Working with the model proxy must be done on the UI dispatch thread.
@@ -504,11 +549,26 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
     public void allocateColors()
     {
-    	IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+
+      IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
     	
-    	colorBackground = new Color(Display.getDefault(), PreferenceConverter.getColor(store, 
-    			TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND));
-    	
+    	// has a memory-space-specific background color been set for the current memory space? 
+    	if (fCurrentMemorySpaceId != null) 
+    	{
+    	  final String key = fMemSpacePrefsUtil.getMemorySpaceKey(fCurrentMemorySpaceId);
+    	  if (store.getString(key) != "") {
+    	    colorBackground = new Color(Display.getDefault(), 
+    	        PreferenceConverter.getColor(store, key));
+    	  }
+    	  else {
+    	    colorBackground = null;
+    	  }
+    	}
+    	// no - then use default
+    	if (colorBackground == null) {
+    	  colorBackground = new Color(Display.getDefault(), PreferenceConverter.getColor(store, 
+    	      TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND));
+    	}
     	colorChanged = new Color(Display.getDefault(), PreferenceConverter.getColor(store, 
     			TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED));
     	

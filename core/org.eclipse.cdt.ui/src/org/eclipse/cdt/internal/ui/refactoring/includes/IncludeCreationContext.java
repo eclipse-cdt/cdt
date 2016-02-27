@@ -152,4 +152,16 @@ public class IncludeCreationContext extends InclusionContext {
 	public final boolean wasIncludedPreviously(IPath header) {
 		return fHeadersIncludedPreviously.contains(header);
 	}
+
+	/**
+	 * Returns the path of the partner header included previously, or {@code null} if the partner was not
+	 * included.
+	 */
+	public final IPath getPartnerHeaderIncludedPreviously() {
+		for (IPath path : fHeadersIncludedPreviously) {
+			if (isPartnerFile(path))
+				return path;
+		}
+		return null;
+	}
 }

@@ -24,7 +24,6 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeMap;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition;
 import org.eclipse.cdt.internal.ui.refactoring.includes.SymbolExportMap;
 
 import junit.framework.Test;
@@ -310,9 +309,24 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//}
 	public void testExistingPartnerIncludeIsNotRemoved() throws Exception {
 		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
-				UnusedStatementDisposition.REMOVE.toString());
 		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		assertExpectedResults();
+	}
+
+	//a.h
+	//class A {};
+
+	//f.h
+	//#include "a.h"
+
+	//f.cpp
+	//#include "f.h"
+	//A a;
+	//====================
+	//#include "f.h"
+	//
+	//A a;
+	public void testPartnerInclusion() throws Exception {
 		assertExpectedResults();
 	}
 
@@ -464,8 +478,6 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//M1(a, 1);
 	public void testMacro() throws Exception {
 		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
-				UnusedStatementDisposition.REMOVE.toString());
 		assertExpectedResults();
 	}
 
@@ -491,8 +503,6 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//}
 	public void testExportedSymbol() throws Exception {
 		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
-				UnusedStatementDisposition.REMOVE.toString());
 		SymbolExportMap symbolExportMap = new SymbolExportMap(new String[] { "NULL", "string.h" });
 		preferenceStore.setValue(PreferenceConstants.INCLUDES_SYMBOL_EXPORTING_HEADERS,
 				SymbolExportMap.serializeMaps(Collections.singletonList(symbolExportMap)));
@@ -670,8 +680,6 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	public void testForwardDeclarations() throws Exception {
 		// TODO(sprigogin): Move ns1 outside of other namespaces after IncludeOrganizer starts using ASTWriter.
 		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION,
-				UnusedStatementDisposition.REMOVE.toString());
 		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertExpectedResults();
 	}

@@ -1,5 +1,4 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,7 +192,7 @@ public class IncludeOrganizer {
 		IIndexFileSet reachableHeaders = ast.getIndexFileSet();
 
 		List<InclusionRequest> requests = createInclusionRequests(ast, bindingsToInclude, false, reachableHeaders);
-		processInclusionRequests(requests, headerSubstitutor);
+		processInclusionRequests(requests, existingIncludes, headerSubstitutor);
 
 		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
 
@@ -599,10 +598,10 @@ public class IncludeOrganizer {
 	}
 
 	private void processInclusionRequests(List<InclusionRequest> requests,
-			HeaderSubstitutor headerSubstitutor) throws CoreException {
+			IASTPreprocessorIncludeStatement[] existingIncludes, HeaderSubstitutor headerSubstitutor)
+			throws CoreException {
 		// Add partner header if necessary.
-		HashSet<IIndexFile> includedByPartner = fContext.getPreferences().allowPartnerIndirectInclusion ?
-				new HashSet<IIndexFile>() : null;
+		IIndexFile partnerHeader = null;
 		for (InclusionRequest request : requests) {
 			List<IPath> candidatePaths = request.getCandidatePaths();
 			if (candidatePaths.size() == 1) {
@@ -610,21 +609,32 @@ public class IncludeOrganizer {
 				if (fContext.isPartnerFile(path)) {
 					request.resolve(path);
 					fContext.addHeaderToInclude(path);
-					if (includedByPartner != null) {
-						try {
-							IIndexFile indexFile = request.getDeclaringFiles().keySet().iterator().next();
-							if (!includedByPartner.contains(indexFile)) {
-								for (IIndexInclude include : indexFile.getIncludes()) {
-									IIndexFileLocation headerLocation = include.getIncludesLocation();
-									if (headerLocation != null) {
-										fContext.addHeaderAlreadyIncluded(getAbsolutePath(headerLocation));
-									}
-								}
-								includedByPartner.add(indexFile);
+					partnerHeader = request.getDeclaringFiles().keySet().iterator().next();
+					break;
+				}
+			}
+		}
+
+		if (fContext.getPreferences().allowPartnerIndirectInclusion) {
+			// Mark all headers included by the partner header as already included.
+			if (partnerHeader == null) {
+				for (IASTPreprocessorIncludeStatement include : existingIncludes) {
+					if (include.isPartOfTranslationUnitFile()) {
+						IIndexFile header = include.getImportedIndexFile();
+						if (header != null) {
+							if (fContext.isPartnerFile(new Path(include.getPath()))) {
+								partnerHeader = header;
+								break;
 							}
-						} catch (CoreException e) {
-							CUIPlugin.log(e);
 						}
+					}
+				}
+			}
+			if (partnerHeader != null) {
+				for (IIndexInclude include : partnerHeader.getIncludes()) {
+					IIndexFileLocation headerLocation = include.getIncludesLocation();
+					if (headerLocation != null) {
+						fContext.addHeaderAlreadyIncluded(getAbsolutePath(headerLocation));
 					}
 				}
 			}

@@ -387,6 +387,38 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
+	//	class A {};
+	//	class B {};
+	//	class C {};
+	//	class D {};
+	
+	//	void foo(A* a, B& b, C& c) {
+	//	  A& aa(*a);
+	//	  B* bb(&b);
+	//	  C cc(c);
+	//	  D d;
+	//	}
+	public void testVariableDeclaration() throws Exception {
+		assertDefined("C", "D");
+		assertDeclared("A", "B");
+	}
+
+	//	class A {};
+	//	class B {};
+	//	class C {};
+
+	//	class D {
+	//	  A* aa;
+	//	  B& bb;
+	//	  C cc;
+	//	  D(A* a, B& b, C& c)
+	//        : aa(a), bb(b), cc(c) {}
+	//	};
+	public void testConstructorChainInitializer() throws Exception {
+		assertDefined("C");
+		assertDeclared("A", "B");
+	}
+
 	//	namespace ns1 {
 	//	namespace ns2 {
 	//	class A {};
@@ -754,6 +786,20 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  MACRO(INT);
 	//	}
 	public void testMacro_5() throws Exception {
+		assertDefined("MACRO");
+		assertDeclared();
+	}
+
+	//	struct A {
+	//	  A(int);
+	//	};
+	//
+	//	#define MACRO(a, b) A a(b)
+
+	//	void test(int x) {
+	//	  MACRO(a, x);
+	//	}
+	public void testMacro_6() throws Exception {
 		assertDefined("MACRO");
 		assertDeclared();
 	}

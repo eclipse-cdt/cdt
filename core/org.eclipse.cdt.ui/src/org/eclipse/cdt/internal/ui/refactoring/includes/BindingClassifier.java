@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
@@ -127,9 +128,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -351,23 +354,23 @@ public class BindingClassifier {
 			 */
 
 			// Get the binding of the initialized AST name first.
-			IASTNode memberNode = initializer;
-			IASTName memberName = null;
-			IBinding memberBinding = null;
+			IASTNode variableNode = initializer;
+			IASTName variableName = null;
+			IBinding variableBinding = null;
 
-			while (memberNode != null) {
-				if (memberNode instanceof IASTDeclarator) {
-					memberName = ((IASTDeclarator) memberNode).getName();
+			while (variableNode != null) {
+				if (variableNode instanceof IASTDeclarator) {
+					variableName = ((IASTDeclarator) variableNode).getName();
 					break;
-				} else if (memberNode instanceof ICPPASTConstructorChainInitializer) {
-					memberName = ((ICPPASTConstructorChainInitializer) memberNode).getMemberInitializerId();
+				} else if (variableNode instanceof ICPPASTConstructorChainInitializer) {
+					variableName = ((ICPPASTConstructorChainInitializer) variableNode).getMemberInitializerId();
 					break;
 				}
-				memberNode = memberNode.getParent();
+				variableNode = variableNode.getParent();
 			}
 
-			if (memberName != null)
-				memberBinding = memberName.resolveBinding();
+			if (variableName != null)
+				variableBinding = variableName.resolveBinding();
 
 			// Get the arguments of the initializer.
 			IASTInitializerClause[] arguments = IASTExpression.EMPTY_EXPRESSION_ARRAY;
@@ -379,13 +382,22 @@ public class BindingClassifier {
 				arguments = new IASTInitializerClause[] { equalsInitializer.getInitializerClause() };
 			}
 
-			if (memberBinding instanceof IVariable) {
+			if (variableBinding instanceof IVariable) {
 				// Variable construction.
-				IType memberType = ((IVariable) memberBinding).getType();
-				if (!(memberType instanceof IPointerType || memberType instanceof ICPPReferenceType)) {
-					// We're constructing a non-pointer type. We need to define the member type
-					// either way since we must be able to call its constructor.
-					defineTypeExceptTypedefOrNonFixedEnum(memberType);
+				boolean defineVariableType = true;
+				if (initializer.getPropertyInParent() == IASTDeclarator.INITIALIZER) {
+					IASTDeclarator declarator = (IASTDeclarator) initializer.getParent();
+					IASTDeclSpecifier declSpec = getDeclarationSpecifier(declarator);
+					if (declSpec != null && isPartOfExternalMacroDefinition(declSpec))
+						defineVariableType = false;
+				}
+				IType targetType = ((IVariable) variableBinding).getType();
+				if (!(targetType instanceof IPointerType || targetType instanceof ICPPReferenceType)) {
+					if (defineVariableType) {
+						// We're constructing a non-pointer type. We need to define the member type
+						// either way since we must be able to call its constructor.
+						defineTypeExceptTypedefOrNonFixedEnum(targetType);
+					}
 
 					// TODO: Process the arguments. But how to get the corresponding IParameter[] array here?
 					// processParameters(declaredParameters, arguments);
@@ -394,24 +406,22 @@ public class BindingClassifier {
 					// to check whether the argument type matches the declared type.
 					for (IASTInitializerClause argument : arguments) {
 						if (argument instanceof IASTExpression) {
-							IType argumentType = ((IASTExpression) argument).getExpressionType();
-							if (isTypeDefinitionRequiredForConversion(argumentType, memberType)) {
+							IASTExpression expression = (IASTExpression) argument;
+							IType argumentType = expression.getExpressionType();
+							if (targetType instanceof ICPPReferenceType
+									&& expression instanceof IASTUnaryExpression
+									&& ((IASTUnaryExpression) expression).getOperator() == IASTUnaryExpression.op_star) {
+								argumentType = new CPPReferenceType(argumentType, false);		
+							}
+							if (isTypeDefinitionRequiredForConversion(argumentType, targetType)) {
 								// Types don't match. Define both types.
-								defineTypeExceptTypedefOrNonFixedEnum(memberType);
+								if (defineVariableType)
+									defineTypeExceptTypedefOrNonFixedEnum(targetType);
 								defineTypeExceptTypedefOrNonFixedEnum(argumentType);
 							}
 						}
 					}
 				}
-			} else if (memberBinding instanceof ICPPConstructor) {
-				// Class construction.
-				ICPPConstructor constructor = (ICPPConstructor) memberBinding;
-
-				// We need to define the owning type of the constructor.
-				defineBinding(constructor.getOwner());
-
-				// Process the parameters.
-				processFunctionParameters(constructor, true, arguments);
 			}
 			return PROCESS_CONTINUE;
 		}
@@ -568,20 +578,25 @@ public class BindingClassifier {
 
 					boolean expressionDefinitionRequired = true;
 					switch (unaryExpression.getOperator()) {
-						case IASTUnaryExpression.op_amper:
-						case IASTUnaryExpression.op_bracketedPrimary:
-							// The ampersand operator as well as brackets never require a definition.
-							expressionDefinitionRequired = false;
+					case IASTUnaryExpression.op_amper:
+					case IASTUnaryExpression.op_bracketedPrimary:
+						// The ampersand operator as well as brackets never require a definition.
+						expressionDefinitionRequired = false;
+						break;
+					case IASTUnaryExpression.op_star:
+						if (expression.getParent() instanceof IASTExpression)
 							break;
-						case IASTUnaryExpression.op_alignOf:
-						case IASTUnaryExpression.op_not:
-						case IASTUnaryExpression.op_plus:
-						case IASTUnaryExpression.op_sizeof:
-						case IASTUnaryExpression.op_typeid:
-							// If the operand is a pointer type, then it doesn't need to be defined.
-							if (operand.getExpressionType() instanceof IPointerType) {
-								expressionDefinitionRequired = false;
-							}
+						//$FALL-THROUGH$
+					case IASTUnaryExpression.op_alignOf:
+					case IASTUnaryExpression.op_not:
+					case IASTUnaryExpression.op_plus:
+					case IASTUnaryExpression.op_sizeof:
+					case IASTUnaryExpression.op_typeid:
+						// If the operand is a pointer type, then it doesn't need to be defined.
+						if (operand.getExpressionType() instanceof IPointerType) {
+							expressionDefinitionRequired = false;
+						}
+						break;
 					}
 
 					if (expressionDefinitionRequired) {
@@ -1567,5 +1582,25 @@ public class BindingClassifier {
 		LocalNameFinder localNameFinder = new LocalNameFinder();
 		node.accept(localNameFinder);
 		return localNameFinder.found;
+	}
+
+	/**
+	 * Returns the declaration specifier node for the given declarator.
+	 */
+	private static IASTDeclSpecifier getDeclarationSpecifier(IASTDeclarator declarator) {
+		declarator= CPPVisitor.findOutermostDeclarator(declarator);
+		IASTNode parent = declarator.getParent();
+
+		IASTDeclSpecifier declSpec = null;
+		if (parent instanceof IASTSimpleDeclaration) {
+			declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+		} else if (parent instanceof IASTParameterDeclaration) {
+			declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
+		} else if (parent instanceof IASTFunctionDefinition) {
+			declSpec = ((IASTFunctionDefinition) parent).getDeclSpecifier();
+		} else if (parent instanceof ICPPASTTypeId) {
+			declSpec = ((ICPPASTTypeId) parent).getDeclSpecifier();
+		}
+		return declSpec;
 	}
 }

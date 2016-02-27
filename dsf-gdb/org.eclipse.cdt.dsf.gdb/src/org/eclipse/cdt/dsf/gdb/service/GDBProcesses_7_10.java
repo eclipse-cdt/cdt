@@ -217,15 +217,12 @@ public class GDBProcesses_7_10 extends GDBProcesses_7_4 {
                                                 return;
                                             }
                                             else if (reverseMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARDWARE)) {
-                                            	if (Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
+                                            	String defaultValue = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
                                                         IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
-                                                        IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE,
-                                                        null).equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
+                                                        IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE, null);
+												if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
                                             		reverseService.enableReverseMode(fCommandControl.getContext(), ReverseTraceMethod.BRANCH_TRACE, rm); // Branch Trace
-                                                } else if (Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
-                                                        IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
-                                                        IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE,
-                                                        null).equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
+                                                } else if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
                                                 	reverseService.enableReverseMode(fCommandControl.getContext(), ReverseTraceMethod.PROCESSOR_TRACE, rm); // Processor Trace
                                                 } else {
                                                 	reverseService.enableReverseMode(fCommandControl.getContext(), ReverseTraceMethod.GDB_TRACE, rm); // GDB Selected Option

@@ -77,7 +77,12 @@ public class MIReverseDebugEnabler  implements IReverseDebugEnabler {
        							 (enabled.equals(true) && mode.equals(REVERSE_DEBUG_MODE.DISABLE) ) ||
        							 (mode.equals(REVERSE_DEBUG_MODE.TOGGLE)) )
        						{
-       							runControl.enableReverseMode(fContext, !enabled, new RequestMonitor(fExecutor, null));
+       							runControl.enableReverseMode(fContext, !enabled, new RequestMonitor(fExecutor, null) {
+       								@Override
+									protected void handleError() {
+       									// Do nothing to avoid error printout
+       								};
+       							});
        						}
        					}
        				});

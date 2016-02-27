@@ -63,6 +63,7 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
@@ -123,7 +124,8 @@ import org.osgi.framework.BundleContext;
  * sync with the service state.
  * @since 1.1
  */
-public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, IMultiRunControl, ICachingService, IRunControl3 {
+public class GDBRunControl_7_0_NS extends AbstractDsfService 
+	implements IMIRunControl, IMultiRunControl, ICachingService, IRunControl3, IReverseRunControl {
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTANTS
 	// /////////////////////////////////////////////////////////////////////////
@@ -423,6 +425,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
         					   IRunControl2.class.getName(),
         					   IMIRunControl.class.getName(),
         					   IMultiRunControl.class.getName(),
+        					   IReverseRunControl.class.getName(),
         					   IRunControl3.class.getName()}, 
         	     new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
@@ -2624,5 +2627,63 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
 			rm.done();
 		}
+	}
+
+	// Although Reverse debugging is not supported in non-stop mode, this service implements IReverseRunControl
+	// to allow to return informative error messages to the user.
+	/** @since 5.0 */
+	@Override
+	public void canReverseResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+		// Reverse debugging is not supported in non-stop mode
+		rm.done(false);
+	}
+
+	/** @since 5.0 */
+	@Override
+	public void reverseResume(IExecutionDMContext context, RequestMonitor rm) {
+		// This error message will propagate to the user
+		rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, Messages.GDBRunControl_7_0_NS_NoReverseInNonStop, null));
+	}
+
+	/** @since 5.0 */
+	@Override
+	public boolean isReverseStepping(IExecutionDMContext context) {
+		// Reverse debugging is not supported in non-stop mode
+		return false;
+	}
+
+	/** @since 5.0 */
+	@Override
+	public void canReverseStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
+		// Reverse debugging is not supported in non-stop mode
+		rm.done(false);
+	}
+
+	/** @since 5.0 */
+	@Override
+	public void reverseStep(IExecutionDMContext context, StepType stepType, RequestMonitor rm) {
+		// This error message will propagate to the user
+		rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, Messages.GDBRunControl_7_0_NS_NoReverseInNonStop, null));
+	}
+
+	/** @since 5.0 */
+	@Override
+	public void canEnableReverseMode(ICommandControlDMContext context, DataRequestMonitor<Boolean> rm) {
+		// Reverse debugging is not supported in non-stop mode
+		rm.done(false);
+	}
+
+	/** @since 5.0 */
+	@Override
+	public void isReverseModeEnabled(ICommandControlDMContext context, DataRequestMonitor<Boolean> rm) {
+		// Reverse debugging is not supported in non-stop mode
+		rm.done(false);
+	}
+
+	/** @since 5.0 */
+	@Override
+	public void enableReverseMode(ICommandControlDMContext context, boolean enable, RequestMonitor rm) {
+		// This error message will propagate to the user
+		rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, Messages.GDBRunControl_7_0_NS_NoReverseInNonStop, null));
 	}
 }

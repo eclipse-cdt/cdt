@@ -110,44 +110,41 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
                    if (runControl != null) {
                        ReverseTraceMethod traceMethod = fTraceMethod;
                        if (fTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
-                           if (Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
+                           String defaultValue = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
                                 IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
-                                IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE,
-                                null).equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
-                               traceMethod = ReverseTraceMethod.BRANCH_TRACE; // Branch Trace
-                        } else if (Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
-                                IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
-                                IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE,
-                                null).equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
-                            traceMethod = ReverseTraceMethod.PROCESSOR_TRACE; // Processor Trace
-                        } else {
-                            traceMethod = ReverseTraceMethod.GDB_TRACE; // GDB Selected Option
-                        }
+                                IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE, null);
+                           
+                           if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
+                        	   traceMethod = ReverseTraceMethod.BRANCH_TRACE; // Branch Trace
+                           } else if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
+                        	   traceMethod = ReverseTraceMethod.PROCESSOR_TRACE; // Processor Trace
+                           } else {
+                        	   traceMethod = ReverseTraceMethod.GDB_TRACE; // GDB Selected Option
+                           }
                        }
-                                  runControl.enableReverseMode(controlDmc, traceMethod, new DataRequestMonitor<Boolean>(fExecutor, rm) {
-                                   @Override
-                                   public void handleError() {
-                                       // Call the parent function
-                                       // Since otherwise the status is not updated
-                                       super.handleError();
-                                       // Here we avoid setting any status other than OK, since we want to
-                                       // avoid the default dialog box from eclipse and we propagate the error
-                                       // with the plugin specific code of 1, here the ReverseToggleCommandHandler
-                                       //  interprets it as, the selected trace method is not available
-                                       request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareTracingNotAvailable, null));
-                                   }
-                               });
+                       runControl.enableReverseMode(controlDmc, traceMethod, new DataRequestMonitor<Boolean>(fExecutor, rm) {
+                    	   @Override
+                    	   public void handleError() {
+                    		   // Call the parent function
+                    		   // Since otherwise the status is not updated
+                    		   super.handleError();
+                    		   // Here we avoid setting any status other than OK, since we want to
+                    		   // avoid the default dialog box from eclipse and we propagate the error
+                    		   // with the plugin specific code of 1, here the ReverseToggleCommandHandler
+                    		   //  interprets it as, the selected trace method is not available
+                    		   request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareTracingNotAvailable, null));
+                    	   }
+                       });
 
                    } else {
                        final IReverseRunControl runControl_old = fTracker.getService(IReverseRunControl.class);
                        if (runControl_old != null) {
-                           if(fTraceMethod != ReverseTraceMethod.STOP_TRACE && fTraceMethod != ReverseTraceMethod.FULL_TRACE) {
-                               runControl_old.enableReverseMode(controlDmc, false, rm); // Swtich Off tracing
+                           if (fTraceMethod != ReverseTraceMethod.STOP_TRACE && fTraceMethod != ReverseTraceMethod.FULL_TRACE) {
+                               runControl_old.enableReverseMode(controlDmc, false, rm); // Switch Off tracing
                                request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareTracingNotAvailable, null));
                                return;
                            }
-                           runControl_old.isReverseModeEnabled(controlDmc,
-                                                           new DataRequestMonitor<Boolean>(fExecutor, rm) {
+                           runControl_old.isReverseModeEnabled(controlDmc, new DataRequestMonitor<Boolean>(fExecutor, rm) {
                                @Override
                                public void handleSuccess() {
                                    runControl_old.enableReverseMode(controlDmc, !getData(), rm);

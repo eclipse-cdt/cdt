@@ -19,8 +19,15 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IStatusHandler;
 
 
 /**
@@ -72,7 +79,7 @@ public class MIReverseDebugEnabler  implements IReverseDebugEnabler {
     				runControl.isReverseModeEnabled(fContext, new DataRequestMonitor<Boolean>(fExecutor, null) {
        					@Override
        					public void handleSuccess() {
-       						Boolean enabled = getData();
+       						final Boolean enabled = getData();
        						if ( (enabled.equals(false) && mode.equals(REVERSE_DEBUG_MODE.ENABLE) ) || 
        							 (enabled.equals(true) && mode.equals(REVERSE_DEBUG_MODE.DISABLE) ) ||
        							 (mode.equals(REVERSE_DEBUG_MODE.TOGGLE)) )
@@ -80,8 +87,19 @@ public class MIReverseDebugEnabler  implements IReverseDebugEnabler {
        							runControl.enableReverseMode(fContext, !enabled, new RequestMonitor(fExecutor, null) {
        								@Override
 									protected void handleError() {
-       									// Do nothing to avoid error printout
-       								};
+       									String errorMessage = enabled ? Messages.MIReverseDebugEnabler_UnableDisable :
+       										                            Messages.MIReverseDebugEnabler_UnableEnable +
+       										                  System.lineSeparator() + getStatus().getMessage();
+       									
+       									IStatus status = new Status(IStatus.WARNING, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE, errorMessage, null); 
+       									IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
+       									if (statusHandler != null) {
+       										try {
+       											statusHandler.handleStatus(status, null);
+       										} catch (CoreException ex) {
+       											GdbPlugin.getDefault().getLog().log(ex.getStatus());
+       										}
+       									}       								};
        							});
        						}
        					}

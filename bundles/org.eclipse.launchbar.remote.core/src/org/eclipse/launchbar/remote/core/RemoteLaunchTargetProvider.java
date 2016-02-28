@@ -71,16 +71,18 @@ public abstract class RemoteLaunchTargetProvider implements ILaunchTargetProvide
 	@Override
 	public void connectionChanged(RemoteConnectionChangeEvent event) {
 		IRemoteConnection connection = event.getConnection();
-		switch (event.getType()) {
-		case RemoteConnectionChangeEvent.CONNECTION_ADDED:
-			targetManager.addLaunchTarget(getTypeId(), connection.getName());
-			break;
-		case RemoteConnectionChangeEvent.CONNECTION_REMOVED:
-			ILaunchTarget target = targetManager.getLaunchTarget(getTypeId(), connection.getName());
-			if (target != null) {
-				targetManager.removeLaunchTarget(target);
+		if (connection.getConnectionType().getId().equals(getTypeId())) {
+			switch (event.getType()) {
+			case RemoteConnectionChangeEvent.CONNECTION_ADDED:
+				targetManager.addLaunchTarget(getTypeId(), connection.getName());
+				break;
+			case RemoteConnectionChangeEvent.CONNECTION_REMOVED:
+				ILaunchTarget target = targetManager.getLaunchTarget(getTypeId(), connection.getName());
+				if (target != null) {
+					targetManager.removeLaunchTarget(target);
+				}
+				break;
 			}
-			break;
 		}
 	}
 

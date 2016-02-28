@@ -29,11 +29,6 @@ import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
 
 public class StopActiveCommandHandler extends AbstractHandler {
-	private LaunchBarManager launchBarManager;
-
-	public StopActiveCommandHandler() {
-		launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
-	}
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -43,10 +38,10 @@ public class StopActiveCommandHandler extends AbstractHandler {
 
 	public void stop() {
 		stopBuild();
-		stopActiveLaunches();
+		stopActiveLaunches(Activator.getDefault().getLaunchBarUIManager().getManager());
 	}
 
-	protected void stopActiveLaunches() {
+	static void stopActiveLaunches(LaunchBarManager launchBarManager) {
 		final ILaunch[] activeLaunches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		if (activeLaunches != null && activeLaunches.length > 0) {
 			new Job(Messages.StopActiveCommandHandler_0) {
@@ -64,8 +59,10 @@ public class StopActiveCommandHandler extends AbstractHandler {
 								continue;
 							}
 							if (launchConfig instanceof ILaunchConfigurationWorkingCopy) {
-								// There are evil delegates that use a working copy for scratch storage
-								if (activeConfig.equals(((ILaunchConfigurationWorkingCopy) launchConfig).getOriginal())) {
+								// There are evil delegates that use a working
+								// copy for scratch storage
+								if (activeConfig
+										.equals(((ILaunchConfigurationWorkingCopy) launchConfig).getOriginal())) {
 									launch.terminate();
 									continue;
 								}

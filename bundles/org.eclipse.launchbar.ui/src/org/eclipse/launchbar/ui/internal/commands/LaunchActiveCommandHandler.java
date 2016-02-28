@@ -27,6 +27,7 @@ public class LaunchActiveCommandHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
+			StopActiveCommandHandler.stopActiveLaunches(launchBarManager);
 			ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
 			if (config == null)
 				return Status.OK_STATUS;

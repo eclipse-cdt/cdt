@@ -113,19 +113,20 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 	}
 
 	public Path getProgramPath() throws CoreException {
+		String projectName = getProject().getName();
 		switch (Platform.getOS()) {
 		case Platform.OS_MACOSX:
 			// TODO this is mac local specific and really should be
 			// in the config
 			// TODO also need to pull the app name out of the pro
 			// file name
-			Path appFolder = getBuildDirectory().resolve("main.app");
+			Path appFolder = getBuildDirectory().resolve(projectName + ".app");
 			Path contentsFolder = appFolder.resolve("Contents");
 			Path macosFolder = contentsFolder.resolve("MacOS");
-			return macosFolder.resolve("main");
+			return macosFolder.resolve(projectName);
 		case Platform.OS_WIN32:
 			Path releaseFolder = getBuildDirectory().resolve("release");
-			return releaseFolder.resolve("main.exe");
+			return releaseFolder.resolve(projectName + ".exe");
 		default:
 			throw new CoreException(
 					new Status(IStatus.ERROR, Activator.ID, "platform not supported: " + Platform.getOS()));

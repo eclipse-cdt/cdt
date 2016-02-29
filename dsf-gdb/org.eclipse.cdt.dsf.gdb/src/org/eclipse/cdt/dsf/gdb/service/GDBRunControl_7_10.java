@@ -29,107 +29,109 @@ import org.eclipse.core.runtime.Status;
 /** @since 5.0 */
 public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRunControl2 {
 
-    private IMICommandControl fCommandControl;
-    private CommandFactory fCommandFactory;
+	private IMICommandControl fCommandControl;
+	private CommandFactory fCommandFactory;
 
-    private ReverseTraceMethod fReverseTraceMethod; // default: no trace
+	private ReverseTraceMethod fReverseTraceMethod; // default: no trace
 
-    public GDBRunControl_7_10(DsfSession session) {
-        super(session);
-    }
+	public GDBRunControl_7_10(DsfSession session) {
+		super(session);
+	}
 
-    @Override
-    public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize(
-            new ImmediateRequestMonitor(requestMonitor) {
-                @Override
-                public void handleSuccess() {
-                    doInitialize(requestMonitor);
-                }});
-    }
+	@Override
+	public void initialize(final RequestMonitor requestMonitor) {
+		super.initialize(
+			new ImmediateRequestMonitor(requestMonitor) {
+				@Override
+				public void handleSuccess() {
+					doInitialize(requestMonitor);
+				}
+			});
+	}
 
-    private void doInitialize(RequestMonitor requestMonitor) {
+	private void doInitialize(RequestMonitor requestMonitor) {
 
-        fCommandControl = getServicesTracker().getService(IMICommandControl.class);
-        fCommandFactory = fCommandControl.getCommandFactory();
-        fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
-        
-        if (fCommandControl == null) {
-            requestMonitor.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Service is not available")); //$NON-NLS-1$
-            return;
-        }
+		fCommandControl = getServicesTracker().getService(IMICommandControl.class);
+		fCommandFactory = fCommandControl.getCommandFactory();
+		fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
 
-        fCommandControl.addEventListener(this);
+		if (fCommandControl == null) {
+			requestMonitor.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Service is not available")); //$NON-NLS-1$
+			return;
+		}
 
-        register(new String[]{ IReverseRunControl2.class.getName() },
-                 new Hashtable<String,String>());
-        
-        requestMonitor.done();
-    }
+		fCommandControl.addEventListener(this);
 
-    @Override
-    public void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseTraceMethod> rm) {
-        rm.setData(fReverseTraceMethod);
-        rm.done();
-    }
+		register(new String[]{ IReverseRunControl2.class.getName() },
+			 	 new Hashtable<String,String>());
 
-    @Override
-    public void enableReverseMode(final ICommandControlDMContext context,final ReverseTraceMethod traceMethod, final RequestMonitor rm) {
-        if (!getReverseSupported()) {
-            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Reverse mode is not supported.", null)); //$NON-NLS-1$
-            return;
-        }
+		requestMonitor.done();
+	}
 
-        if (fReverseTraceMethod == traceMethod) {
-            rm.done();
-            return;
-        }
+	@Override
+	public void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseTraceMethod> rm) {
+		rm.setData(fReverseTraceMethod);
+		rm.done();
+	}
 
-        if(fReverseTraceMethod == ReverseTraceMethod.STOP_TRACE || traceMethod == ReverseTraceMethod.STOP_TRACE) {
-            getConnection().queueCommand(
-                fCommandFactory.createCLIRecord(context, traceMethod),
-                new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-                    @Override
-                    public void handleSuccess() {
-                        boolean enabled = false;
-                        fReverseTraceMethod = traceMethod;
-                        if(fReverseTraceMethod != ReverseTraceMethod.STOP_TRACE)
-                            enabled = true;
-                            setReverseModeEnabled(enabled );
-                            rm.done();
-                        }
-                        @Override
-                        public void handleFailure() {
-                            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Trace method could not be selected", null)); //$NON-NLS-1$
-                        }
-                    });
-            return;
-        }
-            getConnection().queueCommand(
-                    fCommandFactory.createCLIRecord(context, ReverseTraceMethod.STOP_TRACE),
-                    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-                        @Override
-                        public void handleSuccess() {
-                            setReverseModeEnabled(false);
-                            getConnection().queueCommand(
-                                    fCommandFactory.createCLIRecord(context, traceMethod),
-                                    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-                                        @Override
-                                        public void handleSuccess() {
-                                            fReverseTraceMethod = traceMethod;
-                                            setReverseModeEnabled(true);
-                                            rm.done();
-                                        }
-                                        @Override
-                                        public void handleFailure() {
-                                            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Trace method could not be selected", null)); //$NON-NLS-1$
-                                            setReverseModeEnabled(false);
-                                            fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
-                                            rm.done();
-                                        }
-                                    });
-                        }
-                    });
-            return;
-        }
+	@Override
+	public void enableReverseMode(final ICommandControlDMContext context,final ReverseTraceMethod traceMethod, final RequestMonitor rm) {
+		if (!getReverseSupported()) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Reverse mode is not supported.", null)); //$NON-NLS-1$
+			return;
+		}
+
+		if (fReverseTraceMethod == traceMethod) {
+			rm.done();
+			return;
+		}
+
+		if (fReverseTraceMethod == ReverseTraceMethod.STOP_TRACE || traceMethod == ReverseTraceMethod.STOP_TRACE) {
+			getConnection().queueCommand(
+				fCommandFactory.createCLIRecord(context, traceMethod),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+					@Override
+					public void handleSuccess() {
+						boolean enabled = false;
+						fReverseTraceMethod = traceMethod;
+						if (fReverseTraceMethod != ReverseTraceMethod.STOP_TRACE) {
+							enabled = true;
+						}
+						setReverseModeEnabled(enabled );
+						rm.done();
+					}
+					@Override
+					public void handleFailure() {
+						rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Trace method could not be selected", null)); //$NON-NLS-1$
+					}
+				});
+			return;
+		}
+
+		getConnection().queueCommand(
+			fCommandFactory.createCLIRecord(context, ReverseTraceMethod.STOP_TRACE),
+			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+				@Override
+				public void handleSuccess() {
+					setReverseModeEnabled(false);
+					getConnection().queueCommand(
+						fCommandFactory.createCLIRecord(context, traceMethod),
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+							@Override
+							public void handleSuccess() {
+								fReverseTraceMethod = traceMethod;
+								setReverseModeEnabled(true);
+								rm.done();
+							}
+							@Override
+							public void handleFailure() {
+								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Trace method could not be selected", null)); //$NON-NLS-1$
+								setReverseModeEnabled(false);
+								fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
+								rm.done();
+							}
+						});
+				}
+			});
+	}
 }

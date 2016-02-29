@@ -58,9 +58,12 @@ import org.osgi.framework.Bundle;
 public class ReverseToggleCommandHandler extends DebugCommandHandler implements IDebugContextListener, IElementUpdater {
     private ReverseTraceMethod fTraceMethod;
     private ReverseTraceMethod fLastTraceMethod;
-    private ImageDescriptor fTracemethodOnImages[];
-    private ImageDescriptor fTracemethodOffImages[];
-    private ImageDescriptor fTracemethodDefaultImage;
+
+    private static final ImageDescriptor REVERSE_TOGGLE_DEFAULT_IMAGE = getImageDescriptor("icons/obj16/reverse_toggle.gif"); //$NON-NLS-1$
+    private static final ImageDescriptor REVERSE_TOGGLE_SOFTWARE_ON_IMAGE = getImageDescriptor("icons/obj16/reverse_toggle_sw_on.png"); //$NON-NLS-1$
+    private static final ImageDescriptor REVERSE_TOGGLE_SOFTWARE_OFF_IMAGE = getImageDescriptor("icons/obj16/reverse_toggle_sw_off.png"); //$NON-NLS-1$
+    private static final ImageDescriptor REVERSE_TOGGLE_HARDWARE_ON_IMAGE = getImageDescriptor("icons/obj16/reverse_toggle_hw_on.png"); //$NON-NLS-1$
+    private static final ImageDescriptor REVERSE_TOGGLE_HARDWARE_OFF_IMAGE = getImageDescriptor("icons/obj16/reverse_toggle_hw_off.png"); //$NON-NLS-1$
 
     @Override
 	protected Class<?> getCommandType() {
@@ -83,7 +86,7 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     private IReverseToggleHandler fTargetAdapter = null;
     private IDebugContextService fContextService = null;
 
-    private ImageDescriptor getImageDescriptor (String path) {
+    private static ImageDescriptor getImageDescriptor (String path) {
         Bundle bundle = Platform.getBundle("org.eclipse.cdt.debug.ui"); //$NON-NLS-1$
         URL url = null;
         if (bundle != null) {
@@ -105,14 +108,6 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                // This constructor might be called after the launch, so we must refresh here too.
                // This can happen if we activate the action set after the launch.
                refresh(fContextService.getActiveContext());
-
-               fTracemethodOnImages = new ImageDescriptor[2];
-               fTracemethodOffImages = new ImageDescriptor[2];
-               fTracemethodDefaultImage = getImageDescriptor("icons/obj16/reverse_toggle.gif"); //$NON-NLS-1$
-               fTracemethodOnImages[0] = getImageDescriptor("icons/obj16/reverse_toggle_sw_on.png"); //$NON-NLS-1$
-               fTracemethodOnImages[1] = getImageDescriptor("icons/obj16/reverse_toggle_hw_on.png"); //$NON-NLS-1$
-               fTracemethodOffImages[0] = getImageDescriptor("icons/obj16/reverse_toggle_sw_off.png"); //$NON-NLS-1$
-               fTracemethodOffImages[1] = getImageDescriptor("icons/obj16/reverse_toggle_hw_off.png"); //$NON-NLS-1$
 
                fTraceMethod = ReverseTraceMethod.STOP_TRACE;
                fLastTraceMethod = ReverseTraceMethod.STOP_TRACE;
@@ -287,20 +282,20 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                if (fTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseHardTrace"); //$NON-NLS-1$
                    element.setTooltip(Messages.ReverseDebugging_ToggleHardwareTrace);
-                   element.setIcon(fTracemethodOnImages[1]);
+                   element.setIcon(REVERSE_TOGGLE_HARDWARE_ON_IMAGE);
                } else if (fTraceMethod == ReverseTraceMethod.FULL_TRACE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseSoftTrace"); //$NON-NLS-1$
                    element.setTooltip(Messages.ReverseDebugging_ToggleSoftwareTrace);
-                   element.setIcon(fTracemethodOnImages[0]);
+                   element.setIcon(REVERSE_TOGGLE_SOFTWARE_ON_IMAGE);
                } else {
                    element.setTooltip(Messages.ReverseDebugging_ToggleReverseDebugging);
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "TraceOff"); //$NON-NLS-1$
                    if (fLastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
-                       element.setIcon(fTracemethodOffImages[1]);
+                       element.setIcon(REVERSE_TOGGLE_HARDWARE_OFF_IMAGE);
                    } else if (fLastTraceMethod == ReverseTraceMethod.FULL_TRACE) {
-                       element.setIcon(fTracemethodOffImages[0]);
+                       element.setIcon(REVERSE_TOGGLE_SOFTWARE_OFF_IMAGE);
                    } else {
-                       element.setIcon(fTracemethodDefaultImage);
+                       element.setIcon(REVERSE_TOGGLE_DEFAULT_IMAGE);
                    }
                }
            }

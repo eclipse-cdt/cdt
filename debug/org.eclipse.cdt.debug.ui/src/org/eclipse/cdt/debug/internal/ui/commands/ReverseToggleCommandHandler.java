@@ -269,11 +269,11 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     }
 
     @Override
-    public void updateElement(UIElement element,
+    public void updateElement(final UIElement element,
                               @SuppressWarnings("rawtypes") Map parameters) {
        if (fTargetAdapter != null && fTargetAdapter instanceof IChangeReverseMethodHandler) {
            ReverseTraceMethod reverseMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getTraceMethod(fActiveContext);
-           ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
+           final ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
            if (reverseMethod != fTraceMethod) {
                fLastTraceMethod = fTraceMethod;
                fTraceMethod = reverseMethod;
@@ -288,19 +288,31 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                    element.setTooltip(Messages.ReverseDebugging_ToggleSoftwareTrace);
                    element.setIcon(REVERSE_TOGGLE_SOFTWARE_ON_IMAGE);
                } else {
-                   element.setTooltip(Messages.ReverseDebugging_ToggleReverseDebugging);
-                   HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "TraceOff"); //$NON-NLS-1$
-                   if (fLastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
-                       element.setIcon(REVERSE_TOGGLE_HARDWARE_OFF_IMAGE);
-                   } else if (fLastTraceMethod == ReverseTraceMethod.FULL_TRACE) {
-                       element.setIcon(REVERSE_TOGGLE_SOFTWARE_OFF_IMAGE);
-                   } else {
-                       element.setIcon(REVERSE_TOGGLE_DEFAULT_IMAGE);
-                   }
+					HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "TraceOff"); //$NON-NLS-1$
+					if (fLastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
+						element.setIcon(REVERSE_TOGGLE_HARDWARE_OFF_IMAGE);
+					} else if (fLastTraceMethod == ReverseTraceMethod.FULL_TRACE) {
+						element.setIcon(REVERSE_TOGGLE_SOFTWARE_OFF_IMAGE);
+					} else {
+						element.setIcon(REVERSE_TOGGLE_DEFAULT_IMAGE);
+					}		
+					
+					
+					boolean canExecute = 
+							((IChangeReverseMethodHandler)fTargetAdapter).isExecutable(new Object[] { fActiveContext });
+					if (canExecute) {
+						element.setTooltip(Messages.ReverseDebugging_ToggleReverseDebugging);
+					} else {
+						String message = ""; //$NON-NLS-1$
+//						if (getStatus() != null && getStatus().getMessage() != null) {
+//							message = getStatus().getMessage();
+//						}
+						element.setTooltip("CAN'T: " + message);
+					}
                }
            }
            catch(ExecutionException e){
-               // Do nothing
+        	   // Do nothing
            }
        }
    }

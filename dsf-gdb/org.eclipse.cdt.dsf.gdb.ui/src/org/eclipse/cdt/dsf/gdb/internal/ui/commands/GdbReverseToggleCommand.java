@@ -170,12 +170,15 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
         throws CoreException 
     {
-    	if (targets.length != 1) {
-    		return false;
-    	}
-    	
-    	IDMContext dmc = ((IDMVMContext)targets[0]).getDMContext();
-        final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
+        return isExecutable(targets);
+    }
+
+	public boolean isExecutable(Object[] targets) {
+		if (targets.length != 1) {
+			return false;
+		}
+		IDMContext dmc = ((IDMVMContext)targets[0]).getDMContext();
+		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
         final IExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IExecutionDMContext.class);
         if (controlDmc == null && execDmc == null) {
         	return false;
@@ -208,7 +211,7 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
         }
 
 		return false;
-    }
+	}
     
     @Override
 	protected Object getTarget(Object element) {

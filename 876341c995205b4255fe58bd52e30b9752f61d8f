@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_df0d3f46",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-29T21:15:23Z",
+      "side": 1,
+      "message": "No. As the one from ProcessRequestMonitor... run() might be from different DsfSession. More details bellow",
+      "parentUuid": "e7dfcf21_1c4b3580",
+      "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_1c7415bf",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2016-02-29T15:52:16Z",
       "side": 1,
       "message": "consider adding curly brackets for \"if\" and \"else\" blocks, even if not strictly required in this case?",
+      "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9f601703",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-29T21:15:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_1c7415bf",
       "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_ff083b35",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-29T21:15:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_3cfd51a4",
+      "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_1ce7b51f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2016-02-29T15:52:16Z",
       "side": 1,
       "message": "Could we re-use GdbConnectCommand\u0027s fTracker field instead of creating a new instance?",
+      "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7ffd0b79",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-02-29T21:15:23Z",
+      "side": 1,
+      "message": "This processes data requester is a special case as it is iterating across potentially different service implementations from within each selected DsfSession.\n \nServices (and their corresponding service trackers) are specific to each DsfSession. \n\nI have rename local variables to make it more clear on context of services.",
+      "parentUuid": "e7dfcf21_1ce7b51f",
       "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

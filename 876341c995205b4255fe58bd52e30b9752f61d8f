@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_1c4b3580",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-29T15:52:16Z",
+      "side": 1,
+      "message": "Keep a final reference to IGDBBackend here, and re-use that below, in run()?",
+      "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1c7415bf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-29T15:52:16Z",
+      "side": 1,
+      "message": "consider adding curly brackets for \"if\" and \"else\" blocks, even if not strictly required in this case?",
+      "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3cfd51a4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-29T15:52:16Z",
+      "side": 1,
+      "message": "Add a comment here to clarify the current limitations with remote sessions?  Maybe a link to the this entry? \nhttps://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d486408#c7 ?",
+      "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1ce7b51f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-02-29T15:52:16Z",
+      "side": 1,
+      "message": "Could we re-use GdbConnectCommand\u0027s fTracker field instead of creating a new instance?",
+      "revId": "876341c995205b4255fe58bd52e30b9752f61d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

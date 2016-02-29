@@ -97,12 +97,8 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 						if (fReverseTraceMethod != ReverseTraceMethod.STOP_TRACE) {
 							enabled = true;
 						}
-						setReverseModeEnabled(enabled );
+						setReverseModeEnabled(enabled);
 						rm.done();
-					}
-					@Override
-					public void handleFailure() {
-						rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Trace method could not be selected", null)); //$NON-NLS-1$
 					}
 				});
 			return;
@@ -114,6 +110,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 				@Override
 				public void handleSuccess() {
 					setReverseModeEnabled(false);
+					fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
 					getConnection().queueCommand(
 						fCommandFactory.createCLIRecord(context, traceMethod),
 						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
@@ -121,13 +118,6 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 							public void handleSuccess() {
 								fReverseTraceMethod = traceMethod;
 								setReverseModeEnabled(true);
-								rm.done();
-							}
-							@Override
-							public void handleFailure() {
-								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Trace method could not be selected", null)); //$NON-NLS-1$
-								setReverseModeEnabled(false);
-								fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
 								rm.done();
 							}
 						});

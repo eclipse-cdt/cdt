@@ -13,8 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -148,7 +147,6 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
-		List<IBinding> filtered = new ArrayList<>();
 
 		ICPPClassType classType = null;
 		if (getParent() instanceof CPPASTCompositeTypeSpecifier) {
@@ -159,7 +157,9 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 			}
 		}
 
-		for (IBinding binding : bindings) {
+		int j = 0;
+		for (int i = 0; i < bindings.length; i++) {
+			IBinding binding = bindings[i];
 			if (binding instanceof IType) {
 				IType type = (IType) binding;
 
@@ -173,15 +173,21 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 					if ((key == ICPPClassType.k_class || key == ICPPClassType.k_struct
 							|| type instanceof ICPPDeferredClassInstance || type instanceof ICPPUnknownMemberClass)
 							&& (classType == null || !type.isSameType(classType))) {
-						filtered.add(binding);
+						if (i != j)
+							bindings[j] = binding;
+						j++;
 					}
 				} else if (type instanceof ICPPTemplateTypeParameter) {
-					filtered.add(binding);
+					if (i != j)
+						bindings[j] = binding;
+					j++;
 				}
 			}
 		}
 
-		return filtered.toArray(new IBinding[filtered.size()]);
+		if (j < bindings.length)
+			return Arrays.copyOfRange(bindings, 0, j);
+		return bindings;
 	}
 
 	@Override

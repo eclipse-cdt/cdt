@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -31,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -144,22 +145,28 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 
 		CharArraySet baseClasses = null;
+		int j = 0;
 		for (int i = 0; i < bindings.length; i++) {
-			final IBinding b = bindings[i];
-			if ((b instanceof ICPPField) || (b instanceof ICPPNamespace)) {
-				// OK, keep binding.
-			} else if (b instanceof ICPPConstructor || b instanceof ICPPClassType) {
+			final IBinding binding = bindings[i];
+			if ((binding instanceof ICPPField) || (binding instanceof ICPPNamespace)) {
+				if (i != j)
+					bindings[j] = binding;
+				j++;
+			} else if (binding instanceof ICPPConstructor || binding instanceof ICPPClassType) {
 				if (baseClasses == null) 
 					baseClasses = getBaseClasses(n);
 				
-				if (!baseClasses.containsKey(b.getNameCharArray())) {
-					bindings[i] = null;
+				if (baseClasses.containsKey(binding.getNameCharArray())) {
+					if (i != j)
+						bindings[j] = binding;
+					j++;
 				}
-			} else {
-				bindings[i] = null;
 			}
 		}
-		return ArrayUtil.removeNulls(IBinding.class, bindings);
+
+		if (j < bindings.length)
+			return Arrays.copyOfRange(bindings, 0, j);
+		return bindings;
 	}
 
 	private CharArraySet getBaseClasses(IASTName name) {

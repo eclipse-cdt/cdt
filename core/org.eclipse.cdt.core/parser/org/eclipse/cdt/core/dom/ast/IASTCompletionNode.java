@@ -35,23 +35,16 @@ public interface IASTCompletionNode {
 
 	/**
 	 * Returns the length of the completion point.
-	 * 
-	 * @return length of completion token
 	 */
 	public int getLength();
 
 	/**
 	 * Returns a list of names that fit in this context.
-	 * 
-	 * @return array of IASTName's
 	 */
 	public IASTName[] getNames();
 
 	/**
-	 * Returns the translation unit for this completion
-	 * 
-	 * @return the translation unit
+	 * Returns the translation unit for this completion.
 	 */
 	public IASTTranslationUnit getTranslationUnit();
-
 }

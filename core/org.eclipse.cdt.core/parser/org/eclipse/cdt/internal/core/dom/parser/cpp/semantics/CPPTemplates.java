@@ -2910,7 +2910,7 @@ public class CPPTemplates {
 	            		if (result instanceof ICPPClassTemplate) {
 	            			result = instantiate((ICPPClassTemplate) result, args1, context.getPoint());
 	            		} else if (result instanceof ICPPAliasTemplate) {
-	            			result = createSpecialization(context.getContextClassSpecialization(), result,
+	            			result = instantiateAliasTemplate((ICPPAliasTemplate) result, args1,
 	            					context.getPoint());
 	            		}
 	            	}

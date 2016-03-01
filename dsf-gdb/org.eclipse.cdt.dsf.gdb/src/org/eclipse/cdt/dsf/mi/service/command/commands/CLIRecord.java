@@ -25,6 +25,9 @@ public class CLIRecord extends CLICommand<MIInfo> {
 	public CLIRecord(ICommandControlDMContext ctx, boolean enable) {
 		super(ctx, enable ? "record" : "record stop"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	public CLIRecord(ICommandControlDMContext ctx) {
+		super(ctx, "info record"); //$NON-NLS-1$
+	}
 
 	/** Only available for GDB >= 7.10 */
 	/** @since 5.0 */

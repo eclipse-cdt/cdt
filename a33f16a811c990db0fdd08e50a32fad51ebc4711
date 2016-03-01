@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_d0bfecf6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_10.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-01T15:56:18Z",
+      "side": 1,
+      "message": "remove \u0027return\u0027",
+      "revId": "a33f16a811c990db0fdd08e50a32fad51ebc4711",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f0c5c884",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_10.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-01T15:56:18Z",
+      "side": 1,
+      "message": "This calls done() on this, who\u0027s done has already been called.  If you look in your console you will notice\nan expception.  If there is no parent RM, you don\u0027 need to call done() at all.  Please remove.",
+      "revId": "a33f16a811c990db0fdd08e50a32fad51ebc4711",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_50cbdc95",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_10.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-01T15:56:18Z",
+      "side": 1,
+      "message": "Same comment as above.  There is nothing you can do about errors, unless you want to popup a dialog to tell the user.\nYou can use GdbStatusHandler.java to trigger an error/warning dialog in this case.",
+      "revId": "a33f16a811c990db0fdd08e50a32fad51ebc4711",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_70d9b869",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-01T15:56:18Z",
+      "side": 1,
+      "message": "Missing @since tag",
+      "revId": "a33f16a811c990db0fdd08e50a32fad51ebc4711",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d0d60c37",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIRecord.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-01T15:56:18Z",
+      "side": 1,
+      "message": "This is not the same command as the rest of the class.  Please create a new class and mimic CLIGDBVersion.java.",
+      "revId": "a33f16a811c990db0fdd08e50a32fad51ebc4711",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

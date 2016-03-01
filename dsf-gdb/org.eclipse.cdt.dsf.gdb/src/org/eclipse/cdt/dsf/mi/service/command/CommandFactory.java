@@ -190,6 +190,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressableSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
@@ -238,6 +239,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarSetFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowAttributesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIinfoRecord;
 import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
 
 /**
@@ -320,6 +322,11 @@ public class CommandFactory {
 	/** @since 5.0*/
 	public ICommand<MIInfo> createCLIRecord(ICommandControlDMContext ctx, ReverseTraceMethod traceMethod) {
 		return new CLIRecord(ctx, traceMethod);
+	}
+
+	/** @since 5.0*/
+	public ICommand<MIinfoRecord> createCLIInfoRecord(ICommandControlDMContext ctx) {
+		return new CLIInfoRecord(ctx);
 	}
 
 	/** @since 4.1 */

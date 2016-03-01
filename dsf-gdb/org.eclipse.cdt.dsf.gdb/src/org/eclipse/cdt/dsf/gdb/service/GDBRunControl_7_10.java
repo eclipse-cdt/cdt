@@ -16,12 +16,15 @@ import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTrace
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl2;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MINotifyAsyncOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -133,5 +136,43 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 						});
 				}
 			});
+	}
+
+
+	@Override
+	public void eventReceived(Object output) {
+		if (output instanceof MIOutput) {
+			MIOOBRecord[] records = ((MIOutput)output).getMIOOBRecords();
+			for (MIOOBRecord r : records) {
+				if (r instanceof MINotifyAsyncOutput) {
+					MINotifyAsyncOutput notifyOutput = (MINotifyAsyncOutput)r;
+					String asyncClass = notifyOutput.getAsyncClass();
+					// These events have been added with GDB 7.6
+					if ("record-started".equals(asyncClass) || //$NON-NLS-1$
+						"record-stopped".equals(asyncClass)) {	 //$NON-NLS-1$
+						if ("record-stopped".equals(asyncClass)) { //$NON-NLS-1$
+							fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
+							setReverseModeEnabled(false);
+						} else {
+							getConnection().queueCommand(
+								fCommandFactory.createCLIInfoRecord(getConnection().getContext()),
+								new DataRequestMonitor<CLIInfoRecordInfo>(getExecutor(), null) {
+									@Override
+									public void handleCompleted() {
+										if (isSuccess()) {
+											CLIInfoRecordInfo output = getData();
+											fReverseTraceMethod = output.getReverseMethod();
+											setReverseModeEnabled(true);
+										}
+										else {
+											fReverseTraceMethod = ReverseTraceMethod.FULL_TRACE;
+										}
+									}
+								});
+						}
+					}
+				}
+			}
+		}
 	}
 }

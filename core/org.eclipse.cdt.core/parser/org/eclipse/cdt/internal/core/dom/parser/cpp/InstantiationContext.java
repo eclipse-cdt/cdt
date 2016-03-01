@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 /**
  * Represents parameters and state of template instantiation.
  */
-public class InstantiationContext {
+public final class InstantiationContext {
 	private CPPTemplateParameterMap parameterMap;
 	private int packOffset;
 	private final ICPPTypeSpecialization contextTypeSpecialization;
@@ -78,14 +78,14 @@ public class InstantiationContext {
 	 * Returns the mapping of template parameters to arguments, possibly {@code null} if the context doesn't
 	 * contain it.
 	 */
-	public final ICPPTemplateParameterMap getParameterMap() {
+	public ICPPTemplateParameterMap getParameterMap() {
 		return parameterMap;
 	}
 
 	/**
 	 * Adds a parameter mapping.
 	 */
-	public final void addToParameterMap(ICPPTemplateParameter par, ICPPTemplateArgument arg) {
+	public void addToParameterMap(ICPPTemplateParameter par, ICPPTemplateArgument arg) {
 		if (parameterMap == null) {
 			parameterMap = new CPPTemplateParameterMap(1);
 		}
@@ -95,7 +95,7 @@ public class InstantiationContext {
 	/**
 	 * Adds a parameter mapping.
 	 */
-	public final void addToParameterMap(ICPPTemplateParameter par, ICPPTemplateArgument[] args) {
+	public void addToParameterMap(ICPPTemplateParameter par, ICPPTemplateArgument[] args) {
 		if (parameterMap == null) {
 			parameterMap = new CPPTemplateParameterMap(1);
 		}
@@ -105,7 +105,7 @@ public class InstantiationContext {
 	/**
 	 * Puts all mappings from the supplied map into the parameter map of the context.
 	 */
-	public final void addToParameterMap(ICPPTemplateParameterMap toAdd) {
+	public void addToParameterMap(ICPPTemplateParameterMap toAdd) {
 		if (parameterMap == null) {
 			parameterMap = new CPPTemplateParameterMap((CPPTemplateParameterMap) toAdd);
 		} else {
@@ -117,7 +117,7 @@ public class InstantiationContext {
 	 * Returns the type specialization if instantiation happens inside a specialized type, otherwise
 	 * {@code null}.
 	 */
-	public final ICPPTypeSpecialization getContextTypeSpecialization() {
+	public ICPPTypeSpecialization getContextTypeSpecialization() {
 		return contextTypeSpecialization;
 	}
 
@@ -132,21 +132,21 @@ public class InstantiationContext {
 	/**
 	 * Returns the point of instantiation
 	 */
-	public final IASTNode getPoint() {
+	public IASTNode getPoint() {
 		return point;
 	}
 
 	/**
 	 * Returns {@code true} if the pack offset is specified.
 	 */
-	public final boolean hasPackOffset() {
+	public boolean hasPackOffset() {
 		return packOffset != -1;
 	}
 
 	/**
 	 * Returns the pack offset if specified, otherwise -1.
 	 */
-	public final int getPackOffset() {
+	public int getPackOffset() {
 		return packOffset;
 	}
 

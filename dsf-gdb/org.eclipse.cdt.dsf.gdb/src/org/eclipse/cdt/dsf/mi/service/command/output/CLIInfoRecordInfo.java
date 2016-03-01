@@ -1,0 +1,76 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - Added Reverse Debugging BTrace support
+ *******************************************************************************/
+package org.eclipse.cdt.dsf.mi.service.command.output;
+
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIConsoleStreamOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
+
+/**
+ * 'info record' returns the selected reverse trace method.
+ * 
+ * sample output: 
+ *
+ * (gdb) info record
+ * ~ Active record target: record-btrace
+ * ~ Recording format: Branch Trace Store.
+ * ~ Buffer size: 64kB.
+ * ~ Recorded 0 instructions in 0 functions (0 gaps) for thread 1 (process 24645).
+ * 
+ * @since 5.0
+ */
+
+public class CLIInfoRecordInfo extends MIInfo {
+
+	private ReverseTraceMethod fReverseMethod;
+	
+	public CLIInfoRecordInfo(MIOutput record) {
+		super(record);
+		parse();
+	}
+
+	protected void parse() {
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIOOBRecord[] records = out.getMIOOBRecords();
+			StringBuilder builder = new StringBuilder();
+			for(MIOOBRecord rec : records) {
+                if (rec instanceof MIConsoleStreamOutput) {
+                    MIStreamRecord o = (MIStreamRecord)rec;
+                    builder.append(o.getString());
+                }
+			}
+			parseReverseMethod(builder.toString());
+		}
+	}
+
+	protected void parseReverseMethod(String output) {
+		if (output.toString().contains("Processor")) { //$NON-NLS-1$
+			fReverseMethod = ReverseTraceMethod.PROCESSOR_TRACE;
+		}
+    	else if (output.toString().contains("Branch")) { //$NON-NLS-1$
+    		fReverseMethod = ReverseTraceMethod.BRANCH_TRACE;
+    	}
+    	else if (output.toString().contains("full")) { //$NON-NLS-1$
+    		fReverseMethod = ReverseTraceMethod.FULL_TRACE;
+    	}
+    	else {
+    		fReverseMethod = ReverseTraceMethod.STOP_TRACE;
+    	}
+	}
+
+	public ReverseTraceMethod getReverseMethod() {
+		return fReverseMethod;
+	}
+}

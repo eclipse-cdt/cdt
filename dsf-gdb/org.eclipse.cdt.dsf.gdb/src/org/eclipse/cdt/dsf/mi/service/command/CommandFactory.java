@@ -54,6 +54,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIDetach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIExecAbort;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoBreak;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoProgram;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoRecord;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoSharedLibrary;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoThreads;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
@@ -238,6 +239,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarSetFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowAttributesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
 import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
 
 /**
@@ -286,6 +288,11 @@ public class CommandFactory {
 
 	public ICommand<CLIInfoProgramInfo> createCLIInfoProgram(IContainerDMContext ctx) {
 		return new CLIInfoProgram(ctx);
+	}
+
+	/** @since 5.0*/
+	public ICommand<CLIInfoRecordInfo> createCLIInfoRecord(ICommandControlDMContext ctx) {
+		return new CLIInfoRecord(ctx);
 	}
 
 	public ICommand<CLIInfoSharedLibraryInfo> createCLIInfoSharedLibrary(ISymbolDMContext ctx) {

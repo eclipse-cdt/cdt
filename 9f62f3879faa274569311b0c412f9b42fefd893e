@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_9f99f702",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2915,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-03-01T03:37:08Z",
+      "side": 1,
+      "message": "Yes.",
+      "range": {
+        "startLine": 2915,
+        "startChar": 38,
+        "endLine": 2915,
+        "endChar": 81
+      },
+      "revId": "9f62f3879faa274569311b0c412f9b42fefd893e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

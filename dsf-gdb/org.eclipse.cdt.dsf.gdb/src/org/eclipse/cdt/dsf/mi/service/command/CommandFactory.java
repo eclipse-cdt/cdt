@@ -322,6 +322,10 @@ public class CommandFactory {
 		return new CLIRecord(ctx, traceMethod);
 	}
 
+	public ICommand<MIInfo> createCLIRecord(ICommandControlDMContext ctx) {
+		return new CLIRecord(ctx);
+	}
+
 	/** @since 4.1 */
 	public ICommand<MIInfo> createCLIRemoteGet(ICommandControlDMContext ctx, String remoteFile, String localFile) {
 		return new CLIRemoteGet(ctx, remoteFile, localFile);

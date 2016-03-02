@@ -327,13 +327,6 @@ public final class RSEInitJob extends Job {
 	 * @throws InterruptedException if the job is interrupted while waiting.
 	 */
 	public IStatus waitForCompletion() throws InterruptedException {
-		RSEInitJob j = getInstance();
-		synchronized(j){
-			if (!_isStarted){
-				j.schedule();
-				_isStarted = true; // make sure no one else schedules this
-			}
-		}
 		waitForCompletion(RSECorePlugin.INIT_ALL);
 		return getResult();
 	}
@@ -348,6 +341,15 @@ public final class RSEInitJob extends Job {
 	 */
 	public IStatus waitForCompletion(int phase) throws InterruptedException {
 		IStatus result = Status.OK_STATUS;
+		RSEInitJob j = getInstance();
+
+		synchronized (j) {
+			if (!_isStarted) {
+				j.schedule();
+				_isStarted = true; // make sure no one else schedules this
+			}
+		}
+
 		switch (phase) {
 		case RSECorePlugin.INIT_MODEL:
 			result = modelPhase.waitForCompletion();

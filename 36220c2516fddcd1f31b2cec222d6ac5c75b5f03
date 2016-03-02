@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_4a508b56",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-02T16:18:05Z",
+      "side": 1,
+      "message": "update this comment to reflect new feature?",
+      "revId": "36220c2516fddcd1f31b2cec222d6ac5c75b5f03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_53468376",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-02T16:18:05Z",
+      "side": 1,
+      "message": "I would suggest to change this line to \n\"Shell shell \u003d PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();\"\nsee: bug 488874",
+      "revId": "36220c2516fddcd1f31b2cec222d6ac5c75b5f03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_aab82f31",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-02T16:18:05Z",
+      "side": 1,
+      "message": "It seems it would be better to print the process name instead of the pid here, or maybe both.",
+      "revId": "36220c2516fddcd1f31b2cec222d6ac5c75b5f03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8a345366",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/AttachProcessHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-02T16:18:05Z",
+      "side": 1,
+      "message": "With an older GDB (7.9) in a remote session (so the case where we can\u0027t attach without a binary), I get an assertion here when cancelling the \"choose binary for process $pid\" dialog. (attaching through OS Resources view). The assertion disappears if I call rm.cancel() first.\n\norg.eclipse.swt.SWTException: Failed to execute runnable (java.lang.AssertionError)\n\tat org.eclipse.swt.SWT.error(SWT.java:4522)\n\tat org.eclipse.swt.SWT.error(SWT.java:4437)\n\tat org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:185)\n\tat org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:3807)\n\tat org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3446)\n\tat org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$4.run(PartRenderingEngine.java:1118)\n\tat org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:336)\n\tat org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1019)\n\tat org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:157)\n\tat org.eclipse.ui.internal.Workbench$5.run(Workbench.java:691)\n\tat org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:336)\n\tat org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:604)\n\tat org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:150)\n\tat org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:138)\n\tat org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)\n\tat org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:134)\n\tat org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)\n\tat org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:388)\n\tat org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:243)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:497)\n\tat org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:670)\n\tat org.eclipse.equinox.launcher.Main.basicRun(Main.java:609)\n\tat org.eclipse.equinox.launcher.Main.run(Main.java:1516)\n\tat org.eclipse.equinox.launcher.Main.main(Main.java:1489)\nCaused by: java.lang.AssertionError\n\tat org.eclipse.cdt.dsf.concurrent.RequestMonitor.setStatus(RequestMonitor.java:175)\n\tat org.eclipse.cdt.dsf.concurrent.RequestMonitor.done(RequestMonitor.java:338)\n\tat org.eclipse.cdt.dsf.gdb.internal.ui.osview.AttachProcessHandler$4$2$1.run(AttachProcessHandler.java:255)\n\tat org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)\n\tat org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:182)\n\t... 24 more",
+      "revId": "36220c2516fddcd1f31b2cec222d6ac5c75b5f03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

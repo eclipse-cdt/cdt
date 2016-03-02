@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_367485bf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2016-03-02T20:22:47Z",
+      "side": 1,
+      "message": "I think you should use GdbUIPlugin.getShell() \nIt is also already used in GdbDebugNewExecutableCommand.",
+      "range": {
+        "startLine": 218,
+        "startChar": 0,
+        "endLine": 218,
+        "endChar": 7
+      },
+      "revId": "dccc2f9ce399f0d5a3ac54171c9e471472a18c5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

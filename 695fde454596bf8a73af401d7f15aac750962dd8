@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_c0c2b7cd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_10.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-02T14:05:04Z",
+      "side": 1,
+      "message": "In this case and in the below you need to also call setReverseModeEnabled() to keep that\nsetting consistant.  That call will send the event for you.\nAnother option which could be more future-proof would be to call super.eventReceived(output)\nafter you\u0027ve done the special logic necessary in this class.",
+      "revId": "695fde454596bf8a73af401d7f15aac750962dd8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_40294739",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-02T14:05:04Z",
+      "side": 1,
+      "message": "Please move up to be in aphabetical order. This is the only class where we require that.",
+      "revId": "695fde454596bf8a73af401d7f15aac750962dd8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_a0692b71",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIInfoRecord.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-02T14:05:04Z",
+      "side": 1,
+      "message": "Please extend MIInterpreterExecConsole instead of CLICommand.  \nThis will turn this command into an MI command for GDB, which allows us to pass it MI flags\t\nYOu can mimic CLIShowEndian.java",
+      "revId": "695fde454596bf8a73af401d7f15aac750962dd8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c070f751",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIinfoRecord.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-02T14:05:04Z",
+      "side": 1,
+      "message": "Please add some javadoc to show sample ouput.  You can immitate CLIShowEndianInfo.java",
+      "revId": "695fde454596bf8a73af401d7f15aac750962dd8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_202a7b30",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIinfoRecord.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-02T14:05:04Z",
+      "side": 1,
+      "message": "This class should be called CLIInfoRecordInfo to follow convention.  It is parsing CLI output not MI output.",
+      "revId": "695fde454596bf8a73af401d7f15aac750962dd8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_804d0f1b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIinfoRecord.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-02T14:05:04Z",
+      "side": 1,
+      "message": "Please always use {} even for single statements",
+      "revId": "695fde454596bf8a73af401d7f15aac750962dd8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_0061ff7a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIinfoRecord.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-02T14:05:04Z",
+      "side": 1,
+      "message": "You should probably handle the case where recording is off.\nAlthough you don\u0027t use this command in this case, it could be used\nby others.",
+      "revId": "695fde454596bf8a73af401d7f15aac750962dd8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

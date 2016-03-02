@@ -2807,17 +2807,7 @@
          </command>
       </menuContribution>
       
-      <!-- Connect contributions to debug view menu, toolbar menu -->
-      <menuContribution
-            locationURI="toolbar:org.eclipse.debug.ui.DebugView?before=stepGroup">
-         <command
-               commandId="org.eclipse.cdt.debug.ui.command.connect"
-               icon="icons/obj16/connect.gif"
-               label="%Connect.label"
-               style="push"
-               tooltip="%Connect.tooltip">
-         </command>
-      </menuContribution>
+      <!-- Connect contributions to debug view menu -->
       <menuContribution
           locationURI="popup:org.eclipse.debug.ui.DebugView?before=emptyLaunchGroup">
          <command

@@ -22,6 +22,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.TextConsole;
 
 /**
@@ -62,12 +64,13 @@ public class ConsoleSaveAction extends Action{
 	 * @param fileName The fileName of the File to save to
 	 */
 	protected void saveContent(String fileName) 	{
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		try {
 			boolean confirmed = true;
 			
 			File file = new File(fileName);
 			if(file.exists()) {
-				confirmed = MessageDialog.openQuestion(Display.getCurrent().getActiveShell(), 
+				confirmed = MessageDialog.openQuestion(shell, 
 						ConsoleMessages.ConsoleMessages_save_confirm_overwrite_title, 
 						ConsoleMessages.ConsoleMessages_save_confirm_overwrite_desc);
 			}
@@ -77,7 +80,7 @@ public class ConsoleSaveAction extends Action{
 				out.close();
 			}
 		} catch (IOException e) {
-			MessageDialog.openError(Display.getCurrent().getActiveShell(),
+			MessageDialog.openError(shell,
 					ConsoleMessages.ConsoleMessages_save_info_io_error_title, 
 					ConsoleMessages.ConsoleMessages_save_info_io_error_desc);
 		}

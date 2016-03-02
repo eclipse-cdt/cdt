@@ -111,7 +111,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private static final String TYPENAME = "typename"; //$NON-NLS-1$;
 	private static final String ELLIPSIS = "..."; //$NON-NLS-1$;
 	private String fPrefix;
-	private ArrayList<IBinding> fAvailableElements;
+	private List<IBinding> fAvailableElements;
 
 	/**
 	 * Default constructor is required (executable extension).
@@ -121,8 +121,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 
 	@Override
-	protected List<ICompletionProposal> computeCompletionProposals(
-			CContentAssistInvocationContext context,
+	protected List<ICompletionProposal> computeCompletionProposals(CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) {
 		fPrefix = prefix;
 		initializeDefinedElements(context);
@@ -130,7 +129,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		if (inPreprocessorDirective(context)) {
 			if (!inPreprocessorKeyword(context)) {
-				// add only macros
+				// Add only macros.
 				if (prefix.length() == 0) {
 					try {
 						prefix= context.computeIdentifierPrefix().toString();
@@ -146,7 +145,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 			for (IASTName name : names) {
 				if (name.getTranslationUnit() == null)
-					// The node isn't properly hooked up, must have backtracked out of this node
+					// The node isn't properly hooked up, must have backtracked out of this node.
 					continue;
 
 				IASTCompletionContext astContext = name.getCompletionContext();
@@ -154,7 +153,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					continue;
 				} else if (astContext instanceof IASTIdExpression
 						|| astContext instanceof IASTNamedTypeSpecifier) {
-					// handle macros only if there is a prefix
+					// Handle macros only if there is a prefix.
 					handleMacros = prefix.length() > 0;
 				}
 
@@ -192,12 +191,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
 				String ppPrefix= doc.get(partition.getOffset(), offset - partition.getOffset());
 				if (ppPrefix.matches("\\s*#\\s*\\w*")) { //$NON-NLS-1$
-					// we are inside the directive keyword
+					// We are inside the directive keyword.
 					return true;
 				}
 			}
 
-		} catch (BadLocationException exc) {
+		} catch (BadLocationException e) {
 		}
 		return false;
 	}
@@ -205,7 +204,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	/**
 	 * Check if the invocation offset is inside a preprocessor directive.
 	 *
-	 * @param context  the content asist invocation context
+	 * @param context  the content assist invocation context
 	 * @return <code>true</code> if invocation offset is inside a preprocessor directive
 	 */
 	private boolean inPreprocessorDirective(CContentAssistInvocationContext context) {
@@ -239,7 +238,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			char[] prefixChars= prefix.toCharArray();
 			final boolean matchPrefix= !context.isContextInformationStyle();
 			if (matchPrefix) {
-				IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(prefixChars);
+				IContentAssistMatcher matcher =
+						ContentAssistMatcherFactory.getInstance().createMatcher(prefixChars);
 				for (int i = 0; i < macros.length; ++i) {
 					final char[] macroName= macros[i].getName().toCharArray();
 					if (matcher.match(macroName)) {
@@ -304,8 +304,9 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				}
 			}
 
-			if (argString.length() > 0) {
-				CProposalContextInformation info = new CProposalContextInformation(image, descString, argString);
+			if (!argString.isEmpty()) {
+				CProposalContextInformation info =
+						new CProposalContextInformation(image, descString, argString);
 				info.setContextInformationPosition(context.getContextInformationOffset());
 				proposal.setContextInformation(info);
 			}
@@ -366,8 +367,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return name.length == 0 || name[0] == '{';
 	}
 
-	private void addProposalForClassTemplate(ICPPClassTemplate templateType, CContentAssistInvocationContext context,
-			int baseRelevance, List<ICompletionProposal> proposals) {
+	private void addProposalForClassTemplate(ICPPClassTemplate templateType,
+			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		int relevance = getClassTypeRelevance(templateType);
 		StringBuilder representation = new StringBuilder(templateType.getName());
 		boolean inUsingDeclaration = context.isInUsingDirective();
@@ -384,8 +385,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				baseRelevance + relevance, context);
 
 		if (!inUsingDeclaration) {
-			CProposalContextInformation info =
-					new CProposalContextInformation(getImage(templateType), displayString, templateParameterRepresentation);
+			CProposalContextInformation info = new CProposalContextInformation(
+					getImage(templateType), displayString, templateParameterRepresentation);
 			info.setContextInformationPosition(context.getContextInformationOffset());
 			proposal.setContextInformation(info);
 			if (!context.isContextInformationStyle()) {
@@ -418,8 +419,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			} else if (parameter instanceof ICPPTemplateTypeParameter) {
 				representation.append(TYPENAME);
 			} else if (parameter instanceof ICPPTemplateTemplateParameter) {
-				String templateParameterParameters = buildTemplateParameters((ICPPTemplateTemplateParameter) parameter, context);
-				representation.append(MessageFormat.format(TEMPLATE_PARAMETER_PATTERN, templateParameterParameters));
+				String templateParameterParameters =
+						buildTemplateParameters((ICPPTemplateTemplateParameter) parameter, context);
+				representation.append(
+						MessageFormat.format(TEMPLATE_PARAMETER_PATTERN, templateParameterParameters));
 				representation.append(templateParameterParameters);
 			}
 			if (parameter.isParameterPack()) {
@@ -428,11 +431,13 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			representation.append(' ');
 			representation.append(parameter.getName());
 			if (addDefaultArguments && defaultValue != null) {
-				String defaultArgumentRepresentation = MessageFormat.format(DEFAULT_ARGUMENT_PATTERN, defaultValue);
+				String defaultArgumentRepresentation =
+						MessageFormat.format(DEFAULT_ARGUMENT_PATTERN, defaultValue);
 				for (int parameterIndex = 0; parameterIndex < i; parameterIndex++) {
 					String templateArgumentID = HASH + parameterIndex;
 					String templateArgumentValue = parameters[parameterIndex].getName();
-					defaultArgumentRepresentation = defaultArgumentRepresentation.replaceAll(templateArgumentID, templateArgumentValue);
+					defaultArgumentRepresentation =
+							defaultArgumentRepresentation.replaceAll(templateArgumentID, templateArgumentValue);
 				}
 				representation.append(defaultArgumentRepresentation);
 			}
@@ -493,8 +498,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		repStringBuff.append('(');
 
-		StringBuilder dispargs = new StringBuilder(); // for the dispargString
-		StringBuilder idargs = new StringBuilder();   // for the idargString
+		StringBuilder dispArgs = new StringBuilder(); // for the dispargString
+		StringBuilder idArgs = new StringBuilder();   // for the idargString
 		boolean hasArgs = true;
 		String returnTypeStr = null;
 		IParameter[] params = function.getParameters();
@@ -507,35 +512,36 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				}
 				IType paramType = param.getType();
 				if (i > 0) {
-					dispargs.append(parameterDelimiter);
-					idargs.append(parameterDelimiter);
+					dispArgs.append(parameterDelimiter);
+					idArgs.append(parameterDelimiter);
 				}
 
-				dispargs.append(ASTTypeUtil.getType(paramType, false));
-				idargs.append(ASTTypeUtil.getType(paramType, false));
+				dispArgs.append(ASTTypeUtil.getType(paramType, false));
+				idArgs.append(ASTTypeUtil.getType(paramType, false));
 				String paramName = param.getName();
 				if (paramName != null && paramName.length() > 0) {
-					dispargs.append(' ');
-					dispargs.append(paramName);
+					dispArgs.append(' ');
+					dispArgs.append(paramName);
 				}
 				if (param instanceof ICPPParameter) {
 					ICPPParameter cppParam = (ICPPParameter) param;
 					if (cppParam.hasDefaultValue() && isDisplayDefaultArguments()) {
-						dispargs.append(MessageFormat.format(DEFAULT_ARGUMENT_PATTERN, cppParam.getDefaultValue()));
+						dispArgs.append(
+								MessageFormat.format(DEFAULT_ARGUMENT_PATTERN, cppParam.getDefaultValue()));
 					}
 				}
 			}
 
 			if (function.takesVarArgs()) {
-				if (params.length > 0) {
-					dispargs.append(parameterDelimiter);
-					idargs.append(parameterDelimiter);
+				if (params.length != 0) {
+					dispArgs.append(parameterDelimiter);
+					idArgs.append(parameterDelimiter);
 				}
-				dispargs.append("..."); //$NON-NLS-1$
-				idargs.append("..."); //$NON-NLS-1$
+				dispArgs.append("..."); //$NON-NLS-1$
+				idArgs.append("..."); //$NON-NLS-1$
 			} else if (params.length == 0) { // force the void in
-				dispargs.append("void"); //$NON-NLS-1$
-				idargs.append("void"); //$NON-NLS-1$
+				dispArgs.append("void"); //$NON-NLS-1$
+				idArgs.append("void"); //$NON-NLS-1$
 			}
 		}
 		IFunctionType functionType = function.getType();
@@ -547,20 +553,20 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		hasArgs = ASTTypeUtil.functionTakesParameters(function);
 
-        String dispargString = dispargs.toString();
-        String idargString = idargs.toString();
-		String contextDispargString = hasArgs ? dispargString : null;
+        String dispArgString = dispArgs.toString();
+        String idArgString = idArgs.toString();
+		String contextDispargString = hasArgs ? dispArgString : null;
         StringBuilder dispStringBuff = new StringBuilder(repStringBuff);
-		dispStringBuff.append(dispargString);
+		dispStringBuff.append(dispArgString);
         dispStringBuff.append(')');
-        if (returnTypeStr != null && returnTypeStr.length() > 0) {
+        if (returnTypeStr != null && !returnTypeStr.isEmpty()) {
             dispStringBuff.append(" : "); //$NON-NLS-1$
             dispStringBuff.append(returnTypeStr);
         }
         String dispString = dispStringBuff.toString();
 
         StringBuilder idStringBuff = new StringBuilder(repStringBuff);
-        idStringBuff.append(idargString);
+        idStringBuff.append(idArgString);
         idStringBuff.append(')');
         String idString = idStringBuff.toString();
 
@@ -584,7 +590,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		CCompletionProposal proposal = createProposal(repString, dispString, idString,
 				context.getCompletionNode().getLength(), image, baseRelevance + relevance, context);
 		if (!context.isContextInformationStyle()) {
-			int cursorPosition = (!inUsingDeclaration && hasArgs) ? (repString.length() - 1) : repString.length();
+			int cursorPosition = !inUsingDeclaration && hasArgs ?
+					repString.length() - 1 : repString.length();
 			proposal.setCursorPosition(cursorPosition);
 		}
 
@@ -596,18 +603,21 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 
 		/*
-		 * The ParameterGuessingProposal will be active if the function accepts parameters and the content assist is
-		 * invoked before typing any parameters. Otherwise, the normal Parameter Hint Proposal will be added.
+		 * The ParameterGuessingProposal will be active if the function accepts parameters and the content
+		 * assist is invoked before typing any parameters. Otherwise, the normal parameter hint proposal will
+		 * be added.
 		 */
-		if (function.getParameters() != null && function.getParameters().length > 0 && isBeforeParameters(context)) {
-			proposals.add(ParameterGuessingProposal.createProposal(context, fAvailableElements, proposal, function, fPrefix));
+		if (function.getParameters() != null && function.getParameters().length != 0
+				&& isBeforeParameters(context)) {
+			proposals.add(ParameterGuessingProposal.createProposal(context, fAvailableElements, proposal,
+					function, fPrefix));
 		} else {
 			proposals.add(proposal);
 		}
 	}
 
 	/**
-	 * Returns true if the invocation is at the function name or before typing any parameters
+	 * Returns true if the invocation is at the function name or before typing any parameters.
 	 */
 	private boolean isBeforeParameters(CContentAssistInvocationContext context) {
 		/*
@@ -637,7 +647,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 
 	/**
-	 * Initializes the list of defined elements at the start of the current statement.
+	 * Initializes the list of variables accessible at the start of the current statement.
 	 */
 	private void initializeDefinedElements(CContentAssistInvocationContext context) {
 		/*
@@ -804,8 +814,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			CContentAssistInvocationContext cContext, int baseRelevance,
 			List<ICompletionProposal> proposals) {
 		if (astContext instanceof ICPPASTQualifiedName) {
-			IASTCompletionContext parent = ((ICPPASTQualifiedName) astContext)
-					.getCompletionContext();
+			IASTCompletionContext parent = ((ICPPASTQualifiedName) astContext).getCompletionContext();
 			handleNamespace(namespace, parent, cContext, baseRelevance, proposals);
 			return;
 		}
@@ -904,7 +913,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
 		} else if (binding instanceof ICPPUsingDeclaration) {
 			IBinding[] delegates = ((ICPPUsingDeclaration) binding).getDelegates();
-			if (delegates.length > 0)
+			if (delegates.length != 0)
 				return getImage(delegates[0]);
 		}
 

@@ -16,6 +16,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
+import static org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS;
+import static org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_TEMPLATE_PARAMETERS;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,7 +39,6 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -56,9 +58,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.ParameterGuessingProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
-	public static enum CompareType {
-		ID, DISPLAY, REPLACEMENT, CONTEXT, INFORMATION
-	}
+	public static enum CompareType { ID, DISPLAY, REPLACEMENT, CONTEXT, INFORMATION	}
 
 	private class ContentAssistResult {
 		long startTime;
@@ -102,7 +102,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	}
 
 	/**
-	 * Setup the project's content.
+	 * Sets up the project's content.
 	 * @param project
 	 * @return  the file to be opened in the editor
 	 */
@@ -123,9 +123,8 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	private ContentAssistResult invokeContentAssist(int offset, int length,
-			boolean isCompletion, boolean isTemplate, boolean filterResults)
-					throws Exception {
+	private ContentAssistResult invokeContentAssist(int offset, int length, boolean isCompletion,
+			boolean isTemplate, boolean filterResults) throws Exception {
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("\n\n\n\n\nTesting " + this.getClass().getName());
 		}
@@ -158,9 +157,8 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return new ContentAssistResult(startTime, endTime, results);
 	}
 
-	protected void assertContentAssistResults(int offset, int length,
-			String[] expected, boolean isCompletion, boolean isTemplate,
-			boolean filterResults, CompareType compareType) throws Exception {
+	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion,
+			boolean isTemplate, boolean filterResults, CompareType compareType) throws Exception {
 		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
 
 		String[] resultStrings= toStringArray(r.results, compareType);
@@ -204,7 +202,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 	protected void assertContentAssistResults(int offset, int length, Map<String, String[][]> expected,
 			boolean isCompletion, boolean isTemplate, boolean filterResults, CompareType compareType)
-					throws Exception {
+			throws Exception {
 		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
 		Map<String, String[][]> resultMap = toMap(r.results, compareType);
 
@@ -242,8 +240,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		}
 	}
 
-	private Map<String, String[][]> toMap(Object[] results,
-			CompareType compareType) {
+	private Map<String, String[][]> toMap(Object[] results, CompareType compareType) {
 		Map<String, String[][]> resultsMap = new HashMap<>();
 		for (Object result : results) {
 			switch (compareType) {
@@ -273,16 +270,19 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return resultsMap;
 	}
 
-	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, CompareType compareType) throws Exception {
+	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion,
+			boolean isTemplate, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, length, expected, isCompletion, isTemplate, true, compareType);
 	}
 
-	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, CompareType compareType) throws Exception {
+	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion,
+			CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, 0, expected, isCompletion, false, compareType);
 	}
 
 	/**
 	 * Filter out template and keyword proposals.
+	 *
 	 * @param results
 	 * @param isCodeCompletion  completion is in code, not preprocessor, etc.
 	 * @return filtered proposals
@@ -386,14 +386,14 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	}
 
 	/**
-	 * @return  the content of the editor buffer
+	 * Returns the content of the editor buffer
 	 */
 	protected String getBuffer() {
 		return getDocument().get();
 	}
 	
 	/**
-	 * @return  the editor document
+	 * Returns the editor document
 	 */
 	protected IDocument getDocument() {
 		return EditorTestHelper.getDocument(fEditor);
@@ -401,11 +401,10 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 	protected void setCommaAfterFunctionParameter(String value) {
 		fCProject.setOption(
-				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS, value);
+				FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS, value);
 	}
 
 	protected void setCommaAfterTemplateParameter(String value) {
-		fCProject.setOption(
-				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_TEMPLATE_PARAMETERS, value);
+		fCProject.setOption(FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_TEMPLATE_PARAMETERS, value);
 	}
 }

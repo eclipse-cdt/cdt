@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -56,18 +57,18 @@ import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
  * with a list of suggestions for each parameter.
  */
 public class ParameterGuessingProposal extends FunctionCompletionProposal {
-	private ICompletionProposal[][] fChoices; // initialized by guessParameters()
-	private Position[] fPositions; // initialized by guessParameters()
-	private IRegion fSelectedRegion; // initialized by apply()
+	private ICompletionProposal[][] fChoices;  // Initialized by guessParameters()
+	private Position[] fPositions;             // Initialized by guessParameters()
+	private IRegion fSelectedRegion;           // Initialized by apply()
 	private IPositionUpdater fUpdater;
-	private String fFullPrefix; // The string from the start of the statement to the invocation offset.
+	private String fFullPrefix;  // The string from the start of the statement to the invocation offset.
 	private CEditor fCEditor;
 	private char[][] fParametersNames;
 	private IType[] fParametersTypes;
-	private ArrayList<IBinding> fAssignableElements;
+	private List<IBinding> fAssignableElements;
 
 	public static ParameterGuessingProposal createProposal(CContentAssistInvocationContext context,
-			ArrayList<IBinding> availableElements, CCompletionProposal proposal, IFunction function,
+			List<IBinding> availableElements, CCompletionProposal proposal, IFunction function,
 			String prefix) {
 		String replacement = getParametersList(function);
 		String fullPrefix = function.getName() + "("; //$NON-NLS-1$
@@ -92,7 +93,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 			} catch (BadLocationException e1) {
 			}
 			try {
-				// remove ')' from the replacement string if it is auto appended.
+				// Remove ')' from the replacement string if it is auto appended.
 				if (document.getChar(invocationOffset) == ')')
 					replacement = replacement.substring(0, replacement.length() - 1);
 			} catch (BadLocationException e) {
@@ -133,7 +134,8 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 
 	public ParameterGuessingProposal(String replacementString, int replacementOffset, int replacementLength,
 			Image image, String displayString, String idString, int relevance, ITextViewer viewer,
-			IFunction function, int invocationOffset, int parseOffset, ITranslationUnit tu, IDocument document) {
+			IFunction function, int invocationOffset, int parseOffset, ITranslationUnit tu,
+			IDocument document) {
 		super(replacementString, replacementOffset, replacementLength, image, displayString, idString,
 				relevance, viewer, function, invocationOffset, parseOffset, tu, document);
 	}
@@ -145,9 +147,6 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		return invocationOffset - parseOffset != 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		if (isInsideBracket(fInvocationOffset, fParseOffset)) {
@@ -163,7 +162,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	public void apply(final IDocument document, char trigger, int offset) {
 		super.apply(document, trigger, offset);
 
-		// Initialize necessary fields
+		// Initialize necessary fields.
 		fParametersNames = getFunctionParametersNames(fFunctionParameters);
 		fParametersTypes = getFunctionParametersTypes(fFunctionParameters);
 		
@@ -204,7 +203,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 
 				LinkedModeUI ui = new EditorLinkedModeUI(model, fTextViewer);
 				ui.setExitPosition(fTextViewer, baseOffset + replacement.length(), 0, Integer.MAX_VALUE);
-				// exit character can be either ')' or ';'
+				// Exit character can be either ')' or ';'
 				final char exitChar = replacement.charAt(replacement.length() - 1);
 				ui.setExitPolicy(new ExitPolicy(exitChar) {
 					@Override
@@ -350,7 +349,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	}
 
 	/**
-	 * Returns the c editor, or <code>null</code> if it cannot be determined.
+	 * Returns the C/C++ editor, or {@code null} if it cannot be determined.
 	 */
 	private static CEditor getCEditor(IEditorPart editorPart) {
 		if (editorPart instanceof CEditor) {

@@ -69,16 +69,16 @@ public class DOMSearchUtil {
         {
             shouldVisitNames = true;
         }
-        public List<IASTName> nameList = new ArrayList<IASTName>();
+        public List<IASTName> nameList = new ArrayList<>();
 
         @Override
 		public int visit(IASTName name) {
-            nameList.add( name );
+            nameList.add(name);
             return PROCESS_CONTINUE;
         }
 
-        public IASTName getName( int idx ){
-            if( idx < 0 || idx >= nameList.size() )
+        public IASTName getName(int idx) {
+            if (idx < 0 || idx >= nameList.size())
                 return null;
             return nameList.get(idx);
         }

@@ -399,8 +399,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		return;
     	try {
         	fActiveCode= true;
-        	while (t != null && t.getType() != IToken.tINACTIVE_CODE_END)
+        	while (t != null && t.getType() != IToken.tINACTIVE_CODE_END) {
         		t= t.getNext();
+        	}
 
         	if (t != null) {
         		nextToken= t.getNext();
@@ -524,7 +525,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	protected final boolean isOnSameLine(int offset1, int offset2) {
 		ILocationResolver lr= getTranslationUnit().getAdapter(ILocationResolver.class);
-		IASTFileLocation floc= lr.getMappedFileLocation(offset1, offset2-offset1+1);
+		IASTFileLocation floc= lr.getMappedFileLocation(offset1, offset2 - offset1 + 1);
 		return floc.getFileName().equals(lr.getContainingFilePath(offset1)) &&
 			floc.getStartingLineNumber() == floc.getEndingLineNumber();
 	}
@@ -541,12 +542,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected final <T extends IASTNode> T setRange(T n, IASTNode from, int endOffset) {
     	final int offset = ((ASTNode) from).getOffset();
-		((ASTNode) n).setOffsetAndLength(offset, endOffset-offset);
+		((ASTNode) n).setOffsetAndLength(offset, endOffset - offset);
     	return n;
     }
 
     protected final <T extends IASTNode> T setRange(T n, int offset, int endOffset) {
-    	((ASTNode) n).setOffsetAndLength(offset, endOffset-offset);
+    	((ASTNode) n).setOffsetAndLength(offset, endOffset - offset);
     	return n;
     }
 
@@ -557,7 +558,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	protected final <T extends IASTNode> T adjustEndOffset(T n, final int endOffset) {
 		final ASTNode node = (ASTNode) n;
-        node.setLength(endOffset-node.getOffset());
+        node.setLength(endOffset - node.getOffset());
         return n;
 	}
 

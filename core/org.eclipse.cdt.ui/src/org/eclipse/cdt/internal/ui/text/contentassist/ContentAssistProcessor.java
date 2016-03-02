@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -251,11 +251,13 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		fNumberOfComputedResults= 0;
 	}
 
-	private List<ICompletionProposal> collectProposals(ITextViewer viewer, int offset, IProgressMonitor monitor, ContentAssistInvocationContext context) {
+	private List<ICompletionProposal> collectProposals(ITextViewer viewer, int offset,
+			IProgressMonitor monitor, ContentAssistInvocationContext context) {
 		List<ICompletionProposal> proposals= new ArrayList<>();
 		List<CompletionProposalCategory> providers= getCategories();
+		SubMonitor progress = SubMonitor.convert(monitor, providers.size());
 		for (CompletionProposalCategory cat : providers) {
-			List<ICompletionProposal> computed= cat.computeCompletionProposals(context, fPartition, new SubProgressMonitor(monitor, 1));
+			List<ICompletionProposal> computed= cat.computeCompletionProposals(context, fPartition, progress.split(1));
 			proposals.addAll(computed);
 			if (fErrorMessage == null)
 				fErrorMessage= cat.getErrorMessage();
@@ -298,14 +300,17 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		return result;
 	}
 
-	private List<IContextInformation> collectContextInformation(ITextViewer viewer, int offset, IProgressMonitor monitor) {
+	private List<IContextInformation> collectContextInformation(ITextViewer viewer, int offset,
+			IProgressMonitor monitor) {
 		List<IContextInformation> proposals= new ArrayList<>();
 		ContentAssistInvocationContext context= createContext(viewer, offset, false);
 		
 		try {
 			List<CompletionProposalCategory> providers= getCategories();
+			SubMonitor progress = SubMonitor.convert(monitor, providers.size());
 			for (CompletionProposalCategory cat : providers) {
-				List<IContextInformation> computed= cat.computeContextInformation(context, fPartition, new SubProgressMonitor(monitor, 1));
+				List<IContextInformation> computed=
+						cat.computeContextInformation(context, fPartition, progress.split(1));
 				proposals.addAll(computed);
 				if (fErrorMessage == null)
 					fErrorMessage= cat.getErrorMessage();
@@ -326,7 +331,8 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 * @return the list of filtered and sorted proposals, ready for
 	 *         display (element type: {@link IContextInformation})
 	 */
-	protected List<IContextInformation> filterAndSortContextInformation(List<IContextInformation> contexts, IProgressMonitor monitor) {
+	protected List<IContextInformation> filterAndSortContextInformation(List<IContextInformation> contexts,
+			IProgressMonitor monitor) {
 		return contexts;
 	}
 

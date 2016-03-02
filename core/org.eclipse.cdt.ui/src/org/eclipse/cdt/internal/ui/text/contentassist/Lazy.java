@@ -28,7 +28,7 @@ public abstract class Lazy<E> {
 	 * @return The value of this object.
 	 */
 	@SuppressWarnings("unchecked")
-	public E value() {
+	public final E value() {
 		if (value == NOT_INITIALIZED) {
 			value = calculateValue();
 		}

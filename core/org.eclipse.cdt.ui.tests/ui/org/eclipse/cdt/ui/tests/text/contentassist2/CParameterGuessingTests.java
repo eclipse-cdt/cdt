@@ -13,12 +13,12 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Test;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+
+import junit.framework.Test;
 
 public class CParameterGuessingTests extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "PGTest_C.h";
@@ -52,8 +52,8 @@ public class CParameterGuessingTests extends AbstractContentAssistTest {
 	}
 
 	protected void assertParametersGuesses(Map<String, String[][]> expected) throws Exception {
-		assertContentAssistResults(getBuffer().length() - 1, 0, expected, true,
-				false, false, CompareType.REPLACEMENT);
+		assertContentAssistResults(getBuffer().length() - 1, 0, expected, true, false, false,
+				CompareType.REPLACEMENT);
 	}
 
 	//	void foo(){

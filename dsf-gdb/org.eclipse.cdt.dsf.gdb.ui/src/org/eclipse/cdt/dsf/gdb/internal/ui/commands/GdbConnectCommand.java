@@ -71,7 +71,6 @@ import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
@@ -222,7 +221,8 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
     		if (binaryPath == null) {
     			// prompt for the binary path
-    			Shell shell = Display.getCurrent().getActiveShell();
+    			Shell shell = GdbUIPlugin.getShell();
+    			
     			if (shell != null) {
     				FileDialog fd = new FileDialog(shell, SWT.NONE);
     				fd.setText(fTitle);

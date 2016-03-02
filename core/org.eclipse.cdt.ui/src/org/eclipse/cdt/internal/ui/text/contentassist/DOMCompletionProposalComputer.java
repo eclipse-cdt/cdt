@@ -19,9 +19,12 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -32,7 +35,9 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -40,9 +45,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -78,16 +86,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
@@ -95,6 +107,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.parser.scanner.TokenWithImage;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -650,77 +664,87 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	 * Initializes the list of variables accessible at the start of the current statement.
 	 */
 	private void initializeDefinedElements(CContentAssistInvocationContext context) {
-		/*
-		 * Get all defined elements before the start of the statement.
-		 * ex1:	int a = foo( 
-		 * 					^ --> We don't want 'a' as a suggestion. 
-		 * ex2:	char* foo(int a, int b) {return NULL;} 
-		 * 		void bar(char* name) {} 
-		 * 		...
-		 * 		bar( foo( 
-		 * 				 ^ --> If this offset is used, the only defined name will be "bar(char*)".
-		 */
-		int startOffset = getStatementStartOffset(context.getDocument(),
-				context.getParseOffset() - fPrefix.length());
-		Map<String, IBinding> elementsMap = new HashMap<>();
-		IASTCompletionNode node = null;
-		// Create a content assist context that points to the start of the statement.
-		CContentAssistInvocationContext newContext = new CContentAssistInvocationContext(
-				context.getViewer(), startOffset, context.getEditor(), true, false);
-		try {
-			node = newContext.getCompletionNode();
-			if (node != null) {
-				IASTTranslationUnit tu = node.getTranslationUnit();
-				IASTName[] names = node.getNames();
-				for (IASTName name : names) {
-					IASTCompletionContext astContext = name.getCompletionContext();
-					if (astContext != null) {
-						IBinding[] bindings = astContext.findBindings(name, true);
-						if (bindings != null) {
-							AccessContext accessibilityContext = new AccessContext(name);
-							for (IBinding binding : bindings) {
-								// Consider only variables that are part of the current translation unit and fields.
-								if (binding instanceof IVariable
-										&& accessibilityContext.isAccessible(binding)
-										&& !elementsMap.containsKey(binding.getName())) {
-									if (binding instanceof ICPPField) {
-										elementsMap.put(binding.getName(), binding);
-									} else {
-										IASTName[] declarations = tu.getDeclarationsInAST(binding);
-										if (declarations.length != 0)
-											elementsMap.put(binding.getName(), binding);
-									}
-								}
-							}
-						}
-					}
+		fAvailableElements = Collections.emptyList();
+
+		// Get all defined elements before the start of the statement.
+		// ex1:	int a = foo( 
+		// 					^ --> We don't want 'a' as a suggestion. 
+		// ex2:	char* foo(int a, int b) { return NULL; } 
+		// 		void bar(char* name) {} 
+		// 		...
+		// 		bar( foo( 
+		// 				 ^ --> If this offset is used, the only defined name will be "bar(char*)".
+		IASTCompletionNode node = context.getCompletionNode();
+		if (node == null)
+			return;
+
+		// Find the enclosing statement at the point of completion.  
+		IASTStatement completionStatement = null;
+		IASTName[] completionNames = node.getNames();
+		for (IASTName name : completionNames) {
+			IASTStatement statement = ASTQueries.findAncestorWithType(name, IASTStatement.class);
+			if (statement != null) {
+				if (completionStatement == null
+						|| getNodeOffset(statement) < getNodeOffset(completionStatement)) {
+					completionStatement = statement;
 				}
 			}
-		} finally {
-			fAvailableElements = new ArrayList<>(elementsMap.values());
-			newContext.dispose();
 		}
-	}
+		final int statementOffset = getNodeOffset(completionStatement); 
 
-	/**
-	 * Returns the position after last semicolon or opening or closing brace before the given offset.
-	 */
-	private static int getStatementStartOffset(IDocument doc, int offset) {
-		if (offset != 0) {
-			String docPart;
-			try {
-				docPart = doc.get(0, offset);
-				int index = docPart.lastIndexOf(';');
-				int tmpIndex = docPart.lastIndexOf('{');
-				index = (index < tmpIndex) ? tmpIndex : index;
-				tmpIndex = docPart.lastIndexOf('}');
-				index = (index < tmpIndex) ? tmpIndex : index;
-				return index + 1;
-			} catch (BadLocationException e) {
-				CUIPlugin.log(e);
+		IASTTranslationUnit ast = node.getTranslationUnit();
+
+		// Get content assist results for an empty prefix at the start of the statement.
+		IToken token = new TokenWithImage(IToken.tCOMPLETION, null, statementOffset, statementOffset,
+				CharArrayUtils.EMPTY_CHAR_ARRAY);
+		IASTName name = ast.getASTNodeFactory().newName(token.getCharImage());
+		((ASTNode) name).setOffsetAndLength(token.getOffset(), 0);
+		name.setParent(completionStatement == null ? ast : completionStatement.getParent());
+		IBinding[] bindings = findBindingsForContextAssist(name, ast);
+
+		if (bindings.length == 0)
+			return;
+
+		// Get all variables declared in the translation unit.
+		final Set<IBinding> declaredVariables = new HashSet<>();
+		ast.accept(new NameVisitor() {
+	        @Override
+			public int visit(IASTName name) {
+	        	if (getNodeOffset(name) >= statementOffset)
+	        		return PROCESS_ABORT;
+	        	int role = name.getRoleOfName(true);
+	        	if (role == IASTNameOwner.r_declaration || role == IASTNameOwner.r_definition) {
+					IBinding binding = name.resolveBinding();
+					if (binding instanceof IVariable) {
+						declaredVariables.add(binding);
+					}
+	        	}
+	            return PROCESS_CONTINUE;
+	        }
+		});
+
+		Map<String, IBinding> elementsMap = new HashMap<>();
+		AccessContext accessibilityContext = new AccessContext(name);
+		for (IBinding binding : bindings) {
+			// Consider only fields and variables that are declared in the current translation unit.
+			if (binding instanceof IVariable
+					&& !elementsMap.containsKey(binding.getName())
+					&& (binding instanceof ICPPField || declaredVariables.contains(binding))
+					&& accessibilityContext.isAccessible(binding)) {
+				elementsMap.put(binding.getName(), binding);
 			}
 		}
-		return offset;
+		fAvailableElements = new ArrayList<>(elementsMap.values());
+	}
+
+	private IBinding[] findBindingsForContextAssist(IASTName name, IASTTranslationUnit ast) {
+		if (ast.getLinkage().getLinkageID() == ILinkage.CPP_LINKAGE_ID)
+			return CPPSemantics.findBindingsForContentAssist(name, true, new String[0]);
+		return CVisitor.findBindingsForContentAssist(name, true);
+	}
+
+	private int getNodeOffset(IASTNode node) {
+		return ((ASTNode) node).getOffset();
 	}
 
 	private boolean skipDefaultedParameter(IParameter param) {
@@ -934,4 +958,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private static IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
+
+    private static abstract class NameVisitor extends ASTVisitor {
+    	NameVisitor() {
+            shouldVisitNames = true;
+    	}
+    }
 }

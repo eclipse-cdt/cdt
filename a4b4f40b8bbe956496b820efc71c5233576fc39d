@@ -22,6 +22,30 @@
       "revId": "a4b4f40b8bbe956496b820efc71c5233576fc39d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ccbf7d_405158de",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/GCCBuiltinSpecsDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 63140
+      },
+      "writtenOn": "2016-03-02T08:34:33Z",
+      "side": 1,
+      "message": "I think the idea is when we got linux path in Windows platform. We always need to convert it to Windows path. But if we got Windows path. We just do nothing with it. So we got the result we want.",
+      "parentUuid": "67ccbf7d_3a76604a",
+      "range": {
+        "startLine": 171,
+        "startChar": 7,
+        "endLine": 171,
+        "endChar": 48
+      },
+      "revId": "a4b4f40b8bbe956496b820efc71c5233576fc39d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

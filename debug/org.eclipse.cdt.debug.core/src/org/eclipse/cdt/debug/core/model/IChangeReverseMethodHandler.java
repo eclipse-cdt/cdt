@@ -29,4 +29,6 @@ public interface IChangeReverseMethodHandler extends IReverseToggleHandler, IDeb
     *
     */
     ReverseTraceMethod getTraceMethod(Object context);
+
+    ReverseTraceMethod getLastTraceMethod(Object context);
 }

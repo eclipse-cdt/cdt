@@ -60,12 +60,17 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
     private final DsfSession fSession;
 
     private ReverseTraceMethod fTraceMethod = null;
-    
+    private ReverseTraceMethod fLastTraceMethod = null;
+    private ReverseTraceMethod fNextTraceMethod = null;
+
     public GdbReverseToggleCommand(DsfSession session) {
         fExecutor = session.getExecutor();
         fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
         fSession = session;
         fTraceMethod = ReverseTraceMethod.STOP_TRACE;
+        fLastTraceMethod = ReverseTraceMethod.STOP_TRACE;
+        fNextTraceMethod = ReverseTraceMethod.STOP_TRACE;
+
         try {
             fExecutor.execute(new DsfRunnable() {
                 @Override
@@ -108,8 +113,8 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
                    final IReverseRunControl2 runControl = fTracker.getService(IReverseRunControl2.class);
 
                    if (runControl != null) {
-                       ReverseTraceMethod traceMethod = fTraceMethod;
-                       if (fTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
+                       ReverseTraceMethod traceMethod = fNextTraceMethod;
+                       if (fNextTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
                            String defaultValue = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
                                 IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
                                 IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE, null);
@@ -298,7 +303,7 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
 
     @Override
     public void setTraceMethod(ReverseTraceMethod traceMethod) {
-        fTraceMethod = traceMethod;
+    	fNextTraceMethod = traceMethod;
     }
 
     @Override
@@ -334,12 +339,18 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
             try {
                 fExecutor.execute(ReverseMethodQuery);
                 ReverseTraceMethod returnedTrace =  ReverseMethodQuery.get();
+                ReverseTraceMethod currTrace = ReverseTraceMethod.INVALID;
                 if (returnedTrace == ReverseTraceMethod.INVALID)
-                	return isReverseToggled(context) ? ReverseTraceMethod.FULL_TRACE : ReverseTraceMethod.STOP_TRACE ;
+                	currTrace = isReverseToggled(context) ? ReverseTraceMethod.FULL_TRACE : ReverseTraceMethod.STOP_TRACE ; 
                 else 
-                	return (returnedTrace == ReverseTraceMethod.BRANCH_TRACE ||
+                	currTrace = (returnedTrace == ReverseTraceMethod.BRANCH_TRACE ||
                 			returnedTrace == ReverseTraceMethod.PROCESSOR_TRACE ||
                 			returnedTrace == ReverseTraceMethod.GDB_TRACE ) ? ReverseTraceMethod.HARDWARE_TRACE : returnedTrace;
+                if (currTrace != fTraceMethod) {
+                	fLastTraceMethod = fTraceMethod;
+                	fTraceMethod = currTrace;
+                }
+                return fTraceMethod;
             } catch (InterruptedException e) {
             } catch (ExecutionException e) {
             } catch (RejectedExecutionException e) {
@@ -347,4 +358,9 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
 
         return ReverseTraceMethod.STOP_TRACE;
     }
+
+	@Override
+	public ReverseTraceMethod getLastTraceMethod(Object context) {
+		return fLastTraceMethod;
+	}
 }

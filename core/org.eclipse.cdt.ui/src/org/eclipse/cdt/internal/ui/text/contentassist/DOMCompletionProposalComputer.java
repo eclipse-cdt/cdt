@@ -190,10 +190,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 
 	/**
-	 * Test whether the invocation offset is inside or before the preprocessor directive keyword.
+	 * Checks whether the invocation offset is inside or before the preprocessor directive keyword.
 	 *
 	 * @param context  the invocation context
-	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword
+	 * @return {@code true} if the invocation offset is inside or before the directive keyword
 	 */
 	private boolean inPreprocessorKeyword(CContentAssistInvocationContext context) {
 		IDocument doc = context.getDocument();
@@ -216,10 +216,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 
 	/**
-	 * Check if the invocation offset is inside a preprocessor directive.
+	 * Checks if the invocation offset is inside a preprocessor directive.
 	 *
 	 * @param context  the content assist invocation context
-	 * @return <code>true</code> if invocation offset is inside a preprocessor directive
+	 * @return {@code true} if invocation offset is inside a preprocessor directive
 	 */
 	private boolean inPreprocessorDirective(CContentAssistInvocationContext context) {
 		IDocument doc = context.getDocument();
@@ -512,8 +512,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		repStringBuff.append('(');
 
-		StringBuilder dispArgs = new StringBuilder(); // for the dispargString
-		StringBuilder idArgs = new StringBuilder();   // for the idargString
+		StringBuilder dispArgs = new StringBuilder(); // For the dispArgString
+		StringBuilder idArgs = new StringBuilder();   // For the idArgString
 		boolean hasArgs = true;
 		String returnTypeStr = null;
 		IParameter[] params = function.getParameters();
@@ -616,11 +616,9 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			proposal.setContextInformation(info);
 		}
 
-		/*
-		 * The ParameterGuessingProposal will be active if the function accepts parameters and the content
-		 * assist is invoked before typing any parameters. Otherwise, the normal parameter hint proposal will
-		 * be added.
-		 */
+		// The ParameterGuessingProposal will be active if the function accepts parameters and the content
+		// assist is invoked before typing any parameters. Otherwise, the normal parameter hint proposal will
+		// be added.
 		if (function.getParameters() != null && function.getParameters().length != 0
 				&& isBeforeParameters(context)) {
 			proposals.add(ParameterGuessingProposal.createProposal(context, fAvailableElements, proposal,
@@ -634,11 +632,9 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	 * Returns true if the invocation is at the function name or before typing any parameters.
 	 */
 	private boolean isBeforeParameters(CContentAssistInvocationContext context) {
-		/*
-		 * Invocation offset and parse offset are the same if content assist is invoked while in the function
-		 * name (i.e. before the '('). After that, the parse offset will indicate the end of the name part. If
-		 * the diff. between them is zero, then we're still inside the function name part.
-		 */
+		// Invocation offset and parse offset are the same if content assist is invoked while in the function
+		// name (i.e. before the '('). After that, the parse offset will indicate the end of the name part.
+		// If there is no difference between them, then we're still inside the function name part.
 		int relativeOffset = context.getInvocationOffset() - context.getParseOffset();
 		if (relativeOffset == 0)
 			return true;

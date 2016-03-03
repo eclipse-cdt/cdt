@@ -31,10 +31,7 @@ import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
-
-
 public class ContentAssistPreference {
-	
 //	/** Preference key for content assist auto activation (unused) */
 //	public final static String AUTOACTIVATION=  "content_assist_autoactivation";
 	/** Preference key for content assist auto activation delay */
@@ -55,6 +52,8 @@ public class ContentAssistPreference {
 	public final static String AUTOINSERT=  "content_assist_autoinsert"; //$NON-NLS-1$
 	/** Preference key for content assist to insert the common prefix */
 	public final static String PREFIX_COMPLETION= "content_assist_prefix_completion"; //$NON-NLS-1$
+	/** Preference key for content assist to guess function arguments. */
+	public final static String GUESS_ARGUMENTS= "content_assist_guess_arguments"; //$NON-NLS-1$
 
 	/** Preference key for C/CPP content assist auto activation triggers */
 	public final static String AUTOACTIVATION_TRIGGERS_DOT= "content_assist_autoactivation_trigger_dot"; //$NON-NLS-1$
@@ -69,7 +68,7 @@ public class ContentAssistPreference {
 //	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals"; //$NON-NLS-1$
 	/** Preference key for alphabetic ordering of proposals */
 	public final static String ORDER_PROPOSALS= "content_assist_order_proposals"; //$NON-NLS-1$
-//	/** Preference key for case sensitivity of propsals */
+//	/** Preference key for case sensitivity of proposals */
 //	public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
 //	/** Preference key for adding includes on code assist (unused) */
 //	public final static String ADD_INCLUDE= "content_assist_add_import";	 //$NON-NLS-1$
@@ -136,7 +135,7 @@ public class ContentAssistPreference {
 
 		boolean dotTriggersAutoReplace = store.getBoolean(AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW);
 
-		// quick and dirty, since we only have one thing to replace
+		// Quick and dirty, since we only have one thing to replace
 		// if other replacement auto-activate triggers are added,
 		// triggers will have to be cleared and characters that share
 		// such as "." will have to be ||ed together.
@@ -149,25 +148,20 @@ public class ContentAssistPreference {
 			triggers = ".";	//$NON-NLS-1$
 		ccp.setReplacementAutoActivationCharacters(triggers);
 	}
-
 	
 	/**
 	 * Configure the given content assistant from the given store.
 	 */
 	public static void configure(ContentAssistant assistant, IPreferenceStore store) {
-			
 		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		IColorManager manager= textTools.getColorManager();
 		
 		boolean enabledDot= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 		boolean enabledArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 		boolean enabledDoubleColon= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
-		boolean enabledReplaceDotWithArrow
-			= store.getBoolean(AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW);
+		boolean enabledReplaceDotWithArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW);
 
-		boolean enabled
-			=  (enabledDot || enabledArrow || enabledDoubleColon
-					|| enabledReplaceDotWithArrow);
+		boolean enabled = (enabledDot || enabledArrow || enabledDoubleColon || enabledReplaceDotWithArrow);
 		assistant.enableAutoActivation(enabled);
 		
 		int delay= store.getInt(AUTOACTIVATION_DELAY);
@@ -196,16 +190,15 @@ public class ContentAssistPreference {
 		configureCProcessor(assistant, store);
 	}
 	
-	
 	private static void changeCProcessor(ContentAssistant assistant, IPreferenceStore store, String key) {
 		CContentAssistProcessor ccp= getCProcessor(assistant);
 		if (ccp == null)
 			return;
 			
-		if ( (AUTOACTIVATION_TRIGGERS_DOT.equals(key))
-		     || (AUTOACTIVATION_TRIGGERS_ARROW.equals(key))
-			 || (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) 
-			 || (AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW.equals(key))){
+		if ((AUTOACTIVATION_TRIGGERS_DOT.equals(key))
+				|| (AUTOACTIVATION_TRIGGERS_ARROW.equals(key))
+				|| (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) 
+				|| (AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW.equals(key))){
 			configureActivationCharacters(store, ccp);
 		}
 //		else if (SHOW_DOCUMENTED_PROPOSALS.equals(key)) {
@@ -230,20 +223,18 @@ public class ContentAssistPreference {
 	 * change event and the given preference store.
 	 */
 	public static void changeConfiguration(ContentAssistant assistant, IPreferenceStore store, PropertyChangeEvent event) {
-		
 		String p= event.getProperty();
 		
 		if ((AUTOACTIVATION_TRIGGERS_DOT.equals(p))
-			|| (AUTOACTIVATION_TRIGGERS_ARROW.equals(p))
-			|| (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(p))
-			|| (AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW.equals(p))){
+				|| (AUTOACTIVATION_TRIGGERS_ARROW.equals(p))
+				|| (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(p))
+				|| (AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW.equals(p))){
 			boolean enabledDot= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 			boolean enabledArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 			boolean enabledDoubleColon= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
 			boolean enabledReplaceDotWithArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW);
 			boolean enabled =  ((enabledDot) || ( enabledArrow ) || (enabledDoubleColon ) || (enabledReplaceDotWithArrow ));
 			assistant.enableAutoActivation(enabled);
-
 		} else if (AUTOACTIVATION_DELAY.equals(p)) {
 			int delay= store.getInt(AUTOACTIVATION_DELAY);
 			assistant.setAutoActivationDelay(delay);
@@ -275,20 +266,17 @@ public class ContentAssistPreference {
 	private static ContentAssistPreference instance = null;
 	
 	private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
-			
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			String prop = event.getProperty();
 			if (prop.equals(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES)) {
 				updateOnPreferences();
 			}
-			
 		}
 	};
 	
 	private ContentAssistPreference() {
-		getPreferences().addPropertyChangeListener(
-				propertyListener);
+		getPreferences().addPropertyChangeListener(propertyListener);
 		updateOnPreferences();
 	}
 	
@@ -313,9 +301,6 @@ public class ContentAssistPreference {
 		getPreferences().removePropertyChangeListener(propertyListener);
 	}
 	
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
 	public static synchronized void shutdown() {
 		if (instance != null) {
 			instance.shutdownInternal();

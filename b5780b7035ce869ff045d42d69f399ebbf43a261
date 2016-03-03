@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_47f7994c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_10.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-03T16:06:26Z",
+      "side": 1,
+      "message": "In the rare case of an error from this command\nwe\u0027ll be in the wrong state.  How about defaulting to FULL_TRACE\nin that case.  I think from the user\u0027s point of view it will be better.",
+      "revId": "b5780b7035ce869ff045d42d69f399ebbf43a261",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_27036dc8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_10.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-03T16:06:26Z",
+      "side": 1,
+      "message": "Based on the comment above, I suggest overriding handleCompleted instead\nand check for isSuccess(), and if not, setting fReverseTraceMethod\nto the default instead of calling getData().",
+      "revId": "b5780b7035ce869ff045d42d69f399ebbf43a261",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

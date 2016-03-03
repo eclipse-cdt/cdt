@@ -13,7 +13,6 @@
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *     Thomas Corbat
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -33,13 +32,10 @@ import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
- * CodeAssistPreferencePage
+ * Content Assist preference page.
  */
 public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
-	/**
-	 * 
-	 */
 	public CodeAssistPreferencePage() {
 		super();
 		//setDescription(PreferencesMessages.getString("CodeAssistPreferencePage.description")); //$NON-NLS-1$
@@ -47,7 +43,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 	@Override
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
@@ -67,24 +63,16 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SEARCH_SCOPE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FILTER));
 
-        OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
-		overlayKeys.toArray(keys);
-		return keys;
-
+        return overlayKeys.toArray(new OverlayPreferenceStore.OverlayKey[overlayKeys.size()]);
 	}
 		
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();
@@ -166,16 +154,14 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 				ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_ARGUMENTS, 0);
 
 		createDependency(displayDefaultedParameters,
-				ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, displayDefaultArguments);
+				ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT,
+				displayDefaultArguments);
 
 		initializeFields();
 
 		return contentAssistComposite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		// Nothing to do.
@@ -196,9 +182,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
 		store.setDefault(ContentAssistPreference.PREFIX_COMPLETION, true);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
-		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER, ProposalFilterPreferencesUtil.getProposalFilternamesAsString());  // $NON_NLS 1$
+		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER,
+				ProposalFilterPreferencesUtil.getProposalFilternamesAsString());
 		store.setDefault(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES, true);
-		
 	}
-
 }

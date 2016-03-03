@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_a7a13d80",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/CLIInfoRecordInfo.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-03T15:59:12Z",
+      "side": 1,
+      "message": "Why the toString()? output is already a String.\t\nI\u0027ve pushed a new patch that removes them and reformats some stuff",
+      "revId": "12576cbae0a631ebdbe71a5c3059ba946243cb70",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -56,8 +56,6 @@ import org.osgi.framework.Bundle;
  * @since 7.0
  */
 public class ReverseToggleCommandHandler extends DebugCommandHandler implements IDebugContextListener, IElementUpdater {
-    private ReverseTraceMethod fTraceMethod;
-    private ReverseTraceMethod fLastTraceMethod;
 
     private static final ImageDescriptor REVERSE_TOGGLE_DEFAULT_IMAGE = getImageDescriptor("icons/obj16/reverse_toggle.gif"); //$NON-NLS-1$
     private static final ImageDescriptor REVERSE_TOGGLE_SOFTWARE_ON_IMAGE = getImageDescriptor("icons/obj16/reverse_toggle_sw_on.png"); //$NON-NLS-1$
@@ -109,8 +107,6 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                // This can happen if we activate the action set after the launch.
                refresh(fContextService.getActiveContext());
 
-               fTraceMethod = ReverseTraceMethod.STOP_TRACE;
-               fLastTraceMethod = ReverseTraceMethod.STOP_TRACE;
            }
        }
     }
@@ -207,9 +203,10 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     		// Disable tracing
     		if (fTargetAdapter != null && fTargetAdapter instanceof IChangeReverseMethodHandler) {
     			if (fTargetAdapter.toggleNeedsUpdating()) {
+    				ReverseTraceMethod LastTraceMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getLastTraceMethod(fActiveContext);
     				ReverseTraceMethod currMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getTraceMethod(fActiveContext);
     				if (currMethod == ReverseTraceMethod.STOP_TRACE) {
-    					if (fLastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
+    					if (LastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
     						traceMethod = ReverseTraceMethod.HARDWARE_TRACE;
     					} else {
     						traceMethod = ReverseTraceMethod.FULL_TRACE;
@@ -273,26 +270,23 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                               @SuppressWarnings("rawtypes") Map parameters) {
        if (fTargetAdapter != null && fTargetAdapter instanceof IChangeReverseMethodHandler) {
            ReverseTraceMethod reverseMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getTraceMethod(fActiveContext);
+           ReverseTraceMethod LastTraceMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getLastTraceMethod(fActiveContext);
            ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
-           if (reverseMethod != fTraceMethod) {
-               fLastTraceMethod = fTraceMethod;
-               fTraceMethod = reverseMethod;
-           }
            try{
-               if (fTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
+               if (reverseMethod == ReverseTraceMethod.HARDWARE_TRACE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseHardTrace"); //$NON-NLS-1$
                    element.setTooltip(Messages.ReverseDebugging_ToggleHardwareTrace);
                    element.setIcon(REVERSE_TOGGLE_HARDWARE_ON_IMAGE);
-               } else if (fTraceMethod == ReverseTraceMethod.FULL_TRACE) {
+               } else if (reverseMethod == ReverseTraceMethod.FULL_TRACE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseSoftTrace"); //$NON-NLS-1$
                    element.setTooltip(Messages.ReverseDebugging_ToggleSoftwareTrace);
                    element.setIcon(REVERSE_TOGGLE_SOFTWARE_ON_IMAGE);
                } else {
                    element.setTooltip(Messages.ReverseDebugging_ToggleReverseDebugging);
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "TraceOff"); //$NON-NLS-1$
-                   if (fLastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
+                   if (LastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
                        element.setIcon(REVERSE_TOGGLE_HARDWARE_OFF_IMAGE);
-                   } else if (fLastTraceMethod == ReverseTraceMethod.FULL_TRACE) {
+                   } else if (LastTraceMethod == ReverseTraceMethod.FULL_TRACE) {
                        element.setIcon(REVERSE_TOGGLE_SOFTWARE_OFF_IMAGE);
                    } else {
                        element.setIcon(REVERSE_TOGGLE_DEFAULT_IMAGE);

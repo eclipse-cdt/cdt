@@ -48,6 +48,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PREFIX_COMPLETION));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.GUESS_ARGUMENTS));
 //		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.TIMEOUT_DELAY));		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW));
@@ -106,6 +107,9 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically; 
 		addCheckBox(insertionGroup, label, ContentAssistPreference.PREFIX_COMPLETION, 0);
 
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_guessArguments; 
+		addCheckBox(insertionGroup, label, ContentAssistPreference.GUESS_ARGUMENTS, 0);
+
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// sorting and filtering
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_sortingSection_title; 
@@ -138,7 +142,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW, 0);
 
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationDelay; 
-		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
+		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 4, true);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Default Arguments
@@ -181,6 +185,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
 		store.setDefault(ContentAssistPreference.PREFIX_COMPLETION, true);
+		store.setDefault(ContentAssistPreference.GUESS_ARGUMENTS, true);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER,
 				ProposalFilterPreferencesUtil.getProposalFilternamesAsString());

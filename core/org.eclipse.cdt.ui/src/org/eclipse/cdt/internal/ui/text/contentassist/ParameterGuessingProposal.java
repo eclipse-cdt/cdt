@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -66,10 +67,11 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	private char[][] fParametersNames;
 	private IType[] fParametersTypes;
 	private List<IBinding> fAssignableElements;
+	private final boolean fGuessArguments;
 
 	public static ParameterGuessingProposal createProposal(CContentAssistInvocationContext context,
 			List<IBinding> availableElements, CCompletionProposal proposal, IFunction function,
-			String prefix) {
+			String prefix, boolean guessArguments) {
 		String replacement = getParametersList(function);
 		String fullPrefix = function.getName() + "("; //$NON-NLS-1$
 		int replacementOffset = proposal.getReplacementOffset();
@@ -106,7 +108,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		ParameterGuessingProposal ret = new ParameterGuessingProposal(replacement, replacementOffset,
 				replacementLength, proposal.getImage(), proposal.getDisplayString(), proposal.getIdString(),
 				proposal.getRelevance(), context.getViewer(), function, invocationOffset, parseOffset,
-				context.getTranslationUnit(), document);
+				context.getTranslationUnit(), document, guessArguments);
 		ret.setContextInformation(proposal.getContextInformation());
 		ret.fFullPrefix = fullPrefix;
 		ret.fCEditor = getCEditor(context.getEditor());
@@ -135,9 +137,10 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	public ParameterGuessingProposal(String replacementString, int replacementOffset, int replacementLength,
 			Image image, String displayString, String idString, int relevance, ITextViewer viewer,
 			IFunction function, int invocationOffset, int parseOffset, ITranslationUnit tu,
-			IDocument document) {
+			IDocument document, boolean guessArguments) {
 		super(replacementString, replacementOffset, replacementLength, image, displayString, idString,
 				relevance, viewer, function, invocationOffset, parseOffset, tu, document);
+		this.fGuessArguments = guessArguments;
 	}
 
 	/**
@@ -165,12 +168,14 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		// Initialize necessary fields.
 		fParametersNames = getFunctionParametersNames(fFunctionParameters);
 		fParametersTypes = getFunctionParametersTypes(fFunctionParameters);
-		
-		try {
-			guessParameters();
-		} catch (Exception e) {
-			CUIPlugin.log(e);
-			return;
+
+		if (fGuessArguments) {
+			try {
+				guessParameters();
+			} catch (Exception e) {
+				CUIPlugin.log(e);
+				return;
+			}
 		}
 		
 		int baseOffset = getReplacementOffset();
@@ -250,7 +255,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		return new Point(fSelectedRegion.getOffset(), fSelectedRegion.getLength());
 	}
 
-	private void guessParameters() throws Exception {
+	private void guessParameters() throws CModelException {
 		int count = fParametersNames.length;
 		fPositions = new Position[count];
 		fChoices = new ICompletionProposal[count][];
@@ -269,11 +274,11 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 			fPositions[i] = position;
 			fChoices[i] = argumentProposals;
 		}
-		updateProposalsPossitions();
+		updateProposalsPositions();
 	}
 
-	private void updateProposalsPossitions() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+	private void updateProposalsPositions() {
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(fFullPrefix);
 		setCursorPosition(buffer.length());
 

@@ -124,21 +124,22 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private static final String TEMPLATE_PARAMETER_PATTERN = "template<{0}> class"; //$NON-NLS-1$;
 	private static final String TYPENAME = "typename"; //$NON-NLS-1$;
 	private static final String ELLIPSIS = "..."; //$NON-NLS-1$;
-	private String fPrefix;
+	private String fPrefix = ""; //$NON-NLS-1$
+	private boolean fGuessArguments;
 	private List<IBinding> fAvailableElements;
 
 	/**
 	 * Default constructor is required (executable extension).
 	 */
 	public DOMCompletionProposalComputer() {
-		fPrefix = ""; //$NON-NLS-1$
 	}
 
 	@Override
 	protected List<ICompletionProposal> computeCompletionProposals(CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) {
 		fPrefix = prefix;
-		initializeDefinedElements(context);
+		fGuessArguments = getPreferenceStore().getBoolean(ContentAssistPreference.GUESS_ARGUMENTS);
+		fAvailableElements = fGuessArguments ? getDefinedElements(context) : Collections.<IBinding>emptyList();
 		List<ICompletionProposal> proposals = new ArrayList<>();
 
 		if (inPreprocessorDirective(context)) {
@@ -622,7 +623,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		if (function.getParameters() != null && function.getParameters().length != 0
 				&& isBeforeParameters(context)) {
 			proposals.add(ParameterGuessingProposal.createProposal(context, fAvailableElements, proposal,
-					function, fPrefix));
+					function, fPrefix, fGuessArguments));
 		} else {
 			proposals.add(proposal);
 		}
@@ -659,9 +660,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	/**
 	 * Initializes the list of variables accessible at the start of the current statement.
 	 */
-	private void initializeDefinedElements(CContentAssistInvocationContext context) {
-		fAvailableElements = Collections.emptyList();
-
+	private List<IBinding> getDefinedElements(CContentAssistInvocationContext context) {
 		// Get all variables accessible at the start of the statement.
 		// ex1:	int a = foo( 
 		// 					^ --> We don't want 'a' as a suggestion. 
@@ -672,7 +671,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		// 				 ^ --> If this offset is used, the only defined name will be "bar(char*)".
 		IASTCompletionNode node = context.getCompletionNode();
 		if (node == null)
-			return;
+			return Collections.emptyList();
 
 		// Find the enclosing statement at the point of completion.  
 		IASTStatement completionStatement = null;
@@ -687,8 +686,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			}
 		}
 		if (completionStatement == null)
-			return;
-
+			return Collections.emptyList();
 
 		// Get content assist results for an empty prefix at the start of the statement.
 		final int statementOffset = getNodeOffset(completionStatement); 
@@ -701,7 +699,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		IBinding[] bindings = findBindingsForContextAssist(name, ast);
 
 		if (bindings.length == 0)
-			return;
+			return Collections.emptyList();
 
 		// Get all variables declared in the translation unit.
 		final Set<IBinding> declaredVariables = new HashSet<>();
@@ -732,7 +730,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				elementsMap.put(binding.getName(), binding);
 			}
 		}
-		fAvailableElements = new ArrayList<>(elementsMap.values());
+		return new ArrayList<>(elementsMap.values());
 	}
 
 	private IBinding[] findBindingsForContextAssist(IASTName name, IASTTranslationUnit ast) {

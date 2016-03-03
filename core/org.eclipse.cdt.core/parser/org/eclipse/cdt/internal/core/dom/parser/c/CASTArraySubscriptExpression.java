@@ -24,11 +24,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * Array subscript expression for c
+ * Array subscript expression for C.
  */
 public class CASTArraySubscriptExpression extends ASTNode implements
         IASTArraySubscriptExpression, IASTAmbiguityParent {
-
     private IASTExpression array;
     private IASTExpression subscript;
 
@@ -85,7 +84,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 
     @Override
 	public IASTInitializerClause getArgument() {
-		return getSubscriptExpression();
+		return subscript;
 	}
 
 	@Override
@@ -98,23 +97,23 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 	}
 
 	@Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( array != null ) if( !array.accept( action ) ) return false;
-        if( subscript != null ) if( !subscript.accept( action ) ) return false;
+        if (array != null && !array.accept(action)) return false;
+        if (subscript != null && !subscript.accept(action)) return false;
 
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -122,16 +121,14 @@ public class CASTArraySubscriptExpression extends ASTNode implements
     
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == array )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == array) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             array = (IASTExpression) other;
         }
-        if( child == subscript)
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == subscript) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             subscript = (IASTExpression) other;
         }
     }

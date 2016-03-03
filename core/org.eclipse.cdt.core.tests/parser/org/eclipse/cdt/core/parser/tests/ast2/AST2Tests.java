@@ -5356,13 +5356,13 @@ public class AST2Tests extends AST2TestBase {
 		return ((ASTNode) expr).getOffset() + ((ASTNode) expr).getLength();
 	}
 
-	private String polishNotation(IASTExpression expr) {
+	private String polishNotation(IASTInitializerClause expr) {
 		StringBuilder buf= new StringBuilder();
 		polishNotation(expr, buf);
 		return buf.toString();
 	}
 
-	private void polishNotation(IASTExpression expr, StringBuilder buf) {
+	private void polishNotation(IASTInitializerClause expr, StringBuilder buf) {
 		if (expr instanceof IASTConditionalExpression) {
 			IASTConditionalExpression bexpr= (IASTConditionalExpression) expr;
 			polishNotation(bexpr.getLogicalConditionExpression(), buf);
@@ -5398,7 +5398,7 @@ public class AST2Tests extends AST2TestBase {
 			polishNotation(f.getFunctionNameExpression(), buf);
 			buf.append(',');
 			for (IASTInitializerClause arg : f.getArguments()) {
-				polishNotation((IASTExpression) arg, buf);
+				polishNotation(arg, buf);
 				buf.append(',');
 			}
 			buf.append("()");
@@ -5406,7 +5406,7 @@ public class AST2Tests extends AST2TestBase {
 			IASTArraySubscriptExpression f= (IASTArraySubscriptExpression) expr;
 			polishNotation(f.getArrayExpression(), buf);
 			buf.append(',');
-			polishNotation(f.getSubscriptExpression(), buf);
+			polishNotation(f.getArgument(), buf);
 			buf.append(",[]");
 		} else if (expr instanceof IASTFieldReference) {
 			IASTFieldReference f= (IASTFieldReference) expr;
@@ -5433,6 +5433,12 @@ public class AST2Tests extends AST2TestBase {
 				buf.append(ASTStringUtil.getUnaryOperatorString(unaryExpr));
 				break;
 			}
+		} else if (expr instanceof IASTInitializerList) {
+			buf.append('{');
+			for (IASTInitializerClause clause : ((IASTInitializerList) expr).getClauses()) {
+				polishNotation(clause, buf);
+			}
+			buf.append('}');
 		} else {
 			buf.append(expr.getRawSignature());
 		}

@@ -129,7 +129,7 @@ public class CCorePreferenceConstants {
 	/**
 	 * Default absolute maximum size of the index-db in megabytes.
 	 */
-	public static final String DEFAULT_MAX_INDEX_DB_CACHE_SIZE_MB = "64"; //$NON-NLS-1$
+	public static final String DEFAULT_MAX_INDEX_DB_CACHE_SIZE_MB = "256"; //$NON-NLS-1$
 
 	/**
 	 * Boolean preference controlling whether paths of non-workspace files are stored in index in canonical

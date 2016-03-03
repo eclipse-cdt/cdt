@@ -22,6 +22,30 @@
       "revId": "e061d9788178d2d7648165cf8d10d4570f32f606",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e23a53ef",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/PDAPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-03T20:10:41Z",
+      "side": 0,
+      "message": "No, it\u0027s the call to \"PDAPlugin.getDefault().getDescriptor()\", from PDABackend that returned null. getDescriptor() getting called is the one from Plugin.java. The documentation says that in Eclipse 4.6 the method is not supported anymore.",
+      "parentUuid": "27d6470d_29947599",
+      "range": {
+        "startLine": 155,
+        "startChar": 18,
+        "endLine": 155,
+        "endChar": 37
+      },
+      "revId": "e061d9788178d2d7648165cf8d10d4570f32f606",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

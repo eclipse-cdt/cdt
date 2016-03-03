@@ -11,6 +11,7 @@
 package org.eclipse.remote.internal.console.actions;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.remote.console.actions.ConsoleAction;
 import org.eclipse.remote.internal.console.ImageConsts;
 import org.eclipse.remote.internal.console.TerminalConsolePage;
 

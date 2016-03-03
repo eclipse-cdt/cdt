@@ -8,13 +8,16 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.remote.internal.console.actions;
+package org.eclipse.remote.console.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.remote.internal.console.Activator;
 
+/**
+ * @since 1.1
+ */
 public abstract class ConsoleAction extends Action {
 	public ConsoleAction(String id) {
 		this(id, 0);
@@ -25,27 +28,20 @@ public abstract class ConsoleAction extends Action {
 		setId(id);
 	}
 
-	protected void setupAction(String text, String tooltip,
-			String image, String enabledImage, String disabledImage,
+	protected void setupAction(String text, String tooltip, String image, String enabledImage, String disabledImage,
 			boolean enabled) {
 		ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
 		setupAction(text, tooltip, image, enabledImage, disabledImage, enabled, imageRegistry);
 	}
 
-	protected void setupAction(String text, String tooltip,
-			String hoverImage, String enabledImage, String disabledImage,
-			boolean enabled, ImageRegistry imageRegistry) {
-		setupAction(text,
-				tooltip,
-				imageRegistry.getDescriptor(hoverImage),
-				imageRegistry.getDescriptor(enabledImage),
-				imageRegistry.getDescriptor(disabledImage),
-				enabled);
+	protected void setupAction(String text, String tooltip, String hoverImage, String enabledImage,
+			String disabledImage, boolean enabled, ImageRegistry imageRegistry) {
+		setupAction(text, tooltip, imageRegistry.getDescriptor(hoverImage), imageRegistry.getDescriptor(enabledImage),
+				imageRegistry.getDescriptor(disabledImage), enabled);
 	}
 
-	protected void setupAction(String text, String tooltip,
-			ImageDescriptor hoverImage, ImageDescriptor enabledImage, ImageDescriptor disabledImage,
-			boolean enabled) {
+	protected void setupAction(String text, String tooltip, ImageDescriptor hoverImage, ImageDescriptor enabledImage,
+			ImageDescriptor disabledImage, boolean enabled) {
 		setText(text);
 		setToolTipText(tooltip);
 		setEnabled(enabled);

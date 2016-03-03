@@ -2,13 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.remote.console;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.remote.internal.console.Activator
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %pluginProvider
-Export-Package: org.eclipse.remote.console
+Export-Package: org.eclipse.remote.console,
+ org.eclipse.remote.console.actions
 Import-Package: org.eclipse.core.commands,
  org.eclipse.core.runtime,
  org.eclipse.core.runtime.jobs,

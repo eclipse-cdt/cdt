@@ -17,13 +17,15 @@ import org.eclipse.remote.internal.console.TerminalConsoleFactory;
 import org.eclipse.ui.console.IConsole;
 
 /**
- * A collection of public API utility methods to open
- * consoles to IRemoteConnection objects
+ * A collection of public API utility methods to open consoles to
+ * IRemoteConnection objects
+ * 
+ * @since 1.1
  */
 public class TerminalConsoleUtility {
 	/**
-	 * Opens a dialog to allow selection of an IRemoteConnection,
-	 * encoding, etc. and then open a console to it.
+	 * Opens a dialog to allow selection of an IRemoteConnection, encoding, etc.
+	 * and then open a console to it.
 	 */
 	public void openConsole() {
 		new TerminalConsoleFactory().openConsole();

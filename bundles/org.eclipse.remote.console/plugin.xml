@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="org.eclipse.remote.console.toolbar" name="org.eclipse.remote.console.toolbar" schema="schema/consoleToolbar.exsd"/>
    <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory

@@ -20,7 +20,6 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.UIJob;
 
-@SuppressWarnings("restriction")
 public class TerminalConsole extends AbstractConsole {
 	private final String encoding;
 	private final TerminalConsoleConnector terminalConnector;

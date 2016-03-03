@@ -16,6 +16,24 @@
       "revId": "0fba75eba9bb30a0a3ffd5b16305bee102ea763a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_a2abeb8e",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/PDAPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-03T20:10:54Z",
+      "side": 1,
+      "message": "That half correct - getEntry() takes a bundle-relative path as input, but returns a system absolute path. So I think \"absoluteURL\" seems appropriate?",
+      "parentUuid": "e7dfcf21_ec36f00b",
+      "revId": "0fba75eba9bb30a0a3ffd5b16305bee102ea763a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

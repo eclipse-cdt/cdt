@@ -1,0 +1,49 @@
+Preparations: 
+a) Make sure to use maven 3.1 or even better 3.3
+b) Download the latest 2.1 RCPTT NIGHTLY  build
+	http://www.eclipse.org/rcptt/download/
+
+
+Building and Running with maven:
+1) Do a full maven build to create the Application Under Test (AUT) from a generated CDT RCP
+
+	> mvn clean install -DskipTests -Dmvn.test.skip=true
+
+2) Locate the application for your platform under:
+
+	<cdt-git-root>/dsf-gdb/org.eclipse.cdt.dsf.gdb.product/target/products/org.eclipse.cdt.dsf.gdb.product
+
+e.g. for linux 64 bits:
+	<cdt-git-root>/dsf-gdb/org.eclipse.cdt.dsf.gdb.product/target/products/org.eclipse.cdt.dsf.gdb.product/linux/gtk/x86_64/cdt-rcp
+
+3) Go to the cdt rcptt test bundle directory, and trigger the tests via maven 
+	> cd <cdt-git-root>/releng/org.eclipse.cdt.rcptt.tests  
+	
+4) Trigger the test execution via maven
+	> mvn clean install
+
+
+
+Running the test cases manually within the RCPTT application:
+* After the installation of RCPTT mentioned under preparations.
+
+1) Import the rcptt test bundle project
+	File -> Import -> General -> Existing Projects into Workspace -> 
+		<cdt-git-root>/releng/org.eclipse.cdt.rcptt.tests
+
+2) Open the test case 
+	tests -> helloWorld
+
+3) Click Replay and add the CDT RCP as an Application under test
+    * Note that this CDT RCP was generated with maven under the Buliding and Running with maven steps above
+
+    the browse location depends on your platform, this example shows the path for linux 64 bits
+	<cdt-git-root>/dsf-gdb/org.eclipse.cdt.dsf.gdb.product/target/products/org.eclipse.cdt.dsf.gdb.product/linux/gtk/x86_64/cdt-rcp
+
+4) When finished successfully the execution view will show the test case with a green check mark decorator and the execution time.
+
+
+
+
+
+

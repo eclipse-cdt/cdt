@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -41,12 +40,10 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.ProcessInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter.PrompterInfo;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
@@ -55,8 +52,8 @@ import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
-import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -152,14 +149,10 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     	// The list of processes used in the case of an ATTACH session
     	IProcessExtendedInfo[] fProcessList = null;
     	DataRequestMonitor<Object> fRequestMonitor;
-    	boolean fNewProcessSupported;
-    	boolean fRemote;
 		private List<String> fDebuggedProcesses;
 
-    	public PromptForPidJob(String name, boolean newProcessSupported, boolean remote, IProcessExtendedInfo[] procs, List<String> debuggedProcesses, DataRequestMonitor<Object> rm) {
+    	public PromptForPidJob(String name, IProcessExtendedInfo[] procs, List<String> debuggedProcesses, DataRequestMonitor<Object> rm) {
     		super(name);
-    		fNewProcessSupported = newProcessSupported;
-    		fRemote = remote;
     		fProcessList = procs;
     		fRequestMonitor = rm;
     		fDebuggedProcesses = debuggedProcesses;
@@ -172,11 +165,11 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     				null);
 
     		try {
-    			PrompterInfo info = new PrompterInfo(fNewProcessSupported, fRemote, fProcessList, fDebuggedProcesses);
+    			PrompterInfo info = new PrompterInfo(fProcessList, fDebuggedProcesses);
     			Object result = new ProcessPrompter().handleStatus(null, info);
     			 if (result == null) {
  					fRequestMonitor.cancel();
- 				} else if (result instanceof IProcessExtendedInfo[] || result instanceof NewExecutableInfo) {
+ 				} else if (result instanceof IProcessExtendedInfo[]) {
     				fRequestMonitor.setData(result);
     		    } else if (result instanceof Integer) {
     		    	// This is the case where the user typed in a pid number directly
@@ -393,15 +386,8 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
     			if (procService != null && commandControl != null && backend != null) {
         			final ICommandControlDMContext controlCtx = commandControl.getContext();
-        			final boolean remote = backend.getSessionType() == SessionType.REMOTE;
         			
-        			// First check if the "New..." button should be enabled.
-        			procService.isDebugNewProcessSupported(controlCtx, new DataRequestMonitor<Boolean>(fExecutor, rm) {
-        			@Override	
-        			protected void handleCompleted() {
-        				final boolean newProcessSupported = isSuccess() && getData();
-        				
-        				// Now get the list of all processes
+         				// Now get the list of all processes
         				procService.getRunningProcesses(
     						controlCtx,        
     						new DataRequestMonitor<IProcessDMContext[]>(fExecutor, rm) {
@@ -419,11 +405,9 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 												protected void handleSuccess() {
 													List<String> dbgPids = getData();
 													
-													// Prompt the user to choose one or more processes, or to start a new one
+													// Prompt the user to choose one or more processes
 													new PromptForPidJob(
 															LaunchUIMessages.getString("ProcessPrompter.PromptJob"),    //$NON-NLS-1$
-															newProcessSupported,
-															remote,
 															procInfoList.toArray(new IProcessExtendedInfo[procInfoList.size()]),
 															dbgPids,
 															new DataRequestMonitor<Object>(fExecutor, rm) {
@@ -435,10 +419,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 																@Override
 																protected void handleSuccess() {
 																	Object data = getData();
-																	if (data instanceof NewExecutableInfo) {
-																		// User wants to start a new process
-																		startNewProcess(controlCtx, (NewExecutableInfo)data, rm);
-																	} else if (data instanceof IProcessExtendedInfo[]) {
+																	if (data instanceof IProcessExtendedInfo[]) {
 																		attachToProcesses(controlCtx, (IProcessExtendedInfo[])data, rm);
 																	} else {
 																		rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
@@ -515,31 +496,11 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     								}
     							}
     						});
-        			}
-        			});
     			} else {
     				rm.done();
     			}
     		}
     	});
-    }
-    
-    private void startNewProcess(ICommandControlDMContext controlDmc, NewExecutableInfo info, RequestMonitor rm) {
-		IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
-		try {
-			Map<String, Object> attributes = fLaunch.getLaunchConfiguration().getAttributes();
-			attributes.put(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, info.getTargetPath());
-			attributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, info.getArguments());
-			procService.debugNewProcess(
-					controlDmc, 
-					info.getHostPath(), 
-					attributes, 
-					new DataRequestMonitor<IDMContext>(fExecutor, rm));
-		}
-		catch(CoreException e) {
-			rm.setStatus(e.getStatus());
-			rm.done();
-		}
     }
     
     private void attachToProcesses(final ICommandControlDMContext controlDmc, IProcessExtendedInfo[] processes, final RequestMonitor rm) {

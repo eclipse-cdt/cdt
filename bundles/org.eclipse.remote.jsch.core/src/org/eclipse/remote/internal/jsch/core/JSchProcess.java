@@ -21,6 +21,7 @@ import org.eclipse.remote.core.IRemoteProcessControlService;
 import org.eclipse.remote.core.IRemoteProcessSignalService;
 import org.eclipse.remote.core.IRemoteProcessTerminalService;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
+import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -162,6 +163,9 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 	 */
 	@Override
 	public int exitValue() {
+		if(!isCompleted()) {
+			throw new IllegalThreadStateException(Messages.JSchProcess_exitValue_exception_msg);
+		}
 		return fChannel.getExitStatus();
 	}
 

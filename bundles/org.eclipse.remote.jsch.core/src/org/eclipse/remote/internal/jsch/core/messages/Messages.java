@@ -42,6 +42,7 @@ public class Messages extends NLS {
 	public static String JSchConnectionProxyFactory_ProxyCommandFailed;
 	public static String JSchConnectionProxyFactory_timedOut;
 	public static String JSchConnectionProxyFactory_wasCanceled;
+	public static String JSchProcess_exitValue_exception_msg;
 	public static String JSchProcessBuilder_Connection_is_not_open;
 	public static String JschFileStore_Connection_is_not_open;
 	public static String JschFileStore_File_doesnt_exist;

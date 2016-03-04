@@ -19,6 +19,7 @@ import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.core.RemoteProcessAdapter;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
 
 public class ProcessTests extends TestCase {
@@ -169,6 +170,28 @@ public class ProcessTests extends TestCase {
 		}
 
 		assertEquals("0123456789", result.toString());
+	}
+
+	public void testExitValue() {
+		IRemoteProcessService processService = fRemoteConnection.getService(IRemoteProcessService.class);
+		assertNotNull(processService);
+		IRemoteProcessBuilder builder = processService.getProcessBuilder(new String[]{"sleep","60"}); //$NON-NLS-1$
+		assertNotNull(builder);
+		IRemoteProcess rp = null;
+		try {
+			rp = builder.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail(e.getLocalizedMessage());
+		}
+		assertNotNull(rp);
+		Process p = new RemoteProcessAdapter(rp);
+		try {
+			p.exitValue();
+			fail("Process has not exited. Should throws an IllegalThreadStateException exception");
+		} catch(IllegalThreadStateException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

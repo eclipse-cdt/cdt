@@ -51,6 +51,24 @@
       "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8a9c45f1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-04T21:42:19Z",
+      "side": 1,
+      "message": "My guess is that CDI must be using it too, but since we\u0027re removing CDI, you are right we could consolidate the whole thing.\n\nDo you think it is worth it?",
+      "parentUuid": "e7dfcf21_0ab755bc",
+      "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

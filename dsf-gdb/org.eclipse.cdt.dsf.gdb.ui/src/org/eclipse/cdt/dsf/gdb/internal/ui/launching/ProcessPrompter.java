@@ -38,25 +38,15 @@ import com.ibm.icu.text.MessageFormat;
 public class ProcessPrompter implements IStatusHandler {
 
 	public static class PrompterInfo {
-		public boolean supportsNewProcess;
-		public boolean remote;
 		public IProcessExtendedInfo[] processList;
 		public List<String> debuggedProcesses;
 		
-		public PrompterInfo(boolean supportsNew, boolean remote, IProcessExtendedInfo[] list, List<String> debuggedProcs) {
-			supportsNewProcess = supportsNew;
-			this.remote = remote;
+		public PrompterInfo(IProcessExtendedInfo[] list, List<String> debuggedProcs) {
 			processList = list;
-			this.debuggedProcesses = debuggedProcs;
+			debuggedProcesses = debuggedProcs;
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
-	 *      java.lang.Object)
-	 */
     @Override
 	public Object handleStatus(IStatus status, Object info) throws CoreException {
 		Shell shell = GdbUIPlugin.getShell();
@@ -92,11 +82,6 @@ public class ProcessPrompter implements IStatusHandler {
 			}
 		} else {
 			ILabelProvider provider = new LabelProvider() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-				 */
 				@Override
 				public String getText(Object element) {
 					IProcessExtendedInfo info = (IProcessExtendedInfo)element;
@@ -150,11 +135,7 @@ public class ProcessPrompter implements IStatusHandler {
 					
 					return text.toString();
 				}
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-				 */
+
 				@Override
 				public Image getImage(Object element) {
 					return LaunchImages.get(LaunchImages.IMG_OBJS_EXEC);
@@ -166,11 +147,7 @@ public class ProcessPrompter implements IStatusHandler {
 					IProcessExtendedInfo info = (IProcessExtendedInfo)element;
 					return info.getName();
 				}
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-				 */
+
 				@Override
 				public Image getImage(Object element) {
 					return LaunchImages.get(LaunchImages.IMG_OBJS_EXEC);
@@ -179,7 +156,7 @@ public class ProcessPrompter implements IStatusHandler {
 
 			// Display the list of processes and have the user choose
 			ProcessPrompterDialog dialog = 
-				new ProcessPrompterDialog(shell, provider, qprovider, prompterInfo.supportsNewProcess, prompterInfo.remote);
+				new ProcessPrompterDialog(shell, provider, qprovider);
 			dialog.setTitle(LaunchUIMessages.getString("LocalAttachLaunchDelegate.Select_Process")); //$NON-NLS-1$
 			dialog.setMessage(LaunchUIMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
 
@@ -202,12 +179,6 @@ public class ProcessPrompter implements IStatusHandler {
 			});
 			dialog.setElements(plist);
 			if (dialog.open() == Window.OK) {
-				// First check if the user pressed the New button
-				NewExecutableInfo execInfo = dialog.getExecutableInfo();
-				if (execInfo != null) {
-					return execInfo;
-				}
-				
 				Object[] results = dialog.getResult();
 				if (results != null) {
 					IProcessExtendedInfo[] processes = new IProcessExtendedInfo[results.length];

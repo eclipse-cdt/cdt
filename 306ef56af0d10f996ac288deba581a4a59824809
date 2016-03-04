@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_07782e9a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-03-04T13:26:16Z",
+      "side": 1,
+      "message": "Hello,\n     The processor trace usage is fine, but branch trace is not a trademark, so please use the following -\u003e\n   \nBranch Trace Store",
+      "range": {
+        "startLine": 62,
+        "startChar": 48,
+        "endLine": 62,
+        "endChar": 54
+      },
+      "revId": "306ef56af0d10f996ac288deba581a4a59824809",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

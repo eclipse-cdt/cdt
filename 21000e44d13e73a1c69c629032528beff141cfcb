@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_aa82e109",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-04T18:25:25Z",
+      "side": 1,
+      "message": "Marc, do you know where this status handler is called from? We use adapter to get IConnectHandler in FinalLaunchsequence::stepAttachToProcess(), I haven\u0027t been able to find any place in the code when we need to use the status handler.",
+      "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

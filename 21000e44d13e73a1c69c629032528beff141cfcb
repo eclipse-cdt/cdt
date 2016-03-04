@@ -16,6 +16,23 @@
       "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_cabacdb5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-04T19:27:25Z",
+      "side": 1,
+      "message": "It is used directly in GdbConnectCommand.java\nIt is not clear to me why it was made an IStatusHandler since it is only\ncalled from the UI plugin anyway.\nIf you search for uses of ProcessPrompter, you\u0027ll find it.",
+      "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

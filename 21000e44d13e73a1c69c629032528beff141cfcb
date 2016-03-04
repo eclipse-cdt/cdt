@@ -33,6 +33,24 @@
       "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_0ab755bc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-04T19:51:47Z",
+      "side": 1,
+      "message": "I know that code but as you said it is called from the UI plugin directly. I suspect that ProcessPrompter was intended to be called from the core plugin. It doesn\u0027t look that we need it anymore. Shouldn\u0027t we just get rid of ProcessPrompter and move the relevant code into GdbConnectCommand?",
+      "parentUuid": "e7dfcf21_cabacdb5",
+      "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

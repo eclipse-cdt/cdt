@@ -27,6 +27,7 @@
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.5</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
+		<rcptt-version>2.1.0-SNAPSHOT</rcptt-version>
 	</properties>
 
 	<licenses>
@@ -58,8 +59,8 @@
 		<module>native/org.eclipse.cdt.native.serial</module>
 		<module>releng/org.eclipse.cdt.native-feature</module>
 		<module>releng/org.eclipse.cdt.native.source-feature</module>
-
 		<module>releng/org.eclipse.cdt</module>
+		<module>releng/org.eclipse.cdt.rcptt.tests</module>
 		<module>core/org.eclipse.cdt.core</module>
 		<module>build/org.eclipse.cdt.build.core</module>
 		<module>build/org.eclipse.cdt.build.ui</module>
@@ -111,6 +112,10 @@
 		<module>dsf-gdb/org.eclipse.cdt.gnu.dsf.source-feature</module>
 		<module>dsf-gdb/org.eclipse.cdt.gnu.multicorevisualizer-feature</module>
 
+		<!-- Used in RCPTT testing, not included in features -->
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.product</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.product-feature</module>
+		
 		<module>p2/org.eclipse.cdt.p2</module>
 		<module>p2/org.eclipse.cdt.p2-feature</module>
 
@@ -247,9 +252,19 @@
 	</modules>
 
 	<pluginRepositories>
-   		<pluginRepository>
-			<id>cbi</id>
-			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+		<pluginRepository>
+		  <id>cbi</id>
+		  <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+		</pluginRepository>
+		<pluginRepository>
+		  <id>rcptt-snapshots</id>
+		  <name>RCPTT Maven Snapshots repository</name>
+		  <url>https://repo.eclipse.org/content/repositories/rcptt-snapshots/</url>
+		</pluginRepository>
+		<pluginRepository>
+		  <id>rcptt-releases</id>
+		  <name>RCPTT Maven repository</name>
+		  <url>https://repo.eclipse.org/content/repositories/rcptt-releases/</url>
 		</pluginRepository>
   	</pluginRepositories>
 	<profiles>
@@ -673,7 +688,12 @@
 					</execution>
 				</executions>
 			</plugin>
-			</plugins>
-		</pluginManagement>
+			<plugin>
+			  <groupId>org.eclipse.rcptt</groupId>
+			  <artifactId>rcptt-maven-plugin</artifactId>
+			  <version>${rcptt-version}</version>
+			</plugin>
+		</plugins>
+	   </pluginManagement>
 	</build>
 </project>

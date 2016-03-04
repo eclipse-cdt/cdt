@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <!--
+  /*******************************************************************************
+  * Copyright (c) 2016 Ericsson AB.
+  * All rights reserved. This program and the accompanying materials
+  * are made available under the terms of the Eclipse Public License v1.0
+  * which accompanies this distribution, and is available at
+  * http://www.eclipse.org/legal/epl-v10.html
+  *******************************************************************************/
+  -->
+
+  <artifactId>org.eclipse.cdt.rcptt.tests</artifactId>
+  <name>CDT Product Tests</name>
+  <packaging>rcpttTest</packaging>
+
+  <parent>
+    <groupId>org.eclipse.cdt</groupId>
+    <artifactId>cdt-parent</artifactId>
+    <version>9.0.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <properties>
+    <aut.extension>tar.gz</aut.extension>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.cdt</groupId>
+      <artifactId>org.eclipse.cdt.dsf.gdb.product</artifactId>
+      <version>9.0.0-SNAPSHOT</version>
+      <type>eclipse-repository</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.rcptt</groupId>
+        <artifactId>rcptt-maven-plugin</artifactId>
+        <version>${rcptt-version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <aut>
+            <groupId>org.eclipse.cdt</groupId>
+            <artifactId>org.eclipse.cdt.dsf.gdb.product</artifactId>
+            <extension>${aut.extension}</extension>
+            <vmArgs>
+              <vmArg>${argLine}</vmArg>
+            </vmArgs>
+		    <args>
+		      <arg>-nosplash</arg>
+		      <arg>--launcher.GTK_version</arg>
+		      <arg>2</arg>
+			  <!-- 
+				<arg>-debug ${basedir}/.options</arg>
+			  -->
+		    </args> 
+          </aut>
+          <runner>
+            <version>${rcptt-version}</version>
+          </runner>
+          <suites>
+            <suite>SmokeTest</suite>
+          </suites>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

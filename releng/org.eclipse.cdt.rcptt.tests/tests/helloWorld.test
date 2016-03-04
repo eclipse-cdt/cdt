@@ -1,0 +1,43 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _c8ctAOAbEeW3sa5zSdqcrQ,_Tf3g8NwBEeWhn9YtuXj9qQ
+Element-Name: helloWorld
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _OpA40OC5EeWTn7j62x_G5Q
+Runtime-Version: 2.1.0.201602241705
+Save-Time: 3/4/16 2:49 PM
+Testcase-Type: ecl
+
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+get-menu "File/New/Project..." | click
+with [get-window "New Project"] {
+    get-tree | select "C\\/C\\+\\+/C Project"
+    get-button "Next >" | click
+}
+with [get-window "C Project"] {
+    get-tree | select "Executable/Hello World ANSI C Project"
+    get-editbox -after [get-label "Project name:"] | set-text HelloWorldPrj
+    get-table | select "Linux GCC"
+    get-button "Next >" | click
+    get-editbox -after [get-label Author] | click-text
+    get-button "Next >" | click
+    get-button Finish | click
+}
+get-window "Open Associated Perspective?" | get-button Yes | click
+get-view "Project Explorer" | get-tree | select HelloWorldPrj
+get-button "Build 'Debug' for project 'HelloWorldPrj'" | click
+
+get-view "Project Explorer" | get-tree | select HelloWorldPrj | get-menu "Debug As/1 Local C\\/C++ Application" | click
+get-window "Confirm Perspective Switch" | get-button Yes | click
+with [get-tab-folder -index 1] {
+    get-tab-item Breakpoints | click
+    get-tab-item Variables | click
+}
+get-button "Terminate (M1+F2)" | click
+get-view Debug | get-button "Remove All Terminated Launches" | click
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

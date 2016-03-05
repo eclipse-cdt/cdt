@@ -10,7 +10,6 @@
  *     Marc Khouzam (Ericsson) - Workaround for Bug 352998
  *     Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
  *     Alvaro Sanchez-Leon (Ericsson) - Breakpoint Enable does not work after restarting the application (Bug 456959)
- *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -446,24 +445,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		                new Step() { 
 		                    @Override
 		                    public void execute(RequestMonitor rm) {								
-								IReverseRunControl reverseService = getServicesTracker().getService(IReverseRunControl.class);
-								if (reverseService != null) {
-									ILaunch launch = procCtx.getAdapter(ILaunch.class);
-									if (launch != null) {
-										try {
-											boolean reverseEnabled = 
-												launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
-														                                     IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
-											if (reverseEnabled) {
-												reverseService.enableReverseMode(fCommandControl.getContext(), true, rm);
-												return;
-											}
-										} catch (CoreException e) {
-											// Ignore, just don't set reverse
-										}
-									}
-								}
-								rm.done();
+								doReverseDebugStep(procCtx, rm);
 		                    }
 		                },
                     	// Store the fully formed container context so it can be returned to the caller
@@ -488,7 +470,29 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	}
 	
 	/** @since 5.0 */
-	protected void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
+	protected void doReverseDebugStep(final IProcessDMContext procCtx, RequestMonitor rm) {
+        // Turn on reverse debugging if it was enabled as a launch option
+		IReverseRunControl reverseService = getServicesTracker().getService(IReverseRunControl.class);
+		if (reverseService != null) {
+			ILaunch launch = procCtx.getAdapter(ILaunch.class);
+			if (launch != null) {
+				try {
+					boolean reverseEnabled = 
+						launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+								                                     IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+					if (reverseEnabled) {
+						reverseService.enableReverseMode(fCommandControl.getContext(), true, rm);
+						return;
+					}
+				} catch (CoreException e) {
+					// Ignore, just don't set reverse
+				}
+			}
+		}
+		rm.done();
+	}
+
+	private void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
 		ILaunch launch = procCtx.getAdapter(ILaunch.class);
 		assert launch != null;
 		if (launch != null) {

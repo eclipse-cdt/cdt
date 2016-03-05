@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Ericsson and others.
+ * Copyright (c) 2009, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,18 +36,19 @@ public class CLIRecord extends CLICommand<MIInfo> {
     {
         String recordParam;
 
-            if (traceMethod == ReverseTraceMethod.STOP_TRACE)
-                recordParam = " stop"; //$NON-NLS-1$
-            else if (traceMethod == ReverseTraceMethod.FULL_TRACE) // full trace
-                recordParam = " full"; //$NON-NLS-1$
-            else if (traceMethod == ReverseTraceMethod.BRANCH_TRACE) // branch trace
-                recordParam = " btrace bts"; //$NON-NLS-1$
-            else if (traceMethod == ReverseTraceMethod.PROCESSOR_TRACE) // processor trace
-                recordParam = " btrace pt"; //$NON-NLS-1$
-            else if (traceMethod == ReverseTraceMethod.GDB_TRACE) // gdb selected trace
-                recordParam = " btrace"; //$NON-NLS-1$
-            else // no trace method defined
-                recordParam = ""; //$NON-NLS-1$
+        if (traceMethod == ReverseTraceMethod.STOP_TRACE) {
+        	recordParam = " stop"; //$NON-NLS-1$
+        } else if (traceMethod == ReverseTraceMethod.FULL_TRACE) {
+        	recordParam = " full"; //$NON-NLS-1$
+        } else if (traceMethod == ReverseTraceMethod.BRANCH_TRACE) {
+        	recordParam = " btrace bts"; //$NON-NLS-1$
+        } else if (traceMethod == ReverseTraceMethod.PROCESSOR_TRACE) {
+        	recordParam = " btrace pt"; //$NON-NLS-1$
+        } else if (traceMethod == ReverseTraceMethod.GDB_TRACE) {
+        	recordParam = " btrace"; //$NON-NLS-1$
+        } else {// no trace method defined
+        	recordParam = ""; //$NON-NLS-1$
+        }
 
         return recordParam;
     }

@@ -44,7 +44,8 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="[5.0.0,7.0.0)",
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.variables;bundle-version="3.2.0",
- org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)"
+ org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)",
+ org.apache.commons.io;bundle-version="[2.2.0,3.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.ibm.icu.text

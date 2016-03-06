@@ -512,9 +512,10 @@
             class="org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsolePageParticipant"
             id="org.eclipse.cdt.dsf.gdb.ui.dsfGdbConsolePageParticipant">
          <enablement>
-            <instanceof
-                  value="org.eclipse.ui.console.IOConsole">
-            </instanceof>
+            <or>
+               <instanceof value="org.eclipse.ui.console.IOConsole"/>
+               <instanceof value="org.eclipse.cdt.dsf.gdb.internal.ui.console.GdbCliConsole"/>
+            </or>
          </enablement>
       </consolePageParticipant>
    </extension>

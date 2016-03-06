@@ -18,11 +18,13 @@ import java.util.Properties;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
-import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 
 public interface IGDBControl extends IMICommandControl {
 
-	AbstractCLIProcess getCLIProcess();
+	/**
+	 * @since 5.0
+	 */
+	Process getCLIProcess();
 
 	/**
 	 * Request to terminate GDB.

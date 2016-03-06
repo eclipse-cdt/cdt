@@ -61,6 +61,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.control" version="0.0.0"/>
+<unit id="org.eclipse.tm.terminal.view.ui" version="0.0.0"/>
 <repository location="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">

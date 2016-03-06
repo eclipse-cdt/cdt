@@ -23,15 +23,11 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -40,7 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -57,7 +52,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -121,53 +115,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		// user to choose one.
 		int candidateCount = candidateConfigs.size();
 		if (candidateCount < 1) {
-			// Set the default debugger based on the active toolchain on the project (if possible)
-			ICDebugConfiguration debugConfig = null;
-			IProject project = bin.getResource().getProject();
-           	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
-           	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
-           	String configId = configDesc.getId();
-       		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
-       		int matchLength = 0;
-       		for (int i = 0; i < debugConfigs.length; ++i) {
-       			ICDebugConfiguration dc = debugConfigs[i];
-       			String[] patterns = dc.getSupportedBuildConfigPatterns();
-       			if (patterns != null) {
-       				for (int j = 0; j < patterns.length; ++j) {
-       					if (patterns[j].length() > matchLength && configId.matches(patterns[j])) {
-       						debugConfig = dc;
-       						matchLength = patterns[j].length();
-       					}
-       				}
-       			}
-			}
-
-			if (debugConfig == null) {
-				// Prompt the user if more then 1 debugger.
-				String programCPU = bin.getCPU();
-				String os = Platform.getOS();
-				debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
-				List<ICDebugConfiguration> debugList = new ArrayList<ICDebugConfiguration>(debugConfigs.length);
-				for (int i = 0; i < debugConfigs.length; i++) {
-					String platform = debugConfigs[i].getPlatform();
-					if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-						if (platform.equals("*") || platform.equals(os)) { //$NON-NLS-1$
-							if (debugConfigs[i].supportsCPU(programCPU)) 
-								debugList.add(debugConfigs[i]);
-						}
-					}
-				}
-				debugConfigs = debugList.toArray(new ICDebugConfiguration[0]);
-				if (debugConfigs.length == 1) {
-					debugConfig = debugConfigs[0];
-				} else if (debugConfigs.length > 1) {
-					debugConfig = chooseDebugConfig(debugConfigs, mode);
-				}
-			}
-			
-			if (debugConfig != null) {
-				configuration = createConfiguration(bin, debugConfig, mode);
-			}
+			configuration = createConfiguration(bin, mode);
 		} else if (candidateCount == 1) {
 			configuration = candidateConfigs.get(0);
 		} else {
@@ -184,7 +132,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * @param bin
 	 * @return ILaunchConfiguration
 	 */
-	private ILaunchConfiguration createConfiguration(IBinary bin, ICDebugConfiguration debugConfig, String mode) {
+	private ILaunchConfiguration createConfiguration(IBinary bin, String mode) {
 		ILaunchConfiguration config = null;
 		try {
 			String projectName = bin.getResource().getProjectRelativePath().toString();
@@ -197,7 +145,6 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
-			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
 
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
 			if (projDes != null) {
@@ -205,10 +152,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);				
 			}
 
+			// TODO: Removing CDI, there are no Debugger Panes to load anymore, what should this do?
 			// Load up the debugger page to set the defaults. There should probably be a separate
 			// extension point for this.
-			ICDebuggerPage page = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
-			page.setDefaults(wc);
+			// ICDebuggerPage page = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
+			// page.setDefaults(wc);
 			
 			config = wc.doSave();
 		} catch (CoreException ce) {
@@ -238,55 +186,6 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
             return w.getShell();
         }
         return null;
-	}
-
-	/**
-	 * Method chooseDebugConfig.
-	 * @param debugConfigs
-	 * @param mode
-	 * @return ICDebugConfiguration
-	 */
-	private ICDebugConfiguration chooseDebugConfig(ICDebugConfiguration[] debugConfigs, String mode) {
-		ILabelProvider provider = new LabelProvider() {
-			/**
-			 * The <code>LabelProvider</code> implementation of this 
-			 * <code>ILabelProvider</code> method returns the element's <code>toString</code>
-			 * string. Subclasses may override.
-			 */
-			@Override
-			public String getText(Object element) {
-				if (element == null) {
-					return ""; //$NON-NLS-1$
-				} else if (element instanceof ICDebugConfiguration) {
-					return ((ICDebugConfiguration) element).getName();
-				}
-				return element.toString();
-			}
-		};
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), provider);
-		dialog.setElements(debugConfigs);
-		dialog.setTitle(getDebugConfigDialogTitleString(debugConfigs, mode)); 
-		dialog.setMessage(getDebugConfigDialogMessageString(debugConfigs, mode)); 
-		dialog.setMultipleSelection(false);
-		int result = dialog.open();
-		provider.dispose();
-		if (result == Window.OK) {
-			return (ICDebugConfiguration) dialog.getFirstResult();
-		}
-		return null;
-	}
-
-	protected String getDebugConfigDialogTitleString(ICDebugConfiguration [] configList, String mode) {
-		return LaunchMessages.getString("CApplicationLaunchShortcut.LaunchDebugConfigSelection");  //$NON-NLS-1$
-	}
-	
-	protected String getDebugConfigDialogMessageString(ICDebugConfiguration [] configList, String mode) {
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseConfigToDebug");  //$NON-NLS-1$
-		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
-			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseConfigToRun");  //$NON-NLS-1$
-		}
-		return LaunchMessages.getString("CApplicationLaunchShortcut.Invalid_launch_mode_1"); //$NON-NLS-1$
 	}
 
 	/**

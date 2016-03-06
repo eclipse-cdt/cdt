@@ -11,11 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.core.model.ITargetProperties;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
@@ -32,10 +29,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
@@ -114,17 +109,6 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate
         ISteppingModeTarget target = getTarget();
         if ( target != null ) {
             target.enableInstructionStepping( enabled );
-            if ( enabled && target instanceof ICDebugTarget ) {
-                try {
-                    IWorkbenchPage page = fWindow.getActivePage();
-                    if (page != null) {
-                        page.showView( ICDebugUIConstants.ID_DSF_DISASSEMBLY_VIEW );
-                    }
-                }
-                catch( PartInitException e ) {
-                    CDebugUIPlugin.log( e.getStatus() );
-                }
-            }
         }
 	}
 

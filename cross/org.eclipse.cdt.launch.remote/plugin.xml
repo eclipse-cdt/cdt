@@ -18,7 +18,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       <launchDelegate
             id="org.eclipse.rse.remotecdt.launch"
             type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
-            modes="run,debug"
+            modes="run"
             delegate="org.eclipse.cdt.launch.remote.launching.RemoteRunLaunchDelegate"
             name="%cdiLaunchDelegate.name"
             delegateDescription="%cdiLaunchDelegate.description"
@@ -83,14 +83,6 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
         <placement after="org.eclipse.cdt.launch.remote.dsf.mainTab"/>
       </tab>
-      <tab
-            id="org.eclipse.rse.remotecdt.launch.RemoteCDebuggerTab"
-            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
-            name="Debugger"
-            class="org.eclipse.cdt.launch.remote.tabs.RemoteCDebuggerTab">
-        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
-        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
-      </tab>
       <tab id="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"
             group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Debugger"
@@ -141,27 +133,6 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       
    </extension>
    
-   
-   <extension
-         point="org.eclipse.cdt.debug.core.CDebugger">
-      <debugger
-            class="org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger2"
-            cpu="*"
-            id="org.eclipse.rse.remotecdt.RemoteGDBDebugger"
-            modes="run"
-            name="remote gdb/mi"
-            platform="*">
-      </debugger>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.debug.ui.CDebuggerPage">
-      <debuggerPage
-            class="org.eclipse.cdt.launch.remote.tabs.RemoteGDBDebuggerPage"
-            debuggerID="org.eclipse.rse.remotecdt.RemoteGDBDebugger"
-            id="org.eclipse.rse.remotecdt.RemoteGDBDebuggerPage">
-      </debuggerPage>
-   </extension>
-
 	<!-- ============================================ -->
 	<!-- Define Help Context                          -->
 	<!-- ============================================ -->

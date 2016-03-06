@@ -37,6 +37,11 @@ import org.eclipse.core.runtime.Status;
 /**
  * CLI Process object implementation which uses the {@link IMIBackend} service
  * to monitor and control the underlying process.
+ *
+ * Note that starting with GDB 7.12, as long as a PTY is available,
+ * this process is no longer used.  Instead, the real GDB process
+ * along with its console will be used by the user.  A new PTY
+ * will be used to communicate using MI.
  * 
  * @since 1.1
  */

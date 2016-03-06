@@ -193,7 +193,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private IEventProcessor fMIEventProcessor;
     private IEventProcessor fCLICommandProcessor;
     private IEventProcessor fControlEventProcessor;
-    private AbstractCLIProcess fCLIProcess;
+    private Process fCLIProcess;
 
     private GdbCommandTimeoutManager fCommandTimeoutManager;
 
@@ -358,11 +358,24 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         );
     }
 
+	/**
+	 * @deprecated Replaced by {@link #getGDBCLIProcess()}
+	 */
+	@Deprecated
 	@Override
-    public AbstractCLIProcess getCLIProcess() { 
-        return fCLIProcess; 
+    public AbstractCLIProcess getCLIProcess() {
+		if (fCLIProcess instanceof AbstractCLIProcess) {
+			return (AbstractCLIProcess)fCLIProcess;			
+		}
+		return null;
     }
     
+	/** @since 5.1 */
+	@Override
+    public Process getGDBCLIProcess() {
+		return fCLIProcess;
+    }
+
 	/**
 	 * @since 2.0
 	 */
@@ -546,8 +559,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     
     /** @since 5.1 */
     protected void doCommandProcessorsStep(final RequestMonitor requestMonitor) {
-		try {
-            fCLIProcess = new GDBBackendCLIProcess(GDBControl.this, fMIBackend);
+        try {
+            fCLIProcess = createBackendCLIProcess(GDBControl.this, fMIBackend);
         }
         catch(IOException e) {
             requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$
@@ -564,10 +577,12 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
     /** @since 5.1 */
     protected void undoCommandProcessorsStep(RequestMonitor requestMonitor) {
-		fControlEventProcessor.dispose();
+    	fControlEventProcessor.dispose();
     	fCLICommandProcessor.dispose();
         fMIEventProcessor.dispose();
-        fCLIProcess.dispose();
+        if (fCLIProcess instanceof AbstractCLIProcess) {
+        	((AbstractCLIProcess)fCLIProcess).dispose();
+        }
 
         requestMonitor.done();
 	}
@@ -715,6 +730,19 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		return new ControlEventProcessor();
 	}
 
+	/** @since 5.1 */
+	protected Process createBackendCLIProcess(ICommandControlService commandControl,                           
+	           								  IMIBackend backend) throws IOException {
+	   	if (backend instanceof IGDBBackend && ((IGDBBackend)backend).isFullGdbConsoleSupported()) {
+	   		// If the full GDB console is supported, which uses the GDB process itself,
+	   		// we return that GDB process
+    		return ((IGDBBackend)backend).getProcess();
+    	}
+	   	// If the full GDB console is not supported according to the backen service,
+	   	// then we create our own Process class to handled the CLI
+		return new GDBBackendCLIProcess(commandControl, backend);
+	}
+	
 	/**
 	 * @since 4.1
 	 */

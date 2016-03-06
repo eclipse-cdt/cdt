@@ -16,6 +16,7 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,6 +44,8 @@ import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.cdt.utils.pty.PTY.Mode;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.runtime.CoreException;
@@ -171,7 +174,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * array. Allow subclass to override.
 	 * 
 	 * @since 4.6
+	 * @deprecated Replace by getGDBCommandLine()
 	 */
+    @Deprecated
 	protected String[] getGDBCommandLineArray() {
 		// The goal here is to keep options to an absolute minimum.
 		// All configuration should be done in the final launch sequence
@@ -187,6 +192,33 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
 		// Parse to properly handle spaces and such things (bug 458499)
 		return CommandLineUtil.argumentsToArray(cmd);
+	}
+
+	/**
+	 * Returns the GDB command and its arguments as an array.
+	 * Allow subclass to override.
+	 * @since 5.0
+	 */
+    // This method replace getGDBCommandLineArray() because we need
+    // to override it with GDB 7.11 even if extenders have overridden
+    // getGDBCommandLineArray().
+    // Here is the scenario:
+    //   An extender has overridden getGDBCommandLineArray() to launch
+    //   GDB in MI mode but with extra parameters.  Once GDBBackend_7_12
+    //   is released, the extender may likely point their extention to
+    //   GDBBackend_7_12 instead of GDBBackend (which will even happen
+    //   automatically if the extender extends GDBBackend_HEAD).
+    //   In such a case, they would override the changes in 
+    //   GDBBackend_7_12.getGDBCommandLineArray() and the debug session
+    //   is likely to fail.
+    //
+    //   By using getGDBCommandLine(), an extender will not override it
+    //   without noticing (as it didn't exist before).  Then we can call
+    //   the overridden getGDBCommandLineArray() and work with that to
+    //   make it work with the new logic of GDBBackend_7_12
+	protected String[] getGDBCommandLine() {
+		// Call the old method in case it was overridden
+		return getGDBCommandLineArray();
 	}
 
 	@Override
@@ -245,7 +277,12 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	protected Process launchGDBProcess(String[] commandLine) throws CoreException {
 		Process proc = null;
 		try {
-			proc = ProcessFactory.getFactory().exec(commandLine, getGDBLaunch().getLaunchEnvironment());
+			// TODO handle case where PTY not supported
+			proc = ProcessFactory.getFactory().exec(
+					commandLine, 
+					getGDBLaunch().getLaunchEnvironment(),
+					new File(getGDBWorkingDirectory().toOSString()),
+					new PTY(Mode.TERMINAL)); //TODO The TERMINAL setting breaks older GDBs
 		} catch (IOException e) {
 			String message = "Error while launching command: " + StringUtil.join(commandLine, " "); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
@@ -466,7 +503,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 				}
 
 				try {
-					fProcess = launchGDBProcess(getGDBCommandLineArray());
+                    fProcess = launchGDBProcess(getGDBCommandLine());
+
 					// Need to do this on the executor for thread-safety
 					getExecutor().submit(new DsfRunnable() {
 						@Override
@@ -493,7 +531,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 					String line;
 					while ((line = inputReader.readLine()) != null) {
 						line = line.trim();
-						if (line.endsWith("(gdb)")) { //$NON-NLS-1$
+						if (line.indexOf("(gdb)") != -1) { //$NON-NLS-1$
 							success = true;
 							break;
 						}

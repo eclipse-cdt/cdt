@@ -31,6 +31,7 @@ class Messages extends NLS {
 	public static String RegisterGroup_name_used;
 	public static String RegisterGroup_invalid_number_of_registers;
 	public static String GDB_Version_Mismatch;
+	public static String PTY_Console_not_available;
 	
 	static {
 		// initialize resource bundle

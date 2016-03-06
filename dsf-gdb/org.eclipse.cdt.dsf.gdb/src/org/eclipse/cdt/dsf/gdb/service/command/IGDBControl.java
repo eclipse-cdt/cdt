@@ -22,6 +22,26 @@ import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 
 public interface IGDBControl extends IMICommandControl {
 
+	/**
+	 * Returns the process that represents the GDB CLI.
+	 * This is the process that should be added to the launch.
+	 * @since 5.1
+	 */
+	default Process getGDBCLIProcess() {
+		return getCLIProcess();
+	};
+	
+	/**
+	 * @deprecated The return value of this method was too
+	 *             restrictive.  It has been replaced with
+	 *             {@link #getGDBCLIProcess()}
+	 * @return The AbstractCLIProcess that handles the CLI.
+	 *         Will return null if the CLI is not handled
+	 *         by an AbstractCLIProcess; this will happen
+	 *         for GDB >= 7.12 when the CLI is handled by
+	 *         the GDB process itself.
+	 */
+	@Deprecated
 	AbstractCLIProcess getCLIProcess();
 
 	/**

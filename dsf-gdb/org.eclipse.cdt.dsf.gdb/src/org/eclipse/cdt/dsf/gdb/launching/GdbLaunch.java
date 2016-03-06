@@ -62,7 +62,6 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlockRetrievalManager;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -198,9 +197,9 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	public void addCLIProcess(String label) throws CoreException {
 		try {
 			// Add the CLI process object to the launch.
-			AbstractCLIProcess cliProc = getDsfExecutor().submit(new Callable<AbstractCLIProcess>() {
+			Process cliProc = getDsfExecutor().submit(new Callable<Process>() {
 				@Override
-				public AbstractCLIProcess call() throws CoreException {
+				public Process call() throws CoreException {
 					IGDBControl gdb = fTracker.getService(IGDBControl.class);
 					if (gdb != null) {
 						return gdb.getCLIProcess();

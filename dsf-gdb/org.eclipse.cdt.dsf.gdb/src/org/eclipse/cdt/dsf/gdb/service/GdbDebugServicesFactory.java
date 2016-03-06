@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_12;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_4;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_7;
@@ -89,6 +90,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
 	/** @since 4.8 */
 	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
+	/** @since 5.0 */
+	public static final String GDB_7_12_VERSION = "7.10.88888"; //$NON-NLS-1$
 
 	private final String fVersion;
 	
@@ -170,6 +173,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBControl_7_12(session, config, new CommandFactory_6_8());
+		}
 		if (compareVersionWith(GDB_7_7_VERSION) >= 0) {
 			return new GDBControl_7_7(session, config, new CommandFactory_6_8());
 		}
@@ -189,6 +195,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 
 	protected IMIBackend createBackendGDBService(DsfSession session, ILaunchConfiguration lc) {
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBBackend_7_12(session, lc);
+		}
 		return new GDBBackend(session, lc);
 	}
 

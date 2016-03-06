@@ -46,9 +46,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * This Process implementation tracks the process the GDB process.  This 
+ * This Process implementation tracks the GDB process.  This 
  * process object is displayed in Debug view and is used to
- * accept CLI commands and to write their output to the console.   
+ * accept CLI commands and to write their output to the console.
+ * 
+ * Note that starting with GDB 7.12, as long as a PTY is available,
+ * this process is no longer used.  Instead, the real GDB process
+ * along with its console will be used by the user.  A new PTY
+ * will be used to communicate using MI.
  * 
  * @see org.eclipse.debug.core.model.IProcess 
  */

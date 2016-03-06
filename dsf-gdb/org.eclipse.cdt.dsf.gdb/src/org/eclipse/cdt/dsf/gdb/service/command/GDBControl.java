@@ -193,7 +193,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private IEventProcessor fMIEventProcessor;
     private IEventProcessor fCLICommandProcessor;
     private IEventProcessor fControlEventProcessor;
-    private AbstractCLIProcess fCLIProcess;
+    private Process fCLIProcess;
 
     private GdbCommandTimeoutManager fCommandTimeoutManager;
 
@@ -358,12 +358,15 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         );
     }
 
-	@Override
-    public AbstractCLIProcess getCLIProcess() { 
-        return fCLIProcess; 
-    }
-    
 	/**
+	 * @since 5.0
+	 */
+	@Override
+    public Process getCLIProcess() {
+		return fCLIProcess;
+    }
+
+    /**
 	 * @since 2.0
 	 */
 	@Override
@@ -526,7 +529,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
             try {
-                fCLIProcess = new GDBBackendCLIProcess(GDBControl.this, fMIBackend);
+                fCLIProcess = createBackendCLIProcess(GDBControl.this, fMIBackend);
             }
             catch(IOException e) {
                 requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$
@@ -546,7 +549,9 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         	fControlEventProcessor.dispose();
         	fCLICommandProcessor.dispose();
             fMIEventProcessor.dispose();
-            fCLIProcess.dispose();
+            if (fCLIProcess instanceof AbstractCLIProcess) {
+            	((AbstractCLIProcess)fCLIProcess).dispose();
+            }
 
             requestMonitor.done();
         }
@@ -675,6 +680,11 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		return new ControlEventProcessor();
 	}
 
+	/** @since 5.0 */
+	protected Process createBackendCLIProcess(ICommandControlService commandControl,                           
+	           								  IMIBackend backend) throws IOException {
+		return new GDBBackendCLIProcess(commandControl, backend);
+	}
 	/**
 	 * @since 4.1
 	 */

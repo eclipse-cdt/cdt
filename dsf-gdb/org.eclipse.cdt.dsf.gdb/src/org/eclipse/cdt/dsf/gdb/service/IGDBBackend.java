@@ -156,4 +156,19 @@ public interface IGDBBackend extends IMIBackend {
 	 * @since 3.0
 	 */
 	public boolean getUpdateThreadListOnSuspend() throws CoreException;
+	
+	/**
+	 * @since 5.1
+	 */
+	default boolean isFullGdbConsoleSupported() {
+		return false;
+	}
+	
+	//TODO do we need this and the one in IGDBControl?
+	/**
+	 * @since 5.1
+	 */
+	default Process getProcess() {
+		return null;
+	}
 }

@@ -57,7 +57,8 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         	DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).addDebugContextListener(this);
         }
 
-		if(console instanceof TracingConsole || isConsoleGdbCli(console)) {
+		if (console instanceof TracingConsole || 
+				(isConsoleGdbCli(console) && console instanceof TextConsole)) {
 			TextConsole textConsole = (TextConsole) console;
 
 			// Add the save console action
@@ -80,6 +81,9 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		if(console instanceof org.eclipse.debug.ui.console.IConsole) {
 			org.eclipse.debug.ui.console.IConsole debugConsole  = (org.eclipse.debug.ui.console.IConsole)console;
 			return (debugConsole.getProcess() instanceof GDBProcess);
+		}
+		if (console instanceof GdbCliConsole) {
+			return true;
 		}
 		return false;
 	}
@@ -152,6 +156,10 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         	return null;
         }
 
+        if (context instanceof GDBProcess) {
+        	return (GDBProcess)context;
+        }
+        
 		if (context != null) {
 			// Look for the process that this context refers to, so we can select its console
 			IDMContext dmc = context.getAdapter(IDMContext.class);
@@ -187,12 +195,18 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
-	 */
     @Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			if (fView != null && fConsole instanceof GdbCliConsole) {
+				IProcess currentProcess = getCurrentProcess();
+				if (currentProcess instanceof GDBProcess && 
+						((GdbCliConsole)fConsole).getLaunch().equals(currentProcess.getLaunch())) {
+					fView.display(fConsole);
+				}
+				return;
+			}
+			
 			IProcess consoleProcess = getConsoleProcess();
 			if (fView != null && consoleProcess != null && consoleProcess.equals(getCurrentProcess())) {
 	            fView.display(fConsole);

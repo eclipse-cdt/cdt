@@ -138,7 +138,7 @@ public class TracingConsole extends IOConsole {
         }
 
         if (fLaunch.isTerminated()) {
-        	return ConsoleMessages.ConsoleMessages_trace_console_terminated + label; 
+        	return ConsoleMessages.ConsoleMessages_console_terminated + label; 
         }
         
         return label;

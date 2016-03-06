@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.extensions;
 
-import org.eclipse.cdt.dsf.gdb.service.GDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.GDBBackend_7_12;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -37,13 +37,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * 
  * @since 4.8
  */
-public class GDBBackend_HEAD extends GDBBackend {
+public class GDBBackend_HEAD extends GDBBackend_7_12 {
 	public GDBBackend_HEAD(DsfSession session, ILaunchConfiguration lc) {
 		super(session, lc);
 		validateGdbVersion(session);
 	}
 	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_1_VERSION; }
+	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_12_VERSION; }
 	
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);

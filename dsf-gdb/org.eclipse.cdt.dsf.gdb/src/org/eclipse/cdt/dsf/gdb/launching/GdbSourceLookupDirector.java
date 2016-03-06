@@ -66,10 +66,10 @@ public class GdbSourceLookupDirector extends DsfSourceLookupDirector {
 			if (container instanceof MapEntrySourceContainer) {
 				MapEntrySourceContainer sourceSubContainer = (MapEntrySourceContainer) container;
 
-				IPath from = sourceSubContainer.getBackendPath();
+				String from = sourceSubContainer.getBackend();
 				IPath to = sourceSubContainer.getLocalPath();
 				if (from != null && to != null) {
-					entries.put(from.toOSString(), to.toOSString());
+					entries.put(from, to.toOSString());
 				}
 			}
 

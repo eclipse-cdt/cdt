@@ -15,6 +15,8 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOCase;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
@@ -205,7 +207,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		}
 	}
 
-	private void addSourceMappingToDirector(IPath missingPath, IPath newSourcePath, AbstractSourceLookupDirector director) throws CoreException {
+	private void addSourceMappingToDirector(String missingPath, IPath newSourcePath, AbstractSourceLookupDirector director) throws CoreException {
 		ArrayList<ISourceContainer> containerList = new ArrayList<ISourceContainer>(Arrays.asList(director.getSourceContainers()));
 		MappingSourceContainer foundMappings = null;
 		for (ISourceContainer container : containerList) {
@@ -237,13 +239,13 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	 *            the location of the file locally; the user led us to it
 	 * @throws CoreException
 	 */	
-	private void addSourceMappingToCommon(IPath missingPath, IPath newSourcePath) throws CoreException {
+	private void addSourceMappingToCommon(String missingPath, IPath newSourcePath) throws CoreException {
 		CSourceLookupDirector director = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector();
 		addSourceMappingToDirector(missingPath, newSourcePath, director);
 		CDebugCorePlugin.getDefault().savePluginPreferences();
 	}
 	
-	private void addSourceMappingToLaunch(IPath missingPath, IPath newSourcePath) throws CoreException {
+	private void addSourceMappingToLaunch(String missingPath, IPath newSourcePath) throws CoreException {
 		String memento = null;
 		String type = null;
 
@@ -272,24 +274,23 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	
 	protected void locateFile() {
 		FileDialog dialog = new FileDialog(getEditorSite().getShell(), SWT.NONE);
-		IPath missingPath = MapEntrySourceContainer.createPath(missingFile);
 		dialog.setFilterNames(new String[] {SourceLookupUIMessages.CSourceNotFoundEditor_2});
-		dialog.setFilterExtensions(new String[] {"*." + missingPath.getFileExtension()}); //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] {"*." + FilenameUtils.getExtension(missingFile)}); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
-			Path newPath = new Path(res);
-			
-			if (newPath.lastSegment().equalsIgnoreCase(missingPath.lastSegment())) {
-				if (missingPath.segmentCount() > 1) {
-					IPath compPath = missingPath.removeLastSegments(1);
-					IPath newSourcePath = newPath.removeLastSegments(1);
+			// We cannot use IPaths when manipulating the missingFile (aka compilation file name) otherwise
+			// we end up converting windows paths to Linux and/or other canonicalisation of the names
+			if (IOCase.INSENSITIVE.checkEquals(FilenameUtils.getName(missingFile), FilenameUtils.getName(res))) {
+				String compPath = FilenameUtils.getFullPath(missingFile);
+				IPath newSourcePath = new Path(FilenameUtils.getFullPath(res));
+				if (compPath.length() > 0) {
 					try {
 						if (isDebugElement)
 							addSourceMappingToLaunch(compPath, newSourcePath);
 						else
-							addSourceMappingToCommon(compPath, newSourcePath);							
+							addSourceMappingToCommon(compPath, newSourcePath);
 					} catch (CoreException e) {
-					}					
+					}
 				}
 				
 				IWorkbenchPage page = getEditorSite().getPage();

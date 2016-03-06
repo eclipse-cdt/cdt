@@ -156,4 +156,21 @@ public interface IGDBBackend extends IMIBackend {
 	 * @since 3.0
 	 */
 	public boolean getUpdateThreadListOnSuspend() throws CoreException;
+	
+	/**
+	 * @return True if the full GDB console should be used.  False otherwise.
+	 * 
+	 * @since 5.1
+	 */
+	default boolean isFullGdbConsoleSupported() {
+		return false;
+	}
+	
+	/**
+	 * @return The real GDB process that was started for the debug session
+	 * @since 5.1
+	 */
+	default Process getProcess() {
+		throw new RuntimeException();
+	}
 }

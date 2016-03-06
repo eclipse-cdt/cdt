@@ -9,7 +9,7 @@ package org.eclipse.cdt.dsf.gdb.service.extensions;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
-import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_7;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_12;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -38,14 +38,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * 
  * @since 4.8
  */
-public class GDBControl_HEAD extends GDBControl_7_7 {
+public class GDBControl_HEAD extends GDBControl_7_12 {
 	public GDBControl_HEAD(DsfSession session, ILaunchConfiguration lc, CommandFactory factory) {
 		super(session, lc, factory);
 		
 		validateGdbVersion(session);
 	}
 	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_7_VERSION; }
+	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_12_VERSION; }
 	
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);

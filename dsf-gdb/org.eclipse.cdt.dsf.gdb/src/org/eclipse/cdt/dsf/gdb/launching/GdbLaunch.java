@@ -64,7 +64,6 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlockRetrievalManager;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -202,13 +201,13 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	@ThreadSafeAndProhibitedFromDsfExecutor("getDsfExecutor()")
 	public void addCLIProcess(String label) throws CoreException {
 		try {
-			// Add the CLI process object to the launch.
-			AbstractCLIProcess cliProc = getDsfExecutor().submit(new Callable<AbstractCLIProcess>() {
+			// Add the GDB process object to the launch.
+			Process gdbProc = getDsfExecutor().submit(new Callable<Process>() {
 				@Override
-				public AbstractCLIProcess call() throws CoreException {
+				public Process call() throws CoreException {
 					IGDBControl gdb = fTracker.getService(IGDBControl.class);
 					if (gdb != null) {
-						return gdb.getCLIProcess();
+						return gdb.getGDBBackendProcess();
 					}
 					return null;
 				}
@@ -221,7 +220,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			Map<String, String> attributes = new HashMap<String, String>();
 			attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 					IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE);
-			DebugPlugin.newProcess(this, cliProc, label, attributes);
+			DebugPlugin.newProcess(this, gdbProc, label, attributes);
 		} catch (InterruptedException e) {
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0,
 					"Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$

@@ -157,7 +157,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		};
 	}
 
-	private GdbLaunch getGDBLaunch() {
+	/** @since 5.1 */
+	protected GdbLaunch getGDBLaunch() {
 		return (GdbLaunch) getSession().getModelAdapter(ILaunch.class);
 	}
 
@@ -171,7 +172,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * array. Allow subclass to override.
 	 * 
 	 * @since 4.6
+	 * @deprecated Replaced by getDebuggerCommandLine()
 	 */
+    @Deprecated
 	protected String[] getGDBCommandLineArray() {
 		// The goal here is to keep options to an absolute minimum.
 		// All configuration should be done in the final launch sequence
@@ -187,6 +190,39 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
 		// Parse to properly handle spaces and such things (bug 458499)
 		return CommandLineUtil.argumentsToArray(cmd);
+	}
+
+	/**
+	 * Returns the GDB command and its arguments as an array.
+	 * Allow subclass to override.
+	 * @since 5.1
+	 */
+    // This method replaces getGDBCommandLineArray() because we need
+    // to override it for GDB 7.12 even if an extender has overridden
+    // getGDBCommandLineArray().
+    // Here is the scenario:
+    //   An extender has overridden getGDBCommandLineArray() to launch
+    //   GDB in MI mode but with extra parameters.  Once GDBBackend_7_12
+    //   is released, the extender may likely point their extension to
+    //   GDBBackend_7_12 instead of GDBBackend (which will even happen
+    //   automatically if the extender extends GDBBackend_HEAD).
+    //   In such a case, they would override the changes in 
+    //   GDBBackend_7_12.getGDBCommandLineArray() and the debug session
+    //   is likely to fail since with GDBBackend_7_12, we launch GDB
+    //   in CLI mode.
+    //
+    //   Instead, we use getDebuggerCommandLine() and override that method in
+    //   GDBBackend_7_12.  That way an extender will not override it
+    //   without noticing (since it didn't exist before).  Then we can call
+    //   the overridden getGDBCommandLineArray() and work with that to
+    //   make it work with the new way to launch GDB of GDBBackend_7_12
+    //
+    // Note that we didn't name this method getGDBCommandLine() because
+    // this name had been used in CDT 8.8 and could still be part of
+    // extenders' code.
+	protected String[] getDebuggerCommandLine() {
+		// Call the old method in case it was overridden
+		return getGDBCommandLineArray();
 	}
 
 	@Override
@@ -237,11 +273,34 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	}
 
 	/**
+	 * Launch GDB process. Allow subclass to override.
+	 * 
+	 * @since 5.1
+	 */
+	// Again, we create a new method that we know has not been already
+	// overridden.  That way, even if extenders have overridden the
+	// original launchGDBProcess(String[]), we will instead use
+	// the GDBBackend_7_12#launchGDBProcess() method when appropriate.
+	// This is important because if we didn't, the new console would
+	// not work properly.
+	//
+	// Of course, in that case, we won't call the extenders overridden
+	// launchGDBProcess(String[]) and therefore will not get their
+	// specialized code.  I feel this is still a lower risk than
+	// not starting the full GDB console properly.
+	protected Process launchGDBProcess() throws CoreException {
+		// Call the old method in case it was overridden
+		return launchGDBProcess(getDebuggerCommandLine());
+	}
+
+	/**
 	 * Launch GDB process with command and arguments. Allow subclass to
 	 * override.
 	 * 
 	 * @since 4.6
+	 * @deprecated Replace by launchGDBProcess()
 	 */
+	@Deprecated
 	protected Process launchGDBProcess(String[] commandLine) throws CoreException {
 		Process proc = null;
 		try {
@@ -254,6 +313,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		return proc;
 	}
 
+	@Override
 	public Process getProcess() {
 		return fProcess;
 	}
@@ -466,7 +526,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 				}
 
 				try {
-					fProcess = launchGDBProcess(getGDBCommandLineArray());
+                    fProcess = launchGDBProcess();
+
 					// Need to do this on the executor for thread-safety
 					getExecutor().submit(new DsfRunnable() {
 						@Override
@@ -488,8 +549,12 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 				BufferedReader errorReader = null;
 				boolean success = false;
 				try {
+					// Must call getMIInputStream() because we always want to read from the MI stream,
+					// which is not always the same as the input stream of fProcess.  They are
+					// different when we use the full GDB console
+					InputStream inputStream = getMIInputStream();
 					// Read initial GDB prompt
-					inputReader = new BufferedReader(new InputStreamReader(getMIInputStream()));
+					inputReader = new BufferedReader(new InputStreamReader(inputStream));
 					String line;
 					while ((line = inputReader.readLine()) != null) {
 						line = line.trim();
@@ -501,7 +566,11 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
 					// Failed to read initial prompt, check for error
 					if (!success) {
-						errorReader = new BufferedReader(new InputStreamReader(getMIErrorStream()));
+						// Don't call getMIErrorStream() because it can be overridden with a
+						// dummy stream in the case of the full GDB console.
+						// Instead, make sure we read the error from the process itself.
+						InputStream errorStream = fProcess.getErrorStream();
+						errorReader = new BufferedReader(new InputStreamReader(errorStream));
 						String errorInfo = errorReader.readLine();
 						if (errorInfo == null) {
 							errorInfo = "GDB prompt not read"; //$NON-NLS-1$

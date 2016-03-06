@@ -17,11 +17,37 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 
 public interface IGDBControl extends IMICommandControl {
 
+	/**
+	 * Returns the process that represents GDB.
+	 * This is the process that should be added to the launch.
+	 * Note that this is usually not be the actual GDB process but
+	 * only one that is used to represent it.
+	 * To get the real GDB process use
+	 * {@link IGDBBackend#getProcess()}.
+	 * 
+	 * @since 5.1
+	 */
+	default Process getGDBBackendProcess() {
+		return getCLIProcess();
+	};
+	
+	/**
+	 * @deprecated The return value of this method was too
+	 *             restrictive.  It has been replaced with
+	 *             {@link #getGDBBackendProcess()}
+	 * @return The AbstractCLIProcess that handles the CLI.
+	 *         Will return null if the CLI is not handled
+	 *         by an AbstractCLIProcess; this will sometimes
+	 *         happen for GDB >= 7.12 if the CLI is handled
+	 *         by the GDB process itself.
+	 */
+	@Deprecated
 	AbstractCLIProcess getCLIProcess();
 
 	/**

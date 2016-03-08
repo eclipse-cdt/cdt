@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_2456fda3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointPropertyPage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 751,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-08T22:23:47Z",
+      "side": 1,
+      "message": "Really all the memory space stuff should be removed (it was in an earlier patch in this gerrit) but I decided to delay that to the next commit to reduce the number of insertions and API changes that were not obviously part of CDI. To remove memory spaces means removing org.eclipse.cdt.debug.core.model.ICWatchpoint2.MEMORYSPACE and I think that is worthy of its own self-contained commit.",
+      "revId": "1469cac931e249e239ebe0c741530008d9c3a8a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_44b86962",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpoints/AbstractToggleBreakpointAdapter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-08T22:23:47Z",
+      "side": 1,
+      "message": "See memory space comment in CBreakpointPropertyPage",
+      "revId": "1469cac931e249e239ebe0c741530008d9c3a8a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_e45b35cc",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-08T22:23:47Z",
+      "side": 0,
+      "message": "I have removed this code as it is no longer relevant. These debugger panes were CDI things and not applicable outside CDI (i.e. DSF). The reason they had to be set in the launch shortcut is that the launch shortcut needed to create a launch configuration that could work with CDI or DSF.",
+      "revId": "bf52a46a9d79fd592837bb033fea878f36b5ec9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

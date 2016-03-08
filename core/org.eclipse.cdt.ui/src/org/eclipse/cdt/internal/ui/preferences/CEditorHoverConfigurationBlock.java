@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
@@ -44,6 +46,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -155,6 +158,19 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	private TableColumn fNameColumn;
 	private TableColumn fModifierColumn;
 	private Text fDescription;
+	private Map<Button, String> fCheckBoxes= new HashMap<>();
+	private SelectionListener fCheckBoxListener= new SelectionListener() {
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			Button button= (Button) e.widget;
+			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
+		}
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			Button button= (Button) e.widget;
+			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
+		}
+	};
 	
 	private PreferencePage fMainPreferencePage;
 
@@ -173,7 +189,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		
 		ArrayList<OverlayKey> overlayKeys= new ArrayList<OverlayKey>();
 	
-		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS));
 		
@@ -204,9 +220,8 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		hoverComposite.setLayout(layout);
 		hoverComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		//String rollOverLabel= PreferencesMessages.getString("CEditorHoverConfigurationBlock.annotationRollover"); //$NON-NLS-1$
-		//addCheckBox(hoverComposite, rollOverLabel, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER, 0); //$NON-NLS-1$
-
+		String rollOverLabel= PreferencesMessages.CEditorHoverConfigurationBlock_annotationRollover;
+		addCheckBox(hoverComposite, rollOverLabel, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER, 0); //$NON-NLS-1$
 		//addFiller(hoverComposite);
 
 		Label label= new Label(hoverComposite, SWT.NONE);
@@ -384,7 +399,14 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 
 	void initializeFields() {
 		fModifierEditor.setEnabled(false);
-		
+
+		Iterator<Button> e= fCheckBoxes.keySet().iterator();
+		while (e.hasNext()) {
+			Button b= e.next();
+			String key= fCheckBoxes.get(b);
+			b.setSelection(fStore.getBoolean(key));
+		}
+
 		CEditorTextHoverDescriptor[] hoverDescs= getContributedHovers();
 		for (int i= 0; i < hoverDescs.length; i++)
 			fHoverTable.getItem(i).setChecked(hoverDescs[i].isEnabled());
@@ -546,7 +568,21 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		fMainPreferencePage.setValid(fStatus.isOK());
 		StatusUtil.applyToStatusLine(fMainPreferencePage, fStatus);
 	}
-	
+
+	private Button addCheckBox(Composite parent, String label, String key, int indentation) {
+		Button checkBox= new Button(parent, SWT.CHECK);
+		checkBox.setText(label);
+
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indentation;
+		gd.horizontalSpan= 2;
+		checkBox.setLayoutData(gd);
+		checkBox.addSelectionListener(fCheckBoxListener);
+
+		fCheckBoxes.put(checkBox, key);
+
+		return checkBox;
+	}
 	
 //	private void addFiller(Composite composite) {
 //		PixelConverter pixelConverter= new PixelConverter(composite);

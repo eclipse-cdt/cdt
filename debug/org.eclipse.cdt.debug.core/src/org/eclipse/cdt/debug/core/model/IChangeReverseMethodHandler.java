@@ -15,7 +15,7 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
 /**
  * Handler interface for the reverse debug change trace method command
  *
- * @since 7.8
+ * @since 8.0
  */
 public interface IChangeReverseMethodHandler extends IReverseToggleHandler, IDebugCommandHandler {
 

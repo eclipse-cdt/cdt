@@ -92,8 +92,6 @@
 		<module>debug/org.eclipse.cdt.gdb-feature</module>
 		<module>debug/org.eclipse.cdt.gdb.source-feature</module>
 
-		<module>debug/org.eclipse.cdt.debug.mi.core</module>
-		<module>debug/org.eclipse.cdt.debug.mi.ui</module>
 		<module>launch/org.eclipse.cdt.launch</module>
 		<module>debug/org.eclipse.cdt.gnu.debug-feature</module>
 		<module>debug/org.eclipse.cdt.gnu.debug.source-feature</module>
@@ -236,7 +234,6 @@
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>
 		<module>xlc/org.eclipse.cdt.core.lrparser.xlc.tests</module>
-		<module>debug/org.eclipse.cdt.debug.ui.tests</module>
 -->
 		<module>releng/org.eclipse.cdt.target</module>
 		<module>releng/org.eclipse.cdt.testing</module>

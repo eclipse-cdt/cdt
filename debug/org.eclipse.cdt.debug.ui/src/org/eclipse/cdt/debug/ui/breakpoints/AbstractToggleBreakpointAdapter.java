@@ -34,7 +34,6 @@ import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.CRequest;
-import org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
@@ -487,9 +486,7 @@ abstract public class AbstractToggleBreakpointAdapter
     }
 
     private String getMemorySpace(IMemoryBlock memBlock, String def) {
-        if (memBlock != null && memBlock instanceof CMemoryBlockExtension) {
-            return ((CMemoryBlockExtension)memBlock).getMemorySpaceID();
-        }
+        // XXX: In pre-CDI removal this retrieved memory space from CMemoryBlockExtension
         return def;
     }
 

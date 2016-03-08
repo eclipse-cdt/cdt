@@ -2105,6 +2105,17 @@ public class PreferenceConstants {
 	public static final String INCLUDE_STYLE_MATCHING_PATTERN = "includeStyle.matchingPattern"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether annotation roll over is used or not.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> the annotation ruler column
+	 * uses a roll over to display multiple annotations
+	 * </p>
+	 *
+	 * @since 6.0
+	 */
+	public static final String EDITOR_ANNOTATION_ROLL_OVER= "editor_annotation_roll_over"; //$NON-NLS-1$
+	
+	/**
 	 * Returns the CDT-UI preference store.
 	 *
 	 * @return the CDT-UI preference store
@@ -2132,6 +2143,8 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifier); //$NON-NLS-1$
 
 		store.setDefault(EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT, true);
+
+		store.setDefault(EDITOR_ANNOTATION_ROLL_OVER, false);		
 
 		// Syntax highlighting
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);

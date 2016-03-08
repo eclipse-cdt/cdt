@@ -97,6 +97,8 @@ import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationRulerColumn;
+import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IAnnotationModelExtension2;
@@ -105,11 +107,14 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -136,6 +141,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
@@ -232,6 +238,7 @@ import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.text.TabsToSpacesConverter;
+import org.eclipse.cdt.internal.ui.text.c.hover.CExpandHover;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.util.CUIHelp;
@@ -2346,6 +2353,10 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
         action.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_LAST);
         setAction(StructureSelectionAction.HISTORY, action);
         
+		// add annotation actions for roll-over expand hover
+		action= new CSelectMarkerRulerAction(bundle, "Editor.RulerAnnotationSelection.", this); //$NON-NLS-1$
+		setAction("AnnotationAction", action); //$NON-NLS-1$
+        
         
         // Assorted action groupings
 		fSelectionSearchGroup = createSelectionSearchGroup();
@@ -3651,5 +3662,40 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 */
 	public void removePostSaveListener(IPostSaveListener listener) {
 		fPostSaveListeners.remove(listener);
+	}
+
+	@Override
+	protected IVerticalRulerColumn createAnnotationRulerColumn(CompositeRuler ruler) {
+		if (!getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER)) {
+			return super.createAnnotationRulerColumn(ruler);
+		}
+
+		AnnotationRulerColumn column= new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess());
+		column.setHover(new CExpandHover(ruler, getAnnotationAccess(), new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				// for now: just invoke ruler double click action
+				triggerAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
+			}
+
+			private void triggerAction(String actionID) {
+				IAction action= getAction(actionID);
+				if (action != null) {
+					if (action instanceof IUpdate)
+						((IUpdate) action).update();
+					// hack to propagate line change
+					if (action instanceof ISelectionListener) {
+						((ISelectionListener)action).selectionChanged(null, null);
+					}
+					if (action.isEnabled()) {
+						action.run();
+					}
+				}
+			}
+
+		}));
+
+		return column;
 	}
 }

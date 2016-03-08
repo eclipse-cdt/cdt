@@ -20,6 +20,7 @@ public final class CHoverMessages extends NLS {
 	public static String AbstractAnnotationHover_message_singleQuickFix;
 	public static String AbstractAnnotationHover_message_multipleQuickFix;
 
+	public static String CExpandHover_tooltip_noBreakpoint;
 	public static String CMacroExpansionControl_exploreMacroExpansion;
 	public static String CMacroExpansionControl_statusText;
 

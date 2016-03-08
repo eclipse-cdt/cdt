@@ -126,6 +126,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CFileTypeDialog_patternLabel;
 	public static String CFileTypeDialog_typeLabel;
 	public static String CEditorPreferencePage_hover_title;
+	public static String CEditorHoverConfigurationBlock_annotationRollover;
 	public static String CEditorHoverConfigurationBlock_hoverPreferences;
 	public static String CEditorHoverConfigurationBlock_keyModifier;
 	public static String CEditorHoverConfigurationBlock_description;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 QNX Software Systems and others.
+ * Copyright (c) 2002, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/**
 	 * Annotation representing an {@code IProblem}.
 	 */
-	static protected class ProblemAnnotation extends Annotation implements ICAnnotation {
+	public static class ProblemAnnotation extends Annotation implements ICAnnotation {
 		private static final String INDEXER_ANNOTATION_TYPE= "org.eclipse.cdt.ui.indexmarker"; //$NON-NLS-1$
 
 		private final ITranslationUnit fTranslationUnit;

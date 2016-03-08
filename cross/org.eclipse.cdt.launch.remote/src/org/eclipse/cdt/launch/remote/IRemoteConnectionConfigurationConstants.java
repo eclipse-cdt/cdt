@@ -13,11 +13,9 @@
 
 package org.eclipse.cdt.launch.remote;
 
-import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.debug.core.DebugPlugin;
 
-public interface IRemoteConnectionConfigurationConstants extends
-		IGDBServerMILaunchConfigurationConstants {
+public interface IRemoteConnectionConfigurationConstants {
 	
 	public static final String ATTR_REMOTE_CONNECTION = 
 				DebugPlugin.getUniqueIdentifier() + ".REMOTE_TCP"; //$NON-NLS-1$

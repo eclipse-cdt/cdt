@@ -12,11 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
 import org.eclipse.cdt.debug.core.command.CCommandAdapterFactory;
@@ -27,11 +23,9 @@ import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
-import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.DebugModelProvider;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
-import org.eclipse.cdt.debug.internal.core.SessionManager;
 import org.eclipse.cdt.debug.internal.core.Trace;
 import org.eclipse.cdt.debug.internal.core.disassembly.DisassemblyContextService;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
@@ -41,8 +35,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -74,10 +66,6 @@ public class CDebugCorePlugin extends Plugin {
 	 */
 	private static CDebugCorePlugin plugin;
 
-	private HashMap<String, DebugConfiguration> fDebugConfigurations;
-	
-	private HashSet<String> fActiveDebugConfigurations;
-
 	/**
 	 * Breakpoint listener list.
 	 */
@@ -104,8 +92,6 @@ public class CDebugCorePlugin extends Plugin {
 	 * Dummy source lookup director needed to manage common source containers.
 	 */
 	private CommonSourceLookupDirector fCommonSourceLookupDirector;
-
-	private SessionManager fSessionManager = null;
 
 	/**
 	 * The constructor.
@@ -179,117 +165,6 @@ public class CDebugCorePlugin extends Plugin {
 		getDefault().getLog().log(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), INTERNAL_ERROR, message, null));
 	}
 
-	private void initializeDebugConfiguration() {
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(getUniqueIdentifier(), CDEBUGGER_EXTENSION_POINT_ID);
-		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		fDebugConfigurations = new HashMap<String, DebugConfiguration>(infos.length);
-		for(int i = 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
-			if (configurationElement.getName().equals(DEBUGGER_ELEMENT)) {
-				DebugConfiguration configType = new DebugConfiguration(configurationElement);
-				fDebugConfigurations.put(configType.getID(), configType);
-			}
-		}
-	}
-
-	private void initializeActiveDebugConfigurations() {
-		fActiveDebugConfigurations = new HashSet<String>(getDebugConfigurations().length);
-		fActiveDebugConfigurations.addAll(fDebugConfigurations.keySet());
-		String[] filteredTypes = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_FILTERED_DEBUGGERS).split("\\,"); //$NON-NLS-1$
-		fActiveDebugConfigurations.removeAll(Arrays.asList(filteredTypes));
-	}
-
-	public ICDebugConfiguration[] getDebugConfigurations() {
-		if (fDebugConfigurations == null) {
-			initializeDebugConfiguration();
-		}
-		return fDebugConfigurations.values().toArray(new ICDebugConfiguration[fDebugConfigurations.size()]);
-	}
-
-	public ICDebugConfiguration[] getActiveDebugConfigurations() {
-		if (fDebugConfigurations == null) {
-			initializeDebugConfiguration();
-		}
-		if (fActiveDebugConfigurations == null) {
-			initializeActiveDebugConfigurations();
-		}
-		ArrayList<DebugConfiguration> list = new ArrayList<DebugConfiguration>(fActiveDebugConfigurations.size());
-
-		for (String id : fActiveDebugConfigurations) {
-			DebugConfiguration dc = fDebugConfigurations.get(id);
-			if (dc != null)
-				list.add(dc);
-		}
-		return list.toArray(new ICDebugConfiguration[list.size()]);
-	}
-
-	public ICDebugConfiguration[] getDefaultActiveDebugConfigurations() {
-		List<String> filtered = Arrays.asList(CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString(ICDebugConstants.PREF_FILTERED_DEBUGGERS).split("\\,")); //$NON-NLS-1$
-		HashMap<String, DebugConfiguration> all = new HashMap<String, DebugConfiguration>(fDebugConfigurations);
-		all.keySet().removeAll(filtered);
-		return all.values().toArray(new ICDebugConfiguration[all.size()]); 
-	}
-
-	public void saveFilteredDebugConfigurations(ICDebugConfiguration[] configurations) {
-		disposeActiveDebugConfigurations();
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < configurations.length; ++i) {
-			sb.append(configurations[i].getID()).append(',');
-		}
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_FILTERED_DEBUGGERS, sb.toString());
-		CDebugCorePlugin.getDefault().savePluginPreferences();
-	}
-
-	public void saveDefaultDebugConfiguration(String id) {
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, (id != null) ? id : ""); //$NON-NLS-1$
-	}
-
-	public ICDebugConfiguration getDefaultDebugConfiguration() {
-		ICDebugConfiguration result = null;
-		try {
-			result = getDebugConfiguration(CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE));
-		} catch (CoreException e) {
-		}
-		return result;
-	}
-
-	public ICDebugConfiguration getDefaultDefaultDebugConfiguration() {
-		ICDebugConfiguration result = null;
-		try {
-			result = getDebugConfiguration(CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE));
-		} catch (CoreException e) {
-		}
-		if (result == null) {
-		}
-		return result;
-	}
-
-	public boolean isDefaultDebugConfiguration(String id) {
-		return id.compareTo(CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE)) == 0;
-	}
-
-	public ICDebugConfiguration getDebugConfiguration(String id) throws CoreException {
-		if (fDebugConfigurations == null) {
-			initializeDebugConfiguration();
-		}
-		ICDebugConfiguration dbgCfg = fDebugConfigurations.get(id);
-		if (dbgCfg == null) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 100, DebugCoreMessages.getString("CDebugCorePlugin.0"), null); //$NON-NLS-1$
-			throw new CoreException(status);
-		}
-		return dbgCfg;
-	}
-
-	protected SessionManager getSessionManager() {
-		return fSessionManager;
-	}
-
-	protected void setSessionManager(SessionManager sm) {
-		if (fSessionManager != null)
-			fSessionManager.dispose();
-		fSessionManager = sm;
-	}
-
 	public void saveCommonSourceLocations(ICSourceLocation[] locations) {
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_SOURCE_LOCATIONS, SourceUtils.getCommonSourceLocationsMemento(locations));
 	}
@@ -348,7 +223,6 @@ public class CDebugCorePlugin extends Plugin {
 		createCommandAdapterFactory();
 		createBreakpointListenersList();
 		createDisassemblyContextService();
-		setSessionManager(new SessionManager());
 		setDefaultLaunchDelegates();
 		
 		Platform.getAdapterManager().registerAdapters(new DebugModelProvider(), ICDebugElement.class);
@@ -359,11 +233,9 @@ public class CDebugCorePlugin extends Plugin {
 	 */
 	@Override
     public void stop(BundleContext context) throws Exception {
-		setSessionManager(null);
 		disposeDisassemblyContextService();
 		disposeBreakpointListenersList();
 		disposeCommonSourceLookupDirector();
-		disposeDebugConfigurations();
 		super.stop(context);
 	}
 
@@ -422,21 +294,6 @@ public class CDebugCorePlugin extends Plugin {
 
 	private void convertSourceLocations(CommonSourceLookupDirector director) {
 		director.setSourceContainers(SourceUtils.convertSourceLocations(getCommonSourceLocations()));
-	}
-
-	private void disposeActiveDebugConfigurations() {
-		if (fActiveDebugConfigurations != null) {
-			fActiveDebugConfigurations.clear();
-			fActiveDebugConfigurations = null;
-		}
-	}
-
-	private void disposeDebugConfigurations() {
-		disposeActiveDebugConfigurations();
-		if (fDebugConfigurations != null) {
-			fDebugConfigurations.clear();
-			fDebugConfigurations = null;
-		}
 	}
 	
 	public BreakpointActionManager getBreakpointActionManager() {

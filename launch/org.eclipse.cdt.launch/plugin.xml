@@ -9,7 +9,7 @@
             id="org.eclipse.cdt.cdi.launch.localCLaunch"
             type="org.eclipse.cdt.launch.applicationLaunchType"
             delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
-            modes="run,debug"
+            modes="run"
             name="%LocalCDTLaunch.name"
             delegateDescription="%LocalCDTLaunch.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
@@ -74,14 +74,6 @@
         <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>
       </tab>
       <tab
-            id="org.eclipse.cdt.cdi.launch.applicationLaunch.debuggerTab"
-            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
-            name="%DebuggerLaunchTab.name"
-            class="org.eclipse.cdt.launch.ui.ApplicationCDebuggerTab">
-        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
-        <placement after="org.eclipse.debug.ui.environmentTab"/>
-      </tab>
-      <tab
             id="org.eclipse.cdt.cdi.launch.applicationLaunch.sourceLookupTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%SourceLookupLaunchTab.name"
@@ -119,14 +111,6 @@
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCAttachLaunch"/>
       </tab>
       <tab
-            id="org.eclipse.cdt.cdi.launch.attachLaunch.debuggerTab"
-            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
-            name="%DebuggerLaunchTab.name"
-            class="org.eclipse.cdt.launch.ui.AttachCDebuggerTab">
-        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCAttachLaunch"/>
-        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
-      </tab>
-      <tab
             id="org.eclipse.cdt.cdi.launch.attachLaunch.sourceLookupTab"
             group="org.eclipse.cdt.launch.attachLaunchTabGroup"
             name="%SourceLookupLaunchTab.name"
@@ -162,14 +146,6 @@
             name="%MainLaunchTab.name"
             class="org.eclipse.cdt.launch.ui.CMainCoreTab">
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.coreFileCLaunch"/>
-      </tab>
-      <tab
-            id="org.eclipse.cdt.cdi.launch.postmortemLaunch.coreTab"
-            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
-            name="%CoreFileLaunchTab.name"
-            class="org.eclipse.cdt.launch.ui.CoreFileDebuggerTab">
-        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.coreFileCLaunch"/>
-        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
       </tab>
       <tab
             id="org.eclipse.cdt.cdi.launch.postmortemLaunch.sourceLookupTab"

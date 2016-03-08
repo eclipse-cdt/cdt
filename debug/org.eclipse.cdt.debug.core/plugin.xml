@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-     <extension-point id="CDebugger" name="%CDebugger.name" schema="schema/CDebugger.exsd"/>
      <extension-point id="BreakpointActionType" name="%BreakpointAction" schema="schema/BreakpointAction.exsd"/>
      <extension-point id="BreakpointExtension" name="%BreakpointAction" schema="schema/BreakpointExtension.exsd"/>
      <extension-point id="supportedSourceContainerTypes" name="%SupportedSourceContainerTypes.name" schema="schema/SupportedSourceContainerTypes.exsd"/>
@@ -383,21 +382,6 @@
             id="org.eclipse.cdt.debug.core.containerType.programRelativePath"
             name="%containerName.programRelativePath">
       </sourceContainerType>
-   </extension>
- 
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            class="org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionAdapterFactory"
-            adaptableType="org.eclipse.cdt.debug.internal.core.model.CThread">
-         <adapter
-               type="org.eclipse.cdt.debug.core.breakpointactions.ILogActionEnabler">
-         </adapter>
-         <adapter
-               type="org.eclipse.cdt.debug.core.breakpointactions.IResumeActionEnabler">
-         </adapter>
-       </factory>
-
    </extension>
    <extension
          point="org.eclipse.cdt.debug.core.BreakpointExtension">

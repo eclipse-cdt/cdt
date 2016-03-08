@@ -32,17 +32,14 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
-import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -244,16 +241,6 @@ public class CDebugUtils {
 	 */
 	public static String serializeDocument(Document doc) throws IOException, TransformerException {
 		return serializeDocument(doc, true);
-	}
-
-	public static Number getFloatingPointValue(ICValue value) {
-		if (value instanceof CFloatingPointValue) {
-			try {
-				return ((CFloatingPointValue)value).getFloatingPointValue();
-			} catch (CDIException e) {
-			}
-		}
-		return null;
 	}
 
 	public static boolean isNaN(Number value) {

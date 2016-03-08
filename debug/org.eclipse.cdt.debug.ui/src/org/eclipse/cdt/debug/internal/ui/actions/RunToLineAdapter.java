@@ -15,8 +15,6 @@ import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
-import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -29,8 +27,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -67,11 +63,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				}
 				else {
 					final String fileName = getFileName( input ); // actually, absolute path, not just file name
-					IDebugTarget debugTarget = null;
-					if (target instanceof CDebugElement) { // should always be, but just in case
-						debugTarget = ((CDebugElement)target).getDebugTarget();
-					}
-					final IPath path = convertPath( fileName, debugTarget );					
+					final IPath path = new Path( fileName );
 					ITextSelection textSelection = (ITextSelection)selection;
 					final int lineNumber = textSelection.getStartLine() + 1;
 					if ( target instanceof IAdaptable ) {
@@ -134,11 +126,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				if (fileName == null) {
 					return false;
 				}
-				IDebugTarget debugTarget = null;
-				if (target instanceof CDebugElement) { // should always be, but just in case
-					debugTarget = ((CDebugElement)target).getDebugTarget();
-				}
-				final IPath path = convertPath( fileName, debugTarget );					
+				final IPath path = new Path( fileName );
 				
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
@@ -160,21 +148,5 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "RunToLineAdapter.0" ), null ); //$NON-NLS-1$
 		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
 		CDebugUtils.error( ms, this );
-	}
-	
-	private IPath convertPath( String sourceHandle, IDebugTarget debugTarget ) {
-		IPath path = null;
-		if ( Path.EMPTY.isValidPath( sourceHandle ) ) {
-			if ( debugTarget != null ) {
-				ISourceLocator sl = debugTarget.getLaunch().getSourceLocator();
-				if ( sl instanceof CSourceLookupDirector ) {
-					path = ((CSourceLookupDirector)sl).getCompilationPath( sourceHandle );
-				}
-			}
-			if ( path == null ) {
-				path = new Path( sourceHandle );
-			}
-		}
-		return path;
 	}
 }

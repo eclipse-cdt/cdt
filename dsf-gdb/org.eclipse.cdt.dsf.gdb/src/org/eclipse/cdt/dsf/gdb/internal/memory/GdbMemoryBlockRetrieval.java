@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Texas Instruments, Freescale Semiconductor and others.
+ * Copyright (c) 2010, 2016 Texas Instruments, Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -445,7 +445,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	 * @see org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval#createBlocksFromConfiguration(org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext, java.lang.String)
 	 */
 	@Override
-	protected void createBlocksFromConfiguration(IMemoryDMContext memoryCtx, String memento) throws CoreException {
+	protected void createBlocksFromConfiguration(final IMemoryDMContext memoryCtx, String memento) throws CoreException {
 
 	    // Parse the memento and validate its type
         Element root = DebugPlugin.parseDocument(memento);
@@ -462,6 +462,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
             NodeList expressionList = root.getChildNodes();
             int length = expressionList.getLength();
             for (int i = 0; i < length; ++i) {
+            	IMemoryDMContext memoryContext = memoryCtx;
                 Node node = expressionList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element entry = (Element) node;
@@ -476,18 +477,18 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
                         		memorySpaceID = null; 
                         		assert false : "should have either no memory space or a valid (non-empty) ID"; //$NON-NLS-1$	
                         	} else {
-                        		if (memoryCtx instanceof IMemorySpaceDMContext) {
+                        		if (memoryContext instanceof IMemorySpaceDMContext) {
                         			//The context is already a memory space context, make sure the ids are consistent
-                        			assert(((IMemorySpaceDMContext) memoryCtx).getMemorySpaceId().equals(memorySpaceID));
+                        			assert(((IMemorySpaceDMContext) memoryContext).getMemorySpaceId().equals(memorySpaceID));
                         		} else {
                                     //Use a memory space context if the memory space id is valid
-                            		memoryCtx = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryCtx);
+                        			memoryContext = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryContext);
                         		}
                         	}
                         }
 
                         BigInteger blockAddress = new BigInteger(address);
-                        DsfMemoryBlock block = new GdbMemoryBlock(this, memoryCtx, getModelId(), label, blockAddress, getAddressableSize(memoryCtx), 0, memorySpaceID);
+                        DsfMemoryBlock block = new GdbMemoryBlock(this, memoryContext, getModelId(), label, blockAddress, getAddressableSize(memoryCtx), 0, memorySpaceID);
                         blocks.add(block);
                     }
                 }

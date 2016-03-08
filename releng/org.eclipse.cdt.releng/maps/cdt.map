@@ -15,9 +15,6 @@ plugin@org.eclipse.cdt.managedbuilder.gnu.ui=@cdtTag@,/cvsroot/tools,,org.eclips
 plugin@org.eclipse.cdt.debug.core=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.debug.core
 plugin@org.eclipse.cdt.debug.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.debug.ui
 
-plugin@org.eclipse.cdt.debug.mi.core=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.debug.mi.core
-plugin@org.eclipse.cdt.debug.mi.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.debug.mi.ui
-
 plugin@org.eclipse.cdt.launch=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.launch
 
 plugin@org.eclipse.cdt.doc.user=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.doc.user
@@ -56,7 +53,6 @@ fragment@org.eclipse.cdt.core.win32=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all
 ! Testing feature
 plugin@org.eclipse.cdt.core.tests=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.tests
 plugin@org.eclipse.cdt.ui.tests=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.ui.tests
-plugin@org.eclipse.cdt.debug.ui.tests=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.debug.ui.tests
 plugin@org.eclipse.cdt.managedbuilder.core.tests=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core.tests
 plugin@org.eclipse.cdt.managedbuilder.ui.tests=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.ui.tests
 plugin@org.eclipse.cdt.testing=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.testing

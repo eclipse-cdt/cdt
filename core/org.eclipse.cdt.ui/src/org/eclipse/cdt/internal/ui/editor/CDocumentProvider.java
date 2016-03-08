@@ -112,7 +112,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/**
 	 * Annotation representing an <code>IProblem</code>.
 	 */
-	static protected class ProblemAnnotation extends Annotation implements ICAnnotation {
+	public static class ProblemAnnotation extends Annotation implements ICAnnotation {
 		private static final String INDEXER_ANNOTATION_TYPE= "org.eclipse.cdt.ui.indexmarker"; //$NON-NLS-1$
 
 		private final ITranslationUnit fTranslationUnit;

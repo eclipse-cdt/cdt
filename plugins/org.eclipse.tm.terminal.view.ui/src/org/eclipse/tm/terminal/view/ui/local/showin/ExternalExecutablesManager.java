@@ -278,7 +278,7 @@ public class ExternalExecutablesManager {
 						biggest = d;
 					} else if (id.height != 16 && d.height < id.height && id.width != 16 && d.width < id.width) {
 						id = d;
-					} else if (d.height > biggest.height && d.width > biggest.width) {
+					} else if (biggest == null || d.height > biggest.height && d.width > biggest.width) {
 						biggest = d;
 					}
 				}

@@ -95,7 +95,7 @@ public abstract class FunctionExtractor {
 	
 	public List<IASTParameterDeclaration> getParameterDeclarations(
 			Collection<NameInformation> parameterNames, INodeFactory nodeFactory) {
-		List<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>(parameterNames.size());		
+		List<IASTParameterDeclaration> result = new ArrayList<>(parameterNames.size());		
 		for (NameInformation param : parameterNames) {
 			result.add(param.getParameterDeclaration(nodeFactory));
 		}
@@ -170,7 +170,7 @@ public abstract class FunctionExtractor {
 	 * @return a map from references to parameters to parameters themselves.
 	 */
 	protected static Map<IASTName, NameInformation> getChangedParameterReferences(List<NameInformation> parameters) {
-		final Map<IASTName, NameInformation> referenceLookupMap = new HashMap<IASTName, NameInformation>();
+		final Map<IASTName, NameInformation> referenceLookupMap = new HashMap<>();
 		for (NameInformation param : parameters) {
 			if (param.isRenamed() || param.getIndirection() == Indirection.POINTER) {
 				for (IASTName name : param.getReferencesInSelection()) {

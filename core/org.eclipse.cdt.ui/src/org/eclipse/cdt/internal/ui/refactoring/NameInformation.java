@@ -66,7 +66,7 @@ public class NameInformation {
 	public NameInformation(IASTName name) {
 		this.name = name;
 		this.newName = String.valueOf(name.getSimpleID());
-		referencesInSelection = new ArrayList<IASTName>();
+		referencesInSelection = new ArrayList<>();
 	}
 
 	public static NameInformation createInfoForAddedParameter(String type, String name,

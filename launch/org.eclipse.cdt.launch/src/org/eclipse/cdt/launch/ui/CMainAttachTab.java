@@ -12,7 +12,7 @@ package org.eclipse.cdt.launch.ui;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 
-
+@Deprecated
 public class CMainAttachTab extends CMainTab {
 
 	public CMainAttachTab() {

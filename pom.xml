@@ -109,9 +109,6 @@
 		<module>dsf-gdb/org.eclipse.cdt.gnu.dsf.source-feature</module>
 		<module>dsf-gdb/org.eclipse.cdt.gnu.multicorevisualizer-feature</module>
 
-		<module>p2/org.eclipse.cdt.p2</module>
-		<module>p2/org.eclipse.cdt.p2-feature</module>
-
 		<module>releng/org.eclipse.cdt-feature</module>
 
 		<module>doc/org.eclipse.cdt.doc.isv</module>

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -51,14 +52,14 @@ public class NamespaceHelper {
 	 */
 	public static ICPPASTQualifiedName getSurroundingNamespace(final ITranslationUnit translationUnit, final int offset, CRefactoringContext astCache)
 			throws CoreException {
-		final CPPASTQualifiedName qualifiedName = new CPPASTQualifiedName();
+		final CPPASTQualifiedName[] qualifiedName = new CPPASTQualifiedName[1];
 	
 		astCache.getAST(translationUnit, null).accept(new CPPASTAllVisitor() {
 			@Override
 			public int visit(IASTDeclSpecifier declSpec) {
 				if (declSpec instanceof ICPPASTCompositeTypeSpecifier &&
 						checkFileNameAndLocation(translationUnit.getLocation(), offset, declSpec)) {
-					qualifiedName.addName(createNameWithTemplates(declSpec));
+					qualifiedName[0] = new CPPASTQualifiedName((ICPPASTName) createNameWithTemplates(declSpec));
 				}
 				return super.visit(declSpec);
 			}
@@ -66,14 +67,14 @@ public class NamespaceHelper {
 			@Override
 			public int visit(ICPPASTNamespaceDefinition namespace) {
 				if (checkFileNameAndLocation(translationUnit.getLocation(), offset, namespace)) {
-					qualifiedName.addName((namespace).getName().copy(CopyStyle.withLocations)); 
+					qualifiedName[0].addName((namespace).getName().copy(CopyStyle.withLocations)); 
 				}
 				
 				return super.visit(namespace);
 			}
 		});
 		
-		return qualifiedName;
+		return qualifiedName[0];
 	}
 	
 	private static boolean checkFileNameAndLocation(final IPath path, final int offset, IASTNode namespace) {

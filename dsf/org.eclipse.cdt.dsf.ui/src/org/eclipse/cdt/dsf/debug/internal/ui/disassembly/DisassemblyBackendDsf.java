@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,9 @@ import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithRawOpcodes;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithSize;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
+import org.eclipse.cdt.dsf.debug.service.IRegisters;
+import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -1194,6 +1197,74 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		}
 		return null;
 		
+	}
+	
+	@Override
+	public String evaluateRegister(final String potentialRegisterName) {
+		if (fTargetFrameContext == null) {
+			return null;
+		}
+		final DsfExecutor executor = DsfSession.getSession(fDsfSessionId).getExecutor();
+		
+		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+			@Override
+			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
+				IExecutionDMContext exeCtx = DMContexts.getAncestorOfType(fTargetFrameContext, IExecutionDMContext.class);
+				final IRunControl rc = getService(IRunControl.class);
+				if (rc == null || !rc.isSuspended(exeCtx)) {
+					rm.done();
+					return;
+				}
+				final IRegisters registersService = getService(IRegisters.class);
+				if (registersService == null) {
+					rm.done();
+					return;
+				}
+				
+				// find registers for current frame context
+				registersService.findRegister(fTargetFrameContext, potentialRegisterName, 
+						new DataRequestMonitor<IRegisterDMContext>(executor, rm) 
+				{
+					@Override
+					protected void handleSuccess() {
+						// final array to hold the register we're looking-for
+						final IRegisterDMContext[] theOne = new IRegisterDMContext[1];
+						theOne[0] = getData();
+
+						registersService.getRegisterData(theOne[0], 
+								new DataRequestMonitor<IRegisterDMData>(executor, new DataRequestMonitor<IRegisterDMData>(executor, rm))
+						{
+							@Override
+							protected void handleCompleted() {
+								if (!isSuccess()) {
+									rm.done();
+									return;
+								}
+
+								FormattedValueDMContext fmtCtx = registersService.getFormattedValueContext(theOne[0], IFormattedValues.HEX_FORMAT);
+								registersService.getFormattedExpressionValue(fmtCtx, new DataRequestMonitor<FormattedValueDMData>(executor, rm)	{
+									@Override
+									protected void handleCompleted() {
+										rm.done(getData());
+									}
+								});
+							}
+						});
+					}
+				});
+			}};
+		
+		executor.execute(query);
+		FormattedValueDMData data = null;
+		try {
+			data = query.get();
+		} catch (InterruptedException exc) {
+		} catch (ExecutionException exc) {
+		}
+		if (data != null) {
+			return data.getFormattedValue();
+		}
+		return null;
 	}
 	
 	/**

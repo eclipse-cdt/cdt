@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AbstractDisassemblyBackend;
@@ -55,6 +56,8 @@ import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithRawOpcodes;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithSize;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
+import org.eclipse.cdt.dsf.debug.service.IRegisters;
+import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -1196,6 +1199,64 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		
 	}
 	
+	@Override
+	public String evaluateRegister(final String potentialRegisterName) {
+		if (fTargetFrameContext == null) {
+			return null;
+		}
+		final DsfExecutor executor = DsfSession.getSession(fDsfSessionId).getExecutor();
+
+		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+			@Override
+			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
+				IExecutionDMContext exeCtx = DMContexts.getAncestorOfType(fTargetFrameContext, IExecutionDMContext.class);
+				final IRunControl rc = getService(IRunControl.class);
+				if (rc == null || !rc.isSuspended(exeCtx)) {
+					rm.done();
+					return;
+				}
+				final IRegisters registersService = getService(IRegisters.class);
+				if (registersService == null) {
+					rm.done();
+					return;
+				}
+				
+				// find registers for current frame context
+				registersService.findRegister(fTargetFrameContext, potentialRegisterName, 
+						new DataRequestMonitor<IRegisterDMContext>(executor, rm) 
+				{
+					@Override
+					protected void handleSuccess() {
+						// handle to the register we're looking-for
+						final IRegisterDMContext theOne = getData();
+
+                        FormattedValueDMContext fmtCtx = registersService.getFormattedValueContext(theOne, IFormattedValues.HEX_FORMAT);
+                        registersService.getFormattedExpressionValue(fmtCtx, new DataRequestMonitor<FormattedValueDMData>(executor, rm) {
+                            @Override
+                            protected void handleSuccess() {
+                                rm.done(getData());
+                            }
+                        });
+					}
+				});
+			}};
+		
+		executor.execute(query);
+		String returnValue = null;
+		try {
+            // set a query timeout, to help avoid potential deadlock
+		    FormattedValueDMData data = query.get(500, TimeUnit.MILLISECONDS);
+		    if (data != null) {
+	            returnValue = data.getFormattedValue();		        
+		    }
+		} catch (InterruptedException exc) {
+		} catch (ExecutionException exc) {
+		} catch (TimeoutException exc) {
+        }
+
+        return returnValue;
+	}
+
 	/**
 	 * Align the opCode of an address.
 	 * 

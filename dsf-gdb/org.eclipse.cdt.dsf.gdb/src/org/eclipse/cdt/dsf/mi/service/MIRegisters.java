@@ -779,8 +779,27 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      */
 	@Override
     public void findRegister(IDMContext ctx, String name, DataRequestMonitor<IRegisterDMContext> rm) {
-        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Finding a Register context not supported", null)); //$NON-NLS-1$
-        rm.done();
+        getRegisters(ctx, new ImmediateDataRequestMonitor<IRegisterDMContext[]>() {
+            @Override
+            protected void handleSuccess () {
+                IRegisterDMContext[] allRegs = getData();
+                
+                // in all registers found, look for one with the name we seek
+                for (int i = 0; i < allRegs.length; i++) {
+                    if (allRegs[i] instanceof MIRegisterDMC) {
+                        if (name.equals(((MIRegisterDMC)allRegs[i]).getName())) {
+                            // found it
+                            rm.done(allRegs[i]);
+                            return;
+                        }
+                    }
+                }
+
+                // register was not found
+                rm.done(new Status(IStatus.WARNING, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown register name", null)); //$NON-NLS-1$
+                return;
+            }
+        });
     }
 
     /*

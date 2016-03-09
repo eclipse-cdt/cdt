@@ -722,6 +722,32 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	}
 	
 	@Override
+    public void findRegister(IDMContext ctx, String name, DataRequestMonitor<IRegisterDMContext> rm) {
+		getRegisters(ctx, new ImmediateDataRequestMonitor<IRegisterDMContext[]>() {
+			@Override
+			protected void handleSuccess () {
+				IRegisterDMContext[] allRegs = getData();
+				
+				// in all registers found, look for one with the name we seek
+				for (int i = 0; i < allRegs.length; i++) {
+					if (allRegs[i] instanceof MIRegisterDMC) {
+						if (name.equals(((MIRegisterDMC)allRegs[i]).getName())) {
+							// found it
+							rm.done(allRegs[i]);
+							return;
+						}
+					}
+				}
+				
+				// register was not found
+				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown register name", null)); //$NON-NLS-1$
+				rm.done();
+				return;
+			}
+		});
+    }
+	
+	@Override
 	public void shutdown(RequestMonitor rm) {
 		save();
 		super.shutdown(rm);

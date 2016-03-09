@@ -194,11 +194,10 @@ public class ExternalExecutablesManager {
 	 *
 	 * @param l The list of external executables or <code>null</code>.
 	 */
-	public static void save(List<Map<String, String>> l) {
-		ISourceProviderService sourceProviderService =
-						PlatformUI.getWorkbench().getService(ISourceProviderService.class);
-		ExternalExecutablesState stateService =
-						(ExternalExecutablesState) sourceProviderService.getSourceProvider(ExternalExecutablesState.CONFIGURED_STATE);
+	@SuppressWarnings("cast")
+    public static void save(List<Map<String, String>> l) {
+		ISourceProviderService sourceProviderService = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
+		ExternalExecutablesState stateService = (ExternalExecutablesState) sourceProviderService.getSourceProvider(ExternalExecutablesState.CONFIGURED_STATE);
 
 		IPath stateLocation = UIPlugin.getDefault().getStateLocation();
 		if (stateLocation != null) {

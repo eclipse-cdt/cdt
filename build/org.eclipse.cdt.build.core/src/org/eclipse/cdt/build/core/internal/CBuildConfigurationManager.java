@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.core.internal;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -102,7 +103,11 @@ public class CBuildConfigurationManager
 				// Clean up the scanner info data
 				IPath stateLoc = Activator.getDefault().getStateLocation();
 				IPath scannerInfoPath = stateLoc.append(project.getName());
-				Path directory = scannerInfoPath.toFile().toPath();
+				File file = scannerInfoPath.toFile();
+				if (!file.exists()) {
+					return;
+				}
+				Path directory = file.toPath();
 				try {
 					Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
 						@Override

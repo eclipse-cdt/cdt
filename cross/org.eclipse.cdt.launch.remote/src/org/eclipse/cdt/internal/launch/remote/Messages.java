@@ -43,6 +43,8 @@ public class Messages extends NLS {
 	public static String RemoteCMainTab_ErrorNoConnection;
 	public static String RemoteCMainTab_Connection;
 	public static String RemoteCMainTab_New;
+	public static String RemoteCMainTab_New_title;
+	public static String RemoteCMainTab_New_conntype_combo_label;
 	public static String RemoteCMainTab_Edit;
 	public static String RemoteCMainTab_Properties;
 	public static String RemoteCMainTab_Properties_title;

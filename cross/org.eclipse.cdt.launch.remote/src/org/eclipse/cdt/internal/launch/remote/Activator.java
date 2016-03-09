@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.launch.remote;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -63,5 +64,17 @@ public class Activator extends Plugin {
 
 	public static BundleContext getBundleContext() {
 		return getDefault().getBundle().getBundleContext();
+	}
+
+	/**
+	 * Return the OSGi service with the given service interface.
+	 *
+	 * @param service service interface
+	 * @return the specified service or null if it's not registered
+	 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = Activator.getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
 	}
 }

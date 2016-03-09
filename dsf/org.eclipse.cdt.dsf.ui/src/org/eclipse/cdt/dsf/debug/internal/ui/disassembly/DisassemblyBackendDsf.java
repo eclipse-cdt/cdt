@@ -55,6 +55,9 @@ import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithRawOpcodes;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithSize;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
+import org.eclipse.cdt.dsf.debug.service.IRegisters;
+import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -66,6 +69,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -1194,6 +1198,93 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		}
 		return null;
 		
+	}
+	
+	@Override
+	public String evaluateRegister(final String potentialRegisterName) {
+		if (fTargetFrameContext == null) {
+			return null;
+		}
+		final DsfExecutor executor = DsfSession.getSession(fDsfSessionId).getExecutor();
+		
+		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+			@Override
+			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
+				IExecutionDMContext exeCtx = DMContexts.getAncestorOfType(fTargetFrameContext, IExecutionDMContext.class);
+				final IRunControl rc = getService(IRunControl.class);
+				if (rc == null || !rc.isSuspended(exeCtx)) {
+					rm.done();
+					return;
+				}
+				final IRegisters registersService = getService(IRegisters.class);
+				if (registersService == null) {
+					rm.done();
+					return;
+				}
+				
+				// find register for current frame context
+				registersService.getRegisters(fTargetFrameContext, new DataRequestMonitor<IRegisterDMContext[]>(executor, rm) {
+					@Override
+					protected void handleCompleted() {
+						if (!isSuccess()) {
+							rm.done();
+							return;
+						}
+						
+						IRegisterDMContext[] allRegs = getData();
+						// final array to hold the register we're looking-for
+						final IRegisterDMContext[] theOne = new IRegisterDMContext[1];
+						
+						// in all registers found, look for one with the name we want
+						for (int i = 0; i < allRegs.length; i++) {
+							if (allRegs[i] instanceof MIRegisterDMC) {
+								if (potentialRegisterName.equals(((MIRegisterDMC)allRegs[i]).getName())) {
+									theOne[0] = allRegs[i];
+									break;
+								}
+							}
+						}
+						// register not found
+						if (theOne[0] == null) {
+							rm.done();
+							return;
+						}
+
+						registersService.getRegisterData(theOne[0], 
+								new DataRequestMonitor<IRegisterDMData>(executor, new DataRequestMonitor<IRegisterDMData>(executor, rm))
+						{
+							@Override
+							protected void handleCompleted() {
+								if (!isSuccess()) {
+									rm.done();
+									return;
+								}
+
+								FormattedValueDMContext fmtCtx = registersService.getFormattedValueContext(theOne[0], IFormattedValues.HEX_FORMAT);
+								registersService.getFormattedExpressionValue(fmtCtx, new DataRequestMonitor<FormattedValueDMData>(executor, rm)	{
+									@Override
+									protected void handleCompleted() {
+										rm.done(getData());
+									}
+								});
+							}
+						});
+					}
+				});
+			}};
+		
+		executor.execute(query);
+
+		FormattedValueDMData data = null;
+		try {
+			data = query.get();
+		} catch (InterruptedException exc) {
+		} catch (ExecutionException exc) {
+		}
+		if (data != null) {
+			return data.getFormattedValue();
+		}
+		return null;
 	}
 	
 	/**

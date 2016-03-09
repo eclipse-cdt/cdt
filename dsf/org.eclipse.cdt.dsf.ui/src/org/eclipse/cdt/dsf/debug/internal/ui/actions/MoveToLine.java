@@ -12,6 +12,8 @@ package org.eclipse.cdt.dsf.debug.internal.ui.actions;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.model.IMoveToAddress;
@@ -63,11 +65,12 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
                     }
                 };
                 session.getExecutor().execute(query);
-                return query.get();
+                return query.get(DsfActionsConstants.ACTION_ADAPTERS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             } catch (RejectedExecutionException e) {
             } catch (InterruptedException e) {
             } catch (ExecutionException e) {
-            }
+            } catch (TimeoutException e) {
+			}
         }
         return false;
     }
@@ -134,11 +137,12 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
                     }
                 };
                 session.getExecutor().execute(query);
-                return query.get();
+                return query.get(DsfActionsConstants.ACTION_ADAPTERS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             } catch (RejectedExecutionException e) {
             } catch (InterruptedException e) {
             } catch (ExecutionException e) {
-            }
+            } catch (TimeoutException e) {
+			}
         }
         return false;
     }

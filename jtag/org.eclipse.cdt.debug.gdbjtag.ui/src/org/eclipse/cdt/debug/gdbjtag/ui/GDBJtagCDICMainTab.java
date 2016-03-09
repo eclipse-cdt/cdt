@@ -15,6 +15,7 @@ import org.eclipse.cdt.launch.ui.CMainTab;
 /**
  * @since 7.0
  */
+@SuppressWarnings("deprecation")
 public class GDBJtagCDICMainTab extends CMainTab {
 
 	public GDBJtagCDICMainTab() {

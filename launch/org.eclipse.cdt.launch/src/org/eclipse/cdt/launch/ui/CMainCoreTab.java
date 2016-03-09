@@ -14,6 +14,7 @@ package org.eclipse.cdt.launch.ui;
 /**
  * @since 6.0
  */
+@Deprecated
 public class CMainCoreTab extends CMainTab {
     public CMainCoreTab() {
         super(CMainTab.SPECIFY_CORE_FILE);

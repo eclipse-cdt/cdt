@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+@Deprecated  // see https://git.eclipse.org/r/#/c/68010/
 public class RemoteCMainTab extends CMainTab {
 
 	/* Labels and Error Messages */

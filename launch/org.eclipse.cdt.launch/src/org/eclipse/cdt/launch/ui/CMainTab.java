@@ -64,6 +64,7 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  * </p>
  * @since 2.0
  */
+@Deprecated  // see https://git.eclipse.org/r/#/c/68010/
 public class CMainTab extends CAbstractMainTab {
 
     /**

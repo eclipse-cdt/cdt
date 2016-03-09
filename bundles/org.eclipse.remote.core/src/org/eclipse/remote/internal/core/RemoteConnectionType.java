@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.remote.internal.core;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,10 +71,11 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		
 		// load up existing connections
 		try {
-			for (String connectionName : getPreferenceNode().childrenNames()) {
+			for (String nodeName : getPreferenceNode().childrenNames()) {
+				String connectionName = URLDecoder.decode(nodeName, "UTF-8");
 				connections.put(connectionName, new RemoteConnection(this, connectionName));
 			}
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException | UnsupportedEncodingException e) {
 			RemoteCorePlugin.log(e);
 		}
 	}

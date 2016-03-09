@@ -114,14 +114,14 @@ public class RemoteConnection implements IRemoteConnection {
 				throw new ConnectionExistsException(newName);
 			}
 
-			Preferences newPrefs = connectionType.getPreferenceNode().node(newName);
+			Preferences newPrefs = connectionType.getPreferenceNode().node(URLEncoder.encode(newName, "UTF-8"));
 			Preferences oldPrefs = getPreferences();
 			for (String key : oldPrefs.keys()) {
 				newPrefs.put(key, oldPrefs.get(key, null));
 			}
 
 			oldPrefs.removeNode();
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException | UnsupportedEncodingException e) {
 			RemoteCorePlugin.log(e);
 		}
 

@@ -143,7 +143,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private FunctionExtractor extractor;
 	private INodeFactory nodeFactory;
-	private DefaultCodeFormatterOptions formattingOptions;
+	private final DefaultCodeFormatterOptions formattingOptions;
 
 	private IIndex index;
 	private IASTTranslationUnit ast;
@@ -152,9 +152,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		super(element, selection, project);
 		info = new ExtractFunctionInformation();
 		name = Messages.ExtractFunctionRefactoring_ExtractFunction;
-		names = new HashMap<String, Integer>();
-		namesCounter = new Container<Integer>(NULL_INTEGER);
-		trailPos = new Container<Integer>(NULL_INTEGER);
+		names = new HashMap<>();
+		namesCounter = new Container<>(NULL_INTEGER);
+		trailPos = new Container<>(NULL_INTEGER);
 		formattingOptions = new DefaultCodeFormatterOptions(project.getOptions(true));
 	}
 
@@ -436,7 +436,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private List<IASTNode> getNodesWithoutComments(List<IASTNode> nodes) {
-		final List<IASTNode> nodesWithoutComments = new ArrayList<IASTNode>(nodes.size());
+		final List<IASTNode> nodesWithoutComments = new ArrayList<>(nodes.size());
 
 		for (IASTNode node : nodes) {
 			if (!(node instanceof IASTComment)) {
@@ -447,9 +447,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private List<IASTNode> getTrail(List<IASTNode> stmts) {
-		final List<IASTNode> trail = new ArrayList<IASTNode>();
-		nameTrail = new HashMap<String, Integer>();
-		final Container<Integer> trailCounter = new Container<Integer>(NULL_INTEGER);
+		final List<IASTNode> trail = new ArrayList<>();
+		nameTrail = new HashMap<>();
+		final Container<Integer> trailCounter = new Container<>(NULL_INTEGER);
 
 		for (IASTNode node : stmts) {
 			node.accept(new CPPASTAllVisitor() {
@@ -604,7 +604,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
 		func.setParent(ast);
 
-		List<IASTPointerOperator> pointerOperators = new ArrayList<IASTPointerOperator>();
+		List<IASTPointerOperator> pointerOperators = new ArrayList<>();
 		IASTDeclSpecifier returnType = getReturnType(pointerOperators);
 		func.setDeclSpecifier(returnType);
 
@@ -826,7 +826,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private IASTSimpleDeclaration getDeclaration(ModificationCollector collector, IASTName name) {
-		List<IASTPointerOperator> pointerOperators = new ArrayList<IASTPointerOperator>();
+		List<IASTPointerOperator> pointerOperators = new ArrayList<>();
 		IASTDeclSpecifier declSpec = getReturnType(pointerOperators);
 		IASTSimpleDeclaration simpleDecl = nodeFactory.newSimpleDeclaration(declSpec);
 		if (info.isVirtual() && declSpec instanceof ICPPASTDeclSpecifier) {

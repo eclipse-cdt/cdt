@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_3d9a8ff5",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfActionsConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-10T11:07:51Z",
+      "side": 1,
+      "message": "Please add a copyright header mimicking any other file but putting your companies copyright.",
+      "revId": "0e42c6cc8634a422f9b20f47e620d3bdcdd8d731",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fd310776",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/DsfActionsConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-10T11:07:51Z",
+      "side": 1,
+      "message": "We usually make file of constants an interface instead of a class (and prefix the name of an \u0027I\u0027).  You would also add in the javadoc of the interface the line\n\n /** @noimplement This interface is not intended to be implemented by clients.*/\n\nto allow us to add more elements to the file without breaking an API.  Note that this package is internal, so we don\u0027t have to worry about API, but it is still good valid to put that javadoc entry.",
+      "revId": "0e42c6cc8634a422f9b20f47e620d3bdcdd8d731",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

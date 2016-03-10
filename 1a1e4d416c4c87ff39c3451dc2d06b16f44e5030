@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_7a7a5d30",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-10T14:03:40Z",
+      "side": 1,
+      "message": "This package is from dsf.gdb which is higher up in the application.\ni.e. dsf.ui can not depend on it as it may not be the debugger of choice",
+      "revId": "1a1e4d416c4c87ff39c3451dc2d06b16f44e5030",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ba5b05cc",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1210,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-10T14:03:40Z",
+      "side": 1,
+      "message": "Query should be avoided, from the link:\nhttp://help.eclipse.org/luna/topic/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html#mozTocId548320\n\"One common deadlock scenario occurs when the get() method is being called by a thread which is itself required for completion of the asynchronous methods\" \n\nYou better wrap your code in a runnable and execute from DSF with e.g:\n\n                        fSession.getExecutor().execute(new DsfRunnable() {\n                            @Override\n                            public void run() {\n                            \t//code\n                            }\n                        }",
+      "revId": "1a1e4d416c4c87ff39c3451dc2d06b16f44e5030",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_603b8af4",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1226,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-10T14:03:40Z",
+      "side": 1,
+      "message": "This call can be replaced by:\n   registersService.findRegister(ctx, name, rm);\nand you would not need to cast to MIRegisterDMC \nHowever, you will need to implement the \u0027findRegister\u0027 method for dsf-gdb as it currently returns an unsupportted IStatus",
+      "revId": "1a1e4d416c4c87ff39c3451dc2d06b16f44e5030",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

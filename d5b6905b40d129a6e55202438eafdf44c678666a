@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_e3c7a4a7",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsProvidersSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 878,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2016-03-10T19:30:27Z",
+      "side": 1,
+      "message": "Is it wise to request validation prompt here? Could it cause an out of context popup for the user?",
+      "range": {
+        "startLine": 878,
+        "startChar": 13,
+        "endLine": 878,
+        "endChar": 25
+      },
+      "revId": "d5b6905b40d129a6e55202438eafdf44c678666a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

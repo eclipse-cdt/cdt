@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_60654a38",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/IAutotoolsOption.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-03-10T15:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_f74ced1e",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_975d69c4",
         "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/internal/autotools/core/configure/ConfigureMessages.properties",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2016-02-25T21:15:00Z",
       "side": 1,
       "message": "Need to add a .tip message.  Something like - Environment variables to be used during configuration.",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c0553e49",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/internal/autotools/core/configure/ConfigureMessages.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-03-10T15:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_975d69c4",
       "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_e0507a58",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/internal/autotools/core/configure/VariableConfigureOption.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-03-10T15:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_b75a65c7",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_d757f19d",
         "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java",
         "patchSetId": 7
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_23b6ec25",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-03-10T15:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_d757f19d",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_971ac9f8",
         "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java",
         "patchSetId": 7
@@ -81,6 +153,24 @@
       "writtenOn": "2016-02-25T21:15:00Z",
       "side": 1,
       "message": "Don\u0027t you need a check for back-slash which negates a quote if directly after it?",
+      "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_83c6e08e",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-03-10T15:34:33Z",
+      "side": 1,
+      "message": "Not sure I understood your question.\nIn case the value input\u0027ed has already quotes?\nAnyway, I fixed issues for cases 1) user already wrap the value around quotes and 2) pass an variable with empty value.",
+      "parentUuid": "e7dfcf21_971ac9f8",
       "revId": "285a9dc61ab8687797ca1c556affe5ebbb438d49",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

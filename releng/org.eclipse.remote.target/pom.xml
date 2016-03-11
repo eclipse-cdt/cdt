@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.remote</groupId>
+		<artifactId>remote-parent</artifactId>
+		<version>2.0.2-SNAPSHOT</version>
+		<relativePath>../org.eclipse.remote.build/pom.xml</relativePath>
+	</parent>
+
+	<version>2.0.2-SNAPSHOT</version>
+	<artifactId>org.eclipse.remote.target</artifactId>
+	<packaging>pom</packaging>
+	
+	<build>
+		<plugins>
+			<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>build-helper-maven-plugin</artifactId>
+			<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>mars.target</file>
+									<type>target</type>
+									<classifier>mars</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -43,6 +43,7 @@
 	</licenses>
 
 	<modules>
+		<module>../../releng/org.eclipse.remote.target</module>
 		<!-- Remote feature -->
 		<module>../../bundles/org.eclipse.remote.core</module>
 		<module>../../bundles/org.eclipse.remote.jsch.core</module>
@@ -66,17 +67,17 @@
 	</modules>
 
 	<repositories>
-		<repository>
+		<!-- repository>
 			<id>platform-${platform-version}</id>
 			<url>${platform-site}</url>
 			<layout>p2</layout>
-		</repository>
+		</repository-->
 		<repository>
 			<id>license</id>
 			<url>${license-site}</url>
 			<layout>p2</layout>
 		</repository>
-		<repository>
+		<!--repository>
 			<id>tm</id>
 			<url>${tm-site}</url>
 			<layout>p2</layout>
@@ -85,7 +86,7 @@
 			<id>cdt</id>
 			<url>${cdt-site}</url>
 			<layout>p2</layout>
-		</repository>
+		</repository-->
 	</repositories>
 
 	<build>
@@ -130,6 +131,23 @@
 							<arch>x86_64</arch>
 						</environment>
 					</environments>
+					<dependency-resolution>
+						<extraRequirements>
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>org.eclipse.ui.ide</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
+						</extraRequirements>
+		          </dependency-resolution>
+				  <target>
+						<artifact>
+							<groupId>org.eclipse.remote</groupId>
+							<artifactId>org.eclipse.remote.target</artifactId>
+							<version>2.0.2-SNAPSHOT</version>
+							<classifier>mars</classifier>
+						</artifact>
+				  </target>
 				</configuration>
 			</plugin>
 			<plugin>

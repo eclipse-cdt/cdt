@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -74,10 +73,10 @@ public class NameHelper {
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName(
 				(ICPPASTName) declaratorName.copy(CopyStyle.withLocations));
 		
-		ICPPASTNameSpecifier[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationTu,
-				selectionOffset, astCache).getAllSegments();
-		ICPPASTNameSpecifier[] implementationNames = NamespaceHelper.getSurroundingNamespace(insertFileTu,
-				insertLocation, astCache).getAllSegments();
+		ICPPASTName[] declarationNames =
+				NamespaceHelper.getSurroundingNamespace(declarationTu, selectionOffset, astCache);
+		ICPPASTName[] implementationNames =
+				NamespaceHelper.getSurroundingNamespace(insertFileTu, insertLocation, astCache);
 		
 		for (int i = 0; i < declarationNames.length; i++) {
 			if (i >= implementationNames.length) {

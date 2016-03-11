@@ -19,10 +19,8 @@ import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
@@ -108,31 +106,27 @@ public abstract class CRefactoring extends Refactoring {
 	@Override
 	public final RefactoringStatus checkFinalConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
-		if (pm == null)
-			pm = new NullProgressMonitor();
-		pm.beginTask(Messages.CRefactoring_checking_final_conditions, 10);
+		SubMonitor progress = SubMonitor.convert(pm, Messages.CRefactoring_checking_final_conditions, 12);
 
-		CheckConditionsContext context= new CheckConditionsContext();
-		context.add(new ValidateEditChecker(getValidationContext()));
-		ResourceChangeChecker resourceChecker = new ResourceChangeChecker();
-		IResourceChangeDescriptionFactory deltaFactory = resourceChecker.getDeltaFactory();
-		context.add(resourceChecker);
-
-		RefactoringStatus result = checkFinalConditions(new SubProgressMonitor(pm, 8), context);
-		if (result.hasFatalError()) {
-			pm.done();
+		try {
+			CheckConditionsContext context= new CheckConditionsContext();
+			context.add(new ValidateEditChecker(getValidationContext()));
+			ResourceChangeChecker resourceChecker = new ResourceChangeChecker();
+			IResourceChangeDescriptionFactory deltaFactory = resourceChecker.getDeltaFactory();
+			context.add(resourceChecker);
+	
+			RefactoringStatus result = checkFinalConditions(progress.split(8), context);
+			if (result.hasFatalError())
+				return result;
+	
+			modificationCollector = new ModificationCollector(deltaFactory);
+			collectModifications(progress.split(2), modificationCollector);
+	
+			result.merge(context.check(progress.split(2)));
 			return result;
+		} finally {
+			progress.done();
 		}
-		if (pm.isCanceled())
-			throw new OperationCanceledException();
-
-		modificationCollector = new ModificationCollector(deltaFactory);
-		collectModifications(pm, modificationCollector);
-
-		result.merge(context.check(new SubProgressMonitor(pm, 2)));
-
-		pm.done();
-		return result;
 	}
 
 	protected RefactoringStatus checkFinalConditions(IProgressMonitor subProgressMonitor,

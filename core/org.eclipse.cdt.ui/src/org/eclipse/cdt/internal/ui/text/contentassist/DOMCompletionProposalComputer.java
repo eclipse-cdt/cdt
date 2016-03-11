@@ -703,7 +703,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		// Get all variables declared in the translation unit.
 		final Set<IBinding> declaredVariables = new HashSet<>();
-		ast.accept(new NameVisitor() {
+		ast.accept(new ASTVisitor(true) {
 	        @Override
 			public int visit(IASTName name) {
 	        	if (getNodeOffset(name) >= statementOffset)
@@ -715,7 +715,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 						declaredVariables.add(binding);
 					}
 	        	}
-	            return PROCESS_CONTINUE;
+	            return PROCESS_SKIP; // Do non visit internals of qualified names.
 	        }
 		});
 
@@ -954,10 +954,4 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private static IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
-
-    private static abstract class NameVisitor extends ASTVisitor {
-    	NameVisitor() {
-            shouldVisitNames = true;
-    	}
-    }
 }

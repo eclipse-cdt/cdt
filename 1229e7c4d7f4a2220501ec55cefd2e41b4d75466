@@ -1,0 +1,129 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_ef130561",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/CLICommandAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-11T21:37:35Z",
+      "side": 1,
+      "message": "Here I would use DebugPlugin.newDocument() and serializeDocument().",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6f1ff564",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/CLICommandAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-11T21:37:35Z",
+      "side": 1,
+      "message": "I think using System.getProperty(\"line.separator\") instead of \\r?\\n is cleaner.",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2f25edb2",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/CLICommandAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-11T21:37:35Z",
+      "side": 1,
+      "message": "Same for DebugPlugin.parseDocument()",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8f3521e0",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/CLICommandActionComposite.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-11T21:37:35Z",
+      "side": 1,
+      "message": "Why this is a separate class? Is it used somewhere else?\n\nIdeally, the UI should be implemented as a list of commands instead of a text field. Users should be able to add, remove, edit and move commands up and down. The result should be an array of commands not a single string.",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8fe7e1cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/CLIDebugActionEnabler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-11T21:37:35Z",
+      "side": 1,
+      "message": "It\u0027s probably better to use System.getProperty(\"line.separator\") instead of \"\\\\r?\\\\n\"",
+      "range": {
+        "startLine": 55,
+        "startChar": 41,
+        "endLine": 55,
+        "endChar": 50
+      },
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_94a9b8de",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/CLIDebugActionEnabler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-11T21:37:35Z",
+      "side": 1,
+      "message": "Do we really need to support MI commands?",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_945b787e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/CLIDebugActionEnabler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-11T21:37:35Z",
+      "side": 1,
+      "message": "Why do we need this check? Is it to prevent running run control commands?",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

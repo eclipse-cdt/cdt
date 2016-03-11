@@ -1300,6 +1300,23 @@
            id="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugActionPage">
      </actionPage>
   </extension>
+  
+    <extension
+        point="org.eclipse.cdt.debug.core.BreakpointActionType">
+     <actionType
+           class="org.eclipse.cdt.debug.ui.breakpointactions.CLICommandAction"
+           id="org.eclipse.cdt.debug.ui.breakpointactions.CLICommandAction"
+           name="%CLICommandAction.name">
+     </actionType>
+  </extension>
+    <extension
+        point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+     <actionPage
+           actionType="org.eclipse.cdt.debug.ui.breakpointactions.CLICommandAction"
+           class="org.eclipse.cdt.debug.ui.breakpointactions.CLICommandActionPage"
+           id="org.eclipse.cdt.debug.ui.breakpointactions.CLICommandActionPage">
+     </actionPage>
+  </extension>
 
 	<extension point="org.eclipse.debug.ui.detailPaneFactories">
       	<detailFactories

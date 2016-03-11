@@ -26,9 +26,8 @@ public abstract class CRefactoringContribution extends RefactoringContribution {
 		super();
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Map retrieveArgumentMap(RefactoringDescriptor descriptor) {
+	public Map<String, String> retrieveArgumentMap(RefactoringDescriptor descriptor) {
 		if (descriptor instanceof CRefactoringDescriptor) {
 			CRefactoringDescriptor refDesc = (CRefactoringDescriptor) descriptor;
 			return refDesc.getParameterMap();

@@ -90,27 +90,57 @@ public class ClassMemberInserter {
 	private ClassMemberInserter() {
 	}
 
-	public static void createChange(ICPPASTCompositeTypeSpecifier classNode,
+	/**
+	 * Inserts a node inside a class declaration.
+	 *
+	 * @param classNode the type specifier of the class declaration
+	 * @param visibility desired visibility of the inserted declaration
+	 * @param nodeToAdd the node to add
+	 * @param isField whether the node being inserted is a field declaration or not
+	 * @param collector the modification collector recording the insertion
+	 * @return the rewriter for making further modifications to the inserted node
+	 */
+	public static ASTRewrite createChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, IASTNode nodeToAdd, boolean isField,
 			ModificationCollector collector) {
-		createChange(classNode, visibility,	Collections.singletonList(nodeToAdd), isField, collector);
+		List<ASTRewrite> addedNodesRewrites =
+				createChange(classNode, visibility,	Collections.singletonList(nodeToAdd), isField, collector);
+		return addedNodesRewrites.get(0);
 	}
 
-	public static void createChange(ICPPASTCompositeTypeSpecifier classNode,
+	/**
+	 * Inserts one more adjacent nodes inside a class declaration.
+	 *
+	 * @param classNode the type specifier of the class declaration
+	 * @param visibility desired visibility of the inserted declarations
+	 * @param nodesToAdd the nodes to add
+	 * @param isField whether the nodes being inserted are field declaration or not
+	 * @param collector the modification collector recording the insertion
+	 * @return the rewriters for making further modifications to the inserted nodes
+	 */
+	public static List<ASTRewrite> createChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, List<IASTNode> nodesToAdd, boolean isField,
 			ModificationCollector collector) {
 		InsertionInfo info = findInsertionPoint(classNode, visibility, isField);
-		nodesToAdd = new ArrayList<IASTNode>(nodesToAdd);
-		if (info.getPrologue() != null)
-			nodesToAdd.add(0, info.getPrologue());
-		if (info.getEpilogue() != null)
-			nodesToAdd.add(info.getEpilogue());
-
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(classNode.getTranslationUnit());
-		for (IASTNode node : nodesToAdd) {
-			rewrite.insertBefore(info.getParentNode(), info.getInsertBeforeNode(), node,
+
+		if (info.getPrologue() != null) {
+			rewrite.insertBefore(info.getParentNode(), info.getInsertBeforeNode(), info.getPrologue(),
 					createEditDescription(classNode));
 		}
+
+		List<ASTRewrite> addedNodeRewrites = new ArrayList<>(nodesToAdd.size());
+		for (IASTNode node : nodesToAdd) {
+			addedNodeRewrites.add(rewrite.insertBefore(info.getParentNode(), info.getInsertBeforeNode(), node,
+					createEditDescription(classNode)));
+		}
+
+		if (info.getEpilogue() != null) {
+			rewrite.insertBefore(info.getParentNode(), info.getInsertBeforeNode(), info.getEpilogue(),
+					createEditDescription(classNode));
+		}
+
+		return addedNodeRewrites;
 	}
 
 	public static InsertionInfo findInsertionPoint(ICPPASTCompositeTypeSpecifier classNode,

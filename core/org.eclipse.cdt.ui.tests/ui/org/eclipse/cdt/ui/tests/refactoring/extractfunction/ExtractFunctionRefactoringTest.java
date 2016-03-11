@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
@@ -27,6 +25,8 @@ import org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionIn
 import org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
+import junit.framework.Test;
+
 /**
  * Tests for Extract Function refactoring.
  */
@@ -35,12 +35,12 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	private String extractedFunctionName = "extracted";
 	private String returnValue;
 	// Map from old names to new ones.
-	private Map<String, String> parameterRename = new HashMap<>();
+	private final Map<String, String> parameterRename = new HashMap<>();
 	// New positions of parameters, or null.
 	private int[] parameterOrder;
 	private VisibilityEnum visibility = VisibilityEnum.v_private;
 	private boolean virtual;
-	private boolean replaceDuplicates = true;
+	private final boolean replaceDuplicates = true;
 	private ExtractFunctionRefactoring refactoring;
 
 	public ExtractFunctionRefactoringTest() {
@@ -567,6 +567,79 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//#endif /*B_H_*/
 	public void testNamedTypedField() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//#include "B.h"
+	//
+	//class A {
+	//public:
+	//	void foo();
+	//};
+	//
+	//#endif /*A_H_*/
+	//====================
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//#include "B.h"
+	//
+	//class A {
+	//public:
+	//	void foo();
+	//
+	//private:
+	//	ns1::ns2::B extracted(ns1::ns2::B b);
+	//};
+	//
+	//#endif /*A_H_*/
+
+	//A.cpp
+	//#include "A.h"
+	//#include "B.h"
+	//
+	//using ns1::ns2::B;
+	//
+	//void A::foo() {
+	//	B b;
+	//	/*$*/b.m();/*$$*/
+	//	b.n();
+	//}
+	//====================
+	//#include "A.h"
+	//#include "B.h"
+	//
+	//using ns1::ns2::B;
+	//
+	//B A::extracted(B b) {
+	//	b.m();
+	//	return b;
+	//}
+	//
+	//void A::foo() {
+	//	B b;
+	//	b = extracted(b);
+	//	b.n();
+	//}
+
+	//B.h
+	//#ifndef B_H_
+	//#define B_H_
+	//
+	//namespace ns1 { namespace ns2 {
+	//struct B {
+	//  void m();
+	//  void n() const;
+	//};
+	//}}
+	//
+	//#endif /*B_H_*/
+	public void testUsingDeclaration() throws Exception {
+		getPreferenceStore().setValue(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, true);
 		assertRefactoringSuccess();
 	}
 

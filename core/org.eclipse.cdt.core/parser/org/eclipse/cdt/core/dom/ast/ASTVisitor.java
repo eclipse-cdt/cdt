@@ -308,7 +308,7 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
-	public int visit( IASTProblem problem ){
+	public int visit(IASTProblem problem) {
 		return PROCESS_CONTINUE;
 	}
 

@@ -45,7 +45,7 @@ public interface IBinding extends IAdaptable {
 	public ILinkage getLinkage();
 
 	/**
-	 * Returns the binding that owns this binding, or <code>null</code> if there is no owner.
+	 * Returns the binding that owns this binding, or {@code null} if there is no owner.
 	 * <p>
 	 * The owner is determined as follows:
 	 * <br> {@link ICPPUsingDeclaration}: The owner depends on where the declaration is found,

@@ -14,6 +14,17 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,20 +33,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -133,14 +130,17 @@ public class RefactoringSaveHelper {
 				@Override
 				public void run(IProgressMonitor pm) throws InterruptedException {
 					int count= dirtyEditors.length;
-					pm.beginTask("", count); //$NON-NLS-1$
-					for (int i= 0; i < count; i++) {
-						IEditorPart editor= dirtyEditors[i];
-						editor.doSave(new SubProgressMonitor(pm, 1));
-						if (pm.isCanceled())
-							throw new InterruptedException();
+					SubMonitor progress = SubMonitor.convert(pm, "", count); //$NON-NLS-1$
+					try {
+						for (int i= 0; i < count; i++) {
+							IEditorPart editor= dirtyEditors[i];
+							editor.doSave(progress.split(1));
+						}
+					} catch (OperationCanceledException e) {
+						throw new InterruptedException();
+					} finally {
+						progress.done();
 					}
-					pm.done();
 				}
 			};
 			try {

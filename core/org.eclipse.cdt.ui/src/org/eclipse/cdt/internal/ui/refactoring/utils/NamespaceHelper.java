@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -20,14 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
@@ -49,16 +51,16 @@ public class NamespaceHelper {
 	 * @return ICPPASTQualifiedName with the names of all namespaces
 	 * @throws CoreException 
 	 */
-	public static ICPPASTQualifiedName getSurroundingNamespace(final ITranslationUnit translationUnit, final int offset, CRefactoringContext astCache)
-			throws CoreException {
-		final CPPASTQualifiedName qualifiedName = new CPPASTQualifiedName();
+	public static ICPPASTName[] getSurroundingNamespace(final ITranslationUnit translationUnit,
+			final int offset, CRefactoringContext astCache) throws CoreException {
+		final List<ICPPASTName> names = new ArrayList<>();
 	
 		astCache.getAST(translationUnit, null).accept(new CPPASTAllVisitor() {
 			@Override
 			public int visit(IASTDeclSpecifier declSpec) {
 				if (declSpec instanceof ICPPASTCompositeTypeSpecifier &&
 						checkFileNameAndLocation(translationUnit.getLocation(), offset, declSpec)) {
-					qualifiedName.addName(createNameWithTemplates(declSpec));
+					names.add((ICPPASTName) createNameWithTemplates(declSpec));
 				}
 				return super.visit(declSpec);
 			}
@@ -66,14 +68,14 @@ public class NamespaceHelper {
 			@Override
 			public int visit(ICPPASTNamespaceDefinition namespace) {
 				if (checkFileNameAndLocation(translationUnit.getLocation(), offset, namespace)) {
-					qualifiedName.addName((namespace).getName().copy(CopyStyle.withLocations)); 
+					names.add((ICPPASTName) namespace.getName().copy(CopyStyle.withLocations)); 
 				}
 				
 				return super.visit(namespace);
 			}
 		});
-		
-		return qualifiedName;
+
+		return names.toArray(new ICPPASTName[names.size()]);
 	}
 	
 	private static boolean checkFileNameAndLocation(final IPath path, final int offset, IASTNode namespace) {

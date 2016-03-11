@@ -151,35 +151,26 @@
         <requirement
             name="org.eclipse.launchbar.feature.group"/>
         <requirement
+            name="org.eclipse.launchbar.remote.feature.group"/>
+        <requirement
             name="org.eclipse.linuxtools.docker.feature.feature.group"/>
         <requirement
             name="org.freemarker"/>
         <requirement
+            name="org.bouncycastle.bcpkix"
+            versionRange="[1.51.0.v201505131810,1.51.0.v201505131810]"/>
+        <requirement
+            name="org.bouncycastle.bcprov"
+            versionRange="[1.51.0.v201505131810,1.51.0.v201505131810]"/>
+        <requirement
             name="org.antlr.runtime"/>
+        <requirement
+            name="org.eclipse.tools.templates.freemarker"/>
+        <requirement
+            name="org.eclipse.tools.templates.ui"/>
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
-        <repositoryList
-            name="Mars">
-          <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20151221205849/repository/"/>
-          <repository
-              url="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
-          <repository
-              url="http://download.eclipse.org/tm/updates/4.0/"/>
-          <repository
-              url="http://download.eclipse.org/eclipse/updates/4.5/"/>
-          <repository
-              url="http://download.eclipse.org/tools/ptp/builds/remote/2.0.0"/>
-          <repository
-              url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
-          <repository
-              url="https://hudson.eclipse.org/cdt/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
-          <repository
-              url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
-        </repositoryList>
         <repositoryList
             name="Neon">
           <repository
@@ -202,6 +193,8 @@
               url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
           <repository
               url="https://hudson.eclipse.org/orbit/job/orbit-recipes/lastSuccessfulBuild/artifact/releng/repository/target/repository"/>
+          <repository
+              url="https://hudson.eclipse.org/cdt/job/tools-templates-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
         </repositoryList>
       </targlet>
     </setupTask>

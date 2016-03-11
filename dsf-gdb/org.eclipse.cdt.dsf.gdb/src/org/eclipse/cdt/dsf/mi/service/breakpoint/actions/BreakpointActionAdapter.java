@@ -12,6 +12,7 @@
 
 package org.eclipse.cdt.dsf.mi.service.breakpoint.actions;
 
+import org.eclipse.cdt.debug.core.breakpointactions.ICLIDebugActionEnabler;
 import org.eclipse.cdt.debug.core.breakpointactions.ILogActionEnabler;
 import org.eclipse.cdt.debug.core.breakpointactions.IResumeActionEnabler;
 import org.eclipse.cdt.debug.core.breakpointactions.IReverseDebugEnabler;
@@ -46,6 +47,9 @@ public class BreakpointActionAdapter implements IAdaptable {
         }
         if (adapter.equals(IReverseDebugEnabler.class)) {
         	return (T)new MIReverseDebugEnabler(fExecutor, fServiceTracker, fContext);
+        }
+        if (adapter.equals(ICLIDebugActionEnabler.class)) {
+        	return (T)new CLIDebugActionEnabler(fExecutor, fServiceTracker, fContext);
         }
         return null;
     }

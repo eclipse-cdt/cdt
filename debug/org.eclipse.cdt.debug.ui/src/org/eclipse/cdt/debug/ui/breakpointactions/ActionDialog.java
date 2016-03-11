@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Text;
 public class ActionDialog extends Dialog {
 
 	public static final String BREAKPOINT_ACTION_PAGE_EXTENSION_POINT_ID = "BreakpointActionPage"; //$NON-NLS-1$
-	
+
 	public static final String ACTION_PAGE_ELEMENT = "actionPage"; //$NON-NLS-1$
 
 	private static final String ACTION_DIALOG_LAST_SELECTED = "ActionDialog.lastSelectedAction"; //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class ActionDialog extends Dialog {
 
 	/**
 	 * Create the dialog
-	 * 
+	 *
 	 * @param parentShell
 	 */
 	public ActionDialog(Shell parentShell, IBreakpointAction action) {
@@ -92,7 +92,7 @@ public class ActionDialog extends Dialog {
 
 	/**
 	 * Create contents of the button bar
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
@@ -103,7 +103,7 @@ public class ActionDialog extends Dialog {
 
 	/**
 	 * Create contents of the dialog
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
@@ -128,7 +128,8 @@ public class ActionDialog extends Dialog {
 			public void widgetSelected(final SelectionEvent e) {
 				try {
 					showActionComposite();
-				} catch (CoreException e1) {
+				} catch (Exception ex) {
+					CDebugUIPlugin.log(ex);
 				}
 			}
 		});
@@ -296,8 +297,8 @@ public class ActionDialog extends Dialog {
 	}
 
 	private void addDecorator(Composite parent, final Text control) {
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false); 
-		gd.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth(); 
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
 		control.setLayoutData(gd);
 
 		final ControlDecoration decoration = new ControlDecoration(control, SWT.TOP | SWT.LEFT, parent );
@@ -307,8 +308,8 @@ public class ActionDialog extends Dialog {
 			public void modifyText(ModifyEvent e) {
 				String name = control.getText();
 				if (name.trim().isEmpty()) {
-					decoration.setImage( 
-							FieldDecorationRegistry.getDefault().getFieldDecoration( 
+					decoration.setImage(
+							FieldDecorationRegistry.getDefault().getFieldDecoration(
 									FieldDecorationRegistry.DEC_ERROR).getImage());
 					decoration.setDescriptionText(Messages.getString("ActionDialog.ErrEmptyName")); //$NON-NLS-1$
 					decoration.show();

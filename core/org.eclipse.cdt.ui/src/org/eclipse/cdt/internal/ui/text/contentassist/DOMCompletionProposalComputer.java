@@ -159,9 +159,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			IASTName[] names = completionNode.getNames();
 
 			for (IASTName name : names) {
-				if (name.getTranslationUnit() == null)
+				if (name.getTranslationUnit() == null) {
 					// The node isn't properly hooked up, must have backtracked out of this node.
 					continue;
+				}
 
 				IASTCompletionContext astContext = name.getCompletionContext();
 				if (astContext == null) {

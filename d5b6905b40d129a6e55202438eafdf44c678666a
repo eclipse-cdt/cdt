@@ -22,6 +22,30 @@
       "revId": "d5b6905b40d129a6e55202438eafdf44c678666a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c1fd3da5",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsProvidersSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 878,
+      "author": {
+        "id": 26331
+      },
+      "writtenOn": "2016-03-12T00:25:25Z",
+      "side": 1,
+      "message": "No matter what is passed to the validateEdit (IWorkspace.VALIDATE_PROMPT or null), workspace asks for user\u0027s validation when required. In fact, the second parameter provides the shell to show the prompt. \n\ne.g., in the case of perforce, only if the user preferences is set to \"show changelist selection dialog ...\" when a file is checked-out, this command causes a prompt. Which,  I think, is expected and necessary.",
+      "parentUuid": "e7dfcf21_e3c7a4a7",
+      "range": {
+        "startLine": 878,
+        "startChar": 13,
+        "endLine": 878,
+        "endChar": 25
+      },
+      "revId": "d5b6905b40d129a6e55202438eafdf44c678666a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryAddressInfoRegistersRetrieval;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryAddressInfoVariablesRetrieval;
 import org.eclipse.cdt.dsf.gdb.memory.IGdbMemoryAddressInfoTypeRetrieval;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -47,7 +48,7 @@ public class GdbMemoryBlockAddressInfoRetrieval implements IMemoryBlockAddressIn
     }
 
     protected IGdbMemoryAddressInfoTypeRetrieval[] resolveMemoryAddressInfoProviders() {
-        return new IGdbMemoryAddressInfoTypeRetrieval[] {new GdbMemoryAddressInfoVariablesRetrieval(fSession)};
+        return new IGdbMemoryAddressInfoTypeRetrieval[] {new GdbMemoryAddressInfoVariablesRetrieval(fSession), new GdbMemoryAddressInfoRegistersRetrieval(fSession)};
     }
 
     @Override

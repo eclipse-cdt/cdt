@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,24 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 
 import java.math.BigInteger;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval;
+import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval.EventType;
+import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval.IAddressInfoUpdateListener;
+import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval.IGetMemoryBlockAddressInfoReq;
+import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval.IMemoryBlockAddressInfoItem;
+import org.eclipse.cdt.debug.internal.core.CRequest;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -36,8 +47,15 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -60,9 +78,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 @SuppressWarnings("restriction")
-public class Rendering extends Composite implements IDebugEventSetListener
+public class Rendering extends Composite implements IDebugEventSetListener, IDebugContextListener, IAddressInfoUpdateListener
 {
     // the IMemoryRendering parent
     private TraditionalRendering fParent;
@@ -113,6 +132,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     private boolean fIsDisplayLittleEndian = false;
     
+    private final Set<IMemoryBlockAddressInfoRetrieval> fAddressInfoRetrievals;
+
     // constants used to identify radix
     public final static int RADIX_HEX = 1;
 
@@ -156,10 +177,32 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public final static int UPDATE_MANUAL = 3;
     public int fUpdateMode = UPDATE_ALWAYS;
 
+    // Additional Address information variables
+
+    /**
+     * Simple tracker of selected context, to reduce the number of asynchronous calls to resolve the information items
+     * related to a selected context
+     */
+    private volatile Object fSelectedContext;
+
+    /**
+     * This maintains the full set of information items retrieved for the currently selected context This is updated
+     * each time a context selection change is detected
+     */
+    private volatile IMemoryBlockAddressInfoItem[] fAddressInfoItems;
+    /**
+     * Maintains the subset of items visible in the current view address range this information is refreshed when the
+     * associated Panes are about to be redrawn
+     */
+    private final Map<BigInteger, List<IMemoryBlockAddressInfoItem>> fMapAddressToInfoItems = Collections
+            .synchronizedMap(new HashMap<BigInteger, List<IMemoryBlockAddressInfoItem>>());
+
     public Rendering(Composite parent, TraditionalRendering renderingParent)
     {
         super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND | SWT.H_SCROLL
-        		| SWT.V_SCROLL);
+                | SWT.V_SCROLL);
+
+        fAddressInfoRetrievals = new HashSet<IMemoryBlockAddressInfoRetrieval>();
         
         this.setFont(JFaceResources
             .getFont(IInternalDebugUIConstants.FONT_NAME)); // TODO internal?
@@ -268,6 +311,164 @@ public class Rendering extends Composite implements IDebugEventSetListener
         });
 
         DebugPlugin.getDefault().addDebugEventListener(this);
+
+        // Register as Debug context listener
+        IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+        IDebugContextService contextService = DebugUITools.getDebugContextManager()
+                .getContextService(site.getWorkbenchWindow());
+        contextService.addDebugContextListener(this, site.getId());
+        resolveAddressInfoForCurrentSelection(contextService);
+    }
+
+    private void resolveAddressInfoForCurrentSelection(IDebugContextService contextService) {
+        IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+        // Check current selection
+        ISelection selection = contextService.getActiveContext(site.getId());
+        if (selection instanceof StructuredSelection) {
+            handleDebugContextChanged(((StructuredSelection) selection).getFirstElement());
+        }
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Override
+    public void debugContextChanged(DebugContextEvent event) {
+        if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+            // Resolve selection
+            ISelection selection = event.getContext();
+            if (!(selection instanceof IStructuredSelection)) {
+                return;
+            }
+
+            Object elem = ((IStructuredSelection) selection).getFirstElement();
+            handleDebugContextChanged(elem);
+        }
+
+    }
+
+    private class GetMemoryBlockAddressInfoReq extends CRequest implements IGetMemoryBlockAddressInfoReq {
+        private Map<String, IMemoryBlockAddressInfoItem[]> fInfoTypeToItems = Collections
+                .synchronizedMap(new HashMap<String, IMemoryBlockAddressInfoItem[]>());
+        private final Object fContext;
+
+        GetMemoryBlockAddressInfoReq(Object context) {
+            fContext = context;
+        }
+
+        @Override
+        public IMemoryBlockAddressInfoItem[] getAddressInfoItems(String type) {
+            return fInfoTypeToItems.get(type);
+        }
+
+        @Override
+        public void setAddressInfoItems(String type, IMemoryBlockAddressInfoItem[] items) {
+            fInfoTypeToItems.put(type, items);
+        }
+
+        public Object getContext() {
+            return fContext;
+        }
+
+        @Override
+        public String[] getAddressInfoItemTypes() {
+            return fInfoTypeToItems.keySet().toArray(new String[fInfoTypeToItems.size()]);
+        }
+
+        @Override
+        public IMemoryBlockAddressInfoItem[] getAddressInfoItems() {
+            // concatenate the different type of items received into a single array
+            IMemoryBlockAddressInfoItem[] allItems = new IMemoryBlockAddressInfoItem[0];
+            // For each set of items
+            for (IMemoryBlockAddressInfoItem[] partialItems : fInfoTypeToItems.values()) {
+                if (partialItems != null && partialItems.length > 0) {
+                    // Save what we have
+                    IMemoryBlockAddressInfoItem[] accumulatedItems = allItems;
+                    // prepare to allocate the existing ones + the new ones
+                    allItems = new IMemoryBlockAddressInfoItem[allItems.length + partialItems.length];
+                    // add existing
+                    System.arraycopy(accumulatedItems, 0, allItems, 0, accumulatedItems.length);
+                    // add the new set
+                    System.arraycopy(partialItems, 0, allItems, accumulatedItems.length, partialItems.length);
+                }
+            }
+            return allItems;
+        }
+    }
+
+    private void handleDebugContextChanged(final Object context) {
+        if (isDisposed() || context == null) {
+            // Invalid context
+            return;
+        }
+
+        IAdaptable adaptable = null;
+        IMemoryBlockAddressInfoRetrieval addrInfoTmp = null;
+
+        if (context instanceof IAdaptable) {
+            adaptable = (IAdaptable) context;
+            addrInfoTmp = ((IMemoryBlockAddressInfoRetrieval) adaptable
+                    .getAdapter(IMemoryBlockAddressInfoRetrieval.class));
+        }
+
+        if (addrInfoTmp != null) {
+            final IMemoryBlockAddressInfoRetrieval addrInfo = addrInfoTmp;
+            // The selection has changed, so our Address information may no longer be valid
+            fAddressInfoItems = null;
+            fMapAddressToInfoItems.clear();
+            // Save the selected context to later help us determine if the selection has really changed
+            fSelectedContext = context;
+
+            final Display display = getDisplay();
+            addrInfo.getMemoryBlockAddressInfo(context, getMemoryBlock(), new GetMemoryBlockAddressInfoReq(context) {
+                @Override
+                public void done() {
+                    // If the context is still valid
+                    if (getContext().equals(fSelectedContext)) {
+                        fAddressInfoItems = getAddressInfoItems();
+                        refreshUpdateListener(addrInfo);
+                        if (!display.isDisposed()) {
+                            display.asyncExec(new Runnable() {
+                                @Override
+                                public void run() {
+                                    redrawPanes();
+                                }
+                            });
+                        }
+                    }
+                }
+
+                private void refreshUpdateListener(final IMemoryBlockAddressInfoRetrieval addrInfo) {
+                    if (fAddressInfoItems != null && fAddressInfoItems.length > 0) {
+                        // Only one listener is expected since there is one retrieval per session,
+                        // however in order to make it more maintainable we make sure we remember one retrieval
+                        // and keep one listener registration at any time.
+                        boolean listening = false;
+                        synchronized (fAddressInfoRetrievals) {
+                            for (Iterator<IMemoryBlockAddressInfoRetrieval> iterator = fAddressInfoRetrievals
+                                    .iterator(); iterator.hasNext();) {
+                                IMemoryBlockAddressInfoRetrieval iRetriever = (IMemoryBlockAddressInfoRetrieval) iterator
+                                        .next();
+                                if (!iRetriever.equals(addrInfo)) {
+                                    iRetriever.removeAddressInfoUpdateListener(Rendering.this);
+                                    fAddressInfoRetrievals.remove(iterator);
+                                } else {
+                                    listening = true;
+                                }
+                            }
+
+                            if (!listening) {
+                                // Register this rendering to listen for info updates
+                                fAddressInfoRetrievals.add(addrInfo);
+                                addrInfo.registerAddressInfoUpdateListener(Rendering.this);
+                            }
+
+                            assert fAddressInfoRetrievals.size() == 1;
+                        }
+                    }
+                }
+            });
+        }
     }
 
     protected void setLayout()
@@ -351,7 +552,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         fViewportAddress = fViewportAddress.add(BigInteger
                 .valueOf(getAddressableCellsPerRow()));
             ensureViewportAddressDisplayable();
-            redrawPanes();    	
+            redrawPanes();
     }
     
     protected void handleUpArrow()
@@ -368,7 +569,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 .valueOf(getAddressableCellsPerRow()
                     * (Rendering.this.getRowCount() - 1)));
             ensureViewportAddressDisplayable();
-            redrawPanes();    	
+            redrawPanes();
     }
 
     protected void handlePageUp()
@@ -377,7 +578,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 .valueOf(getAddressableCellsPerRow()
                     * (Rendering.this.getRowCount() - 1)));
             ensureViewportAddressDisplayable();
-            redrawPanes();    	
+            redrawPanes();
     }
     protected SelectionListener createHorizontalBarSelectionListener()
     {
@@ -435,7 +636,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         if(fAddressPane.isPaneVisible())
                         {
                             fAddressPane.redraw();
-                        }                        
+                        }
                         redrawPanes();
                     	break;
                 }
@@ -656,8 +857,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
         IMemoryBlock block = fParent.getMemoryBlock();
         if(block != null)
-            return (IMemoryBlockExtension) block
-                .getAdapter(IMemoryBlockExtension.class);
+            return (IMemoryBlockExtension) block.getAdapter(IMemoryBlockExtension.class);
 
         return null;
     }
@@ -1184,6 +1384,21 @@ public class Rendering extends Composite implements IDebugEventSetListener
             fViewportCache.dispose();
             fViewportCache = null;
         }
+
+        fSelectedContext = null;
+        fMapAddressToInfoItems.clear();
+        fAddressInfoItems = null;
+
+        IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+        IDebugContextService contextService = DebugUITools.getDebugContextManager()
+                .getContextService(site.getWorkbenchWindow());
+        contextService.removeDebugContextListener(this);
+        synchronized (fAddressInfoRetrievals) {
+            for (IMemoryBlockAddressInfoRetrieval infoRetriever : fAddressInfoRetrievals) {
+                infoRetriever.removeAddressInfoUpdateListener(this);
+            }
+        }
+
         super.dispose();
     }
 
@@ -1525,6 +1740,20 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return fViewportAddress.add(BigInteger.valueOf(this.getBytesPerRow() * getRowCount() / getAddressableSize()));
     }
 
+    /**
+     * @return Return the view port end address, if the DataPane displays information with a single height per row i.e.
+     *         single height is used when no additional address information is available for any of the addresses in the
+     *         view port
+     */
+    private BigInteger getViewportEndAddressSingleHeight() {
+        int cellHeight = fBinaryPane.getCellTextHeight() + (getCellPadding() * 2);
+        int rowCount = getBounds().height / cellHeight;
+        BigInteger endAddress = fViewportAddress
+                .add(BigInteger.valueOf(this.getBytesPerRow() * rowCount / getAddressableSize()));
+
+        return endAddress;
+    }
+
     private BigInteger getScrollStartAddress()
     {
     	return fScrollStartAddress;
@@ -1620,9 +1849,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
         Control panes[] = getRenderingPanes();
         for(int i = 0; i < panes.length; i++)
         {
-            if(panes[i] instanceof AbstractPane)
-                rowCount = Math.max(rowCount,
-                    ((AbstractPane) panes[i]).getRowCount());
+            if (panes[i] instanceof AbstractPane) {
+                rowCount = Math.max(rowCount, ((AbstractPane) panes[i]).getRowCount());
+            }
         }
 
         return rowCount;
@@ -1910,36 +2139,33 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	fParent.updateRenderingLabels();
 	}
 	
-    protected void redrawPanes()
-    {
-    	if(!isDisposed() && this.isVisible())
-    	{
-	        if(fAddressPane.isPaneVisible())
-	        {
-	            fAddressPane.redraw();
-	            fAddressPane.setRowCount();
-	            if(fAddressPane.isFocusControl())
-	                fAddressPane.updateCaret();
-	        }
-	
-	        if(fBinaryPane.isPaneVisible())
-	        {
-	            fBinaryPane.redraw();
-	            fBinaryPane.setRowCount();
-	            if(fBinaryPane.isFocusControl())
-	                fBinaryPane.updateCaret();
-	        }
-	
-	        if(fTextPane.isPaneVisible())
-	        {
-	            fTextPane.redraw();
-	            fTextPane.setRowCount();
-	            if(fTextPane.isFocusControl())
-	                fTextPane.updateCaret();
-	        }
-    	}
-    	
-    	fParent.updateRenderingLabels();
+    protected void redrawPanes() {
+        // Refresh address information visible in the current viewport
+        getVisibleValueToAddressInfoItems();
+        if (!isDisposed() && this.isVisible()) {
+            if (fAddressPane.isPaneVisible()) {
+                fAddressPane.redraw();
+                fAddressPane.setRowCount();
+                if (fAddressPane.isFocusControl())
+                    fAddressPane.updateCaret();
+            }
+
+            if (fBinaryPane.isPaneVisible()) {
+                fBinaryPane.redraw();
+                fBinaryPane.setRowCount();
+                if (fBinaryPane.isFocusControl())
+                    fBinaryPane.updateCaret();
+            }
+
+            if (fTextPane.isPaneVisible()) {
+                fTextPane.redraw();
+                fTextPane.setRowCount();
+                if (fTextPane.isFocusControl())
+                    fTextPane.updateCaret();
+            }
+        }
+
+        fParent.updateRenderingLabels();
     }
 
     private void layoutPanes()
@@ -2292,5 +2518,144 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public AbstractPane incrPane(AbstractPane currentPane, int offset) {
         final List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
         return panes.get((panes.indexOf(currentPane) + offset) % panes.size());
+    }
+
+    /**
+     * @return The items that would be visible in the current viewable area if the rows were to use a single height
+     */
+    Map<BigInteger, List<IMemoryBlockAddressInfoItem>> getVisibleValueToAddressInfoItems() {
+        IMemoryBlockAddressInfoItem[] items = fAddressInfoItems;
+        if (items == null) {
+            fMapAddressToInfoItems.clear();
+            return fMapAddressToInfoItems;
+        }
+
+        Map<BigInteger, List<IMemoryBlockAddressInfoItem>> allValuesMap = new HashMap<>(items.length);
+
+        // This local variable will hold the same values as the instance variable fMapAddressToInfoItems, and be used as
+        // return value. The reason for the duplication is to prevent concurrent access exceptions
+        Map<BigInteger, List<IMemoryBlockAddressInfoItem>> filteredValuesMap = new HashMap<>(items.length);
+
+        synchronized (fMapAddressToInfoItems) {
+            // Refreshing the Address to InfoItem data map
+            fMapAddressToInfoItems.clear();
+            BigInteger startAddress = getViewportStartAddress();
+            // Get the endAddress considering single height so we don't miss marking items with information
+            // Note: The UI may some times present rows with double height even if the user does not see items with
+            // additional info, the reason is that the second part of a view port page may contain all the items with
+            // info. However restricting the set of visible items to consider a double height may not consider additional
+            // info items present when using single height and display them with no markings and additional information
+            BigInteger endAddress = getViewportEndAddressSingleHeight();
+
+            for (IMemoryBlockAddressInfoItem item : items) {
+                List<IMemoryBlockAddressInfoItem> containers = allValuesMap.get(item.getAddress());
+                if (containers == null) {
+                    containers = new ArrayList<IMemoryBlockAddressInfoItem>();
+                    allValuesMap.put(item.getAddress(), containers);
+                }
+                containers.add(item);
+
+                // If any address within the item width is within the visible range we want it in the filtered result
+                BigInteger itemStart = item.getAddress();
+                BigInteger itemEnd = item.getAddress().add(item.getRangeInAddressableUnits());
+                boolean itemStartIsInRange = isWithinRange(itemStart, startAddress, endAddress);
+                boolean itemEndIsInRange = isWithinRange(itemEnd, startAddress, endAddress);
+                boolean itemSpansOverVisibleRange = isWithinRange(startAddress, itemStart, itemEnd)
+                        && isWithinRange(endAddress, itemStart, itemEnd);
+
+                if (itemStartIsInRange || itemEndIsInRange || itemSpansOverVisibleRange) {
+                    fMapAddressToInfoItems.put(item.getAddress(), allValuesMap.get(item.getAddress()));
+                    filteredValuesMap.put(item.getAddress(), allValuesMap.get(item.getAddress()));
+                }
+            }
+        }
+
+        return filteredValuesMap;
+    }
+
+    private boolean isWithinRange(BigInteger item, BigInteger start, BigInteger end) {
+        if (item.compareTo(start) > -1 && item.compareTo(end) < 1) {
+            return true;
+        }
+        return false;
+    }
+
+    String buildAddressInfoString(BigInteger cellAddress, String separator, boolean addTypeHeaders) {
+        List<IMemoryBlockAddressInfoItem> infoItems = fMapAddressToInfoItems.get(cellAddress);
+
+        if (infoItems == null || infoItems.size() < 1) {
+            // No information to display
+            return "";
+        }
+
+        // The container string builder for all types
+        StringBuilder sb = new StringBuilder();
+        Map<String, StringBuilder> infoTypeToStringBuilder = new HashMap<>();
+
+        for (int i = 0; i < infoItems.size(); i++) {
+            String infoType = infoItems.get(i).getInfoType();
+
+            // Resolve string builder for this info type
+            StringBuilder typeBuilder = infoTypeToStringBuilder.get(infoType);
+            if (typeBuilder == null) {
+                // Create a String builder per information type
+                if (addTypeHeaders) {
+                    typeBuilder = new StringBuilder(infoType).append(":").append(separator);
+                } else {
+                    typeBuilder = new StringBuilder();
+                }
+                infoTypeToStringBuilder.put(infoType, typeBuilder);
+            }
+
+            // append the new item information to the string builder associated to its type
+            typeBuilder.append(infoItems.get(i).getLabel()).append(separator);
+        }
+
+        // Present the group of items sorted by type name
+        String[] sortedTypes = orderTypesAscending(infoTypeToStringBuilder.keySet());
+
+        // Consolidate the String builders per type into a single one
+        int i = 0;
+        for (String type : sortedTypes) {
+            StringBuilder builder = infoTypeToStringBuilder.get(type);
+            String text = builder.toString();
+            text = text.substring(0, text.length() - 1);
+            sb.append(text);
+            if (i < infoTypeToStringBuilder.keySet().size() - 1) {
+                sb.append(separator);
+            }
+            i++;
+        }
+
+        return sb.toString();
+    }
+
+    private String[] orderTypesAscending(Set<String> items) {
+        List<String> collection = new ArrayList<String>(items);
+        Collections.sort(collection);
+        return collection.toArray(new String[collection.size()]);
+    }
+
+    boolean hasInfo(BigInteger cellAddress) {
+        return fMapAddressToInfoItems.keySet().contains(cellAddress);
+    }
+
+    /**
+     * Indicates if additional address information is available to display in the current visible range
+     */
+    boolean isExtraInfo() {
+        return (fMapAddressToInfoItems.size() > 0);
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Override
+    public void handleAddressInfoUpdate(EventType type, Object update) {
+        fAddressInfoItems = null;
+        IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+        IDebugContextService contextService = DebugUITools.getDebugContextManager()
+                .getContextService(site.getWorkbenchWindow());
+        resolveAddressInfoForCurrentSelection(contextService);
     }
 }

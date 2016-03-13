@@ -51,4 +51,8 @@ public class TraditionalRenderingPreferenceConstants {
 
 	public static final String MEM_DEFAULT_COPY_ACTION = "memoryDefaultCopyAction";
 
+	/**
+	 * @since 1.4
+	 */
+	public static final String MEM_CROSS_REFERENCE_INFO = "memCrossReferenceInfo";
 }

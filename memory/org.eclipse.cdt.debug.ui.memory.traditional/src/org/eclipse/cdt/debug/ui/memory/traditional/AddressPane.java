@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
@@ -211,9 +210,7 @@ public class AddressPane extends AbstractPane
 
         GC gc = pe.gc;
 
-        FontMetrics fontMetrics = gc.getFontMetrics();
-        int textHeight = fontMetrics.getHeight();
-        int cellHeight = textHeight + (fRendering.getCellPadding() * 2);
+        int cellHeight =  getCellHeight();
 
         try
         {

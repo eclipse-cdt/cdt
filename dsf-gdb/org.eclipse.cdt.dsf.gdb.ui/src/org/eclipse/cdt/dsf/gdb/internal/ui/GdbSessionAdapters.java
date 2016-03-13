@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Ericsson and others.
+ * Copyright (c) 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
+import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
@@ -68,6 +69,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbSelectPrevTraceRecordComm
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbStartTracingCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbStopTracingCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbUncallCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.memory.GdbMemoryBlockAddressInfoRetrieval;
 import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -214,7 +216,8 @@ public class GdbSessionAdapters {
 			IPinProvider.class,
 			IDebugModelProvider.class, 
 			ILaunch.class,
-			ICEditorTextHover.class));
+			ICEditorTextHover.class,
+			IMemoryBlockAddressInfoRetrieval.class));
     }
 
     /**
@@ -363,6 +366,11 @@ public class GdbSessionAdapters {
 		if (ICEditorTextHover.class.equals(adapterType)) {
 			return (T)new GdbDebugTextHover();
 		}
+
+		if (IMemoryBlockAddressInfoRetrieval.class.equals(adapterType)) {
+			return (T) new GdbMemoryBlockAddressInfoRetrieval(session);
+		}
+
     	return null;
     }
 

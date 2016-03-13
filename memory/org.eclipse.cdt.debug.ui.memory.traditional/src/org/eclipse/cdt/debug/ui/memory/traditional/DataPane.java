@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
+ *     Alvaro Sanchez-leon (Ericsson) - Add hovering support to the traditional memory render (Bug 489505)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
@@ -15,12 +16,23 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 public class DataPane extends AbstractPane
 {
+    private Shell fToolTipShell;
     public DataPane(Rendering parent)
     {
         super(parent);
@@ -128,6 +140,17 @@ public class DataPane extends AbstractPane
             + (fRendering.getCellPadding() * 2);
     }
 
+    /**
+     * @return The width length in pixels needed to draw the characters of an addressable unit 
+     */
+    private int getAddressableWidth() {
+        // derive the number of characters per addressable size e.g. 2 * NumOfOctets
+        int charsPerOctet = 2;
+        int addressCharacterCount = fRendering.getAddressableSize() * charsPerOctet;
+        // derive width by multiplying by the size of a character
+        return addressCharacterCount * getCellCharacterWidth();
+    }
+
     @Override
 	protected int getCellCharacterCount()
     {
@@ -160,6 +183,43 @@ public class DataPane extends AbstractPane
 
         return address;
     }
+    
+    /**
+     * @return The address associated to the hovering location
+     */
+    private BigInteger getAddressAt(int x, int y) {
+        // Resolve the first address in the cell
+        BigInteger cellBaseAddress;
+        try {
+            cellBaseAddress = getCellAddressAt(x, y);
+        } catch (DebugException e) {
+            fRendering.logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_DETERMINE_ADDRESS_LOCATION"), e); //$NON-NLS-1$
+            return null;
+        }
+
+        if (cellBaseAddress == null) {
+            return null;
+        }
+
+        // Get the start location of the cell
+        Point cellPosition = getCellLocation(cellBaseAddress);
+        if (cellPosition == null) {
+            return null;
+        }
+
+        // Resolve the horizontal offset between hover location and
+        // the start of the cell
+        int offset = x - cellPosition.x;
+        if (offset < 0) {
+        	return null;
+        }
+
+        // Resolve the number of addresses between hover location and first address in the cell
+        int addressableOffset = offset / getAddressableWidth();
+        assert addressableOffset <= getAddressableOctetsPerColumn();
+
+        return cellBaseAddress.add(BigInteger.valueOf(addressableOffset));
+    }
 
     @Override
 	protected Point getCellLocation(BigInteger cellAddress)
@@ -167,7 +227,8 @@ public class DataPane extends AbstractPane
         try
         {
             BigInteger address = fRendering.getViewportStartAddress();
-
+            
+            // cell offset from base address in octets
             int cellOffset = cellAddress.subtract(address).intValue();
             cellOffset *= fRendering.getAddressableSize();
 
@@ -264,7 +325,7 @@ public class DataPane extends AbstractPane
 
         try
         {
-            BigInteger start = fRendering.getViewportStartAddress();
+            BigInteger startAddress = fRendering.getViewportStartAddress();
 
             for(int i = 0; i < this.getBounds().height / cellHeight; i++)
             {
@@ -277,7 +338,7 @@ public class DataPane extends AbstractPane
                     else
                         gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
 
-                    BigInteger cellAddress = start.add(BigInteger.valueOf((i
+                    BigInteger cellAddress = startAddress.add(BigInteger.valueOf((i
                         * fRendering.getColumnCount() + col)
                         * fRendering.getAddressesPerColumn()));
 
@@ -400,5 +461,111 @@ public class DataPane extends AbstractPane
             }
         }
     }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (fToolTipShell != null) {
+            fToolTipShell.dispose();
+            fToolTipShell = null;
+        }
+    }
 
+    @Override
+    protected MouseTrackAdapter createMouseHoverListener() {
+        return new DataPaneMouseHoverListener();
+    }
+
+    private int getAddressableOctetsPerColumn() {
+        // Prevent division by zero
+        int addressableSize = (fRendering.getAddressableSize() > 0) ? fRendering.getAddressableSize() : 1;
+        return fRendering.getBytesPerColumn() / addressableSize;
+    }
+
+
+    class DataPaneMouseHoverListener extends MouseTrackAdapter {
+        private BigInteger fTooltipAddress = null;
+        private final Label fLabelContent;
+
+        DataPaneMouseHoverListener() {
+            fLabelContent = createToolTip();
+        }
+
+        @Override
+        public void mouseExit(MouseEvent e) {
+            if (fToolTipShell != null && !fToolTipShell.isDisposed()) {
+                fToolTipShell.setVisible(false);
+                fTooltipAddress = null;
+            }
+        }
+
+        @Override
+        public void mouseHover(MouseEvent e) {
+            if (e.widget == null || !(e.widget instanceof Control) || fToolTipShell == null || fToolTipShell.isDisposed()) {
+                return;
+            }
+
+            Control control = (Control) e.widget;
+
+            // Resolve the address associated to the hovering location
+            BigInteger address = getAddressAt(e.x, e.y);
+
+            if (address == null) {
+                // Invalid Address at location
+                return;
+            }
+
+            // Display tooltip if there is a change in hover
+            Point hoverPoint = control.toDisplay(new Point(e.x, e.y));
+            if (!fToolTipShell.isVisible() || !address.equals(fTooltipAddress)) {
+                diplayToolTip(hoverPoint, address);
+            } else {
+                // Still pointing to the same cell
+                return;
+            }
+
+            // Keep Track of the latest visited address
+            fTooltipAddress = address;
+        }
+
+        private void diplayToolTip(Point hoverPoint, BigInteger subAddress) {
+            // Show the current hovering address as the first line in the tooltip
+            StringBuilder sb = new StringBuilder("0x").append(subAddress.toString(16)).append("\n");
+
+            fLabelContent.setText(sb.toString());
+
+            // Setting location of the tool tip
+            Rectangle shellBounds = fToolTipShell.getBounds();
+            shellBounds.x = hoverPoint.x;
+            shellBounds.y = hoverPoint.y + getCellWidth();
+
+            fToolTipShell.setBounds(shellBounds);
+            fToolTipShell.pack();
+
+            fToolTipShell.setVisible(true);
+        }
+
+        private Label createToolTip() {
+            if (fToolTipShell != null) {
+                fToolTipShell.dispose();
+            }
+
+            fToolTipShell = new Shell(getShell(), SWT.ON_TOP | SWT.RESIZE);
+            GridLayout gridLayout = new GridLayout();
+            gridLayout.numColumns = 1;
+            gridLayout.marginWidth = 2;
+            gridLayout.marginHeight = 0;
+            fToolTipShell.setLayout(gridLayout);
+            fToolTipShell.setBackground(fToolTipShell.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+            return createToolTipContent(fToolTipShell);
+        }
+
+        private Label createToolTipContent(Composite composite) {
+            Label toolTipContent = new Label(composite, SWT.NONE);
+            toolTipContent.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+            toolTipContent.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+            toolTipContent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER));
+            return toolTipContent;
+        }
+    }
 }

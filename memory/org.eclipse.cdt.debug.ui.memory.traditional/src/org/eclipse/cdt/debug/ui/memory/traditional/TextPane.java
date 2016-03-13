@@ -238,7 +238,7 @@ public class TextPane extends AbstractPane
         {
             BigInteger start = fRendering.getViewportStartAddress();
 
-            for(int i = 0; i < this.getBounds().height / cellHeight; i++)
+            for(int i = 0; i < fRendering.getRowCount(); i++)
             {
                 for(int col = 0; col < columns; col++)
                 {

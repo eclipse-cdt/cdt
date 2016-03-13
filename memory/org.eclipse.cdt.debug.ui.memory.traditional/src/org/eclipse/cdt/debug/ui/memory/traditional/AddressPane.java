@@ -15,7 +15,6 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
@@ -211,15 +210,13 @@ public class AddressPane extends AbstractPane
 
         GC gc = pe.gc;
 
-        FontMetrics fontMetrics = gc.getFontMetrics();
-        int textHeight = fontMetrics.getHeight();
-        int cellHeight = textHeight + (fRendering.getCellPadding() * 2);
+        int cellHeight =  getCellHeight();
 
         try
         {
             BigInteger start = fRendering.getViewportStartAddress();
 
-            for(int i = 0; i < this.getBounds().height / cellHeight; i++)
+            for(int i = 0; i < fRendering.getRowCount(); i++)
             {
                 gc.setForeground(fRendering.getTraditionalRendering().getColorText());
                 BigInteger lineAddress = start.add(BigInteger.valueOf(i

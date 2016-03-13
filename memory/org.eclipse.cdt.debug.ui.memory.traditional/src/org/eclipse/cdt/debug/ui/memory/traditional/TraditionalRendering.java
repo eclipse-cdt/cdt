@@ -428,7 +428,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     {
     	allocateColors();
     	
-        this.fRendering = new Rendering(parent, this);
+        this.fRendering = new RenderingAddressInfo(parent, this);
         
         applyPreferences();
 

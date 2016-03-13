@@ -13,13 +13,22 @@
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval.IMemoryBlockAddressInfoItem;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -33,6 +42,8 @@ import org.eclipse.swt.widgets.Shell;
 public class DataPane extends AbstractPane
 {
     private Shell fToolTipShell;
+    private final static String ARROW_UP = "\u2196";
+
     public DataPane(Rendering parent)
     {
         super(parent);
@@ -221,6 +232,30 @@ public class DataPane extends AbstractPane
         return cellBaseAddress.add(BigInteger.valueOf(addressableOffset));
     }
 
+    private Point getAddressLocation(BigInteger address) {
+        // Resolve the location of the cell
+        Point cellLocation = getCellLocation(address);
+
+        // Resolve the first address in the cell
+        BigInteger baseAddress;
+        try {
+            baseAddress = getCellAddressAt(cellLocation.x, cellLocation.y);
+        } catch (DebugException e) {
+            return null;
+        }
+
+        if (baseAddress == null) {
+            return null;
+        }
+
+        int addressSpan = address.subtract(baseAddress).intValue();
+        // Resolve the horizontal distance from base address to given address
+        int xOffset = addressSpan * getAddressableWidth();
+
+        return new Point(cellLocation.x + xOffset, cellLocation.y);
+    }
+
+
     @Override
 	protected Point getCellLocation(BigInteger cellAddress)
     {
@@ -250,6 +285,51 @@ public class DataPane extends AbstractPane
                 .logError(
                     TraditionalRenderingMessages
                         .getString("TraditionalRendering.FAILURE_DETERMINE_CELL_LOCATION"), e); //$NON-NLS-1$
+            return null;
+        }
+    }
+
+    private Point getRowFirstCellLocation(BigInteger cellAddress) {
+        try {
+            BigInteger address = fRendering.getViewportStartAddress();
+
+            // cell offset from base address in octets
+            int cellOffset = cellAddress.subtract(address).intValue();
+            cellOffset *= fRendering.getAddressableSize();
+
+            int row = cellOffset / (fRendering.getColumnCount() * fRendering.getBytesPerColumn());
+
+            // column zero plus cell padding
+            int x = fRendering.getCellPadding();
+            int y = row * getCellHeight() + fRendering.getCellPadding();
+
+            return new Point(x, y);
+        } catch (Exception e) {
+            fRendering.logError(
+                    TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_DETERMINE_CELL_LOCATION"), e); //$NON-NLS-1$
+            return null;
+        }
+    }
+
+    private Point getRowLastCellLocation(BigInteger cellAddress) {
+        try {
+            BigInteger address = fRendering.getViewportStartAddress();
+
+            // cell offset from base address in octets
+            int cellOffset = cellAddress.subtract(address).intValue();
+            cellOffset *= fRendering.getAddressableSize();
+
+            int row = cellOffset / (fRendering.getColumnCount() * fRendering.getBytesPerColumn());
+
+            int col = fRendering.getColumnCount() - 1;
+
+            int x = col * getCellWidth() + fRendering.getCellPadding();
+            int y = row * getCellHeight() + fRendering.getCellPadding();
+
+            return new Point(x, y);
+        } catch (Exception e) {
+            fRendering.logError(
+                    TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_DETERMINE_CELL_LOCATION"), e); //$NON-NLS-1$
             return null;
         }
     }
@@ -405,6 +485,8 @@ public class DataPane extends AbstractPane
                             cellHeight);
                 }
             }
+            
+            markAddressesWithAdditionalInfo(gc);
         }
         catch(Exception e)
         {
@@ -412,6 +494,215 @@ public class DataPane extends AbstractPane
                 .getString("TraditionalRendering.FAILURE_PAINT"), e); //$NON-NLS-1$
         }
 
+    }
+
+    private void markAddressesWithAdditionalInfo(GC gc) {
+        if (fRendering.isDisposed() || !fRendering.isVisible() || isDisposed()) {
+            return;
+        }
+        final Map<BigInteger, List<IMemoryBlockAddressInfoItem>> addressToInfoItems = fRendering
+                .getVisibleValueToAddressInfoItems();
+
+        // Check if there are information items available
+        if (addressToInfoItems.size() < 1) {
+            return;
+        }
+        // Prepare to enclose addresses with additional info in a rectangle
+        int addressableWidth = getAddressableWidth();
+        assert addressableWidth > 0;
+
+        // Initialize the dimensions for the rectangle
+        int width = 1;
+        int leftMargin = 1;
+        int rightMargin = leftMargin + 1;
+        int lowerMargin = 1;
+        int lineWidth = 2;
+        int height = getCellTextHeight() - fRendering.getCellPadding() + lowerMargin;
+
+        // Save current GC settings
+        Color origColor = gc.getForeground();
+        int origLineWidth = gc.getLineWidth();
+
+        gc.setForeground(fRendering.getTraditionalRendering().getColorChanged());
+
+        // Set the thickness of the lines being drawn, i.e. thicker than the default
+        gc.setLineWidth(lineWidth);
+
+        // Loop for each address from lowest to highest value
+        BigInteger[] sortedAddresses = orderItemsAscending(addressToInfoItems.keySet());
+        // Define rectangle margin space
+        for (BigInteger address : sortedAddresses) {
+            // Resolve rectangle starting point and start / end row references
+            Point location = getAddressLocation(address);
+            Point firstCellInRow = getRowFirstCellLocation(address);
+            Point lastCellInRow = getRowLastCellLocation(address);
+
+            // Mark each item even if they point to the same start address,
+            // so the end address is visible on each of them
+            List<IMemoryBlockAddressInfoItem> sameStartAddressitems = addressToInfoItems.get(address);
+            // Sort items starting in the same address to draw longest first, this will give more visibility to the embedded markings
+            IMemoryBlockAddressInfoItem[] sameStartOrderedItems = orderItemsByLengthDescending(sameStartAddressitems);
+            for (IMemoryBlockAddressInfoItem item : sameStartOrderedItems) {
+                BigInteger addressUnits = item.getRangeInAddressableUnits();
+
+                // Resolve the color for the rectangle
+                Color rangeColor = resolveColor(item.getRegionRGBColor());
+                if (rangeColor != null) {
+                    gc.setForeground(rangeColor);
+                }
+
+                // The start and end address are part of the length so we need to decrement / adjust by one
+                BigInteger endAddress = address.add(addressUnits.subtract(BigInteger.ONE));
+
+                // End location to the start of next address may change to a different row
+                // So it's best to add the addressable width to the beginning of the last address
+                Point endLocation = getAddressLocation(endAddress);
+                endLocation.x = endLocation.x + addressableWidth;
+
+                // Resolve the rows index as the selection may span multiple rows
+                int rowsIndex = (endLocation.y - location.y) / getCellHeight();
+
+                for (int i = 0; i <= rowsIndex; i++) {
+                    Point rowLocation = new Point(firstCellInRow.x, firstCellInRow.y + i * getCellHeight());
+                    if (!isRowVisible(rowLocation.y)) {
+                    	// No need to draw the portion of lines outside the visible area
+                    	continue;
+                    }
+
+                    if (i == 0) {
+                        // Enclosing range in first row
+                        if (endLocation.y == location.y) {
+                            // End and beginning locations are in the same row
+                            width = endLocation.x - location.x + rightMargin;
+                            gc.drawRectangle(location.x - leftMargin, location.y, width, height);
+                        } else {
+                            // The end cell is in a different row,
+                            // mark from the location to the end of this row
+                            width = lastCellInRow.x + addressableWidth * fRendering.getAddressesPerColumn() - location.x + rightMargin;
+                            // open ended first row
+                            location.x -= leftMargin;
+                            drawRectangleOpenEnd(location, width, height, gc);
+                        }
+                    } else if (i > 0 && i < rowsIndex) {
+                        // The marking started before this row and finishes after this row
+                        // we need to mark the whole row with opened ends i.e. two bordering lines top / bottom
+                        width = lastCellInRow.x + addressableWidth * fRendering.getAddressesPerColumn() - firstCellInRow.x + rightMargin;
+                        // parallel lines row
+                        assert width > 0;
+                        rowLocation.x -= leftMargin;
+                        drawParallelLines(rowLocation, width, height, gc);
+                    } else if (i == rowsIndex) {
+                        // The last row to highlight
+                        width = endLocation.x - firstCellInRow.x + rightMargin;
+                        // Draw a colored rectangle around the addressable units
+                        rowLocation.x -= leftMargin;
+                        drawRectangleOpenStart(rowLocation, width, height, gc);
+                    }
+                }
+
+                // Display the associated textual information
+                String info = fRendering.buildAddressInfoString(address, ",", false);
+                if (info.length() > 0) {
+                	// Add one character e.g. up arrow, to indicate the start of the data i.e. upper or lower row
+                    gc.drawText(ARROW_UP + info, location.x, location.y + getCellTextHeight());
+                }
+                
+                if (rangeColor != null) {
+                    rangeColor.dispose();
+                }
+            }
+        }
+        // Restore the original color
+        gc.setForeground(origColor);
+        gc.setLineWidth(origLineWidth);
+    }
+
+    private IMemoryBlockAddressInfoItem[] orderItemsByLengthDescending(
+            List<IMemoryBlockAddressInfoItem> sameStartAddressitems) {
+        if (sameStartAddressitems.isEmpty() || sameStartAddressitems.size() == 1) {
+            // One item, nothing to sort
+            return sameStartAddressitems.toArray(new IMemoryBlockAddressInfoItem[sameStartAddressitems.size()]);
+        }
+
+        // Map items from length to item
+        Map<BigInteger, IMemoryBlockAddressInfoItem> mapLengthToItem = new HashMap<BigInteger, IMemoryBlockAddressInfoItem>();
+        BigInteger[] itemLenghts = new BigInteger[sameStartAddressitems.size()];
+        int i = 0;
+        for (IMemoryBlockAddressInfoItem item : sameStartAddressitems) {
+            mapLengthToItem.put(item.getRangeInAddressableUnits(), item);
+            itemLenghts[i] = item.getRangeInAddressableUnits();
+            i++;
+        }
+
+        // Sort the lengths
+        Arrays.sort(itemLenghts);
+
+        // Sort the items by length but Descending
+        IMemoryBlockAddressInfoItem[] sortedItemsDescending = new IMemoryBlockAddressInfoItem[itemLenghts.length];
+        i = 0;
+        for (int y = itemLenghts.length - 1; y >= 0; y--) {
+            sortedItemsDescending[i] = mapLengthToItem.get(itemLenghts[y]);
+            i++;
+        }
+
+        return sortedItemsDescending;
+    }
+
+    private BigInteger[] orderItemsAscending(Set<BigInteger> keySet) {
+        List<BigInteger> collection = new ArrayList<BigInteger>(keySet);
+        Collections.sort(collection);
+        return collection.toArray(new BigInteger[collection.size()]);
+    }
+
+    /**
+     * Convert from int to RGB octets to then create the corresponding Color
+     */
+    private Color resolveColor(int intColor) {
+        return new Color(getDisplay(), intColor >> 16, (intColor >> 8) & 0xff, intColor & 0xff);
+    }
+
+    private boolean isRowVisible(int y) {
+        int firstVisibleRow = getAddressLocation(fRendering.getViewportStartAddress()).y;
+        int lastVisibleRow = getAddressLocation(fRendering.getViewportEndAddress()).y;
+        if (y >= firstVisibleRow && y <= lastVisibleRow) {
+        	return true;
+        }
+        
+        return false;
+    }
+
+	private void drawRectangleOpenStart(Point location, int width, int height, GC gc) {
+        gc.drawRectangle(location.x, location.y, width, height);
+        // clear start border
+        eraseVerticalLine(location, height, gc);
+    }
+
+    private void drawRectangleOpenEnd(Point location, int width, int height, GC gc) {
+        gc.drawRectangle(location.x, location.y, width, height);
+        // clear end border
+        Point erasep = new Point(location.x + width, location.y);
+        eraseVerticalLine(erasep, height, gc);
+    }
+
+    private void eraseVerticalLine(Point erasep, int height, GC gc) {
+    	Color currentColor = gc.getForeground();
+        gc.setForeground(fRendering.getTraditionalRendering().getColorBackground());
+        gc.drawLine(erasep.x, erasep.y, erasep.x, erasep.y + height);
+        gc.setForeground(currentColor);
+    }
+
+    private void drawParallelLines(Point location, int width, int height, GC gc) {
+        // NOTE: Writing parallel lines would be preferred, however this did not work in my environment
+//      gc.drawLine(location.x, location.y , location.x + width, location.y);
+//      gc.drawLine(location.x, location.y + height, location.x + width, location.y + height);
+
+        // So we use the work around of writing a rectangle and erase start / end borders
+        gc.drawRectangle(location.x, location.y, width, height);
+        // clear start border
+        eraseVerticalLine(location, height, gc);
+        // clear end border
+        Point erasep = new Point(location.x + width, location.y);
+        eraseVerticalLine(erasep, height, gc);
     }
 
     // Allow subclasses to override this method to do their own coloring
@@ -531,6 +822,14 @@ public class DataPane extends AbstractPane
         private void diplayToolTip(Point hoverPoint, BigInteger subAddress) {
             // Show the current hovering address as the first line in the tooltip
             StringBuilder sb = new StringBuilder("0x").append(subAddress.toString(16)).append("\n");
+
+            // Add additional address information, if available
+            if (fRendering.hasInfo(subAddress) && !subAddress.equals(BigInteger.ZERO)) {
+                String info = fRendering.buildAddressInfoString(subAddress, "\n", true);
+                if (info.length() > 0) {
+                    sb.append(info);
+                }
+            }
 
             fLabelContent.setText(sb.toString());
 

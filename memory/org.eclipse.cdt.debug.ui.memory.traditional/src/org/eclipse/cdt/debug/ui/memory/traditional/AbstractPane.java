@@ -734,6 +734,10 @@ public abstract class AbstractPane extends Canvas
         return fRowCount;
     }
 
+	int getRowWithInfoCount() {
+		return getBounds().height / getInfoCellHeight();
+	}
+	
     protected void setRowCount()
     {
     	fRowCount = getBounds().height / getCellHeight();
@@ -850,6 +854,8 @@ public abstract class AbstractPane extends Canvas
     		fRendering.setDirty(false);
     		fRendering.refresh();
         }
+
+		refreshHeight();
     }
 
     abstract protected BigInteger getViewportAddress(int col, int row)
@@ -880,18 +886,30 @@ public abstract class AbstractPane extends Canvas
     
     private int fCellHeight = -1; // called often, cache
 
-    protected int getCellHeight()
-    {
-        if(fCellHeight == -1)
-        {
-            fCellHeight = getCellTextHeight()
-                + (fRendering.getCellPadding() * 2);
-        }
+	protected int getCellHeight() {
 
-        return fCellHeight;
+		refreshHeight();
+
+		return fCellHeight;
+	}
+
+	/**
+	 * Provide the Row height to be used if additional information is to be presented
+	 * @return
+	 */
+	private int getInfoCellHeight() {
+		int multiplier = 2;
+		return getCellTextHeight() * multiplier + (fRendering.getCellPadding() * 2);
     }
 
     private int fCharacterWidth = -1; // called often, cache
+
+	private void refreshHeight() {
+		// If additional information is to be inserted between lines
+		// double the height
+		int multiplier = fRendering.isExtraInfo() == true ? 2 : 1;
+		fCellHeight = getCellTextHeight() * multiplier + (fRendering.getCellPadding() * 2);
+	}
 
     protected int getCellCharacterWidth()
     {

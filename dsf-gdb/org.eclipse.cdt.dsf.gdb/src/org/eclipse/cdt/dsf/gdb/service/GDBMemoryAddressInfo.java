@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryAddressInfoRegistersRetrieval;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryAddressInfoVariablesRetrieval;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -31,6 +32,7 @@ public class GDBMemoryAddressInfo extends AbstractDsfService implements IMemoryA
 	public GDBMemoryAddressInfo(DsfSession session) {
 		super(session);
         fInfoTypeProviders = new IGdbMemoryAddressInfoTypeRetrieval[] {
+                new GdbMemoryAddressInfoRegistersRetrieval(getSession()),
                 new GdbMemoryAddressInfoVariablesRetrieval(getSession()) };
 	}
 

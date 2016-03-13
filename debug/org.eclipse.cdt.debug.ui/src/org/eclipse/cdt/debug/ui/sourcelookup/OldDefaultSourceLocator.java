@@ -12,11 +12,12 @@ package org.eclipse.cdt.debug.ui.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
@@ -36,6 +37,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Old default source locator. We keep it for migration purposes.
@@ -124,7 +127,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 			if ( getCSourceLocator().getProject() != null && !getCSourceLocator().getProject().equals( project ) )
 				return;
 			if ( project == null || !project.exists() || !project.isOpen() )
-				abort( MessageFormat.format( SourceLookupMessages.getString( "OldDefaultSourceLocator.4" ), new String[]{ projectName } ), null ); //$NON-NLS-1$
+				abort( MessageFormat.format( SourceLookupMessages.getString( "OldDefaultSourceLocator.4" ), new Object[]{ projectName } ), null ); //$NON-NLS-1$
 			IPersistableSourceLocator psl = getPersistableSourceLocator();
 			if ( psl != null )
 				psl.initializeFromMemento( data );
@@ -212,7 +215,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 				return project;
 			}
 		}
-		abort( MessageFormat.format( SourceLookupMessages.getString( "OldDefaultSourceLocator.9" ), new String[]{ projectName } ), null ); //$NON-NLS-1$
+		abort( MessageFormat.format( SourceLookupMessages.getString( "OldDefaultSourceLocator.9" ), new Object[]{ projectName } ), null ); //$NON-NLS-1$
 		return null;
 	}
 }

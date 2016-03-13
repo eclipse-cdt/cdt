@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @since 2.0
@@ -40,12 +41,12 @@ public class UIMessages {
 	}
 	public static String getFormattedString(String key, String arg) {
 		key = toNlsFormatKey(key);
-		return MessageFormat.format(getString(key), new String[] { arg });
+		return MessageFormat.format(getString(key), new Object[] { arg });
 	}
 
 	public static String getFormattedString(String key, String[] args) {
 		key = toNlsFormatKey(key);
-		return MessageFormat.format(getString(key), args);
+		return MessageFormat.format(getString(key), (Object[])args);
 	}
 
 	public static String getString(String key) {

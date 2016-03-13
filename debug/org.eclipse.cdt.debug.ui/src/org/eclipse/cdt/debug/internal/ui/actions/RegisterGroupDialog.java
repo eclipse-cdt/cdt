@@ -58,7 +58,7 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 		public String getText( Object element ) {
 			if ( element instanceof IRegisterDescriptor ) {
 				IRegisterDescriptor rd = (IRegisterDescriptor)element;
-				return MessageFormat.format( "{0} - {1}", new String[] { rd.getName(), rd.getGroupName() } ); //$NON-NLS-1$
+				return MessageFormat.format( "{0} - {1}", new Object[] { rd.getName(), rd.getGroupName() } ); //$NON-NLS-1$
 			}
 			return super.getText( element );
 		}

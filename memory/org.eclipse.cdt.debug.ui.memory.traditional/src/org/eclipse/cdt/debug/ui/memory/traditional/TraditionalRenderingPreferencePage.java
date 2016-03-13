@@ -103,6 +103,11 @@ public class TraditionalRenderingPreferencePage
 		
 		addField(new ScaleFieldEditor(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT,
 				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_HistoryTrailLevels"), getFieldEditorParent(), 1, 10, 1, 1)); //$NON-NLS-1$
+
+		addField(new BooleanFieldEditor(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO,
+				TraditionalRenderingMessages
+						.getString("TraditionalRenderingPreferencePage_ShowCrossRefInfo"), //$NON-NLS-1$
+				getFieldEditorParent()));
 	}
 
 	/* (non-Javadoc)

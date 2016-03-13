@@ -588,7 +588,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	    		panes[i].setBackground(getColorBackground());
 	    	
 	    	setRenderingPadding(TraditionalRenderingPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR));
-	    	
+	    	if (store.getBoolean(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO)) {
+	            fRendering.resolveAddressInfoForCurrentSelection();	    	    
+	    	}
+
 	    	fRendering.redrawPanes();
     	}
     }
@@ -719,7 +722,15 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     {
     	return colorTextAlternate;
     }
-    
+
+    /**
+     * @since 1.4
+     */
+    public boolean isShowCrossRefInfoGlobalPref() {
+        IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+        return store.getBoolean(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO);
+    }
+
     public void createMenus()
     {
         // add the menu to each of the rendering panes
@@ -1193,6 +1204,21 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 sub.add(displayBinaryPaneAction);
                 sub.add(displayTextPaneAction);
                 manager.add(sub);
+
+                // if there is cross reference info types available
+                // add Actions to allow the user to toggle the visibility for each of them
+                if (isShowCrossRefInfoGlobalPref()) {
+                    Action[] dynamicActions = fRendering.getDynamicActions();
+                    if (dynamicActions != null) {
+                        sub = new MenuManager(TraditionalRenderingMessages
+                                .getString("TraditionalRenderingPreferencePage_ShowCrossRefInfo_Label")); //$NON-NLS-1$
+                        for (Action action : dynamicActions) {
+                            sub.add(action);
+                        }
+
+                        manager.add(sub);
+                    }
+                }
 
                 sub = new MenuManager(TraditionalRenderingMessages
                     .getString("TraditionalRendering.ENDIAN")); //$NON-NLS-1$

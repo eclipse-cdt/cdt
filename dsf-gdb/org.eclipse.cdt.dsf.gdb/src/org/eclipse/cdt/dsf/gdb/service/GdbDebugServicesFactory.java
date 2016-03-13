@@ -136,10 +136,11 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 					return (V)createHardwareAndOSService(session, (ILaunchConfiguration)arg);
 				}
 			}
-		}
-		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
+		} else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointsSynchronizerService(session);
-		} 
+		} else if (IMemoryAddressInfo.class.isAssignableFrom(clazz)) {
+			return (V)createMemoryAddressInfoService(session);
+		}
 
         return super.createService(clazz, session, optionalArguments);
 	}
@@ -334,6 +335,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		return new MIBreakpointsSynchronizer(session);
 	}
 	
+	/**
+	 * @since 5.0
+	 */
+	protected IMemoryAddressInfo createMemoryAddressInfoService(DsfSession session) {
+		return new GDBMemoryAddressInfo(session);
+	}	
+
 	/**
 	 * Compares the GDB version of the current debug session with the one specified by 
 	 * parameter 'version'.  Returns -1, 0, or 1 if the current version is less than, 

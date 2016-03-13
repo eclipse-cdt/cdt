@@ -68,6 +68,13 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     
     private static final String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
     
+	/**
+	 * The most recent launch. This exists only for API backwards compatibility.
+	 * Other than {@link #cleanupLaunch()}, nothing should read this. S
+	 */
+	@Deprecated
+	private GdbLaunch fGdbLaunch;
+
 	public GdbLaunchDelegate() {
 		// We now fully support project-less debugging
 		// See bug 343861
@@ -251,6 +258,16 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	protected String getCLILabel(ILaunchConfiguration config, String gdbVersion) throws CoreException {
         return LaunchUtils.getGDBPath(config).toString().trim() + " (" + gdbVersion +")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
+	/**
+	 * Exists for backwards compatibility. Instead use
+	 * {@link #cleanupLaunch(ILaunch)} and keep track of the launch object from
+	 * creation to cleanup call.
+	 */
+	@Deprecated
+	protected void cleanupLaunch() throws DebugException {
+		cleanupLaunch(fGdbLaunch);
+	}
 	
 	/** 
 	 * This method takes care of cleaning up any resources allocated by the launch, as early as
@@ -358,6 +375,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     @Override
     public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
     	GdbLaunch launch = createGdbLaunch(configuration, mode, null);
+
+        // Store away launch for backwards compatibility.
+        fGdbLaunch = launch;
+
     	// Don't initialize the GdbLaunch yet to avoid needing to cleanup.
     	// We will initialize the launch once we know it will proceed and
     	// that we need to start using it.

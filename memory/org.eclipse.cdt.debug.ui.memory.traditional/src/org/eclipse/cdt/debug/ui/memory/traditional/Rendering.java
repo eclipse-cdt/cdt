@@ -39,6 +39,7 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -2338,9 +2339,23 @@ public class Rendering extends Composite implements IDebugEventSetListener
      * 
      * @param addTypeHeaders
      *            Indicates if the string shall include a data type name before each list of items of the same
-     *            type e.g. Variables, Regitsters, etc.
+     *            type e.g. Variables, Registers, etc.
      */
     String buildAddressInfoString(BigInteger address, String separator, boolean addTypeHeaders) {
         return "";
     }
+
+    /**
+     * Returns Dynamic context menu actions to this render, No actions by default
+     * @since 1.4
+     */
+    Action[] getDynamicActions() {
+        return new Action[0];
+    }
+    
+    /**
+     * Trigger the resolution of additional address information - No action by default
+     */
+    void resolveAddressInfoForCurrentSelection() {}
+
 }

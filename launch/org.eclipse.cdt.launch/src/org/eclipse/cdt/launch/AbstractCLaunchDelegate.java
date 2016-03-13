@@ -355,7 +355,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected String renderProcessLabel(String commandLine) {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		return MessageFormat.format(format, new String[]{commandLine, timestamp});
+		return MessageFormat.format(format, new Object[]{commandLine, timestamp});
 	}
 
 	// temporary fix for #66015
@@ -366,7 +366,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected String renderDebuggerProcessLabel() {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		return MessageFormat.format(format, new String[]{
+		return MessageFormat.format(format, new Object[]{
 				LaunchMessages.AbstractCLaunchDelegate_Debugger_Process, timestamp}); 
 	}
 

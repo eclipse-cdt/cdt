@@ -51,6 +51,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
@@ -196,6 +198,8 @@ public class Rendering extends Composite implements IDebugEventSetListener, IDeb
      */
     private final Map<BigInteger, List<IMemoryBlockAddressInfoItem>> fMapAddressToInfoItems = Collections
             .synchronizedMap(new HashMap<BigInteger, List<IMemoryBlockAddressInfoItem>>());
+    
+    private final AddressInfoTypeMap fAddressInfoTypeStatusMap = new AddressInfoTypeMap();
 
     public Rendering(Composite parent, TraditionalRendering renderingParent)
     {
@@ -319,6 +323,56 @@ public class Rendering extends Composite implements IDebugEventSetListener, IDeb
         contextService.addDebugContextListener(this, site.getId());
         resolveAddressInfoForCurrentSelection(contextService);
     }
+    
+    /**
+     * Keeps a map from information type to its state and to a corresponding Action instance
+     * needed to update the actual state from UI interactions
+     */
+    class AddressInfoTypeMap extends HashMap<String, Boolean> {
+        private static final long serialVersionUID = 1L;
+        
+        private final Map<String, Action> fTypeToActionMap = new HashMap<>();
+        
+        public Action getAction(final String infoType) {
+            if (!containsKey(infoType)) {
+                if (fTypeToActionMap.containsKey(infoType)) {
+                    // The key status has been removed, clean the action map
+                    fTypeToActionMap.remove(infoType);
+                }
+                return null;
+            }
+    
+            Action action = fTypeToActionMap.get(infoType);
+            if (action != null) {
+                return action;
+            } else {
+                action = new Action(infoType, IAction.AS_CHECK_BOX) {
+                    @Override
+                    public void run() {
+                        put(infoType, Boolean.valueOf(isChecked()));
+                        redrawPanes();
+                    }
+                };
+                action.setChecked(get(infoType));
+                fTypeToActionMap.put(infoType, action);
+            }
+            
+            return action;
+        }
+    
+        @Override
+        public void clear() {
+            fTypeToActionMap.clear();
+            super.clear();
+        }
+    }
+
+    void resolveAddressInfoForCurrentSelection() {
+        IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+        IDebugContextService contextService = DebugUITools.getDebugContextManager()
+                .getContextService(site.getWorkbenchWindow());
+        resolveAddressInfoForCurrentSelection(contextService);
+    }
 
     private void resolveAddressInfoForCurrentSelection(IDebugContextService contextService) {
         IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
@@ -397,8 +451,8 @@ public class Rendering extends Composite implements IDebugEventSetListener, IDeb
     }
 
     private void handleDebugContextChanged(final Object context) {
-        if (isDisposed() || context == null) {
-            // Invalid context
+        if (isDisposed() || context == null || !fParent.isShowCrossRefInfoGlobalPref()) {
+            // Invalid context or user has chosen not to see additional address information
             return;
         }
 
@@ -426,14 +480,24 @@ public class Rendering extends Composite implements IDebugEventSetListener, IDeb
                     // If the context is still valid
                     if (getContext().equals(fSelectedContext)) {
                         fAddressInfoItems = getAddressInfoItems();
-                        refreshUpdateListener(addrInfo);
-                        if (!display.isDisposed()) {
-                            display.asyncExec(new Runnable() {
-                                @Override
-                                public void run() {
-                                    redrawPanes();
+
+                        if (fParent.isShowCrossRefInfoGlobalPref()) {
+                            String[] types = getAddressInfoItemTypes();
+                            for (String type : types) {
+                                if (!fAddressInfoTypeStatusMap.containsKey(type)) {
+                                    fAddressInfoTypeStatusMap.put(type, Boolean.TRUE);
                                 }
-                            });
+                            }
+                            
+                            refreshUpdateListener(addrInfo);
+                            if (!display.isDisposed()) {
+                                display.asyncExec(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        redrawPanes();
+                                    }
+                                });
+                            }
                         }
                     }
                 }
@@ -1387,6 +1451,7 @@ public class Rendering extends Composite implements IDebugEventSetListener, IDeb
 
         fSelectedContext = null;
         fMapAddressToInfoItems.clear();
+        fAddressInfoTypeStatusMap.clear();
         fAddressInfoItems = null;
 
         IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
@@ -2525,7 +2590,7 @@ public class Rendering extends Composite implements IDebugEventSetListener, IDeb
      */
     Map<BigInteger, List<IMemoryBlockAddressInfoItem>> getVisibleValueToAddressInfoItems() {
         IMemoryBlockAddressInfoItem[] items = fAddressInfoItems;
-        if (items == null) {
+        if (items == null || !fParent.isShowCrossRefInfoGlobalPref()) {
             fMapAddressToInfoItems.clear();
             return fMapAddressToInfoItems;
         }
@@ -2548,6 +2613,13 @@ public class Rendering extends Composite implements IDebugEventSetListener, IDeb
             BigInteger endAddress = getViewportEndAddressSingleHeight();
 
             for (IMemoryBlockAddressInfoItem item : items) {
+                // Skip information types not wanted by the user
+                String itemType = item.getInfoType();
+                if (!fAddressInfoTypeStatusMap.containsKey(itemType)
+                        || fAddressInfoTypeStatusMap.get(itemType).equals(Boolean.FALSE)) {
+                    continue;
+                }
+
                 List<IMemoryBlockAddressInfoItem> containers = allValuesMap.get(item.getAddress());
                 if (containers == null) {
                     containers = new ArrayList<IMemoryBlockAddressInfoItem>();
@@ -2653,9 +2725,23 @@ public class Rendering extends Composite implements IDebugEventSetListener, IDeb
     @Override
     public void handleAddressInfoUpdate(EventType type, Object update) {
         fAddressInfoItems = null;
-        IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
-        IDebugContextService contextService = DebugUITools.getDebugContextManager()
-                .getContextService(site.getWorkbenchWindow());
-        resolveAddressInfoForCurrentSelection(contextService);
+        resolveAddressInfoForCurrentSelection();
+    }
+    
+    /**
+     * @since 1.4
+     */
+    public Action[] getDynamicActions() {
+        List<Action> actionList = new ArrayList<Action>(fAddressInfoTypeStatusMap.size());
+        if (getPaneVisible(Rendering.PANE_BINARY)) {
+            for (final String infoType : fAddressInfoTypeStatusMap.keySet()) {
+                Action action = fAddressInfoTypeStatusMap.getAction(infoType);
+                if (action != null) {
+                    actionList.add(action);                    
+                }
+            }
+        }
+
+        return actionList.toArray(new Action[actionList.size()]);
     }
 }

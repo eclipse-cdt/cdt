@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_579c8f76",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/CLICommandAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-03-13T21:11:31Z",
+      "side": 1,
+      "message": "No, if these files are committed to version control and then checked out in different fs it won\u0027t work. This is universal solution.",
+      "parentUuid": "e7dfcf21_6f1ff564",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_2f25edb2",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/CLICommandAction.java",
         "patchSetId": 4
@@ -64,6 +82,24 @@
       "writtenOn": "2016-03-11T21:37:35Z",
       "side": 1,
       "message": "Why this is a separate class? Is it used somewhere else?\n\nIdeally, the UI should be implemented as a list of commands instead of a text field. Users should be able to add, remove, edit and move commands up and down. The result should be an array of commands not a single string.",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7797cb51",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/CLICommandActionComposite.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-03-13T21:11:31Z",
+      "side": 1,
+      "message": "This is how all other commands are implemented so I just copied that approach (composite)\n\nThe list of command I would definitely won\u0027t do. This is a) assumes the semantics of what this text is which I want to avoid. I want backend debugger to deal with it. b) make UI a lot more cluttered for no reason. Adding breakpoint actions ui is already cluttered beyond imagination. Typing is a lot faster then clicking lots of buttons. And if you think of this as a script then editor concept is better for script then any sort of table/list",
+      "parentUuid": "e7dfcf21_8f3521e0",
       "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -874,24 +874,19 @@ public abstract class AbstractPane extends Canvas
     {
     	super.setFont(font);
     	fCharacterWidth = -1;
-    	fCellHeight = -1;
     	fTextHeight = -1;
     }
-    
-    private int fCellHeight = -1; // called often, cache
 
-    protected int getCellHeight()
-    {
-        if(fCellHeight == -1)
-        {
-            fCellHeight = getCellTextHeight()
-                + (fRendering.getCellPadding() * 2);
-        }
+    protected int getCellHeight() {
+        // If additional information is to be inserted between lines
+        // double the height
+        int multiplier = fRendering.hasVisibleRangeInfo() ? 2 : 1;
+        int cellHeight = getCellTextHeight() * multiplier + (fRendering.getCellPadding() * 2);
 
-        return fCellHeight;
+        return cellHeight;
     }
 
-    private int fCharacterWidth = -1; // called often, cache
+	private int fCharacterWidth = -1; // called often, cache
 
     protected int getCellCharacterWidth()
     {

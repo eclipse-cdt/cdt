@@ -142,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_06081366",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/CLICommandActionComposite.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-14T20:36:52Z",
+      "side": 1,
+      "message": "You still assume the semantics in the implementation of CLICommandAction.getSummery().\nThe idea of passing whatever the user types in a text field to the backend doesn\u0027t mix very well with the cross-platform compatibility. That\u0027s why I suggested having a list of commands in the UI.\nBesides that, having a single text line for a multi-command script is probably not a good idea if the script contains more than a couple of commands. Editing that kind of scripts  in a single text filed is difficult.\nAnyway, if this is urgent, we can leave it as it is.",
+      "parentUuid": "e7dfcf21_7797cb51",
+      "revId": "1229e7c4d7f4a2220501ec55cefd2e41b4d75466",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_8fe7e1cf",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/CLIDebugActionEnabler.java",
         "patchSetId": 4

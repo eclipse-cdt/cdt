@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson - Initial Implementation
  *     Simon Marchi (Ericsson) - Add and use runningOnWindows().
@@ -58,38 +58,38 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.gdb.eventbkpts.IEventBreakpointConstants;
 import org.eclipse.cdt.gdb.internal.eventbkpts.GdbCatchpoints;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * This is the test suite for the catchpoint support in DSF-GDB.
- * 
+ *
  * It is meant to be a regression suite to be executed automatically against the
  * DSF nightly builds.
- * 
+ *
  * It is also meant to be augmented with a proper test case(s) every time a
  * feature is added or in the event (unlikely :-) that a bug is found in the
  * Breakpoint Service.
- * 
+ *
  * Refer to the JUnit4 documentation for an explanation of the annotations.
- * 
+ *
  */
 
-@RunWith(BackgroundRunner.class)
-public class MICatchpointsTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class MICatchpointsTest extends BaseParametrizedTestCase {
 
     private static final String EXEC_NAME  = "CatchpointTestApp.exe"; //$NON-NLS-1$
     private static final String SOURCE_NAME = "CatchpointTestApp.cc"; //$NON-NLS-1$
-    
+
     public static final int LINE_NUMBER_SLEEP_CALL = 17;
 
     // Asynchronous Completion
     private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
-    
+
     // Services references
     private DsfSession          fSession;
 	private IBreakpointsTargetDMContext fBreakpointsDmc;
@@ -97,7 +97,7 @@ public class MICatchpointsTest extends BaseTestCase {
     private MIRunControl        fRunControl;
     private IBreakpoints        fBreakpointService;
     private IExpressions        fExpressionService;
-    
+
     // Event Management
     private static Boolean fEventHandlerLock = true;
     private enum Events { BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT }
@@ -105,10 +105,10 @@ public class MICatchpointsTest extends BaseTestCase {
     private final int BP_UPDATED = Events.BP_UPDATED.ordinal();
     private final int BP_REMOVED = Events.BP_REMOVED.ordinal();
     private final int BP_HIT     = Events.BP_HIT.ordinal();
-    
-    /** number of times a breakpoint event was received, broken down by event type */ 
+
+    /** number of times a breakpoint event was received, broken down by event type */
     private int[]   fBreakpointEvents = new int[Events.values().length];
-    
+
     /** total number of breakpoint events received */
     private int totalBreakpointEventsCount() {
     	synchronized (fEventHandlerLock) {
@@ -119,8 +119,8 @@ public class MICatchpointsTest extends BaseTestCase {
 	    	return total;
     	}
     }
-    
-    
+
+
     /**
      * The gdb breakpoint number associated with the most recent breakpoint event
      */
@@ -139,7 +139,7 @@ public class MICatchpointsTest extends BaseTestCase {
     // Error messages
     private final String UNKNOWN_EXECUTION_CONTEXT    = "Unknown execution context";
     private final String UNKNOWN_BREAKPOINT           = "Unknown breakpoint";
-    
+
     // ========================================================================
     // Housekeeping stuff
     // ========================================================================
@@ -155,7 +155,7 @@ public class MICatchpointsTest extends BaseTestCase {
 			public void run() {
                 fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
                 assertNotNull(fServicesTracker);
-        		    
+
                 fRunControl = fServicesTracker.getService(MIRunControl.class);
                 assertNotNull(fRunControl);
 
@@ -173,7 +173,7 @@ public class MICatchpointsTest extends BaseTestCase {
             }
         };
         fSession.getExecutor().submit(runnable).get();
-        
+
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
         assertNotNull(fBreakpointsDmc);
@@ -182,31 +182,31 @@ public class MICatchpointsTest extends BaseTestCase {
     @Override
     protected void setLaunchAttributes() {
     	super.setLaunchAttributes();
-    	
+
     	// Select the binary to run the tests against
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
-    
+
 	@Override
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
-		
-        Runnable runnable = new Runnable() {
-            @Override
-			public void run() {
-            	fRunControl.getSession().removeServiceEventListener(MICatchpointsTest.this);
-            }
-        };
-        fSession.getExecutor().submit(runnable).get();
-
+		if (fSession != null) {
+			Runnable runnable = new Runnable() {
+				@Override
+				public void run() {
+					fRunControl.getSession().removeServiceEventListener(MICatchpointsTest.this);
+				}
+			};
+			fSession.getExecutor().submit(runnable).get();
+		}
 		// Clear the references (not strictly necessary)
-        fBreakpointService = null;
-        fRunControl = null;
-        fServicesTracker.dispose();
-        fServicesTracker = null;
-
-        clearEventCounters();
-    }
+		fBreakpointService = null;
+		fRunControl = null;
+		if (fServicesTracker != null)
+			fServicesTracker.dispose();
+		fServicesTracker = null;
+		clearEventCounters();
+	}
 
     // ========================================================================
     // Event Management Functions
@@ -282,7 +282,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	 * Suspends the calling thread until [count] number of breakpoint events
 	 * have been received in the current test. NOTE: too simple for real life
 	 * but good enough for this test suite
-	 * 
+	 *
 	 * @param count
 	 *            the number breakpoint events to wait for
 	 * @param timeout
@@ -305,7 +305,7 @@ public class MICatchpointsTest extends BaseTestCase {
 			}
 		}
 	}
-	
+
 	/**
 	 * Simplified variant that just waits up to two seconds
 	 */
@@ -598,7 +598,7 @@ public class MICatchpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that no breakpoint events were received
-		assertEquals("Unexpected number of breakpoint events", 0, totalBreakpointEventsCount());		
+		assertEquals("Unexpected number of breakpoint events", 0, totalBreakpointEventsCount());
     }
 
 	// Long story. There's really no way for the user to set a disabled
@@ -613,7 +613,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	// disabled breakpoint. When we do, this test will become relevant.
 	//	@Test
 //	public void insertCatchpoint_Disabled() throws Throwable {
-//		// Create a catchpoint		
+//		// Create a catchpoint
 //		Map<String, Object> breakpoint = new HashMap<String, Object>();
 //		breakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
 //		breakpoint.put(MIBreakpoints.CATCHPOINT_TYPE, "throw");
@@ -743,7 +743,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	}
 
 	/**
-	 * Set a catchpoint while the target is running and ensure it gets hit. 
+	 * Set a catchpoint while the target is running and ensure it gets hit.
 	 */
 	@Test
 	public void insertCatchpoint_WhileTargetRunning() throws Throwable {
@@ -756,10 +756,10 @@ public class MICatchpointsTest extends BaseTestCase {
 	    if (runningOnWindows()) {
 	    	return;
 	    }
-		
-		// Run the program. It will make a two second sleep() call, during which time... 
+
+		// Run the program. It will make a two second sleep() call, during which time...
 		SyncUtil.resume();
-		
+
 		// Set a throw catchpoint; don't use the utility method since it assumes
 		// the target is running
 		Map<String, Object> bkptsProps = new HashMap<String, Object>();
@@ -767,21 +767,21 @@ public class MICatchpointsTest extends BaseTestCase {
 		bkptsProps.put(MIBreakpoints.CATCHPOINT_TYPE, "throw");
 		insertBreakpoint(fBreakpointsDmc, bkptsProps);
 		assertTrue(fWait.getMessage(), fWait.isOK());
-		
+
 		// After the sleep, the test app throws a C++ exception. Wait for the
 		// catchpoint to hit and for the expected number of breakpoint events to
 		// have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
-		
+
 		// Ensure that right breakpoint events were received. One indicating the
 		// catchpoint was created, another indicating it was hit
 		waitForBreakpointEvent(1);
 		assertEquals("Unexpected number of breakpoint events", 2, totalBreakpointEventsCount());
 		assertEquals("Unexpected number of breakpoint-added events", 1, getBreakpointEventCount(BP_ADDED));
-		assertEquals("Unexpected number of breakpoint-hit events", 1, getBreakpointEventCount(BP_HIT));		
+		assertEquals("Unexpected number of breakpoint-hit events", 1, getBreakpointEventCount(BP_HIT));
 		clearEventCounters();
-		
+
 		assertTrue("Did not stop because of catchpoint, but stopped because of: " +
 				event.getClass().getCanonicalName(), event instanceof MIBreakpointHitEvent);
 	}
@@ -822,7 +822,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	public void removeCatchpoint_InvalidBreakpoint() throws Throwable {
 		// set a catchpoint
 		IBreakpointDMContext bkptRef1 = setCatchpoint("throw", null, null);
-		
+
 		// Remove the installed breakpoint
 		clearEventCounters();
 		removeBreakpoint(bkptRef1);
@@ -834,7 +834,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		assertEquals("Unexpected number of breakpoint-added events", 1, getBreakpointEventCount(BP_REMOVED));
 		clearEventCounters();
 
-		// Ensure the breakpoint service sees what we expect 
+		// Ensure the breakpoint service sees what we expect
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 0, breakpoints.length);
 
@@ -848,7 +848,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Ensure no breakpoint events were received
 		assertEquals("Unexpected number of breakpoint events", 0, totalBreakpointEventsCount());
 
-		// Ensure the breakpoint service sees what we expect 
+		// Ensure the breakpoint service sees what we expect
 		breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 0, breakpoints.length);
 
@@ -870,7 +870,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 1, breakpoints.length);
 		MIBreakpointDMData bkpt2_set = (MIBreakpointDMData) getBreakpoint(bkptRef2);
 		MIBreakpointDMData bkpt2_svc = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
-		assertEquals(bkpt2_set.getNumber(), bkpt2_svc.getNumber());		
+		assertEquals(bkpt2_set.getNumber(), bkpt2_svc.getNumber());
 	}
 
 	/**
@@ -889,14 +889,14 @@ public class MICatchpointsTest extends BaseTestCase {
 
 		// Get the list of breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
-		assertEquals("Breakpoint service reports unexpected number of breakpoints", events.length, breakpoints.length);		
+		assertEquals("Breakpoint service reports unexpected number of breakpoints", events.length, breakpoints.length);
 
 		// Remove the catchpoints one at a time but in an order different than how they were added
 		int[] whichOne = { 0, 2, 1, 3 };
 		int breakpoints_left = 4;
 		for (int i = 0; i < whichOne.length; i++) {
 			clearEventCounters();
-			
+
 			// Remove one of the catchpoints
 			IBreakpointDMContext removeThisBreakpoint = breakpoints[whichOne[i]];
 			removeBreakpoint(removeThisBreakpoint);
@@ -907,8 +907,8 @@ public class MICatchpointsTest extends BaseTestCase {
 			waitForBreakpointEvent(1);
 			assertEquals("Unexpected number of breakpoint events", 1, totalBreakpointEventsCount());
 			assertEquals("Unexpected number of breakpoint-added events", 1, getBreakpointEventCount(BP_REMOVED));
-			
-			// Ensure the breakpoint service sees what we expect 
+
+			// Ensure the breakpoint service sees what we expect
 			IBreakpointDMContext[] remaining_breakpoints = getBreakpoints(fBreakpointsDmc);
 			assertEquals("Breakpoints service reports unexpected number of breakpoints", --breakpoints_left, remaining_breakpoints.length);
 			for (int j = 0; j < breakpoints_left; j++) {
@@ -953,20 +953,20 @@ public class MICatchpointsTest extends BaseTestCase {
 	    if (runningOnWindows()) {
 	    	return;
 	    }
-		
+
 		// Set a line breakpoint at the sleep() call. We need to get the program
 		// past the initial loop that throws and catches C++ exceptions.
 		IBreakpointDMContext refLineBkpt = setLineBreakpoint(LINE_NUMBER_SLEEP_CALL);
 
 		// Run to the breakpoint
 		resumeAndExpectBkptHit(((MIBreakpointDMData) getBreakpoint(refLineBkpt)).getNumber(), null);
-		
+
 		// Set the two catchpoints
 		IBreakpointDMContext refThrow = setCatchpoint("throw", null, null);
 		IBreakpointDMContext refCatch = setCatchpoint("catch", null, null);
 
 		// Run the program. It will make a two second sleep() call, during which time...
-		clearEventCounters();		
+		clearEventCounters();
 		SyncUtil.resume();
 
 		// ...we remove one of the catchpoints
@@ -980,10 +980,10 @@ public class MICatchpointsTest extends BaseTestCase {
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
 		assertTrue("stopped event is of an unexpected type: " + event.getClass().getName(), event instanceof MIBreakpointHitEvent);
-		MIBreakpointHitEvent bkptHitEvent = (MIBreakpointHitEvent)event; 
+		MIBreakpointHitEvent bkptHitEvent = (MIBreakpointHitEvent)event;
 		MIBreakpointDMData bkptNotRemoved = (MIBreakpointDMData) getBreakpoint(removeThrow ? refCatch : refThrow);
 		assertEquals("Target stopped as expected, but the responsible breakpoint was not the expected one", bkptNotRemoved.getNumber(), bkptHitEvent.getNumber());
-		
+
 		// If we removed the catch exception, we don't know at this point that
 		// it won't get hit; we're stopped at the throw catchpoint. So resume
 		// the target and make sure it doesn't get hit.
@@ -991,10 +991,10 @@ public class MICatchpointsTest extends BaseTestCase {
 			clearEventCounters();
 			SyncUtil.resume();
 			Thread.sleep(1000); // give the program a second to run to completion
-			assertEquals("Unexpected number of breakpoint events", 0, totalBreakpointEventsCount());			
+			assertEquals("Unexpected number of breakpoint events", 0, totalBreakpointEventsCount());
 		}
 	}
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	// Catchpoint Update tests
 	///////////////////////////////////////////////////////////////////////////
@@ -1007,19 +1007,19 @@ public class MICatchpointsTest extends BaseTestCase {
 	public void updateCatchpoint_AddCondition() throws Throwable {
 		// Set a catchpoint with no condition
 		IBreakpointDMContext ref = setCatchpoint("throw", null, null);
-		
-		// Update the catchpoint to have a condition
-		modifyBkptProperty(ref, MIBreakpoints.CONDITION, CONDITION_1);		
 
-		// Ensure the breakpoint service sees what we expect 
+		// Update the catchpoint to have a condition
+		modifyBkptProperty(ref, MIBreakpoints.CONDITION, CONDITION_1);
+
+		// Ensure the breakpoint service sees what we expect
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 1, breakpoints.length);
 		MIBreakpointDMData bkpt_svc = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertEquals("Incorrect breakpoint condition", CONDITION_1, bkpt_svc.getCondition());
-		
+
 		resumeAndExpectBkptHit(bkpt_svc.getNumber(), 2);
 	}
-	
+
 	/**
 	 * Add a catchpoint with a condition then remove the condition
 	 */
@@ -1027,16 +1027,16 @@ public class MICatchpointsTest extends BaseTestCase {
 	public void updateCatchpoint_RemoveCondition() throws Throwable {
 		// Set a catchpoint with a condition
 		IBreakpointDMContext ref = setCatchpoint("throw", CONDITION_1, null);
-		
+
 		// Remove the condition
 		modifyBkptProperty(ref, MIBreakpoints.CONDITION, null);
 
-		// Ensure the breakpoint service sees what we expect 
+		// Ensure the breakpoint service sees what we expect
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 1, breakpoints.length);
 		MIBreakpointDMData bkpt_svc = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertEquals("Incorrect breakpoint condition", CONDITION_NONE, bkpt_svc.getCondition());
-		
+
 		resumeAndExpectBkptHit(bkpt_svc.getNumber(), 0);
 	}
 
@@ -1051,7 +1051,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Modify the catchpoint to have a different condition
 		modifyBkptProperty(ref, MIBreakpoints.CONDITION, CONDITION_2);
 
-		// Ensure the breakpoint service sees what we expect 
+		// Ensure the breakpoint service sees what we expect
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 1, breakpoints.length);
 		MIBreakpointDMData bkpt_svc = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
@@ -1066,7 +1066,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	 * through the loop that throws and catches C++ exceptions and then enter a
 	 * sleep call. During the sleep call, Then remove the throw catchpoint while
 	 * the target is running and ensure the catch catchpoint is hit.
-	 * 
+	 *
 	 */
 	@Test
 	public void updateCatchpoint_WhileTargetRunning1() throws Throwable {
@@ -1093,7 +1093,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	 * to something that will resolve to true. After the sleep, the program does
 	 * one more round of throwing and catching. Ensure that the target stops and
 	 * that it's because of the catchpoint we updated.
-	 * 
+	 *
 	 * @param removeThrow
 	 *            if true, we update the throw catchpoint, otherwise the catch
 	 *            one.
@@ -1108,8 +1108,8 @@ public class MICatchpointsTest extends BaseTestCase {
 	    if (runningOnWindows()) {
 	    	return;
 	    }
-		
-		// Set a line breakpoint at the sleep() call. 
+
+		// Set a line breakpoint at the sleep() call.
 		IBreakpointDMContext refLineBkpt = setLineBreakpoint(LINE_NUMBER_SLEEP_CALL);
 
 		// Set the two catchpoints
@@ -1126,20 +1126,20 @@ public class MICatchpointsTest extends BaseTestCase {
 		MIBreakpointDMData lineBkpt = (MIBreakpointDMData) getBreakpoint(refLineBkpt);
 		assertEquals("Target stopped as expected, but the responsible breakpoint was not the expected one", lineBkpt.getNumber(), fBreakpointRef);
 		clearEventCounters();
-		
+
 		// Resume the program. It will make a one second sleep() call, during which time...
 		SyncUtil.resume();
-		
+
 		// ...we modify one of the catchpoints's condition
 		modifyBkptProperty(modifyThrow ? refThrow : refCatch, MIBreakpoints.CONDITION, CONDITION_ALWAYS_MET);
 
 		// After the sleep, the test app throws a C++ exception and catches it.
 		// So, the catchpoint whose condition we modified should get hit
-		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
 		assertTrue("stopped event is of an unexpected type: " + event.getClass().getName(), event instanceof MIBreakpointHitEvent);
-		MIBreakpointHitEvent bkptHitEvent = (MIBreakpointHitEvent)event; 
+		MIBreakpointHitEvent bkptHitEvent = (MIBreakpointHitEvent)event;
 		MIBreakpointDMData bkptUpdated = (MIBreakpointDMData) getBreakpoint(modifyThrow ? refThrow : refCatch);
 		assertEquals("Target stopped as expected, but the responsible breakpoint was not the expected one", bkptUpdated.getNumber(), bkptHitEvent.getNumber());
 	}
@@ -1152,12 +1152,12 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Modify the catchpoint to have a different condition
 		modifyBkptProperty(ref, MIBreakpoints.IGNORE_COUNT, 3);
 
-		// Ensure the breakpoint service sees what we expect 
+		// Ensure the breakpoint service sees what we expect
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 1, breakpoints.length);
 		MIBreakpointDMData bkpt_svc = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertEquals("Incorrect breakpoint condition", 3, bkpt_svc.getIgnoreCount());
-		
+
 		// Resume and validate catchpoint hit
 		resumeAndExpectBkptHit(bkpt_svc.getNumber(), 3);
 	}
@@ -1172,13 +1172,13 @@ public class MICatchpointsTest extends BaseTestCase {
 
 		// Modify the catchpoint to not have an ignore count
 		modifyBkptProperty(ref, MIBreakpoints.IGNORE_COUNT, null);
-		
-		// Ensure the breakpoint service sees what we expect 
+
+		// Ensure the breakpoint service sees what we expect
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 1, breakpoints.length);
 		MIBreakpointDMData bkpt_svc = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertEquals("Incorrect breakpoint ignore count", 0, bkpt_svc.getIgnoreCount());
-		
+
 		// Resume and validate catchpoint hit
 		resumeAndExpectBkptHit(bkpt_svc.getNumber(), 0);
 	}
@@ -1195,7 +1195,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Modify the catchpoint to have a different ignore count
 		modifyBkptProperty(ref, MIBreakpoints.IGNORE_COUNT, 5);
 
-		// Ensure the breakpoint service sees what we expect 
+		// Ensure the breakpoint service sees what we expect
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 1, breakpoints.length);
 		MIBreakpointDMData bkpt_svc = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
@@ -1215,11 +1215,11 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Set the catchpoints
 		IBreakpointDMContext refThrow = setCatchpoint("throw", null, null);
 		IBreakpointDMContext refCatch = setCatchpoint("catch", null, null);
-		
+
 		// Disable the throw catchpoint
 		modifyBkptProperty(refThrow, MIBreakpoints.IS_ENABLED, false);
 
-		// Ensure the breakpoint service sees what we expect 
+		// Ensure the breakpoint service sees what we expect
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 2, breakpoints.length);
 		int throwCatchpointNumber = ((MIBreakpointDMData)getBreakpoint(refThrow)).getNumber();
@@ -1231,11 +1231,11 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Resume the target. Should miss the throw catchpoint and stop at the catch one
 		int catchCatchpointNumber = ((MIBreakpointDMData)getBreakpoint(refCatch)).getNumber();
 		resumeAndExpectBkptHit(catchCatchpointNumber, null);
-		
+
 		// Ee-enable the throw catchpoint
 		modifyBkptProperty(refThrow, MIBreakpoints.IS_ENABLED, true);
 
-		// Ensure the breakpoint service sees what we expect 
+		// Ensure the breakpoint service sees what we expect
 		breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 2, breakpoints.length);
 		for (IBreakpointDMContext bkpt : breakpoints) {
@@ -1263,7 +1263,7 @@ public class MICatchpointsTest extends BaseTestCase {
 
 	/**
 	 * Set a line breakpoint and validate it was set correctly.
-	 * 
+	 *
 	 * @param lineNumber
 	 *            the line where to set the breakpoint
 	 * @return the breakpoint context
@@ -1272,7 +1272,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		IBreakpointDMContext[] bkptsBefore = getBreakpoints(fBreakpointsDmc);
-		
+
 		// Set the breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
@@ -1289,7 +1289,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Ensure the breakpoint service sees what we expect
 		List<IBreakpointDMContext> bkptsAfter = new LinkedList<IBreakpointDMContext>(Arrays.asList(getBreakpoints(fBreakpointsDmc)));
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", bkptsBefore.length + 1, bkptsAfter.size());
-		
+
 		ListIterator<IBreakpointDMContext> iter = bkptsAfter.listIterator();
 		while (iter.hasNext()) {
 			IBreakpointDMContext bkptAfter = iter.next();
@@ -1309,7 +1309,7 @@ public class MICatchpointsTest extends BaseTestCase {
 
 	/**
 	 * Set a catchpoint for the given event and validate it was set correctly
-	 * 
+	 *
 	 * @param event
 	 *            the event; the gdb keyword for it (e.g., "catch", "throw")
 	 * @param condition
@@ -1322,7 +1322,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		IBreakpointDMContext[] bkptsBefore = getBreakpoints(fBreakpointsDmc);
-		
+
 		// set the catchpoint
 		Map<String, Object> bkptsProps = new HashMap<String, Object>();
 		bkptsProps.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
@@ -1335,7 +1335,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		}
 		IBreakpointDMContext refCatchpoint = insertBreakpoint(fBreakpointsDmc, bkptsProps);
 		assertTrue(fWait.getMessage(), fWait.isOK());
-		
+
 		// Ensure that right breakpoint events were received.
 		waitForBreakpointEvent(1);
 		assertEquals("Unexpected number of breakpoint events", 1, totalBreakpointEventsCount());
@@ -1359,11 +1359,11 @@ public class MICatchpointsTest extends BaseTestCase {
 			}
 		}
 		assertEquals("All but the new bkpt should have been removed from bkptsAfter", bkptsAfter.size(), 1);
-		
+
 		MIBreakpointDMData bkpt_set = (MIBreakpointDMData) getBreakpoint(refCatchpoint);
 		MIBreakpointDMData bkpt_svc = (MIBreakpointDMData) getBreakpoint(bkptsAfter.get(0));
-		
-		assertEquals(bkpt_set.getNumber(), bkpt_svc.getNumber());		
+
+		assertEquals(bkpt_set.getNumber(), bkpt_svc.getNumber());
 		assertEquals("Incorrect breakpoint condition", condition != null ? condition : CONDITION_NONE, bkpt_svc.getCondition());
 		assertEquals("Incorrect breakpoint ignore count", ignoreCount != null ? ignoreCount : 0, bkpt_svc.getIgnoreCount());
 
@@ -1374,7 +1374,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	 * Resume the target and expect it to be stopped by the given breakpoint.
 	 * Optionally, check that the program's single global int variable has the
 	 * given value.
-	 * 
+	 *
 	 * @param bkptNumber
 	 *            the GDB breakpoint number
 	 * @param expectedVarValue
@@ -1383,7 +1383,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	 * @return the stoppped event
 	 */
 	private MIStoppedEvent resumeAndExpectBkptHit(int bkptNumber, Integer expectedVarValue) throws Throwable {
-		// Resume the target. The throw catchpoint should get hit. 
+		// Resume the target. The throw catchpoint should get hit.
 		clearEventCounters();
 		MIStoppedEvent event = SyncUtil.resumeUntilStopped();
 
@@ -1391,10 +1391,10 @@ public class MICatchpointsTest extends BaseTestCase {
 		waitForBreakpointEvent(1);
 		assertEquals("Unexpected number of breakpoint events", 1, totalBreakpointEventsCount());
 		assertEquals("Unexpected type of breakpoint event", 1, getBreakpointEventCount(BP_HIT));
-		
+
 		// Ensure the target stopped because of the throw catchpoint
 		assertEquals("Target stopped as expected, but the responsible breakpoint was not the expected one", bkptNumber, fBreakpointRef);
-		
+
 		if (expectedVarValue != null) {
 	        IFrameDMContext frameDmc = SyncUtil.getStackFrame(event.getDMContext(), 0);
 			assertEquals("program variable has unexpected value", expectedVarValue.intValue(), evaluateExpression(frameDmc, CONDITION_VAR).intValue());
@@ -1413,11 +1413,11 @@ public class MICatchpointsTest extends BaseTestCase {
 		bkptProps.put(property, value);
 		updateBreakpoint(bkptRef, bkptProps);
 		assertTrue(fWait.getMessage(), fWait.isOK());
-	
+
 		// Ensure that right breakpoint events were received
 		waitForBreakpointEvent(1);
 		assertEquals("Unexpected number of breakpoint events", 1, totalBreakpointEventsCount());
 		assertEquals("Unexpected number of breakpoint added events", 1, getBreakpointEventCount(BP_UPDATED));
 	}
-	
+
 }

@@ -439,7 +439,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	 * @since 4.0
 	 */
 	protected boolean isNonStopSupportedInGdbVersion(String version) {
-		if (NON_STOP_FIRST_VERSION.compareTo(version) <= 0) {
+		if (NON_STOP_FIRST_VERSION.compareTo(version) <= 0) {// XXX: 7.2 > 7.11 !!!
 			return true;
 		}
 		return false;

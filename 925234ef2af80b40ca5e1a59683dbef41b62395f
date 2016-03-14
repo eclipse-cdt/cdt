@@ -138,6 +138,57 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_9aa63ec1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T06:06:36Z",
+      "side": 1,
+      "message": "This instance of the call will not block this method as you managed to do with a query.\nI can\u0027t think of a way to do it though.\nPlease put a comment to show that we would like to block but don\u0027t have a way to do it.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5a9cb676",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T06:06:36Z",
+      "side": 1,
+      "message": "Nicely done about the query.  Can you move this comment to where the query is used?\nThat is where it makes sense.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fa24a2b8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T06:06:36Z",
+      "side": 1,
+      "message": "The better way to do this would be to send an event that the stack service will listen for.\nThat event would then be available for others to trigger off, if needed.\nHowever, that will take a couple of executor cycles, and I don\u0027t know how fast #getName() will\nget called. If you need to clear the cache right away, then just put a comment to explain why\nwe cannot use an event.\t\nI\u0027m fine with leaving it like this either way.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_81a41504",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
         "patchSetId": 24

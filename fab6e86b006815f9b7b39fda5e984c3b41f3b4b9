@@ -33,6 +33,24 @@
       "revId": "fab6e86b006815f9b7b39fda5e984c3b41f3b4b9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6bf7e2fe",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/IntermittentRule.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-03-14T19:31:57Z",
+      "side": 1,
+      "message": "good catch",
+      "parentUuid": "e7dfcf21_4b8dc63c",
+      "revId": "fab6e86b006815f9b7b39fda5e984c3b41f3b4b9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

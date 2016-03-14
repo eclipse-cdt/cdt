@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial implementation of Test cases
  *******************************************************************************/
@@ -34,27 +34,33 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.Intermittent;
+import org.eclipse.cdt.tests.dsf.gdb.framework.IntermittentRule;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
 /**
- * Tests IMultiRunControl class for Non-stop multi-threaded application. 
+ * Tests IMultiRunControl class for Non-stop multi-threaded application.
  */
 @RunWith(BackgroundRunner.class)
+@Intermittent
 public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
+	public @Rule IntermittentRule irule = new IntermittentRule();
+
 	@Override
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);
 	}
 
-	private DsfServicesTracker fServicesTracker;    
+	private DsfServicesTracker fServicesTracker;
 
 	private IMultiRunControl fMultiRun;
 
@@ -67,18 +73,18 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "MultiThreadRunControl.exe";
-	
+
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-			
+
 		final DsfSession session = getGDBLaunch().getSession();
-		
+
         Runnable runnable = new Runnable() {
             @Override
 			public void run() {
-           	fServicesTracker = 
-            		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
+           	fServicesTracker =
+            		new DsfServicesTracker(TestsPlugin.getBundleContext(),
             				session.getId());
             	fMultiRun = fServicesTracker.getService(IMultiRunControl.class);
             }
@@ -90,7 +96,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
 
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
 				           EXEC_PATH + EXEC_NAME);
 
 		// Multi run control only makes sense for non-stop mode
@@ -100,10 +106,10 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	@Override
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
-		
+
 		fServicesTracker.dispose();
 	}
-	
+
 	private abstract class AsyncRunnable<V> {
 	    public abstract void run(DataRequestMonitor<V> drm);
 	};
@@ -119,7 +125,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
     			runnable.run(rm);
     		}
     	};
-    	
+
     	V result = null;
     	try {
     		fMultiRun.getExecutor().execute(query);
@@ -134,18 +140,18 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
     	} catch (TimeoutException e) {
     		fail(e.getMessage());
     	}
-    	
+
     	if (expectExecutionException) {
     		fail("Didn't get the expected execution exception");
     	}
-    	
+
     	return result;
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the run-state of multiple threads
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * with one thread which is stopped.
@@ -154,18 +160,18 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	public void testStateOneThreadStopped() throws Throwable {
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
-		
+
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(threads, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(threads, drm);
 			}
@@ -173,14 +179,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to resume some, but cannot", result);
 
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(threads, drm);
 			}
 		});
 		assertFalse("expected not to be able to suspend all, but can", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(threads, drm);
 			}
@@ -188,30 +194,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected not to be able to suspend some, but can", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertTrue("expected to find all threads suspended but didn't", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertTrue("expected to find some threads suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(threads, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertTrue("expected to be able to step all, but cannot", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(threads, type, drm);
 				}
@@ -220,21 +226,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(threads, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(threads, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 	}
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * with one thread which is running.
@@ -246,33 +252,33 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Resume the program to check thread while it is running
 		SyncUtil.resumeAll();
-		
+
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(threads, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume all, but can", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(threads, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume some, but can", result);
-	
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(threads, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(threads, drm);
 			}
@@ -280,30 +286,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertFalse("expected to find no thread suspended but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertFalse("expected to find no thread suspended but did", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(threads, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected to not be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(threads, type, drm);
 				}
@@ -312,14 +318,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(threads, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(threads, drm);
 			}
@@ -336,43 +342,43 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
 		Boolean result;
 
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(threads, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(threads, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(threads, drm);
 			}
 		});
 		assertFalse("expected not to be able to suspend all, but can", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(threads, drm);
 			}
@@ -380,30 +386,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected not to be able to suspend some, but can", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertTrue("expected to find all threads suspended but didn't", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertTrue("expected to find some threads suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(threads, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertTrue("expected to be able to step all, but can't", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(threads, type, drm);
 				}
@@ -412,14 +418,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(threads, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(threads, drm);
 			}
@@ -440,43 +446,43 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(threads, drm);
 			}
 		});
 		assertFalse("expected to not be able to resume all, but can", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(threads, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(threads, drm);
 			}
 		});
 		assertFalse("expected not to be able to suspend all, but can", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(threads, drm);
 			}
@@ -484,30 +490,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertFalse("expected that not all threads are suspended but they are", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertTrue("expected to find some threads suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(threads, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(threads, type, drm);
 				}
@@ -516,21 +522,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(threads, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(threads, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 	}
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * with two threads which are both running.
@@ -544,46 +550,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(threads, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume all, but can", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(threads, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume some, but can", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(threads, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(threads, drm);
 			}
@@ -591,30 +597,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertFalse("expected that no threads are suspended but they are", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertFalse("expected to find no threads suspended but did", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(threads, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(threads, type, drm);
 				}
@@ -623,25 +629,25 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(threads, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(threads, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the resume operation on multiple threads
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test resume of multiple contexts with one thread which is stopped.
 	 */
@@ -649,27 +655,27 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	public void testResumeOneThreadStopped() throws Throwable {
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
-		
+
         final ServiceEventWaitor<MIRunningEvent> eventWaitor =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(threads, drm);
 			}
 		});
 
 		eventWaitor.waitForEvent(100); // Wait for confirmation thread resumed
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
 	}
-	
+
 	/**
 	 * Test resume of multiple contexts with one thread which is running.
 	 */
@@ -682,7 +688,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		SyncUtil.resumeAll();
 
 		// Confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
@@ -690,14 +696,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected no threads to be suspended, but found some", result);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(threads, drm);
 			}
 		});
 
 		// Confirm that all threads are still running
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
@@ -715,46 +721,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(threads[0], drm);
 			}
 		});
 
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that one thread resumed
-		
+
 		// Also confirm that only one threads is running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertTrue("expected some threads to be suspended, but found none", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertFalse("expected not to find all threads suspended, but did", result);
-		
+
 		// Make sure no other running event arrives
 		try {
-			eventWaitorRunning.waitForEvent(500); 
+			eventWaitorRunning.waitForEvent(500);
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -770,21 +776,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(threads, drm);
 			}
@@ -792,9 +798,9 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation first thread resumed
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation second thread resumed
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
@@ -815,14 +821,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
@@ -830,22 +836,22 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(threads, drm);
 			}
 		});
 
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
@@ -853,7 +859,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	/**
 	 * Test resume of multiple contexts with two running threads.
 	 */
@@ -866,38 +872,38 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
-		
+
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(threads, drm);
 			}
 		});
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
 			fail("Got an unexpected running event");
@@ -905,11 +911,11 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the suspend operation on multiple threads
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test suspend of multiple contexts with one thread which is stopped.
 	 */
@@ -917,23 +923,23 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	public void testSuspendOneThreadStopped() throws Throwable {
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
-		
+
         // No error should be thrown, the already suspended threads should be ignored
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(threads, drm);
 			}
 		});
 
 		// Also confirm that all threads are still suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertTrue("expected all threads to be suspended, but they are not", result);
 	}
-	
+
 	/**
 	 * Test suspend of multiple contexts with one thread which is running.
 	 */
@@ -946,7 +952,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		SyncUtil.resumeAll();
 
 		// Confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
@@ -956,16 +962,16 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(threads, drm);
 			}
 		});
 
 		eventWaitor.waitForEvent(100);  // Thread should interrupt
-		
+
 		// Confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
@@ -981,26 +987,26 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
         // No error should be thrown, the already suspended threads should be ignored
-        runAsyncCall(new AsyncRunnable<Object>() { 
+        runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(threads, drm);
 			}
 		});
 
 		// Also confirm that all threads are still suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
@@ -1021,35 +1027,35 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
 		// No error should be thrown, the call should ignore the suspended threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(threads, drm);
 			}
 		});
 
 		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
-		
+
 		// Also confirm that all threads are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
-		assertTrue("expected all threads to be suspended, but they are not", result);		
+		assertTrue("expected all threads to be suspended, but they are not", result);
 	}
-	
+
 	/**
 	 * Test suspend of multiple contexts with two running threads. Only one
 	 * thread will be suspended.
@@ -1063,43 +1069,43 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
-		
+
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(threads[0], drm);
 			}
 		});
-		
+
 		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
-		
+
 		// Also confirm that some but not all threads are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
 			}
 		});
 		assertTrue("expected some threads to be suspended, but found none", result);
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertFalse("expected that not all threads are suspended, but they are", result);
-		
+
 		try {
 			eventWaitor.waitForEvent(500); // Make sure no other stopped event arrives
 			fail("Got an unexpected stopped event");
@@ -1121,38 +1127,38 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
-		
-		runAsyncCall(new AsyncRunnable<Object>() { 
+
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(threads, drm);
 			}
 		});
-		
+
 		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
 		eventWaitor.waitForEvent(100);  // confirm the other thread was suspended
-		
+
 		// Also confirm that all threads are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
-		assertTrue("expected that all threads are suspended, but they are not", result);		
+		assertTrue("expected that all threads are suspended, but they are not", result);
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the step operation on multiple threads
     //////////////////////////////////////////////////////////////////////
@@ -1165,9 +1171,9 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	public void testStepNotImplemented() throws Throwable {
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
-		
+
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			runAsyncCall(new AsyncRunnable<Object>() { 
+			runAsyncCall(new AsyncRunnable<Object>() {
 				@Override public void run(DataRequestMonitor<Object> drm) {
 					fMultiRun.step(threads, type, drm);
 				}
@@ -1175,32 +1181,32 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the run-state of the process.
 	// This should be done with multi-process but we are not quite setup for it.
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * on the process with one thread which is stopped.
 	 */
 	@Test
-	public void testStateProcessOneThreadStopped() throws Throwable {		
-		final IContainerDMContext[] processes = 
+	public void testStateProcessOneThreadStopped() throws Throwable {
+		final IContainerDMContext[] processes =
 				new IContainerDMContext[] { SyncUtil.getContainerContext() };
-		
+
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(processes, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(processes, drm);
 			}
@@ -1208,14 +1214,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to resume some, but cannot", result);
 
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(processes, drm);
 			}
 		});
 		assertFalse("expected not to be able to suspend all, but can", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(processes, drm);
 			}
@@ -1223,30 +1229,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected not to be able to suspend some, but can", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
 		});
 		assertTrue("expected to find all processes suspended but didn't", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
 		});
 		assertTrue("expected to find some processes suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(processes, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertTrue("expected to be able to step all, but cannot", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(processes, type, drm);
 				}
@@ -1255,59 +1261,59 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(processes, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(processes, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 	}
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * on the process with one thread which is running.
 	 */
 	@Test
 	public void testStateProcessOneThreadRunning() throws Throwable {
-		final IContainerDMContext[] processes = 
+		final IContainerDMContext[] processes =
 				new IContainerDMContext[] { SyncUtil.getContainerContext() };
 
 		// Resume the program to check thread while it is running
 		SyncUtil.resumeAll();
-		
+
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(processes, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume all, but can", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(processes, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume some, but can", result);
-	
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(processes, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(processes, drm);
 			}
@@ -1315,30 +1321,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
 		});
 		assertFalse("expected to find no thread suspended but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
 		});
 		assertFalse("expected to find no thread suspended but did", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(processes, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected to not be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(processes, type, drm);
 				}
@@ -1347,14 +1353,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(processes, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(processes, drm);
 			}
@@ -1371,43 +1377,43 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
-		final IContainerDMContext[] processes = 
+
+		final IContainerDMContext[] processes =
 				new IContainerDMContext[] { SyncUtil.getContainerContext() };
 
 		Boolean result;
 
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(processes, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(processes, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(processes, drm);
 			}
 		});
 		assertFalse("expected not to be able to suspend all, but can", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(processes, drm);
 			}
@@ -1415,30 +1421,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected not to be able to suspend some, but can", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
 		});
 		assertTrue("expected to find all threads suspended but didn't", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
 		});
 		assertTrue("expected to find some threads suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(processes, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertTrue("expected to be able to step all, but can't", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(processes, type, drm);
 				}
@@ -1447,14 +1453,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(processes, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(processes, drm);
 			}
@@ -1475,43 +1481,43 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
-		final IContainerDMContext[] processes = 
+
+		final IContainerDMContext[] processes =
 				new IContainerDMContext[] { SyncUtil.getContainerContext() };
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(processes, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(processes, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(processes, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(processes, drm);
 			}
@@ -1519,30 +1525,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but can't", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
 		});
 		assertTrue("expected that all processes are suspended but they are not", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
 		});
 		assertTrue("expected to find some processes suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(processes, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(processes, type, drm);
 				}
@@ -1551,21 +1557,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(processes, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(processes, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 	}
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * on the process with two threads which are both running.
@@ -1579,46 +1585,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
-		final IContainerDMContext[] processes = 
+
+		final IContainerDMContext[] processes =
 				new IContainerDMContext[] { SyncUtil.getContainerContext() };
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(processes, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume all, but can", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(processes, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume some, but can", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(processes, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(processes, drm);
 			}
@@ -1626,30 +1632,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
 		});
 		assertFalse("expected that no threads are suspended but they are", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
 		});
 		assertFalse("expected to find no threads suspended but did", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(processes, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(processes, type, drm);
 				}
@@ -1658,14 +1664,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(processes, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(processes, drm);
 			}
@@ -1678,31 +1684,31 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	// Because the thread is part of the process, it should be ignored,
 	// and the results should be as if only the process was selected.
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * on the process with one thread which is stopped.
 	 * We also select the thread.
 	 */
 	@Test
-	public void testStateProcessThreadOneThreadStopped() throws Throwable {		
+	public void testStateProcessThreadOneThreadStopped() throws Throwable {
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
 
-		final IExecutionDMContext[] execDmcs = 
+		final IExecutionDMContext[] execDmcs =
 				new IExecutionDMContext[] { SyncUtil.getContainerContext(), threads[0] };
-		
+
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
@@ -1710,14 +1716,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to resume some, but cannot", result);
 
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to suspend all, but can", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -1725,30 +1731,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected not to be able to suspend some, but can", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find all processes suspended but didn't", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find some processes suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertTrue("expected to be able to step all, but cannot", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -1757,21 +1763,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 	}
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * on the process with one thread which is running.
@@ -1782,38 +1788,38 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
 
-		final IExecutionDMContext[] execDmcs = 
+		final IExecutionDMContext[] execDmcs =
 				new IExecutionDMContext[] { SyncUtil.getContainerContext(), threads[0] };
 
 		// Resume the program to check thread while it is running
 		SyncUtil.resumeAll();
-		
+
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume all, but can", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume some, but can", result);
-	
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -1821,30 +1827,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected to find no thread suspended but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected to find no thread suspended but did", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected to not be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -1853,14 +1859,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
@@ -1878,46 +1884,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
 
-		final IExecutionDMContext[] execDmcs = 
+		final IExecutionDMContext[] execDmcs =
 				new IExecutionDMContext[] { SyncUtil.getContainerContext(), threads[0] };
 
 		Boolean result;
 
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to suspend all, but can", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -1925,30 +1931,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected not to be able to suspend some, but can", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find all threads suspended but didn't", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find some threads suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertTrue("expected to be able to step all, but can't", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -1957,14 +1963,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
@@ -1986,46 +1992,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
 
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -2033,30 +2039,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected that all processes are suspended but they are not", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find some processes suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -2065,14 +2071,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
@@ -2094,46 +2100,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
 
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(1) };
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -2141,30 +2147,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected that all processes are suspended but they are not", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find some processes suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -2173,14 +2179,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
@@ -2202,49 +2208,49 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
 
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), threads[0] };
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume all, but can", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume some, but can", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -2252,30 +2258,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected that no threads are suspended but they are", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected to find no threads suspended but did", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -2284,27 +2290,27 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the run-state of the process and both threads.
 	// Because the threads are part of the process, they should be ignored,
 	// and the results should be as if only the process was selected.
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test canResume*, canSuspend*, isSuspended*, canStep*, isStepping*
 	 * on the process with two threads which are both stopped.
@@ -2315,46 +2321,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
 
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), threads[0], threads[1] };
 
 		Boolean result;
 
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to suspend all, but can", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -2362,30 +2368,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected not to be able to suspend some, but can", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find all threads suspended but didn't", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find some threads suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertTrue("expected to be able to step all, but can't", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -2394,14 +2400,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no thread stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
@@ -2423,46 +2429,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
 
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), threads[0], threads[1] };
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume all, but cannot", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to resume some, but cannot", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -2470,30 +2476,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected that all processes are suspended but they are not", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to find some processes suspended but didn't", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -2502,14 +2508,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
@@ -2531,49 +2537,49 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
 
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), threads[0], threads[1] };
 
 		Boolean result;
-		
+
 		// canResume calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume all, but can", result);
-		
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canResumeSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected not to be able to resume some, but can", result);
-		
+
 		// canSuspend calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected to be able to suspend all, but cannot", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.canSuspendSome(execDmcs, drm);
 			}
@@ -2581,30 +2587,30 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected to be able to suspend some, but cannot", result);
 
 		// isSuspended calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertFalse("expected that no threads are suspended but they are", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected to find no threads suspended but did", result);
-		
+
 		// canStep calls
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepAll(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 			// assertFalse("expected not to be able to step all, but can", result);
 
-			result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+			result = runAsyncCall(new AsyncRunnable<Boolean>() {
 				@Override public void run(DataRequestMonitor<Boolean> drm) {
 					fMultiRun.canStepSome(execDmcs, type, drm);
 				}
@@ -2613,66 +2619,66 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		}
 
 		// isStepping calls
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingAll(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSteppingSome(execDmcs, drm);
 			}
 		}, true /* Not implemented yet*/);
 		// assertFalse("expected to find no process stepping but did", result);
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the multi resume operation on processes
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test resume of multiple contexts with one thread which is stopped.
 	 */
 	@Test
 	public void testResumeProcessOneThreadStopped() throws Throwable {
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
-		
+
         final ServiceEventWaitor<MIRunningEvent> eventWaitor =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(processes, drm);
 			}
 		});
 
 		eventWaitor.waitForEvent(100); // Wait for confirmation process resumed
-		
+
 		// Also confirm that process is running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
 	}
-	
+
 	/**
 	 * Test resume of multiple contexts with one thread which is running.
 	 */
 	@Test
 	public void testResumeProcessOneThreadRunning() throws Throwable {
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
 
 		// Resume the program to get thread running
 		SyncUtil.resumeAll();
 
 		// Confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
@@ -2680,14 +2686,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertFalse("expected no process to be suspended, but found some", result);
 
 		// No error should be thrown, the call should ignore running processes
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(processes, drm);
 			}
 		});
 
 		// Confirm that all threads are still running
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
@@ -2705,21 +2711,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(processes, drm);
 			}
@@ -2729,7 +2735,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that second thread resumed
 
 		// Also confirm that all processes are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
@@ -2750,37 +2756,37 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(processes, drm);
 			}
 		});
 
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
@@ -2788,7 +2794,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	/**
 	 * Test resume of multiple contexts with two running threads.
 	 */
@@ -2801,38 +2807,38 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
-		
+
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(processes, drm);
 			}
 		});
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
 			fail("Got an unexpected running event");
@@ -2840,31 +2846,31 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the suspend operation on processes
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test suspend of multiple contexts with one thread which is stopped.
 	 */
 	@Test
 	public void testSuspendProcessOneThreadStopped() throws Throwable {
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
 
         // No error should be thrown, the already suspended processes should be ignored
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(processes, drm);
 			}
 		});
 
 		// Also confirm that all threads are still suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
@@ -2872,27 +2878,27 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected all processes to be suspended, but they are not", result);
 
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertTrue("expected all threads to be suspended, but they are not", result);
 }
-	
+
 	/**
 	 * Test suspend of multiple contexts with one thread which is running.
 	 */
 	@Test
 	public void testSuspendProcessOneThreadRunning() throws Throwable {
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
 
 		// Resume the program to get thread running
 		SyncUtil.resumeAll();
 
 		// Confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(processes, drm);
 			}
@@ -2902,16 +2908,16 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(processes, drm);
 			}
 		});
 
 		eventWaitor.waitForEvent(100);  // Thread should interrupt
-		
+
 		// Confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
@@ -2927,37 +2933,37 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
         // No error should be thrown, the already suspended threads should be ignored
-        runAsyncCall(new AsyncRunnable<Object>() { 
+        runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(processes, drm);
 			}
 		});
 
 		// Also confirm that all processes are still suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
 		});
 		assertTrue("expected all processes to be suspended, but they are not", result);
-		
+
 		// Also confirm that all threads are still suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
@@ -2978,39 +2984,39 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
 		// No error should be thrown, the call should ignore the suspended threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(processes, drm);
 			}
 		});
 
 		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
-		
+
 		// Also confirm that all processes are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
 		});
-		assertTrue("expected all processes to be suspended, but they are not", result);	
-		
+		assertTrue("expected all processes to be suspended, but they are not", result);
+
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
@@ -3031,49 +3037,49 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
-		
-		runAsyncCall(new AsyncRunnable<Object>() { 
+
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(processes, drm);
 			}
 		});
-		
+
 		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
 		eventWaitor.waitForEvent(100);  // confirm the other thread was suspended
-		
+
 		// Also confirm that all processes are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(processes, drm);
 			}
 		});
 		assertTrue("expected that all processes are suspended, but they are not", result);
-		
+
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertTrue("expected that all threads are suspended, but they are not", result);
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the step operation on multiple threads
     //////////////////////////////////////////////////////////////////////
@@ -3084,52 +3090,52 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	 */
 	@Test
 	public void testStepProcessNotImplemented() throws Throwable {
-		final IExecutionDMContext[] processes = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
-		
+
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			runAsyncCall(new AsyncRunnable<Object>() { 
+			runAsyncCall(new AsyncRunnable<Object>() {
 				@Override public void run(DataRequestMonitor<Object> drm) {
 					fMultiRun.step(processes, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the different operations on the process and a thread.
 	// Because the thread is part of the process, it should be ignored,
 	// and the results should be as if only the process was selected.
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test resume of multiple contexts with one thread which is stopped.
 	 * We select the process and the first thread.
 	 */
 	@Test
 	public void testResumeProcessThreadOneThreadStopped() throws Throwable {
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
-		
+
         final ServiceEventWaitor<MIRunningEvent> eventWaitor =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
 		});
 
 		eventWaitor.waitForEvent(100); // Wait for confirmation process resumed
-		
+
 		// Also confirm that process is running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected no contexts to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitor.waitForEvent(500); // Make sure no running events arrive
 			fail("Got an unexpected running event");
@@ -3137,21 +3143,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	/**
 	 * Test resume of multiple contexts with one thread which is running.
 	 * We select the process and the first thread.
 	 */
 	@Test
 	public void testResumeProcessThreadOneThreadRunning() throws Throwable {
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
 
 		// Resume the program to get thread running
 		SyncUtil.resumeAll();
-		
+
 		// Confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
@@ -3162,14 +3168,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 				new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running processes
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
 		});
 
 		// Confirm that all threads are still running
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
@@ -3194,21 +3200,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
@@ -3218,13 +3224,13 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that second thread resumed
 
 		// Also confirm that all processes are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
 			fail("Got an unexpected running event");
@@ -3247,37 +3253,37 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
 		});
 
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
@@ -3285,7 +3291,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	/**
 	 * Test resume of multiple contexts with two threads, one which is stopped
 	 * while the other is running.
@@ -3300,37 +3306,37 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(1) };
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
 		});
 
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
@@ -3338,7 +3344,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	/**
 	 * Test resume of multiple contexts with two running threads.
 	 * We select the process and the first thread.
@@ -3352,38 +3358,38 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
-		
+
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
 		});
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
 			fail("Got an unexpected running event");
@@ -3391,32 +3397,32 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the suspend operation on processes
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test suspend of multiple contexts with one thread which is stopped.
 	 * We select the process and the first thread.
 	 */
 	@Test
 	public void testSuspendProcessThreadOneThreadStopped() throws Throwable {
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
-		
+
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
 
         // No error should be thrown, the already suspended processes should be ignored
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
 
 		// Also confirm that all threads are still suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
@@ -3424,28 +3430,28 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		assertTrue("expected all processes to be suspended, but they are not", result);
 
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertTrue("expected all threads to be suspended, but they are not", result);
 	}
-	
+
 	/**
 	 * Test suspend of multiple contexts with one thread which is running.
 	 * We select the process and the first thread.
 	 */
 	@Test
 	public void testSuspendProcessThreadOneThreadRunning() throws Throwable {
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
 
 		// Resume the program to get thread running
 		SyncUtil.resumeAll();
 
 		// Confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
@@ -3455,16 +3461,16 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
 
 		eventWaitor.waitForEvent(100);  // Thread should interrupt
-		
+
 		// Confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
@@ -3481,37 +3487,37 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
         // No error should be thrown, the already suspended threads should be ignored
-        runAsyncCall(new AsyncRunnable<Object>() { 
+        runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
 
 		// Also confirm that all processes are still suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected all processes to be suspended, but they are not", result);
-		
+
 		// Also confirm that all threads are still suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
@@ -3533,46 +3539,46 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
 		// No error should be thrown, the call should ignore the suspended threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
 
 		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
-		
+
 		// Also confirm that all processes are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
-		assertTrue("expected all processes to be suspended, but they are not", result);	
-		
+		assertTrue("expected all processes to be suspended, but they are not", result);
+
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertTrue("expected all threads to be suspended, but they are not", result);
 	}
-	
+
 	/**
 	 * Test suspend of multiple contexts with two threads, one which is stopped
 	 * while the other is running.
@@ -3587,39 +3593,39 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(1) };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
 		// No error should be thrown, the call should ignore the suspended threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
 
 		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
-		
+
 		// Also confirm that all processes are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
-		assertTrue("expected all processes to be suspended, but they are not", result);	
-		
+		assertTrue("expected all processes to be suspended, but they are not", result);
+
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
@@ -3641,49 +3647,49 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
-		
-		runAsyncCall(new AsyncRunnable<Object>() { 
+
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
-		
+
 		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
 		eventWaitor.waitForEvent(100);  // confirm the other thread was suspended
-		
+
 		// Also confirm that all processes are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected that all processes are suspended, but they are not", result);
-		
+
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
 		});
 		assertTrue("expected that all threads are suspended, but they are not", result);
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the step operation on multiple threads
     //////////////////////////////////////////////////////////////////////
@@ -3695,24 +3701,24 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	 */
 	@Test
 	public void testStepProcessThreadNotImplemented() throws Throwable {
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
-		
+
 		for (final IRunControl.StepType type : IRunControl.StepType.values()) {
-			runAsyncCall(new AsyncRunnable<Object>() { 
+			runAsyncCall(new AsyncRunnable<Object>() {
 				@Override public void run(DataRequestMonitor<Object> drm) {
 					fMultiRun.step(execDmcs, type, drm);
 				}
 			}, true /* Not implemented yet*/);
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the different operations on the process and both threads.
 	// Because the threads are part of the process, they should be ignored,
 	// and the results should be as if only the process was selected.
     //////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Test resume of multiple contexts with two stopped threads.  Only one thread
 	 * is resumed.
@@ -3723,21 +3729,21 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
@@ -3747,13 +3753,13 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that second thread resumed
 
 		// Also confirm that all processes are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
 			fail("Got an unexpected running event");
@@ -3776,37 +3782,37 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
 
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
 		});
 
 		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
@@ -3814,7 +3820,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	/**
 	 * Test resume of multiple contexts with two running threads.
 	 * We select the process and both threads.
@@ -3828,38 +3834,38 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
-		
+
         final ServiceEventWaitor<MIRunningEvent> eventWaitorRunning =
                 new ServiceEventWaitor<MIRunningEvent>(fMultiRun.getSession(), MIRunningEvent.class);
 
 		// No error should be thrown, the call should ignore running threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.resume(execDmcs, drm);
 			}
 		});
-		
+
 		// Also confirm that all threads are running
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(execDmcs, drm);
 			}
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
-		
+
 		try {
 			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
 			fail("Got an unexpected running event");
@@ -3867,7 +3873,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 			// Timeout expected.  Success.
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Tests for verifying the suspend operation on processes
     //////////////////////////////////////////////////////////////////////
@@ -3881,37 +3887,37 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 
 		// Run program until both threads are stopped
 		SyncUtil.addBreakpoint("firstBreakpoint", false);
-		
+
         final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
 		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
 		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
         // No error should be thrown, the already suspended threads should be ignored
-        runAsyncCall(new AsyncRunnable<Object>() { 
+        runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
 
 		// Also confirm that all processes are still suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected all processes to be suspended, but they are not", result);
-		
+
 		// Also confirm that all threads are still suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
@@ -3933,39 +3939,39 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitorStopped =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
         eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
 
 		// No error should be thrown, the call should ignore the suspended threads
-		runAsyncCall(new AsyncRunnable<Object>() { 
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
 
 		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
-		
+
 		// Also confirm that all processes are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
-		assertTrue("expected all processes to be suspended, but they are not", result);	
-		
+		assertTrue("expected all processes to be suspended, but they are not", result);
+
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}
@@ -3987,42 +3993,42 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
-		SyncUtil.resumeAll();		
+		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
         eventWaitor.waitForEvent(2000); // Wait for second thread to stop
-		
+
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
         eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-		
+
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
-		
-		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
+
+		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
-		
-		runAsyncCall(new AsyncRunnable<Object>() { 
+
+		runAsyncCall(new AsyncRunnable<Object>() {
 			@Override public void run(DataRequestMonitor<Object> drm) {
 				fMultiRun.suspend(execDmcs, drm);
 			}
 		});
-		
+
 		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
 		eventWaitor.waitForEvent(100);  // confirm the other thread was suspended
-		
+
 		// Also confirm that all processes are suspended
-		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(execDmcs, drm);
 			}
 		});
 		assertTrue("expected that all processes are suspended, but they are not", result);
-		
+
 		// Also confirm that all threads are suspended
-		result = runAsyncCall(new AsyncRunnable<Boolean>() { 
+		result = runAsyncCall(new AsyncRunnable<Boolean>() {
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedAll(threads, drm);
 			}

@@ -16,18 +16,18 @@ import org.junit.runners.model.Statement;
 
 /**
  * This is the rule to add to tests that rarely fail randomly and you want to keep them but cannot figure out they fail.
- * It is safe to use it in any class, it will only apply to tests which have @InterimittentRule annotation
+ * It is safe to use it in any class, it will only apply to tests which have @IntermittentRule annotation
  * <code>
 
- public @Rule InterimittentRule rule = new InterimittentRule();
+ public @Rule IntermittentRule rule = new IntermittentRule();
 
  @Test
- @InterimittentRule(repetition = 3)
+ @IntermittentRule(repetition = 3)
  public void someTest (){}
 
  * </code>
  */
-public class InterimittentRule implements MethodRule {
+public class IntermittentRule implements MethodRule {
 	public static class RunIntermittent extends Statement {
 		private final FrameworkMethod method;
 		private final Statement statement;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson)	- Initial Implementation
  *******************************************************************************/
@@ -21,6 +21,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+	SuiteGdb.class,
 	Suite_7_11.class,
 	// Can't run the Remote test just yet because they
 	// have the same names on the local tests, which is

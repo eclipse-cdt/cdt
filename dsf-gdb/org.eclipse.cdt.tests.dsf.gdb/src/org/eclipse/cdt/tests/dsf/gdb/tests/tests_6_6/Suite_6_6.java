@@ -14,6 +14,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.eclipse.cdt.tests.dsf.gdb.tests.MIBreakpointsTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -36,7 +37,7 @@ import org.junit.runners.Suite;
 	MIExpressionsTest_6_6.class,
 	GDBPatternMatchingExpressionsTest_6_6.class,
 	MIMemoryTest_6_6.class,
-	MIBreakpointsTest_6_6.class,
+	MIBreakpointsTest.class,
 	MICatchpointsTest_6_6.class,
 	MIDisassemblyTest_6_6.class,
 	GDBProcessesTest_6_6.class,

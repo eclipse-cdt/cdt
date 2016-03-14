@@ -12,9 +12,12 @@ package org.eclipse.cdt.codan.core.param;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
 
@@ -30,9 +33,9 @@ import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
  *
  * @noextend This class is not intended to be extended by clients.
  */
-public class MapProblemPreference extends AbstractProblemPreference implements IProblemPreferenceCompositeValue,
-		IProblemPreferenceCompositeDescriptor {
-	protected LinkedHashMap<String, IProblemPreference> hash = new LinkedHashMap<String, IProblemPreference>();
+public class MapProblemPreference extends AbstractProblemPreference
+		implements IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
+	private Map<String, IProblemPreference> hash = Collections.synchronizedMap(new LinkedHashMap<String, IProblemPreference>());
 
 	/**
 	 * Default constructor
@@ -123,30 +126,34 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	@Override
 	public Object clone() {
 		MapProblemPreference map = (MapProblemPreference) super.clone();
-		map.hash = new LinkedHashMap<String, IProblemPreference>();
-		for (Iterator<String> iterator = hash.keySet().iterator(); iterator.hasNext();) {
-			String key = iterator.next();
-			map.hash.put(key, (IProblemPreference) hash.get(key).clone());
+		synchronized (hash) {
+			map.hash = Collections.synchronizedMap(new LinkedHashMap<String, IProblemPreference>(hash));
+		}
+		// now we have to clone the values too
+		for (Entry<String, IProblemPreference> entry : map.hash.entrySet()) {
+			entry.setValue((IProblemPreference) entry.getValue().clone());
 		}
 		return map;
 	}
 
 	@Override
 	public String exportValue() {
-		StringBuffer buf = new StringBuffer("{"); //$NON-NLS-1$
-		for (Iterator<String> iterator = hash.keySet().iterator(); iterator.hasNext();) {
-			String key = iterator.next();
-			IProblemPreference d = hash.get(key);
-			if (d instanceof AbstractProblemPreference) {
-				if (((AbstractProblemPreference) d).isDefault()) {
-					continue;
+		synchronized (hash) {
+			StringBuffer buf = new StringBuffer("{"); //$NON-NLS-1$
+			for (Iterator<String> iterator = hash.keySet().iterator(); iterator.hasNext();) {
+				String key = iterator.next();
+				IProblemPreference d = hash.get(key);
+				if (d instanceof AbstractProblemPreference) {
+					if (((AbstractProblemPreference) d).isDefault()) {
+						continue;
+					}
 				}
+				buf.append(key + "=>" + d.exportValue()); //$NON-NLS-1$
+				if (iterator.hasNext())
+					buf.append(","); //$NON-NLS-1$
 			}
-			buf.append(key + "=>" + d.exportValue()); //$NON-NLS-1$
-			if (iterator.hasNext())
-				buf.append(","); //$NON-NLS-1$
+			return buf.toString() + "}"; //$NON-NLS-1$
 		}
-		return buf.toString() + "}"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -243,12 +250,14 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	 */
 	@Override
 	public Object getValue() {
-		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-		for (Iterator<IProblemPreference> iterator = hash.values().iterator(); iterator.hasNext();) {
-			IProblemPreference pref = iterator.next();
-			map.put(pref.getKey(), pref.getValue());
+		synchronized (hash) {
+			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+			for (Iterator<IProblemPreference> iterator = hash.values().iterator(); iterator.hasNext();) {
+				IProblemPreference pref = iterator.next();
+				map.put(pref.getKey(), pref.getValue());
+			}
+			return map;
 		}
-		return map;
 	}
 
 	/**
@@ -263,19 +272,21 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	@Override
 	public void setValue(Object value) {
 		Map<String, Object> map = (Map<String, Object>) value;
-		LinkedHashMap<String, IProblemPreference> hash2 = (LinkedHashMap<String, IProblemPreference>) hash.clone();
-		hash.clear();
-		for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext();) {
-			String key = iterator.next();
-			Object value2 = map.get(key);
-			if (value2 instanceof IProblemPreference) {
-				hash.put(key, (IProblemPreference) value2);
-			} else {
-				IProblemPreference pref = hash2.get(key);
-				addChildDescriptor(pref);
-				//setChildValue(key, value2);
-				pref.setValue(value2);
-				hash.put(key, pref);
+		synchronized (hash) {
+			Map<String, IProblemPreference> hashCopy = new HashMap<>(hash);
+			hash.clear();
+			for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext();) {
+				String key = iterator.next();
+				Object value2 = map.get(key);
+				if (value2 instanceof IProblemPreference) {
+					hash.put(key, (IProblemPreference) value2);
+				} else {
+					IProblemPreference pref = hashCopy.get(key);
+					addChildDescriptor(pref);
+					//setChildValue(key, value2);
+					pref.setValue(value2);
+					hash.put(key, pref);
+				}
 			}
 		}
 	}

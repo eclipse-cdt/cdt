@@ -530,7 +530,7 @@ public class PlainTextExporter implements IMemoryExporter {
 								buf.append(" "); //$NON-NLS-1$
 							MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(
 								transferAddress.add(CELLSIZE.multiply(BigInteger.valueOf(i))), 
-								CELLSIZE.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
+								CELLSIZE.longValue());
 							for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
 							{
 								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);

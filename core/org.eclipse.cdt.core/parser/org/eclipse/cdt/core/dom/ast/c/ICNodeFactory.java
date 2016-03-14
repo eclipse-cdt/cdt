@@ -40,12 +40,6 @@ public interface ICNodeFactory extends INodeFactory {
 	
 	@Override
 	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
-	
-	/**
-	 * @deprecated Replaced by {@link #newDesignatedInitializer(IASTInitializerClause)}.
-	 */
-	@Deprecated
-	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializer rhs);
 
 	/**
 	 * @since 5.2
@@ -68,15 +62,22 @@ public interface ICNodeFactory extends INodeFactory {
 	@Override
 	public ICASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 
-	/**
-	 * @deprecated Replaced by {@link #newSimpleDeclSpecifier()}
-	 */
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression);
-
 	@Override
 	public ICASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name);
 
 	@Override
 	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer);
+	
+	/**
+	 * @deprecated Replaced by {@link #newDesignatedInitializer(IASTInitializerClause)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializer rhs);
+	/**
+	 * @deprecated Replaced by {@link #newSimpleDeclSpecifier()}
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression);
 }

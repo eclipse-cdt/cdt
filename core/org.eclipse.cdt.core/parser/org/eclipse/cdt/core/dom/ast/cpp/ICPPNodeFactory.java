@@ -78,19 +78,9 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTAttribute newAttribute(char[] name, char[] scope, IASTToken argumentClause, boolean packExpansion);
 
 	/**
-	 * @deprecated Use newAttributeList() instead.
-	 * @since 5.7
-	 */
-	@Deprecated
-	public ICPPASTAttributeSpecifier newAttributeSpecifier();
-	
-	/**
 	 * @since 6.0
 	 */
 	public ICPPASTAttributeList newAttributeList();
-
-	@Deprecated
-	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual);
 
 	/**
 	 * @since 5.8
@@ -129,21 +119,9 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
 
 	/**
-	 * @deprecated Replaced by {@link #newConstructorChainInitializer(IASTName, IASTInitializer)}
-	 */
-	@Deprecated
-	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName memberInitializerId, IASTExpression initializerValue);
-
-	/**
 	 * @since 5.2
 	 */
 	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName id, IASTInitializer initializer);
-
-	/**
-	 * @deprecated Replaced by {@link #newConstructorInitializer(IASTInitializerClause[])}.
-	 */
-	@Deprecated
-	public ICPPASTConstructorInitializer newConstructorInitializer(IASTExpression exp);
 
 	/**
 	 * @since 5.2
@@ -180,12 +158,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
 
-	/**
-	 * @deprecated Replaced by {@link #newExplicitTemplateInstantiation(IASTDeclaration)}.
-	 */
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration);
-
 	@Override
 	public ICPPASTExpressionList newExpressionList();
 
@@ -211,13 +183,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Override
 	public ICPPASTForStatement newForStatement(IASTStatement init, IASTExpression condition,
 			IASTExpression iterationExpression, IASTStatement body);
-
-	/**
-	 * @deprecated Replaced by {@link #newFunctionCallExpression(IASTExpression, IASTInitializerClause[])}.
-	 */
-	@Override
-	@Deprecated
-	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList);
 
 	/**
 	 * @since 5.2
@@ -269,12 +234,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 			ICPPASTTypeId[] operands);
 
 	/**
-	 * @deprecated Replaced by {@link #newNewExpression(IASTInitializerClause[], IASTInitializer, IASTTypeId)}
-	 */
-	@Deprecated
-	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer, IASTTypeId typeId);
-
-	/**
 	 * @since 5.2
 	 */
 	public ICPPASTNewExpression newNewExpression(IASTInitializerClause[] placement, IASTInitializer initializer, IASTTypeId typeId);
@@ -290,19 +249,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Override
 	public ICPPASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
 
-	/**
-	 * @deprecated Replaced by {@link #newPointer()}.
-	 */
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer newPointerGPP();
-
 	public ICPPASTPointerToMember newPointerToMember(IASTName name);
-
-	/**
-	 * @deprecated Replaced by {@link #newPointerToMember(IASTName)}.
-	 */
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember newPointerToMemberGPP(IASTName name);
 
 	public IASTProblemTypeId newProblemTypeId(IASTProblem problem);
 
@@ -311,12 +258,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @since 5.7
 	 */
 	public ICPPASTQualifiedName newQualifiedName(ICPPASTName name);
-
-	/**
-	 * @deprecated Replaced by {@link #newQualifiedName(ICPPASTName)}.
-	 */
-	@Deprecated
-	public ICPPASTQualifiedName newQualifiedName();
 
 	/**
 	 * Creates an {@link ICPPASTQualifiedName} and adds name qualifiers for the
@@ -350,11 +291,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTRangeBasedForStatement newRangeBasedForStatement();
 
 	/**
-	 * @deprecated Replaced by {@link #newReferenceOperator(boolean)}.
-	 */
-	@Deprecated	public ICPPASTReferenceOperator newReferenceOperator();
-
-	/**
 	 * Creates an lvalue or rvalue reference operator.
 	 * @since 5.2
 	 */
@@ -369,21 +305,9 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 
 	/**
-	 * @deprecated Replaced by {@link #newSimpleDeclSpecifier()}
-	 */
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP();
-
-	/**
 	 * @since 5.2
 	 */
 	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier declSpec, IASTInitializer initializer);
-
-	/**
-	 * @deprecated Replaced by {@link #newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier, IASTInitializer)}
-     */
-	@Deprecated
-	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(int type, IASTExpression expression);
 
 	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId);
 
@@ -432,12 +356,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId);
 
 	/**
-	 * @deprecated Replaced by {@link #newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier, IASTInitializer)}
-	 */
-	@Deprecated
-	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
-
-	/**
 	 * @since 5.6
 	 */
 	public ICPPASTTypeTransformationSpecifier newTypeTransformationSpecifier(Operator kind, ICPPASTTypeId typeId);
@@ -462,4 +380,69 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	@Override
 	public ICPPASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body);
+
+	/**
+	 * @deprecated Replaced by {@link #newConstructorChainInitializer(IASTName, IASTInitializer)}
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName memberInitializerId, IASTExpression initializerValue);
+
+	/**
+	 * @deprecated Replaced by {@link #newConstructorInitializer(IASTInitializerClause[])}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICPPASTConstructorInitializer newConstructorInitializer(IASTExpression exp);
+
+	/**
+	 * @deprecated Replaced by {@link #newBaseSpecifier(ICPPASTNameSpecifier, int, boolean)}
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual);
+
+	/**
+	 * @deprecated Replaced by {@link #newFunctionCallExpression(IASTExpression, IASTInitializerClause[])}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Override
+	@Deprecated
+	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList);
+
+	/**
+	 * @deprecated Replaced by {@link #newNewExpression(IASTInitializerClause[], IASTInitializer, IASTTypeId)}
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer, IASTTypeId typeId);
+
+	/**
+	 * @deprecated Replaced by {@link #newQualifiedName(ICPPASTName)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICPPASTQualifiedName newQualifiedName();
+
+	/**
+	 * @deprecated Replaced by {@link #newReferenceOperator(boolean)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICPPASTReferenceOperator newReferenceOperator();
+
+	/**
+	 * @deprecated Replaced by {@link #newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier, IASTInitializer)}
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
+
+	/**
+	 * @deprecated Use newAttributeList() instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.7
+	 */
+	@Deprecated
+	public ICPPASTAttributeSpecifier newAttributeSpecifier();
 }

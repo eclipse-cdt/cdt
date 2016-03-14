@@ -399,12 +399,6 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration) {
-		return new GPPASTExplicitTemplateInstantiation(declaration);
-	}
-
-	@Override
 	public ICPPASTExpressionList newExpressionList() {
 		return new CPPASTExpressionList();
 	}
@@ -623,20 +617,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer newPointerGPP() {
-		return new GPPASTPointer();
-	}
-
-	@Override
 	public ICPPASTPointerToMember newPointerToMember(IASTName name) {
 		return new CPPASTPointerToMember(name);
-	}
-
-	@Override
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember newPointerToMemberGPP(IASTName name) {
-		return new GPPASTPointerToMember(name);
 	}
 
 	@Override
@@ -720,24 +702,9 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP() {
-		return new GPPASTSimpleDeclSpecifier();
-	}
-
-	@Override
 	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(
 			ICPPASTDeclSpecifier declSpec, IASTInitializer initializer) {
 		return new CPPASTSimpleTypeConstructorExpression(declSpec, initializer);
-	}
-
-	@Override
-	@Deprecated
-	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(int type, IASTExpression expression) {
-		CPPASTSimpleTypeConstructorExpression result = new CPPASTSimpleTypeConstructorExpression();
-		result.setSimpleType(type);
-		result.setInitialValue(expression);
-		return result;
 	}
 
 	@Override

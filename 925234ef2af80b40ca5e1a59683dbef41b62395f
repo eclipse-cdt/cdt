@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_218b4174",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "A recent commit has made QtLocalDebugLaunchConfigDelegate also use DsfSourceLookupDirector,\nand this QtLaunch does use GDB, so it can be made to use this new director.\nPersonally, I would make the change and not bother testing it (I assume you\nwould need to special setup).  The change is straight forward.  If you are not\ncomfortable with that, you can make the change in a different commit, and\nask Doug to review it so he can choose to verify or not.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_816fb51f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "add at the end of above line \"to be added explicitly\"",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_617469f2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "\"use\" instead of \"using\"",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ba6f7aed",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "Not a big deal, but the above if should be in an else since MapEntrySourceContainer\ncannot have children",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5a6af6e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "I think the logic below is not quite right.  I\u0027m not sure it breaks behaviour,\nbut I don\u0027t think it should behave the way it does.\n1- we shouldn\u0027t be checking for children of an IMappingSourceContainer.  The mapping\n   itself is the one that loops over its children.\n2- when using the backend mapping, we never call MappingSourceContainer.getCompilationPath()\n   although that method checks that the local path of the mapping corresponds to the sourceName we received.\n   \nA possibly better approach would be to override MappingSourceContainer.getCompilationPath()\nto do the extra logic we are doing here.  Then we wouldn\u0027t need to override this method\nat all.  I haven\u0027t tried though.  Maybe there is an issue with that?\n\nNote that the comments below are probably subsumed by this comment here.  I\u0027m leaving them\nbecause they may help remind me of what I mean, if this comment is not clear enough.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_dab28631",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "Don\u0027t we need to check that this mapping corresponds to the passed sourceName?\t\nThis may be why you didn\u0027t put the return below?\t\n\nMaybe this approach could fail in the following obscure case.\nSay I create the correct mapping using the backend, then follow it with\na mapping NOT using the backend, but that does still return a new path but the wrong one.\nThen the second mapping will take precedence over the first and break things.\n\nI\u0027m thinking that once we find a valid mapping, we should use it.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_97a377f9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "Why not return null here or even return new Path(sourceName)?  See obscure case above.\t\nNot doing so will allow source containers further down the chain to trigger, no?  Which is\nnot what we want.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_da044656",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "I think the below should be in an else statement.\nThe old code did not look for children if we are dealing with an IMappingSourceContainer",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_81a41504",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "Use ImmediateRequestMonitor in this particular case.  We had some race issues long ago and had to do this for all service in their initialize() method.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c19e1db4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "The base service accesses the sourceLookupDirector on a separate job.\nDo we know why that is?  Could the operation be long and lock the Executor?\nShould we do the same?",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e1807951",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "Should we do\n\t\tif (!fDirectors.containsKey(sourceLookupCtx)) {\nlike is done for each other call that will acces the source director?",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_a1a3d1f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "No \u0027this\u0027",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_01848561",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/extensions/GDBSourceLookup_HEAD.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "Nice that you thought of this",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_61a9c9db",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIUnsetSubstitutePath.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "Please extend MIInterpreterExecConsole instead. Like CLISharedLibrary. \nThis is our new trick to turn CLI commands into MI-like commands \nwhich accepts MI flags.  We didn\u0027t convert all older CLI commands yet, which \nexplains why you still find some extending CLICommand.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_4193edae",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIUnsetSubstitutePath.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "We try to set the specific context to be used so as to guide people using this interface.  In this case it would be ISourceLookupDMContext I believe.  That being said, if you think this may change, or may not be the case on some other situations, then you can keep IDMContext to make the API more generic.  You know better in this case.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2190a1a2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MISetSubstitutePath.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T05:24:01Z",
+      "side": 1,
+      "message": "We try to set the specific context to be used so as to guide people using this interface.  In this case it would be ISourceLookupDMContext I believe.  That being said, if you think this may change, or may not be the case on some other situations, then you can keep IDMContext to make the API more generic.  You know better in this case.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

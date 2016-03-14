@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
  * visit() methods implement a top-down traversal, and <br>
  * leave() methods implement a bottom-up traversal. <br>
  *
- * <p> Clients may subclass. </p>
+ * <p>Clients may subclass.</p>
  */
 public abstract class ASTVisitor {
 	/**
@@ -512,22 +512,6 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
-	/**
-	 * @deprecated use {@link IASTTranslationUnit#getComments()}, instead.
-	 */
-	@Deprecated
-	public int visit( IASTComment comment){
-		return PROCESS_CONTINUE;
-	}
-
-	/**
-	 * @deprecated use {@link IASTTranslationUnit#getComments()}, instead.
-	 */
-	@Deprecated
-	public int leave( IASTComment comment){
-		return PROCESS_CONTINUE;
-	}
-
 	/**
 	 * For internal use, only. When {@link ASTVisitor#shouldVisitAmbiguousNodes} is set to true, the
 	 * visitor will be called for ambiguous nodes. However, the children of an ambiguous will not be

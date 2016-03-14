@@ -15,6 +15,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_7;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.eclipse.cdt.tests.dsf.gdb.tests.MIBreakpointsTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -31,29 +32,29 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// We need specific name for the tests of this suite, because of bug https://bugs.eclipse.org/172256
-	MIRegistersTest_7_7.class,
-	MIRunControlTest_7_7.class,
-	MIRunControlTargetAvailableTest_7_7.class,
-	MIRunControlNonStopTargetAvailableTest_7_7.class,
-	MIExpressionsTest_7_7.class,
-	MIExpressionsNonStopTest_7_7.class,
-	GDBPatternMatchingExpressionsTest_7_7.class,
-	MIMemoryTest_7_7.class,
-	MIBreakpointsTest_7_7.class,
-	MICatchpointsTest_7_7.class,
-	MIDisassemblyTest_7_7.class,
-	GDBProcessesTest_7_7.class,
-	LaunchConfigurationAndRestartTest_7_7.class,
-	OperationsWhileTargetIsRunningTest_7_7.class,
-	OperationsWhileTargetIsRunningNonStopTest_7_7.class,
-	PostMortemCoreTest_7_7.class,
-	CommandTimeoutTest_7_7.class,
-	GDBMultiNonStopRunControlTest_7_7.class,
-	GDBConsoleBreakpointsTest_7_7.class,
-	GDBConsoleSynchronizingTest_7_7.class,
-	StepIntoSelectionTest_7_7.class,
-	StepIntoSelectionNonStopTest_7_7.class,
-	SourceLookupTest_7_7.class,
+//	MIRegistersTest_7_7.class,
+//	MIRunControlTest_7_7.class,
+//	MIRunControlTargetAvailableTest_7_7.class,
+//	MIRunControlNonStopTargetAvailableTest_7_7.class,
+//	MIExpressionsTest_7_7.class,
+//	MIExpressionsNonStopTest_7_7.class,
+//	GDBPatternMatchingExpressionsTest_7_7.class,
+//	MIMemoryTest_7_7.class,
+	MIBreakpointsTest.class,
+//	MICatchpointsTest_7_7.class,
+//	MIDisassemblyTest_7_7.class,
+//	GDBProcessesTest_7_7.class,
+//	LaunchConfigurationAndRestartTest_7_7.class,
+//	OperationsWhileTargetIsRunningTest_7_7.class,
+//	OperationsWhileTargetIsRunningNonStopTest_7_7.class,
+//	PostMortemCoreTest_7_7.class,
+//	CommandTimeoutTest_7_7.class,
+//	GDBMultiNonStopRunControlTest_7_7.class,
+//	GDBConsoleBreakpointsTest_7_7.class,
+//	GDBConsoleSynchronizingTest_7_7.class,
+//	StepIntoSelectionTest_7_7.class,
+//	StepIntoSelectionNonStopTest_7_7.class,
+//	SourceLookupTest_7_7.class,
 	/* Add your test class here */
 })
 

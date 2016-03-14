@@ -20,7 +20,6 @@ public class SharedRootProblemPreference extends RootProblemPreference {
 	public Object clone() {
 		SharedRootProblemPreference map = (SharedRootProblemPreference) super.clone();
 		// alruiz: sharing the internal hash is the only way I could make this work.
-		map.hash = hash;
 		return map;
 	}
 }

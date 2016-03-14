@@ -481,19 +481,23 @@ public class PlainTextExporter implements IMemoryExporter {
 			public IStatus run(IProgressMonitor monitor) {
 				try
 				{	
-					// FIXME 4 byte default
+					final BigInteger addressableSize = getAdressableSize();
 					
-					BigInteger CELLSIZE = BigInteger.valueOf(4);
+					// These variables control how the output will be formatted
 					
-					BigInteger COLUMNS = BigInteger.valueOf(5); // FIXME
-					
-					BigInteger DATA_PER_LINE = CELLSIZE.multiply(COLUMNS);
+					// The output data is split by chunks of 1 addressable unit size.
+					final BigInteger dataCellSize = BigInteger.valueOf(4);
+					// show 32 bytes of data per line, total. Adjust number of columns to compensate
+					// for longer addressable unit size
+					final BigInteger numberOfColumns = BigInteger.valueOf(32).divide(addressableSize);
+					// deduce the number of data chunks to be output, per line
+					final BigInteger dataCellsPerLine = dataCellSize.multiply(numberOfColumns);
 					
 					BigInteger transferAddress = fStartAddress;
 					
 					FileWriter writer = new FileWriter(fOutputFile);
 					
-					BigInteger jobs = fEndAddress.subtract(transferAddress).divide(DATA_PER_LINE);
+					BigInteger jobs = fEndAddress.subtract(transferAddress).divide(dataCellsPerLine);
 					BigInteger factor = BigInteger.ONE;
 					if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
 					{
@@ -506,7 +510,7 @@ public class PlainTextExporter implements IMemoryExporter {
 					BigInteger jobCount = BigInteger.ZERO;
 					while(transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled())
 					{
-						BigInteger length = DATA_PER_LINE;
+						BigInteger length = dataCellsPerLine;
 						if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
 							length = fEndAddress.subtract(transferAddress);
 						
@@ -514,23 +518,13 @@ public class PlainTextExporter implements IMemoryExporter {
 						
 						StringBuffer buf = new StringBuffer();
 						
-//							String transferAddressString = transferAddress.toString(16);
-						
-						// future option
-//							for(int i = 0; i < 8 - transferAddressString.length(); i++)
-//								buf.append("0");
-//							buf.append(transferAddressString);
-//							buf.append(" "); // TODO tab?
-						
-						// data
-						
-						for(int i = 0; i < length.divide(CELLSIZE).intValue(); i++)
+						for(int i = 0; i < length.divide(dataCellSize).intValue(); i++)
 						{
 							if(i != 0)
 								buf.append(" "); //$NON-NLS-1$
 							MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(
-								transferAddress.add(CELLSIZE.multiply(BigInteger.valueOf(i))), 
-								CELLSIZE.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
+								transferAddress.add(dataCellSize.multiply(BigInteger.valueOf(i))), 
+								dataCellSize.longValue());
 							for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
 							{
 								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
@@ -577,4 +571,17 @@ public class PlainTextExporter implements IMemoryExporter {
 		job.setUser(true);
 		job.schedule();
 	}
+	
+	
+	private BigInteger getAdressableSize() {
+		BigInteger addressableSize;
+		try {
+			addressableSize = BigInteger.valueOf(((IMemoryBlockExtension)fMemoryBlock).getAddressableSize());
+		} catch (DebugException e1) {
+			// sane value for most cases
+			addressableSize = BigInteger.ONE;
+		}
+		return addressableSize;
+	}
+	
 }

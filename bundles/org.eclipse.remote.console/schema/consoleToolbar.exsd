@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.remote.console" id="org.eclipse.remote.console.toolbar" name="Terminal Console Toolbar Contributions"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point allows contributions to the TerminalConsole for various types of connections. It associates an action id with a connection type and factory.
       </documentation>
    </annotation>
 
@@ -76,21 +76,20 @@
       </complexType>
    </element>
 
-   <annotation>
-      <appinfo>
-         <meta.section type="since"/>
-      </appinfo>
-      <documentation>
-         [Enter the first release in which this extension point appears.]
-      </documentation>
-   </annotation>
 
    <annotation>
       <appinfo>
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+            &lt;extension
+         point=&quot;org.eclipse.remote.console.toolbar&quot;&gt;
+      &lt;action
+            actionFactory=&quot;com.example.actions.MyActionFactory&quot;
+            connectionType=&quot;org.eclipse.remote.serial.core.connectionType&quot;
+            id=&quot;com.example.actions.MyAction&quot;&gt;
+      &lt;/action&gt;
+   &lt;/extension&gt;
       </documentation>
    </annotation>
 
@@ -99,7 +98,9 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         [Enter API information here.]
+         The value of the actionFactory attribute must implement the abstract class &lt;code&gt;org.eclipse.remote.console.ConsoleAction&lt;/code&gt;
+
+The value of the connectionType attribute should reference the id of a connectionType under the org.eclipse.remote.core.remoteServices extension point.
       </documentation>
    </annotation>
 
@@ -108,9 +109,26 @@
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The package itself does not have any predefined toolbar contributions.
       </documentation>
    </annotation>
 
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         /*******************************************************************************
+ * Copyright (c) 2016 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
+      </documentation>
+   </annotation>
 
 </schema>

@@ -100,7 +100,7 @@ public class BaseTestCase {
 	
 	// A set of global launch attributes which are not
 	// reset when we load a new class of tests.
-	// This allows a Suite to set an attribute
+	// This allows a SuiteGdb to set an attribute
 	// The suite is responsible for clearing those attributes
 	// once it is finished
 	private static Map<String, Object> globalLaunchAttributes = new HashMap<String, Object>();
@@ -504,7 +504,7 @@ public class BaseTestCase {
 
  	/**
  	 * This method will verify that the GDB binary is available, and if it is not, the test will
- 	 * be ignored.  This method should be called by a Suite that specifies a specific GDB version.
+ 	 * be ignored.  This method should be called by a SuiteGdb that specifies a specific GDB version.
  	 */
  	public static void ignoreIfGDBMissing() {
         try {

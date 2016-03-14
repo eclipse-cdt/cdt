@@ -189,6 +189,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_b0a6b9c0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T14:42:39Z",
+      "side": 1,
+      "message": "I\u0027ve been looking into the above comment.\nThere is a way in the Debug view to show the full path of the file in the stack frame.\nYou can enable that in the view menu \"Show full paths\".\nWhen you do that and sourceContainersChanged(), then we refresh the stack service here, but not\nthe debug view.  So, for a little while, the debug view will show the unmapped file path.\nUsing the event would allow to fix that.\nBut we can open a bug to track that issue, as I don\u0027t think it is a big deal.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_81a41504",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
         "patchSetId": 24
@@ -251,6 +268,23 @@
       "writtenOn": "2016-03-14T05:24:01Z",
       "side": 1,
       "message": "No \u0027this\u0027",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_95560f54",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T14:42:39Z",
+      "side": 1,
+      "message": "It should never happen, but we could get a failure for one of the commands below.\nIn such a case, we probably don\u0027t want to cache the entries.\nHow about overriding handleCompleted() of this CRM and storing entries when success\nand storing null when failure?  Then, if null is found in sourceContainersChanged() we always\nsend the update.",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

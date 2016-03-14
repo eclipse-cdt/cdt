@@ -230,7 +230,7 @@ public class PlainTextExporter implements IMemoryExporter {
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					
 					BigInteger startAddress = getStartAddress();
-					BigInteger actualLength = getEndAddress().subtract(startAddress);
+					BigInteger actualLength = getEndAddress().subtract(startAddress).divide(getAdressableSize());
 					fLengthText.setText(actualLength.toString());
 					
 					if(actualLength.compareTo(BigInteger.ZERO) <= 0) {
@@ -269,7 +269,7 @@ public class PlainTextExporter implements IMemoryExporter {
 					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					
-					BigInteger actualLength = getEndAddress().subtract(getStartAddress());
+					BigInteger actualLength = getEndAddress().subtract(getStartAddress().divide(getAdressableSize()));
 					fLengthText.setText(actualLength.toString());
 					
 					if(actualLength.compareTo(BigInteger.ZERO) <= 0) {
@@ -530,7 +530,7 @@ public class PlainTextExporter implements IMemoryExporter {
 								buf.append(" "); //$NON-NLS-1$
 							MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(
 								transferAddress.add(CELLSIZE.multiply(BigInteger.valueOf(i))), 
-								CELLSIZE.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
+								CELLSIZE.longValue());
 							for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
 							{
 								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
@@ -576,5 +576,16 @@ public class PlainTextExporter implements IMemoryExporter {
 			}};
 		job.setUser(true);
 		job.schedule();
+	}
+	
+	private BigInteger getAdressableSize() {
+		BigInteger addressableSize;
+		try {
+			// BigInteger endAddress = new BigInteger(hex ? text.substring(2) : text, hex ? 16 : 10); 
+			addressableSize = BigInteger.valueOf(((IMemoryBlockExtension)fMemoryBlock).getAddressableSize());
+		} catch (DebugException e1) {
+			addressableSize = BigInteger.ONE;
+		}
+		return addressableSize;
 	}
 }

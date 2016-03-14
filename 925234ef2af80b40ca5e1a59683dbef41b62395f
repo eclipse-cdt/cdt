@@ -356,6 +356,40 @@
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1025adb2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T15:02:28Z",
+      "side": 1,
+      "message": "Wrong comment",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_10d04df3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-14T15:02:28Z",
+      "side": 1,
+      "message": "I think most of the methods added are copied from the existing ones\nand simply calling setIsMappingWithBackendEnabled() differently.\nCan we merge these methods and pass in a parameter to differentiate the two cases?\nThe different tests would stay and pass in the parameter.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

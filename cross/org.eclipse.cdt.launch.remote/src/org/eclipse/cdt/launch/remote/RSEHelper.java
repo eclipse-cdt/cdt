@@ -200,9 +200,20 @@ public class RSEHelper {
 					new SubProgressMonitor(monitor, 85));
 			// Need to change the permissions to match the original file
 			// permissions because of a bug in upload
-			remoteShellExec(
-					config,
-					"", "chmod", "+x " + spaceEscapify(remotePath.toString()), new SubProgressMonitor(monitor, 5)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Process p = remoteShellExec(
+				config,
+				"", "chmod", "+x " + spaceEscapify(remotePath.toString()), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new SubProgressMonitor(monitor, 5));
+			
+			// We have to wait for the remote shell process to exit, otherwise
+			// gdbserver may try to run the executable before it's actually executable.
+			while (p.isAlive()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// Nothing to do
+				}
+			}
 		} catch (SystemOperationCancelledException e) {
 			abort(e.getLocalizedMessage(), null, IStatus.CANCEL);
 		} catch (Exception e) {

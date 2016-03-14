@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -212,14 +211,8 @@ public class ASTCommenterVisitor extends ASTVisitor {
 	}
 
 	@Override
-	public int leave(IASTProblem problem){
+	public int leave(IASTProblem problem) {
 		nodeCommenter.appendComments((ASTNode) problem);
-		return PROCESS_CONTINUE;
-	}
-
-	@Override
-	public int leave( IASTComment comment){
-		nodeCommenter.appendComments((ASTNode) comment);
 		return PROCESS_CONTINUE;
 	}
 }

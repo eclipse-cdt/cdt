@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Ericsson and others.
+ * Copyright (c) 2007, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,19 +187,19 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(timeout);
 	}
 
-	public static int addBreakpoint(String location) throws Throwable {
+	public static String addBreakpoint(String location) throws Throwable {
 		return addBreakpoint(location, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
 
-	public static int addBreakpoint(String location, int timeout) throws Throwable {
+	public static String addBreakpoint(String location, int timeout) throws Throwable {
 		return addBreakpoint(location, true, timeout);
 	}
 
-	public static int addBreakpoint(String location, boolean temporary) throws Throwable {
+	public static String addBreakpoint(String location, boolean temporary) throws Throwable {
 		return addBreakpoint(location, temporary, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
 	
-	public static int addBreakpoint(final String location, final boolean temporary, int timeout)
+	public static String addBreakpoint(final String location, final boolean temporary, int timeout)
 							throws Throwable {
 
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
@@ -220,7 +220,7 @@ public class SyncUtil {
 	}
 
 	
-	public static int[] getBreakpointList(int timeout) throws Throwable {
+	public static String[] getBreakpointList(int timeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
 
@@ -235,18 +235,18 @@ public class SyncUtil {
 		MIBreakListInfo info = query.get(timeout, TimeUnit.MILLISECONDS);
 		MIBreakpoint[] breakpoints = info.getMIBreakpoints();
 		
-		int[] result = new int[breakpoints.length];
+		String[] result = new String[breakpoints.length];
 		for (int i = 0; i < breakpoints.length; i++) {
 			result[i] = breakpoints[i].getNumber();
 		}
 		return result;
 	}
 	
-	public static void deleteBreakpoint(int breakpointIndex, int timeout) throws Throwable {
-		deleteBreakpoint(new int[] {breakpointIndex}, timeout);
+	public static void deleteBreakpoint(String breakpointIndex, int timeout) throws Throwable {
+		deleteBreakpoint(new String[] {breakpointIndex}, timeout);
 	}
 	
-	public static void deleteBreakpoint(final int[] breakpointIndices, int timeout) throws Throwable {
+	public static void deleteBreakpoint(final String[] breakpointIndices, int timeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
 

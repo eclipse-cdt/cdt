@@ -22,7 +22,9 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 
 /**
  * Language settings provider to provide entries exported from referenced projects.
@@ -39,7 +41,8 @@ public class ReferencedProjectsLanguageSettingsProvider extends LanguageSettings
 	};
 
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc,
+			String languageId) {
 		if (recursiveCallIndicator.get()) {
 			// Recursive call indicates that the provider of a referenced project is called.
 			// Only exported entries of the original configuration should be considered,
@@ -47,6 +50,11 @@ public class ReferencedProjectsLanguageSettingsProvider extends LanguageSettings
 			return null;
 		}
 
+		if (config == null) {
+			return null;
+		}
+
+		ICConfigurationDescription cfgDescription = config.getAdapter(ICConfigurationDescription.class);
 		if (cfgDescription == null) {
 			return null;
 		}
@@ -58,14 +66,18 @@ public class ReferencedProjectsLanguageSettingsProvider extends LanguageSettings
 		try {
 			recursiveCallIndicator.set(true);
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-			ICConfigurationDescription[] refCfgDescriptions = CoreModelUtil.getReferencedConfigurationDescriptions(cfgDescription, false);
+			ICConfigurationDescription[] refCfgDescriptions = CoreModelUtil
+					.getReferencedConfigurationDescriptions(cfgDescription, false);
 			for (ICConfigurationDescription refCfgDescription : refCfgDescriptions) {
-				List<ICLanguageSettingEntry> refEntries = LanguageSettingsManager.getSettingEntriesByKind(refCfgDescription, rc, languageId, ICSettingEntry.ALL);
+				IBuildConfiguration refConfig = Adapters.adapt(refCfgDescription, IBuildConfiguration.class);
+				List<ICLanguageSettingEntry> refEntries = LanguageSettingsManager
+						.getSettingEntriesByKind(refConfig, rc, languageId, ICSettingEntry.ALL);
 				for (ICLanguageSettingEntry refEntry : refEntries) {
 					int flags = refEntry.getFlags();
 					if ((flags & ICSettingEntry.EXPORTED) == ICSettingEntry.EXPORTED) {
 						// create a new entry with EXPORTED flag cleared
-						ICLanguageSettingEntry entry = CDataUtil.createEntry(refEntry, flags & ~ICSettingEntry.EXPORTED);
+						ICLanguageSettingEntry entry = CDataUtil.createEntry(refEntry,
+								flags & ~ICSettingEntry.EXPORTED);
 						entries.add(entry);
 					}
 				}

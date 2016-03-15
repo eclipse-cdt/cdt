@@ -374,22 +374,22 @@ public class GDBConsoleBreakpointsTest extends BaseTestCase {
   		queueConsoleCommand(String.format("%s %s", command, expression));
   	}
 
-  	private void deleteConsoleBreakpoint(int bpId) throws Throwable {
-  		queueConsoleCommand(String.format("delete %d", bpId));
+  	private void deleteConsoleBreakpoint(String bpId) throws Throwable {
+  		queueConsoleCommand(String.format("delete %s", bpId));
   	}
 
-  	private void enableConsoleBreakpoint(int bpId, boolean enable) throws Throwable {
+  	private void enableConsoleBreakpoint(String bpId, boolean enable) throws Throwable {
   		String cmd = (enable) ? "enable" : "disable";
-  		queueConsoleCommand(String.format("%s %d", cmd, bpId));
+  		queueConsoleCommand(String.format("%s %s", cmd, bpId));
   	}
 
-  	private void setConsoleBreakpointIgnoreCount(int bpId, int ignoreCount) throws Throwable {
+  	private void setConsoleBreakpointIgnoreCount(String bpId, int ignoreCount) throws Throwable {
   		Assert.assertTrue(ignoreCount >= 0);
-  		queueConsoleCommand(String.format("ignore %d %d", bpId, ignoreCount));
+  		queueConsoleCommand(String.format("ignore %s %d", bpId, ignoreCount));
   	}
 
-  	private void setConsoleBreakpointCondition(int bpId, String condition) throws Throwable {
-  		queueConsoleCommand(String.format("condition %d %s", bpId, condition));
+  	private void setConsoleBreakpointCondition(String bpId, String condition) throws Throwable {
+  		queueConsoleCommand(String.format("condition %s %s", bpId, condition));
   	}
 
   	private MIBreakpoint[] getTargetBreakpoints() throws Throwable {

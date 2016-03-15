@@ -1475,7 +1475,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     public void eventDispatched(SuspendedEvent e) {
 	}
 
-    private void performBreakpointAction(final IDMContext context, int number) {
+    private void performBreakpointAction(final IDMContext context, String number) {
         // Identify the platform breakpoint
         final ICBreakpoint breakpoint = findPlatformBreakpoint(number);
 
@@ -1496,7 +1496,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // to the target breakpoint/watchpoint that was just hit
 
     // FIXME: (Bug228703) Need a way to identify the correct context where the BP was hit
-    private ICBreakpoint findPlatformBreakpoint(int targetBreakpointID) {
+    private ICBreakpoint findPlatformBreakpoint(String targetBreakpointID) {
         Set<IBreakpointsTargetDMContext> targets = fBPToPlatformMaps.keySet();
         for (IBreakpointsTargetDMContext target : targets) {
             Map<IBreakpointDMContext, ICBreakpoint> bps = fBPToPlatformMaps.get(target);

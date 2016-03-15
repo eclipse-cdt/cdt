@@ -135,7 +135,7 @@ public class GDBBreakpoints_7_7 extends GDBBreakpoints_7_6 {
 	protected void doAddDynamicPrintf(final IBreakpointsTargetDMContext context, Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> finalRm)
 	{
 		// Select the context breakpoints map
-		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		final Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
        		finalRm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
 			return;
@@ -174,8 +174,8 @@ public class GDBBreakpoints_7_7 extends GDBBreakpoints_7_6 {
 
     							// Create a breakpoint object and store it in the map
     							final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
-    							int reference = newBreakpoint.getNumber();
-    							if (reference == -1) {
+    							String reference = newBreakpoint.getNumber();
+    							if (reference.isEmpty()) {
     								rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, DYNAMIC_PRINTF_INSERTION_FAILURE, null));
     								return;
     							}

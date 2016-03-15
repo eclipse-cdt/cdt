@@ -118,8 +118,8 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 								bs.targetBreakpointCreated(bpt);
 						}
 						else if (BREAKPOINT_DELETED.equals(asyncClass)) {
-							int id = getMIBreakpointIdFromOutput(notifyOutput);
-							if (id != 0)
+							String id = getMIBreakpointIdFromOutput(notifyOutput);
+							if (!id.isEmpty())
 								bs.targetBreakpointDeleted(id);
 						}
 						else if (BREAKPOINT_MODIFIED.equals(asyncClass)) {
@@ -152,21 +152,21 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 		return bpt;
 	}
 
-	private int getMIBreakpointIdFromOutput(MINotifyAsyncOutput notifyOutput) {
+	private String getMIBreakpointIdFromOutput(MINotifyAsyncOutput notifyOutput) {
 		MIResult[] results = notifyOutput.getMIResults();
 		for(int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue val = results[i].getMIValue();
 			if (var.equals("id") && val instanceof MIConst) { //$NON-NLS-1$
             	try {
-					return Integer.parseInt(((MIConst)val).getCString().trim());
+					return ((MIConst)val).getCString().trim();
 				}
 				catch(NumberFormatException e) {
 					GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Invalid breakpoint id")); //$NON-NLS-1$
 				}
 			}
 		}
-		return 0;
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -284,7 +284,7 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 	}
 
 	@Override
-	protected void deleteBreakpointFromTarget(IBreakpointsTargetDMContext context, int reference, RequestMonitor finalRm) {
+	protected void deleteBreakpointFromTarget(IBreakpointsTargetDMContext context, String reference, RequestMonitor finalRm) {
 		MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
 		if (bs != null) {
 			// Do nothing if the breakpoint is deleted from the console.

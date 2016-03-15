@@ -67,13 +67,13 @@ public class GDBRunControl extends MIRunControl {
 	
 	private static class RunToLineActiveOperation {
 		private IMIExecutionDMContext fThreadContext;
-		private int fBpId;
+		private String fBpId;
 		private String fFileLocation;
 		private String fAddrLocation;
 		private boolean fSkipBreakpoints;
 		
 		public RunToLineActiveOperation(IMIExecutionDMContext threadContext,
-				int bpId, String fileLoc, String addr, boolean skipBreakpoints) {
+				String bpId, String fileLoc, String addr, boolean skipBreakpoints) {
 			fThreadContext = threadContext;
 			fBpId = bpId;
 			fFileLocation = fileLoc;
@@ -82,7 +82,7 @@ public class GDBRunControl extends MIRunControl {
 		}
 		
 		public IMIExecutionDMContext getThreadContext() { return fThreadContext; }
-		public int getBreakointId() { return fBpId; }
+		public String getBreakointId() { return fBpId; }
 		public String getFileLocation() { return fFileLocation; }
 		public String getAddrLocation() { return fAddrLocation; }
 		public boolean shouldSkipBreakpoints() { return fSkipBreakpoints; }
@@ -333,7 +333,7 @@ public class GDBRunControl extends MIRunControl {
         				public void handleSuccess() {
         					// We must set are RunToLineActiveOperation *before* we do the resume
         					// or else we may get the stopped event, before we have set this variable.
-           					int bpId = getData().getMIBreakpoints()[0].getNumber();
+           					String bpId = getData().getMIBreakpoints()[0].getNumber();
            					String addr = getData().getMIBreakpoints()[0].getAddress();
         		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, location, addr, skipBreakpoints);
 
@@ -342,9 +342,9 @@ public class GDBRunControl extends MIRunControl {
                 				public void handleFailure() {
                 		    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
                 		    				IBreakpointsTargetDMContext.class);
-                		    		int bpId = fRunToLineActiveOperation.getBreakointId();
+                		    		String bpId = fRunToLineActiveOperation.getBreakointId();
 
-                		    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
+                		    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new String[] {bpId}),
                 		    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
                 		    		fRunToLineActiveOperation = null;
                 		    		fStepInToSelectionActiveOperation = null;
@@ -372,9 +372,9 @@ public class GDBRunControl extends MIRunControl {
     	if (fRunToLineActiveOperation != null) {
     		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
     				IBreakpointsTargetDMContext.class);
-    		int bpId = fRunToLineActiveOperation.getBreakointId();
+    		String bpId = fRunToLineActiveOperation.getBreakointId();
 
-    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
+    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new String[] {bpId}),
     				new DataRequestMonitor<MIInfo>(getExecutor(), null));
     		fRunToLineActiveOperation = null;
     		fStepInToSelectionActiveOperation = null;
@@ -436,7 +436,7 @@ public class GDBRunControl extends MIRunControl {
     
     private boolean processRunToLineStoppedEvent(final MIStoppedEvent e) {
     	if (fRunToLineActiveOperation != null) {
-    		int bpId = 0;
+    		String bpId = ""; //$NON-NLS-1$
     		if (e instanceof MIBreakpointHitEvent) {
     			bpId = ((MIBreakpointHitEvent)e).getNumber();
     		}
@@ -487,7 +487,7 @@ public class GDBRunControl extends MIRunControl {
     				IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
     						IBreakpointsTargetDMContext.class);
 
-    				getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {fRunToLineActiveOperation.getBreakointId()}),
+    				getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new String[] {fRunToLineActiveOperation.getBreakointId()}),
     						new DataRequestMonitor<MIInfo>(getExecutor(), null));
     				fRunToLineActiveOperation = null;
     				fStepInToSelectionActiveOperation = null;

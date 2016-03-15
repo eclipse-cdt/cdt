@@ -29,13 +29,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  
 public class MIBreakCommands extends MICommand<MIInfo>
 {
-	public MIBreakCommands(IBreakpointsTargetDMContext ctx, int breakpoint, String[] commands) {
+	/** @since 5.0 */
+	public MIBreakCommands(IBreakpointsTargetDMContext ctx, String breakpoint, String[] commands) {
 		super(ctx, "-break-commands"); //$NON-NLS-1$
 		if (commands == null) {
-			setParameters(new String[] { Integer.toString(breakpoint) });
+			setParameters(new String[] { breakpoint });
 		} else {
 			String[] params = new String[commands.length + 1];
-			params[0] = Integer.toString(breakpoint);
+			params[0] = breakpoint;
 			for (int i = 1; i < params.length; i++) {
 				params[i] = commands[i-1];
 			}

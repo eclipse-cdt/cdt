@@ -37,10 +37,13 @@ public class MIBreakCondition extends MICommand<MIInfo>
 	 * See bug 213076 for more information.
 	 */ 
 
-	public MIBreakCondition(IBreakpointsTargetDMContext ctx, int breakpoint, String condition) {
+	/**
+	 * @since 5.0
+	 */
+	public MIBreakCondition(IBreakpointsTargetDMContext ctx, String breakpoint, String condition) {
         super(ctx, "-break-condition"); //$NON-NLS-1$
         
-        setParameters(new Adjustable[]{ new MIStandardParameterAdjustable(Integer.toString(breakpoint)),
+        setParameters(new Adjustable[]{ new MIStandardParameterAdjustable(breakpoint),
         		                        new NoChangeAdjustable(condition) });
     }
 	

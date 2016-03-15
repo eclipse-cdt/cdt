@@ -26,16 +26,18 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 @Immutable
 public class MIWatchpointScopeEvent extends MIStoppedEvent {
 
-    final private int number;
+    final private String number;
 
+    /** @since 5.0 */
     protected MIWatchpointScopeEvent(
-        IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, int number)
+        IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String number)
     {
         super(ctx, token, results, frame);
         this.number = number;
     }
 
-    public int getNumber() {
+    /** @since 5.0 */
+    public String getNumber() {
         return number;
     }
 
@@ -44,7 +46,7 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
      */
     public static MIWatchpointScopeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
-       int number = 0;
+       String number = ""; //$NON-NLS-1$
        for (int i = 0; i < results.length; i++) {
            String var = results[i].getVariable();
            MIValue value = results[i].getMIValue();
@@ -53,7 +55,7 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
                if (value instanceof MIConst) {
                    String str = ((MIConst) value).getString();
                    try {
-                       number = Integer.parseInt(str.trim());
+                       number = str.trim();
                    } catch (NumberFormatException e) {
                    }
                }

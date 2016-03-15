@@ -28,12 +28,15 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  
 public class MIBreakDisable extends MICommand<MIInfo>
 {
-    public MIBreakDisable (IBreakpointsTargetDMContext ctx, int[] array) {
+    /**
+	 * @since 5.0
+	 */
+    public MIBreakDisable (IBreakpointsTargetDMContext ctx, String[] array) {
         super(ctx, "-break-disable"); //$NON-NLS-1$
         if (array != null && array.length > 0) {
             String[] brkids = new String[array.length];
             for (int i = 0; i < array.length; i++) {
-                brkids[i] = Integer.toString(array[i]);
+                brkids[i] = array[i];
             }
             setParameters(brkids);
         } 

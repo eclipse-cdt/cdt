@@ -252,7 +252,10 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return (String) fProperties.get(MIBreakpoints.BREAKPOINT_TYPE);
 	}
 
-	public int getReference() {
+	/**
+	 * @since 5.0
+	 */
+	public String getReference() {
 		return fBreakpoint.getNumber();
 	}
 
@@ -323,7 +326,10 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return fBreakpoint.getCommands();
 	}
 
-	public int getNumber() {
+	/**
+	 * @since 5.0
+	 */
+	public String getNumber() {
 		return fBreakpoint.getNumber();
 	}
 

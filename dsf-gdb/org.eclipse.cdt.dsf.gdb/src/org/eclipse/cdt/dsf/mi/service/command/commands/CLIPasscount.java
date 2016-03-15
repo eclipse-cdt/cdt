@@ -22,9 +22,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * @since 3.0
  */
 public class CLIPasscount extends CLICommand<MIInfo> {
-    public CLIPasscount(IBreakpointsTargetDMContext ctx, int breakpoint, int passcount) {
+    /** @since 5.0 */
+    public CLIPasscount(IBreakpointsTargetDMContext ctx, String breakpoint, int passcount) {
         super(ctx, "passcount"); //$NON-NLS-1$
-		setParameters(new String[] { Integer.toString(passcount), Integer.toString(breakpoint) });
+		setParameters(new String[] { Integer.toString(passcount), breakpoint });
     }
 }
 

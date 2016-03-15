@@ -108,7 +108,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 			                     final DataRequestMonitor<IBreakpointDMContext> finalRm)
 	{
 		// Select the context breakpoints map
-		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		final Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
        		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		finalRm.done();
@@ -150,8 +150,8 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 
     							// Create a breakpoint object and store it in the map
     							final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
-    							int reference = newBreakpoint.getNumber();
-    							if (reference == -1) {
+    							String reference = newBreakpoint.getNumber();
+    							if (reference.isEmpty()) {
     								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
     								rm.done();
     								return;
@@ -191,7 +191,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 	protected void addTracepoint(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> drm)
 	{
 		// Select the context breakpoints map
-		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		final Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
        		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		drm.done();
@@ -213,7 +213,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 				new DataRequestMonitor<CLITraceInfo>(getExecutor(), drm) {
 					@Override
 					protected void handleSuccess() {
-						final Integer tpReference = getData().getTraceReference();
+						final String tpReference = getData().getTraceReference();
 						if (tpReference == null) {
 							drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
 							drm.done();
@@ -233,7 +233,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 
 												// Create a breakpoint object and store it in the map
 												final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(bp);
-												int reference = newBreakpoint.getNumber();
+												String reference = newBreakpoint.getNumber();
 												contextBreakpoints.put(reference, newBreakpoint);
 
 												// Format the return value
@@ -277,8 +277,8 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 		// At this point, we know their are OK so there is no need to re-validate
 		MIBreakpointDMContext breakpointCtx = (MIBreakpointDMContext) dmc;
         IBreakpointsTargetDMContext context = DMContexts.getAncestorOfType(breakpointCtx, IBreakpointsTargetDMContext.class);
-		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
-		final int reference = breakpointCtx.getReference();
+		final Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		final String reference = breakpointCtx.getReference();
 		MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 
 		// Track the number of change requests
@@ -336,10 +336,10 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 	}
 
 	private void changeActions(final IBreakpointsTargetDMContext context,
-			final int reference, final String actionNames, final ITracepointAction[] actions, final RequestMonitor rm)
+			final String reference, final String actionNames, final ITracepointAction[] actions, final RequestMonitor rm)
 	{
 		// Pick the context breakpoints map
-		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		final Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
 			rm.done();
@@ -376,10 +376,10 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 	 */
 	@Override
 	protected void changeIgnoreCount(IBreakpointsTargetDMContext context,
-			final int reference, final int ignoreCount, final RequestMonitor rm)
+			final String reference, final int ignoreCount, final RequestMonitor rm)
 	{
 		// Pick the context breakpoints map
-		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		final Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		rm.done();
@@ -404,12 +404,14 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 	 * @param reference
 	 * @param ignoreCount
 	 * @param rm
+	 * 
+	 * @since 5.0
 	 */
 	protected void changePassCount(IBreakpointsTargetDMContext context,
-			final int reference, final int ignoreCount, final RequestMonitor rm)
+			final String reference, final int ignoreCount, final RequestMonitor rm)
 	{
 		// Pick the context breakpoints map
-		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		final Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		rm.done();

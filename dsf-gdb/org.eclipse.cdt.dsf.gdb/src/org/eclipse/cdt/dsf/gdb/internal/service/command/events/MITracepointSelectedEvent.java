@@ -38,7 +38,7 @@ public class MITracepointSelectedEvent extends MIBreakpointHitEvent {
 
 	private int fRecNo;
 	
-    protected MITracepointSelectedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, int trptno, int recordno) {
+    protected MITracepointSelectedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String trptno, int recordno) {
         super(ctx, token, results, frame, trptno);
         fRecNo = recordno;
     }
@@ -53,7 +53,7 @@ public class MITracepointSelectedEvent extends MIBreakpointHitEvent {
 	
     @ConfinedToDsfExecutor("")    
     public static MITracepointSelectedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
-       int trptno = -1;
+       String trptno = ""; //$NON-NLS-1$
        int recordno = -1;
 
        for (int i = 0; i < results.length; i++) {
@@ -66,7 +66,7 @@ public class MITracepointSelectedEvent extends MIBreakpointHitEvent {
 
            if (var.equals("tracepoint")) { //$NON-NLS-1$
                try {
-            	   trptno = Integer.parseInt(str.trim());
+            	   trptno = str.trim();
                } catch (NumberFormatException e) {
                }
            } else if (var.equals("traceframe")) { //$NON-NLS-1$

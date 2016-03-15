@@ -25,7 +25,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  
 public class MIBreakAfter extends MICommand<MIInfo>
 {
-    public MIBreakAfter(IBreakpointsTargetDMContext ctx, int breakpoint, int ignoreCount) {
-        super(ctx, "-break-after", new String[] { Integer.toString(breakpoint), Integer.toString(ignoreCount) }); //$NON-NLS-1$
+    /**
+	 * @since 5.0
+	 */
+    public MIBreakAfter(IBreakpointsTargetDMContext ctx, String breakpoint, int ignoreCount) {
+        super(ctx, "-break-after", new String[] { breakpoint, Integer.toString(ignoreCount) }); //$NON-NLS-1$
     }
 }

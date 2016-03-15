@@ -28,9 +28,10 @@ public class CLITraceInfo extends MIInfo {
 		parse();
 	}
 
-	private Integer fReference = null;
+	private String fReference = null;
 	
-	public Integer getTraceReference(){
+	/** @since 5.0 */
+	public String getTraceReference(){
 		return fReference; 
 	}
 
@@ -48,7 +49,7 @@ public class CLITraceInfo extends MIInfo {
 						if (matcher.find()) {
 							String id = matcher.group(1);
 							try {
-								fReference = Integer.parseInt(id);
+								fReference = id;
 							} catch (NumberFormatException e) {
 								fReference = null;
 							}

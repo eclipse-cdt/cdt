@@ -27,8 +27,11 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 */
 	private String fReason;
 	
+	/**
+	 * @since 5.0
+	 */
 	protected MICatchpointHitEvent(IExecutionDMContext ctx, int token,
-			MIResult[] results, MIFrame frame, int bkptno, String reason) {
+			MIResult[] results, MIFrame frame, String bkptno, String reason) {
 		super(ctx, token, results, frame, bkptno);
 		fReason = reason;
 	}
@@ -58,7 +61,7 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
         StringTokenizer tokenizer = new StringTokenizer(streamRecord.getString());
         tokenizer.nextToken(); // "Catchpoint"
         try {
-        	int bkptNumber = Integer.parseInt(tokenizer.nextToken()); // "1"
+        	String bkptNumber = tokenizer.nextToken(); // "1"
         	StringBuilder reason = new StringBuilder();
         	boolean first = true;
         	while (tokenizer.hasMoreElements()) {
@@ -95,8 +98,9 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 * < 7.0 case we use the reason provided in the stream record (e.g.,
 	 * "exception caught"). The inconsistency is fine. The user will get the
 	 * insight he needs either way.
-	 */
-    public static MICatchpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, int bkptNumber, String gdbKeyword) {
+
+	 * @since 5.0	 */
+    public static MICatchpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, String bkptNumber, String gdbKeyword) {
     	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
     	return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptNumber, gdbKeyword);
     }

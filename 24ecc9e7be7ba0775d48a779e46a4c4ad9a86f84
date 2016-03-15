@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "e7dfcf21_d166e49f",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/settings/model/util/PathEntryTranslator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-03-15T21:07:01Z",
+      "side": 1,
+      "message": "Old formatting was more readable, please restore it. Please try to avoid mixing formatting and semantic changes in the same commit.",
+      "range": {
+        "startLine": 203,
+        "startChar": 27,
+        "endLine": 203,
+        "endChar": 38
+      },
+      "revId": "24ecc9e7be7ba0775d48a779e46a4c4ad9a86f84",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_11804cd4",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/settings/model/util/PathEntryTranslator.java",
         "patchSetId": 1

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River and others.
+ * Copyright (c) 2007, 2016 Wind River and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1475,7 +1475,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     public void eventDispatched(SuspendedEvent e) {
 	}
 
-    private void performBreakpointAction(final IDMContext context, int number) {
+    private void performBreakpointAction(final IDMContext context, String number) {
         // Identify the platform breakpoint
         final ICBreakpoint breakpoint = findPlatformBreakpoint(number);
 
@@ -1496,7 +1496,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // to the target breakpoint/watchpoint that was just hit
 
     // FIXME: (Bug228703) Need a way to identify the correct context where the BP was hit
-    private ICBreakpoint findPlatformBreakpoint(int targetBreakpointID) {
+    private ICBreakpoint findPlatformBreakpoint(String targetBreakpointID) {
         Set<IBreakpointsTargetDMContext> targets = fBPToPlatformMaps.keySet();
         for (IBreakpointsTargetDMContext target : targets) {
             Map<IBreakpointDMContext, ICBreakpoint> bps = fBPToPlatformMaps.get(target);
@@ -1504,7 +1504,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             for (IBreakpointDMContext context : contexts) {
                 if (context instanceof MIBreakpointDMContext) {
                     MIBreakpointDMContext ctx = (MIBreakpointDMContext) context;
-                    if (ctx.getReference() == targetBreakpointID) {
+                    if (ctx.getReference().equals(targetBreakpointID)) {
                         return bps.get(context);
                     }
                 }

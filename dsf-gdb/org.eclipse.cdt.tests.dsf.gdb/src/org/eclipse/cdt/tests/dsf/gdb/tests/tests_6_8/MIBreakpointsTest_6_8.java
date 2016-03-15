@@ -184,7 +184,7 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 0);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
-				fBreakpointRef == breakpoint1.getNumber());
+				fBreakpointRef.equals(breakpoint1.getNumber()));
 		assertTrue("BreakpointService problem: breakpoint mismatch (not pending)",
 				   breakpoint1.isPending());
 		clearEventCounters();

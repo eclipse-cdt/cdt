@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.TracepointActionManage
  */
 public class MIBreakpoint  {
 
-    int     number   = -1;
+    String  number   = ""; //$NON-NLS-1$
     String  type     = "";  //$NON-NLS-1$
     String  disp     = "";  //$NON-NLS-1$
     boolean enabled  = false;
@@ -199,7 +199,7 @@ public class MIBreakpoint  {
 	 */
     public MIBreakpoint(String cliResult) {
 		if (cliResult.startsWith("Catchpoint ")) { //$NON-NLS-1$ 
-			int bkptNumber = 0;
+			String bkptNumber = ""; //$NON-NLS-1$
 	
 			StringTokenizer tokenizer = new StringTokenizer(cliResult);
 			for (int i = 0; tokenizer.hasMoreTokens(); i++) {
@@ -208,7 +208,7 @@ public class MIBreakpoint  {
 				case 0: // first token is "Catchpoint"
 					break;
 				case 1: // second token is the breakpoint number
-					bkptNumber = Integer.parseInt(sub);
+					bkptNumber = sub;
 					break;
 				case 2: // third token is the event type; drop the parenthesis
 					if (sub.startsWith("(")) { //$NON-NLS-1$
@@ -233,7 +233,8 @@ public class MIBreakpoint  {
     // Properties getters 
     ///////////////////////////////////////////////////////////////////////////
 
-	public int getNumber() {
+	/** @since 5.0 */
+	public String getNumber() {
         return number;
     }
 
@@ -507,7 +508,7 @@ public class MIBreakpoint  {
 
             if (var.equals("number")) { //$NON-NLS-1$
                 try {
-                    number = Integer.parseInt(str.trim());
+                    number = str.trim();
                 } catch (NumberFormatException e) {
                 }
             } else if (var.equals("type")) { //$NON-NLS-1$

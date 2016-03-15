@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Ericsson and others.
+ * Copyright (c) 2007, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class MICatchpointsTest extends BaseTestCase {
     /**
      * The gdb breakpoint number associated with the most recent breakpoint event
      */
-    private int fBreakpointRef;
+    private String fBreakpointRef;
 
     // NOTE: The back-end can reformat the condition. In order for the
     // comparison to work, better specify the condition as the back-end
@@ -701,7 +701,7 @@ public class MICatchpointsTest extends BaseTestCase {
 
 		// The breakpoint references are not necessarily retrieved in the order the
 		// breakpoints were initially set...
-		if (bkpt1_svc.getNumber() == bkpt1_set.getNumber()) {
+		if (bkpt1_svc.getNumber().equals(bkpt1_set.getNumber())) {
 			assertEquals(bkpt2_svc.getNumber(), bkpt2_set.getNumber());
 		}
 		else {
@@ -733,7 +733,7 @@ public class MICatchpointsTest extends BaseTestCase {
 
 		// The breakpoint references are not necessarily retrieved in the order the
 		// breakpoints were initially set...
-		if (bkpt1_svc.getNumber() == bkpt1_set.getNumber()) {
+		if (bkpt1_svc.getNumber().equals(bkpt1_set.getNumber())) {
 			assertEquals(bkpt2_svc.getNumber(), bkpt2_set.getNumber());
 		}
 		else {
@@ -1222,14 +1222,14 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Ensure the breakpoint service sees what we expect 
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", 2, breakpoints.length);
-		int throwCatchpointNumber = ((MIBreakpointDMData)getBreakpoint(refThrow)).getNumber();
+		String throwCatchpointNumber = ((MIBreakpointDMData)getBreakpoint(refThrow)).getNumber();
 		for (IBreakpointDMContext bkpt : breakpoints) {
 			MIBreakpointDMData bkpt_svc = (MIBreakpointDMData) getBreakpoint(bkpt);
-			assertEquals("Incorrect breakpoint condition", throwCatchpointNumber != bkpt_svc.getNumber(), bkpt_svc.isEnabled());
+			assertEquals("Incorrect breakpoint condition", !throwCatchpointNumber.equals(bkpt_svc.getNumber()), bkpt_svc.isEnabled());
 		}
 
 		// Resume the target. Should miss the throw catchpoint and stop at the catch one
-		int catchCatchpointNumber = ((MIBreakpointDMData)getBreakpoint(refCatch)).getNumber();
+		String catchCatchpointNumber = ((MIBreakpointDMData)getBreakpoint(refCatch)).getNumber();
 		resumeAndExpectBkptHit(catchCatchpointNumber, null);
 		
 		// Ee-enable the throw catchpoint
@@ -1382,7 +1382,7 @@ public class MICatchpointsTest extends BaseTestCase {
 	 *            indicate a check isn't wanted
 	 * @return the stoppped event
 	 */
-	private MIStoppedEvent resumeAndExpectBkptHit(int bkptNumber, Integer expectedVarValue) throws Throwable {
+	private MIStoppedEvent resumeAndExpectBkptHit(String bkptNumber, Integer expectedVarValue) throws Throwable {
 		// Resume the target. The throw catchpoint should get hit. 
 		clearEventCounters();
 		MIStoppedEvent event = SyncUtil.resumeUntilStopped();

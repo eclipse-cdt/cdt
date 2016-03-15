@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 
 /**
@@ -40,16 +39,9 @@ public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier, ICPPAS
 	public IGPPASTSimpleDeclSpecifier copy();
 
 	/**
-	 * @deprecated All constants must be defined in {@link IASTSimpleDeclSpecifier}.
-	 */
-	@Deprecated
-	public static final int t_last = t_typeof;
-	
-	/**
 	 * @deprecated Replaced by {@link ICPPASTSimpleDeclSpecifier#DECLTYPE_EXPRESSION}.
 	 */
 	@Deprecated
 	public static final ASTNodeProperty TYPEOF_EXPRESSION = new ASTNodeProperty(
 			"IGPPASTSimpleDeclSpecifier.TYPEOF_EXPRESSION - typeof() Expression"); //$NON-NLS-1$
-
 }

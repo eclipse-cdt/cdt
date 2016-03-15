@@ -22,18 +22,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 @Deprecated
 public interface IGCCASTSimpleDeclSpecifier extends ICASTSimpleDeclSpecifier {
 	/**
-	 * @deprecated Replaced by {@link IASTSimpleDeclSpecifier#t_typeof}.
-	 */
-	@Deprecated
-	public static final int t_typeof = ICASTSimpleDeclSpecifier.t_last + 1;
-	
-	/**
-	 * @deprecated All constants must be defined in {@link IASTSimpleDeclSpecifier}.
-	 */
-	@Deprecated
-	public static final int t_last = t_typeof;
-
-	/**
 	 * @deprecated Replaced by {@link IASTSimpleDeclSpecifier#DECLTYPE_EXPRESSION}.
 	 */
 	@Deprecated

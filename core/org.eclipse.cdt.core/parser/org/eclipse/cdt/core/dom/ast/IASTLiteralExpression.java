@@ -39,13 +39,6 @@ public interface IASTLiteralExpression extends IASTExpression {
 	public static final int lk_string_literal = 3;
 
 	/**
-	 * @deprecated All possible values must be defined in {@link IASTLiteralExpression}.
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public static final int lk_last = lk_string_literal;
-
-	/**
 	 * {@code lk_this} represents the '{@code this}' keyword for C++ only.
 	 * @since 5.1
 	 */

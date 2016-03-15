@@ -34,8 +34,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	public static final int k_last = k_class;
 
 	/**
-	 * <code>VISIBILITY_LABEL</code> is used to express the relationship for a
-	 * visibility label "declaration".
+	 * <code>VISIBILITY_LABEL</code> is used to express the relationship for a visibility label "declaration".
 	 */
 	public static final ASTNodeProperty VISIBILITY_LABEL = new ASTNodeProperty(
 			"ICPPASTCompositeTypeSpecifier.VISIBILITY_LABEL - Visibility label \"declaration\""); //$NON-NLS-1$

@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
  */
 @Deprecated
 public interface IGNUASTTypeIdExpression extends IASTTypeIdExpression {
-
 	/**
 	 * <code>op_typeof</code> is used for typeof( typeId ) type expressions.
 	 */
@@ -30,12 +29,6 @@ public interface IGNUASTTypeIdExpression extends IASTTypeIdExpression {
 	 * expressions.
 	 */
 	public static final int op_alignof = IASTTypeIdExpression.op_alignof;
-
-	/**
-	 * @deprecated all constants must be declared in {@link IASTTypeIdExpression} 
-	 */
-	@Deprecated
-	public static final int op_last = IASTTypeIdExpression.op_last;
 	
 	/**
 	 * @since 5.1

@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
@@ -34,14 +32,18 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsScannerInfoProvider;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 /**
  * Test cases testing LanguageSettingsProvider functionality
@@ -65,14 +67,17 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		}
 
 		@Override
-		public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+		public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc,
+				String languageId) {
 			return entries;
 		}
 	}
 
 	/**
 	 * Constructor.
-	 * @param name - name of the test.
+	 * 
+	 * @param name
+	 *            - name of the test.
 	 */
 	public LanguageSettingsScannerInfoProviderTests(String name) {
 		super(name);
@@ -99,14 +104,16 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * main function of the class.
 	 *
-	 * @param args - arguments
+	 * @param args
+	 *            - arguments
 	 */
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
-	 * Sets build working directory for DefaultSettingConfiguration being tested.
+	 * Sets build working directory for DefaultSettingConfiguration being
+	 * tested.
 	 */
 	private void setBuilderCWD(IProject project, IPath buildCWD) throws CoreException {
 		CProjectDescriptionManager manager = CProjectDescriptionManager.getInstance();
@@ -123,8 +130,10 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 			assertEquals(buildCWD, actualBuildCWD);
 		}
 		{
-			// triplecheck builderCWD for different project/configuration descriptions
-			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, READ_ONLY);
+			// triplecheck builderCWD for different project/configuration
+			// descriptions
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance()
+					.getProjectDescription(project, READ_ONLY);
 			assertNotNull(prjDescription);
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 			assertNotNull(cfgDescription);
@@ -153,7 +162,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		{
 			// Handle prjDescription==null
 			IProject project = FAKE_FILE.getProject();
-			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, READ_ONLY);
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance()
+					.getProjectDescription(project, READ_ONLY);
 			assertNull(prjDescription);
 
 			LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
@@ -171,7 +181,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 			IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
 			IFile file = ResourceHelper.createFile(project, "file");
 
-			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, READ_ONLY);
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance()
+					.getProjectDescription(project, READ_ONLY);
 			assertNotNull(prjDescription);
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 			assertNotNull(cfgDescription);
@@ -199,7 +210,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		IFile file = ResourceHelper.createFile(project, "file.c");
 
 		// confirm that language==null
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, READ_ONLY);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				READ_ONLY);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -221,7 +233,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	public void testRegular() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -241,8 +254,9 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		IFile includeFile = ResourceHelper.createFile(project, "include-file");
 
 		CIncludePathEntry includePathEntry = new CIncludePathEntry(includeFolder, 0);
-		CIncludePathEntry includeLocalPathEntry = new CIncludePathEntry(includeLocalFolder, ICSettingEntry.LOCAL); // #include "..."
-		CMacroEntry macroEntry = new CMacroEntry("MACRO", "value",0);
+		CIncludePathEntry includeLocalPathEntry = new CIncludePathEntry(includeLocalFolder, ICSettingEntry.LOCAL); // #include
+																													// "..."
+		CMacroEntry macroEntry = new CMacroEntry("MACRO", "value", 0);
 		CIncludeFileEntry includeFileEntry = new CIncludeFileEntry(includeFile, 0);
 		CMacroFileEntry macroFileEntry = new CMacroFileEntry(macroFile, 0);
 
@@ -293,7 +307,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	public void testLocal() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -306,8 +321,10 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		IFolder incFolder = ResourceHelper.createFolder(project, "include");
 		IFolder incFolder2 = ResourceHelper.createFolder(project, "include2");
 		CIncludePathEntry includePathEntry = new CIncludePathEntry(incFolder, 0);
-		CIncludePathEntry includeLocalPathEntry = new CIncludePathEntry(incFolder, ICSettingEntry.LOCAL); // #include "..."
-		CIncludePathEntry includeLocalPathEntry2 = new CIncludePathEntry(incFolder2, ICSettingEntry.LOCAL); // #include "..."
+		CIncludePathEntry includeLocalPathEntry = new CIncludePathEntry(incFolder, ICSettingEntry.LOCAL); // #include
+																											// "..."
+		CIncludePathEntry includeLocalPathEntry2 = new CIncludePathEntry(incFolder2, ICSettingEntry.LOCAL); // #include
+																											// "..."
 		CIncludePathEntry includePathEntry2 = new CIncludePathEntry(incFolder2, 0);
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -347,7 +364,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	public void testFramework() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -390,7 +408,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	public void testDuplicate() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -402,9 +421,11 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		// contribute the entries
 		IFolder incFolder = ResourceHelper.createFolder(project, "include");
 		CIncludePathEntry includePathEntry = new CIncludePathEntry(incFolder, 0);
-		CIncludePathEntry includeLocalPathEntry = new CIncludePathEntry(incFolder, ICSettingEntry.LOCAL); // #include "..."
+		CIncludePathEntry includeLocalPathEntry = new CIncludePathEntry(incFolder, ICSettingEntry.LOCAL); // #include
+																											// "..."
 		CIncludePathEntry includePathEntry2 = new CIncludePathEntry(incFolder, 0);
-		CIncludePathEntry includeLocalPathEntry2 = new CIncludePathEntry(incFolder, ICSettingEntry.LOCAL); // #include "..."
+		CIncludePathEntry includeLocalPathEntry2 = new CIncludePathEntry(incFolder, ICSettingEntry.LOCAL); // #include
+																											// "..."
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(includePathEntry);
@@ -440,7 +461,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	public void testWorkspacePath() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -467,9 +489,12 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 
 		// contribute the entries
 		CIncludePathEntry incWorkspaceEntry_1 = new CIncludePathEntry(incWorkspace_1, 0);
-		CIncludePathEntry incWorkspaceEntry_2 = new CIncludePathEntry(incWorkspacePath_2, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
-		CIncludePathEntry incWorkspaceEntry_3 = new CIncludePathEntry(incWorkspaceRelativePath_3, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
-		CIncludePathEntry incWorkspaceEntry_4 = new CIncludePathEntry(incWorkspacePathNoResolved_4, ICSettingEntry.VALUE_WORKSPACE_PATH);
+		CIncludePathEntry incWorkspaceEntry_2 = new CIncludePathEntry(incWorkspacePath_2,
+				ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+		CIncludePathEntry incWorkspaceEntry_3 = new CIncludePathEntry(incWorkspaceRelativePath_3,
+				ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+		CIncludePathEntry incWorkspaceEntry_4 = new CIncludePathEntry(incWorkspacePathNoResolved_4,
+				ICSettingEntry.VALUE_WORKSPACE_PATH);
 		CIncludePathEntry incFilesystemEntry = new CIncludePathEntry(incFilesystem, 0);
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -511,12 +536,14 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		// change drive on build working directory
 		String buildCwdDevice = project.getLocation().getDevice();
 
-//		// Test manually with a device which is different from project location device (path should exist)
-//		IPath buildCWD = new Path("D:/build/path");
-//		String buildCwdDevice = buildCWD.getDevice();
+		// // Test manually with a device which is different from project
+		// location device (path should exist)
+		// IPath buildCWD = new Path("D:/build/path");
+		// String buildCwdDevice = buildCWD.getDevice();
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -560,15 +587,17 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(prjName);
 		String relativePath = "include";
 		IFolder buildFolder = ResourceHelper.createFolder(project, "buildDir");
-		IFolder relativeFolder = ResourceHelper.createFolder(project, "buildDir/"+relativePath);
-		IFolder relativeFolderProjName = ResourceHelper.createFolder(project, "buildDir/"+prjName);
+		IFolder relativeFolder = ResourceHelper.createFolder(project, "buildDir/" + relativePath);
+		IFolder relativeFolderProjName = ResourceHelper.createFolder(project, "buildDir/" + prjName);
 		String markedResolved = "-MarkedResolved";
-		IFolder relativeFolderProjNameResolved = ResourceHelper.createFolder(project, "buildDir/" + prjName+markedResolved);
-		IPath buildCWD=buildFolder.getLocation();
+		IFolder relativeFolderProjNameResolved = ResourceHelper.createFolder(project,
+				"buildDir/" + prjName + markedResolved);
+		IPath buildCWD = buildFolder.getLocation();
 		setBuilderCWD(project, buildCWD);
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -580,7 +609,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		// contribute the entries
 		CIncludePathEntry incRelativeEntry = new CIncludePathEntry(new Path(relativePath), 0);
 		CIncludePathEntry incProjNameEntry = new CIncludePathEntry(new Path("${ProjName}"), 0);
-		CIncludePathEntry incProjNameMarkedResolvedEntry = new CIncludePathEntry(new Path("${ProjName}"+markedResolved), ICSettingEntry.RESOLVED);
+		CIncludePathEntry incProjNameMarkedResolvedEntry = new CIncludePathEntry(
+				new Path("${ProjName}" + markedResolved), ICSettingEntry.RESOLVED);
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(incRelativeEntry);
 		entries.add(incProjNameEntry);
@@ -604,12 +634,13 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertEquals(relativeFolder.getLocation(), new Path(actualIncludePaths[0]));
 		assertEquals(new Path(relativePath), new Path(actualIncludePaths[1]));
 
-		// pair of entries, one resolved from build dir another expanded relative path
+		// pair of entries, one resolved from build dir another expanded
+		// relative path
 		assertEquals(relativeFolderProjName.getLocation(), new Path(actualIncludePaths[2]));
 		assertEquals(new Path(prjName), new Path(actualIncludePaths[3]));
 
 		// if marked RESOLVED only that path stays
-		assertEquals(new Path("${ProjName}"+markedResolved), new Path(actualIncludePaths[4]));
+		assertEquals(new Path("${ProjName}" + markedResolved), new Path(actualIncludePaths[4]));
 
 		assertEquals(5, actualIncludePaths.length);
 	}
@@ -622,7 +653,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
 		// set build CWD
 		IFolder buildFolder = ResourceHelper.createFolder(project, "buildDir");
-		IPath buildCWD=buildFolder.getLocation();
+		IPath buildCWD = buildFolder.getLocation();
 		setBuilderCWD(project, buildCWD);
 
 		// define a few variations of paths
@@ -634,11 +665,12 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		String relativePath_dotdot_slash = "../";
 		String relativePath_dotdot_slash_path = "../include";
 		IFolder relativeFolder_dotdot_slash_path = ResourceHelper.createFolder(project, "include");
-		String locationPath_dotdot_path = buildCWD.toString()+"/../include2";
+		String locationPath_dotdot_path = buildCWD.toString() + "/../include2";
 		IFolder incFolder_dotdot_slash_path = ResourceHelper.createFolder(project, "include2"); // "/ProjPath/buildDir/../include2"
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -649,13 +681,17 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 
 		// contribute the entries
 		CIncludePathEntry incRelativeEntry_dot = new CIncludePathEntry(new Path(relativePath_dot), 0);
-		CIncludePathEntry incRelativeEntry_dot_slash_path = new CIncludePathEntry(new Path(relativePath_dot_slash_path), 0);
+		CIncludePathEntry incRelativeEntry_dot_slash_path = new CIncludePathEntry(new Path(relativePath_dot_slash_path),
+				0);
 		CIncludePathEntry incRelativeEntry_dotdot = new CIncludePathEntry(new Path(relativePath_dotdot), 0);
-		CIncludePathEntry incRelativeEntry_dotdot_slash_path = new CIncludePathEntry(new Path(relativePath_dotdot_slash_path), 0);
+		CIncludePathEntry incRelativeEntry_dotdot_slash_path = new CIncludePathEntry(
+				new Path(relativePath_dotdot_slash_path), 0);
 		CIncludePathEntry incEntry_dotdot_path = new CIncludePathEntry(locationPath_dotdot_path, 0);
 		// use LOCAL flag not to clash with plain dot entries
-		CIncludePathEntry incRelativeEntry_dotdot_slash = new CIncludePathEntry(new Path(relativePath_dotdot_slash), ICSettingEntry.LOCAL);
-		CIncludePathEntry incRelativeEntry_dot_slash = new CIncludePathEntry(new Path(relativePath_dot_slash), ICSettingEntry.LOCAL);
+		CIncludePathEntry incRelativeEntry_dotdot_slash = new CIncludePathEntry(new Path(relativePath_dotdot_slash),
+				ICSettingEntry.LOCAL);
+		CIncludePathEntry incRelativeEntry_dot_slash = new CIncludePathEntry(new Path(relativePath_dot_slash),
+				ICSettingEntry.LOCAL);
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(incRelativeEntry_dot);
@@ -721,7 +757,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		String envPathStr = "${ProjDirPath}/Folder";
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -768,7 +805,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 			}
 
 			@Override
-			public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+			public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc,
+					String languageId) {
 				if (this.rc.equals(rc))
 					return entries;
 				return null;
@@ -777,11 +815,14 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
 		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+		IBuildConfiguration config = Adapters.adapt(cfgDescription, IBuildConfiguration.class);
+		assertNotNull(config);
 
 		// sample file
 		IFolder parentFolder = ResourceHelper.createFolder(project, "ParentFolder");
@@ -796,8 +837,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 
 		// add provider for parent folder
 		ILanguageSettingsProvider provider = new MockProviderForResource(parentFolder, entries);
-		assertNull(provider.getSettingEntries(cfgDescription, file, null));
-		assertEquals(includePathEntry, provider.getSettingEntries(cfgDescription, parentFolder, null).get(0));
+		assertNull(provider.getSettingEntries(config, file, null));
+		assertEquals(includePathEntry, provider.getSettingEntries(config, parentFolder, null).get(0));
 
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
@@ -825,7 +866,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		String envPathStr = "${ProjDirPath}/Folder";
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -871,7 +913,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		List<String> languageIds = new ArrayList<String>();
 		for (ICLanguageSetting ls : langSettings) {
 			String langId = ls.getLanguageId();
-			if (langId!=null && !languageIds.contains(langId)) {
+			if (langId != null && !languageIds.contains(langId)) {
 				languageIds.add(langId);
 			}
 		}
@@ -882,7 +924,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	 * Test composition of 2 languages.
 	 */
 	public void testResourceLanguages() throws Exception {
-		 class MockProviderLang extends LanguageSettingsBaseProvider implements ILanguageSettingsProvider {
+		class MockProviderLang extends LanguageSettingsBaseProvider implements ILanguageSettingsProvider {
 			private final String langId;
 			private final List<ICLanguageSettingEntry> entries;
 
@@ -893,8 +935,9 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 			}
 
 			@Override
-			public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-				if (langId==null || langId.equals(languageId))
+			public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc,
+					String languageId) {
+				if (langId == null || langId.equals(languageId))
 					return entries;
 				return new ArrayList<ICLanguageSettingEntry>();
 			}
@@ -909,7 +952,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		IFolder incFolderC = ResourceHelper.createFolder(project, "includeC");
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+				WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);

@@ -12,17 +12,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.resources.IPathEntryStore;
-import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
-import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -42,17 +31,25 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.resources.IPathEntryStore;
+import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
+import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+
 /**
- * C/C++ Include Paths and Symbols page for 3.X projects.
- * 
- * This page lives dormant as of writing (CDT 7.0) but may get activated for
- * {@code org.eclipse.cdt.make.core.makeNature} project (3.X style).
- * 
  * @deprecated as of CDT 4.0.
+ * @noreference This class is not intended to be referenced by clients.
  */
 @Deprecated
 public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatusChangeListener, IPathEntryStoreListener {
-
 	private static final String PAGE_SETTINGS = "IncludeSysmbolsPropertyPage"; //$NON-NLS-1$
 	private static final String INDEX = "pageIndex"; //$NON-NLS-1$
 

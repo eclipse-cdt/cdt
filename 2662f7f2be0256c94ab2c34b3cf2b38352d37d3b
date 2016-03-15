@@ -2,6 +2,91 @@
   "comments": [
     {
       "key": {
+        "uuid": "e7dfcf21_8e3fd93c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-15T18:02:30Z",
+      "side": 1,
+      "message": "I think we still need to check if this mapping applies to \u0027sourceName\u0027.\nFor example if the mapping is /home/marc/src -\u003e /home/marc/bin\nbut that sourceName is /lib/myLib.c\nthen this mapping does not apply and we need to look to the next container.\n\nHow about:\n\t\t\tif (container instanceof IMappingSourceContainer) {\n\t\t\t\tIPath mappedPath \u003d ((IMappingSourceContainer) container).getCompilationPath(sourceName);\n\n\t\t\t\tif (mappedPath !\u003d null) {\n\t\t\t\t    // The path mapping is applicable to sourceName\n\t\t\t\t    // First check if the backend is handling those mappings automatically\n\t\t\t\t    if (container instanceof MappingSourceContainer\n\t\t\t\t\t\t\u0026\u0026 ((MappingSourceContainer) container).isMappingWithBackendEnabled()) {\n    \t\t\t\t\t/*\n\t\t\t\t\t     * This mapping has been handled by GDB backend (i.e. it was\n\t\t\t\t\t     * collected by collectSubstitutionsPaths to pass to gdb\u0027s\n\t\t\t\t\t     * \"set substitute-path\").\n\t\t\t\t\t     * \n\t\t\t\t\t     * As the containers themselves do not know whether the\n\t\t\t\t\t     * director requesting the compilation path supports backend\n\t\t\t\t\t     * mapping we cannot rely on the call to getCompilationPath\n\t\t\t\t\t     * but need to force a null here.\n\t\t\t\t\t     */\n\t\t\t\t\t    return new Path(sourceName);\n\t\t\t\t\t}\n\t\t\t\t    return mappedPath;\n\t\t\t\t}\n\t\t\t}",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ce0ac1b0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-15T18:02:30Z",
+      "side": 1,
+      "message": "I had missed the fact that those mappings can be used by a different director.\nGood that you thought about it.",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ce03a182",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-15T18:02:30Z",
+      "side": 1,
+      "message": "The more I look at this, the more I think it is clearer to return sourceName instead of null.\nNull means no mapping was applicable, which is not our case.  What do you think?\t\nI\u0027m also worried about returning null because we call this method recursively below\nand don\u0027t consider null as a valid result.",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ae3ad549",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-15T18:02:30Z",
+      "side": 1,
+      "message": "We can\u0027t return here without checking for null first.  If null we need to go to the next container.",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6ef28d0e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-15T18:02:30Z",
+      "side": 1,
+      "message": "Since you can\u0027t always return right above, you will need the else below",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_ae2ad57b",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 26

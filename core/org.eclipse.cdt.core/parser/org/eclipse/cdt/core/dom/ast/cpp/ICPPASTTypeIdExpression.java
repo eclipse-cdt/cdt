@@ -21,13 +21,6 @@ public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression, ICPPASTEx
 	public static final int op_typeid = IASTTypeIdExpression.op_typeid;
 
 	/**
-	 * @deprecated all constants should be declared in {@link IASTTypeIdExpression}
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public static final int op_last = IASTTypeIdExpression.op_last;
-
-	/**
 	 * @since 5.1
 	 */
 	@Override

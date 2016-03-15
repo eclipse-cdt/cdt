@@ -108,11 +108,4 @@ public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier, IASTAttributeOw
 	 */
 	@Override
 	public ICPPASTDeclSpecifier copy(CopyStyle style);
-
-	/**
-	 * @deprecated All constants must be defined in {@link IASTDeclSpecifier}.
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public static final int sc_last = sc_mutable;
 }

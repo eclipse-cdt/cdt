@@ -31,13 +31,6 @@ public interface ICPPASTUnaryExpression extends IASTUnaryExpression, ICPPASTExpr
 	public static final int op_typeid = IASTUnaryExpression.op_typeid;
 
 	/**
-	 * @deprecated All constants to be defined in {@link IASTUnaryExpression}
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public static final int op_last = IASTUnaryExpression.op_last;
-	
-	/**
 	 * @since 5.1
 	 */
 	@Override

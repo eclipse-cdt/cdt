@@ -134,11 +134,6 @@ public interface ICPPASTSimpleTypeConstructorExpression extends ICPPASTExpressio
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated public static final int t_unsigned = 11;
-	/**
-	 * @deprecated Not used.
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated public static final int t_last = t_unsigned;
 
 	/**
 	 * @deprecated Replaced by {@link #getDeclSpecifier()}.

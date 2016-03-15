@@ -165,22 +165,14 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_is_trivially_copyable = 24;
 	
 	/**
-	 * @deprecated constants should be declared here, to avoid using the same constant in different
-	 * interfaces.
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public static final int op_last = op_alignof;
-
-	/**
-	 * Get the operator for the expression.
+	 * Returns the operator for the expression.
 	 * 
 	 * @return int
 	 */
 	public int getOperator();
 
 	/**
-	 * Set the operator for the expression.
+	 * Sets the operator for the expression.
 	 * @param value int
 	 */
 	public void setOperator(int value);

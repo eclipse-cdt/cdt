@@ -132,13 +132,6 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_labelReference = 18;
 
 	/**
-	 * @deprecated All constants must be defined in this interface.
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public static final int op_last = op_alignOf;
-
-	/**
 	 * {@code OPERAND} represents the relationship between an {@code IASTUnaryExpression} and
 	 * it's nested {@code IASTExpression}.
 	 */

@@ -111,11 +111,4 @@ public interface IASTDeclSpecifier extends IASTNode {
 	 */
 	@Deprecated
 	public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers);
-
-	/**
-	 * @deprecated All constants must be defined in this interface.
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public static final int sc_last = sc_register;
 }

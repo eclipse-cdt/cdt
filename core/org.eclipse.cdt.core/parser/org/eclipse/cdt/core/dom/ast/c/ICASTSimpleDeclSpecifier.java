@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICASTDeclSpecifier {
-
 	/**
 	 * @since 5.1
 	 */
@@ -39,11 +38,4 @@ public interface ICASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICAST
 	 */
 	@Deprecated
 	public static final int t_Bool = t_bool;
-
-	/**
-	 * @deprecated All constants must be defined in {@link IASTSimpleDeclSpecifier}.
-	 * @noreference This field is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public static final int t_last = t_Bool;
 }

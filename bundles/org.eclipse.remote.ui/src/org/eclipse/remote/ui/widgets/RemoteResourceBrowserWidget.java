@@ -188,7 +188,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	private String fDialogLabel;
 
 	private boolean fShowHidden;
-	private final List<IFileStore> fResources = new ArrayList<>();
+	private final List<IFileStore> fResources = new ArrayList<IFileStore>();
 	private String fResource;
 	private String fInitialPath;
 	private IPath fRootPath;
@@ -404,7 +404,9 @@ public class RemoteResourceBrowserWidget extends Composite {
 		/*
 		 * Only add filter if we are a directory browser. File and resource browsers show everything.
 		 */
-		if ((fOptionFlags & DIRECTORY_BROWSER) != 0) {
+		int mask = FILE_BROWSER|DIRECTORY_BROWSER;
+		if ((fOptionFlags & mask) != mask	// Avoid filter on resource browsers.
+				&& (fOptionFlags & DIRECTORY_BROWSER) != 0) {
 			fTreeViewer.addFilter(new ViewerFilter() {
 				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {

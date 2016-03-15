@@ -36,11 +36,13 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSourceLookup;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
@@ -111,6 +113,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepSourceGDBInitFile",   //$NON-NLS-1$
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
 					"stepSetSharedLibraryPaths",   //$NON-NLS-1$
+					"stepSetSourceSubstitutePath",   //$NON-NLS-1$
 					
 					// -environment-directory with a lot of paths could
 					// make setting breakpoint incredibly slow, which makes
@@ -481,6 +484,26 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
 
 		sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
+	}
+
+	/**
+	 * Setup the source substitute paths.
+	 *
+	 * This step tells GDB to to handle all the path re-writing using
+	 * "set substitute-path"
+	 *
+	 * @since 5.0
+	 */
+	@Execute
+	public void stepSetSourceSubstitutePath(RequestMonitor rm) {
+		IGDBSourceLookup sourceSubPath = fTracker.getService(IGDBSourceLookup.class);
+		ICommandControlDMContext context = fCommandControl.getContext();
+		if (sourceSubPath == null || !(context instanceof ISourceLookupDMContext)) {
+			rm.done();
+		} else {
+			ISourceLookupDMContext sourceLookupCtx = (ISourceLookupDMContext) context;
+			sourceSubPath.initializeSourceSubstitutions(sourceLookupCtx, rm);
+		}
 	}
 
 	private static final String INVALID = "invalid";   //$NON-NLS-1$

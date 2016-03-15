@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_11804cd4",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/settings/model/util/PathEntryTranslator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-03-15T20:13:25Z",
+      "side": 1,
+      "message": "Ugh, comments at the end of a line.",
+      "revId": "24ecc9e7be7ba0775d48a779e46a4c4ad9a86f84",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

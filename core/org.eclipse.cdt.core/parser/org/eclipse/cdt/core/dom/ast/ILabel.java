@@ -23,6 +23,7 @@ public interface ILabel extends IBinding {
     /**
      * @since 5.4
      * @deprecated use {@link #EMPTY_ARRAY} instead
+     * @noreference This field is not intended to be referenced by clients.
      */
 	@Deprecated
     public static final IBinding[] EMPTY_LABEL_ARRAY = {};

@@ -38,6 +38,7 @@ public interface ICPPASTLiteralExpression extends IASTLiteralExpression, ICPPAST
 
 	/**
 	 * @deprecated All constants must be defined in {@link IASTLiteralExpression}.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int lk_last = lk_false;

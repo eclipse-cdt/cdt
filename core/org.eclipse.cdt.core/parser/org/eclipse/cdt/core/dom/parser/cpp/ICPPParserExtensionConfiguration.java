@@ -163,18 +163,21 @@ public interface ICPPParserExtensionConfiguration {
 
 	/**
 	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public boolean supportGCCOtherBuiltinSymbols();
 
 	/**
 	 * @deprecated use {@link IScannerExtensionConfiguration#supportMinAndMaxOperators()}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public boolean supportMinAndMaxOperators();
 
 	/**
 	 * @deprecated configure extra keywords, via {@link IScannerExtensionConfiguration#getAdditionalKeywords()}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public boolean supportRestrictKeyword();

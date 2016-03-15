@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * @deprecated, use IASTMacroExpansionLocation instead
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IASTMacroExpansion extends IASTNodeLocation {

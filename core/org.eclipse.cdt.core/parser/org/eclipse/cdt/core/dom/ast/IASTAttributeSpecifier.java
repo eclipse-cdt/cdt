@@ -25,15 +25,15 @@ public interface IASTAttributeSpecifier extends IASTNode {
 			new ASTNodeProperty("IASTAttributeSpecifier.ATTRIBUTE"); //$NON-NLS-1$
 
 	/**
-	 * Returns the attributes of the specifier.
 	 * @deprecated Use IASTAttributeList.getAttributes() instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public abstract IASTAttribute[] getAttributes();
 
 	/**
-	 * Adds an attribute to the specifier.
 	 * @deprecated Use IASTAttributeList.addAttribute() instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public abstract void addAttribute(IASTAttribute attribute);

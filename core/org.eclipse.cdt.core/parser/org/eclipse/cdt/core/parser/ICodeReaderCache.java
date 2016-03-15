@@ -20,18 +20,16 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * For thread safety the implementations of this interface must ensure that their methods are thread safe. 
  * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICodeReaderCache {
-
 	/**
 	 * Retrieves the CodeReader corresponding to the key specified that represents the 
 	 * path for that CodeReader.  If no CodeReader is found in the cache then a new CodeReader
 	 * is created for the path and then returned.
-	 * 
+	 *
 	 * @param key the path corresponding to the CodeReader, generally: 
 	 * fileToParse.getLocation().toOSString()
 	 * @return the CodeReader corresponding to the path specified by the key

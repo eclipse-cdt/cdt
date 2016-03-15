@@ -16,11 +16,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 
 /**
- * G++ adds its own modifiers and types to the Simple Decl Specifier.
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated Replaced by {@link ICPPASTSimpleDeclSpecifier}.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier, ICPPASTSimpleDeclSpecifier {

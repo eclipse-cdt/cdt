@@ -356,68 +356,190 @@ public interface IProblem {
 	 */
 	public final static int MISSING_SEMICOLON = SYNTAX_RELATED | 0x002;
 	
-
-	
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static int SEMANTICS_RELATED = 0x08000000;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static String A_PREPROC_POUND_ERROR = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static String A_PREPROC_POUND_WARNING = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static String A_PREPROC_INCLUDE_FILENAME = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static String A_PREPROC_MACRO_NAME = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static String A_PREPROC_CONDITION = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static String A_PREPROC_UNKNOWN_DIRECTIVE = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static String A_PREPROC_CONDITIONAL_MISMATCH = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final String A_SCANNER_BADCHAR = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final String A_SYMBOL_NAME = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final String A_NAMESPACE_NAME = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final String A_TYPE_NAME = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static String FILENAME_NOT_PROVIDED = ""; //$NON-NLS-1$
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static int SEMANTIC_UNIQUE_NAME_PREDEFINED = SEMANTICS_RELATED | 0x001;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static int SEMANTIC_NAME_NOT_FOUND = SEMANTICS_RELATED | 0x002;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public final static int SEMANTIC_NAME_NOT_PROVIDED = SEMANTICS_RELATED | 0x003;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_INVALID_OVERLOAD = SEMANTICS_RELATED | 0x004;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_INVALID_USING = SEMANTICS_RELATED | 0x005;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_AMBIGUOUS_LOOKUP = SEMANTICS_RELATED | 0x006;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_INVALID_TYPE = SEMANTICS_RELATED | 0x007;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_CIRCULAR_INHERITANCE = SEMANTICS_RELATED | 0x008;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_INVALID_TEMPLATE = SEMANTICS_RELATED | 0x009;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_BAD_VISIBILITY = SEMANTICS_RELATED | 0x00A;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_UNABLE_TO_RESOLVE_FUNCTION = SEMANTICS_RELATED | 0x00B;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENT = SEMANTICS_RELATED | 0x00C;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_INVALID_TEMPLATE_PARAMETER = SEMANTICS_RELATED | 0x00D;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_REDECLARED_TEMPLATE_PARAMETER = SEMANTICS_RELATED | 0x00E;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_INVALID_CONVERSION_TYPE = SEMANTICS_RELATED | 0x00F;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_MALFORMED_EXPRESSION = SEMANTICS_RELATED | 0x010;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_ILLFORMED_FRIEND = SEMANTICS_RELATED | 0x011;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final int SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION = SEMANTICS_RELATED | 0x012;
 }

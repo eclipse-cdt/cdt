@@ -174,20 +174,6 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	@Override
 	public ICPPFunctionScope getFunctionScope();
 
-
-	@Deprecated
-	public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty(
-			"ICPPASTFunctionDeclarator.CONSTRUCTOR_CHAIN_MEMBER - Role of a Constructor Chain Initializer"); //$NON-NLS-1$
-	
-	/**
-	 * @deprecated  use {@link ICPPASTFunctionDefinition#getMemberInitializers}, instead.
-	 */
-	@Deprecated
-	public ICPPASTConstructorChainInitializer[] getConstructorChain();
-
-	@Deprecated
-	public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer);
-	
 	/**
 	 * @since 5.1
 	 */
@@ -208,30 +194,12 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public boolean isOverride();
 
 	/**
-	 * Sets whether this function is declared override.
-	 * 
-	 * @since 5.5
-	 * @deprecated Use addVirtSpecifier() instead.
-	 */
-	@Deprecated
-	public void setOverride(boolean isOverride);
-
-	/**
 	 * Returns whether this function is declared final.
 	 * 
 	 * @since 5.5
 	 */
 	public boolean isFinal();
 
-	/**
-	 * Sets whether this function is declared final.
-	 * 
-	 * @since 5.5
-	 * @deprecated Use addVirtSpecifier() instead.
-	 */
-	@Deprecated
-	public void setFinal(boolean isFinal);
-	
 	/**
 	 * Returns the virt-specifiers of this function.
 	 * @since 5.7
@@ -243,4 +211,42 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * @since 5.7
 	 */
 	public void addVirtSpecifier(ICPPASTVirtSpecifier virtSpecifier);
+
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty(
+			"ICPPASTFunctionDeclarator.CONSTRUCTOR_CHAIN_MEMBER - Role of a Constructor Chain Initializer"); //$NON-NLS-1$
+	
+	/**
+	 * @deprecated Use {@link ICPPASTFunctionDefinition#getMemberInitializers}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ICPPASTConstructorChainInitializer[] getConstructorChain();
+
+	/**
+	 * @deprecated Use {@link ICPPASTFunctionDefinition#addMemberInitializer(ICPPASTConstructorChainInitializer)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer);
+	
+	/**
+	 * @since 5.5
+	 * @deprecated Use {@link #addVirtSpecifier(ICPPASTVirtSpecifier)} instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public void setFinal(boolean isFinal);
+
+	/**
+	 * @since 5.5
+	 * @deprecated Use {@link #addVirtSpecifier(ICPPASTVirtSpecifier)} instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public void setOverride(boolean isOverride);
 }

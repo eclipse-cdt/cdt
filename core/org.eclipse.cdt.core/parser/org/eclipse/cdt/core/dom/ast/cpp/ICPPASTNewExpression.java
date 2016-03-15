@@ -112,6 +112,7 @@ public interface ICPPASTNewExpression extends ICPPASTExpression, IASTImplicitNam
 
 	/**
 	 * @deprecated the id-expressions are part of the type-id.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final ASTNodeProperty NEW_TYPEID_ARRAY_EXPRESSION = new ASTNodeProperty(
@@ -119,36 +120,42 @@ public interface ICPPASTNewExpression extends ICPPASTExpression, IASTImplicitNam
 
 	/**
 	 * @deprecated the id-expressions are part of the type-id.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression[] getNewTypeIdArrayExpressions();
 
 	/**
 	 * @deprecated the id-expressions are part of the type-id
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void addNewTypeIdArrayExpression(IASTExpression expression);
 	
 	/**
 	 * @deprecated Replaced by {@link #getPlacementArguments()}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getNewPlacement();
 	
 	/**
 	 * @deprecated Replaced by {@link #setPlacementArguments(IASTInitializerClause[])}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setNewPlacement(IASTExpression expression);
 
 	/**
 	 * @deprecated Replaced by {@link #getInitializer()}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getNewInitializer();
 
 	/**
 	 * @deprecated Replaced by {@link #setInitializer(IASTInitializer)}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setNewInitializer(IASTExpression expression);

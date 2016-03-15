@@ -14,12 +14,8 @@ package org.eclipse.cdt.core.dom.ast.gnu;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 
 /**
- * There are GNU language extensions that apply to both GCC and G++. Unary
- * expressions for _alignOf() and typeof() along the lines of sizeof().
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated Use {@link IASTTypeIdExpression}, instead.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IGNUASTTypeIdExpression extends IASTTypeIdExpression {

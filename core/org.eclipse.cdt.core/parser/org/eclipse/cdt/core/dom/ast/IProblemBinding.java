@@ -65,6 +65,7 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
 
 	/**
 	 * @deprecated, there may be additional problems.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int LAST_PROBLEM = 0x00E;

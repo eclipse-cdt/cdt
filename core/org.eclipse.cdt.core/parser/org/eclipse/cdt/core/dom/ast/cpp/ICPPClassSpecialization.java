@@ -28,6 +28,7 @@ public interface ICPPClassSpecialization extends ICPPTypeSpecialization, ICPPCla
 
 	/**
 	 * @deprecated Specializing a member may require a point of instantiation.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	IBinding specializeMember(IBinding binding);

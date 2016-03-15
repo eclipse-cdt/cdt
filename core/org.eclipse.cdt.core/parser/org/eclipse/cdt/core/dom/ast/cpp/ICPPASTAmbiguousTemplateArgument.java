@@ -40,12 +40,14 @@ public interface ICPPASTAmbiguousTemplateArgument extends IASTNode {
 	
 	/**
 	 * @deprecated Replaced by {@link #addExpression(IASTExpression)}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void addIdExpression(IASTExpression idExpression);
 	
 	/**
 	 * @deprecated Replaced by {@link #addIdExpression(IASTExpression)}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void addIdExpression(IASTIdExpression idExpression);

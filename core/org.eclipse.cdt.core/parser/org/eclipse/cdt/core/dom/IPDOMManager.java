@@ -23,6 +23,7 @@ public interface IPDOMManager {
 	public static final String ID_FAST_INDEXER= "org.eclipse.cdt.core.fastIndexer"; //$NON-NLS-1$
 	/**
 	 * @deprecated The full indexer has been removed.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final String ID_FULL_INDEXER= "org.eclipse.cdt.core.domsourceindexer"; //$NON-NLS-1$

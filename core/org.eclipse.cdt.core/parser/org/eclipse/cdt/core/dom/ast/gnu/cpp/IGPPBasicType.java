@@ -15,14 +15,11 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 
 /**
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated use {@link ICPPBasicType}, instead.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IGPPBasicType extends ICPPBasicType {
-
-	
 	/**
 	 * @deprecated don't use this constant.
 	 */

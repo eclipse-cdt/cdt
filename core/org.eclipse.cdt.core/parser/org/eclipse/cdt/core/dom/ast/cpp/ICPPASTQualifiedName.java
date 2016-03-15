@@ -49,15 +49,12 @@ public interface ICPPASTQualifiedName extends ICPPASTName, IASTNameOwner {
 	public void setLastName(ICPPASTName name);
 
 	/**
-	 * Returns all name segments.
-	 *
-	 * @return <code>IASTName []</code>
-	 * 
 	 * @deprecated This cannot represent all qualified names in C++11,
 	 * where the first segment of a qualifier name may be a decltype-specifier.
 	 * Use {@link #getLastName()} and {@link #getQualifier()} instead.
 	 * If called on a name where a segment is a decltype-specifier,
 	 * UnsupportedOperationException is thrown.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTName[] getNames();

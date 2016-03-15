@@ -20,13 +20,11 @@ import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
  * of a CodeReader.
  * 
  * @author jcamelon
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated replaced by {@link IncludeFileContentProvider}
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICodeReaderFactory {
-
 	/**
 	 * @return unique identifier as int
 	 */

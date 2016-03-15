@@ -81,44 +81,52 @@ public interface IBasicType extends IType {
 	public boolean isImaginary();
 
 	/**
-	 * @deprecated, use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public int getType() throws DOMException;
 
 	/**
-	 * @deprecated, types don't have values.
+	 * @deprecated Types don't have values.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getValue() throws DOMException;
 
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_unspecified = IASTSimpleDeclSpecifier.t_unspecified;
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_void = IASTSimpleDeclSpecifier.t_void;
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_char = IASTSimpleDeclSpecifier.t_char;
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_int = IASTSimpleDeclSpecifier.t_int;
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_float = IASTSimpleDeclSpecifier.t_float;
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_double = IASTSimpleDeclSpecifier.t_double;

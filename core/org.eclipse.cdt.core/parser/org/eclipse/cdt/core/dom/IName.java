@@ -37,6 +37,7 @@ public interface IName {
 	 * index never contain qualification or template arguments, which is different
 	 * for names from the AST.
 	 * Use {@link #getSimpleID()}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public char[] toCharArray();

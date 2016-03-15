@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 public interface ICPPTemplateNonTypeParameter extends ICPPTemplateParameter, ICPPVariable {
 	/** 
 	 * @deprecated, use {@link ICPPTemplateParameter#getDefaultValue()}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getDefault();

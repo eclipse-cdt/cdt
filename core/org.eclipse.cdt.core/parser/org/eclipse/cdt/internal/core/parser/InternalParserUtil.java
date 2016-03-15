@@ -54,9 +54,8 @@ public class InternalParserUtil extends ParserFactory {
 	}
 
 	/**
-	 * Creates a code reader for an external location, normalizing path to 
-	 * canonical path. The cache is consulted after the path has been normalized.
 	 * @deprecated, use {@link FileContent}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static org.eclipse.cdt.core.parser.CodeReader createExternalFileReader(String externalLocation, CodeReaderLRUCache cache) throws IOException {

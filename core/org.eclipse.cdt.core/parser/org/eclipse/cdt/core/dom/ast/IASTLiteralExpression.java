@@ -39,8 +39,8 @@ public interface IASTLiteralExpression extends IASTExpression {
 	public static final int lk_string_literal = 3;
 
 	/**
-	 * A constant defined for subclasses to extend from.
-	 * @deprecated all possible values must be defined in {@link IASTLiteralExpression}.
+	 * @deprecated All possible values must be defined in {@link IASTLiteralExpression}.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int lk_last = lk_string_literal;
@@ -113,6 +113,7 @@ public interface IASTLiteralExpression extends IASTExpression {
 
 	/**
 	 * @deprecated Replaced by {@link #setValue(char[])}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setValue(String value);

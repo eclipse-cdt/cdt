@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 
 /**
  * @deprecated register {@link ICProjectDescriptionListener} for {@link CProjectDescriptionEvent}
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICDescriptorListener {

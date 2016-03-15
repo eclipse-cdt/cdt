@@ -30,31 +30,31 @@ public interface ITypeInfo {
 	};
 		
 	/**
-	 * Gets the CElement type.
+	 * Returns the CElement type.
 	 * @return ICElement.C_NAMESPACE, C_CLASS, C_STRUCT, C_UNION, C_ENUMERATION, or C_TYPEDEF,
 	 * or zero if unknown type.
 	 */
 	public int getCElementType();
 
 	/**
-	 * Gets the type name.
+	 * Returns the type name.
 	 */
 	public String getName();
 
 	/**
-	 * Gets the qualified type name.
+	 * Returns the qualified type name.
 	 */
 	public IQualifiedTypeName getQualifiedTypeName();
 
 	/** 
-	 * Gets the originating locations where this type was declared.
+	 * Returns the originating locations where this type was declared.
 	 * @return all known source references, or an empty
 	 * array if none found.
 	 */
 	public ITypeReference[] getReferences();
 
 	/**
-	 * Gets the real location where type was declared.
+	 * Returns the real location where type was declared.
 	 * 
 	 * @return the parsed source reference (with offset and length), 
 	 * or <code>null</code> if not found.
@@ -62,7 +62,7 @@ public interface ITypeInfo {
 	public ITypeReference getResolvedReference();
 			
 	/**
-	 * Gets the enclosing project.
+	 * Returns the enclosing project.
 	 */
 	public ICProject getEnclosingProject();
 

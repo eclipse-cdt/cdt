@@ -13,11 +13,8 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 
 /**
- * G++ allows for restrict to be a modifier for the decl spec.
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated Replaced by {@link IASTDeclSpecifier}.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IGPPASTDeclSpecifier extends IASTDeclSpecifier {

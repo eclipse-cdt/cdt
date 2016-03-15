@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This is the base interface that represents a declaration specifier sequence.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -31,12 +31,14 @@ public interface IASTDeclSpecifier extends IASTNode {
 	public static final int sc_mutable = 6;
 
 	/**
-	 * @since 5.10 
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 * @since 5.10
 	 */
 	@Deprecated
 	public static final ASTNodeProperty ALIGNMENT_SPECIFIER = new ASTNodeProperty(
 			"IASTDeclSpecifier.ALIGNMENT_SPECIFIER - Alignment specifier");  //$NON-NLS-1$
-	
+
 	/**
 	 * Returns the storage class, which is one of the constants sc_...
 	 */
@@ -53,16 +55,16 @@ public interface IASTDeclSpecifier extends IASTNode {
 
 	// Function specifier
 	public boolean isInline();
-	
+
 	/**
-	 * Get any alignment-specifiers in this decl-specifier sequence.
 	 * @deprecated Use ICASTDeclSpecifier.getAlignmentSpecifiers() for C code.
 	 * In C++ code, alignment specifiers are now stored in the attribute specifier sequence.
+	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.10
 	 */
 	@Deprecated
 	public IASTAlignmentSpecifier[] getAlignmentSpecifiers();
-	
+
 	/**
 	 * @since 5.1
 	 */
@@ -100,18 +102,19 @@ public interface IASTDeclSpecifier extends IASTNode {
 	 * Not allowed on frozen ast.
 	 */
 	public void setInline(boolean value);
-	
+
 	/**
-	 * Not allowed on frozen ast.
 	 * @deprecated Use ICASTDeclSpecifier.setAlignmentSpecifiers() for C code.
 	 * In C++ code, alignment specifiers are now stored in the attribute specifier sequence.
+	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.10
 	 */
 	@Deprecated
 	public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers);
-	
+
 	/**
 	 * @deprecated All constants must be defined in this interface.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int sc_last = sc_register;

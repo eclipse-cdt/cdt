@@ -51,15 +51,15 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 	public void setArgument(IASTInitializerClause expression);
 
 	/**
-	 * Returns the subscript expression, or <code>null</code>. Consider using {@link #getArgument()}.
 	 * @deprecated Replaced by {@link #getArgument()}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getSubscriptExpression();
 
 	/**
-	 * Not allowed on frozen ast.
 	 * @deprecated Replaced by {@link #setArgument(IASTInitializerClause)}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setSubscriptExpression(IASTExpression expression);

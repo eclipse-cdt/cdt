@@ -68,7 +68,8 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 	public void addTemplateParameter(ICPPASTTemplateParameter paramm);
 
 	/**
-	 * @deprecated Use addTemplateParameter.
+	 * @deprecated Use {@link #addTemplateParameter(ICPPASTTemplateParameter)}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void addTemplateParamter(ICPPASTTemplateParameter paramm);

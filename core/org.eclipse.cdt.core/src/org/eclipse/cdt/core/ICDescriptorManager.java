@@ -18,13 +18,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated replace with {@link ICProjectDescriptionManager} & {@link ICProjectDescription}
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICDescriptorManager {
-
 	public void configure(IProject project, String id) throws CoreException;
 
 	public void convert(IProject project, String id) throws CoreException;

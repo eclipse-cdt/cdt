@@ -50,6 +50,7 @@ public interface ILinkage {
 
 	/**
 	 * Additional linkage ids may be added in future.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	final static int MAX_LINKAGE_ID= FORTRAN_LINKAGE_ID;

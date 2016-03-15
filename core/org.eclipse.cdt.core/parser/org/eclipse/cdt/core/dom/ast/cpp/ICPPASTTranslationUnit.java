@@ -27,6 +27,7 @@ public interface ICPPASTTranslationUnit extends IASTTranslationUnit {
 
 	/**
 	 * @deprecated Use {@link #getGlobalNamespace()}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IBinding resolveBinding();

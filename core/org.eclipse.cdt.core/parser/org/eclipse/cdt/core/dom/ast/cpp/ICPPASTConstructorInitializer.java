@@ -58,16 +58,22 @@ public interface ICPPASTConstructorInitializer extends IASTInitializer {
 
 	/**
 	 * @deprecated Replaced by {@link #getArguments()}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getExpression();
 
 	/**
 	 * @deprecated Replaced by {@link #setArguments(IASTInitializerClause[])}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setExpression(IASTExpression expression);
-	
+
+	/**
+	 * @deprecated Use {@link #ARGUMENT} instead.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final ASTNodeProperty EXPRESSION = ARGUMENT;
 }

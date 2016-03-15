@@ -22,6 +22,7 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 	/**
 	 * @since 5.4
 	 * @deprecated use {@link #EMPTY_ARRAY} instead 
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final IASTStatement[] EMPTY_LABEL_STATEMENT_ARRAY = {};

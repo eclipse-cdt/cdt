@@ -24,6 +24,7 @@ public interface ICExtension {
 
 	/**
 	 * @deprecated Use {@link #getConfigExtensionReference()} instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public ICExtensionReference getExtensionReference();

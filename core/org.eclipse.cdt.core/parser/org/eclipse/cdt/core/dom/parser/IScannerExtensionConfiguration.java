@@ -24,11 +24,10 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IScannerExtensionConfiguration {
-
 	/**
-	 * @return <code>true</code>, if macros should be initialized to 1
 	 * @deprecated empty macros are taken as they are. It is the task of configuration to provide the correct values.
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=215789
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public boolean initializeMacroValuesTo1();

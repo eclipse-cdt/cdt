@@ -114,6 +114,7 @@ public interface IScanner {
 	public int getCodeBranchNesting();
 	
 	/**
+	 * @deprecated Has no effect.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated

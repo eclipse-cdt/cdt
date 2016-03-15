@@ -13,12 +13,11 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 
 /**
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated Use {@link IASTPointer}, instead.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IGPPASTPointer extends IASTPointer {
-
 	/**
 	 * @since 5.1
 	 */

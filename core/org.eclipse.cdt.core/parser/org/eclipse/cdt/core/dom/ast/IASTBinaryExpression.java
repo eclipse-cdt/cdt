@@ -224,7 +224,8 @@ public interface IASTBinaryExpression extends IASTExpression {
 	public static final int op_ellipses= 34;
 	
 	/**
-	 * @deprecated all constants must be defined here, to avoid using the same value twice.
+	 * @deprecated All constants must be defined here, to avoid using the same value twice.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int op_last = op_ellipses;

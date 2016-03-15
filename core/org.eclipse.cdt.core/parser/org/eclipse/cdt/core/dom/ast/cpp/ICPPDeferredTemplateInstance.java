@@ -15,6 +15,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 
 /**
  * @deprecated use {@link ICPPDeferredClassInstance} instead.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICPPDeferredTemplateInstance extends ICPPTemplateInstance {

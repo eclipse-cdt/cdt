@@ -17,13 +17,11 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated Unified with {@link ICPPASTSimpleTypeConstructorExpression}.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorExpression, IASTNameOwner {
-
 	/**
 	 * Was template token consumed?
 	 * 

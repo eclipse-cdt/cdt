@@ -241,56 +241,56 @@ public interface ICElement extends IAdaptable {
 	static final int ASM_LABEL= 94;
 
 	/**
-	 * Modifier indicating a class constructor
 	 * @deprecated use {@link IMethodDeclaration#isConstructor()}
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	static final int C_CLASS_CTOR = 0x100;
 
 	/**
-	 * Modifier indicating a class destructor
 	 * @deprecated use {@link IMethodDeclaration#isDestructor()}
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	static final int C_CLASS_DTOR = 0x200;
 
 	/**
-	 * Modifier indicating a static storage attribute
 	 * @deprecated use {@link IDeclaration#isStatic()}
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	static final int C_STORAGE_STATIC = 0x400;
 
 	/**
-	 * Modifier indicating an extern storage attribute
 	 * @deprecated not used anymore
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	static final int C_STORAGE_EXTERN = 0x800;
 
 	/**
-	 * Modifier indicating a private class
 	 * @deprecated use {@link IMember#getVisibility()}
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	static final int CPP_PRIVATE = 0x1000;
 
 	/**
-	 * Modifier indicating a public class
 	 * @deprecated use {@link IMember#getVisibility()}
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	static final int CPP_PUBLIC = 0x2000;
 
 	/**
-	 * Modifier indicating a protected class
 	 * @deprecated use {@link IMember#getVisibility()}
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	static final int CPP_PROTECTED = 0x4000;
 	/**
-	 * Modifier indicating a friend class
 	 * @deprecated use {@link IMethodDeclaration#isFriend()}
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	static final int CPP_FRIEND = 0x8000;

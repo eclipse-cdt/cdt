@@ -42,12 +42,14 @@ public interface IValue {
 
 	/**
 	 * @deprecated Returns an empty character array.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	char[] getInternalExpression(); 
 
 	/**
 	 * @deprecated Returns an empty array.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	IBinding[] getUnknownBindings();

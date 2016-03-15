@@ -13,9 +13,8 @@ package org.eclipse.cdt.core;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICOwner {

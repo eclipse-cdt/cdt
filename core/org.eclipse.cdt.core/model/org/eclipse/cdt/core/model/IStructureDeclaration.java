@@ -39,8 +39,8 @@ public interface IStructureDeclaration extends IDeclaration {
 	public boolean isStruct() throws CModelException;
 
 	/**
-	 * Return "class", "struct", "union"
 	 * @deprecated use isUnion(), isClass(), isStruct()
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	String getTypeName() throws CModelException;

@@ -14,13 +14,10 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
 /**
  * @deprecated Replaced by {@link IASTUnaryExpression}.
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IGNUASTUnaryExpression extends IASTUnaryExpression {
-
 	/**
 	 * @since 5.1
 	 */

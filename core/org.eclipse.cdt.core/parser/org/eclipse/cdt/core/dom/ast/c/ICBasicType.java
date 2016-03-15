@@ -18,7 +18,8 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
  */
 public interface ICBasicType extends IBasicType {
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_Bool = ICASTSimpleDeclSpecifier.t_Bool;

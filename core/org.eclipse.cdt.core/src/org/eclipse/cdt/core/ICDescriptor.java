@@ -19,20 +19,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Element;
 /**
- * Models meta-data stored with a CDT project
- *
- * Consumers should ensure that changes made to an ICDescriptor are done
- * in the context of an {@link ICDescriptorOperation}
- * via {@link ICDescriptorManager#runDescriptorOperation}
- *
- * @see ICDescriptorOperation
- * @see ICDescriptorManager
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated as this API is not configuration aware. Replaced by 
  * {@link ICConfigurationDescription} which can be fetched with 
  * {@link ICProjectDescription#getConfigurations()}
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICDescriptor {

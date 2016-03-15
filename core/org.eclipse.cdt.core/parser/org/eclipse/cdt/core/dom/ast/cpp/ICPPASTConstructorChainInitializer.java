@@ -74,12 +74,14 @@ public interface ICPPASTConstructorChainInitializer extends IASTInitializer, ICP
 	
 	/**
 	 * @deprecated Replaced by {@link #getInitializer()}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getInitializerValue();
 
 	/**
 	 * @deprecated Replaced by {@link #setInitializer(IASTInitializer)}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setInitializerValue(IASTExpression expression);

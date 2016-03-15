@@ -35,8 +35,8 @@ public interface IArrayType extends IType {
     boolean hasSize();
 
     /**
-     * Returns the expression that represents the size of this array
-     * @throws DOMException
+     * @deprecated Replaced by {@link #getSize()}.
+     * @noreference This method is not intended to be referenced by clients.
      */
     @Deprecated
     IASTExpression getArraySizeExpression() throws DOMException;

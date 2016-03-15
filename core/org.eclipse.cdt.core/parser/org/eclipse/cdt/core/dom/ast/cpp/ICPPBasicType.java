@@ -20,26 +20,29 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 public interface ICPPBasicType extends IBasicType {
 	/**
 	 * @deprecated, don't use the constant, more flags may be added for supporting future c++ standards.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int LAST = IS_LONG_LONG;
 
 	/** 
-	 * @return a combination of qualifiers.
 	 * @since 4.0
 	 * @deprecated use {@link #getModifiers()}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public int getQualifierBits();
 
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_bool = ICPPASTSimpleDeclSpecifier.t_bool;
 
 	/**
-	 * @deprecated,  use the type-safe version getKind(), instead.
+	 * @deprecated Use the type-safe version getKind(), instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_wchar_t = ICPPASTSimpleDeclSpecifier.t_wchar_t;

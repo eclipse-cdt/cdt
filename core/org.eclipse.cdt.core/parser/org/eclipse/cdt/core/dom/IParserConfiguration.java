@@ -13,13 +13,8 @@ package org.eclipse.cdt.core.dom;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 
 /**
- * This interface represents a parser configuration as specified by the client
- * to the parser service.
- * 
- * @author jcamelon
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  * @deprecated Used only by other deprecated interfaces
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IParserConfiguration {

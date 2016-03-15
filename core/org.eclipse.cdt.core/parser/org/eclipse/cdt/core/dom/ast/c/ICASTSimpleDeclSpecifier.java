@@ -35,12 +35,14 @@ public interface ICASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICAST
 
 	/**
 	 * @deprecated Replaced by {@link IASTSimpleDeclSpecifier#t_bool}.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_Bool = t_bool;
 
 	/**
 	 * @deprecated All constants must be defined in {@link IASTSimpleDeclSpecifier}.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_last = t_Bool;

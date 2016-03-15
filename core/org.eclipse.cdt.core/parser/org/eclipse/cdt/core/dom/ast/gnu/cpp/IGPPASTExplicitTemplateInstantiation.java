@@ -13,16 +13,11 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 
 /**
- * G++ allows for instantiations to be qualified w/modifiers for scoping.
  * @deprecated Replaced by {@link ICPPASTExplicitTemplateInstantiation}
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
-public interface IGPPASTExplicitTemplateInstantiation extends
-		ICPPASTExplicitTemplateInstantiation {
-
+public interface IGPPASTExplicitTemplateInstantiation extends ICPPASTExplicitTemplateInstantiation {
 	/**
 	 * <code>ti_static</code> implies 'static' keyword is used.
 	 */

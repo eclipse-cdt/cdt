@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 
 /**
  * @deprecated use {@link org.eclipse.cdt.core.model.IWorkingCopyProvider}, instead.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IWorkingCopyProvider {

@@ -73,48 +73,104 @@ public interface ICPPASTSimpleTypeConstructorExpression extends ICPPASTExpressio
 	 * @since 5.2
 	 */
 	public void setInitializer(IASTInitializer initializer);
-	
-	
+
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated	public static final int t_unspecified = 0;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_void = 1;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_char = 2;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_int = 3;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_float = 4;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_double = 5;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_bool = 6;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_wchar_t = 7;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_short = 8;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_long = 9;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_signed = 10;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_unsigned = 11;
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated public static final int t_last = t_unsigned;
 
 	/**
 	 * @deprecated Replaced by {@link #getDeclSpecifier()}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public int getSimpleType();
 
 	/**
 	 * @deprecated Replaced by {@link #setDeclSpecifier(ICPPASTDeclSpecifier)}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setSimpleType(int value);
 
 	/**
 	 * @deprecated Replaced by {@link #INITIALIZER}.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final ASTNodeProperty INITIALIZER_VALUE = INITIALIZER;
 
 	/**
 	 * @deprecated Replaced by {@link #getInitializer()}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTExpression getInitialValue();
 
 	/**
 	 * @deprecated Replaced by {@link #setInitializer(IASTInitializer)}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setInitialValue(IASTExpression expression);

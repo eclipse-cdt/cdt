@@ -12,12 +12,10 @@ package org.eclipse.cdt.core.browser;
 
 /**
  * @deprecated not used anywhere
- * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ITypeInfoVisitor {
-	
 	public boolean visit(ITypeInfo info);
 
 	public boolean shouldContinue();

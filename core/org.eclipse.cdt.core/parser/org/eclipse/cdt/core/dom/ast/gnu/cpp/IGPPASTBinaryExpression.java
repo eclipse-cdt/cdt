@@ -31,8 +31,9 @@ public interface IGPPASTBinaryExpression extends ICPPASTBinaryExpression {
 	public static final int op_min = IASTBinaryExpression.op_min;
 
 	/**
-	 * @deprecated all constants must be defined in {@link IASTBinaryExpression} to avoid
+	 * @deprecated All constants must be defined in {@link IASTBinaryExpression} to avoid
 	 * using a constant twice.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int op_last = IASTBinaryExpression.op_last;

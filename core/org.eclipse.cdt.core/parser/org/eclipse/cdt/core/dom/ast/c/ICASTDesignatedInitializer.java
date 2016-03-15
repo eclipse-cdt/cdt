@@ -67,12 +67,14 @@ public interface ICASTDesignatedInitializer extends IASTInitializer, IASTInitial
 
 	/**
 	 * @deprecated Replaced by {@link #getOperand()};
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IASTInitializer getOperandInitializer();
 
 	/**
 	 * @deprecated Replaced by setOperand();
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void setOperandInitializer(IASTInitializer rhs);

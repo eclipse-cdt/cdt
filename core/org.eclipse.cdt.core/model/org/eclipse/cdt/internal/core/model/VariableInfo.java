@@ -8,11 +8,9 @@
  * Contributors:
  * Rational Software - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 class VariableInfo extends SourceManipulationInfo {
-
 	String typeStr = ""; //$NON-NLS-1$
 	boolean isConst = false;
 	boolean isVolatile = false;

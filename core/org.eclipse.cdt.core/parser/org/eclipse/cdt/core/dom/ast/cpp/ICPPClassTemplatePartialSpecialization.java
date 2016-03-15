@@ -25,7 +25,10 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplate, ICPPPartialSpecialization {
 	/** @since 6.0 */
 	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_ARRAY = {};
-	/** @deprecated Use {@link #EMPTY_ARRAY} */
+	/**
+	 * @deprecated Use {@link #EMPTY_ARRAY}
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_PARTIAL_SPECIALIZATION_ARRAY = EMPTY_ARRAY;
 	

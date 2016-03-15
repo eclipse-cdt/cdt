@@ -96,14 +96,15 @@ public interface ICommandLauncher {
 	 * @param env The list of environment variables in variable=value format.
 	 * @throws CoreException if there is an error executing the command.
 	 */
-	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor) throws CoreException;
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Reads output form the process to the streams.
-	 * @deprecated Deprecated as of CDT 8.1. Use method taking IProgressMonitor instead.
+	 * @deprecated Use {@link #waitAndRead(OutputStream, OutputStream, IProgressMonitor)} instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public  int waitAndRead(OutputStream out, OutputStream err);
+	public int waitAndRead(OutputStream out, OutputStream err);
 
 	/**
 	 * Reads output form the process to the streams. A progress monitor is
@@ -111,6 +112,5 @@ public interface ICommandLauncher {
 	 * process if the monitor becomes canceled override to implement a different
 	 * way to read the process inputs
 	 */
-	public  int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor);
-
+	public int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor);
 }

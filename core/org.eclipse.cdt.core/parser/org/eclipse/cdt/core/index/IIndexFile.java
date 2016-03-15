@@ -78,14 +78,16 @@ public interface IIndexFile extends IFileNomination {
 	long getContentsHash() throws CoreException;
 
 	/**
-	 * @deprecated Returns 0. 
+	 * @deprecated Returns 0.
+	 * @noreference This method is not intended to be referenced by clients. 
 	 */
 	@Deprecated
 	int getScannerConfigurationHashcode() throws CoreException;
 
 	/**
 	 * @since 5.3
-	 * @deprecated Returns 0. 
+	 * @deprecated Returns 0.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	int getEncodingHashcode() throws CoreException;

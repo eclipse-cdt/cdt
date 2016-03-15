@@ -58,6 +58,7 @@ public interface IScope {
 
 	/**
 	 * @deprecated Use {{@link #find(String, IASTTranslationUnit)}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IBinding[] find(String name);
@@ -88,12 +89,14 @@ public interface IScope {
 
 	/**
 	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup);
 
 	/**
 	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,

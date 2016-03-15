@@ -101,7 +101,8 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends ICPPASTTemplatePa
 	public ICPPScope asScope();
 
 	/**
-	 * @deprecated Use {@link #addTemplateParameter(ICPPASTTemplateParameter)};
+	 * @deprecated Use {@link #addTemplateParameter(ICPPASTTemplateParameter)}
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void addTemplateParamter(ICPPASTTemplateParameter parm);

@@ -132,16 +132,9 @@ public interface IIndex {
 	public long getLastWriteAccess();
 
 	/**
-	 * Returns the file object for the given location and linkage or {@code null} if the file
-	 * was not indexed in this linkage.
-	 * <p>
-	 * When a header file is stored in the index in multiple variants for different sets of macro
-	 * definitions, this method will return an arbitrary one of these variants.
-	 * @param location an IIndexFileLocation representing the location of the file
-	 * @return the file in the index or {@code null}
-	 * @throws CoreException
 	 * @deprecated Use {@link #getFile(int, IIndexFileLocation, ISignificantMacros)} or
 	 *     {@link #getFiles(int, IIndexFileLocation)}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException;

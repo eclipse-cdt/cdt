@@ -18,11 +18,9 @@ package org.eclipse.cdt.core.model;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEnumeration extends IParent, IDeclaration {
-
 	/**
-	 * Return "enum"
-	 * @throws CModelException 
-	 * @deprecated
+	 * @deprecated Useless method that always returns "enum".
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	String getTypeName() throws CModelException;

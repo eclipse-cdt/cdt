@@ -118,12 +118,8 @@ public interface ICParserExtensionConfiguration {
 	public boolean supportFunctionStyleAssembler();
 	
 	/**
-	 * See http://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html for more
-	 * information on GCC's Other Built-in Symbols.
-	 * 
-	 * @return <code>true</code> if support for the extension should be
-	 *         enabled
 	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public boolean supportGCCOtherBuiltinSymbols();

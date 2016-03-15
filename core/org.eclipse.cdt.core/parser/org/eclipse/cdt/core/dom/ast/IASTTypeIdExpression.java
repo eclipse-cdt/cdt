@@ -167,6 +167,7 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	/**
 	 * @deprecated constants should be declared here, to avoid using the same constant in different
 	 * interfaces.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int op_last = op_alignof;

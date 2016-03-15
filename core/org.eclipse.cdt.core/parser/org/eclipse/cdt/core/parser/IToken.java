@@ -98,12 +98,8 @@ public interface IToken {
 
 	/** @since 5.10*/ int t_alignas = 5900;
 	/** @since 5.10*/ int t_alignof = 5901;
-	/** @deprecated use {@link #tAND} */ @Deprecated int t_and = 54;
-	/** @deprecated use {@link #tAMPERASSIGN} */ @Deprecated int t_and_eq = 55;
 	int t_asm = 56;
 	int t_auto = 57;
-	/** @deprecated use {@link #tAMPER} */ @Deprecated int t_bitand = 58;
-	/** @deprecated use {@link #tBITOR} */ @Deprecated int t_bitor = 59;
 	int t_bool = 60;
 	int t_break = 61;
 	int t_case = 62;
@@ -112,8 +108,6 @@ public interface IToken {
 	/** @since 5.2 */ int t_char16_t= 5202;
 	/** @since 5.2 */ int t_char32_t= 5203;
 	int t_class = 65;
-	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int tCOMPL= tBITCOMPLEMENT;
-	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int t_compl = 66;
 	int t_const = 67;
 
 	/** @since 5.4 */ int t_constexpr = 5400;
@@ -144,11 +138,7 @@ public interface IToken {
 	int t_new = 92;
 	/** @since 5.4 */ int t_noexcept = 5401;
 	/** @since 5.4 */ int t_nullptr = 5402;
-	/** @deprecated use {@link #tNOT} */ @Deprecated int t_not = 93;
-	/** @deprecated use {@link #tNOTEQUAL} */ @Deprecated int t_not_eq = 94;
 	int t_operator = 95;
-	/** @deprecated use {@link #tOR} */ @Deprecated int t_or = 96;
-	/** @deprecated use {@link #tBITORASSIGN} */ @Deprecated int t_or_eq = 97;
 	int t_private = 98;
 	int t_protected = 99;
 	int t_public = 100;
@@ -180,8 +170,6 @@ public interface IToken {
 	int t_volatile = 124;
 	int t_wchar_t = 125;
 	int t_while = 126;
-	/** @deprecated use {@link #tXOR} */ @Deprecated int t_xor = 127;
-	/** @deprecated use {@link #tXORASSIGN} */ @Deprecated int t_xor_eq = 128;
 	int tFLOATINGPT = 129;
 
 	int tSTRING = 130;
@@ -202,13 +190,10 @@ public interface IToken {
 	int t__Complex = 135;
 	int t__Imaginary = 136;
 	int t_restrict = 137;
-	/** @deprecated don't use it */ @Deprecated int tMACROEXP = 138;
 	int tPOUND= 	  138;
 	int tPOUNDPOUND = 139;
 	int tCOMPLETION = 140;
 	int tEOC = 141; // End of Completion
-	/** @deprecated don't use it */ @Deprecated int tCOMMENT = 142;
-	/** @deprecated don't use it */ @Deprecated int tBLOCKCOMMENT = 143;
 	int tEND_OF_INPUT= 144;
 	/** @since 5.1 */ int tINACTIVE_CODE_START= 145;
 	/** @since 5.1 */ int tINACTIVE_CODE_SEPARATOR= 146;
@@ -234,4 +219,35 @@ public interface IToken {
 	 */
 	@Deprecated
 	public boolean isOperator();
+
+	/** @deprecated use {@link #tAND} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_and = 54;
+	/** @deprecated use {@link #tAMPERASSIGN} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_and_eq = 55;
+	/** @deprecated use {@link #tAMPER} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_bitand = 58;
+	/** @deprecated use {@link #tBITOR} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_bitor = 59;
+	/** @deprecated use {@link #tBITCOMPLEMENT} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int tCOMPL= tBITCOMPLEMENT;
+	/** @deprecated use {@link #tBITCOMPLEMENT} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_compl = 66;
+	/** @deprecated use {@link #tNOT} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_not = 93;
+	/** @deprecated use {@link #tNOTEQUAL} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_not_eq = 94;
+	/** @deprecated use {@link #tOR} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_or = 96;
+	/** @deprecated use {@link #tBITORASSIGN} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_or_eq = 97;
+	/** @deprecated use {@link #tXOR} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_xor = 127;
+	/** @deprecated use {@link #tXORASSIGN} @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int t_xor_eq = 128;
+	/** @deprecated don't use it @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int tMACROEXP = 138;
+	/** @deprecated don't use it @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int tCOMMENT = 142;
+	/** @deprecated don't use it @noreference This field is not intended to be referenced by clients. */
+	@Deprecated int tBLOCKCOMMENT = 143;
 }

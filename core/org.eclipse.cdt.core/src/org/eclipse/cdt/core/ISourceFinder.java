@@ -14,7 +14,6 @@ import java.io.File;
 
 import org.eclipse.cdt.internal.core.model.Binary;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * This interface is available for a {@link Binary} via the adapter mechanism. It is used to translate the
@@ -93,21 +92,9 @@ public interface ISourceFinder {
 	public String toLocalPath(String compilationPath);
 
 	/**
-	 * Use this method to find a file if you have a debug context. The implementation will consult the source
-	 * locator associated with the given ILaunch. If there is no such locator or it does not find the file,
-	 * the global source locator is consulted.
-	 * 
-	 * @param launch
-	 *            an IAdaptable that will queried for an ILaunch. Pass in an ILaunch instance or something
-	 *            that can be adapted to one. If the object does not adapt to ILaunch, null is returned.
-	 * @param compilationPath
-	 *            the path of a file as found in the debug information
-	 * @return if we are able to find the file, the location on the host machine, otherwise null. The result
-	 *         is in OS specific format, along the lines of what {@link IPath#toOSString()} would return. Note
-	 *         that by "on the host machine", we simply mean a specification that is <i>accessible by the host
-	 *         machine</i>. The file may be on a network drive, e.g., and thus not really be "local".
 	 * @deprecated This method is unused in CDT code base. Use {@link #toLocalPath(String)} or request
 	 * undeprecating on the cdt-dev mailing list.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public String toLocalPath(IAdaptable launch, String compilationPath);

@@ -21,7 +21,10 @@ public interface IASTAttributeOwner extends IASTNode {
 	/** @since 5.7 */
 	public static final ASTNodeProperty ATTRIBUTE_SPECIFIER = 
 			new ASTNodeProperty("IASTAttributeOwner.ATTRIBUTE_SPECIFIER"); //$NON-NLS-1$
-	/** @deprecated Not used. */
+	/**
+	 * @deprecated Not used.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public static final ASTNodeProperty ATTRIBUTE = 
 			new ASTNodeProperty("IASTAttributeOwner.ATTRIBUTE"); //$NON-NLS-1$
@@ -44,8 +47,9 @@ public interface IASTAttributeOwner extends IASTNode {
 	public IASTAttribute[] getAttributes();
 
 	/**
-	 * @deprecated Ignored. Attributes should not be assigned to nodes directly, but have to be
-	 * wrapped by attribute specifiers.
+	 * @deprecated Ignored. Attributes should not be assigned to nodes directly,
+	 * but have to be wrapped by attribute specifiers.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void addAttribute(IASTAttribute attribute);

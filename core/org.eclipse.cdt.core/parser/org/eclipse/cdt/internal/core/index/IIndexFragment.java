@@ -90,21 +90,9 @@ public interface IIndexFragment {
 	public static final String PROPERTY_RESUME_INDEXER= "org.eclipse.cdt.internal.core.index.resume"; //$NON-NLS-1$
 
 	/**
-	 * Returns the file for the given location and linkage.
-	 * May return <code>null</code>, if no such file exists.
-	 * This method may only return files that are actually managed by this fragment.
-	 * This method returns files without content, also.
-	 * <p>
-	 * When a header file is stored in the index in multiple variants for different sets of macro
-	 * definitions, this method will return an arbitrary one of these variants.
-	 *
-	 * @param linkageID the id of the linkage in which the file has been parsed.
-	 * @param location the IIndexFileLocation representing the location of the file
-	 * @return the file for the location, or <code>null</code> if the file is not present in
-	 *     the index
-	 * @throws CoreException
 	 * @deprecated Use {@link #getFile(int, IIndexFileLocation, ISignificantMacros)} or
 	 *     {@link #getFiles(int, IIndexFileLocation)}.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location) throws CoreException;

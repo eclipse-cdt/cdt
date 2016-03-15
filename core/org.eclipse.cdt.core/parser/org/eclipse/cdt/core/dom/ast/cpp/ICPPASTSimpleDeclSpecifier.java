@@ -34,6 +34,7 @@ public interface ICPPASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICP
 
 	/**
 	 * @deprecated all constants must be defined in {@link IASTSimpleDeclSpecifier}.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int t_last = t_wchar_t;

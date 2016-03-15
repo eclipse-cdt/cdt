@@ -35,6 +35,7 @@ public interface ICPPASTBinaryExpression extends IASTBinaryExpression, ICPPASTEx
 	/**
 	 * @deprecated all constants must be defined in {@link IASTBinaryExpression}, to avoid 
 	 * duplicate usage of the same constant.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final int op_last = IASTBinaryExpression.op_last;

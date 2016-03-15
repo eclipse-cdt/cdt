@@ -25,8 +25,10 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Adapters;
 import org.junit.Test;
 
 /**
@@ -61,6 +63,8 @@ public class LibtoolGCCBuildCommandParserTest {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		IBuildConfiguration config = Adapters.adapt(cfgDescription, IBuildConfiguration.class);
+		assertNotNull(config);
 
 		IFile file1 = ResourceHelper.createFile(project, "file1.cpp");
 		IFile file2 = ResourceHelper.createFile(project, "file2.cpp");
@@ -77,11 +81,11 @@ public class LibtoolGCCBuildCommandParserTest {
 		parser.processLine("libtool: compile:  g++ -I/path0 file2.cpp");
 		parser.processLine("libtool: compile:  cc -I/path0 file3.cpp");
 		parser.shutdown();
-		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file1, languageId);
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(config, file1, languageId);
 		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
-		entries = parser.getSettingEntries(cfgDescription, file2, languageId);
+		entries = parser.getSettingEntries(config, file2, languageId);
 		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
-		entries = parser.getSettingEntries(cfgDescription, file3, languageId);
+		entries = parser.getSettingEntries(config, file3, languageId);
 		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
 	}
 

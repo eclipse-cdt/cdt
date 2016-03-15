@@ -84,11 +84,6 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 			return baseClass;
 		}
 
-		@Override @Deprecated
-		public IName getBaseClassSpecifierName() {
-			return base.getBaseClassSpecifierName();
-		}
-		
 		@Override
 		public IName getClassDefinitionName() {
 			return base.getClassDefinitionName();

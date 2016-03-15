@@ -474,6 +474,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_71a43003",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T22:08:34Z",
+      "side": 1,
+      "message": "It may be possible. At first I thought that it was a pure in memory operation. However it may access disk if the container is (for e.g.) a DirectorySourceContainer. As there cannot be MappingSourceContainers as children of arbitrary other source containers, I recommend (and have implemented) simply limiting the recursion to things that can have MappingSourceContainers, i.e. the root containers plus DefaultSourceContainer (which has the global containers in it).",
+      "parentUuid": "e7dfcf21_c19e1db4",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_e1807951",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
         "patchSetId": 24
@@ -485,6 +503,24 @@
       "writtenOn": "2016-03-14T05:24:01Z",
       "side": 1,
       "message": "Should we do\n\t\tif (!fDirectors.containsKey(sourceLookupCtx)) {\nlike is done for each other call that will acces the source director?",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b19eb8b2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T22:08:34Z",
+      "side": 1,
+      "message": "The director wasn\u0027t being accessed here, but in getSubstitutionsPaths() which had such a check. I duplicated the check as it makes it more obvious.",
+      "parentUuid": "e7dfcf21_e1807951",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -508,6 +544,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_d180a451",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T22:08:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_a1a3d1f8",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_95560f54",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
         "patchSetId": 24
@@ -519,6 +573,24 @@
       "writtenOn": "2016-03-14T14:42:39Z",
       "side": 1,
       "message": "It should never happen, but we could get a failure for one of the commands below.\nIn such a case, we probably don\u0027t want to cache the entries.\nHow about overriding handleCompleted() of this CRM and storing entries when success\nand storing null when failure?  Then, if null is found in sourceContainersChanged() we always\nsend the update.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_11620c32",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T22:08:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_95560f54",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

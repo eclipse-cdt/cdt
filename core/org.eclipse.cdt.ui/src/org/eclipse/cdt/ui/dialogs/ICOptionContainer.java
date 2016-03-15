@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Preferences;
 
 public interface ICOptionContainer {
-
 	void updateContainer();
 
 	IProject getProject();
@@ -26,5 +24,4 @@ public interface ICOptionContainer {
 	 * @return the preference store, or <code>null</code> if none
 	 */
 	public Preferences getPreferences();
-
 }

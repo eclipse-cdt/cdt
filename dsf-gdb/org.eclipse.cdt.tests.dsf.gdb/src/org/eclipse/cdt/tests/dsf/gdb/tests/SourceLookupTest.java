@@ -161,12 +161,12 @@ public class SourceLookupTest extends BaseTestCase {
 	/**
 	 * Map entry for non-canonical build dirs
 	 */
-	protected MapEntrySourceContainer fMapEntrySourceContainerN = new MapEntrySourceContainer(
-			new Path(BUILD_NONCANONICAL_PATH), new Path(SOURCE_ABSPATH));
+	protected MapEntrySourceContainer fMapEntrySourceContainerN = new MapEntrySourceContainer(BUILD_NONCANONICAL_PATH,
+			new Path(SOURCE_ABSPATH));
 	/**
 	 * Map entry for canonical build dirs
 	 */
-	protected MapEntrySourceContainer fMapEntrySourceContainerC = new MapEntrySourceContainer(new Path(BUILD_ABSPATH),
+	protected MapEntrySourceContainer fMapEntrySourceContainerC = new MapEntrySourceContainer(BUILD_ABSPATH,
 			new Path(SOURCE_ABSPATH));
 
 	protected AsyncCompletionWaitor fBreakpointInstalledWait = new AsyncCompletionWaitor();
@@ -482,7 +482,6 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteAN() throws Throwable {
 		sourceMapping(EXEC_AN_NAME, true);
 	}
@@ -519,7 +518,6 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteRN() throws Throwable {
 		sourceMapping(EXEC_RN_NAME, true);
 	}
@@ -557,7 +555,6 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteBreakpointsAN() throws Throwable {
 		sourceMappingBreakpoints(EXEC_AN_NAME, true);
 	}
@@ -595,7 +592,6 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteBreakpointsRN() throws Throwable {
 		sourceMappingBreakpoints(EXEC_RN_NAME, true);
 	}
@@ -625,8 +621,8 @@ public class SourceLookupTest extends BaseTestCase {
 		doMappingAndLaunch(EXEC_AC_NAME, withBackend);
 
 		DsfSourceLookupDirector sourceLocator = (DsfSourceLookupDirector) getGDBLaunch().getSourceLocator();
-		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(
-				new Path(BUILD_ABSPATH + "/incorrectsubpath"), new Path(SOURCE_ABSPATH));
+		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(BUILD_ABSPATH + "/incorrectsubpath",
+				new Path(SOURCE_ABSPATH));
 
 		if (withBackend) {
 			assertSourceFound();
@@ -960,8 +956,7 @@ public class SourceLookupTest extends BaseTestCase {
 		 * substitution, we want to make sure that we process the other
 		 * MappingSourceContainer correctly
 		 */
-		substituteContainer
-				.addMapEntry(new MapEntrySourceContainer(new Path("/from_invalid"), new Path("/to_invalid")));
+		substituteContainer.addMapEntry(new MapEntrySourceContainer("/from_invalid", new Path("/to_invalid")));
 		AbstractSourceLookupDirector director = setSourceContainer(substituteContainer);
 
 		// this is the mapping we want to do the work

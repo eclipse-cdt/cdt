@@ -36,12 +36,14 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
 			if (ELEMENT_NAME.equals(element.getNodeName())) {
-				String path = element.getAttribute(BACKEND_PATH);
-				IPath backend = MapEntrySourceContainer.createPath(path);
-				if (!backend.isValidPath(path)) {
+				String backend = element.getAttribute(BACKEND_PATH);
+				if (backend == null || backend.isEmpty()) {
 					abort(InternalSourceLookupMessages.MapEntrySourceContainerType_0, null);
 				}
-				path = element.getAttribute(LOCAL_PATH);
+				String path = element.getAttribute(LOCAL_PATH);
+				if (path == null) {
+					abort(InternalSourceLookupMessages.MapEntrySourceContainerType_1, null);
+				}
 				IPath local = new Path(path);
 				if (!local.isValidPath(path)) {
 					abort(InternalSourceLookupMessages.MapEntrySourceContainerType_1, null);
@@ -62,7 +64,7 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 		MapEntrySourceContainer entry = (MapEntrySourceContainer) container;
 		Document document = newDocument();
 		Element element = document.createElement(ELEMENT_NAME);
-		element.setAttribute(BACKEND_PATH, entry.getBackendPath().toOSString());
+		element.setAttribute(BACKEND_PATH, entry.getBackend());
 		element.setAttribute(LOCAL_PATH, entry.getLocalPath().toOSString());
 		document.appendChild(element);
 		return serializeDocument(document);

@@ -100,4 +100,49 @@ public class SourceLookupTest_6_6 extends SourceLookupTest {
 	public void sourceMappingBreakpointsRC() throws Throwable {
 		super.sourceMappingBreakpointsRC();
 	}
+
+	/**
+	 * GDB < 6.8 does not work correctly with substitute-paths with .. in the
+	 * build path when the build path is an absolute path. GDB 6.8 and above
+	 * works fine in this case.
+	 */
+	@Ignore("Not supported because GDB < 6.8 does non-canonical absolute paths.")
+	@Test
+	@Override
+	public void sourceSubstituteAN() throws Throwable {
+		super.sourceSubstituteAN();
+	}
+
+	/**
+	 * @see SourceLookupTest_6_6#sourceSubstituteAN()
+	 */
+	@Ignore("Not supported because GDB < 6.8 does non-canonical absolute paths.")
+	@Test
+	@Override
+	public void sourceSubstituteBreakpointsAN() throws Throwable {
+		super.sourceSubstituteAN();
+	}
+
+	/**
+	 * GDB < 7.6 does not work correctly with substitute-paths with .. in the
+	 * build path when the build path is a relative path. GDB 7.6 and above
+	 * works fine in this case.
+	 */
+	@Ignore("Not supported because GDB < 7.6 does non-canonical relative paths.")
+	@Test
+	@Override
+	public void sourceSubstituteRN() throws Throwable {
+		super.sourceSubstituteRN();
+	}
+
+	/**
+	 * @see SourceLookupTest_6_6#sourceSubstituteRN()
+	 */
+	@Ignore("Not supported because GDB < 7.6 does non-canonical relative paths.")
+	@Test
+	@Override
+	public void sourceSubstituteBreakpointsRN() throws Throwable {
+		super.sourceSubstituteRN();
+	}
+
 }

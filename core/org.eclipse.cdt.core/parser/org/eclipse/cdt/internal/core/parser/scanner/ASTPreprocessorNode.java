@@ -542,12 +542,6 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	}
 
 	@Override
-	public void setExpansion(String exp) {assert false;}
-
-	@Override
-	public void setName(IASTName name) {assert false;}
-
-	@Override
 	public IASTFileLocation getExpansionLocation() {
 		if (fExpansionNumber >= 0) {
 			IASTTranslationUnit ast = getTranslationUnit();

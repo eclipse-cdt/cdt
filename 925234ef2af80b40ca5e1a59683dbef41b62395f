@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_e6140704",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_218b4174",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_816fb51f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
         "patchSetId": 24
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-14T05:24:01Z",
       "side": 1,
       "message": "add at the end of above line \"to be added explicitly\"",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_06181334",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_816fb51f",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_261fcf1e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_617469f2",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_ba6f7aed",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
         "patchSetId": 24
@@ -64,6 +118,24 @@
       "writtenOn": "2016-03-14T05:24:01Z",
       "side": 1,
       "message": "Not a big deal, but the above if should be in an else since MapEntrySourceContainer\ncannot have children",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_46221b62",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_ba6f7aed",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_26718f53",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Unfortunately we do need to handle it here. The MappingSourceContainer does not have the information needed to know whether it should be used. The director is the one that knows if it has already bypassed the container by virtual of set substitute-path. The structure of the loop in getCompilationPath matches collectSubstitutionsPaths just above. I have expanded the comment to explain.\n\nThat said, with an API change to org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer.getCompilationPath(String) we could pass in the current enablement. If we did that, I would want to also move the collectSubstitutionsPaths logic into the container too. My suggested solution would be a new interface IMappingWithBackendSourceContainer with methods:\n  \n  boolean isMappingWithBackendEnabled() (pulled up from MappingSourceContainer)\n  IPath getCompilationPath(String sourceName, boolean mappingSupportedByBackend)\n  and then a method that collected the substitutions too (for collectSubstitutionsPaths) implementation.\n\nBefore I go and rewrite for this, please let me know if that is what you want.",
+      "parentUuid": "e7dfcf21_5a6af6e1",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_dab28631",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
         "patchSetId": 24
@@ -98,6 +188,24 @@
       "writtenOn": "2016-03-14T05:24:01Z",
       "side": 1,
       "message": "Don\u0027t we need to check that this mapping corresponds to the passed sourceName?\t\nThis may be why you didn\u0027t put the return below?\t\n\nMaybe this approach could fail in the following obscure case.\nSay I create the correct mapping using the backend, then follow it with\na mapping NOT using the backend, but that does still return a new path but the wrong one.\nThen the second mapping will take precedence over the first and break things.\n\nI\u0027m thinking that once we find a valid mapping, we should use it.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2648af05",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_dab28631",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_0651f3af",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_97a377f9",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_da044656",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
         "patchSetId": 24
@@ -132,6 +258,24 @@
       "writtenOn": "2016-03-14T05:24:01Z",
       "side": 1,
       "message": "I think the below should be in an else statement.\nThe old code did not look for children if we are dealing with an IMappingSourceContainer",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e64de719",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_da044656",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_66ac7725",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_9aa63ec1",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5a9cb676",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
         "patchSetId": 24
@@ -166,6 +328,24 @@
       "writtenOn": "2016-03-14T06:06:36Z",
       "side": 1,
       "message": "Nicely done about the query.  Can you move this comment to where the query is used?\nThat is where it makes sense.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_86a7c33e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_5a9cb676",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_c688ebab",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Added a comment. The getSourceName comes through right away (in terms of executor cycles) so a delay would be a problem.\n\nComment added.",
+      "parentUuid": "e7dfcf21_fa24a2b8",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_b0a6b9c0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
         "patchSetId": 24
@@ -206,6 +404,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_060e53c4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "I have created Bug 489607 for that. Note that this is one of many cases that source lookup changes do not update fully. Granted this is a new case introduced by this change. The most serious case, and this exists with the current code base, is that changing source lookup does not cause breakpoints to be reinserted.",
+      "parentUuid": "e7dfcf21_b0a6b9c0",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_81a41504",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
         "patchSetId": 24
@@ -217,6 +433,24 @@
       "writtenOn": "2016-03-14T05:24:01Z",
       "side": 1,
       "message": "Use ImmediateRequestMonitor in this particular case.  We had some race issues long ago and had to do this for all service in their initialize() method.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_262c2f1e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_81a41504",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -325,6 +559,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_8640a3bb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIUnsetSubstitutePath.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_61a9c9db",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_4193edae",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIUnsetSubstitutePath.java",
         "patchSetId": 24
@@ -336,6 +588,24 @@
       "writtenOn": "2016-03-14T05:24:01Z",
       "side": 1,
       "message": "We try to set the specific context to be used so as to guide people using this interface.  In this case it would be ISourceLookupDMContext I believe.  That being said, if you think this may change, or may not be the case on some other situations, then you can keep IDMContext to make the API more generic.  You know better in this case.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c63aab4b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIUnsetSubstitutePath.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_4193edae",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -359,6 +629,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_e6dc0795",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MISetSubstitutePath.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_2190a1a2",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_1025adb2",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 24
@@ -376,6 +664,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_06e01341",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_1025adb2",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_10d04df3",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 24
@@ -387,6 +693,24 @@
       "writtenOn": "2016-03-14T15:02:28Z",
       "side": 1,
       "message": "I think most of the methods added are copied from the existing ones\nand simply calling setIsMappingWithBackendEnabled() differently.\nCan we merge these methods and pass in a parameter to differentiate the two cases?\nThe different tests would stay and pass in the parameter.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_26e7cf5b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T00:32:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_10d04df3",
       "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

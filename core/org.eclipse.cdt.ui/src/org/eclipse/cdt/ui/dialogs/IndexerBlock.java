@@ -604,6 +604,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 
     /**
      * @deprecated always returns false
+     * @noreference This method is not intended to be referenced by clients.
      */
 	@Deprecated
 	public boolean isIndexEnabled() {

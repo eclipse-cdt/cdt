@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
+import org.eclipse.jface.wizard.IWizardPage;
+
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.jface.wizard.IWizardPage;
 
 /**
  * A path container page allows the user to create a new or edit an 
@@ -29,10 +30,8 @@ import org.eclipse.jface.wizard.IWizardPage;
  * </p>
  * 
  * @deprecated - use IPathEntryContainerPage 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  */
-
 @Deprecated
 public interface ICPathContainerPage extends IWizardPage {
 

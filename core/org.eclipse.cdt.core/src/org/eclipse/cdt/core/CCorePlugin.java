@@ -92,8 +92,8 @@ import org.osgi.framework.BundleContext;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * CCorePlugin is the life-cycle owner of the core plug-in, and starting point
- * for access to many core APIs.
+ * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many
+ * core APIs.
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -103,8 +103,7 @@ public class CCorePlugin extends Plugin {
 	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
 	public static final int CDT_PROJECT_NATURE_ID_MISMATCH = 3;
 	/**
-	 * Status code for core exception that is thrown if a pdom grew larger than
-	 * the supported limit.
+	 * Status code for core exception that is thrown if a pdom grew larger than the supported limit.
 	 * 
 	 * @since 5.2
 	 */
@@ -276,8 +275,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the shared working copies currently registered for the default
-	 * buffer factory.
+	 * Returns the shared working copies currently registered for the default buffer factory.
 	 * 
 	 * @since 5.1
 	 */
@@ -382,25 +380,21 @@ public class CCorePlugin extends Plugin {
 		pdomManager = new PDOMManager();
 		final Job post2 = pdomManager.startup();
 
-		// bug 186755, when started after the platform has been started the job
-		// manager
-		// is no longer suspended. So we have to start a job at the very end to
-		// make
-		// sure we don't trigger a concurrent plug-in activation from within the
-		// job.
+		// bug 186755, when started after the platform has been started the job manager
+		// is no longer suspended. So we have to start a job at the very end to make
+		// sure we don't trigger a concurrent plug-in activation from within the job.
 		post1.schedule();
 		post2.schedule();
 	}
 
 	/**
-	 * TODO: Add all options here Returns a table of all known configurable
-	 * options with their default values. These options allow to configure the
-	 * behavior of the underlying components. The client may safely use the
-	 * result as a template that they can modify and then pass to
+	 * TODO: Add all options here Returns a table of all known configurable options with their
+	 * default values. These options allow to configure the behavior of the underlying components.
+	 * The client may safely use the result as a template that they can modify and then pass to
 	 * <code>setOptions</code>.
 	 *
-	 * Helper constants have been defined on CCorePlugin for each of the option
-	 * ID and their possible constant values.
+	 * Helper constants have been defined on CCorePlugin for each of the option ID and their
+	 * possible constant values.
 	 *
 	 * Note: more options might be added in further releases.
 	 * 
@@ -415,9 +409,8 @@ public class CCorePlugin extends Plugin {
 	 *     - default:           <platform default>
 	 * </pre>
 	 *
-	 * @return a mutable map containing the default settings of all known
-	 *         options (key type: <code>String</code>; value type:
-	 *         <code>String</code>)
+	 * @return a mutable map containing the default settings of all known options (key type:
+	 *         <code>String</code>; value type: <code>String</code>)
 	 * @see #setOptions
 	 */
 	public static HashMap<String, String> getDefaultOptions() {
@@ -446,11 +439,10 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Helper method for returning one option value only. Equivalent to
-	 * <code>(String)CCorePlugin.getOptions().get(optionName)</code> Note that
-	 * it may answer <code>null</code> if this option does not exist.
+	 * <code>(String)CCorePlugin.getOptions().get(optionName)</code> Note that it may answer
+	 * <code>null</code> if this option does not exist.
 	 * <p>
-	 * For a complete description of the configurable options, see
-	 * <code>getDefaultOptions</code>.
+	 * For a complete description of the configurable options, see <code>getDefaultOptions</code>.
 	 * </p>
 	 *
 	 * @param optionName
@@ -471,16 +463,14 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the table of the current options. Initially, all options have
-	 * their default values, and this method returns a table that includes all
-	 * known options.
+	 * Returns the table of the current options. Initially, all options have their default values,
+	 * and this method returns a table that includes all known options.
 	 * <p>
-	 * For a complete description of the configurable options, see
-	 * <code>getDefaultOptions</code>.
+	 * For a complete description of the configurable options, see <code>getDefaultOptions</code>.
 	 * </p>
 	 *
-	 * @return table of current settings of all options (key type:
-	 *         <code>String</code>; value type: <code>String</code>)
+	 * @return table of current settings of all options (key type: <code>String</code>; value type:
+	 *         <code>String</code>)
 	 * @see CCorePlugin#getDefaultOptions
 	 */
 	public static HashMap<String, String> getOptions() {
@@ -512,18 +502,16 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Sets the current table of options. All and only the options explicitly
-	 * included in the given table are remembered; all previous option settings
-	 * are forgotten, including ones not explicitly mentioned.
+	 * Sets the current table of options. All and only the options explicitly included in the given
+	 * table are remembered; all previous option settings are forgotten, including ones not
+	 * explicitly mentioned.
 	 * <p>
-	 * For a complete description of the configurable options, see
-	 * <code>getDefaultOptions</code>.
+	 * For a complete description of the configurable options, see <code>getDefaultOptions</code>.
 	 * </p>
 	 *
 	 * @param newOptions
-	 *            the new options (key type: <code>String</code>; value type:
-	 *            <code>String</code>), or <code>null</code> to reset all
-	 *            options to their default values
+	 *            the new options (key type: <code>String</code>; value type: <code>String</code>),
+	 *            or <code>null</code> to reset all options to their default values
 	 * @see CCorePlugin#getDefaultOptions
 	 */
 	public static void setOptions(HashMap<String, String> newOptions) {
@@ -550,24 +538,22 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Create CDT console adapter for build console defined as an extension. See
-	 * {@code org.eclipse.cdt.core.CBuildConsole} extension point. If the
-	 * console class is instance of {@link ICConsole} it is initialized with
-	 * context id, name and icon to be shown in the list of consoles in the
-	 * Console view.
+	 * {@code org.eclipse.cdt.core.CBuildConsole} extension point. If the console class is instance
+	 * of {@link ICConsole} it is initialized with context id, name and icon to be shown in the list
+	 * of consoles in the Console view.
 	 *
 	 * @param extConsoleId
 	 *            - console id defined in the extension point.
 	 * @param contextId
-	 *            - context menu id in the Console view. A caller needs to
-	 *            define a distinct one for own use.
+	 *            - context menu id in the Console view. A caller needs to define a distinct one for
+	 *            own use.
 	 * @param name
-	 *            - name of console to appear in the list of consoles in context
-	 *            menu in the Console view.
+	 *            - name of console to appear in the list of consoles in context menu in the Console
+	 *            view.
 	 * @param iconUrl
-	 *            - a {@link URL} of the icon for the context menu of the
-	 *            Console view. The url is expected to point to an image in
-	 *            eclipse OSGi bundle. Here is an example how to retrieve URL:
-	 *            <br/>
+	 *            - a {@link URL} of the icon for the context menu of the Console view. The url is
+	 *            expected to point to an image in eclipse OSGi bundle. Here is an example how to
+	 *            retrieve URL: <br/>
 	 *            <code>
 	 *    URL iconUrl = CUIPlugin.getDefault().getBundle().getEntry("icons/obj16/flask.png");
 	 *    </code>
@@ -604,13 +590,11 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Create CDT console adapter. The adapter serves as a bridge between core
-	 * plugin and UI console API in a way that a user can create a UI console
-	 * from plugins having no dependencies to UI.
+	 * Create CDT console adapter. The adapter serves as a bridge between core plugin and UI console
+	 * API in a way that a user can create a UI console from plugins having no dependencies to UI.
 	 *
 	 * @param id
-	 *            - id of the console specified in extension point to
-	 *            instantiate console adapter.
+	 *            - id of the console specified in extension point to instantiate console adapter.
 	 * @return CDT console adapter.
 	 */
 	public IConsole getConsole(String id) {
@@ -619,25 +603,23 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Create CDT console adapter for build console. A new instance of class
-	 * {@code org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole} is created
-	 * and initialized with the parameters.
+	 * {@code org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole} is created and initialized
+	 * with the parameters.
 	 *
 	 * @param contextId
-	 *            - context menu id in the Console view. A caller needs to
-	 *            define a distinct one for own use.
+	 *            - context menu id in the Console view. A caller needs to define a distinct one for
+	 *            own use.
 	 * @param name
-	 *            - name of console to appear in the list of consoles in context
-	 *            menu in the Console view.
+	 *            - name of console to appear in the list of consoles in context menu in the Console
+	 *            view.
 	 * @param iconUrl
-	 *            - a {@link URL} of the icon for the context menu of the
-	 *            Console view. The url is expected to point to an image in
-	 *            eclipse OSGi bundle. Here is an example how to retrieve URL:
-	 *            <br/>
+	 *            - a {@link URL} of the icon for the context menu of the Console view. The url is
+	 *            expected to point to an image in eclipse OSGi bundle. Here is an example how to
+	 *            retrieve URL: <br/>
 	 *            <code>
 	 *    URL iconUrl = CUIPlugin.getDefault().getBundle().getResource("icons/obj16/flask.png");
 	 *    </code> <br/>
-	 *            {@code iconUrl} can be <b>null</b>, in that case the default
-	 *            image is used. See
+	 *            {@code iconUrl} can be <b>null</b>, in that case the default image is used. See
 	 *            {@code org.eclipse.cdt.internal.ui.buildconsole.BuildConsole(IBuildConsoleManager, String, String, URL)}
 	 *
 	 * @return CDT console adapter.
@@ -657,8 +639,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated Use {@link #getDefaultBinaryParserExtensions(IProject)}
-	 *             instead.
+	 * @deprecated Use {@link #getDefaultBinaryParserExtensions(IProject)} instead.
 	 */
 	@Deprecated
 	public ICExtensionReference[] getBinaryParserExtensions(IProject project) throws CoreException {
@@ -679,8 +660,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the binary parser extensions for the default settings
-	 * configuration.
+	 * Returns the binary parser extensions for the default settings configuration.
 	 * 
 	 * @since 5.2
 	 */
@@ -794,14 +774,14 @@ public class CCorePlugin extends Plugin {
 	 * Please use {@link #getProjectDescription(IProject, boolean)} to fetch the
 	 * ICProjectDescription for the project. And use
 	 * {@link ICProjectDescription#getConfigurations()} to get an array of
-	 * ICConfigurationDescriptions, which have similar API to ICDescriptor,
-	 * allowing you to store settings and configure extensions at the
-	 * Configuration level rather than at the project level.
+	 * ICConfigurationDescriptions, which have similar API to ICDescriptor, allowing you to store
+	 * settings and configure extensions at the Configuration level rather than at the project
+	 * level.
 	 *
 	 * @param project
 	 * @param create
-	 * @return ICDescriptor or <b>null</b> if <b>create</b> is <b>false</b> and
-	 *         no .cdtproject file exists on disk.
+	 * @return ICDescriptor or <b>null</b> if <b>create</b> is <b>false</b> and no .cdtproject file
+	 *         exists on disk.
 	 * @throws CoreException
 	 * @deprecated
 	 */
@@ -823,15 +803,13 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated Settings should be set per ICConfigurationDescription rather
-	 *             than global to the project. Please use
-	 *             {@link #getProjectDescription(IProject, boolean)} to fetch
+	 * @deprecated Settings should be set per ICConfigurationDescription rather than global to the
+	 *             project. Please use {@link #getProjectDescription(IProject, boolean)} to fetch
 	 *             the ICProjectDescription for the project. And use
-	 *             {@link ICProjectDescription#getConfigurations()} to get an
-	 *             array of ICConfigurationDescriptions, which have similar API
-	 *             to ICDescriptor, allowing you to store settings and configure
-	 *             extensions at the Configuration level rather than at the
-	 *             project level.
+	 *             {@link ICProjectDescription#getConfigurations()} to get an array of
+	 *             ICConfigurationDescriptions, which have similar API to ICDescriptor, allowing you
+	 *             to store settings and configure extensions at the Configuration level rather than
+	 *             at the project level.
 	 */
 	@Deprecated
 	public ICDescriptorManager getCDescriptorManager() {
@@ -857,7 +835,7 @@ public class CCorePlugin extends Plugin {
 	 */
 	public IProject createCProject(final IProjectDescription description, final IProject projectHandle,
 			IProgressMonitor monitor, final String projectID)
-					throws CoreException, OperationCanceledException {
+			throws CoreException, OperationCanceledException {
 
 		getWorkspace().run(new IWorkspaceRunnable() {
 			@Override
@@ -954,9 +932,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Method convertProjectFromCtoCC converts a C Project to a C++ Project The
-	 * newProject MUST, not be null, already have a C Nature && must NOT already
-	 * have a C++ Nature
+	 * Method convertProjectFromCtoCC converts a C Project to a C++ Project The newProject MUST, not
+	 * be null, already have a C Nature && must NOT already have a C++ Nature
 	 *
 	 * @param projectHandle
 	 * @param monitor
@@ -972,9 +949,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Method to convert a project to a C nature All checks should have been
-	 * done externally (as in the Conversion Wizards). This method blindly does
-	 * the conversion.
+	 * Method to convert a project to a C nature All checks should have been done externally (as in
+	 * the Conversion Wizards). This method blindly does the conversion.
 	 */
 	public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID)
 			throws CoreException {
@@ -1057,8 +1033,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated since CDT 6.1. Use
-	 *             {@link ErrorParserManager#getErrorParserAvailableIds()}
+	 * @deprecated since CDT 6.1. Use {@link ErrorParserManager#getErrorParserAvailableIds()}
 	 *             instead
 	 * @return array of error parsers ids
 	 */
@@ -1070,8 +1045,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated since CDT 6.1. Use
-	 *             {@link ErrorParserManager#getErrorParserCopy(String)} instead
+	 * @deprecated since CDT 6.1. Use {@link ErrorParserManager#getErrorParserCopy(String)} instead
 	 * @param id
 	 *            - id of error parser
 	 * @return array of error parsers
@@ -1123,9 +1097,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Clears cached scanner info provider for the given project so that the
-	 * next call to {@link #getScannerInfoProvider(IProject)} would return an up
-	 * to date scanner info provider.
+	 * Clears cached scanner info provider for the given project so that the next call to
+	 * {@link #getScannerInfoProvider(IProject)} would return an up to date scanner info provider.
 	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -1141,8 +1114,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Find {@link IScannerInfoProvider} registered as extension via extension
-	 * point org.eclipse.cdt.core.ScannerInfoProvider2.
+	 * Find {@link IScannerInfoProvider} registered as extension via extension point
+	 * org.eclipse.cdt.core.ScannerInfoProvider2.
 	 */
 	private IScannerInfoProvider getExtensionScannerInfoProvider2(IProject project) throws CoreException {
 		IScannerInfoProvider provider = null;
@@ -1182,13 +1155,11 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the content type for a filename. The method respects project
-	 * specific content type definitions. The lookup prefers case- sensitive
-	 * matches over the others.
+	 * Returns the content type for a filename. The method respects project specific content type
+	 * definitions. The lookup prefers case- sensitive matches over the others.
 	 * 
 	 * @param project
-	 *            a project with possible project specific settings. Can be
-	 *            <code>null</code>
+	 *            a project with possible project specific settings. Can be <code>null</code>
 	 * @param filename
 	 *            a filename to compute the content type for
 	 * @return the content type found or <code>null</code>
@@ -1218,8 +1189,7 @@ public class CCorePlugin extends Plugin {
 	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor"; //$NON-NLS-1$
 
 	/**
-	 * Configure the plug-in with respect to option settings defined in
-	 * ".options" file
+	 * Configure the plug-in with respect to option settings defined in ".options" file
 	 */
 	public void configurePluginDebugOptions() {
 		if (CCorePlugin.getDefault().isDebugging()) {
@@ -1257,8 +1227,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated use {@link ITranslationUnit} or {@link ILanguage} to
-	 *             construct ASTs, instead.
+	 * @deprecated use {@link ITranslationUnit} or {@link ILanguage} to construct ASTs, instead.
 	 */
 	@Deprecated
 	public org.eclipse.cdt.core.dom.CDOM getDOM() {
@@ -1288,8 +1257,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Equivalent to
-	 * <code>createProjectDescription(IProject, boolean, false)</code>.
+	 * Equivalent to <code>createProjectDescription(IProject, boolean, false)</code>.
 	 *
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
@@ -1304,23 +1272,19 @@ public class CCorePlugin extends Plugin {
 	 * @param project
 	 *            project for which the project description is requested
 	 * @param loadIfExists
-	 *            if true the method first tries to load and return the project
-	 *            description from the settings file (.cproject), if false, the
-	 *            stored settings are ignored and the new (empty) project
-	 *            description is created
+	 *            if true the method first tries to load and return the project description from the
+	 *            settings file (.cproject), if false, the stored settings are ignored and the new
+	 *            (empty) project description is created
 	 * @param creating
-	 *            if true the created project description will be contain the
-	 *            true "isCdtProjectCreating" state. <br>
-	 *            NOTE: in case the project already contains the project
-	 *            description AND its "isCdtProjectCreating" is false the
-	 *            resulting description will be created with the false
-	 *            "isCdtProjectCreating" state.
+	 *            if true the created project description will be contain the true
+	 *            "isCdtProjectCreating" state. <br>
+	 *            NOTE: in case the project already contains the project description AND its
+	 *            "isCdtProjectCreating" is false the resulting description will be created with the
+	 *            false "isCdtProjectCreating" state.
 	 *
 	 *            <br>
-	 *            NOTE: changes made to the returned project description will
-	 *            not be applied until the
-	 *            {@link #setProjectDescription(IProject, ICProjectDescription)}
-	 *            is called.
+	 *            NOTE: changes made to the returned project description will not be applied until
+	 *            the {@link #setProjectDescription(IProject, ICProjectDescription)} is called.
 	 * @return {@link ICProjectDescription}
 	 * @throws CoreException
 	 */
@@ -1330,20 +1294,17 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the project description associated with this project or null if
-	 * the project does not contain the CDT data associated with it.
+	 * Returns the project description associated with this project or null if the project does not
+	 * contain the CDT data associated with it.
 	 *
-	 * This is a convenience method fully equivalent to
-	 * getProjectDescription(project, true) see
+	 * This is a convenience method fully equivalent to getProjectDescription(project, true) see
 	 * {@link #getProjectDescription(IProject, boolean)} for more detail.
 	 *
 	 * @param project
-	 * @return a writable copy of the ICProjectDescription or null if the
-	 *         project does not contain the CDT data associated with it. <br>
-	 *         Note: changes to the project description will not be
-	 *         reflected/used by the core until the
-	 *         {@link #setProjectDescription(IProject, ICProjectDescription)} is
-	 *         called.
+	 * @return a writable copy of the ICProjectDescription or null if the project does not contain
+	 *         the CDT data associated with it. <br>
+	 *         Note: changes to the project description will not be reflected/used by the core until
+	 *         the {@link #setProjectDescription(IProject, ICProjectDescription)} is called.
 	 *
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
@@ -1352,8 +1313,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Called to save/apply the project description. The method should be called
-	 * to apply changes made to the project description returned by the
+	 * Called to save/apply the project description. The method should be called to apply changes
+	 * made to the project description returned by the
 	 * {@link #getProjectDescription(IProject, boolean)} or
 	 * {@link #createProjectDescription(IProject, boolean)}
 	 *
@@ -1374,40 +1335,37 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the project description associated with this project or null if
-	 * the project does not contain the CDT data associated with it.
+	 * Returns the project description associated with this project or null if the project does not
+	 * contain the CDT data associated with it.
 	 *
 	 * @param project
 	 *            project for which the description is requested
 	 * @param write
-	 *            if true, the writable description copy is returned. If false
-	 *            the cached read-only description is returned.
+	 *            if true, the writable description copy is returned. If false the cached read-only
+	 *            description is returned.
 	 *
 	 *            <br>
-	 *            CDT core maintains the cached project description settings. If
-	 *            only read access is needed to description, then the read-only
-	 *            project description should be obtained. This description
-	 *            always operates with cached data and thus it is better to use
-	 *            it for performance reasons. All set* calls to the read-only
-	 *            description result in the {@link WriteAccessException}.
+	 *            CDT core maintains the cached project description settings. If only read access is
+	 *            needed to description, then the read-only project description should be obtained.
+	 *            This description always operates with cached data and thus it is better to use it
+	 *            for performance reasons. All set* calls to the read-only description result in the
+	 *            {@link WriteAccessException}.
 	 *
-	 *            When the writable description is requested, the description
-	 *            copy is created. Changes to this description will not be
-	 *            reflected/used by the core and the Build System until the
-	 *            {@link #setProjectDescription(IProject, ICProjectDescription)}
-	 *            is called.
+	 *            When the writable description is requested, the description copy is created.
+	 *            Changes to this description will not be reflected/used by the core and the Build
+	 *            System until the {@link #setProjectDescription(IProject, ICProjectDescription)} is
+	 *            called.
 	 *
-	 *            Each getProjectDescription(project, true) returns a new copy
-	 *            of the project description.
+	 *            Each getProjectDescription(project, true) returns a new copy of the project
+	 *            description.
 	 *
-	 *            The writable description uses the cached data until the first
-	 *            set call after that the description communicates directly to
-	 *            the Build System i.e. the implementer of the
-	 *            org.eclipse.cdt.core.CConfigurationDataProvider extension This
-	 *            ensures the Core<->Build System settings integrity.
+	 *            The writable description uses the cached data until the first set call after that
+	 *            the description communicates directly to the Build System i.e. the implementer of
+	 *            the org.eclipse.cdt.core.CConfigurationDataProvider extension This ensures the
+	 *            Core<->Build System settings integrity.
 	 *
-	 * @return {@link ICProjectDescription} or null if the project does not
-	 *         contain the CDT data associated with it.
+	 * @return {@link ICProjectDescription} or null if the project does not contain the CDT data
+	 *         associated with it.
 	 */
 	public ICProjectDescription getProjectDescription(IProject project, boolean write) {
 		return fNewCProjectDescriptionManager.getProjectDescription(project, write);
@@ -1417,8 +1375,7 @@ public class CCorePlugin extends Plugin {
 	 * Forces the cached data of the specified projects to be re-calculated.
 	 *
 	 * @param projects
-	 *            if <code>null</code>, all projects within the workspace are
-	 *            updated
+	 *            if <code>null</code>, all projects within the workspace are updated
 	 * @param monitor
 	 * @throws CoreException
 	 */
@@ -1457,8 +1414,7 @@ public class CCorePlugin extends Plugin {
 	// NON-API
 
 	/**
-	 * @noreference This constructor is not intended to be referenced by
-	 *              clients.
+	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public CCorePlugin() {
 		super();
@@ -1476,9 +1432,8 @@ public class CCorePlugin extends Plugin {
 	 * Prints a message in the log
 	 * 
 	 * @param severity
-	 *            - desired severity of the message in the log, one of
-	 *            {@link IStatus#INFO}, {@link IStatus#WARNING} or
-	 *            {@link IStatus#ERROR}
+	 *            - desired severity of the message in the log, one of {@link IStatus#INFO},
+	 *            {@link IStatus#WARNING} or {@link IStatus#ERROR}
 	 * @param msg
 	 *            - message
 	 * 
@@ -1493,9 +1448,8 @@ public class CCorePlugin extends Plugin {
 	 * Prints a message in the log accompanied by stack trace
 	 * 
 	 * @param severity
-	 *            - desired severity of the message in the log, one of
-	 *            {@link IStatus#INFO}, {@link IStatus#WARNING} or
-	 *            {@link IStatus#ERROR}
+	 *            - desired severity of the message in the log, one of {@link IStatus#INFO},
+	 *            {@link IStatus#WARNING} or {@link IStatus#ERROR}
 	 * @param msg
 	 *            - message
 	 * 
@@ -1561,9 +1515,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the preference controlling whether source roots are shown at the
-	 * top of projects or embedded within the resource tree of projects when
-	 * they are not top level folders.
+	 * Returns the preference controlling whether source roots are shown at the top of projects or
+	 * embedded within the resource tree of projects when they are not top level folders.
 	 *
 	 * @return boolean preference value
 	 * @since 5.2

@@ -42,9 +42,11 @@ import org.eclipse.cdt.internal.core.parser.ParserSettings2;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
 import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -52,14 +54,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Implementation of {@link IScannerInfoProvider} backed by the list of
- * language settings providers of "default settings configuration"
- * (see {@link ICProjectDescription#getDefaultSettingConfiguration()}).
+ * Implementation of {@link IScannerInfoProvider} backed by the list of language settings providers
+ * of "default settings configuration" (see
+ * {@link ICProjectDescription#getDefaultSettingConfiguration()}).
  *
  * @see IScannerInfo#getIncludePaths()
  *
  */
-public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider, ILanguageSettingsChangeListener {
+public class LanguageSettingsScannerInfoProvider
+		implements IScannerInfoProvider, ILanguageSettingsChangeListener {
 	private static final String FRAMEWORK_PRIVATE_HEADERS_INCLUDE = "/__framework__.framework/PrivateHeaders/__header__"; //$NON-NLS-1$
 	private static final String FRAMEWORK_HEADERS_INCLUDE = "/__framework__.framework/Headers/__header__"; //$NON-NLS-1$
 	private static final ExtendedScannerInfo DUMMY_SCANNER_INFO = new ExtendedScannerInfo();
@@ -69,20 +72,26 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	@Override
 	public ExtendedScannerInfo getScannerInformation(IResource rc) {
 		IProject project = rc.getProject();
-		if (project==null)
+		if (project == null)
 			return DUMMY_SCANNER_INFO;
 
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-		if (prjDescription==null)
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance()
+				.getProjectDescription(project, false);
+		if (prjDescription == null)
 			return DUMMY_SCANNER_INFO;
 
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
-		if (cfgDescription==null)
+		if (cfgDescription == null)
+			return DUMMY_SCANNER_INFO;
+
+		IBuildConfiguration config = Adapters.adapt(cfgDescription, IBuildConfiguration.class);
+		if (config == null)
 			return DUMMY_SCANNER_INFO;
 
 		List<String> languageIds = LanguageSettingsManager.getLanguages(rc, cfgDescription);
 		if (languageIds.isEmpty()) {
-			String msg = NLS.bind(SettingsModelMessages.getString("LanguageSettingsScannerInfoProvider.UnableToDetermineLanguage"), rc.toString()); //$NON-NLS-1$
+			String msg = NLS.bind(SettingsModelMessages.getString(
+					"LanguageSettingsScannerInfoProvider.UnableToDetermineLanguage"), rc.toString()); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, new Exception());
 			CCorePlugin.log(status);
 			return DUMMY_SCANNER_INFO;
@@ -95,24 +104,24 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		LinkedHashSet<ICLanguageSettingEntry> macroEntries = new LinkedHashSet<ICLanguageSettingEntry>();
 
 		for (String langId : languageIds) {
-			List<ICLanguageSettingEntry> incSys = LanguageSettingsProvidersSerializer.getSystemSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.INCLUDE_PATH);
+			List<ICLanguageSettingEntry> incSys = LanguageSettingsProvidersSerializer
+					.getSystemSettingEntriesByKind(config, rc, langId, ICSettingEntry.INCLUDE_PATH);
 			includePathEntries.addAll(incSys);
 
-			List<ICLanguageSettingEntry> incLocal = LanguageSettingsProvidersSerializer.getLocalSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.INCLUDE_PATH);
+			List<ICLanguageSettingEntry> incLocal = LanguageSettingsProvidersSerializer
+					.getLocalSettingEntriesByKind(config, rc, langId, ICSettingEntry.INCLUDE_PATH);
 			includePathLocalEntries.addAll(incLocal);
 
-			List<ICLanguageSettingEntry> incFiles = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.INCLUDE_FILE);
+			List<ICLanguageSettingEntry> incFiles = LanguageSettingsProvidersSerializer
+					.getSettingEntriesByKind(config, rc, langId, ICSettingEntry.INCLUDE_FILE);
 			includeFileEntries.addAll(incFiles);
 
-			List<ICLanguageSettingEntry> macroFiles = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.MACRO_FILE);
+			List<ICLanguageSettingEntry> macroFiles = LanguageSettingsProvidersSerializer
+					.getSettingEntriesByKind(config, rc, langId, ICSettingEntry.MACRO_FILE);
 			macroFileEntries.addAll(macroFiles);
 
-			List<ICLanguageSettingEntry> macros = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
-					ICSettingEntry.MACRO);
+			List<ICLanguageSettingEntry> macros = LanguageSettingsProvidersSerializer
+					.getSettingEntriesByKind(config, rc, langId, ICSettingEntry.MACRO);
 			macroEntries.addAll(macros);
 		}
 
@@ -123,13 +132,14 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 
 		Map<String, String> definedMacros = new HashMap<String, String>();
 		for (ICLanguageSettingEntry entry : macroEntries) {
-			ICMacroEntry macroEntry = (ICMacroEntry)entry;
+			ICMacroEntry macroEntry = (ICMacroEntry) entry;
 			String name = macroEntry.getName();
 			String value = macroEntry.getValue();
 			definedMacros.put(name, value);
 		}
 
-		ExtendedScannerInfo extendedScannerInfo = new ExtendedScannerInfo(definedMacros, includePaths, macroFiles, includeFiles, includePathsLocal);
+		ExtendedScannerInfo extendedScannerInfo = new ExtendedScannerInfo(definedMacros, includePaths,
+				macroFiles, includeFiles, includePathsLocal);
 		extendedScannerInfo.setParserSettings(new ParserSettings2(project));
 		return extendedScannerInfo;
 	}
@@ -146,8 +156,8 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	}
 
 	/**
-	 * Get build working directory for the provided configuration. Returns
-	 * project location if none defined.
+	 * Get build working directory for the provided configuration. Returns project location if none
+	 * defined.
 	 */
 	private static IPath getBuildCWD(ICConfigurationDescription cfgDescription) {
 		IPath buildCWD = cfgDescription.getBuildSetting().getBuilderCWD();
@@ -180,11 +190,14 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	}
 
 	/**
-	 * Resolve location to file system location in a configuration context.
-	 * Resolving includes replacing build/environment variables with values, making relative path absolute etc.
+	 * Resolve location to file system location in a configuration context. Resolving includes
+	 * replacing build/environment variables with values, making relative path absolute etc.
 	 *
-	 * @param location - location to resolve. If relative, it is taken to be rooted in build working directory.
-	 * @param cfgDescription - the configuration context.
+	 * @param location
+	 *            - location to resolve. If relative, it is taken to be rooted in build working
+	 *            directory.
+	 * @param cfgDescription
+	 *            - the configuration context.
 	 * @return resolved file system location.
 	 */
 	private static String resolveEntry(String location, ICConfigurationDescription cfgDescription) {
@@ -225,7 +238,8 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 
 	/**
 	 * Convert path delimiters to OS representation avoiding using org.eclipse.core.runtime.Path
-	 * being careful to preserve "../" segments and not let collapsing them which is not correct for symbolic links.
+	 * being careful to preserve "../" segments and not let collapsing them which is not correct for
+	 * symbolic links.
 	 */
 	private String toOSString(String loc) {
 		// use OS file separators (i.e. '\' on Windows)
@@ -239,16 +253,19 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	 * Convert the path entries to absolute file system locations represented as String array.
 	 * Resolve the entries which are not resolved.
 	 *
-	 * @param entriesPath - language settings path entries.
-	 * @param cfgDescription - configuration description for resolving entries.
+	 * @param entriesPath
+	 *            - language settings path entries.
+	 * @param cfgDescription
+	 *            - configuration description for resolving entries.
 	 * @return array of the locations.
 	 */
-	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath, ICConfigurationDescription cfgDescription) {
+	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath,
+			ICConfigurationDescription cfgDescription) {
 		List<String> locations = new ArrayList<String>(entriesPath.size());
 		for (ICLanguageSettingEntry entry : entriesPath) {
-			ICPathEntry entryPath = (ICPathEntry)entry;
+			ICPathEntry entryPath = (ICPathEntry) entry;
 			if (entryPath.isValueWorkspacePath()) {
-				ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[] {entry};
+				ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[] { entry };
 				if (!entry.isResolved()) {
 					entries = CDataUtil.resolveEntries(entries, cfgDescription);
 				}
@@ -307,7 +324,8 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		}
 
 		if (listenersMap == null) {
-			listenersMap = Collections.synchronizedMap(new HashMap<IResource, List<IScannerInfoChangeListener>>());
+			listenersMap = Collections
+					.synchronizedMap(new HashMap<IResource, List<IScannerInfoChangeListener>>());
 		}
 
 		IProject project = resource.getProject();
@@ -346,12 +364,14 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		if (project != null) {
 			ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project);
 			if (prjDescription != null) {
-				ICConfigurationDescription indexedCfgDescription = prjDescription.getDefaultSettingConfiguration();
+				ICConfigurationDescription indexedCfgDescription = prjDescription
+						.getDefaultSettingConfiguration();
 				String indexedCfgId = indexedCfgDescription.getId();
 
 				for (String cfgId : event.getConfigurationDescriptionIds()) {
 					if (cfgId.equals(indexedCfgId)) {
-						for (Entry<IResource, List<IScannerInfoChangeListener>> entry : listenersMap.entrySet()) {
+						for (Entry<IResource, List<IScannerInfoChangeListener>> entry : listenersMap
+								.entrySet()) {
 							IResource rc = entry.getKey();
 							List<IScannerInfoChangeListener> listeners = listenersMap.get(rc);
 							if (listeners != null && !listeners.isEmpty()) {

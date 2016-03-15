@@ -34,12 +34,15 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.Intermittent;
+import org.eclipse.cdt.tests.dsf.gdb.framework.IntermittentRule;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,7 +51,10 @@ import org.junit.runner.RunWith;
  * Tests IMultiRunControl class for Non-stop multi-threaded application. 
  */
 @RunWith(BackgroundRunner.class)
+@Intermittent
 public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
+	public @Rule IntermittentRule irule = new IntermittentRule();
+
 	@Override
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);

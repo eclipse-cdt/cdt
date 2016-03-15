@@ -16,18 +16,34 @@ import org.junit.runners.model.Statement;
 
 /**
  * This is the rule to add to tests that rarely fail randomly and you want to keep them but cannot figure out they fail.
- * It is safe to use it in any class, it will only apply to tests which have @InterimittentRule annotation
- * <code>
+ * It is safe to use it in any class, it will only apply to tests which have @Intermittent annotation
+ <code>
+ import org.eclipse.cdt.tests.dsf.gdb.framework.Intermittent
+ import org.eclipse.cdt.tests.dsf.gdb.framework.IntermittentRule
 
- public @Rule InterimittentRule rule = new InterimittentRule();
+ class SomeTest {
+ public @Rule IntermittentRule rule = new IntermittentRule();
 
  @Test
- @InterimittentRule(repetition = 3)
- public void someTest (){}
+ @Intermittent(repetition = 3)
+ public void someTest (){...}
+ }
+ </code>
 
- * </code>
+ You can also ally this to the whole class
+ <code>
+ import org.eclipse.cdt.tests.dsf.gdb.framework.Intermittent
+ import org.eclipse.cdt.tests.dsf.gdb.framework.IntermittentRule
+
+ @Intermittent(repetition = 3)
+ class SomeTest {
+ public @Rule IntermittentRule rule = new IntermittentRule();
+ ...
+ }
+
+ </code>
  */
-public class InterimittentRule implements MethodRule {
+public class IntermittentRule implements MethodRule {
 	public static class RunIntermittent extends Statement {
 		private final FrameworkMethod method;
 		private final Statement statement;

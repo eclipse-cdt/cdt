@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 QNX Software Systems and others.
+ * Copyright (c) 2009, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,14 +27,17 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 @Immutable
 public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 
-    final private int number;
+    final private String number;
     final private String exp;
     final private String oldValue;
     final private String newValue;
 
+    /**
+	 * @since 5.0
+	 */
     protected MIWatchpointTriggerEvent(
         IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, 
-        int number, String exp, String oldValue, String newValue) 
+        String number, String exp, String oldValue, String newValue) 
     {
         super(ctx, token, results, frame);
         this.number = number;
@@ -43,7 +46,10 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
         this.newValue = newValue;
     }
 
-    public int getNumber() {
+    /**
+	 * @since 5.0
+	 */
+    public String getNumber() {
         return number;
     }
 
@@ -64,7 +70,7 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
      */
     public static MIWatchpointTriggerEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
-       int number = 0;
+       String number = ""; //$NON-NLS-1$
        String exp = ""; //$NON-NLS-1$
        String oldValue = ""; //$NON-NLS-1$
        String newValue = ""; //$NON-NLS-1$
@@ -83,7 +89,7 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
                            if (wptValue instanceof MIConst) {
                                String str = ((MIConst) wptValue).getString();
                                try {
-                                   number = Integer.parseInt(str);
+                                   number = str;
                                } catch (NumberFormatException e) {
                                }
                            }

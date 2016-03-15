@@ -47,7 +47,9 @@ import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -83,10 +85,12 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		protected List<String> parseOptions(String line) {
 			return null;
 		}
+
 		@Override
 		protected AbstractOptionParser[] getOptionParsers() {
 			return null;
 		}
+
 		@Override
 		protected String getCompilerCommand(String languageId) {
 			return null;
@@ -101,6 +105,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		protected void startupForLanguage(String languageId) throws CoreException {
 			super.startupForLanguage(languageId);
 		}
+
 		@Override
 		protected void shutdownForLanguage() {
 			super.shutdownForLanguage();
@@ -116,6 +121,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			super.execute();
 			waitForProviderToFinish();
 		}
+
 		protected boolean isExecuted() {
 			return isExecuted;
 		}
@@ -128,15 +134,19 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		private int executedCount = 0;
 
 		@Override
-		public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException {
+		public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker)
+				throws CoreException {
 			executedCount++;
 			super.startup(cfgDescription, cwdTracker);
 		}
+
 		@Override
-		public MockBuiltinSpecsDetectorEnvironmentChangeListener cloneShallow() throws CloneNotSupportedException {
+		public MockBuiltinSpecsDetectorEnvironmentChangeListener cloneShallow()
+				throws CloneNotSupportedException {
 			MockBuiltinSpecsDetectorEnvironmentChangeListener clone = (MockBuiltinSpecsDetectorEnvironmentChangeListener) super.cloneShallow();
 			return clone;
 		}
+
 		@Override
 		public MockBuiltinSpecsDetectorEnvironmentChangeListener clone() throws CloneNotSupportedException {
 			MockBuiltinSpecsDetectorEnvironmentChangeListener clone = (MockBuiltinSpecsDetectorEnvironmentChangeListener) super.clone();
@@ -158,17 +168,21 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		protected boolean validateEnvironment() {
 			return false;
 		}
+
 		@Override
 		protected void execute() {
 			super.execute();
 			sampleEnvVarValue = environmentMap.get(ENV_SAMPLE);
 		}
+
 		@Override
-		public MockBuiltinSpecsDetectorEnvironmentChangeListener cloneShallow() throws CloneNotSupportedException {
+		public MockBuiltinSpecsDetectorEnvironmentChangeListener cloneShallow()
+				throws CloneNotSupportedException {
 			MockBuiltinSpecsDetectorEnvironmentChangeListener clone = (MockBuiltinSpecsDetectorEnvironmentChangeListener) super.cloneShallow();
 			clone.sampleEnvVarValue = sampleEnvVarValue;
 			return clone;
 		}
+
 		@Override
 		public MockBuiltinSpecsDetectorEnvironmentChangeListener clone() throws CloneNotSupportedException {
 			MockBuiltinSpecsDetectorEnvironmentChangeListener clone = (MockBuiltinSpecsDetectorEnvironmentChangeListener) super.clone();
@@ -179,6 +193,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		protected boolean isExecuted() {
 			return isExecuted;
 		}
+
 		public String getSampleEnvVar() {
 			return sampleEnvVarValue;
 		}
@@ -189,28 +204,38 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	 */
 	private class MockConsoleBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 		@SuppressWarnings("nls")
-		private final AbstractOptionParser[] optionParsers = {
-			new MacroOptionParser("#define (\\S*) *(\\S*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-		};
+		private final AbstractOptionParser[] optionParsers = { new MacroOptionParser("#define (\\S*) *(\\S*)",
+				"$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), };
+
 		@Override
-		protected int runProgramForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, OutputStream consoleOut, OutputStream consoleErr, IProgressMonitor monitor) throws CoreException, IOException {
+		protected int runProgramForLanguage(String languageId, String command, String[] envp,
+				URI workingDirectoryURI, OutputStream consoleOut, OutputStream consoleErr,
+				IProgressMonitor monitor) throws CoreException, IOException {
 			String line = "#define MACRO VALUE";
 			consoleOut.write((line + '\n').getBytes());
 			consoleOut.flush();
 			return ICommandLauncher.OK;
 		}
+
 		@Override
 		protected IStatus runForEachLanguage(IProgressMonitor monitor) {
 			return super.runForEachLanguage(monitor);
 		}
+
 		@Override
 		protected List<String> parseOptions(final String line) {
-			return new ArrayList<String>() {{ add(line); }};
+			return new ArrayList<String>() {
+				{
+					add(line);
+				}
+			};
 		}
+
 		@Override
 		protected AbstractOptionParser[] getOptionParsers() {
 			return optionParsers;
 		}
+
 		@Override
 		protected String getCompilerCommand(String languageId) {
 			return null;
@@ -280,7 +305,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			Map<String, String> properties = new HashMap<String, String>();
 			properties.put(ATTR_PARAMETER, CUSTOM_COMMAND_1);
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-			ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+			ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE",
+					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 			entries.add(entry);
 
 			provider.configureProvider(PROVIDER_ID, PROVIDER_NAME, languages, entries, properties);
@@ -314,6 +340,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			public MockDetectorCloneable clone() throws CloneNotSupportedException {
 				return (MockDetectorCloneable) super.clone();
 			}
+
 			@Override
 			public MockDetectorCloneable cloneShallow() throws CloneNotSupportedException {
 				return (MockDetectorCloneable) super.cloneShallow();
@@ -326,7 +353,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		List<String> languages = new ArrayList<String>();
 		languages.add(LANGUAGE_ID);
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		entries.add(entry);
 
 		// check clone after initialization
@@ -367,7 +395,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			MockDetectorCloneable clone = provider.clone();
 			boolean isConsoleEnabled = clone.isConsoleEnabled();
-			clone.setConsoleEnabled( ! isConsoleEnabled );
+			clone.setConsoleEnabled(!isConsoleEnabled);
 			assertFalse(provider.equals(clone));
 		}
 
@@ -384,7 +412,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			MockDetectorCloneable clone = provider.clone();
 			List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
-			entries2.add(new CMacroEntry("MACRO2", "VALUE2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY));
+			entries2.add(
+					new CMacroEntry("MACRO2", "VALUE2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY));
 			clone.setSettingEntries(null, null, null, entries2);
 			assertFalse(provider.equals(clone));
 		}
@@ -544,7 +573,11 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 
 		MockConsoleBuiltinSpecsDetector provider = new MockConsoleBuiltinSpecsDetector();
-		provider.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
+		provider.setLanguageScope(new ArrayList<String>() {
+			{
+				add(LANGUAGE_ID);
+			}
+		});
 
 		// Run provider
 		provider.startup(cfgDescription, null);
@@ -557,8 +590,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		assertNull(noentries);
 
 		// Check parsed entries
-		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(cfgDescription, null, LANGUAGE_ID);
-		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		IBuildConfiguration config = Adapters.adapt(cfgDescription, IBuildConfiguration.class);
+		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(config, null, LANGUAGE_ID);
+		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
 	}
 
@@ -568,7 +603,11 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	public void testAbstractBuiltinSpecsDetector_RunGlobal() throws Exception {
 		// Create provider
 		MockConsoleBuiltinSpecsDetector provider = new MockConsoleBuiltinSpecsDetector();
-		provider.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
+		provider.setLanguageScope(new ArrayList<String>() {
+			{
+				add(LANGUAGE_ID);
+			}
+		});
 
 		// Run provider
 		provider.startup(null, null);
@@ -579,7 +618,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// Check parsed entries
 		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, LANGUAGE_ID);
-		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
 	}
 
@@ -595,7 +635,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// Create provider
 		MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
-		// register environment listener on configuration - note that provider is not included in the configuration
+		// register environment listener on configuration - note that provider is not included in the
+		// configuration
 		provider.registerListener(cfgDescription);
 		waitForProviderToFinish();
 		assertEquals(true, provider.isExecuted());
@@ -607,8 +648,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// Set an environment variable to the configuration
 		{
-			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
-			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault()
+					.getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable
+					.getActiveConfiguration();
 			// create and set sample environment variable in the configuration
 			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
@@ -635,8 +678,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// Set an environment variable to the configuration
 		{
-			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
-			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault()
+					.getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable
+					.getActiveConfiguration();
 			// create and set sample environment variable in the configuration
 			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
@@ -667,13 +712,16 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// Assign a provider to configuration
 		{
-			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
-			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault()
+					.getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable
+					.getActiveConfiguration();
 			// Create provider
 			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = new MockBuiltinSpecsDetectorEnvironmentChangeListener();
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(provider);
-			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable)
+					.setLanguageSettingProviders(providers);
 			// Write to project description
 			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
 
@@ -685,8 +733,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// Set environment variable to the configuration
 		{
-			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
-			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault()
+					.getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable
+					.getActiveConfiguration();
 			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
 
@@ -695,8 +745,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			contribEnv.addVariable(var, cfgDescriptionWritable);
 			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
 
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
-			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable)
+					.getLanguageSettingProviders();
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers
+					.get(0);
 			// unset "isExecuted" flag
 			provider.clear();
 			assertEquals(false, provider.isExecuted());
@@ -710,7 +762,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// Check if the provider got executed
 		{
 			// check if environment variable got there
-			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
+			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project,
+					false);
 			ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
 			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IEnvironmentVariable var = envManager.getVariable(ENV_SAMPLE, cfgDescription, true);
@@ -718,8 +771,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(ENV_SAMPLE_VALUE_1, var.getValue());
 
 			// check if provider got executed with new value
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers
+					.get(0);
 			assertEquals(true, provider.isExecuted());
 			assertEquals(ENV_SAMPLE_VALUE_1, provider.getSampleEnvVar());
 		}
@@ -727,8 +782,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// Repeat one more time with different value of environment variable
 		// Set another environment variable to the configuration
 		{
-			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault().getProjectDescription(project, true);
-			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable.getActiveConfiguration();
+			ICProjectDescription prjDescriptionWritable = CoreModel.getDefault()
+					.getProjectDescription(project, true);
+			ICConfigurationDescription cfgDescriptionWritable = prjDescriptionWritable
+					.getActiveConfiguration();
 			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
 
@@ -737,8 +794,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			contribEnv.addVariable(var, cfgDescriptionWritable);
 			assertEquals(var, envManager.getVariable(ENV_SAMPLE, cfgDescriptionWritable, true));
 
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
-			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable)
+					.getLanguageSettingProviders();
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers
+					.get(0);
 			// unset "isExecuted" flag
 			provider.clear();
 			assertEquals(false, provider.isExecuted());
@@ -752,7 +811,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// Check if the provider got executed
 		{
 			// check if environment variable got there
-			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
+			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project,
+					false);
 			ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
 			IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 			IEnvironmentVariable var = envManager.getVariable(ENV_SAMPLE, cfgDescription, true);
@@ -760,8 +820,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(ENV_SAMPLE_VALUE_2, var.getValue());
 
 			// check if provider got executed with new value
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers.get(0);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
+			MockBuiltinSpecsDetectorEnvironmentChangeListener provider = (MockBuiltinSpecsDetectorEnvironmentChangeListener) providers
+					.get(0);
 			assertEquals(true, provider.isExecuted());
 			assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
 		}
@@ -842,7 +904,6 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		compiler.setLastModified(lastModified + 1000);
 		long lastModifiedUpdated = compiler.lastModified();
 		assertTrue(lastModifiedUpdated != lastModified);
-
 
 		// Check that an event triggers rerun after upgrade
 		provider.handleEvent(null);
@@ -940,18 +1001,30 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	 */
 	public void testAbstractBuiltinSpecsDetector_GroupSettings() throws Exception {
 		// define benchmarks
-		final CIncludePathEntry includePath_1 = new CIncludePathEntry("/include/path_1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CIncludePathEntry includePath_2 = new CIncludePathEntry("/include/path_2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CIncludeFileEntry includeFile_1 = new CIncludeFileEntry(new Path("/include.file1"), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CIncludeFileEntry includeFile_2 = new CIncludeFileEntry(new Path("/include.file2"), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CMacroEntry macro_1 = new CMacroEntry("MACRO_1", "", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CMacroEntry macro_2 = new CMacroEntry("MACRO_2", "", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY |ICSettingEntry.UNDEFINED);
-		final CMacroFileEntry macroFile_1 = new CMacroFileEntry(new Path("/macro.file1"), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CMacroFileEntry macroFile_2 = new CMacroFileEntry(new Path("/macro.file2"), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CLibraryPathEntry libraryPath_1 = new CLibraryPathEntry(new Path("/lib/path_1"), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CLibraryPathEntry libraryPath_2 = new CLibraryPathEntry(new Path("/lib/path_2"), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CLibraryFileEntry libraryFile_1 = new CLibraryFileEntry("lib_1.a", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		final CLibraryFileEntry libraryFile_2 = new CLibraryFileEntry("lib_2.a", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CIncludePathEntry includePath_1 = new CIncludePathEntry("/include/path_1",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CIncludePathEntry includePath_2 = new CIncludePathEntry("/include/path_2",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CIncludeFileEntry includeFile_1 = new CIncludeFileEntry(new Path("/include.file1"),
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CIncludeFileEntry includeFile_2 = new CIncludeFileEntry(new Path("/include.file2"),
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CMacroEntry macro_1 = new CMacroEntry("MACRO_1", "",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CMacroEntry macro_2 = new CMacroEntry("MACRO_2", "",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.UNDEFINED);
+		final CMacroFileEntry macroFile_1 = new CMacroFileEntry(new Path("/macro.file1"),
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CMacroFileEntry macroFile_2 = new CMacroFileEntry(new Path("/macro.file2"),
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CLibraryPathEntry libraryPath_1 = new CLibraryPathEntry(new Path("/lib/path_1"),
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CLibraryPathEntry libraryPath_2 = new CLibraryPathEntry(new Path("/lib/path_2"),
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CLibraryFileEntry libraryFile_1 = new CLibraryFileEntry("lib_1.a",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		final CLibraryFileEntry libraryFile_2 = new CLibraryFileEntry("lib_2.a",
+				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 
 		// Define mock detector adding unorganized entries
 		MockBuiltinSpecsDetector provider = new MockBuiltinSpecsDetector() {

@@ -92,12 +92,6 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 	}
 
 	@Override
-	@Deprecated
-	public IName getBaseClassSpecifierName() {
-		return base.getName();
-	}
-
-	@Override
 	public IName getClassDefinitionName() {
 		IASTNode parent = base.getParent();
 		if (parent instanceof ICPPASTCompositeTypeSpecifier) {

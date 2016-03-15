@@ -87,11 +87,6 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	}
 
 	@Override
-	public PDOMName getBaseClassSpecifierName() {
-		return null;
-	}
-	
-	@Override
 	public PDOMName getClassDefinitionName() {
 		try {
 			long rec = getDB().getRecPtr(record + CLASS_DEFINITION);
@@ -198,11 +193,6 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 			return baseClass;
 		}
 		
-		@Override @Deprecated
-		public IName getBaseClassSpecifierName() {
-			return base.getBaseClassSpecifierName();
-		}
-
 		@Override
 		public IName getClassDefinitionName() {
 			return base.getClassDefinitionName();

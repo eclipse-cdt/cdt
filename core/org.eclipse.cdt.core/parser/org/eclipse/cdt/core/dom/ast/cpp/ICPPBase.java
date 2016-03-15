@@ -45,13 +45,6 @@ public interface ICPPBase extends Cloneable {
 	public IType getBaseClassType();
 
 	/**
-	 * @deprecated Don't use it, a base class may be specified without the use of a name.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public IName getBaseClassSpecifierName();
-
-	/**
 	 * Returns the name of the class definition that originally declares the base.
 	 * @since 5.5
 	 */

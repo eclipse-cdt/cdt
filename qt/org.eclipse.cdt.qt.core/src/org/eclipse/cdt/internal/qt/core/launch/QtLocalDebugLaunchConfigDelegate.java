@@ -15,8 +15,8 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
-import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.launching.ServicesLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -43,7 +43,7 @@ public class QtLocalDebugLaunchConfigDelegate extends QtLaunchConfigurationDeleg
 		launch.setLaunchTarget(target);
 		launch.initialize();
 
-		DsfSourceLookupDirector locator = new DsfSourceLookupDirector(launch.getSession());
+		GdbSourceLookupDirector locator = new GdbSourceLookupDirector(launch.getSession());
 		String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String) null);
 		if (memento == null) {
 			locator.initializeDefaults(configuration);

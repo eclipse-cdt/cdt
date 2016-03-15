@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Mentor Graphics and others.
+ * Copyright (c) 2012, 2016 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,24 +109,24 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 	/**
 	 * Collection of breakpoints created from the GDB console or outside of Eclipse
 	 */
-	private Map<IBreakpointsTargetDMContext, Map<Integer, MIBreakpoint>> fCreatedTargetBreakpoints;
+	private Map<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>> fCreatedTargetBreakpoints;
 
 	/**
 	 * Collection of breakpoints deleted from the GDB console or outside of Eclipse
 	 */ 
-	private Map<IBreakpointsTargetDMContext, Set<Integer>> fDeletedTargetBreakpoints;
+	private Map<IBreakpointsTargetDMContext, Set<String>> fDeletedTargetBreakpoints;
 	
 	/**
 	 * Collection of pending breakpoint modifications
 	 */
-	private Map<IBreakpointsTargetDMContext, Map<Integer, MIBreakpoint>> fPendingModifications;
+	private Map<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>> fPendingModifications;
 
 	public MIBreakpointsSynchronizer(DsfSession session) {
 		super(session);
 		fTrackedTargets = new HashSet<IBreakpointsTargetDMContext>();
-		fCreatedTargetBreakpoints = new HashMap<IBreakpointsTargetDMContext, Map<Integer, MIBreakpoint>>();
-		fDeletedTargetBreakpoints = new HashMap<IBreakpointsTargetDMContext, Set<Integer>>();
-		fPendingModifications = new HashMap<IBreakpointsTargetDMContext, Map<Integer, MIBreakpoint>>();
+		fCreatedTargetBreakpoints = new HashMap<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>>();
+		fDeletedTargetBreakpoints = new HashMap<IBreakpointsTargetDMContext, Set<String>>();
+		fPendingModifications = new HashMap<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>>();
 	}
 
 	@Override
@@ -219,20 +219,20 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		}
 
 		// Store the target breakpoint data
-		Map<Integer, MIBreakpointDMData> contextBreakpoints = breakpointsService.getBreakpointMap(bpTargetDMC);
+		Map<String, MIBreakpointDMData> contextBreakpoints = breakpointsService.getBreakpointMap(bpTargetDMC);
 		if (contextBreakpoints == null) {
 			contextBreakpoints = breakpointsService.createNewBreakpointMap(bpTargetDMC);
 		}
-		contextBreakpoints.put(Integer.valueOf(miBpt.getNumber()), new MIBreakpointDMData(miBpt));
+		contextBreakpoints.put(miBpt.getNumber(), new MIBreakpointDMData(miBpt));
 
 		// Store the created target breakpoint to prevent setting it again on the target 
 		// when addBreakpoint() is called.
-		Map<Integer, MIBreakpoint> targetMap = fCreatedTargetBreakpoints.get(bpTargetDMC);
+		Map<String, MIBreakpoint> targetMap = fCreatedTargetBreakpoints.get(bpTargetDMC);
 		if (targetMap == null) {
-			targetMap = new HashMap<Integer, MIBreakpoint>();
+			targetMap = new HashMap<String, MIBreakpoint>();
 			fCreatedTargetBreakpoints.put(bpTargetDMC, targetMap);
 		}
-		targetMap.put(Integer.valueOf(miBpt.getNumber()), miBpt);
+		targetMap.put(miBpt.getNumber(), miBpt);
 
 		// Convert the debug info file path into the file path in the local file system
     	String debuggerPath = getFileName(miBpt);
@@ -277,9 +277,9 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 	        			}
 						// Make sure the platform breakpoint's parameters are synchronized 
 						// with the target breakpoint.
-						Map<Integer, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
+						Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
 						if (map != null) {
-							MIBreakpoint mod = map.remove(Integer.valueOf(miBpt.getNumber()));
+							MIBreakpoint mod = map.remove(miBpt.getNumber());
 							if (mod != null) {
 								targetBreakpointModified(bpTargetDMC, plBpt, mod);
 							}
@@ -296,7 +296,10 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
             });
 	}
 
-	public void targetBreakpointDeleted(final int id) {
+	/**
+	 * @since 5.0
+	 */
+	public void targetBreakpointDeleted(final String id) {
 		MIBreakpoints breakpointsService = getBreakpointsService();
 		final MIBreakpointsManager bm = getBreakpointsManager();
 		if (breakpointsService == null || bm == null) {
@@ -322,12 +325,12 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 	
 						IBreakpoint plBpt = bm.findPlatformBreakpoint(bpDMC);
 						if (plBpt instanceof ICBreakpoint) {
-							Set<Integer> set = fDeletedTargetBreakpoints.get(bpTargetDMC);
+							Set<String> set = fDeletedTargetBreakpoints.get(bpTargetDMC);
 							if (set == null) {
-								set = new HashSet<Integer>();
+								set = new HashSet<String>();
 								fDeletedTargetBreakpoints.put(bpTargetDMC, set);
 							}
-							set.add(Integer.valueOf(id));
+							set.add(id);
 	
 							try {
 								int threadId = Integer.parseInt(data.getThreadId());
@@ -390,7 +393,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			if (bpTargetDMC == null) {
 				return;
 			}
-			final Map<Integer, MIBreakpointDMData> contextBreakpoints = breakpointsService.getBreakpointMap(bpTargetDMC);
+			final Map<String, MIBreakpointDMData> contextBreakpoints = breakpointsService.getBreakpointMap(bpTargetDMC);
 			if (contextBreakpoints == null) {
 				return;
 			}
@@ -399,12 +402,12 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			if (!(b instanceof ICBreakpoint)) {
 				// Platform breakpoint hasn't been created yet. Store the latest 
 				// modification data, it will be picked up later.
-				Map<Integer, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
+				Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
 				if (map == null) {
-					map = new HashMap<Integer, MIBreakpoint>();
+					map = new HashMap<String, MIBreakpoint>();
 					fPendingModifications.put(bpTargetDMC, map);
 				}
-				map.put(Integer.valueOf(miBpt.getNumber()), miBpt);
+				map.put(miBpt.getNumber(), miBpt);
 			}
 			else {
 				ICBreakpoint plBpt = (ICBreakpoint)b;
@@ -417,9 +420,9 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			IBreakpointsTargetDMContext bpTargetDMC,
 			ICBreakpoint plBpt, 
 			MIBreakpoint miBpt) {
-		Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointsService().getBreakpointMap(bpTargetDMC);
-		MIBreakpointDMData oldData = contextBreakpoints.get(Integer.valueOf(miBpt.getNumber()));
-		contextBreakpoints.put(Integer.valueOf(miBpt.getNumber()), new MIBreakpointDMData(miBpt));
+		Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointsService().getBreakpointMap(bpTargetDMC);
+		MIBreakpointDMData oldData = contextBreakpoints.get(miBpt.getNumber());
+		contextBreakpoints.put(miBpt.getNumber(), new MIBreakpointDMData(miBpt));
 		try {
 			if (plBpt.isEnabled() != miBpt.isEnabled()) {
 				plBpt.setEnabled(miBpt.isEnabled());
@@ -482,7 +485,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			}
 		}
 		catch(CoreException e) {
-			contextBreakpoints.put(Integer.valueOf(miBpt.getNumber()), oldData);
+			contextBreakpoints.put(miBpt.getNumber(), oldData);
 			GdbPlugin.log(e.getStatus());
 		}
 	}
@@ -898,7 +901,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			IBreakpointsTargetDMContext context, 
 			Map<String, Object> attributes,
 			DataRequestMonitor<MIBreakpoint> rm) {
-		Map<Integer, MIBreakpoint> map = fCreatedTargetBreakpoints.get(context);
+		Map<String, MIBreakpoint> map = fCreatedTargetBreakpoints.get(context);
 		if (map == null) {
 			rm.done();
 			return;
@@ -1083,9 +1086,9 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 	}
 
 	public void removeCreatedTargetBreakpoint(IBreakpointsTargetDMContext context, MIBreakpoint miBpt) {
-		Map<Integer, MIBreakpoint> map = fCreatedTargetBreakpoints.get(context);
+		Map<String, MIBreakpoint> map = fCreatedTargetBreakpoints.get(context);
 		if (map != null) {
-			map.remove(Integer.valueOf(miBpt.getNumber()));
+			map.remove(miBpt.getNumber());
 		}
 	}
 
@@ -1163,10 +1166,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
     	return isPlatformLineBreakpoint(plBpt, miBpt, fileName);
     }
 
-    public boolean isTargetBreakpointDeleted(IBreakpointsTargetDMContext context, int bpId, boolean remove) {
-    	Set<Integer> set = fDeletedTargetBreakpoints.get(context);
+    /** @since 5.0 */
+    public boolean isTargetBreakpointDeleted(IBreakpointsTargetDMContext context, String bpId, boolean remove) {
+    	Set<String> set = fDeletedTargetBreakpoints.get(context);
     	if (set != null) {
-    		return (remove) ? set.remove(Integer.valueOf(bpId)) : set.contains(Integer.valueOf(bpId));
+    		return (remove) ? set.remove(bpId) : set.contains(bpId);
     	}
     	return false;
     }    
@@ -1461,15 +1465,15 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
     		// This will happen for GDB < 7.4 where the container is the breakpoint target.
     		// For GDB >= 7.4, GDB is the breakpoint target and will not be removed.
     		IBreakpointsTargetDMContext bpTargetDMContext = (IBreakpointsTargetDMContext)e.getDMContext();
-    			Map<Integer, MIBreakpoint> createdBreakpoints = fCreatedTargetBreakpoints.remove(bpTargetDMContext);
+    			Map<String, MIBreakpoint> createdBreakpoints = fCreatedTargetBreakpoints.remove(bpTargetDMContext);
     			if (createdBreakpoints != null) {
     				createdBreakpoints.clear();
     			}
-    			Map<Integer, MIBreakpoint> modifications = fPendingModifications.remove(bpTargetDMContext);
+    			Map<String, MIBreakpoint> modifications = fPendingModifications.remove(bpTargetDMContext);
     			if (modifications != null) {
     				modifications.clear();
     			}
-    			Set<Integer> deletedBreakpoints = fDeletedTargetBreakpoints.remove(bpTargetDMContext);
+    			Set<String> deletedBreakpoints = fDeletedTargetBreakpoints.remove(bpTargetDMContext);
     			if (deletedBreakpoints != null) {
     				deletedBreakpoints.clear();
     			}

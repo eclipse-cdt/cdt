@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Ericsson and others.
+ * Copyright (c) 2009, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,10 @@ public class CLITraceInfo extends MIInfo {
 		parse();
 	}
 
-	private Integer fReference = null;
+	private String fReference = null;
 	
-	public Integer getTraceReference(){
+	/** @since 5.0 */
+	public String getTraceReference(){
 		return fReference; 
 	}
 
@@ -47,11 +48,7 @@ public class CLITraceInfo extends MIInfo {
 						Matcher matcher = pattern.matcher(str);
 						if (matcher.find()) {
 							String id = matcher.group(1);
-							try {
-								fReference = Integer.parseInt(id);
-							} catch (NumberFormatException e) {
-								fReference = null;
-							}
+							fReference = id;
 						}
 					}
 				}

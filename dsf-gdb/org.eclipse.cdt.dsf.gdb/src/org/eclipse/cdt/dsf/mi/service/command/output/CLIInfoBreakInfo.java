@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ import java.util.Set;
  */
 public class CLIInfoBreakInfo extends MIInfo {
 
-	private Map<Integer, String[]> fBreakpointToGroupMap = new HashMap<Integer, String[]>();
+	private Map<String, String[]> fBreakpointToGroupMap = new HashMap<String, String[]>();
 
 	public CLIInfoBreakInfo(MIOutput out) {		
 		super(out);
@@ -65,7 +65,7 @@ public class CLIInfoBreakInfo extends MIInfo {
 	 * each breakpoint applies.  If there is only a single thread-group being debugged, an
 	 * empty map will be returned.
 	 */
-	public Map<Integer, String[]> getBreakpointToGroupMap() {
+	public Map<String, String[]> getBreakpointToGroupMap() {
 		return fBreakpointToGroupMap; 
 	}
 	
@@ -81,14 +81,8 @@ public class CLIInfoBreakInfo extends MIInfo {
 						// Get the breakpoint id by extracting the first element before a white space
 						// or before a period.  We can set a limit of 2 since we only need the first element
 						String bpIdStr = line.split("[\\s\\.]", 2)[0]; //$NON-NLS-1$
-						int bpId = 0;
-						try {
-							bpId = Integer.parseInt(bpIdStr);
-						} catch (NumberFormatException e) {
-							assert false;
-						}
 						
-						String[] groups = fBreakpointToGroupMap.get(bpId);
+						String[] groups = fBreakpointToGroupMap.get(bpIdStr);
 						Set<String> groupIdList = new HashSet<String>();
 						if (groups != null) {
 							// Since we already know about this breakpoint id we must retain the list
@@ -104,7 +98,7 @@ public class CLIInfoBreakInfo extends MIInfo {
 							groupIdList.add("i" + id.trim());  //$NON-NLS-1$						
 						}
 						
-						fBreakpointToGroupMap.put(bpId, groupIdList.toArray(new String[groupIdList.size()]));
+						fBreakpointToGroupMap.put(bpIdStr, groupIdList.toArray(new String[groupIdList.size()]));
 					}
 				}
 			}

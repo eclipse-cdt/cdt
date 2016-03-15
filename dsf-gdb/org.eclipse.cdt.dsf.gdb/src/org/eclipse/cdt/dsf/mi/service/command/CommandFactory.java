@@ -319,7 +319,8 @@ public class CommandFactory {
 		return new CLIMaintenance(ctx, subCommand);
 	}
 
-	public ICommand<MIInfo> createCLIPasscount(IBreakpointsTargetDMContext ctx, int breakpoint, int passcount) {
+	/** @since 5.0 */
+	public ICommand<MIInfo> createCLIPasscount(IBreakpointsTargetDMContext ctx, String breakpoint, int passcount) {
 		return new CLIPasscount(ctx, breakpoint, passcount);
 	}
 
@@ -393,27 +394,33 @@ public class CommandFactory {
 		return new MIAddInferior(ctx);
 	}
 	
-	public ICommand<MIInfo> createMIBreakAfter(IBreakpointsTargetDMContext ctx, int breakpoint, int ignoreCount) {
+	/** @since 5.0 */
+	public ICommand<MIInfo> createMIBreakAfter(IBreakpointsTargetDMContext ctx, String breakpoint, int ignoreCount) {
 		return new MIBreakAfter(ctx, breakpoint, ignoreCount);
 	}
 
-	public ICommand<MIInfo> createMIBreakCommands(IBreakpointsTargetDMContext ctx, int breakpoint, String[] commands) {
+	/** @since 5.0 */
+	public ICommand<MIInfo> createMIBreakCommands(IBreakpointsTargetDMContext ctx, String breakpoint, String[] commands) {
 		return new MIBreakCommands(ctx, breakpoint, commands);
 	}
 	
-	public ICommand<MIInfo> createMIBreakCondition(IBreakpointsTargetDMContext ctx, int breakpoint, String condition) {
+	/** @since 5.0 */
+	public ICommand<MIInfo> createMIBreakCondition(IBreakpointsTargetDMContext ctx, String breakpoint, String condition) {
 		return new MIBreakCondition(ctx, breakpoint, condition);
 	}
 
-	public ICommand<MIInfo> createMIBreakDelete(IBreakpointsTargetDMContext ctx, int[] array) {
+	/** @since 5.0 */
+	public ICommand<MIInfo> createMIBreakDelete(IBreakpointsTargetDMContext ctx, String[] array) {
 		return new MIBreakDelete(ctx, array);
 	}
 
-	public ICommand<MIInfo> createMIBreakDisable(IBreakpointsTargetDMContext ctx, int[] array) {
+	/** @since 5.0 */
+	public ICommand<MIInfo> createMIBreakDisable(IBreakpointsTargetDMContext ctx, String[] array) {
 		return new MIBreakDisable(ctx, array);
 	}
 
-	public ICommand<MIInfo> createMIBreakEnable(IBreakpointsTargetDMContext ctx, int[] array) {
+	/** @since 5.0 */
+	public ICommand<MIInfo> createMIBreakEnable(IBreakpointsTargetDMContext ctx, String[] array) {
 		return new MIBreakEnable(ctx, array);
 	}
 

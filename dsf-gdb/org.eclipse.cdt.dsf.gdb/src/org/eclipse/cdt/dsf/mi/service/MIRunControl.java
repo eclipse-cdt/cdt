@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -524,9 +524,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 
     	MIBreakpointDMContext _bp = null;
     	if (e instanceof MIBreakpointHitEvent) {
-    	    int bpId = ((MIBreakpointHitEvent)e).getNumber();
+    	    String bpId = ((MIBreakpointHitEvent)e).getNumber();
             IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
-            if (bpsTarget != null && bpId >= 0) {
+            if (bpsTarget != null && !bpId.isEmpty()) {
                 _bp = new MIBreakpointDMContext(getSession().getId(), new IDMContext[] {bpsTarget}, bpId); 
             }
     	}

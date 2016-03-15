@@ -41,20 +41,29 @@ import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DefaultPathEntryStore;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.model.PathEntryUtil;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * Wrapper class intended to provide backward compatibility with ScannerInfo supplied by {@link PathEntryManager}.
+ * Wrapper class intended to provide backward compatibility with ScannerInfo
+ * supplied by {@link PathEntryManager}.
  */
 public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettingsBaseProvider {
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc,
+			String languageId) {
+		if (config == null) {
+			return null;
+		}
+
+		ICConfigurationDescription cfgDescription = config.getAdapter(ICConfigurationDescription.class);
 		if (cfgDescription == null) {
 			return null;
 		}
+
 		ICProjectDescription prjDescription = cfgDescription.getProjectDescription();
 		if (prjDescription == null) {
 			return null;
@@ -72,7 +81,8 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 			@Override
 			public int compare(IPathEntry macro1, IPathEntry macro2) {
 				if (macro1 instanceof IMacroEntry && macro2 instanceof IMacroEntry) {
-					return ((IMacroEntry)macro1).getMacroName().compareTo(((IMacroEntry)macro2).getMacroName());
+					return ((IMacroEntry) macro1).getMacroName()
+							.compareTo(((IMacroEntry) macro2).getMacroName());
 				}
 				return 0;
 			}
@@ -82,17 +92,20 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 		pathEntriesMap.put(IPathEntry.CDT_LIBRARY, new LinkedHashSet<IPathEntry>());
 
 		IPathEntryStore pathEntryStore = new DefaultPathEntryStore(project);
-		int typesMask = IPathEntry.CDT_INCLUDE | IPathEntry.CDT_MACRO | IPathEntry.CDT_INCLUDE_FILE | IPathEntry.CDT_MACRO_FILE | IPathEntry.CDT_LIBRARY;
+		int typesMask = IPathEntry.CDT_INCLUDE | IPathEntry.CDT_MACRO | IPathEntry.CDT_INCLUDE_FILE
+				| IPathEntry.CDT_MACRO_FILE | IPathEntry.CDT_LIBRARY;
 		try {
 			IPathEntry[] storePathEntries = pathEntryStore.getRawPathEntries();
 			for (IPathEntry storePathEntry : storePathEntries) {
 				if (storePathEntry instanceof IContainerEntry) {
 					try {
-						IPathEntryContainer container = PathEntryManager.getDefault().getPathEntryContainer((IContainerEntry) storePathEntry, cproject);
+						IPathEntryContainer container = PathEntryManager.getDefault()
+								.getPathEntryContainer((IContainerEntry) storePathEntry, cproject);
 						if (container != null) {
 							IPathEntry[] pathEntries = null;
 							if (container instanceof IPathEntryContainerExtension) {
-								pathEntries = ((IPathEntryContainerExtension)container).getPathEntries(rc.getFullPath(), typesMask);
+								pathEntries = ((IPathEntryContainerExtension) container)
+										.getPathEntries(rc.getFullPath(), typesMask);
 							} else {
 								pathEntries = container.getPathEntries();
 							}
@@ -124,10 +137,12 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 			}
 		}
 
-		return LanguageSettingsSerializableStorage.getPooledList(new ArrayList<ICLanguageSettingEntry>(lsEntries));
+		return LanguageSettingsSerializableStorage
+				.getPooledList(new ArrayList<ICLanguageSettingEntry>(lsEntries));
 	}
 
-	private void collectPathEntry(LinkedHashMap<Integer, Set<IPathEntry>> pathEntriesMap, IPath projectPath, IPathEntry pathEntry) {
+	private void collectPathEntry(LinkedHashMap<Integer, Set<IPathEntry>> pathEntriesMap, IPath projectPath,
+			IPathEntry pathEntry) {
 		switch (pathEntry.getEntryKind()) {
 		case IPathEntry.CDT_INCLUDE:
 		case IPathEntry.CDT_MACRO:
@@ -145,14 +160,16 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 	private ICLanguageSettingEntry toLanguageSettingsEntry(IPathEntry pathEntry) {
 		switch (pathEntry.getEntryKind()) {
 		case IPathEntry.CDT_INCLUDE:
-			IIncludeEntry includeEntry = (IIncludeEntry)pathEntry;
-			return CDataUtil.createCIncludePathEntry(includeEntry.getFullIncludePath().toOSString(), includeEntry.isSystemInclude() ? 0 : ICSettingEntry.LOCAL);
+			IIncludeEntry includeEntry = (IIncludeEntry) pathEntry;
+			return CDataUtil.createCIncludePathEntry(includeEntry.getFullIncludePath().toOSString(),
+					includeEntry.isSystemInclude() ? 0 : ICSettingEntry.LOCAL);
 		case IPathEntry.CDT_MACRO:
 			IMacroEntry macroEntry = (IMacroEntry) pathEntry;
 			return CDataUtil.createCMacroEntry(macroEntry.getMacroName(), macroEntry.getMacroValue(), 0);
 		case IPathEntry.CDT_INCLUDE_FILE:
 			IIncludeFileEntry includeFileEntry = (IIncludeFileEntry) pathEntry;
-			return CDataUtil.createCIncludeFileEntry(includeFileEntry.getFullIncludeFilePath().toOSString(), 0);
+			return CDataUtil.createCIncludeFileEntry(includeFileEntry.getFullIncludeFilePath().toOSString(),
+					0);
 		case IPathEntry.CDT_MACRO_FILE:
 			IMacroFileEntry macroFileEntry = (IMacroFileEntry) pathEntry;
 			return CDataUtil.createCMacroFileEntry(macroFileEntry.getFullMacroFilePath().toOSString(), 0);

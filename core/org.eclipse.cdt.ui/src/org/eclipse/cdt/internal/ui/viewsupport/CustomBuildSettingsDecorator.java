@@ -12,10 +12,12 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
@@ -34,15 +36,18 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
- * Determines if a file or folder got customized build settings and if so decorates with the "wrench" overlay.
+ * Determines if a file or folder got customized build settings and if so decorates with the
+ * "wrench" overlay.
  */
 public class CustomBuildSettingsDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		if (element instanceof IFile || element instanceof IFolder) {
 			IResource rc = (IResource) element;
-			ICProjectDescriptionManager projectDescriptionManager = CoreModel.getDefault().getProjectDescriptionManager();
-			ICProjectDescription prjDescription = projectDescriptionManager.getProjectDescription(rc.getProject(), ICProjectDescriptionManager.GET_IF_LOADDED);
+			ICProjectDescriptionManager projectDescriptionManager = CoreModel.getDefault()
+					.getProjectDescriptionManager();
+			ICProjectDescription prjDescription = projectDescriptionManager
+					.getProjectDescription(rc.getProject(), ICProjectDescriptionManager.GET_IF_LOADDED);
 			if (prjDescription != null) {
 				ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 				if (cfgDescription != null) {
@@ -54,23 +59,33 @@ public class CustomBuildSettingsDecorator implements ILightweightLabelDecorator 
 	}
 
 	private static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
-		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject()) && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-				IContainer parent = rc.getParent();
-				List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
-				for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
-					for (String languageId : languages) {
-						List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
-						if (list != null) {
-							List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, parent, languageId);
-							// != is OK here due as the equal lists will have the same reference in WeakHashSet
-							if (list != listDefault)
-								return true;
-						}
+		IBuildConfiguration config = Adapters.adapt(cfgDescription, IBuildConfiguration.class);
+		if (config != null
+				&& ScannerDiscoveryLegacySupport
+						.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject())
+				&& cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			IContainer parent = rc.getParent();
+			List<String> languages = LanguageSettingsManager.getLanguages(rc, cfgDescription);
+			for (ILanguageSettingsProvider provider : ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders()) {
+				for (String languageId : languages) {
+					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
+					if (list == null) {
+						list = provider.getSettingEntries(config, rc, languageId);
+					}
+					if (list != null) {
+						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(config, parent,
+								languageId);
+						// != is OK here due as the equal lists will have the same reference in WeakHashSet
+						if (list != listDefault)
+							return true;
 					}
 				}
+			}
 		}
 
-		ICResourceDescription rcDescription = cfgDescription.getResourceDescription(rc.getProjectRelativePath(), true);
+		ICResourceDescription rcDescription = cfgDescription
+				.getResourceDescription(rc.getProjectRelativePath(), true);
 		return rcDescription != null;
 	}
 

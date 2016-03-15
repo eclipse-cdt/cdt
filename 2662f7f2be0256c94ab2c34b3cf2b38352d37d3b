@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_718ef0b9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T21:25:53Z",
+      "side": 1,
+      "message": "You are correct of course! there is a bug here, I will address that with a test that exposes it too.  The mistake is that it should be a continue, not a return null. The container handled by the backend should be ignored by getCompilationPath, not stop looking!",
+      "parentUuid": "e7dfcf21_8e3fd93c",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_ce0ac1b0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
         "patchSetId": 26
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_918d3cbd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T21:25:53Z",
+      "side": 1,
+      "message": "To do so should really have an API change. At the moment getCompilationPath returns a IPath, but the only caller of getCompilationPath in CDT immediately converts to a string if not-null. See org.eclipse.cdt.dsf.mi.service.CSourceLookup.getDebuggerPath(...).new Job() {...}.run(IProgressMonitor)",
+      "parentUuid": "e7dfcf21_ce03a182",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_ae3ad549",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
         "patchSetId": 26
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_b18878aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T21:25:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_ae3ad549",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_6ef28d0e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
         "patchSetId": 26
@@ -81,6 +135,24 @@
       "writtenOn": "2016-03-15T18:02:30Z",
       "side": 1,
       "message": "Since you can\u0027t always return right above, you will need the else below",
+      "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d10a64b0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-15T21:25:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_6ef28d0e",
       "revId": "2662f7f2be0256c94ab2c34b3cf2b38352d37d3b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -24,8 +24,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
  * @deprecated Clients should extend the new extension point
  *             <tt>completionProprosalComputer</tt> and implement interface
  *             {@link ICompletionProposalComputer}
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICompletionContributor {

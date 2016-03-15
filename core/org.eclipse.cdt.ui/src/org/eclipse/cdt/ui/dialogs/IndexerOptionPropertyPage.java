@@ -83,7 +83,8 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated Throws UnsupportedOperationException if called.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Override
 	@Deprecated

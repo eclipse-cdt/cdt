@@ -62,6 +62,9 @@ public class AutotoolsOptionConstants {
 	 * @since 2.0
 	 */
 	public static final String CATEGORY_ENVVAR = "cat_envvar"; // $NON-NLS-1$
+	/**
+	 * @since 2.0
+	 */
 	public final static String OPT_ENVVAR = "env_vars"; // $NON-NLS-1$
 
 }

@@ -48,14 +48,4 @@ public interface IASTPreprocessorMacroDefinition extends IASTPreprocessorStateme
 	 */
 	@Override
 	public boolean isActive();
-
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	@Deprecated public void setName(IASTName name);
-
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	@Deprecated public void setExpansion(String exp);
 }

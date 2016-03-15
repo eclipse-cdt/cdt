@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Ericsson and others.
+ * Copyright (c) 2011, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 		// Select the breakpoints context map
 		// If it doesn't exist then no breakpoint was ever inserted for this breakpoint space.
 		// In that case, return an empty list.
-		final Map<Integer, MIBreakpointDMData> breakpointContext = getBreakpointMap(context);
+		final Map<String, MIBreakpointDMData> breakpointContext = getBreakpointMap(context);
 		if (breakpointContext == null) {
        		drm.setData(new IBreakpointDMContext[0]);
        		drm.done();
@@ -141,7 +141,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 							new ImmediateDataRequestMonitor<CLIInfoBreakInfo>(drm) {
 						@Override
 						protected void handleSuccess() {
-							Map<Integer, String[]> groupIdMap = getData().getBreakpointToGroupMap();
+							Map<String, String[]> groupIdMap = getData().getBreakpointToGroupMap();
 
 							// Refresh the breakpoints map and format the result
 							breakpointContext.clear();
@@ -153,7 +153,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 								// It is ok to get null.  For example, pending breakpoints are not
 								// associated to a thread-group; also, when debugging a single process,
 								// the thread-group list is empty.
-								int reference = breakpointData.getReference();
+								String reference = breakpointData.getReference();
 								String[] groupIds = groupIdMap.get(reference);
 								breakpointData.setGroupIds(groupIds);
 								
@@ -191,7 +191,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 
 	protected void sendTracepointCommand(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, boolean isFastTracepoint, final DataRequestMonitor<IBreakpointDMContext> drm) {
 		// Select the context breakpoints map
-		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		final Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
 			drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
 			drm.done();
@@ -223,8 +223,8 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 
 						// Create a breakpoint object and store it in the map
 						final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
-						int reference = newBreakpoint.getNumber();
-						if (reference == -1) {
+						String reference = newBreakpoint.getNumber();
+						if (reference.isEmpty()) {
 							drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
 							drm.done();
 							return;

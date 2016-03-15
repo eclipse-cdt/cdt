@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 QNX Software Systems and others.
+ * Copyright (c) 2009, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,20 +43,22 @@ import org.eclipse.debug.core.model.IBreakpoint;
 @Immutable
 public class MIBreakpointHitEvent extends MIStoppedEvent {
 
-    int bkptno;
+    private String bkptno;
 
-    protected MIBreakpointHitEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, int bkptno) {
+    /** @since 5.0 */
+    protected MIBreakpointHitEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String bkptno) {
         super(ctx, token, results, frame);
         this.bkptno = bkptno;
     }
 
-    public int getNumber() {
+    /** @since 5.0 */
+    public String getNumber() {
         return bkptno;
     }
     
     @ConfinedToDsfExecutor("")    
     public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
-       int bkptno = -1;
+       String bkptno = ""; //$NON-NLS-1$
 
        for (int i = 0; i < results.length; i++) {
            String var = results[i].getVariable();
@@ -68,7 +70,7 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
 
            if (var.equals("bkptno")) { //$NON-NLS-1$
                try {
-                   bkptno = Integer.parseInt(str.trim());
+                   bkptno = str.trim();
                } catch (NumberFormatException e) {
                }
            }

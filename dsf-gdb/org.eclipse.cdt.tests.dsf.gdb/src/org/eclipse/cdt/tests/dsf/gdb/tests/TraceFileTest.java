@@ -142,7 +142,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		startTracing();
 		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
 		assertTrue(stoppedEvent instanceof MIBreakpointHitEvent
-				&& ((MIBreakpointHitEvent)stoppedEvent).getNumber() == bptDMC.getReference());
+				&& ((MIBreakpointHitEvent)stoppedEvent).getNumber().equals(bptDMC.getReference()));
 		stopTracing();
 		saveTraceData();
 	}

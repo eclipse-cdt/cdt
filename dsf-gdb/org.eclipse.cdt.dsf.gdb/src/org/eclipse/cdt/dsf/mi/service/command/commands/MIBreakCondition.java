@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Ericsson and others.
+ * Copyright (c) 2007, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,11 @@ public class MIBreakCondition extends MICommand<MIInfo>
 	 * 
 	 * See bug 213076 for more information.
 	 */ 
-
-	public MIBreakCondition(IBreakpointsTargetDMContext ctx, int breakpoint, String condition) {
+	/** @since 5.0 */
+	public MIBreakCondition(IBreakpointsTargetDMContext ctx, String breakpoint, String condition) {
         super(ctx, "-break-condition"); //$NON-NLS-1$
         
-        setParameters(new Adjustable[]{ new MIStandardParameterAdjustable(Integer.toString(breakpoint)),
+        setParameters(new Adjustable[]{ new MIStandardParameterAdjustable(breakpoint),
         		                        new NoChangeAdjustable(condition) });
     }
 	

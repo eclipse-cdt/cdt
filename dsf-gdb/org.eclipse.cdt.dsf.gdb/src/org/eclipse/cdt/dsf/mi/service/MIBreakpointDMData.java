@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Ericsson and others.
+ * Copyright (c) 2007, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,7 +252,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return (String) fProperties.get(MIBreakpoints.BREAKPOINT_TYPE);
 	}
 
-	public int getReference() {
+	/** @since 5.0 */
+	public String getReference() {
 		return fBreakpoint.getNumber();
 	}
 
@@ -323,7 +324,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return fBreakpoint.getCommands();
 	}
 
-	public int getNumber() {
+	/** @since 5.0 */
+	public String getNumber() {
 		return fBreakpoint.getNumber();
 	}
 

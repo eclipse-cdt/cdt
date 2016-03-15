@@ -116,6 +116,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 					}
 				};
 			}
+			typeProviders.put(typeId, provider);
 		}
 		return provider;
 	}

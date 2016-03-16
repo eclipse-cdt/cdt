@@ -41,12 +41,19 @@ import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
-import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIMixedInstruction;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
@@ -185,6 +192,9 @@ public class SourceLookupTest extends BaseTestCase {
 		}
 	};
 
+	private IGDBControl fCommandControl;
+	private CommandFactory fCommandFactory;
+
 	@Override
 	public void doBeforeTest() throws Exception {
 		removeTeminatedLaunchesBeforeTest();
@@ -213,6 +223,19 @@ public class SourceLookupTest extends BaseTestCase {
 	protected void doLaunch(String programName) throws Exception {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, programName);
 		super.doLaunch();
+
+		final DsfSession session = getGDBLaunch().getSession();
+		Runnable runnable = new Runnable() {
+
+			@Override
+			public void run() {
+				DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+				fCommandControl = tracker.getService(IGDBControl.class);
+				fCommandFactory = fCommandControl.getCommandFactory();
+				tracker.dispose();
+			}
+		};
+		session.getExecutor().submit(runnable).get();
 	}
 
 	@Override
@@ -234,15 +257,15 @@ public class SourceLookupTest extends BaseTestCase {
 	 * file.
 	 */
 	protected void assertSourceNotFound() throws Throwable {
-		// Check file name as returned from back end
-		IFrameDMData frameData = SyncUtil.getFrameData(0, 0);
-		assertFalse("GDB Unexpectedly located the source", fileExists(frameData.getFile()));
-
 		// Check file as resolved by source lookup director
 		ISourceLookupDirector director = (ISourceLookupDirector) getGDBLaunch().getSourceLocator();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(0, 0);
 		Object sourceElement = director.getSourceElement(frameDmc);
 		assertNull("Source Locator unexpectedly found the source", sourceElement);
+
+		// Check file name as returned from back end
+		IFrameDMData frameData = SyncUtil.getFrameData(0, 0);
+		assertFalse("GDB Unexpectedly located the source", fileExists(frameData.getFile()));
 
 		// Check file as resolved by ISourceLookup service
 		try {
@@ -260,15 +283,15 @@ public class SourceLookupTest extends BaseTestCase {
 	 * found the source file.
 	 */
 	protected void assertSourceFoundByDirectorOnly() throws Throwable {
-		// Check file name as returned from back end
-		IFrameDMData frameData = SyncUtil.getFrameData(0, 0);
-		assertFalse("GDB Unexpectedly located the source", fileExists(frameData.getFile()));
-
 		// Check file as resolved by source lookup director
 		ISourceLookupDirector director = (ISourceLookupDirector) getGDBLaunch().getSourceLocator();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(0, 0);
 		Object sourceElement = director.getSourceElement(frameDmc);
 		assertTrue("Source locator failed to find source", sourceElement instanceof IStorage);
+
+		// Check file name as returned from back end
+		IFrameDMData frameData = SyncUtil.getFrameData(0, 0);
+		assertFalse("GDB Unexpectedly located the source", fileExists(frameData.getFile()));
 
 		// Check file as resolved by ISourceLookup service
 		sourceElement = SyncUtil.getSource(frameData.getFile());
@@ -279,15 +302,15 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Custom assertion that GDB and the Source Locator found the source file.
 	 */
 	protected void assertSourceFound() throws Throwable {
-		// Check file name as returned from back end
-		IFrameDMData frameData = SyncUtil.getFrameData(0, 0);
-		assertTrue("GDB failed to find source", fileExists(frameData.getFile()));
-
 		// Check file as resolved by source lookup director
 		ISourceLookupDirector director = (ISourceLookupDirector) getGDBLaunch().getSourceLocator();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(0, 0);
 		Object sourceElement = director.getSourceElement(frameDmc);
 		assertTrue("Source locator failed to find source", sourceElement instanceof IStorage);
+
+		// Check file name as returned from back end
+		IFrameDMData frameData = SyncUtil.getFrameData(0, 0);
+		assertTrue("GDB failed to find source", fileExists(frameData.getFile()));
 
 		// Check file as resolved by ISourceLookup service
 		sourceElement = SyncUtil.getSource(frameData.getFile());
@@ -328,10 +351,11 @@ public class SourceLookupTest extends BaseTestCase {
 	/**
 	 * Add the mapping source container to the common source lookup
 	 */
-	protected void doMappingInCommon(boolean canonical) {
+	protected void doMappingInCommon(boolean canonical, boolean withBackend) {
 		CSourceLookupDirector commonSourceLookupDirector = CDebugCorePlugin.getDefault()
 				.getCommonSourceLookupDirector();
 		MappingSourceContainer mapContainer = new MappingSourceContainer("Mappings");
+		mapContainer.setIsMappingWithBackendEnabled(withBackend);
 		if (canonical) {
 			mapContainer.addMapEntry(fMapEntrySourceContainerC);
 		} else {
@@ -362,11 +386,10 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Set default source locators and a path mapping
 	 * {@link MappingSourceContainer} from BUILD_ABSPATH -> SOURCE_ABSPATH and
 	 * do the launch
-	 * 
-	 * @return
 	 */
-	protected void doMappingAndLaunch(String programName) throws CoreException, Exception {
+	protected void doMappingAndLaunch(String programName, boolean withBackend) throws CoreException, Exception {
 		MappingSourceContainer mapContainer = new MappingSourceContainer("Mappings");
+		mapContainer.setIsMappingWithBackendEnabled(withBackend);
 		if (programName.endsWith("N.exe")) {
 			mapContainer.addMapEntry(fMapEntrySourceContainerN);
 		} else if (programName.endsWith("C.exe")) {
@@ -379,20 +402,39 @@ public class SourceLookupTest extends BaseTestCase {
 	}
 
 	/**
-	 * With mapping test that GDB does not locate the file, but the source
-	 * lookup director and the source lookup service do find the file.
+	 * Mapping test common.
+	 * 
+	 * If backend is used for mapping then every layer should be able to find
+	 * source.
+	 * 
+	 * If backned is not used for mapping then only once the source lookup
+	 * director gets involved should the source be found as GDB will not know
+	 * how to find it on its own.
 	 */
-	protected void sourceMapping(String programName) throws Throwable {
-		doMappingAndLaunch(programName);
-		assertSourceFoundByDirectorOnly();
+	protected void sourceMapping(String programName, boolean withBackend) throws Throwable {
+		doMappingAndLaunch(programName, withBackend);
+		if (withBackend) {
+			assertSourceFound();
+		} else {
+			assertSourceFoundByDirectorOnly();
+		}
 	}
 
 	/**
 	 * With mapping test breakpoints can be inserted.
 	 */
-	protected void sourceMappingBreakpoints(String programName) throws Throwable {
-		doMappingAndLaunch(programName);
+	protected void sourceMappingBreakpoints(String programName, boolean withBackend) throws Throwable {
+		doMappingAndLaunch(programName, withBackend);
 
+		assertInsertBreakpointSuccessful();
+	}
+
+	/**
+	 * Assert that a breakpoint can be successfully inserted. To successfully
+	 * insert a breakpoint it means the the mapping of local file names to
+	 * compilation paths is working properly.
+	 */
+	protected void assertInsertBreakpointSuccessful() throws Throwable {
 		// insert breakpoint in source file
 		fBreakpointInstalledWait.waitReset();
 		ICLineBreakpoint bp = CDIDebugModel.createLineBreakpoint(
@@ -414,7 +456,16 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingAC() throws Throwable {
-		sourceMapping(EXEC_AC_NAME);
+		sourceMapping(EXEC_AC_NAME, false);
+	}
+
+	/**
+	 * Test source mappings with executable built with an Absolute and Canonical
+	 * build path
+	 */
+	@Test
+	public void sourceSubstituteAC() throws Throwable {
+		sourceMapping(EXEC_AC_NAME, true);
 	}
 
 	/**
@@ -423,7 +474,17 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingAN() throws Throwable {
-		sourceMapping(EXEC_AN_NAME);
+		sourceMapping(EXEC_AN_NAME, false);
+	}
+
+	/**
+	 * Test source mappings with executable built with an Absolute and
+	 * Non-canonical build path
+	 */
+	@Test
+	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
+	public void sourceSubstituteAN() throws Throwable {
+		sourceMapping(EXEC_AN_NAME, true);
 	}
 
 	/**
@@ -432,7 +493,16 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingRC() throws Throwable {
-		sourceMapping(EXEC_RC_NAME);
+		sourceMapping(EXEC_RC_NAME, false);
+	}
+
+	/**
+	 * Test source mappings with executable built with a Relative and Canonical
+	 * build path
+	 */
+	@Test
+	public void sourceSubstituteRC() throws Throwable {
+		sourceMapping(EXEC_RC_NAME, true);
 	}
 
 	/**
@@ -441,7 +511,17 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingRN() throws Throwable {
-		sourceMapping(EXEC_RN_NAME);
+		sourceMapping(EXEC_RN_NAME, false);
+	}
+
+	/**
+	 * Test source mappings with executable built with a Relative and
+	 * Non-canonical build path
+	 */
+	@Test
+	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
+	public void sourceSubstituteRN() throws Throwable {
+		sourceMapping(EXEC_RN_NAME, true);
 	}
 
 	/**
@@ -450,7 +530,16 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsAC() throws Throwable {
-		sourceMappingBreakpoints(EXEC_AC_NAME);
+		sourceMappingBreakpoints(EXEC_AC_NAME, false);
+	}
+
+	/**
+	 * Test source mappings with executable built with an Absolute and Canonical
+	 * build path
+	 */
+	@Test
+	public void sourceSubstituteBreakpointsAC() throws Throwable {
+		sourceMappingBreakpoints(EXEC_AC_NAME, true);
 	}
 
 	/**
@@ -460,7 +549,17 @@ public class SourceLookupTest extends BaseTestCase {
 	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	@Test
 	public void sourceMappingBreakpointsAN() throws Throwable {
-		sourceMappingBreakpoints(EXEC_AN_NAME);
+		sourceMappingBreakpoints(EXEC_AN_NAME, false);
+	}
+
+	/**
+	 * Test source mappings with executable built with an Absolute and
+	 * Non-canonical build path
+	 */
+	@Test
+	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
+	public void sourceSubstituteBreakpointsAN() throws Throwable {
+		sourceMappingBreakpoints(EXEC_AN_NAME, true);
 	}
 
 	/**
@@ -469,7 +568,16 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsRC() throws Throwable {
-		sourceMappingBreakpoints(EXEC_RC_NAME);
+		sourceMappingBreakpoints(EXEC_RC_NAME, false);
+	}
+
+	/**
+	 * Test source mappings with executable built with a Relative and Canonical
+	 * build path
+	 */
+	@Test
+	public void sourceSubstituteBreakpointsRC() throws Throwable {
+		sourceMappingBreakpoints(EXEC_RC_NAME, true);
 	}
 
 	/**
@@ -479,7 +587,33 @@ public class SourceLookupTest extends BaseTestCase {
 	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	@Test
 	public void sourceMappingBreakpointsRN() throws Throwable {
-		sourceMappingBreakpoints(EXEC_RN_NAME);
+		sourceMappingBreakpoints(EXEC_RN_NAME, false);
+	}
+
+	/**
+	 * Test source mappings with executable built with a Relative and
+	 * Non-canonical build path
+	 */
+	@Test
+	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
+	public void sourceSubstituteBreakpointsRN() throws Throwable {
+		sourceMappingBreakpoints(EXEC_RN_NAME, true);
+	}
+
+	/**
+	 * Change directory to the binary (aka EXEC_PATH)
+	 */
+	protected void doCdToBinDir() throws Exception {
+		Query<MIInfo> query = new Query<MIInfo>() {
+			@Override
+			protected void execute(DataRequestMonitor<MIInfo> rm) {
+				fCommandControl.queueCommand(fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(),
+						new File(EXEC_PATH).getAbsolutePath()), rm);
+			}
+		};
+
+		fCommandControl.getExecutor().execute(query);
+		query.get();
 	}
 
 	/**
@@ -487,15 +621,18 @@ public class SourceLookupTest extends BaseTestCase {
 	 * debug session (e.g. with CSourceNotFoundEditor) that the lookups are
 	 * updated.
 	 */
-	@Test
-	public void sourceMappingChanges() throws Throwable {
-		doMappingAndLaunch(EXEC_AC_NAME);
+	public void sourceMappingChangesHelper(boolean withBackend) throws Throwable {
+		doMappingAndLaunch(EXEC_AC_NAME, withBackend);
 
 		DsfSourceLookupDirector sourceLocator = (DsfSourceLookupDirector) getGDBLaunch().getSourceLocator();
 		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(
 				new Path(BUILD_ABSPATH + "/incorrectsubpath"), new Path(SOURCE_ABSPATH));
 
-		assertSourceFoundByDirectorOnly();
+		if (withBackend) {
+			assertSourceFound();
+		} else {
+			assertSourceFoundByDirectorOnly();
+		}
 
 		// Change the source mappings
 		ISourceContainer[] containers = sourceLocator.getSourceContainers();
@@ -503,6 +640,18 @@ public class SourceLookupTest extends BaseTestCase {
 		mappingSourceContainer.removeMapEntry(fMapEntrySourceContainerC);
 		mappingSourceContainer.addMapEntry(incorrectMapEntry);
 		sourceLocator.setSourceContainers(containers);
+
+		/*
+		 * GDB (pre 7.0) changes the current directory when the above source is
+		 * found. As a result GDB is able to find the source even though we have
+		 * changed the source lookup paths. To make sure that GDB is really
+		 * doing a substitution rather than looking in current directory, change
+		 * the current directory. Without this, the assertSourceNotFound fails
+		 * because GDB unexpectedly finds the source (for the wrong reason).
+		 */
+		if (withBackend) {
+			doCdToBinDir();
+		}
 
 		assertSourceNotFound();
 
@@ -513,7 +662,21 @@ public class SourceLookupTest extends BaseTestCase {
 		mappingSourceContainer.addMapEntry(fMapEntrySourceContainerC);
 		sourceLocator.setSourceContainers(containers);
 
-		assertSourceFoundByDirectorOnly();
+		if (withBackend) {
+			assertSourceFound();
+		} else {
+			assertSourceFoundByDirectorOnly();
+		}
+	}
+
+	@Test
+	public void sourceMappingChanges() throws Throwable {
+		sourceMappingChangesHelper(false);
+	}
+
+	@Test
+	public void sourceSubstituteChanges() throws Throwable {
+		sourceMappingChangesHelper(true);
 	}
 
 	/**
@@ -524,8 +687,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 * This version is for a new source mapping where there wasn't one
 	 * previously.
 	 */
-	@Test
-	public void sourceMappingAdded() throws Throwable {
+	public void sourceMappingAddedHelper(boolean withBackend) throws Throwable {
 		doLaunch(EXEC_PATH + EXEC_AC_NAME);
 
 		assertSourceNotFound();
@@ -534,13 +696,28 @@ public class SourceLookupTest extends BaseTestCase {
 		DsfSourceLookupDirector sourceLocator = (DsfSourceLookupDirector) getGDBLaunch().getSourceLocator();
 		ISourceContainer[] containers = sourceLocator.getSourceContainers();
 		MappingSourceContainer mappingSourceContainer = new MappingSourceContainer("Mappings");
+		mappingSourceContainer.setIsMappingWithBackendEnabled(withBackend);
 		mappingSourceContainer.addMapEntry(fMapEntrySourceContainerC);
 		ISourceContainer[] newContainers = new ISourceContainer[containers.length + 1];
 		System.arraycopy(containers, 0, newContainers, 0, containers.length);
 		newContainers[newContainers.length - 1] = mappingSourceContainer;
 		sourceLocator.setSourceContainers(newContainers);
 
-		assertSourceFoundByDirectorOnly();
+		if (withBackend) {
+			assertSourceFound();
+		} else {
+			assertSourceFoundByDirectorOnly();
+		}
+	}
+
+	@Test
+	public void sourceMappingAdded() throws Throwable {
+		sourceMappingAddedHelper(false);
+	}
+
+	@Test
+	public void sourceSubstituteAdded() throws Throwable {
+		sourceMappingAddedHelper(true);
 	}
 
 	/**
@@ -635,11 +812,20 @@ public class SourceLookupTest extends BaseTestCase {
 	 * In this case, the DSF specific director created as part of the launch
 	 * gets used.
 	 */
+	public void sourceFinderMappingAC_ActiveLaunchHelper(boolean withBackend) throws Throwable {
+		assertFinderDoesNotFind(EXEC_AC_NAME, new File(BUILD_PATH, SOURCE_NAME).getAbsolutePath());
+		doMappingAndLaunch(EXEC_AC_NAME, withBackend);
+		assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
+	}
+
 	@Test
 	public void sourceFinderMappingAC_ActiveLaunch() throws Throwable {
-		assertFinderDoesNotFind(EXEC_AC_NAME, new File(BUILD_PATH, SOURCE_NAME).getAbsolutePath());
-		doMappingAndLaunch(EXEC_AC_NAME);
-		assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
+		sourceFinderMappingAC_ActiveLaunchHelper(false);
+	}
+
+	@Test
+	public void sourceFinderSubstituteAC_ActiveLaunch() throws Throwable {
+		sourceFinderMappingAC_ActiveLaunchHelper(true);
 	}
 
 	/**
@@ -649,13 +835,22 @@ public class SourceLookupTest extends BaseTestCase {
 	 * In this case, the DSF specific director created as part of the launch
 	 * gets used.
 	 */
-	@Test
-	public void sourceFinderMappingAC_TerminatedLaunch() throws Throwable {
-		sourceFinderMappingAC_ActiveLaunch();
+	public void sourceFinderMappingAC_TerminatedLaunchHelper(boolean withBackend) throws Throwable {
+		sourceFinderMappingAC_ActiveLaunchHelper(withBackend);
 
 		// Terminate the launch, but don't remove it
 		doAfterTest();
 		assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
+	}
+
+	@Test
+	public void sourceFinderMappingAC_TerminatedLaunch() throws Throwable {
+		sourceFinderMappingAC_TerminatedLaunchHelper(false);
+	}
+
+	@Test
+	public void sourceFinderSubstituteAC_TerminatedLaunch() throws Throwable {
+		sourceFinderMappingAC_ActiveLaunchHelper(true);
 	}
 
 	/**
@@ -665,9 +860,8 @@ public class SourceLookupTest extends BaseTestCase {
 	 * In this case, the c general director created as part of the launch gets
 	 * used.
 	 */
-	@Test
-	public void sourceFinderMappingAC_LaunchConfig() throws Throwable {
-		sourceFinderMappingAC_TerminatedLaunch();
+	public void sourceFinderMappingAC_LaunchConfigHelper(boolean withBackend) throws Throwable {
+		sourceFinderMappingAC_TerminatedLaunchHelper(withBackend);
 
 		// Remove the launch, so that we can test with the existing
 		// configuration
@@ -683,15 +877,24 @@ public class SourceLookupTest extends BaseTestCase {
 		assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
 	}
 
+	@Test
+	public void sourceFinderMappingAC_LaunchConfig() throws Throwable {
+		sourceFinderMappingAC_LaunchConfigHelper(false);
+	}
+
+	@Test
+	public void sourceFinderSubstituteAC_LaunchConfig() throws Throwable {
+		sourceFinderMappingAC_LaunchConfigHelper(true);
+	}
+
 	/**
 	 * Test that CSourceFinder works with the common source director, i.e. no
 	 * launches or launch configs in place.
 	 */
-	@Test
-	public void sourceFinderMappingAC_CommonLocator() throws Throwable {
+	public void sourceFinderMappingAC_CommonLocatorHelper(boolean withBackend) throws Throwable {
 		assertFinderDoesNotFind(EXEC_AC_NAME, new File(BUILD_PATH, SOURCE_NAME).getAbsolutePath());
 
-		doMappingInCommon(true);
+		doMappingInCommon(true, withBackend);
 		try {
 			assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
 		} finally {
@@ -699,6 +902,16 @@ public class SourceLookupTest extends BaseTestCase {
 		}
 
 		assertFinderDoesNotFind(EXEC_AC_NAME, new File(BUILD_PATH, SOURCE_NAME).getAbsolutePath());
+	}
+
+	@Test
+	public void sourceFinderMappingAC_CommonLocator() throws Throwable {
+		sourceFinderMappingAC_CommonLocatorHelper(false);
+	}
+
+	@Test
+	public void sourceFinderSubstituteAC_CommonLocator() throws Throwable {
+		sourceFinderMappingAC_CommonLocatorHelper(true);
 	}
 
 	/**
@@ -732,5 +945,39 @@ public class SourceLookupTest extends BaseTestCase {
 		doLaunch(EXEC_PATH + EXEC_NAME);
 
 		assertSourceFound();
+	}
+
+	/**
+	 * Test verifies interaction between director that has two mappers, one with
+	 * backend enabled and one without with the second being the only valid one.
+	 */
+	@Test
+	public void twoMappersSecondValid() throws Throwable {
+		MappingSourceContainer substituteContainer = new MappingSourceContainer("Mappings With Backend");
+		substituteContainer.setIsMappingWithBackendEnabled(true);
+		/*
+		 * the entry here does not matter, as long as it is not the valid
+		 * substitution, we want to make sure that we process the other
+		 * MappingSourceContainer correctly
+		 */
+		substituteContainer
+				.addMapEntry(new MapEntrySourceContainer(new Path("/from_invalid"), new Path("/to_invalid")));
+		AbstractSourceLookupDirector director = setSourceContainer(substituteContainer);
+
+		// this is the mapping we want to do the work
+		MappingSourceContainer mapContainer = new MappingSourceContainer("Mappings");
+		mapContainer.setIsMappingWithBackendEnabled(false);
+		mapContainer.addMapEntry(fMapEntrySourceContainerC);
+		addSourceContainer(director, mapContainer);
+
+		doLaunch(EXEC_PATH + EXEC_AC_NAME);
+
+		/*
+		 * because the backend substitution does not apply, we resolve with the
+		 * CDT mapping, in this case that means that only the director should
+		 * locate the source.
+		 */
+		assertSourceFoundByDirectorOnly();
+		assertInsertBreakpointSuccessful();
 	}
 }

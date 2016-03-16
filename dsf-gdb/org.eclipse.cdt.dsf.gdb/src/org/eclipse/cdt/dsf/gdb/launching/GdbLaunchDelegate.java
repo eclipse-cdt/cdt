@@ -430,7 +430,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
      * @since 4.1
      */
     protected DsfSourceLookupDirector createDsfSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
-    	return new DsfSourceLookupDirector(session);
+        return new GdbSourceLookupDirector(session);
     }
 	
 	/**

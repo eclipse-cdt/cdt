@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,8 @@ public class SourceLookupUIMessages extends NLS {
 	public static String PathMappingDialog_14;
 	public static String PathMappingDialog_15;
 	public static String PathMappingDialog_16;
+	public static String PathMappingDialog_MappingWithBackendEnabled;
+	public static String PathMappingDialog_MappingWithBackendEnabledTooltip;
 	public static String RemoveAction_0;
 	public static String SourceContainerWorkbenchAdapter_0;
 	public static String UpAction_0;

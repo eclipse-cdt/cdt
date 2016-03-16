@@ -428,15 +428,21 @@ public class CommandFactory {
 		return new MIBreakInsert(ctx, func, false);
 	}
 
+	/**
+     * @since 5.0
+     */
 	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, 
 			boolean isHardware, String condition, int ignoreCount,
-			String line, int tid) {
+			String line, String tid) {
 		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, false);
 	}
 
+	/**
+     * @since 5.0
+     */
 	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary,
 			boolean isHardware, String condition, int ignoreCount, 
-			String location, int tid, boolean disabled, boolean isTracepoint) {
+			String location, String tid, boolean disabled, boolean isTracepoint) {
 		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint, false);
 	}
 

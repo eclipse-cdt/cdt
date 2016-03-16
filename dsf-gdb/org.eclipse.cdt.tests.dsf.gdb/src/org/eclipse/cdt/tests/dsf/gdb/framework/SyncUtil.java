@@ -209,7 +209,7 @@ public class SyncUtil {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakInsertInfo> rm) {
 				fGdbControl.queueCommand(
-						fCommandFactory.createMIBreakInsert(bpTargetDmc, temporary, false, null, 0, location, 0),
+						fCommandFactory.createMIBreakInsert(bpTargetDmc, temporary, false, null, 0, location, "0"),
 						rm);
 			}
 		};

@@ -661,13 +661,12 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		final String  condition      = (String)  getProperty(attributes, CONDITION,    NULL_STRING);
 		final Integer ignoreCount    = (Integer) getProperty(attributes, IGNORE_COUNT,          0 );
 		final String  threadId       = (String)  getProperty(attributes, MIBreakpointDMData.THREAD_ID,      "0"); //$NON-NLS-1$
-		final int     tid            = Integer.parseInt(threadId);
 
 	    final Step insertBreakpointStep = new Step() {
     		@Override
     		public void execute(final RequestMonitor rm) {
     				fConnection.queueCommand(
-    					fCommandFactory.createMIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid), 
+    					fCommandFactory.createMIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, threadId), 
 						new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
 							@Override
 							protected void handleSuccess() {

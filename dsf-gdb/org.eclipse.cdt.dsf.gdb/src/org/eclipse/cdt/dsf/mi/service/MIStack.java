@@ -285,7 +285,7 @@ implements IStack, ICachingService {
 	   it will eliminate the issue with invalid data on subsequent invocations. We don't cache errors.
 	 */
 	@SuppressWarnings("serial")
-	private class FramesCache extends HashMap<Integer, FramesCacheInfo> {
+	private class FramesCache extends HashMap<String, FramesCacheInfo> {
 		public void clear(IDMContext context) {
 			final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 			if (execDmc != null) {
@@ -295,7 +295,7 @@ implements IStack, ICachingService {
 			};
 		}
 
-		public FramesCacheInfo getThreadFramesCache(int threadId) {
+		public FramesCacheInfo getThreadFramesCache(String threadId) {
 			FramesCacheInfo info = get(threadId);
 			if (info == null) {
 				put(threadId, info = new FramesCacheInfo());
@@ -303,13 +303,13 @@ implements IStack, ICachingService {
 			return info;
 		}
 
-		public FramesCacheInfo update(int threadId, int stackDepth, int maxRequestedStackDepth) {
+		public FramesCacheInfo update(String threadId, int stackDepth, int maxRequestedStackDepth) {
 			FramesCacheInfo info = getThreadFramesCache(threadId);
 			info.setStackDepth(stackDepth, maxRequestedStackDepth);
 			return info;
 		}
 
-		public FramesCacheInfo update(int threadId, MIStackListFramesInfo framesInfo) {
+		public FramesCacheInfo update(String threadId, MIStackListFramesInfo framesInfo) {
 			FramesCacheInfo info = getThreadFramesCache(threadId);
 			if (framesInfo != null) {
 				int len = framesInfo.getMIFrames().length;
@@ -507,9 +507,10 @@ implements IStack, ICachingService {
 			}
 		}
 
+        String threadId = execDmc.getThreadId();
 		// if requested stack limit is bigger then currently cached this call will return -1
 		final int maxDepth = endIndex > 0 ? endIndex + 1 : -1;
-		int depth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getStackDepth(
+		int depth = fFramesCache.getThreadFramesCache(threadId).getStackDepth(
 				maxDepth);
 		if (depth > 0) { // our stack depth cache is good so we can use it to fill levels array
 			rm.setData(getDMFrames(execDmc, startIndex, endIndex, depth));
@@ -524,7 +525,7 @@ implements IStack, ICachingService {
 				// getStackDepth call would have updated cache for us.
 				// We use same handler on success or error, since gdb is unreliable when comes to frame retrieval
 				// we will return frames array even if we get error when attempting to get stack depth.
-				int stackDepth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getValidStackDepth();
+				int stackDepth = fFramesCache.getThreadFramesCache(threadId).getValidStackDepth();
 				rm.done(getDMFrames(execDmc, startIndex, endIndex, stackDepth));
 			}
 		});
@@ -612,7 +613,7 @@ implements IStack, ICachingService {
 			return;
 		}
 
-		final int threadId = execDmc.getThreadId();
+        String threadId = execDmc.getThreadId();
 		final int frameLevel = miFrameDmc.fLevel;
 		FrameData fd = fFramesCache.getThreadFramesCache(threadId).getFrameData(frameLevel);
 		if (fd != null) {
@@ -1026,8 +1027,7 @@ implements IStack, ICachingService {
 				return;
 			}
 
-			final int threadId = execDmc.getThreadId();
-
+            String threadId = execDmc.getThreadId();
 			// Check our internal cache first because different commands can
 			// still be re-used.
 			int depth = fFramesCache.getThreadFramesCache(threadId).getStackDepth(maxDepth);

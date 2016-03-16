@@ -1971,7 +1971,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         		if (targetThreads != null) {
         			for (IExecutionDMContext thread : targetThreads) {
         				if (thread instanceof IMIExecutionDMContext) {
-        					results.add(Integer.toString(((IMIExecutionDMContext)thread).getThreadId()));
+        					results.add(((IMIExecutionDMContext)thread).getThreadId());
         				} else {
         					// If any of the threads is not an IMIExecutionDMContext,
         					// we don't support thread filters at all.

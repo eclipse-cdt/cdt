@@ -210,7 +210,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 		final String  condition      = (String)  getProperty(attributes, MIBreakpoints.CONDITION,         NULL_STRING);
 
 		fConnection.queueCommand(
-				fConnection.getCommandFactory().createMIBreakInsert(context, false, isFastTracepoint, condition, 0, location, 0, !enabled, true),
+				fConnection.getCommandFactory().createMIBreakInsert(context, false, isFastTracepoint, condition, 0, location, "0", !enabled, true), //$NON-NLS-1$
 				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), drm) {
 					@Override
 					protected void handleSuccess() {

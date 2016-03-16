@@ -297,7 +297,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
             IMIExecutionDMContext execDmc = findDmcInPath(
                 update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
             if (execDmc != null) {
-                update.setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(execDmc.getThreadId()));
+                update.setProperty(ILaunchVMConstants.PROP_ID, execDmc.getThreadId());
 
                 // set pin properties
                 IPinElementColorDescriptor colorDesc = PinCloneUtils.getPinElementColorDescriptor(GdbPinProvider.getPinnedHandles(), execDmc);

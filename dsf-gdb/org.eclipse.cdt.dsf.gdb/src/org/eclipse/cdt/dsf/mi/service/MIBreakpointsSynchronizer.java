@@ -333,8 +333,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 							set.add(id);
 	
 							try {
-								int threadId = Integer.parseInt(data.getThreadId());
-								if (threadId > 0) {
+								String threadId = data.getThreadId();
+								if (!threadId.equals("0")) { //$NON-NLS-1$
 									IDsfBreakpointExtension bpExtension = 
 										(IDsfBreakpointExtension)((ICBreakpoint)plBpt).getExtension(
 											MIBreakpointsManager.GDB_DEBUG_MODEL_ID, ICBreakpointExtension.class);
@@ -353,7 +353,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 									List<IExecutionDMContext> list = new ArrayList<IExecutionDMContext>(execDMCs.length);
 									for (IExecutionDMContext c : execDMCs) {
 										if (c instanceof IMIExecutionDMContext 
-											&& ((IMIExecutionDMContext)c).getThreadId() != threadId) {
+											&& !((IMIExecutionDMContext)c).getThreadId().equals(threadId)) {
 											list.add(c);
 										}
 									}
@@ -370,9 +370,6 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 							}
 							catch(CoreException e) {
 								GdbPlugin.log(e.getStatus());
-							}
-							catch(NumberFormatException e) {
-								GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Invalid thread id")); //$NON-NLS-1$
 							}
 						}
 					}
@@ -515,13 +512,12 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			if (execDMCs == null) {
 				execDMCs = new IExecutionDMContext[0];
 			}
-			int threadNum = Integer.parseInt(threadId);
 			for (IExecutionDMContext execDMC : execDMCs) {
-				if (execDMC instanceof IMIExecutionDMContext 
-					&& ((IMIExecutionDMContext)execDMC).getThreadId() == threadNum) {
-					// The platform breakpoint is already restricted to the given thread.
-					return;
-				}
+                String ctxThreadId = ((IMIExecutionDMContext)execDMC).getThreadId();
+                if (execDMC instanceof IMIExecutionDMContext && ctxThreadId.equals(threadId)) {
+                    // The platform breakpoint is already restricted to the given thread.
+                    return;
+                }
 			}
 			IExecutionDMContext[] newExecDMCs = new IExecutionDMContext[execDMCs.length + 1];
 			System.arraycopy(execDMCs, 0, newExecDMCs, 0, execDMCs.length);
@@ -530,9 +526,6 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 					processes.createThreadContext(procDmc, threadId),
 					threadId);
 			bpExtension.setThreadFilters(newExecDMCs);
-		}
-		catch(NumberFormatException e) {
-			GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Invalid thread id")); //$NON-NLS-1$
 		}
 		catch(CoreException e) {
 			GdbPlugin.log(e);

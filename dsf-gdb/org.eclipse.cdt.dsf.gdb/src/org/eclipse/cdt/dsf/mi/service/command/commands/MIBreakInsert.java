@@ -66,12 +66,12 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
 {
 	/** @since 4.0 */
 	public MIBreakInsert(IBreakpointsTargetDMContext ctx, String func, boolean allowPending) {
-		this(ctx, false, false, null, 0, func, 0, allowPending);
+		this(ctx, false, false, null, 0, func, "0", allowPending); //$NON-NLS-1$
 	}
 	
-	/** @since 4.0 */
+	/** @since 5.0*/
 	public MIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, boolean isHardware,
-			String condition, int ignoreCount, String line, int tid, boolean allowPending) {
+			String condition, int ignoreCount, String line, String tid, boolean allowPending) {
 		this(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, false, false, allowPending);
 	}
 	
@@ -79,10 +79,10 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
 	 * This constructor allows to specify if the breakpoint should actually be
 	 * a tracepoint (this will only work starting with GDB 7.1)
 	 * It also includes if a breakpoint should be created disabled (starting GDB 7.0)
-	 * @since 4.0
+	 * @since 5.0
 	 */
 	public MIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, boolean isHardware,
-			String condition, int ignoreCount, String location, int tid, boolean disabled, boolean isTracepoint,
+			String condition, int ignoreCount, String location, String tid, boolean disabled, boolean isTracepoint,
 			boolean allowPending) {
 		super(ctx, "-break-insert"); //$NON-NLS-1$
 
@@ -94,7 +94,7 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
 			// and passcounts cannot be set by a -break-insert
 			ignoreCount = 0;
 			// GDB 7.1 only supports tracepoints that apply to all threads
-			tid = 0;
+			tid = "0"; //$NON-NLS-1$
 		}
 
         // Determine the number of optional parameters that are present
@@ -112,7 +112,7 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
         if (ignoreCount > 0) {
             i += 2;
         }
-        if (tid > 0) {
+        if (!tid.equals("0")) { //$NON-NLS-1$
             i += 2;
         }
         if (disabled) {
@@ -150,10 +150,10 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
             opts[i] = Integer.toString(ignoreCount);
             i++;
         }
-        if (tid > 0) {
+        if (!tid.equals("0")) { //$NON-NLS-1$
             opts[i] = "-p"; //$NON-NLS-1$
             i++;
-            opts[i] = Integer.toString(tid);
+            opts[i] = tid;
             i++;
         }
         if (disabled) {

@@ -14,8 +14,8 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_3.StepIntoSelectionTest_7_3;
-import org.junit.runner.RunWith;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class StepIntoSelectionTest_7_4 extends StepIntoSelectionTest_7_3 {

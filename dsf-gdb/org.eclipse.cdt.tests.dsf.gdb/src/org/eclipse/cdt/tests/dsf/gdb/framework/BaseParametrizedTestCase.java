@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
-import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -133,10 +132,5 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 				setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 						IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 		}
-	}
-
-	@AfterClass
-	public static void afterClass() {
-		BaseParametrizedTestCase.resetGlobalState();
 	}
 }

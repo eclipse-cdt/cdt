@@ -11,6 +11,8 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseRemoteSuite;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.MIBreakpointsTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.MICatchpointsTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.MIRegistersTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -29,7 +31,7 @@ import org.junit.runners.Suite;
 	// We need specific name for the tests of this suite, because of bug https://bugs.eclipse.org/172256
 	GDBMultiNonStopRunControlTest_7_11.class,
 	GDBRemoteTracepointsTest_7_11.class,
-	MIRegistersTest_7_11.class,
+	MIRegistersTest.class,
 	MIRunControlTest_7_11.class,
 	MIRunControlTargetAvailableTest_7_11.class,
 	MIRunControlNonStopTargetAvailableTest_7_11.class,
@@ -38,7 +40,7 @@ import org.junit.runners.Suite;
 	GDBPatternMatchingExpressionsTest_7_11.class,
 	MIMemoryTest_7_11.class,
 	MIBreakpointsTest.class,
-	MICatchpointsTest_7_11.class,
+	MICatchpointsTest.class,
 	MIDisassemblyTest_7_11.class,
 	GDBProcessesTest_7_11.class,
 	OperationsWhileTargetIsRunningTest_7_11.class,

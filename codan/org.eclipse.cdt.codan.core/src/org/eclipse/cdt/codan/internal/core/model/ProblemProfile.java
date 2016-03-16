@@ -16,11 +16,6 @@ import java.util.Collection;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
-import org.eclipse.cdt.codan.core.model.IProblemProfileChangeListener;
-import org.eclipse.cdt.codan.core.model.ProblemProfileChangeEvent;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.SafeRunner;
 
 /**
  * @author Alena
@@ -28,7 +23,6 @@ import org.eclipse.core.runtime.SafeRunner;
 public class ProblemProfile implements IProblemProfile, Cloneable {
 	private CodanProblemCategory rootCategory;
 	private Object resource;
-	private ListenerList preferenceChangeListeners;
 
 	/**
 	 * @param resource
@@ -106,51 +100,6 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	@Override
 	public IProblemCategory getParentCategory() {
 		return getRoot();
-	}
-
-	@Override
-	@Deprecated
-	public void addProfileChangeListener(IProblemProfileChangeListener listener) {
-		if (preferenceChangeListeners == null)
-			preferenceChangeListeners = new ListenerList();
-		preferenceChangeListeners.add(listener);
-	}
-
-	@Override
-	@Deprecated
-	public void removeProfileChangeListener(IProblemProfileChangeListener listener) {
-		if (preferenceChangeListeners == null)
-			return;
-		preferenceChangeListeners.remove(listener);
-		if (preferenceChangeListeners.isEmpty())
-			preferenceChangeListeners = null;
-	}
-
-	/**
-	 * Convenience method for notifying preference change listeners.
-	 */
-	@Deprecated
-	protected void fireProfileChangeEvent(String key, Object oldValue, Object newValue) {
-		if (preferenceChangeListeners == null)
-			return;
-		Object[] listeners = preferenceChangeListeners.getListeners();
-		final ProblemProfileChangeEvent event =
-				new ProblemProfileChangeEvent(this, this.resource, key, oldValue, newValue);
-		for (int i = 0; i < listeners.length; i++) {
-			final IProblemProfileChangeListener listener = (IProblemProfileChangeListener) listeners[i];
-			ISafeRunnable job = new ISafeRunnable() {
-				@Override
-				public void handleException(Throwable exception) {
-					// already logged in Platform#run()
-				}
-
-				@Override
-				public void run() throws Exception {
-					listener.profileChange(event);
-				}
-			};
-			SafeRunner.run(job);
-		}
 	}
 
 	@Override

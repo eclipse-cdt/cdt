@@ -11,7 +11,6 @@
 package org.eclipse.cdt.codan.core.model;
 
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 /**
  * Problem Profile contains tree of categories and problems. For the user
@@ -66,26 +65,6 @@ public interface IProblemProfile extends IProblemElement {
 	 * @return array of problems defined in profile
 	 */
 	IProblem[] getProblems();
-
-	/**
-	 * Add a listener for profile changes
-	 *
-	 * @param listener
-	 * @since 2.0
-	 * @deprecated use {@link IEclipsePreferences} listener instead.
-	 */
-	@Deprecated
-	public void addProfileChangeListener(IProblemProfileChangeListener listener);
-
-	/**
-	 * Remove a lister for profile changes
-	 *
-	 * @param listener
-	 * @since 2.0
-	 * @deprecated use {@link IEclipsePreferences} listener instead.
-	 */
-	@Deprecated
-	public void removeProfileChangeListener(IProblemProfileChangeListener listener);
 
 	/**
 	 * Get an object associated with profile, usually the resource

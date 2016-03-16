@@ -14,7 +14,6 @@ import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblemMultiple;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
-import org.eclipse.cdt.codan.core.model.ProblemProfileChangeEvent;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 
@@ -84,19 +83,17 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 			throw new NullPointerException();
 		checkSet();
 		this.severity = sev;
-		notifyChanged(ProblemProfileChangeEvent.PROBLEM_KEY);
 	}
 
 	@Override
 	public void setEnabled(boolean checked) {
 		checkSet();
 		this.enabled = checked;
-		notifyChanged(ProblemProfileChangeEvent.PROBLEM_KEY);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -114,7 +111,6 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		if (value == null)
 			throw new NullPointerException();
 		rootPreference = value;
-		notifyChanged(ProblemProfileChangeEvent.PROBLEM_PREF_KEY);
 	}
 
 	@Override
@@ -124,7 +120,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMessagePattern()
 	 */
 	@Override
@@ -144,7 +140,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getDescription()
 	 */
 	@Override
@@ -154,7 +150,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.IProblemWorkingCopy#setDescription(java
 	 * .lang.String)
@@ -167,7 +163,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMarkerType()
 	 */
 	@Override
@@ -177,7 +173,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 
 	/**
 	 * Sets the marker id for the problem.
-	 * 
+	 *
 	 * @param markerType
 	 */
 	public void setMarkerType(String markerType) {
@@ -187,7 +183,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblemMultiple#isMultiple()
 	 */
 	@Override
@@ -197,7 +193,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblemMultiple#isOriginal()
 	 */
 	@Override

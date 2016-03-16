@@ -86,14 +86,4 @@ public class CodanProblemElement implements IProblemElement {
 	protected boolean isFrozen() {
 		return frozen;
 	}
-
-	/**
-	 * @param problemKey
-	 */
-	@Deprecated
-	protected void notifyChanged(String key) {
-		if (getProfile() instanceof ProblemProfile) {
-			((ProblemProfile) getProfile()).fireProfileChangeEvent(key, null, this);
-		}
-	}
 }

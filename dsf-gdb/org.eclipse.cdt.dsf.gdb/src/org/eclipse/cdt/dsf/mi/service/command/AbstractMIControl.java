@@ -582,7 +582,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         public String getThreadId() {
         	IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(fCommand.getContext(), IMIExecutionDMContext.class);
         	if(execCtx != null)
-        		return Integer.toString(execCtx.getThreadId());
+        		return execCtx.getThreadId();
         	return null;
         } 
         

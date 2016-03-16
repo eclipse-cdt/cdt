@@ -130,11 +130,18 @@ public class MulticoreVisualizerEventListener {
 								int coreId = Integer.parseInt(cores[0]);
 								final VisualizerCore vCore = model.getCore(coreId);
 								
-								int tid = execDmc.getThreadId();
-																
-								final VisualizerThread thread = model.getThread(tid);
+						        int tid;
+						        VisualizerThread threadTmp = null;
+						        try {
+						            tid = Integer.parseInt(execDmc.getThreadId());
+	                                threadTmp = model.getThread(tid);
+						        } catch (NumberFormatException e) {
+						            // unable to resolve thread
+						            return;
+						        }
 					    		
-					    		if (thread != null) {
+					    		if (threadTmp != null) {
+					    		    final VisualizerThread thread = threadTmp;
 					    			assert thread.getState() == VisualizerExecutionState.RUNNING;
 					    			
 									VisualizerExecutionState _newState = VisualizerExecutionState.SUSPENDED;
@@ -224,11 +231,17 @@ public class MulticoreVisualizerEventListener {
     		// We don't deal with processes
     	} else if (context instanceof IMIExecutionDMContext) {
     		// Thread resumed
-    		int tid = ((IMIExecutionDMContext)context).getThreadId();
+            int tid;
+            VisualizerThread thread = null;
+            try {
+                tid = Integer.parseInt(((IMIExecutionDMContext) context).getThreadId());
+                thread = model.getThread(tid);
+            } catch (NumberFormatException e) {
+                // unable to resolve thread
+                return;
+            }
 
-    		VisualizerThread thread = model.getThread(tid);
-    		
-    		if (thread != null) {
+            if (thread != null) {
     			assert thread.getState() == VisualizerExecutionState.SUSPENDED ||
      				   thread.getState() == VisualizerExecutionState.CRASHED;
     			
@@ -267,7 +280,14 @@ public class MulticoreVisualizerEventListener {
 			if (vCore == null) return;
 			
 			int pid = Integer.parseInt(processContext.getProcId());
-			int tid = execDmc.getThreadId();
+
+            int tid;
+            try {
+                tid = Integer.parseInt(execDmc.getThreadId());
+            } catch (NumberFormatException e) {
+                // unable to resolve thread
+                return;
+            }
 
 			int osTid = 0;
 
@@ -321,7 +341,13 @@ public class MulticoreVisualizerEventListener {
                                     return;
 								
 								int pid = Integer.parseInt(processContext.getProcId());
-								int tid = execDmc.getThreadId();
+                                int tid;
+                                try {
+                                    tid = Integer.parseInt(execDmc.getThreadId());
+                                } catch (NumberFormatException e) {
+                                    // Unable to resolve thread information
+                                    return;
+                                }
 								
 								int osTid = 0;
 								try {
@@ -382,7 +408,14 @@ public class MulticoreVisualizerEventListener {
 							IDMContext[] contexts = getData();
 							for (IDMContext c : contexts) {
 								if (c instanceof IMIExecutionDMContext) {
-									int tid = ((IMIExecutionDMContext)c).getThreadId();
+                                    int tid;
+                                    try {
+                                        tid = Integer.parseInt(((IMIExecutionDMContext) c).getThreadId());
+                                    } catch (NumberFormatException e) {
+                                        // unable to resolve the thread id
+                                        continue;
+                                    }
+
 									model.markThreadExited(tid);
 								}
 							}
@@ -401,10 +434,14 @@ public class MulticoreVisualizerEventListener {
 
     	} else if (context instanceof IMIExecutionDMContext) {
     		// Thread exited
-    		int tid = ((IMIExecutionDMContext)context).getThreadId();
+            int tid;
+            try {
+                tid = Integer.parseInt(((IMIExecutionDMContext) context).getThreadId());
+                model.markThreadExited(tid);
+            } catch (NumberFormatException e) {
+                // unable to resolve the thread id
+            }
 
-			model.markThreadExited(tid);
-			
 			if (canvas != null) {
 				canvas.requestUpdate();
 			}

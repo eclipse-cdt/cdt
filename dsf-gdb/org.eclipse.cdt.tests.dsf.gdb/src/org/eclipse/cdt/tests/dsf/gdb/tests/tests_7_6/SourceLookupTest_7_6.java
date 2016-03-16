@@ -12,6 +12,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_6;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6.SourceLookupTest_6_6;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5.SourceLookupTest_7_5;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.junit.Ignore;
@@ -126,5 +127,23 @@ public class SourceLookupTest_7_6 extends SourceLookupTest_7_5 {
 	@Override
 	public void directorySource() throws Throwable {
 		super.directorySource();
+	}
+
+	/**
+	 * @see SourceLookupTest_6_6#sourceSubstituteRN()
+	 */
+	@Test
+	@Override
+	public void sourceSubstituteRN() throws Throwable {
+		super.sourceSubstituteRN();
+	}
+
+	/**
+	 * @see SourceLookupTest_6_6#sourceSubstituteRN()
+	 */
+	@Test
+	@Override
+	public void sourceSubstituteBreakpointsRN() throws Throwable {
+		super.sourceSubstituteRN();
 	}
 }

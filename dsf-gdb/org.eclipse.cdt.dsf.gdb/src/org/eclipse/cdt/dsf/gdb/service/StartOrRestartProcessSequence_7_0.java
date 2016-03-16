@@ -210,7 +210,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 					IBreakpointsTargetDMContext.class);
 
 			fCommandControl.queueCommand(
-					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, userStopSymbol, 0),
+					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, userStopSymbol, "0"), //$NON-NLS-1$
 					new ImmediateDataRequestMonitor<MIBreakInsertInfo>(rm) {
 						@Override
 						public void handleSuccess() {
@@ -241,7 +241,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, 
-							ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, 0),
+							ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, "0"), //$NON-NLS-1$
 					new ImmediateDataRequestMonitor<MIBreakInsertInfo>(rm) {
 						@Override
 						public void handleSuccess() {

@@ -22,6 +22,7 @@ public interface IMIExecutionDMContext extends IExecutionDMContext
     /**
      * Returns the GDB/MI thread identifier of this context.
      * @return
+     * @since 5.0
      */
-    public int getThreadId();
+    public String getThreadId();
 }

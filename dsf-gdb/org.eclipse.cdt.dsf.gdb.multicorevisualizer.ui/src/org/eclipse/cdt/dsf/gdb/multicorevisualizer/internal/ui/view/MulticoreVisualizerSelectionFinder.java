@@ -140,8 +140,16 @@ public class MulticoreVisualizerSelectionFinder
 	{
 		IMIExecutionDMContext execContext =
 				DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-		int tid = (execContext == null) ? 0 :
-			execContext.getThreadId();
+        int tid = 0;
+        if (execContext != null) {
+            try {
+                tid = Integer.parseInt(execContext.getThreadId());
+            } catch (NumberFormatException e) {
+                // Unable to resolve thread id
+                assert false : "The thread id does not convert to an integer: " + execContext.getThreadId(); //$NON-NLS-1$
+            }
+        }
+
 		return tid;
 	}
 

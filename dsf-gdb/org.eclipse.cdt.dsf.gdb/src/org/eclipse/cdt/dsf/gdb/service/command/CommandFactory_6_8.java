@@ -28,13 +28,13 @@ public class CommandFactory_6_8 extends CommandFactory {
 
 	@Override
 	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, 
-			boolean isHardware, String condition, int ignoreCount, String line, int tid) {
+			boolean isHardware, String condition, int ignoreCount, String line, String tid) {
 		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, true);
 	}
 
 	@Override
 	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary,
-			boolean isHardware, String condition, int ignoreCount, String location, int tid, boolean disabled, boolean isTracepoint) {
+			boolean isHardware, String condition, int ignoreCount, String location, String tid, boolean disabled, boolean isTracepoint) {
 		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint, true);
 	}
 }

@@ -128,15 +128,14 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 		final Boolean isHardware     = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_HARDWARE,  false);
 		final String  condition      = (String)  getProperty(attributes, MIBreakpoints.CONDITION,         NULL_STRING);
 		final Integer ignoreCount    = (Integer) getProperty(attributes, MIBreakpoints.IGNORE_COUNT,      0);
-		String  threadId       = (String)  getProperty(attributes, MIBreakpointDMData.THREAD_ID,    "0"); //$NON-NLS-1$
-		final int     tid            = Integer.parseInt(threadId);
+		String threadId              = (String)  getProperty(attributes, MIBreakpointDMData.THREAD_ID,    "0"); //$NON-NLS-1$
 
 	    final Step insertBreakpointStep = new Step() {
     		@Override
     		public void execute(final RequestMonitor rm) {
     			// Execute the command
     			fConnection.queueCommand(
-    					fCommandFactory.createMIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid, !enabled, false),
+    					fCommandFactory.createMIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, threadId, !enabled, false),
     					new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
     						@Override
     						protected void handleSuccess() {

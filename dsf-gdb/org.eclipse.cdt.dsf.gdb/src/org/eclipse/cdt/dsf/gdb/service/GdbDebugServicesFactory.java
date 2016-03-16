@@ -46,7 +46,6 @@ import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_4;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_7;
-import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
@@ -275,7 +274,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected ISourceLookup createSourceLookupService(DsfSession session) {
-		return new CSourceLookup(session);
+		return new GDBSourceLookup(session);
 	}
 	
 	@Override

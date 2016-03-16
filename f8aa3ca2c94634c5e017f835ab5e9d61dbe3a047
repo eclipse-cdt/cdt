@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_d792545c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupDirector.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-16T03:40:09Z",
+      "side": 1,
+      "message": "I still don\u0027t think this is right :)  But maybe I\u0027m not understanding the big picture...\nI wrote a new test to illustrate better, and I pushed a new patchset with that test.\nHere is my thought process.\nOnce a valid substitute mapping is found above, it should be used; meaning that we should not\ngo to the next mapping.  Going to the next mapping could screw up if that mapping is wrong\n(I\u0027m not sure the user would ever create such a mapping though... but solely based on the\ncode review, it seems possible).\nHow to we know it is a *valid* substitute mapping?  We have to call getCompilcationPath()\nand make sure it does find a mapping for sourceName.  If we do, we must return right away.\t\nThe below should address the problem:\n\t\t\tif (container instanceof IMappingSourceContainer) {\n\t\t\t\tIPath mappedPath \u003d ((IMappingSourceContainer) container).getCompilationPath(sourceName);\n\n\t\t\t\tif (mappedPath !\u003d null) {\n\t\t\t\t    // The path mapping is applicable to sourceName\n\t\t\t\t    // First check if the backend is handling those mappings automatically\n\t\t\t\t    if (container instanceof MappingSourceContainer\n\t\t\t\t\t\t\u0026\u0026 ((MappingSourceContainer) container).isMappingWithBackendEnabled()) {\n    \t\t\t\t\t/*\n\t\t\t\t\t     * This mapping has been handled by GDB backend (i.e. it was\n\t\t\t\t\t     * collected by collectSubstitutionsPaths to pass to gdb\u0027s\n\t\t\t\t\t     * \"set substitute-path\").\n\t\t\t\t\t     * \n\t\t\t\t\t     * As the containers themselves do not know whether the\n\t\t\t\t\t     * director requesting the compilation path supports backend\n\t\t\t\t\t     * mapping we cannot rely on the call to getCompilationPath\n\t\t\t\t\t     * but need to force a null here.\n\t\t\t\t\t     */\n\t\t\t\t\t    return new Path(sourceName);\n\t\t\t\t\t}\n\t\t\t\t    return mappedPath;\n\t\t\t\t}\n\t\t\t} else if (container.isComposite()) {\n\t\t\t...",
+      "revId": "f8aa3ca2c94634c5e017f835ab5e9d61dbe3a047",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

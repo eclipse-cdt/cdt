@@ -527,6 +527,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_9d246d62",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-16T18:31:15Z",
+      "side": 1,
+      "message": "Well, getSubstitutionPaths() had a partial check that upon failure (return empty map) would cause the current\nmethod to send an \u0027unset substitute-path\u0027.  But that is all academic as you should never get the wrong\nsourceLookupDMC.  But I like that you added the check anyway.  Thanks.",
+      "revId": "925234ef2af80b40ca5e1a59683dbef41b62395f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_a1a3d1f8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
         "patchSetId": 24

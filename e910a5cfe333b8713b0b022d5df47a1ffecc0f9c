@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_fd701151",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 29
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-16T18:30:37Z",
+      "side": 1,
+      "message": "To be proper, this should return an error status.  It is not that there was not change\nnecessary, it is that the sourceLookupDMC is unknown.",
+      "revId": "e910a5cfe333b8713b0b022d5df47a1ffecc0f9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

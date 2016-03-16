@@ -374,7 +374,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 								int parmCount = 0;
 								for (int k = 0; k < parmList.getLength(); ++k) {
 									Node n3 = parmList.item(k);
-									if (n3.getNodeName() == "parameter") {  //$NON-NLS-1$
+									if (n3.getNodeName().equals("parameter")) { //$NON-NLS-1$
 										NamedNodeMap parmVals = n3.getAttributes();
 										Node parmVal = parmVals.item(0);
 										if (parmCount > 0)

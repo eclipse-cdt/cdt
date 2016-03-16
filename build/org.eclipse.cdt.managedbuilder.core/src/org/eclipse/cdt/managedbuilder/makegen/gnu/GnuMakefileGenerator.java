@@ -4370,7 +4370,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			rcInfo = config.getResourceInfo(folderPath.removeLastSegments(1), false);
 		}
 		String targetExtension = ((IFolderInfo)rcInfo).getOutputExtension(srcExtension);
-		if (targetExtension != "") //$NON-NLS-1$
+		if (!targetExtension.equals("")) //$NON-NLS-1$
 			fileName += DOT + targetExtension;
 		IPath projectRelativePath = deletedFile.getProjectRelativePath().removeLastSegments(1);
 		IPath targetFilePath = getBuildWorkingDir().append(projectRelativePath).append(fileName);

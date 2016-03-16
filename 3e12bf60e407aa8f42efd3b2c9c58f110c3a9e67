@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_3dd6f9be",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/language/settings/providers/ILanguageSettingsProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-03-16T17:54:32Z",
+      "side": 1,
+      "message": "Please deprecate this and similar methods.",
+      "range": {
+        "startLine": 123,
+        "startChar": 45,
+        "endLine": 123,
+        "endChar": 62
+      },
+      "revId": "3e12bf60e407aa8f42efd3b2c9c58f110c3a9e67",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

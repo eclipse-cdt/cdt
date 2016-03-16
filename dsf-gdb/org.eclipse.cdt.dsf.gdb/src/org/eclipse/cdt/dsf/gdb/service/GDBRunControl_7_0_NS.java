@@ -952,9 +952,19 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 
     	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
+        int threadId;
+        try {
+            threadId = Integer.parseInt(dmc.getThreadId());
+        } catch (NumberFormatException e) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+                    "Unxepected thread id format:" + dmc.getThreadId(), e)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+
     	fConnection.queueCommand(
     			fCommandFactory.createMIBreakInsert(bpDmc, true, false, null, 0, 
-    					          location, dmc.getThreadId()), 
+    					          location, threadId), 
     		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
     				@Override
     				public void handleSuccess() {
@@ -2187,7 +2197,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
                 		attr.put(MIBreakpoints.FILE_NAME, debuggerPath);
                 		attr.put(MIBreakpoints.LINE_NUMBER, lineNumber);
                 		attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
-                		attr.put(MIBreakpointDMData.THREAD_ID, Integer.toString(threadExecDmc.getThreadId()));
+                		attr.put(MIBreakpointDMData.THREAD_ID, threadExecDmc.getThreadId());
 
                 		// Now do the operation
                 		moveToLocation(context, location, attr, rm);
@@ -2233,7 +2243,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 				attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 				attr.put(MIBreakpoints.ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
 				attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
-				attr.put(MIBreakpointDMData.THREAD_ID,  Integer.toString(threadExecDmc.getThreadId()));
+				attr.put(MIBreakpointDMData.THREAD_ID,  threadExecDmc.getThreadId());
 
 				// Now do the operation
 				moveToLocation(context, location, attr, rm);

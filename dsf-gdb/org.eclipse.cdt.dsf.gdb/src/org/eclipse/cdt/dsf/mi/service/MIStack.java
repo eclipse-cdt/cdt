@@ -507,9 +507,19 @@ implements IStack, ICachingService {
 			}
 		}
 
+        int threadId;
+        try {
+            threadId = Integer.parseInt(execDmc.getThreadId());
+        } catch (NumberFormatException e) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+                    "Unxepected thread id format:" + execDmc.getThreadId(), e)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+		
 		// if requested stack limit is bigger then currently cached this call will return -1
 		final int maxDepth = endIndex > 0 ? endIndex + 1 : -1;
-		int depth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getStackDepth(
+		int depth = fFramesCache.getThreadFramesCache(threadId).getStackDepth(
 				maxDepth);
 		if (depth > 0) { // our stack depth cache is good so we can use it to fill levels array
 			rm.setData(getDMFrames(execDmc, startIndex, endIndex, depth));
@@ -524,7 +534,7 @@ implements IStack, ICachingService {
 				// getStackDepth call would have updated cache for us.
 				// We use same handler on success or error, since gdb is unreliable when comes to frame retrieval
 				// we will return frames array even if we get error when attempting to get stack depth.
-				int stackDepth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getValidStackDepth();
+				int stackDepth = fFramesCache.getThreadFramesCache(threadId).getValidStackDepth();
 				rm.done(getDMFrames(execDmc, startIndex, endIndex, stackDepth));
 			}
 		});
@@ -612,7 +622,16 @@ implements IStack, ICachingService {
 			return;
 		}
 
-		final int threadId = execDmc.getThreadId();
+        final int threadId;
+        try {
+            threadId = Integer.parseInt(execDmc.getThreadId());
+        } catch (NumberFormatException e) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+                    "Unxepected thread id format:" + execDmc.getThreadId(), e)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+	
 		final int frameLevel = miFrameDmc.fLevel;
 		FrameData fd = fFramesCache.getThreadFramesCache(threadId).getFrameData(frameLevel);
 		if (fd != null) {
@@ -1026,7 +1045,15 @@ implements IStack, ICachingService {
 				return;
 			}
 
-			final int threadId = execDmc.getThreadId();
+            final int threadId;
+            try {
+                threadId = Integer.parseInt(execDmc.getThreadId());
+            } catch (NumberFormatException e) {
+                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+                        "Unxepected thread id format:" + execDmc.getThreadId(), e)); //$NON-NLS-1$
+                rm.done();
+                return;
+            }
 
 			// Check our internal cache first because different commands can
 			// still be re-used.

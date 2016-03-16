@@ -349,8 +349,9 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 									IExecutionDMContext[] execDMCs = bpExtension.getThreadFilters(contDMC);
 									List<IExecutionDMContext> list = new ArrayList<IExecutionDMContext>(execDMCs.length);
 									for (IExecutionDMContext c : execDMCs) {
+									    int ctxThreadId = Integer.parseInt(((IMIExecutionDMContext)c).getThreadId());
 										if (c instanceof IMIExecutionDMContext 
-											&& ((IMIExecutionDMContext)c).getThreadId() != threadId) {
+											&& ctxThreadId != threadId) {
 											list.add(c);
 										}
 									}
@@ -514,11 +515,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			}
 			int threadNum = Integer.parseInt(threadId);
 			for (IExecutionDMContext execDMC : execDMCs) {
-				if (execDMC instanceof IMIExecutionDMContext 
-					&& ((IMIExecutionDMContext)execDMC).getThreadId() == threadNum) {
-					// The platform breakpoint is already restricted to the given thread.
-					return;
-				}
+                int ctxThreadId = Integer.parseInt(((IMIExecutionDMContext)execDMC).getThreadId());
+                if (execDMC instanceof IMIExecutionDMContext && ctxThreadId == threadNum) {
+                    // The platform breakpoint is already restricted to the given thread.
+                    return;
+                }
 			}
 			IExecutionDMContext[] newExecDMCs = new IExecutionDMContext[execDMCs.length + 1];
 			System.arraycopy(execDMCs, 0, newExecDMCs, 0, execDMCs.length);

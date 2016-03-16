@@ -296,7 +296,7 @@ public class MIRunControlTest extends BaseTestCase {
         // We check this _after_ we ask for the execution contexts because when running remote (i.e., with gdbserver),
         // thread events are not sent by gdb until a request for a thread list is given (Bug 455992)
         IStartedDMEvent startedEvent = startedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
-        Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? 3 : 2, ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
+        Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? "3" : "2", ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
 
         /*
          * Get data
@@ -350,7 +350,7 @@ public class MIRunControlTest extends BaseTestCase {
         fRunCtrl.getExecutor().submit(new Runnable() {
             @Override
 			public void run() {
-            	fRunCtrl.getExecutionData(((MIRunControl)fRunCtrl).createMIExecutionContext(containerDmc, 1), rm);
+            	fRunCtrl.getExecutionData(((MIRunControl)fRunCtrl).createMIExecutionContext(containerDmc, "1"), rm);
             }
         });
         wait.waitUntilDone(TestsPlugin.massageTimeout(5000));

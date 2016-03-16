@@ -366,7 +366,8 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 					// if this breakpoint applies to the process that is selected.  But if the threadId is not 0
 					// we simply make sure we have the right thread selected.
 					if ( bpThreadId != 0 ) {
-						rm.done( threadContext.getThreadId() == bpThreadId );
+					    int ctxThreadId = Integer.parseInt(threadContext.getThreadId());
+						rm.done( ctxThreadId == bpThreadId );
 						return;
 					}
 				}

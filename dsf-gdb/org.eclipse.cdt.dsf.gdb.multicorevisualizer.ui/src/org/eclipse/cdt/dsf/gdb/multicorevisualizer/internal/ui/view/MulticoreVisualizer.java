@@ -86,6 +86,8 @@ import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
 import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.cdt.visualizer.ui.util.Timer;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.ResumeCommandAction;
@@ -999,7 +1001,15 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 
 						IMIExecutionDMContext execContext =
 								DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-						int tid = (execContext == null) ? 0 : execContext.getThreadId();
+
+                        int tid = 0;
+                        if (execContext != null) {
+                            try {
+                                tid = Integer.parseInt(execContext.getThreadId());
+                            } catch (NumberFormatException e) {
+                                // continue tid=0
+                            }
+                        }
 
 						if (tid == 0) { // process
 							List<VisualizerThread> threads = model.getThreadsForProcess(pid);
@@ -1020,6 +1030,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 				}
 				visualizerSelection = SelectionUtils.toSelection(selected);
 			}
+		}
+		
+		String one = "one";
+		String two = "two";
+		if (one == two) {
+		    System.out.println("Hello");
 		}
 		
 		return visualizerSelection;
@@ -1406,7 +1422,16 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		IMIProcessDMContext processContext =
 				DMContexts.getAncestorOfType(execContext, IMIProcessDMContext.class);
 		int pid = Integer.parseInt(processContext.getProcId());
-		int tid = execContext.getThreadId();
+		int tid; 
+        try {
+            tid = Integer.parseInt(execContext.getThreadId());
+        } catch (NumberFormatException e) {
+            rm.setStatus(new Status(IStatus.ERROR, MulticoreVisualizerUIPlugin.PLUGIN_ID, IStatus.ERROR,
+                    "Unxepected thread id format:" + execContext.getThreadId(), e)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+
 		String osTIDValue = threadData.getId();
 
 		// If we can't get the real Linux OS tid, fallback to using the gdb thread id

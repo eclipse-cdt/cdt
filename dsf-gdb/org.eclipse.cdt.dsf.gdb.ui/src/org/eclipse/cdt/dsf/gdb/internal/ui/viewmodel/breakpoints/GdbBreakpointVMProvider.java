@@ -359,27 +359,17 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 		IMIExecutionDMContext threadContext = DMContexts.getAncestorOfType( execContext, IMIExecutionDMContext.class );
 		if ( threadContext != null ) {
 			// A thread is selected.  Now make sure this breakpoint is assigned to this thread.
-			if ( data.getThreadId() != null && data.getThreadId().length() > 0 ) {
-				try {
-					int bpThreadId = Integer.parseInt( data.getThreadId() );
-					// A threadId of 0 means all threads of this process.  We therefore will have to check
-					// if this breakpoint applies to the process that is selected.  But if the threadId is not 0
-					// we simply make sure we have the right thread selected.
-					if ( bpThreadId != 0 ) {
-						rm.done( threadContext.getThreadId() == bpThreadId );
-						return;
-					}
-				}
-				catch( NumberFormatException e ) {
-					assert false;
-					GdbUIPlugin.getDefault().getLog().log( new Status( 
-							IStatus.ERROR, 
-							GdbUIPlugin.getUniqueIdentifier(), 
-							"Invalid breakpoint thread id" ) ); //$NON-NLS-1$
-					rm.done( true );
-					return;
-				}
-			}
+            if (data.getThreadId() != null && data.getThreadId().length() > 0) {
+                String bpThreadId = data.getThreadId().trim();
+                // A threadId of 0 means all threads of this process. We therefore will have to check
+                // if this breakpoint applies to the process that is selected. But if the threadId is not 0
+                // we simply make sure we have the right thread selected.
+                if (!bpThreadId.equals("0")) { //$NON-NLS-1$
+                    String ctxThreadId = threadContext.getThreadId();
+                    rm.done(ctxThreadId.equals(bpThreadId));
+                    return;
+                }
+            }
     	}
 
 		// If we get here it is that the breakpoint is not assigned to a single thread.

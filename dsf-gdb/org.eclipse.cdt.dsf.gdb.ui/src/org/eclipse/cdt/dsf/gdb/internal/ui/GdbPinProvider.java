@@ -183,9 +183,9 @@ public class GdbPinProvider implements IPinProvider {
 		
 		// get the execution (thread) context label
 		if (execDmc != null) {
-			int threadId = execDmc.getThreadId();
+			String threadId = execDmc.getThreadId();
 			label += !label.isEmpty() ? ": " : "";   //$NON-NLS-1$//$NON-NLS-2$
-			label += "Thread [" + Integer.toString(threadId) + "]";   //$NON-NLS-1$//$NON-NLS-2$
+			label += "Thread [" + threadId + "]";   //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return label;
 	}

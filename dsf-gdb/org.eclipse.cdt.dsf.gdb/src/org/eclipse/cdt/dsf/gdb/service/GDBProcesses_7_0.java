@@ -169,14 +169,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		 * @return
 		 */
     	@Override
-		public int getThreadId(){
-			try {
-				return Integer.parseInt(fThreadId);
-			} catch (NumberFormatException e) {
-			}
-			
-			return 0;
-		}
+        public String getThreadId() {
+            return fThreadId;
+        }
 
 		/* Unused; reintroduce if needed
 		public String getId(){

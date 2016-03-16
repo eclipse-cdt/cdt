@@ -202,7 +202,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 				MapEntrySourceContainer entry = (MapEntrySourceContainer) containers[i];
 				IPath local = entry.getLocalPath();
 				if (local.isPrefixOf(path)) {
-					result = entry.getBackendPath().append(path.removeFirstSegments(local.segmentCount()));
+					result = new Path(entry.getBackend()).append(path.removeFirstSegments(local.segmentCount()));
 					break;
 				}
 			}

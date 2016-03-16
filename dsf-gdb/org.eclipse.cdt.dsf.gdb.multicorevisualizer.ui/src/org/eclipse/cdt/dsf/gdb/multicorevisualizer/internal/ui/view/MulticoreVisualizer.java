@@ -86,6 +86,8 @@ import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
 import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.cdt.visualizer.ui.util.Timer;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.ResumeCommandAction;
@@ -120,7 +122,9 @@ import org.eclipse.swt.widgets.Composite;
 public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPinnable {
 	// --- constants ---
 	
-	/** Eclipse ID for this view */
+	private static final String THE_THREAD_ID_DOES_NOT_CONVERT_TO_AN_INTEGER = "The thread id does not convert to an integer: "; //$NON-NLS-1$
+
+    /** Eclipse ID for this view */
 	public static final String ECLIPSE_ID = "org.eclipse.cdt.dsf.gdb.multicorevisualizer.visualizer"; //$NON-NLS-1$
 	
 	// --- members ---
@@ -999,7 +1003,16 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 
 						IMIExecutionDMContext execContext =
 								DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-						int tid = (execContext == null) ? 0 : execContext.getThreadId();
+
+                        int tid = 0;
+                        if (execContext != null) {
+                            try {
+                                tid = Integer.parseInt(execContext.getThreadId());
+                            } catch (NumberFormatException e) {
+                                // continue tid=0
+                                assert false : THE_THREAD_ID_DOES_NOT_CONVERT_TO_AN_INTEGER + execContext.getThreadId();
+                            }
+                        }
 
 						if (tid == 0) { // process
 							List<VisualizerThread> threads = model.getThreadsForProcess(pid);
@@ -1406,7 +1419,17 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		IMIProcessDMContext processContext =
 				DMContexts.getAncestorOfType(execContext, IMIProcessDMContext.class);
 		int pid = Integer.parseInt(processContext.getProcId());
-		int tid = execContext.getThreadId();
+		int tid; 
+        try {
+            tid = Integer.parseInt(execContext.getThreadId());
+        } catch (NumberFormatException e) {
+            rm.setStatus(new Status(IStatus.ERROR, MulticoreVisualizerUIPlugin.PLUGIN_ID, IStatus.ERROR,
+                    "Unxepected thread id format:" + execContext.getThreadId(), e)); //$NON-NLS-1$
+            rm.done();
+            assert false : THE_THREAD_ID_DOES_NOT_CONVERT_TO_AN_INTEGER + execContext.getThreadId();
+            return;
+        }
+
 		String osTIDValue = threadData.getId();
 
 		// If we can't get the real Linux OS tid, fallback to using the gdb thread id

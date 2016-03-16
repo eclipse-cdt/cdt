@@ -147,16 +147,16 @@ public class GDBRunControl extends MIRunControl {
 	}
 
     @Override
-	public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, int threadId) {
+	public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, String threadId) {
         IProcessDMContext procDmc = DMContexts.getAncestorOfType(container, IProcessDMContext.class);
         
         IThreadDMContext threadDmc = null;
         if (procDmc != null) {
         	// For now, reuse the threadId as the OSThreadId
-        	threadDmc = fProcService.createThreadContext(procDmc, Integer.toString(threadId));
+        	threadDmc = fProcService.createThreadContext(procDmc, threadId);
         }
 
-        return fProcService.createExecutionContext(container, threadDmc, Integer.toString(threadId));
+        return fProcService.createExecutionContext(container, threadDmc, threadId);
     }
 
     @Override
@@ -236,7 +236,7 @@ public class GDBRunControl extends MIRunControl {
 			IExecutionDMContext ctxt = iterator.next();
 			if(! list.contains(ctxt)){
 			    IContainerDMContext containerDmc = DMContexts.getAncestorOfType(ctxt, IContainerDMContext.class); 
-                MIEvent<?> e =  new MIThreadExitEvent(containerDmc, Integer.toString(((IMIExecutionDMContext)ctxt).getThreadId()));
+                MIEvent<?> e =  new MIThreadExitEvent(containerDmc, ((IMIExecutionDMContext)ctxt).getThreadId());
                 // Dispatch DsfMIThreadExitEvent
                 getSession().dispatchEvent(e, getProperties());
 			}
@@ -325,9 +325,10 @@ public class GDBRunControl extends MIRunControl {
 
         if (doCanResume(dmc)) {
         	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
+        	int threadId = Integer.parseInt(dmc.getThreadId());
         	getConnection().queueCommand(
         			fCommandFactory.createMIBreakInsert(bpDmc, true, false, null, 0, 
-        					          location, dmc.getThreadId()), 
+        					          location, threadId), 
         		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
         				@Override
         				public void handleSuccess() {

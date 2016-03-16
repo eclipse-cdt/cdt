@@ -23,14 +23,17 @@ import java.util.regex.Pattern;
  */
 public class CLIThreadInfo extends MIInfo {
 
-	private Integer fCurrentThread;
+	private String fCurrentThread;
 	
 	public CLIThreadInfo(MIOutput out) {
 		super(out);
 		parse();
 	}
 
-	public Integer getCurrentThread(){
+	/**
+     * @since 5.0
+     */
+	public String getCurrentThread(){
 		return fCurrentThread; 
 	}
 
@@ -56,7 +59,7 @@ public class CLIThreadInfo extends MIInfo {
 				Matcher matcher = pattern.matcher(str);
 				if (matcher.find()) {
 					String id = matcher.group(1).trim();
-					fCurrentThread = Integer.parseInt(id);
+					fCurrentThread = id;
 				}
 			}
 	}

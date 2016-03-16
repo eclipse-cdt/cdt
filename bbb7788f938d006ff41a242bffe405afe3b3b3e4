@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_ddab558e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointDMData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-16T16:50:23Z",
+      "side": 1,
+      "message": "Same suggestion as for MIBreakpoint. We need two getters for the process and breakpoint numbers.",
+      "revId": "bbb7788f938d006ff41a242bffe405afe3b3b3e4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1d293dbd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-16T16:50:23Z",
+      "side": 1,
+      "message": "I think we should also add methods that return the process number and the breakpoint number in the process. It will encapsulate the parsing of the breakpoint\u0027s identifier string. Otherwise the clients of this class that parse the identifier would be affected by any change in the identifier format.",
+      "revId": "bbb7788f938d006ff41a242bffe405afe3b3b3e4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

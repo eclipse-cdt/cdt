@@ -20,6 +20,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	SuiteGdb.class,
+	SuiteGdbVersioned.class,
 })
 public class AutomatedSuite {
 }

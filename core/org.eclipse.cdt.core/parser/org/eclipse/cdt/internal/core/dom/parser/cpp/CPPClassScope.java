@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
@@ -155,8 +156,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
     	}
 	}
 
-	private ICPPBase[] findInheritedConstructorsSourceBases(
-			ICPPASTCompositeTypeSpecifier compositeTypeSpec) {
+	private ICPPBase[] findInheritedConstructorsSourceBases(ICPPASTCompositeTypeSpecifier compositeTypeSpec) {
 		ICPPBase[] bases = ClassTypeHelper.getBases(getClassType(), compositeTypeSpec);
 		if (bases.length == 0)
 			return bases;
@@ -173,9 +173,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 				IBinding parent = qualifier[qualifier.length - 1].resolveBinding();
 				if (!(parent instanceof IType) || parent instanceof IProblemBinding)
 					continue;
-				IType type = SemanticUtil.getNestedType((IType) parent, TDEF);
-				if (type instanceof IBinding &&
-					Arrays.equals(((IBinding) type).getNameCharArray(), qName.getLastName().getSimpleID())) {
+				if (isConstructorNameForType(qName.getLastName().getSimpleID(), (IType) parent)) {
+					IType type = SemanticUtil.getNestedType((IType) parent, TDEF);
 					for (ICPPBase base : bases) {
 						IType baseClass = base.getBaseClassType();
 						if (type.isSameType(baseClass)) {
@@ -189,6 +188,17 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         return trim(results, n);
 	}
 
+	private static boolean isConstructorNameForType(char[] lastName, IType type) {
+		while (type instanceof IBinding) {
+			if (Arrays.equals(((IBinding) type).getNameCharArray(), lastName))
+				return true;
+			if (!(type instanceof ITypedef))
+				break;
+			type = ((ITypedef) type).getType();
+		} 
+		return false;
+	}
+	
 	static ICPPMethod[] createInheritedConsructors(ICPPClassScope scope, char[] className,
 			ICPPBase[] bases, IType[][] existingConstructorParamTypes, IASTNode point) {
 		ICPPMethod[] inheritedConstructors = ICPPMethod.EMPTY_CPPMETHOD_ARRAY;

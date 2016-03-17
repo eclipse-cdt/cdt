@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
@@ -153,7 +153,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 				fRunControl = fServicesTracker.getService(IRunControl.class);
 			}
 		};
-		
+
 		fSession.getExecutor().submit(runnable).get();
 
 		//resolve the execution context
@@ -165,7 +165,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		fCompositeDmc = new CompositeDMContext(new IDMContext[] { containerDmc, frameDmc });
 		fGroupNameSuffix = 0;
 	}
-	
+
 	@Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
@@ -173,13 +173,13 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 
 	}
-	
-	
+
+
 	@Override
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 
-		fServicesTracker.dispose();
+		if (fServicesTracker!=null) fServicesTracker.dispose();
 		fRegService = null;
 	}
 
@@ -190,11 +190,11 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		//Get all the registers from the Container (Process)
 		IRegisterDMContext[] registers = getRegisters(fCompositeDmc);
 		assertTrue(registers.length > 0);
-		
+
 		//Get the register group from any of the register contexts
     	IRegisterGroupDMContext regGroupsDMC = DMContexts.getAncestorOfType(registers[0], IRegisterGroupDMContext.class);
 		assertNotNull(regGroupsDMC);
-    	
+
 		return regGroupsDMC;
 	}
 
@@ -202,7 +202,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	 * This is a common support method which gets the Registers names.
 	 */
 	private IRegisterDMContext[] getAllRegisters(final IFrameDMContext frameDmc) throws Throwable {
-		
+
 		Query<IRegisterDMContext[]> queryRegisters = new Query<IRegisterDMContext[]>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterDMContext[]> rm) {
@@ -223,7 +223,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
      *  Get the Registers for the specified composite context
      */
     private IRegisterDMContext[] getRegisters(final IDMContext dmc) throws Throwable {
-    	
+
 		Query<IRegisterDMContext[]> queryRegistersDmc = new Query<IRegisterDMContext[]>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterDMContext[]> rm) {
@@ -231,26 +231,26 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 			}
 		};
 
-		fRegService.getExecutor().submit(queryRegistersDmc);           
+		fRegService.getExecutor().submit(queryRegistersDmc);
         IRegisterDMContext[] regContexts = queryRegistersDmc.get(500, TimeUnit.MILLISECONDS);
 
         return(regContexts);
     }
-	
+
     /*
-     *  This is a common support method which gets the Register context of root group over the specified frame context 
+     *  This is a common support method which gets the Register context of root group over the specified frame context
      */
     private IRegisterDMContext[] getTargetRegisters(final IFrameDMContext frameDmc) throws Throwable {
     	IRegisterDMContext[] regContexts = getRegisters(new CompositeDMContext(new IDMContext[] { fCompositeDmc, frameDmc}));
     	assertEquals("Wrong number of registers", get_X86_REGS().size(), regContexts.length);
-    	
+
     	return regContexts;
     }
 
 	/*************************************************************************
-	 * 
+	 *
 	 * The tests for the register service.
-	 * 
+	 *
 	 *************************************************************************/
 	@Test
 	public void resolveTargetRegisterGroup() throws Throwable {
@@ -276,15 +276,15 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		List<String> regNames = get_X86_REGS();
 
         IRegisterDMData[] datas = getRegistersData(regDMCs);
-        
+
     	for(IRegisterDMData data: datas){
     		String regName = data.getName();
    			assertTrue("GDB does not support register name: " + regName, regNames.contains(regName));
     	}
     }
-    
+
     private IRegisterDMData[] getRegistersData(final IRegisterDMContext[] regDMCs) throws InterruptedException, ExecutionException {
-   
+
 		Query<IRegisterDMData[]> query = new Query<IRegisterDMData[]>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterDMData[]> rm) {
@@ -367,14 +367,14 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		// Get the thread IDs
 		final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);
-		
+
 		Query<IExecutionDMContext[]> queryExecutionContexts = new Query<IExecutionDMContext[]>() {
 			@Override
 			protected void execute(DataRequestMonitor<IExecutionDMContext[]> rm) {
 				fRunControl.getExecutionContexts(containerDmc, rm);
 			}
 		};
-		
+
 	    fRegService.getExecutor().submit(queryExecutionContexts);
 
 		IExecutionDMContext[] ctxts = queryExecutionContexts.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
@@ -432,7 +432,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		fRegService.getExecutor().submit(queryAction);
 		queryAction.get(500, TimeUnit.MILLISECONDS);
 	}
-	
+
 	/**
 	 * Waits for IRegistersChangedDMEvent(s) during a time interval, collects them and returns them after timeout
 	 */
@@ -442,11 +442,11 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 				new ServiceEventWaitor<IRegistersChangedDMEvent>(fSession, IRegistersChangedDMEvent.class);
 
 		writeRegister(registerDmc, regValue, formatId);
-		
-		return eventWaitor.waitForEvents(TestsPlugin.massageTimeout(3000));			
+
+		return eventWaitor.waitForEvents(TestsPlugin.massageTimeout(3000));
 	}
-	
-	
+
+
 	@Test
 	public void writeRegisterNaturalFormat() throws Throwable {
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
@@ -516,14 +516,14 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		MIRegisterDMC sp_reg_f0 = (MIRegisterDMC) findStackPointerRegister(sp_name, registers_f0);
 		assertNotNull(sp_reg_f0);
 		String sp_f0_str = getModelDataForRegisterDataValue(frame0, IFormattedValues.HEX_FORMAT, sp_reg_f0.getRegNo());
-	
+
 		// Get the stack pointer value for frame1
 		IFrameDMContext frame1 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1);
 		IRegisterDMContext[] registers_f1 = getTargetRegisters(frame1);
 		MIRegisterDMC sp_reg_f1 = (MIRegisterDMC) findStackPointerRegister(sp_name, registers_f1);
 		assertNotNull(sp_reg_f1);
 		String sp_f1_str = getModelDataForRegisterDataValue(frame1, IFormattedValues.HEX_FORMAT, sp_reg_f1.getRegNo());
-		
+
 		//The stack pointer's are not expected to be the same among frames
 		assertFalse("Stack pointers shall be different among frames", sp_f0_str.equals(sp_f1_str));
 	}
@@ -532,56 +532,56 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		IRegisterDMData[] registersData = getRegistersData(registerDMCs);
 		for (int i = 0; i < registersData.length; i++) {
 			IRegisterDMData registerData = registersData[i];
-			
+
 			if (registerData.getName().equals(sp_name)) {
 				return registerDMCs[i];
 			}
 		}
-		
+
 		return null;
 	}
 
 	private String resolveStackPointerName() throws Throwable {
 		List<String> regNames = get_X86_REGS();
-		
+
 		// for 64 bits
 		String sp_name = "rsp";
 		if (regNames.contains(sp_name)) {
 			return sp_name;
 		}
-		
+
 		// for 32 bits
 		sp_name = "esp";
 		if (regNames.contains(sp_name)) {
 			return sp_name;
 		}
-		
+
 		// for 16 bits
 		sp_name = "sp";
 		if (regNames.contains(sp_name)) {
 			return sp_name;
 		}
-		
+
 		return null;
 	}
-	
+
 	@Test
 	public void getRegisterGroupsData() throws Throwable {
 		int grpsIncrement = 3;
 
-		//Group name to Group description 
+		//Group name to Group description
 		Map<String, String> groupNameToDescMap = new HashMap<>();
 		groupNameToDescMap.put("Group_1", "");
 		groupNameToDescMap.put("Group_2", "");
 		groupNameToDescMap.put("Group_3", "");
 		groupNameToDescMap.put("General Registers", "General Purpose and FPU Register Group");
-		
+
 		//Tracking groups found
 		Set<String> groupsFound = new HashSet<>();
-		
+
 		addRegisterGroups(grpsIncrement);
 		final IRegisterDMContext[] regInGroup = getRegisters(0, 4);
-		
+
 		IRegisterGroupDMData[] groupsData = getRegisterGroupsData(regInGroup[0]);
 		//increment + root
 		assertEquals(grpsIncrement + 1, groupsData.length);
@@ -590,16 +590,16 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 			assertTrue(groupNameToDescMap.containsKey(grpData.getName()));
 			String grpDataDesc = grpData.getDescription();
 			String expectedName = groupNameToDescMap.get(grpData.getName());
-			
+
 			//Validate group description
 			assertEquals(expectedName, grpDataDesc);
 			groupsFound.add(grpData.getName());
 		}
-		
+
 		//Make sure all expected groups were found
 		assertEquals(groupNameToDescMap.size(), groupsFound.size());
 	}
-	
+
 	@Test
 	public void canAddRegisterGroup() throws Throwable {
 		// only root group expected
@@ -607,7 +607,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		assertEquals("Unexpected groups present, only root was expected", 1, groups.length);
 		assertTrue("Can not Add register groups", canAddRegisterGroup(groups[0]));
 	}
-	
+
 	@Test
 	public void canNotEditRootRegisterGroup() throws Throwable {
 		// only root group expected
@@ -616,7 +616,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		assertFalse("Not expected to allow the editing of the root register group", canEditRegisterGroup(groups[0]));
 	}
-	
+
 	@Test
 	public void canNotEditUnknownRegisterGroup() throws Throwable {
 		// only root group expected
@@ -682,7 +682,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		IFrameDMContext frameDmc = DMContexts.getAncestorOfType(regInGroup[0], IFrameDMContext.class);
 		CompositeDMContext compositeDmc = new CompositeDMContext(new IDMContext[]{frameDmc, groups[0]});
 		IRegisterDMContext[] readRegisters = getRegisters(compositeDmc);
-		
+
 		// Same order, same data and same values are expected, although different instances to different parents
 		assertTrue(sameData(regInGroup, readRegisters, false));
 
@@ -699,7 +699,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		assertEquals("unexpected groups present", 1, groups.length);
 
 		IRegisterGroupDMContext group = addDefaultUserGroup();
-		
+
 		IRegisterDMContext[] origRegisters = getRegisters(group);
 
 		// Assert the default group name
@@ -734,7 +734,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		// only root group expected
 		IRegisterGroupDMContext[] groups = getRegisterGroups(1);
 		assertFalse("Removal of root register group shall not be allowed", canRemoveRegisterGroups(groups));
-		
+
 		//Add another two groups
 		// Define a subset of registers to create a register group (from, to)
 		final IRegisterDMContext[] regInGroup = getRegisters(0, 4);
@@ -751,17 +751,17 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		// Retrieve the existing groups, expected and validated to root + 3
 		groups = getRegisterGroups(4);
-		
+
 		//Remove the root group from the list, so the remaining can be validated
 		//as can be removed
 		groups = Arrays.copyOfRange(groups, 0, groups.length-1);
 		assertTrue("Not allowing removal of groups", canRemoveRegisterGroups(groups));
-		
+
 		//remove the non root groups and validate the result
 		removeGroups(groups);
 		groups = getRegisterGroups(1);
 	}
-	
+
 	@Test
 	public void removeRegisterGroups() throws Throwable {
 		int grpsIncrement = 3;
@@ -802,15 +802,15 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		getRegisterGroups(1); // assert root is preserved
 	}
 
-	
+
 	@Test
 	public void canRestoreRegisterGroups() throws Throwable {
 		int grpsIncrement = 3;
 		addRegisterGroups(grpsIncrement);
-		//Always able to restore to default 
+		//Always able to restore to default
 		assertTrue(canRestoreDefaultGroups());
 	}
-	
+
 	@Test
 	public void restoreRegisterGroups() throws Throwable {
 		int grpsIncrement = 3;
@@ -923,7 +923,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 				writtenValue, readVal);
 
 	}
-		
+
 	/**
 	 * Get an array with all available register groups
 	 */
@@ -993,14 +993,14 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		fRegService.getExecutor().submit(queryAction);
 		return queryAction.get(500, TimeUnit.MILLISECONDS);
 	}
-	
+
 	private void addGroup(final String groupName, final IRegisterDMContext[] regIndexes) throws Throwable {
 
 		if (regIndexes == null || regIndexes.length < 1) {
 			fail("Invalid argument regIndexes");
 			return;
 		}
-		
+
 		Query<Object> queryAction = new Query<Object>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
@@ -1055,7 +1055,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		//Validate, we can always restore to defaults
 		return queryCanRestore.get(500, TimeUnit.MILLISECONDS);
 	}
-	
+
 	private void restoreDefaultGroups() throws Throwable {
 		Query<Object> queryRestore = new Query<Object>() {
 
@@ -1167,7 +1167,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		return groupsData;
 	}
-	
+
 	private void getRegisterGroupsData(final IDMContext dmc, final DataRequestMonitor<IRegisterGroupDMData[]> rm) {
 		assert (dmc != null);
 		final DsfExecutor executor = fRegService.getExecutor();

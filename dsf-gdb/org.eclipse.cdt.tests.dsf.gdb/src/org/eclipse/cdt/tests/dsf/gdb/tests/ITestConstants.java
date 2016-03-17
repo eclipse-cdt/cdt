@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *     Marc Khouzam (Ericsson) - Tests for GDB 7.4
@@ -14,7 +14,6 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 
 public interface ITestConstants {
-
 	public static final String SUFFIX_GDB_6_6 = "6.6";
 	public static final String SUFFIX_GDB_6_7 = "6.7";
 	public static final String SUFFIX_GDB_6_8 = "6.8";
@@ -30,7 +29,24 @@ public interface ITestConstants {
 	public static final String SUFFIX_GDB_7_9 = "7.9";
 	public static final String SUFFIX_GDB_7_10 = "7.10";
 	public static final String SUFFIX_GDB_7_11 = "7.11";
-	
+	public static String[] ALL_KNOWN_VERSIONS = new String[] {
+			ITestConstants.SUFFIX_GDB_6_6,
+			ITestConstants.SUFFIX_GDB_6_7,
+			ITestConstants.SUFFIX_GDB_6_8,
+			ITestConstants.SUFFIX_GDB_7_0,
+			ITestConstants.SUFFIX_GDB_7_1,
+			ITestConstants.SUFFIX_GDB_7_2,
+			ITestConstants.SUFFIX_GDB_7_3,
+			ITestConstants.SUFFIX_GDB_7_4,
+			ITestConstants.SUFFIX_GDB_7_5,
+			ITestConstants.SUFFIX_GDB_7_6,
+			ITestConstants.SUFFIX_GDB_7_7,
+			ITestConstants.SUFFIX_GDB_7_8,
+			ITestConstants.SUFFIX_GDB_7_9,
+			ITestConstants.SUFFIX_GDB_7_10,
+			ITestConstants.SUFFIX_GDB_7_11,
+			// add versions here
+	};
 	// Attribute that allows a test to request not to start gdbserver even if the session is a remote one
 	public static final String LAUNCH_GDB_SERVER = TestsPlugin.PLUGIN_ID + ".launchGdbServer";
 }

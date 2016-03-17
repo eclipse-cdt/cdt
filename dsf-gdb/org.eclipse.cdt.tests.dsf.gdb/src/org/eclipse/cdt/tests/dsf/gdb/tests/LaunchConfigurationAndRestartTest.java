@@ -30,11 +30,16 @@ import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
@@ -42,11 +47,13 @@ import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -57,9 +64,10 @@ import org.eclipse.debug.core.model.IProcess;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(BackgroundRunner.class)
-public class LaunchConfigurationAndRestartTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase {
 	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";
 
 	protected static final int FIRST_LINE_IN_MAIN = 27;
@@ -215,8 +223,9 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
      *     17^done
      */
     @Test
-    @Ignore
+
     public void testSourceGdbInit() throws Throwable {
+    	assumeGdbVersionAtLeast("7.2");
         setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
                            "data/launch/src/launchConfigTestGdbinit");
         doLaunch();
@@ -274,8 +283,8 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
      * Repeat the test testSourceGdbInit, but after a restart.
      */
     @Test
-    @Ignore
     public void testSourceGdbInitRestart() throws Throwable {
+    	assumeGdbVersionAtLeast("7.2");
     	fRestart = true;
     	testSourceGdbInit();
     }
@@ -743,6 +752,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
      */
     @Test
     public void testExitCodeSet() throws Throwable {
+    	assumeGdbVersionAtLeast("7.3");
     	doLaunch();
     	
         ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
@@ -778,5 +788,316 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
 			}
 		}
 		assert false;
+    }
+    
+	
+	/**
+	 * This test will confirm that we have turned on "pending breakpoints"
+	 * The pending breakpoint setting only affects CLI commands so we have
+	 * to test with one.  We don't have classes to set breakpoints using CLI,
+	 * but we do for tracepoints, which is the same for this test.
+	 * 
+	 * The pending breakpoint feature only works with tracepoints starting
+	 * with GDB 7.0.
+	 * 
+	 * We could run this test before 7.0 but we would have to use a breakpoint
+	 * set using CLI commands.
+	 */
+    @Test
+    public void testPendingBreakpointSetting() throws Throwable {
+    	assumeGdbVersionAtLeast("7.0");
+        doLaunch();
+    	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+
+    	final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(),
+    																				 IBreakpointsTargetDMContext.class);
+    	Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
+    		@Override
+    		protected void execute(final DataRequestMonitor<MIBreakListInfo> rm) {
+    			fGdbControl.queueCommand(
+    					fGdbControl.getCommandFactory().createCLITrace(bpTargetDmc, "invalid", ""),
+    					new ImmediateDataRequestMonitor<CLITraceInfo>(rm) {
+    						@Override
+    						protected void handleSuccess() {
+    							fGdbControl.queueCommand(
+    									fGdbControl.getCommandFactory().createMIBreakList(bpTargetDmc), 
+    									new ImmediateDataRequestMonitor<MIBreakListInfo>(rm) {
+    			    						@Override
+    			    						protected void handleSuccess() {
+    			    							rm.setData(getData());
+    			    							rm.done();
+    			    						}
+    									});
+    						}
+    					});
+    		}
+    	};
+    	try {
+    		fExpService.getExecutor().execute(query);
+    		MIBreakListInfo value = query.get(500, TimeUnit.MILLISECONDS);
+    		MIBreakpoint[] bps = value.getMIBreakpoints();
+    		assertTrue("Expected 1 breakpoint but got " + bps.length,
+    				   bps.length == 1);
+    		assertTrue("Expending a <PENDING> breakpoint but got one at " + bps[0].getAddress(),
+    				   bps[0].getAddress().equals("<PENDING>"));
+    	} catch (InterruptedException e) {
+    		fail(e.getMessage());
+    	} catch (ExecutionException e) {
+    		fail(e.getCause().getMessage());
+    	} catch (TimeoutException e) {
+    		fail(e.getMessage());
+    	}
+    }
+    
+    /**
+     * This test will tell the launch to "stop on main" at method main() with reverse
+     * debugging enabled.  We will verify that the launch stops at main() and that
+     * reverse debugging is enabled.
+     *
+     * In this test, the execution crosses getenv() while recording is enabled. gdb 7.0
+     * and 7.1 have trouble with that. We disable the test for those, and enable it for
+     * 7.2 and upwards.
+     */
+    @Test
+    public void testStopAtMainWithReverse() throws Throwable {
+    	assumeGdbVersionAtLeast("7.2");
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
+    	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, true);
+    	doLaunch();
+
+    	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+    	// Make sure we stopped at the first line of main
+    	assertTrue("Expected to stop at main:" + FIRST_LINE_IN_MAIN + " but got " +
+    			   stoppedEvent.getFrame().getFunction() + ":" +
+    			   Integer.toString(stoppedEvent.getFrame().getLine()),
+    			   stoppedEvent.getFrame().getFunction().equals("main") &&
+    			   stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN);
+    	
+    	// Step a couple of times and check where we are
+    	final int NUM_STEPS = 3;
+    	stoppedEvent = SyncUtil.step(NUM_STEPS,  StepType.STEP_OVER);
+    	assertTrue("Expected to stop at main:" + (FIRST_LINE_IN_MAIN+NUM_STEPS) + " but got " +
+ 			   stoppedEvent.getFrame().getFunction() + ":" +
+ 			   Integer.toString(stoppedEvent.getFrame().getLine()),
+ 			   stoppedEvent.getFrame().getFunction().equals("main") &&
+ 			   stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN+NUM_STEPS);
+    	
+    	// Now step backwards to make sure reverse was enabled
+    	
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+			new ServiceEventWaitor<MIStoppedEvent>(
+					fSession,
+					MIStoppedEvent.class);
+
+    	final int REVERSE_NUM_STEPS = 2;
+    	final IExecutionDMContext execDmc = stoppedEvent.getDMContext();
+    	Query<MIInfo> query = new Query<MIInfo>() {
+    		@Override
+    		protected void execute(DataRequestMonitor<MIInfo> rm) {
+    			fGdbControl.queueCommand(
+    					fGdbControl.getCommandFactory().createMIExecReverseNext(execDmc, REVERSE_NUM_STEPS),
+    					rm);
+    		}
+    	};
+    	try {
+    		fGdbControl.getExecutor().execute(query);
+    		query.get(500, TimeUnit.MILLISECONDS);
+    	} catch (InterruptedException e) {
+    		fail(e.getMessage());
+    	} catch (ExecutionException e) {
+    		fail(e.getCause().getMessage());
+    	} catch (TimeoutException e) {
+    		fail(e.getMessage());
+    	}
+    	
+    	stoppedEvent = eventWaitor.waitForEvent(1000);
+    	
+    	assertTrue("Expected to stop at main:" + (FIRST_LINE_IN_MAIN+NUM_STEPS-REVERSE_NUM_STEPS) + " but got " +
+  			   stoppedEvent.getFrame().getFunction() + ":" +
+  			   Integer.toString(stoppedEvent.getFrame().getLine()),
+  			   stoppedEvent.getFrame().getFunction().equals("main") &&
+  			   stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN+NUM_STEPS-REVERSE_NUM_STEPS);
+    }
+    
+    /**
+     * Repeat the test testStopAtMainWithReverse, but after a restart.
+     */
+    @Test
+    public void testStopAtMainWithReverseRestart() throws Throwable {
+    	assumeGdbVersionAtLeast("7.2");
+    	fRestart = true;
+    	testStopAtMainWithReverse();
+    }
+
+    /**
+     * This test will tell the launch to "stop on main" at method stopAtOther(), 
+     * with reverse debugging enabled.  We will then verify that the launch is properly
+     * stopped at stopAtOther() and that it can go backwards until main() (this will
+     * confirm that reverse debugging was enabled at the very start).
+     *
+     * In this test, the execution crosses getenv() while recording is enabled. gdb 7.0
+     * and 7.1 have trouble with that. We disable the test for those, and enable it for
+     * 7.2 and upwards.
+     */
+	@Test
+    public void testStopAtOtherWithReverse() throws Throwable {
+		assumeGdbVersionAtLeast("7.2");
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "stopAtOther");
+    	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, true);
+    	doLaunch();
+
+    	// Wait for the launch to properly complete.  This is because with reverse
+    	// the first stopped event does not mean the launch is complete.  There will
+    	// be another stopped event
+    	synchronized (this) {
+    		wait(1000);			
+		}
+    	
+    	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+    	
+    	// The initial stopped event is not the last stopped event.
+    	// With reverse we have to stop the program, turn on reverse and start it again.
+    	// Let's get the frame where we really are stopped right now.
+    	final IExecutionDMContext execDmc = stoppedEvent.getDMContext();
+    	IFrameDMData frame = SyncUtil.getFrameData(execDmc, 0);
+ 
+    	// Make sure we stopped at the first line of main
+    	assertTrue("Expected to stop at stopAtOther but got " +
+    			   frame.getFunction(),
+    			   frame.getFunction().equals("stopAtOther"));
+    	
+    	// Now step backwards all the way to the start to make sure reverse was enabled from the very start   	
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+			new ServiceEventWaitor<MIStoppedEvent>(
+					fSession,
+					MIStoppedEvent.class);
+
+    	final int REVERSE_NUM_STEPS = 3;
+    	Query<MIInfo> query2 = new Query<MIInfo>() {
+    		@Override
+    		protected void execute(DataRequestMonitor<MIInfo> rm) {
+    			fGdbControl.queueCommand(
+    					fGdbControl.getCommandFactory().createMIExecReverseNext(execDmc, REVERSE_NUM_STEPS),
+    					rm);
+    		}
+    	};
+    	try {
+    		fGdbControl.getExecutor().execute(query2);
+    		query2.get(500, TimeUnit.MILLISECONDS);
+    	} catch (InterruptedException e) {
+    		fail(e.getMessage());
+    	} catch (ExecutionException e) {
+    		fail(e.getCause().getMessage());
+    	} catch (TimeoutException e) {
+    		fail(e.getMessage());
+    	}
+    	
+    	stoppedEvent = eventWaitor.waitForEvent(1000);
+    	
+    	assertTrue("Expected to stop at main:" + (FIRST_LINE_IN_MAIN) + " but got " +
+  			   stoppedEvent.getFrame().getFunction() + ":" +
+  			   Integer.toString(stoppedEvent.getFrame().getLine()),
+  			   stoppedEvent.getFrame().getFunction().equals("main") &&
+  			   stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN);
+    }
+    
+    /**
+     * Repeat the test testStopAtOtherWithReverse, but after a restart.
+     */
+    @Test
+    public void testStopAtOtherWithReverseRestart() throws Throwable {
+    	assumeGdbVersionAtLeast("7.2");
+    	fRestart = true;
+    	testStopAtOtherWithReverse();
+    }
+    /**
+     * This test will set a breakpoint at the last line of the program and will tell 
+     * the launch to NOT "stop on main", with reverse debugging enabled.  We will 
+     * verify that the first stop is at the last line of the program but that the program
+     * can run backwards until main() (this will confirm that reverse debugging was 
+     * enabled at the very start).
+     */
+	@Test
+    public void testNoStopAtMainWithReverse() throws Throwable {
+    	assumeGdbVersionAtLeast("7.2");
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
+    	// Set this one as well to make sure it gets ignored
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
+    	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, true);
+    	
+    	// MUST SET BREAKPOINT AT LAST LINE BUT BEFORE LAUNCH IS STARTED
+    	// MUST SET BREAKPOINT AT LAST LINE BUT BEFORE LAUNCH IS STARTED
+    	// MUST SET BREAKPOINT AT LAST LINE BUT BEFORE LAUNCH IS STARTED
+    	// see testNoStopAtMain()
+    	
+    	doLaunch();
+
+    	// Wait for the launch to properly complete.  This is because with reverse
+    	// the first stopped event does not mean the launch is complete.  There will
+    	// be another stopped event
+    	synchronized (this) {
+    		wait(1000);			
+		}
+    	
+    	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+    	
+    	// The initial stopped event is not the last stopped event.
+    	// With reverse we have to stop the program, turn on reverse and start it again.
+    	// Let's get the frame where we really are stopped right now.
+    	final IExecutionDMContext execDmc = stoppedEvent.getDMContext();
+    	IFrameDMData frame = SyncUtil.getFrameData(execDmc, 0);
+ 
+    	// Make sure we stopped at the first line of main
+    	assertTrue("Expected to stop at main:" + LAST_LINE_IN_MAIN + " but got " +
+    			   frame.getFunction() + ":" +
+    			   Integer.toString(frame.getLine()),
+    			   frame.getFunction().equals("main") &&
+    			   frame.getLine() == LAST_LINE_IN_MAIN);
+    	
+    	// Now step backwards all the way to the start to make sure reverse was enabled from the very start   	
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+			new ServiceEventWaitor<MIStoppedEvent>(
+					fSession,
+					MIStoppedEvent.class);
+
+    	final int REVERSE_NUM_STEPS = 3;
+    	Query<MIInfo> query2 = new Query<MIInfo>() {
+    		@Override
+    		protected void execute(DataRequestMonitor<MIInfo> rm) {
+    			fGdbControl.queueCommand(
+    					fGdbControl.getCommandFactory().createMIExecReverseNext(execDmc, REVERSE_NUM_STEPS),
+    					rm);
+    		}
+    	};
+    	try {
+    		fGdbControl.getExecutor().execute(query2);
+    		query2.get(500, TimeUnit.MILLISECONDS);
+    	} catch (InterruptedException e) {
+    		fail(e.getMessage());
+    	} catch (ExecutionException e) {
+    		fail(e.getCause().getMessage());
+    	} catch (TimeoutException e) {
+    		fail(e.getMessage());
+    	}
+    	
+    	stoppedEvent = eventWaitor.waitForEvent(1000);
+    	
+    	assertTrue("Expected to stop at main:" + (FIRST_LINE_IN_MAIN) + " but got " +
+  			   stoppedEvent.getFrame().getFunction() + ":" +
+  			   Integer.toString(stoppedEvent.getFrame().getLine()),
+  			   stoppedEvent.getFrame().getFunction().equals("main") &&
+  			   stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN);
+    }
+    
+    /**
+     * Repeat the test testNoStopAtMainWithReverse, but after a restart.
+     */
+    @Test
+    public void testNoStopAtMainWithReverseRestart() throws Throwable {
+    	assumeGdbVersionAtLeast("7.2");
+    	fRestart = true;
+    	testNoStopAtMainWithReverse();
     }
 }

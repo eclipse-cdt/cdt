@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *******************************************************************************/
@@ -32,8 +32,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -44,19 +43,20 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.osgi.service.prefs.Preferences;
 
 
 /**
  * Tests that we can perform different operations while the target
- * is running. 
+ * is running.
  */
-@RunWith(BackgroundRunner.class)
-public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase {
 
 	private static final String TIMEOUT_MESSAGE = "Timeout";
 
-	private DsfServicesTracker fServicesTracker;    
+	private DsfServicesTracker fServicesTracker;
 	private IGDBProcesses fProcesses;
 	private IMIContainerDMContext fContainerDmc;
 	private IGDBControl fControl;
@@ -68,11 +68,11 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     @BeforeClass
 	public static void doBeforeClass() throws Exception {
 		// Save the original values of the preferences used in this class
-		fgAutoTerminate = Platform.getPreferencesService().getBoolean( 
+		fgAutoTerminate = Platform.getPreferencesService().getBoolean(
 				GdbPlugin.PLUGIN_ID,
-				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, 
+				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
 				true,
-				null );		
+				null );
     }
 
 	@Override
@@ -80,12 +80,12 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
 		super.doBeforeTest();
 
 		final DsfSession session = getGDBLaunch().getSession();
-		
+
         Runnable runnable = new Runnable() {
             @Override
 			public void run() {
-            	fServicesTracker = 
-            			new DsfServicesTracker(TestsPlugin.getBundleContext(), 
+            	fServicesTracker =
+            			new DsfServicesTracker(TestsPlugin.getBundleContext(),
             					session.getId());
 
             	fProcesses = fServicesTracker.getService(IGDBProcesses.class);
@@ -93,7 +93,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
             }
         };
         session.getExecutor().submit(runnable).get();
-        
+
         fContainerDmc = (IMIContainerDMContext)SyncUtil.getContainerContext();
 
 	}
@@ -109,18 +109,18 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );
 		node.putBoolean( IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, fgAutoTerminate );
 	}
-	
+
 	@Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
-		
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
+
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
 				           EXEC_PATH + EXEC_NAME);
 	}
 
     /**
      * Test that the restart operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminates, enabled.  
+     * with the option to kill GDB after the process terminates, enabled.
      */
     @Test
     public void restartWhileTargetRunningKillGDB() throws Throwable {
@@ -139,18 +139,18 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     	// then we do the restart, and confirm we are then stopped on main
     	SyncUtil.resume();
 		MIStoppedEvent stoppedEvent = SyncUtil.restart(getGDBLaunch());
-		
+
 		String func = stoppedEvent.getFrame().getFunction();
 		Assert.assertTrue("Expected to be stopped at main, but is stopped at " + func,
 				"main".equals(func));
-		
+
         // Now make sure GDB is still alive
         Assert.assertTrue("GDB should have been still alive", fControl.isActive());
     }
- 
+
     /**
      * Test that the restart operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminates, disabled.  
+     * with the option to kill GDB after the process terminates, disabled.
      */
     @Test
     public void restartWhileTargetRunningGDBAlive() throws Throwable {
@@ -160,7 +160,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     				           SyncUtil.canRestart());
     	    return;
     	}
-    	
+
     	// First set the preference not to kill gdb
     	Preferences node = InstanceScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, false);
@@ -169,18 +169,18 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     	// then we do the restart, and confirm we are then stopped on main
     	SyncUtil.resume();
 		MIStoppedEvent stoppedEvent = SyncUtil.restart(getGDBLaunch());
-		
+
 		String func = stoppedEvent.getFrame().getFunction();
 		Assert.assertTrue("Expected to be stopped at main, but is stopped at " + func,
 				"main".equals(func));
-		
+
         // Now make sure GDB is still alive
         Assert.assertTrue("GDB should have been still alive", fControl.isActive());
     }
-    
+
     /**
      * Test that the terminate operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminates, enabled. 
+     * with the option to kill GDB after the process terminates, enabled.
      */
     @Test
     public void terminateWhileTargetRunningKillGDB() throws Throwable {
@@ -191,7 +191,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     	// The target is currently stopped.  We resume to get it running
     	// then we terminate, and confirm that we shutdown right away
     	SyncUtil.resume();
-    	
+
         ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
         		getGDBLaunch().getSession(),
         		ICommandControlShutdownDMEvent.class);
@@ -206,19 +206,19 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
             }
         };
         fProcesses.getExecutor().execute(runnable);
-    		
+
 		// The shutdown must happen quickly, which will confirm that it was
 		// our own terminate that did it.  If it take longer, it indicates
 		// that the program terminated on its own, which is not what we want.
         shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
-        
+
         // Now make sure GDB is dead
         Assert.assertTrue("GDB should have been terminated", !fControl.isActive());
     }
 
     /**
      * Test that the terminate operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminates, disabled. 
+     * with the option to kill GDB after the process terminates, disabled.
      */
     @Test
     public void terminateWhileTargetRunningKeepGDBAlive() throws Throwable {
@@ -229,7 +229,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     	// The target is currently stopped.  We resume to get it running
     	// then we terminate the process, and confirm that there are no more processes
     	SyncUtil.resume();
-    	
+
         ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<IExitedDMEvent>(
         		getGDBLaunch().getSession(),
         		IExitedDMEvent.class);
@@ -251,26 +251,26 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     	} catch (TimeoutException e) {
     		fail(TIMEOUT_MESSAGE);
     	}
-    		
+
         IExitedDMEvent event = exitedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
         if (!(event.getDMContext() instanceof IMIContainerDMContext)) {
         	// This was the thread exited event, we want the container exited event
             event = exitedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
         }
-        
+
         // Make sure this event shows that the process was terminated
         Assert.assertTrue("Process was not terminated", event.getDMContext() instanceof IMIContainerDMContext);
         IMIContainerDMContext dmc = (IMIContainerDMContext)event.getDMContext();
-        Assert.assertTrue("Expected process " + fContainerDmc.getGroupId() + " but got " + dmc.getGroupId(), 
+        Assert.assertTrue("Expected process " + fContainerDmc.getGroupId() + " but got " + dmc.getGroupId(),
         		          fContainerDmc.getGroupId().equals(dmc.getGroupId()));
-        
+
         // Now make sure GDB is still alive
         Assert.assertTrue("GDB should have been still alive", fControl.isActive());
     }
-    
+
     /**
      * Test that the detach operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminates, enabled.  
+     * with the option to kill GDB after the process terminates, enabled.
      */
     @Test
     public void detachWhileTargetRunningKillGDB() throws Throwable {
@@ -281,7 +281,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     	// The target is currently stopped.  We resume to get it running
     	// then we detach the process, and confirm that we are shutdown
     	SyncUtil.resume();
-    	
+
         ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
         		getGDBLaunch().getSession(),
         		ICommandControlShutdownDMEvent.class);
@@ -295,19 +295,19 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
             }
         };
         fProcesses.getExecutor().execute(runnable);
-      		
+
 		// The shutdown must happen quickly, which will confirm that it was
 		// our own terminate that did it.  If it take longer, it indicates
 		// that the program terminated on its own, which is not what we want.
         shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
-        
+
         // Now make sure GDB is dead
         Assert.assertTrue("GDB should have been terminated", !fControl.isActive());
     }
-    
+
     /**
      * Test that the detach operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminates, disabled.  
+     * with the option to kill GDB after the process terminates, disabled.
      */
     @Test
     public void detachWhileTargetRunningGDBAlive() throws Throwable {
@@ -318,7 +318,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     	// The target is currently stopped.  We resume to get it running
     	// then we detach the process, and confirm that we are not longer running
     	SyncUtil.resume();
-    	
+
         ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<IExitedDMEvent>(
         		getGDBLaunch().getSession(),
         		IExitedDMEvent.class);
@@ -339,19 +339,19 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     	} catch (TimeoutException e) {
     		fail(TIMEOUT_MESSAGE);
     	}
-    		
+
         IExitedDMEvent event = exitedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
         if (!(event.getDMContext() instanceof IMIContainerDMContext)) {
         	// This was the thread exited event, we want the container exited event
             event = exitedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
         }
-        
+
         // Make sure this event shows that the process was detached
         Assert.assertTrue("Process was not detached", event.getDMContext() instanceof IMIContainerDMContext);
         IMIContainerDMContext dmc = (IMIContainerDMContext)event.getDMContext();
-        Assert.assertTrue("Expected process " + fContainerDmc.getGroupId() + " but got " + dmc.getGroupId(), 
+        Assert.assertTrue("Expected process " + fContainerDmc.getGroupId() + " but got " + dmc.getGroupId(),
         		          fContainerDmc.getGroupId().equals(dmc.getGroupId()));
-        
+
         // Now make sure GDB is still alive
         Assert.assertTrue("GDB should have been still alive", fControl.isActive());
     }

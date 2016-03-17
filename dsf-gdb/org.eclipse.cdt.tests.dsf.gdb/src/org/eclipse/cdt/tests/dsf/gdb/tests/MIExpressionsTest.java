@@ -52,8 +52,7 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -64,9 +63,10 @@ import org.eclipse.core.runtime.Status;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(BackgroundRunner.class)
-public class MIExpressionsTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class MIExpressionsTest extends BaseParametrizedTestCase {
 	private static final String EXEC_NAME = "ExpressionTestApp.exe";
 
     private DsfSession fSession;
@@ -314,7 +314,7 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testChildren() throws Throwable {
-
+      	assumeGdbVersionAtLeast("6.7");
     	// Get the children of some variables
         MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testChildren");
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
@@ -1831,6 +1831,8 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testDeleteChildren() throws Throwable {
+    	assumeGdbVersionAtLeast("6.7");
+    	assumeGdbVersionLowerThen("7.3");
         SyncUtil.runToLocation("testDeleteChildren");
         MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
@@ -2885,6 +2887,7 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testCanWriteLValue() throws Throwable {
+    	assumeGdbVersionAtLeast("6.8");
     	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testCanWrite");  // Re-use test
     	final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -3461,6 +3464,8 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testRTTI() throws Throwable {
+    	assumeGdbVersionNot("6.7"); // crashing
+    	assumeGdbVersionLowerThen("7.5");
     	SyncUtil.runToLocation("testRTTI");    	
     	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
@@ -4256,5 +4261,188 @@ public class MIExpressionsTest extends BaseTestCase {
         String type = query.get(500, TimeUnit.MILLISECONDS);
 		assertEquals(expectedType, type);
 		return type;
+    }
+    
+	
+	// Slight change in GDB output to fix a bug, so we must change the test a little
+	// Bug 320277
+	@Test
+    public void testDeleteChildren_7_3() throws Throwable {
+    	assumeGdbVersionAtLeast("7.3");
+        SyncUtil.runToLocation("testDeleteChildren");
+        MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+        
+        fExpService.getExecutor().submit(new Runnable() {
+        	@Override
+			public void run() {
+
+        		// First create the var object and all its children
+        		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "f");
+
+        		fExpService.getSubExpressions(
+        				parentDmc, 
+        				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+        					@Override
+        					protected void handleCompleted() {
+        						if (!isSuccess()) {
+        							wait.waitFinished(getStatus());
+        						} else {
+        							if (getData().length != 5) {
+        								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+        										"Failed getting children; expecting 5 got " + getData().length, null));
+        							} else {
+        								String childStr = "((class bar) f)";
+        								if (!getData()[0].getExpression().equals(childStr)) {
+        									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+        											"Got child " + getData()[0].getExpression() + " instead of " + childStr, null));
+        								} else {
+        									// Now list the children of the first element
+        									fExpService.getSubExpressions(
+        											getData()[0], 
+        											new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+        												@Override
+        												protected void handleCompleted() {
+        													if (!isSuccess()) {
+        														wait.waitFinished(getStatus());
+        													} else {
+        														if (getData().length != 2) {
+        															wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+        																	"Failed getting children; expecting 2 got " + getData().length, null));
+        														} else {
+        					        								String childStr = "((((class bar) f)).d)";
+        					        								if (!getData()[0].getExpression().equals(childStr)) {
+        					        									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+        					        											"Got child " + getData()[0].getExpression() + " instead of " + childStr, null));
+        					        								} else {
+        					        									wait.setReturnInfo(getData()[0]);
+        								        						wait.waitFinished();
+        					        								}
+        														}
+        													}
+        												}
+        											});
+        								}
+        							}
+        						}
+        					}	
+        				});
+        	}
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        final IExpressionDMContext deletedChildDmc = (IExpressionDMContext)wait.getReturnInfo();
+
+        wait.waitReset();
+        
+        fExpService.getExecutor().submit(new Runnable() {
+        	@Override
+			public void run() {
+
+        		// Now create more than 1000 expressions to trigger the deletion of the children
+        		// that were created above
+        		for (int i=0; i<1100; i++) {
+        			IExpressionDMContext dmc = fExpService.createExpression(frameDmc, "a[" + i + "]");
+
+        			wait.increment();
+        			fExpService.getExpressionData(
+        					dmc, 
+        					new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
+        						@Override
+        						protected void handleCompleted() {
+        							if (!isSuccess()) {
+        								wait.waitFinished(getStatus());
+        							} else {
+        								wait.waitFinished();
+        							}
+        						}	
+        					});
+        		}
+        	}
+        });
+        
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+        
+        fExpService.getExecutor().submit(new Runnable() {
+        	@Override
+			public void run() {
+
+        		// Evaluate the expression of a child that we know is deleted to make sure
+        		// the expression service can handle that
+        		fExpService.getExpressionData(
+        				deletedChildDmc, 
+        				new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
+        					@Override
+        					protected void handleCompleted() {
+        						if (!isSuccess()) {
+        							wait.waitFinished(getStatus());
+        						} else {
+        							wait.waitFinished();
+        						}
+        					}	
+        				});
+        	}
+        });
+        
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+        
+    }
+	
+
+    /**
+     * This test verifies that there is proper RTTI support starting with GDB 7.5.
+     */
+	@Test
+    public void testRTTI_7_5() throws Throwable {
+    	assumeGdbVersionAtLeast("7.5");
+    	SyncUtil.runToLocation("testRTTI");    	
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+        
+        // The expression we will follow as it changes types: derived.ptr
+	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "derived.ptr");
+	    
+	    // Now, the expression should be type VirtualBase
+	    getExpressionType(exprDmc, "VirtualBase *");
+	    assertChildrenCount(exprDmc, 2);
+	    // get all children
+	    String[] expectedValues = new String[2];
+	    expectedValues[0] = "a";
+	    expectedValues[1] = "b";
+	    getChildren(exprDmc, expectedValues);
+	    
+	    // Make the type of our expression change
+	    SyncUtil.step(1, StepType.STEP_OVER);
+	    // Now, the expression should be type Derived
+	    getExpressionType(exprDmc, "Derived *");
+	    assertChildrenCount(exprDmc, 5);
+	    // get all children
+	    expectedValues = new String[5];
+	    expectedValues[0] = "VirtualBase";
+	    expectedValues[1] = "c";
+	    expectedValues[2] = "ptr";
+	    expectedValues[3] = "d";
+	    expectedValues[4] = "e";
+	    getChildren(exprDmc, expectedValues);
+
+	    // Make the type of our expression change
+	    SyncUtil.step(1, StepType.STEP_OVER);
+	    // Now, the expression should be type OtherDerived
+	    getExpressionType(exprDmc, "OtherDerived *");
+	    assertChildrenCount(exprDmc, 4);
+	    // get all children
+	    expectedValues = new String[4];
+	    expectedValues[0] = "VirtualBase";
+	    expectedValues[1] = "d";
+	    expectedValues[2] = "c";
+	    expectedValues[3] = "f";
+	    getChildren(exprDmc, expectedValues);
     }
 }

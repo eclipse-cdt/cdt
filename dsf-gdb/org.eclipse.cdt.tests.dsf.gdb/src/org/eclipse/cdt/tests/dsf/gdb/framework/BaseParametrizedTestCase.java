@@ -36,7 +36,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 	@Parameter public String parameter;
 	// other fields
 	private String gdbVersionPostfix; // this is how we want to invoke it
-	private boolean remote; // this is if we want remote tests (gdbserver)
+	protected boolean remote; // this is if we want remote tests (gdbserver)
 
 	protected static List<String> calculateVersions() {
 		if (globalVersion != null) {
@@ -78,9 +78,18 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		globalVersion = null;
 	}
 
+	public void assumeGdbVersionNot(String checkVersion) {
+		String gdbVersion = getGdbVersion();
+		// cannot be that version
+		boolean match = LaunchUtils.compareVersions(checkVersion, gdbVersion) == 0;
+		Assume.assumeTrue(
+				"Skipped because gdb " + gdbVersion + " does not support this feature",
+				!match);
+	}
+
 	public void assumeGdbVersionLowerThen(String checkVersion) {
 		String gdbVersion = getGdbVersion();
-		// otherwise it has to be strictly lower
+		// has to be strictly lower
 		boolean isLower = LaunchUtils.compareVersions(checkVersion, gdbVersion) > 0;
 		Assume.assumeTrue(
 				"Skipped because gdb " + gdbVersion + " does not support this feature: removed since " + checkVersion,

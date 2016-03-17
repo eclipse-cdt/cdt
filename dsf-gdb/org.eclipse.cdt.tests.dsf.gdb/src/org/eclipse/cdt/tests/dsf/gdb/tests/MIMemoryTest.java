@@ -41,8 +41,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.MemoryByteBuffer;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
@@ -53,22 +52,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /*
  * This is the Memory Service test suite.
- * 
+ *
  * It is meant to be a regression suite to be executed automatically against
  * the DSF nightly builds.
- * 
+ *
  * It is also meant to be augmented with a proper test case(s) every time a
  * feature is added or in the event (unlikely :-) that a bug is found in the
  * Memory Service.
- * 
+ *
  * Refer to the JUnit4 documentation for an explanation of the annotations.
  */
 
-@RunWith(BackgroundRunner.class)
-public class MIMemoryTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class MIMemoryTest extends BaseParametrizedTestCase {
 	private static final String EXEC_NAME = "MemoryTestApp.exe";
 
 	private DsfSession          fSession;
@@ -98,7 +98,7 @@ public class MIMemoryTest extends BaseTestCase {
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-		
+
 	    fSession = getGDBLaunch().getSession();
 	    fMemoryDmc = (IMemoryDMContext)SyncUtil.getContainerContext();
 	    assert(fMemoryDmc != null);
@@ -141,7 +141,7 @@ public class MIMemoryTest extends BaseTestCase {
 	@Override
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
-		
+
 		// Clear the references (not strictly necessary)
         Runnable runnable = new Runnable() {
             @Override
@@ -150,7 +150,7 @@ public class MIMemoryTest extends BaseTestCase {
             }
         };
         fSession.getExecutor().submit(runnable).get();
-        
+
         fBaseAddress = null;
 		fExpressionService = null;
 		fMemoryService = null;
@@ -169,7 +169,7 @@ public class MIMemoryTest extends BaseTestCase {
 	 * ------------------------------------------------------------------------
 	 * Processes MemoryChangedEvents.
 	 * First checks if the memory block base address was set so the individual
-	 * test can control if it wants to verify the event(s).   
+	 * test can control if it wants to verify the event(s).
 	 * ------------------------------------------------------------------------
 	 * @param e The MemoryChangedEvent
 	 * ------------------------------------------------------------------------
@@ -812,7 +812,7 @@ public class MIMemoryTest extends BaseTestCase {
 		}
 
 		// Write an initialized memory block
-		ByteBuffer buffer = ByteBuffer.allocate(count * fWordSize); 
+		ByteBuffer buffer = ByteBuffer.allocate(count * fWordSize);
 		for (int i = 0; i < count; i++) {
 			buffer.put(valueToBytes(i));
 		}

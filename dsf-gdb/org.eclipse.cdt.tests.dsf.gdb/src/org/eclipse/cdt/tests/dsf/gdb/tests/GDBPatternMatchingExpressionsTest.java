@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial Implementation
  *     Marc Khouzam (Ericsson) - Tests for Pattern Matching for variables (Bug 394408)
@@ -49,16 +49,16 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(BackgroundRunner.class)
-public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase {
 	private static final String EXEC_NAME = "PatternMatchingExpressionsTestApp.exe";
 
 	private DsfSession fSession;
@@ -103,11 +103,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	//**************************************************************************************
 	// Utility methods
 	//**************************************************************************************
-	
+
 	// Static list of register names as obtained directly from GDB.
 	// We make it static so it does not get re-set for every test
 	protected static List<String> fRegisterNames = null;
-	
+
 	@BeforeClass
  	public static void initializeGlobals() {
 		// In case we run multiple GDB versions of this test
@@ -117,7 +117,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	}
 
 	protected List<String> get_X86_REGS() throws Throwable {
-		
+
 		if (fRegisterNames == null) {
 			// The tests must run on different machines, so the set of registers can change.
 			// To deal with this we ask GDB for the list of registers.
@@ -151,7 +151,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		// Return a copy since it will be modified by each test
 		return new LinkedList<String>(fRegisterNames);
 	}
-	
+
 	final static String[] fAllVariables = new String[] { "firstarg", "firstvar", "ptrvar", "secondarg", "secondvar", "var", "var2" };
 
 	protected void checkChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
@@ -168,11 +168,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		assertTrue(String.format("Expected %d but got %d", expectedCount, count), count == expectedCount);
 	}
 
-	protected String getRegisterValue(final String regName, final IMIExecutionDMContext threadDmc) throws Exception {    	
+	protected String getRegisterValue(final String regName, final IMIExecutionDMContext threadDmc) throws Exception {
 		Query<String> query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
-				fRegService.getRegisters(threadDmc, 
+				fRegService.getRegisters(threadDmc,
 						new ImmediateDataRequestMonitor<IRegisterDMContext[]>(rm) {
 							@Override
 							protected void handleSuccess() {
@@ -197,15 +197,15 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		};
 
 		fSession.getExecutor().execute(query);
-		return query.get(); 
+		return query.get();
 	}
 
-	protected String getExpressionValue(final IExpressionDMContext exprDmc) throws Throwable 
+	protected String getExpressionValue(final IExpressionDMContext exprDmc) throws Throwable
 	{
 		Query<String> query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
-				final FormattedValueDMContext valueDmc = 
+				final FormattedValueDMContext valueDmc =
 						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT);
 				fExpService.getFormattedExpressionValue(valueDmc,
 						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
@@ -218,7 +218,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		};
 
 		fSession.getExecutor().execute(query);
-		return query.get(); 
+		return query.get();
 	}
 
 	// This method tests IExpressions.getSubExpressions(IExpressionDMC, int, int, DRM);
@@ -233,7 +233,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		};
 
 		fSession.getExecutor().execute(query);
-		IExpressionDMContext[] childDmcs =  query.get(); 
+		IExpressionDMContext[] childDmcs =  query.get();
 
 		String[] childExpressions = new String[childDmcs.length];
 		MIExpressionDMCAccessor[] childDmcsAccessor = new MIExpressionDMCAccessor[childDmcs.length];
@@ -243,7 +243,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		for (int i = 0; i < childExpressions.length; i++) {
 			childDmcsAccessor[i] = new MIExpressionDMCAccessor(childDmcs[i]);
 			childExpressions[i] = childDmcsAccessor[i].getRelativeExpression();
-		}        
+		}
 		assertTrue("Expected " + Arrays.toString(expectedValues) + " but got " + Arrays.toString(childExpressions),
 				expectedValues.length == childExpressions.length);
 
@@ -283,7 +283,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 * Test that we can access a single variable, without using groups or patterns
 	 */
 	@Test
-	public void testSingleLocal() throws Throwable {    	
+	public void testSingleLocal() throws Throwable {
 		final String exprString = "secondvar";
 
 		SyncUtil.runToLocation("foo");
@@ -313,12 +313,12 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can match a single variable
 	 */
 	@Test
-	public void testMatchSingleLocal() throws Throwable {    	
+	public void testMatchSingleLocal() throws Throwable {
 		final String exprString = "=secondvar";
 		final String[] children = new String[] { "secondvar" };
 
@@ -352,7 +352,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
-		
+
 		exprDmc = SyncUtil.createExpression(frameDmc, exprString2);
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
@@ -458,7 +458,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that variables can be dereferenced using '*'
 	 * without conflicting with glob-expressions
@@ -466,7 +466,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testDerefVar() throws Throwable {
 		final String exprString = "*ptrvar";
-		
+
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
 
@@ -477,7 +477,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		assertEquals(getExpressionValue(exprDmc), "0x12");
 	}
-	
+
 	/**
 	 * Test that variables can be matched using '*' at the end
 	 * not to be confused with multiplication
@@ -497,7 +497,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that variables can be multiplied using '*'
 	 * without conflicting with glob-expressions
@@ -505,7 +505,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMultiplyVar() throws Throwable {
 		final String exprString = "var*0";
-		
+
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
 
@@ -516,7 +516,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		assertEquals(getExpressionValue(exprDmc), "0x0");
 	}
-	
+
 	/**
 	 * Test that registers can be matched using '?'
 	 */
@@ -535,7 +535,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that conditional operator can be used for registers
 	 */
@@ -689,7 +689,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that arrays can be matched using [] using a range of numbers.
 	 * In this case, we want to show the user the range of array elements.
@@ -774,7 +774,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArrayWithWildCardAndNumberRange() throws Throwable {
 		final String exprString = "=ar*[2-3]";
-		final String[] children = new String[] { 
+		final String[] children = new String[] {
 				"array2", "array3",
 				"arrayBool[2]", "arrayBool[3]",
 				"arrayInt[2]", "arrayInt[3]",
@@ -790,7 +790,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that arrays can be matched using [] and a ?.
 	 */
@@ -809,7 +809,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can match all arrays using [].
 	 * In this case, we want to show the user the range of array elements.
@@ -817,9 +817,9 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchAllArraysAndNumberRange() throws Throwable {
 		final String exprString = "=*[2-3]";
-		final String[] children = new String[] { 
+		final String[] children = new String[] {
 				"array2", "array3",
-                "arrayBool[2]", "arrayBool[3]", 
+                "arrayBool[2]", "arrayBool[3]",
                 "arrayInt[2]", "arrayInt[3]",
 				"array[2]", "array[3]" };
 
@@ -833,14 +833,14 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can match arrays using [] and comma-separated indices.
 	 */
 	@Test
 	public void testMatchArraysWithCommaSeparatedIndices() throws Throwable {
 		final String exprString = "=array[2,5,8]";
-		final String[] children = new String[] { 
+		final String[] children = new String[] {
 				"array2", "array[2]", "array[5]", "array[8]" };
 
 		SyncUtil.runToLocation("testArrayMatching");
@@ -853,17 +853,17 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can match arrays using [] and comma-separated ranges.
 	 */
 	@Test
 	public void testMatchArraysWithCommaSeparatedNumberRanges() throws Throwable {
 		final String exprString = "=array[2-3, 5, 7-8]";
-		final String[] children = new String[] { 
+		final String[] children = new String[] {
 				"array2", "array3",
-				"array[2]", "array[3]", 
-                "array[5]", 
+				"array[2]", "array[3]",
+                "array[5]",
                 "array[7]", "array[8]" };
 
 		SyncUtil.runToLocation("testArrayMatching");
@@ -876,7 +876,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can match arrays using [] and comma-separated ranges
 	 * with an overlap.
@@ -884,7 +884,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArraysWithCommaSeparatedOverlappingRanges() throws Throwable {
 		final String exprString = "=array[2-3, 5, 4-6]";
-		final String[] children = new String[] { 
+		final String[] children = new String[] {
 				"array2", "array3", "array[2]", "array[3]", "array[4]", "array[5]", "array[6]" };
 
 		SyncUtil.runToLocation("testArrayMatching");
@@ -897,7 +897,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can match arrays using [] and comma-separated ranges
 	 * that are not sorted.
@@ -905,7 +905,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArraysWithCommaSeparatedUnsortedRanges() throws Throwable {
 		final String exprString = "=array[5-6, 3, 0-1]";
-		final String[] children = new String[] { 
+		final String[] children = new String[] {
 				"array3", "array[0]", "array[1]", "array[3]", "array[5]", "array[6]" };
 
 		SyncUtil.runToLocation("testArrayMatching");
@@ -918,7 +918,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can match arrays using [] and comma-separated ranges
 	 * containing invalid ranges.  Invalid ranges are not accepted by
@@ -929,7 +929,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testMatchArraysWithCommaSeparatedInvalidRanges() throws Throwable {
 		final String exprString = "=array[2-3, 5, 6-4]";
-		final String[] children = new String[] { 
+		final String[] children = new String[] {
 				"array[2]", "array[3]", "array[5]", "array[6-4]" };
 
 		SyncUtil.runToLocation("testArrayMatching");
@@ -942,7 +942,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we properly handle a non-arrays when using []
 	 */
@@ -959,7 +959,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		checkChildrenCount(exprDmc, 0);
 	}
-	
+
 	/**
 	 * Test that arrays can be accessed using [] with a single letter range.
 	 * In this case, since letters do not indicate an array index,
@@ -980,7 +980,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that arrays can be accessed using [] with a letter range.
 	 * In this case, since letters do not indicate an array index,
@@ -1001,7 +1001,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that arrays can be accessed using [] with a letter range.
 	 * In this case, since letters do not indicate an array index,
@@ -1022,7 +1022,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that arrays can be accessed using [] with an invalid range.
 	 * In this case, the range is used as-is to create the expression.
@@ -1042,7 +1042,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that all registers and all locals can be matched at the same time
 	 */
@@ -1087,7 +1087,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can match a range
 	 */
@@ -1105,7 +1105,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		// Check four children starting at position 1
 		checkChildren(exprDmc, 1, 4, children);
 	}
-	
+
 	/**
 	 * Test that we can group a local with all registers
 	 */
@@ -1127,7 +1127,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that we can group a local with a pattern for variables
 	 */
@@ -1217,7 +1217,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final String exprString = "*";
 		List<String> list = Arrays.asList(fAllVariables);
 		Collections.sort(list);
-		final String[] children = list.toArray(new String[list.size()]);		
+		final String[] children = list.toArray(new String[list.size()]);
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1256,7 +1256,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that pattern-matched arrays are sorted properly by index instead
 	 * of completely alphabetically.  An alphabetical sorting would cause the
@@ -1271,7 +1271,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testArraySorting() throws Throwable {
 		final String exprString = "=array[1-11];=arrayInt[1-2,11,20-22]";
-		final String[] children = new String[] { 
+		final String[] children = new String[] {
 				"array[1]","array[2]","array[3]","array[4]","array[5]","array[6]",
 				"array[7]","array[8]","array[9]","array[10]","array[11]",
 				"arrayInt[1]","arrayInt[2]","arrayInt[11]","arrayInt[20]","arrayInt[21]","arrayInt[22]"};
@@ -1327,7 +1327,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildrenCount(exprDmc, children.length);
 
 	}
-	
+
 	/**
 	 * Test that a valid expression that contains a comma will not be converted
 	 * to a group expression (bug 393474)
@@ -1343,7 +1343,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		// This is a way to confirm that the test is valid for the above expression that
 		// is separated by a command.
 		final String exprStringSemiColon = exprStringComma.replace(',', ';');
-		
+
 		assertFalse("The two strings for this test should not be the same", exprStringComma.equals(exprStringSemiColon));
 
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("foo");
@@ -1352,7 +1352,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		final IExpressionDMContext exprDmcSemiColon = SyncUtil.createExpression(frameDmc, exprStringSemiColon);
 		final IExpressionDMContext exprDmcComma = SyncUtil.createExpression(frameDmc, exprStringComma);
-		
+
 		try {
 			// This should get split into two children and not
 			// sent to GDB at all, so we should not see a failure,
@@ -1362,7 +1362,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		} catch (Exception e) {
 			assertFalse("Expected two children for when using a semi-colon", true);
 		}
-		
+
 		try {
 			// Should throw an exception because this expression is not
 			// valid and since it does not get split into children,
@@ -1376,10 +1376,10 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		assertFalse("Should have seen an expression thrown", true);
 
 	}
-	
+
 	// Cannot use comma separator because of templates (bug 393474)
 //	/**
-//	 * Test that group-expression can use a comma and a semi-colon as a 
+//	 * Test that group-expression can use a comma and a semi-colon as a
 //	 * separator at the same time
 //	 */
 //	@Test
@@ -1397,7 +1397,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 //		checkChildren(exprDmc, -1, -1, children);
 //		checkChildrenCount(exprDmc, children.length);
 //	}
-	
+
 	// Cannot use comma separator because of templates (bug 393474)
 //	/**
 //	 * Test that group-expression can have empty terms with commas.
@@ -1436,7 +1436,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
-	
+
 	/**
 	 * Test that group-expression clean up extra spaces
 	 */
@@ -1523,7 +1523,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		fSession.getExecutor().execute(query);
 		IExpressionDMAddress data = query.get();
-		
+
 		assertTrue("The address data shoudl be of type IExpressionDMLocation", data instanceof IExpressionDMLocation);
 		assertEquals(IExpressions.IExpressionDMLocation.INVALID_ADDRESS, data.getAddress());
 		assertEquals(0, data.getSize());
@@ -1558,7 +1558,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		fSession.getExecutor().execute(query);
 		IExpressionDMContext[] childDmcs = query.get();
-		
+
 		String[] childExpressions = new String[childDmcs.length];
 		MIExpressionDMCAccessor[] childDmcsAccessor = new MIExpressionDMCAccessor[childDmcs.length];
 
@@ -1567,7 +1567,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		for (int i = 0; i < childExpressions.length; i++) {
 			childDmcsAccessor[i] = new MIExpressionDMCAccessor(childDmcs[i]);
 			childExpressions[i] = childDmcsAccessor[i].getRelativeExpression();
-		}        
+		}
 		assertTrue("Expected " + Arrays.toString(children) + " but got " + Arrays.toString(childExpressions),
 				children.length == childExpressions.length);
 
@@ -1599,10 +1599,10 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		fSession.getExecutor().execute(query);
 		boolean canWrite = query.get();
-		
+
 		assertFalse("Should not be able to modify the value of a group-expression", canWrite);
 	}
-	
+
 	/**
 	 * Test the only available format for the value of a group-expression is NATURAL
 	 */
@@ -1626,11 +1626,11 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 
 		fSession.getExecutor().execute(query);
 		String[] formats = query.get();
-		
+
 		assertEquals(1, formats.length);
 		assertEquals(IFormattedValues.NATURAL_FORMAT, formats[0]);
 	}
-	
+
 	/**
 	 * Test the different values returned by a group-expression
 	 */
@@ -1652,5 +1652,5 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		assertEquals("No matches", getExpressionValue(noMatchExprDmc));
 		assertEquals("1 unique match", getExpressionValue(singleMatchExprDmc));
 		assertEquals("2 unique matches", getExpressionValue(doubleMatchExprDmc));
-	}	
+	}
 }

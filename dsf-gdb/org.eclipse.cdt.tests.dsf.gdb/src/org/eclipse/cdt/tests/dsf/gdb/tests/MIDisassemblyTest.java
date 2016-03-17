@@ -4,15 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson - Initial Implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.math.BigInteger;
@@ -35,8 +34,7 @@ import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
@@ -44,22 +42,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /*
  * This is the Disassembly Service test suite.
- * 
+ *
  * It is meant to be a regression suite to be executed automatically against
  * the DSF nightly builds.
- * 
+ *
  * It is also meant to be augmented with a proper test case(s) every time a
  * feature is added or in the event (unlikely :-) that a bug is found in the
  * Disassembly Service.
- * 
+ *
  * Refer to the JUnit4 documentation for an explanation of the annotations.
  */
 
-@RunWith(BackgroundRunner.class)
-public class MIDisassemblyTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class MIDisassemblyTest extends BaseParametrizedTestCase {
     private static final String EXEC_NAME = "MemoryTestApp.exe";
     private static final String SOURCE_NAME = "MemoryTestApp.cc";
     private static final int LINE_NUMBER = 35;
@@ -81,7 +80,7 @@ public class MIDisassemblyTest extends BaseTestCase {
     @Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-		
+
         fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
             @Override
@@ -89,7 +88,7 @@ public class MIDisassemblyTest extends BaseTestCase {
                // Get a reference to the memory service
                 fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
                 assert(fServicesTracker != null);
-                    
+
                 fDisassembly = fServicesTracker.getService(MIDisassembly.class);
                 assert(fDisassembly != null);
 
@@ -98,7 +97,7 @@ public class MIDisassemblyTest extends BaseTestCase {
             }
         };
         fSession.getExecutor().submit(runnable).get();
-        
+
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         fDisassemblyDmc = DMContexts.getAncestorOfType(containerDmc, IDisassemblyDMContext.class);
         assert(fDisassemblyDmc != null);
@@ -108,15 +107,15 @@ public class MIDisassemblyTest extends BaseTestCase {
     @Override
     protected void setLaunchAttributes() {
     	super.setLaunchAttributes();
-    	
+
     	// Select the binary to run the tests against
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
-    
+
 	@Override
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
-		
+
         fExpressionService = null;
         fDisassembly = null;
         fServicesTracker.dispose();
@@ -133,10 +132,10 @@ public class MIDisassemblyTest extends BaseTestCase {
      * Invokes the ExpressionService to evaluate an expression. In theory, we
      * shouldn't rely on another service to test this one but we need a way to
      * access a variable from the test application in order verify that the
-     * memory operations (read/write) are working properly.   
+     * memory operations (read/write) are working properly.
      * ------------------------------------------------------------------------
      * @param expression Expression to resolve
-     * @return Resolved expression  
+     * @return Resolved expression
      * @throws InterruptedException
      * ------------------------------------------------------------------------
      */

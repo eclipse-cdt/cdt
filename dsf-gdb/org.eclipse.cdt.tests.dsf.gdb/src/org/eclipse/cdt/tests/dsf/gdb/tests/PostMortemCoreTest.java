@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Marc Khouzam (Ericsson) - Added test to handle different cases of core
@@ -37,8 +37,7 @@ import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
@@ -53,9 +52,10 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(BackgroundRunner.class)
-public class PostMortemCoreTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class PostMortemCoreTest extends BaseParametrizedTestCase {
 	private static final String EXEC_NAME = "ExpressionTestApp.exe";
 	private static final String INVALID_CORE_NAME = "MultiThread.exe";
 	private static final String CORE_NAME = "core";
@@ -72,14 +72,14 @@ public class PostMortemCoreTest extends BaseTestCase {
 	public void doBeforeTest() throws Exception {
 		removeTeminatedLaunchesBeforeTest();
 		setLaunchAttributes();
-		// Can't run the launch right away because each test needs to first set some 
-		// parameters.  The individual tests will be responsible for starting the launch. 
+		// Can't run the launch right away because each test needs to first set some
+		// parameters.  The individual tests will be responsible for starting the launch.
 	}
-	
+
 	@Override
  	protected void setLaunchAttributes() {
     	super.setLaunchAttributes();
-    	
+
 		// Set a working directory for GDB that is different than eclipse's directory.
 		// This allows us to make sure we properly handle finding the core file,
 		// especially in the case of a relative path
@@ -87,7 +87,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		// Because we just set a different working directory, we must use an absolute path for the program
     	String absoluteProgram = new Path(EXEC_PATH + EXEC_NAME).toFile().getAbsolutePath();
         setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, absoluteProgram);
-        
+
         // Set post-mortem launch
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				           ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
@@ -97,7 +97,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		// Set default core file path
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EXEC_PATH + CORE_NAME);
     }
-    
+
     // This method cannot be tagged as @Before, because the launch is not
     // running yet.  We have to call this manually after all the proper
     // parameters have been set for the launch
@@ -124,17 +124,11 @@ public class PostMortemCoreTest extends BaseTestCase {
     @Override
 	public void doAfterTest() throws Exception {
     	super.doAfterTest();
-    	
+
     	if (fSession != null) {
-    		Runnable runnable = new Runnable() {
-    			@Override
-    			public void run() {
-    				fSession.removeServiceEventListener(PostMortemCoreTest.this);
-    			}
-    		};
-    		fSession.getExecutor().submit(runnable).get();
+    		fSession.getExecutor().submit(()->fSession.removeServiceEventListener(PostMortemCoreTest.this)).get();
     	}
-    	
+
     	fExpService = null;
     	if (fServicesTracker != null) fServicesTracker.dispose();
     }
@@ -148,11 +142,11 @@ public class PostMortemCoreTest extends BaseTestCase {
     	assertTrue("Cannot find test file; " + file.toString(), file.exists());
 
     	String absoluteCoreFile = file.getAbsolutePath();
-    	
+
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, absoluteCoreFile);
 
 		doLaunch();
-		
+
 		// If the launch passed, we are ok, nothing more to check
     }
 
@@ -165,14 +159,14 @@ public class PostMortemCoreTest extends BaseTestCase {
     	assertTrue("Cannot find test file; " + file.toString(), file.exists());
 
     	String relativeCoreFile = file.toString();
-    	
+
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, relativeCoreFile);
 
 		doLaunch();
-		
+
 		// If the launch passed, we are ok, nothing more to check
     }
-    
+
     /**
      * Test that we handle specifying an invalid core file with an absolute path.
      */
@@ -180,9 +174,9 @@ public class PostMortemCoreTest extends BaseTestCase {
     public void testAbsoluteCoreFilePathInvalid() throws Throwable {
     	File file = new File(EXEC_PATH + INVALID_CORE_NAME);
     	assertTrue("Cannot find test file: " + file.toString(), file.exists());
-    	
+
     	String absoluteCoreFile = file.getAbsolutePath();
-    	
+
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, absoluteCoreFile);
 
         try {
@@ -191,7 +185,7 @@ public class PostMortemCoreTest extends BaseTestCase {
         	// Success of the test
         	return;
         }
-        
+
         fail("Launch seems to have succeeded even though the specified core file is invalid");
     }
 
@@ -202,9 +196,9 @@ public class PostMortemCoreTest extends BaseTestCase {
     public void testRelativeCoreFilePathInvalid() throws Throwable {
     	File file = new File(EXEC_PATH + INVALID_CORE_NAME);
     	assertTrue("Cannot find test file: " + file.toString(), file.exists());
-    	
+
     	String relativeCoreFile = file.toString();
-    	
+
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, relativeCoreFile);
 
         try {
@@ -213,7 +207,7 @@ public class PostMortemCoreTest extends BaseTestCase {
         	// Success of the test
         	return;
         }
-        
+
         fail("Launch seems to have succeeded even though the specified core file is invalid");
     }
 
@@ -224,9 +218,9 @@ public class PostMortemCoreTest extends BaseTestCase {
     public void testAbsoluteCoreFilePathMissing() throws Throwable {
     	File file = new File(EXEC_PATH + "MissingFile");
     	assertTrue("Should not have found test file: " + file.toString(), !file.exists());
-    	
+
     	String absoluteCoreFile = file.getAbsolutePath();
-    	
+
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, absoluteCoreFile);
 
         try {
@@ -235,10 +229,10 @@ public class PostMortemCoreTest extends BaseTestCase {
         	// Success of the test
         	return;
         }
-        
+
         fail("Launch seems to have succeeded even though the specified core file does not exist");
     }
-    
+
     /**
      * Test that we handle specifying a missing core file with a relative path.
      */
@@ -246,9 +240,9 @@ public class PostMortemCoreTest extends BaseTestCase {
     public void testRelativeCoreFilePathMissing() throws Throwable {
     	File file = new File(EXEC_PATH + "MissingFile");
     	assertTrue("Should not have found test file: " + file.toString(), !file.exists());
-    	
+
     	String relativeCoreFile = file.toString();
-    	
+
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, relativeCoreFile);
 
         try {
@@ -257,10 +251,10 @@ public class PostMortemCoreTest extends BaseTestCase {
         	// Success of the test
         	return;
         }
-        
+
         fail("Launch seems to have succeeded even though the specified core file does not exist");
     }
-    
+
     /**
      * Test that we support a valid core file path using variables.
      */
@@ -276,7 +270,7 @@ public class PostMortemCoreTest extends BaseTestCase {
     	//   Then, send the variable itself, with all the .., and the
     	//   absolute path, and make sure the variable gets translated
     	//   properly.
-    	
+
     	// Absolute path of the core file
        	File file = new File(EXEC_PATH + CORE_NAME);
     	String absoluteCoreFile = file.getAbsolutePath();
@@ -290,7 +284,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		IPath corePath = new Path(absoluteCoreFile);
 		// Prepare to find the common path between the core file and the workspace
 		IPath commonPath = new Path(workspaceLocation);
-		
+
 		StringBuffer backwards = new StringBuffer("/");
 		// While the commonPath is not the prefix of the core file path
 		// remove one more segment of the potential commonPath
@@ -298,10 +292,10 @@ public class PostMortemCoreTest extends BaseTestCase {
 			commonPath = commonPath.removeLastSegments(1);
 			backwards.append("../");
 		}
-		
+
 		// Remove the commonPath from the workspace path
 		IPath trailingPathCoreFile = corePath.removeFirstSegments(commonPath.segmentCount());
-		
+
 		// Build the path using the variable unexpanded, the number of ..
 		// to remove all non-common segments, the trailing part of the
 		// path of the core file
@@ -331,7 +325,7 @@ public class PostMortemCoreTest extends BaseTestCase {
             "-5", "-5" });
         tests.put("10 + -15", new String[] { "0xFFFFFFFB", "037777777773", "11111111111111111111111111111011", "-5",
             "-5", "-5" });
-        
+
         executeExpressionSubTests(tests, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
     }
 
@@ -354,7 +348,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 
         tests.clear();
         tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200", "200" });
-        executeExpressionSubTests(tests, true, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));        
+        executeExpressionSubTests(tests, true, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
 
     }
 
@@ -393,7 +387,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 
         executeExpressionSubTests(tests1, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
     }
- 
+
 	@Test
 	public void readMemoryArray() throws Throwable {
        	doLaunch();
@@ -404,7 +398,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 
 		// Get the memory block
 		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, address, 0, 1, LENGTH);
-		
+
 		assertEquals(LENGTH, buffer.length);
 
 		assertEquals(buffer[0].getValue(), 0xffffffde);
@@ -458,7 +452,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 
 	private IAddress evaluateExpression(IDMContext ctx, String expression) throws Throwable
 	{
-		// Create the expression and format contexts 
+		// Create the expression and format contexts
 		final IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
 		final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpService, expressionDMC, IFormattedValues.HEX_FORMAT);
 
@@ -468,7 +462,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 				fExpService.getFormattedExpressionValue(formattedValueDMC, rm);
 			}
 		};
-		
+
 		fSession.getExecutor().execute(query);
 		FormattedValueDMData value = null;
 		try {
@@ -483,7 +477,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 
 	/**
 	 * Executes a group of sub-tests.
-	 * 
+	 *
 	 * @param tests
 	 *            A Map in which the key is an expression to evaluate and the
 	 *            value is an array of expected values, one for each of the
@@ -502,7 +496,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 	 *            caller only supplied "1.2345".
 	 */
     private void executeExpressionSubTests(final Map<String, String[]> tests, final boolean exact, IDMContext dmc)
-        throws Throwable 
+        throws Throwable
     {
 
         // Now evaluate each of the above expressions and compare the actual
@@ -583,12 +577,12 @@ public class PostMortemCoreTest extends BaseTestCase {
                                                     else
                                                         expectedValue = "[Unrecognized format ID: " + formatId + "]";
 
-                                                    if ((exact == false) && 
+                                                    if ((exact == false) &&
                                                     		(formatId.equals(IFormattedValues.NATURAL_FORMAT) || formatId.equals(MIExpressions.DETAILS_FORMAT)) &&
                                                     		(expectedValue.length() < actualValue.length())) {
                                                     	actualValue = actualValue.substring(0, expectedValue.length());
                                                     }
-                                                    
+
                                                     if (actualValue.equalsIgnoreCase(expectedValue)) {
                                                         wait.waitFinished();
                                                     } else {
@@ -611,7 +605,7 @@ public class PostMortemCoreTest extends BaseTestCase {
             assertTrue(wait.getMessage(), wait.isOK());
         }
     }
-    
+
     private void executeExpressionSubTests(final Map<String, String[]> tests, IDMContext dmc) throws Throwable {
     	executeExpressionSubTests(tests, true, dmc);
     }

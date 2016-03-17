@@ -208,13 +208,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// cleanup cannot assume sane state since it runs even test is failed or skipped
 		if (fSession != null) {
 			// Clear the references (not strictly necessary)
-			Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					fRunControl.getSession().removeServiceEventListener(MIBreakpointsTest.this);
-				}
-			};
-			fSession.getExecutor().submit(runnable).get();
+			fSession.getExecutor().submit(()->fRunControl.getSession().removeServiceEventListener(MIBreakpointsTest.this)).get();
 		}
 		fBreakpointService = null;
 		fRunControl = null;

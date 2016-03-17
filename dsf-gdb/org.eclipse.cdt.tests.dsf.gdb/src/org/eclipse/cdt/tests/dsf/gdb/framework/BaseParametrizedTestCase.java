@@ -36,7 +36,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 	@Parameter public String parameter;
 	// other fields
 	private String gdbVersionPostfix; // this is how we want to invoke it
-	private boolean remote; // this is if we want remote tests (gdbserver)
+	protected boolean remote; // this is if we want remote tests (gdbserver)
 
 	protected static List<String> calculateVersions() {
 		if (globalVersion != null) {
@@ -78,25 +78,43 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		globalVersion = null;
 	}
 
+	public void assumeGdbVersionNot(String checkVersion) {
+		String gdbVersion = getGdbVersion();
+		// cannot be that version
+		boolean match = LaunchUtils.compareVersions(checkVersion, gdbVersion) == 0;
+		Assume.assumeTrue(
+				"Skipped because gdb " + gdbVersion + " does not support this feature",
+				!match);
+	}
+
 	public void assumeGdbVersionLowerThen(String checkVersion) {
 		String gdbVersion = getGdbVersion();
-		// otherwise it has to be strictly lower
+		// has to be strictly lower
 		boolean isLower = LaunchUtils.compareVersions(checkVersion, gdbVersion) > 0;
 		Assume.assumeTrue(
 				"Skipped because gdb " + gdbVersion + " does not support this feature: removed since " + checkVersion,
 				isLower);
 	}
 
+	protected String getGdbVersionParameter() {
+		if (gdbVersionPostfix == null) {
+			parseParameter();
+			if (gdbVersionPostfix == null) {
+				gdbVersionPostfix = globalVersion;
+			}
+		}
+		return gdbVersionPostfix;
+	}
+
 	protected String getGdbVersion() {
-		if (gdbVersionPostfix==null) gdbVersionPostfix=globalVersion;
-		String gdbPath = getProgramPath("gdb", gdbVersionPostfix);
+		String gdbPath = getProgramPath("gdb", getGdbVersionParameter());
 		return getGdbVersion(gdbPath);
 	}
 
 	public void assumeGdbVersionAtLeast(String checkVersion) {
 		String gdbVersion = getGdbVersion();
 		if (gdbVersion == GDB_NOT_FOUND) {
-			String gdbPath = getProgramPath("gdb", gdbVersionPostfix);
+			String gdbPath = getProgramPath("gdb", getGdbVersionParameter());
 			// fail assumption
 			Assume.assumeFalse("GDB cannot be run " + gdbPath, true);
 		}
@@ -117,20 +135,13 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 
 	@Override
 	protected void initializeLaunchAttributes() {
-		parseParameter();
-		if (gdbVersionPostfix == null) {
-			// we are not running parametrized
-			setGdbVersion(); // old way
-			gdbVersionPostfix = globalVersion;
-		} else {
-			String gdbPath = getProgramPath("gdb", gdbVersionPostfix);
-			String gdbServerPath = getProgramPath("gdbserver", gdbVersionPostfix);
-			assumeGdbVersionAtLeast(gdbVersionPostfix);
-			setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbPath);
-			setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, gdbServerPath);
-			if (remote)
-				setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-						IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
-		}
+		String gdbPath = getProgramPath("gdb", getGdbVersionParameter());
+		String gdbServerPath = getProgramPath("gdbserver", gdbVersionPostfix);
+		assumeGdbVersionAtLeast(gdbVersionPostfix);
+		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbPath);
+		setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, gdbServerPath);
+		if (remote)
+			setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 	}
 }

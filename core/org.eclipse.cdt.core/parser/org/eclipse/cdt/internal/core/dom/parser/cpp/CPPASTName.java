@@ -147,12 +147,12 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
     }
 
     @Override
-	public char[] getSimpleID() {
+	public final char[] getSimpleID() {
 		return name;
 	}
 
 	@Override
-	public char[] getLookupKey() {
+	public final char[] getLookupKey() {
 		return name;
 	}
 	

@@ -29,12 +29,12 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
+import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces2;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlock.MemorySpaceDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.service.DsfServices;
@@ -152,16 +152,12 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
             return null;
         }
         
-        //Adjust the memory context to use memory spaces when available
-        if (memoryDmc instanceof IMemorySpaceDMContext) {
-        	// The memory space ids should match
-        	assert(memorySpaceID != null);
-        	assert(memorySpaceID.equals(((IMemorySpaceDMContext)memoryDmc).getMemorySpaceId()));
-        } else {
-            if (memorySpaceID != null && memorySpaceID.length() > 0) {
-            	memoryDmc = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryDmc);
-            }        	
-        }
+        if (memorySpaceID != null && memorySpaceID.length() > 0) {
+        	IMemorySpaces service = fMemorySpaceServiceTracker.getService();
+        	if (service instanceof IMemorySpaces2) {
+        		memoryDmc = ((IMemorySpaces2)service).createMemorySpaceContext(memoryDmc, memorySpaceID);
+        	}
+        }        	
         
 		// The block start address (supports 64-bit processors)
 		BigInteger blockAddress;
@@ -481,7 +477,10 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
                         			assert(((IMemorySpaceDMContext) memoryCtx).getMemorySpaceId().equals(memorySpaceID));
                         		} else {
                                     //Use a memory space context if the memory space id is valid
-                            		memoryCtx = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryCtx);
+                        			IMemorySpaces service = fMemorySpaceServiceTracker.getService();
+                        	        if (service instanceof IMemorySpaces2) {
+                        	        	memoryCtx = ((IMemorySpaces2)service).createMemorySpaceContext(memoryCtx, memorySpaceID);
+                        	        }
                         		}
                         	}
                         }
@@ -509,20 +508,19 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	}
 	
 	private int getAddressableSize(IMemoryDMContext context) {
-		IGDBMemory2 memoryService = (IGDBMemory2) getServiceTracker()
-				.getService();
+		IMemory memoryService = getServiceTracker().getService();
 		
-		if (memoryService != null && context != null) {
-			return memoryService.getAddressableSize(context);
+		if (memoryService instanceof IGDBMemory2 && context != null) {
+			return ((IGDBMemory2)memoryService).getAddressableSize(context);
 		}
 		
 		return super.getAddressableSize();
 	}
 	
 	private int getAddressSize(IMemoryDMContext context) {
-		IGDBMemory memoryService = (IGDBMemory)getServiceTracker().getService();
-		if (memoryService != null && context != null) {
-			return memoryService.getAddressSize(context);
+		IMemory memoryService = getServiceTracker().getService();
+		if (memoryService instanceof IGDBMemory && context != null) {
+			return ((IGDBMemory)memoryService).getAddressSize(context);
 		}
 		return super.getAddressSize();
 	}

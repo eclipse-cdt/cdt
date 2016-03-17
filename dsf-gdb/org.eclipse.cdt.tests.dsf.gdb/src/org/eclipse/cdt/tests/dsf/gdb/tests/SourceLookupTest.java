@@ -980,4 +980,42 @@ public class SourceLookupTest extends BaseTestCase {
 		assertSourceFoundByDirectorOnly();
 		assertInsertBreakpointSuccessful();
 	}
+	
+	/**
+	 * Test verifies interaction between director that has two mappers, one with
+	 * backend enabled and one without, with the first being the only valid one,
+	 * and the second causing the breakpoint installation to fail.
+	 */
+	@Test
+	public void twoMappersFirstValid() throws Throwable {
+		// This first mapping is valid and should cause to find the source
+		MappingSourceContainer substituteContainer = new MappingSourceContainer("Mappings With Backend");
+		substituteContainer.setIsMappingWithBackendEnabled(true);
+		substituteContainer.addMapEntry(fMapEntrySourceContainerC);
+		AbstractSourceLookupDirector director = setSourceContainer(substituteContainer);
+
+		// Because of the above valid mapping substitution, GDB will provide the proper path
+		// to the source and it will be found no matter what the below mapping is set to.
+		// On the other hand, when setting a breakpoint, we have to make sure that the below
+		// mapping does not change the path to something GDB does not know.
+		// Therefore, we set the below mapping from an invalid compilation path to the proper source path.
+		// This is so that if the below mapping is triggered it will cause us to try to set a breakpoint
+		// in GDB on an invalid path, thus failing the test.
+		// This allows to verify that the first mapping is used once it is found to be valid
+		// and does not fallback to the next mapping.
+		MappingSourceContainer mapContainer = new MappingSourceContainer("Mappings");
+		mapContainer.setIsMappingWithBackendEnabled(false);
+		mapContainer
+				.addMapEntry(new MapEntrySourceContainer(new Path("/from_invalid"), new Path(SOURCE_ABSPATH)));
+		addSourceContainer(director, mapContainer);
+
+		doLaunch(EXEC_PATH + EXEC_AC_NAME);
+
+		/*
+		 * because the backend substitution applies, we should be able to find the
+		 * source with the director or without it.
+		 */
+		assertSourceFound();
+		assertInsertBreakpointSuccessful();
+	}
 }

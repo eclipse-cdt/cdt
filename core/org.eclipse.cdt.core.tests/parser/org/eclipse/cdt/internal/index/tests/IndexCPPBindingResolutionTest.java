@@ -178,7 +178,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.longValue());
 	}
-	
+
 	private void assertUserDefinedLiteralType(String retName) {
 		ICPPVariable v= getBindingFromFirstIdentifier("test =");
 		assertEquals(retName, ASTTypeUtil.getType(v.getType()));
@@ -895,7 +895,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public void testAnonymousUnion_377409() {
 		checkBindings();
 	}
-	
+
 	// void foo(int a=2, int b=3);
 
 	// void ref() { foo(); }
@@ -1810,6 +1810,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public void testAnonymousNamespaces_418130() {
 		checkBindings();
 	}
+
 	//	struct A {
 	//	  A(int);
 	//	};

@@ -607,7 +607,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testInstanceInheritance_258745() throws Exception {
 		getBindingFromFirstIdentifier("a", ICPPField.class);
 	}
-	
+
 	//	template <typename>
 	//	struct Base {
 	//	    virtual void foo() = 0;
@@ -616,7 +616,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	struct Derived : Base<int> {
 	//	    virtual void foo();
 	//	};
-	
+
 	//	Derived waldo;
 	public void testMethodOveriddenFromTemplateInstanceBase_480892() throws Exception {
 		IVariable waldo = getBindingFromFirstIdentifier("waldo");
@@ -2199,15 +2199,15 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}
-	
+
 	//	template<typename T>
 	//	struct meta {
-	//	  enum { 
+	//	  enum {
 	//	      a = T::value,
 	//	      b = a
 	//	  };
 	//	};
-	
+
 	//	struct S {
 	//	    static const int value = 42;
 	//	};
@@ -2233,12 +2233,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	//	template<typename T>
 	//	struct meta {
-	//	  enum { 
+	//	  enum {
 	//	      b = T::value,
 	//	      a = b
 	//	  };
 	//	};
-	
+
 	//	struct S {
 	//	    static const int value = 42;
 	//	};
@@ -2630,7 +2630,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSpecializationOfConstexprFunction_420995() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	template <typename>
 	//	struct S;
 	//
@@ -2643,7 +2643,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	constexpr int foo() {
 	//		return S<T>::value;
 	//	}
-	
+
 	//	constexpr int waldo = foo<int>();
 	public void testInstantiationOfReturnExpression_484959() throws Exception {
 		ICPPVariable waldo = getBindingFromASTName("waldo", 5);
@@ -2770,12 +2770,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IVariable var2 = getBindingFromASTName("var2", 4);
 		assertSameType(var1.getType(), var2.getType());
 	}
-	
+
 	//	template <typename T>
 	//	struct allocator {
 	//	    typedef T value_type;
 	//	};
-	
+
 	//	template <typename> struct allocator;
 	//
 	//	struct Item {
@@ -2790,25 +2790,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		checkBindings();
 	}
 
-	//	template<long _Ax> struct _GcdX {	
+	//	template<long _Ax> struct _GcdX {
 	//		static const long value = _GcdX<_Ax - 1>::value;
 	//	};
-	//	
+	//
 	//	template<> struct _GcdX<0> {
 	//		static const long value = 0;
 	//	};
-	//	
+	//
 	//	template<long _Ax> struct R {
 	//	// static const long value = _Ax;
 	//	};
-	//	
-	//	template<class _R1>	struct Operation {	
+	//
+	//	template<class _R1>	struct Operation {
 	//		static const long _N1 = _R1::value;
 	//		typedef R<_GcdX<_N1>::value> value;
 	//	};
-	//	
+	//
 	//	typedef Operation< R<1> >::value MYTYPE;
-	
+
 	//	// empty file
 	public void testRecursiveTemplateInstantiation_479138a() throws Exception {
 		// This tests that a template metaprogram whose termination depends on
@@ -2816,35 +2816,35 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		// inputs are not known.
 		checkBindings();
 	}
-	
-	//	template<long _Ax, long _Bx> struct _GcdX {	
+
+	//	template<long _Ax, long _Bx> struct _GcdX {
 	//		static const long value = _GcdX<_Bx, _Ax % _Bx>::value;
 	//	};
-	//	
+	//
 	//	template<long _Ax> struct _GcdX<_Ax, 0> {
 	//		static const long value = _Ax;
 	//	};
-	//	
+	//
 	//	template<long _Ax, long _Bx> struct _Gcd {
 	//		static const long value = _GcdX<_Ax, _Bx>::value;
 	//	};
-	//	
-	//	template<> struct _Gcd<0, 0> {	
+	//
+	//	template<> struct _Gcd<0, 0> {
 	//		static const long value = 1;
 	//	};
-	//	
+	//
 	//	template<long _Ax> struct R {
 	//	// static const long value = _Ax;
 	//	};
-	//	
-	//	template<class _R1>	struct Operation {	
+	//
+	//	template<class _R1>	struct Operation {
 	//		static const long _N1 = _R1::value;
 	//		typedef R<_Gcd<_N1, _N1>::value> value;
 	//	};
-	//	
-	//	
+	//
+	//
 	//	typedef Operation< R<1> >::value MYTYPE;
- 
+
 	//	// empty file
 	public void testRecursiveTemplateInstantiation_479138b() throws Exception {
 		// This is similar to 479138a, but the metaprogram additionally has
@@ -2852,22 +2852,22 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		// intermediate results cannot be collapsed into a single value.
 		checkBindings();
 	}
-	
-	//	template<long _Ax> struct _GcdX {	
+
+	//	template<long _Ax> struct _GcdX {
 	//		static const long value = _GcdX<_Ax - 1>::value;
 	//	};
-	//	
+	//
 	//	template<long _Ax> struct R {
 	//		static const long value = _Ax;
 	//	};
-	//	
-	//	template<class _R1>	struct Operation {	
+	//
+	//	template<class _R1>	struct Operation {
 	//		static const long _N1 = _R1::value;
 	//		typedef R<_GcdX<_N1>::value> value;
 	//	};
-	//	
+	//
 	//	typedef Operation< R<1> >::value MYTYPE;
-	
+
 	//	// empty file
 	//	// special:allowRecursionBindings
 	public void testRecursiveTemplateInstantiation_479138c() throws Exception {
@@ -2888,7 +2888,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	auto Foo<Bar("")>() -> int {
 	//		return 1;
 	//	}
-	
+
 	//	// empty file
 	public void testStackOverflow_462764() throws Exception {
 		checkBindings();

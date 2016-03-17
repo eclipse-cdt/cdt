@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -26,6 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+
+import junit.framework.TestSuite;
 
 /**
  * For testing PDOM binding C language resolution
@@ -45,26 +45,26 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(false));}
 		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
 	}
-	
-	public static void addTests(TestSuite suite) {		
+
+	public static void addTests(TestSuite suite) {
 		suite.addTest(SingleProject.suite());
 		suite.addTest(ProjectWithDepProj.suite());
 	}
-	
+
 	public IndexCBindingResolutionTest() {
 		setStrategy(new SinglePDOMTestStrategy(false));
 	}
-	
+
 	// int (*f)(int);
 	// int g(int n){return n;}
-	
+
 	// void foo() {
 	//    f= g;
 	// }
 	public void testPointerToFunction() throws Exception {
-		IBinding b0 = getBindingFromASTName("f= g;", 1);		
+		IBinding b0 = getBindingFromASTName("f= g;", 1);
 		IBinding b1 = getBindingFromASTName("g;", 1);
-		
+
 		assertInstance(b0, IVariable.class);
 		IVariable v0= (IVariable) b0;
 		assertInstance(v0.getType(), IPointerType.class);
@@ -74,14 +74,14 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		assertInstance(f0.getReturnType(), IBasicType.class);
 		assertEquals(1, f0.getParameterTypes().length);
 		assertInstance(f0.getParameterTypes()[0], IBasicType.class);
-		
+
 		assertInstance(b1, IFunction.class);
 		IFunctionType f1= ((IFunction)b1).getType();
 		assertInstance(f1.getReturnType(), IBasicType.class);
 		assertEquals(1, f1.getParameterTypes().length);
 		assertInstance(f1.getParameterTypes()[0], IBasicType.class);
 	}
-	
+
 	//	// header file
 	//	struct S {int x;};
 	//	union U {int x;};
@@ -131,15 +131,15 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		IBinding b15 = getBindingFromASTName("a; ", 1);
 		IBinding b16 = getBindingFromASTName("IntPtr b = &a; ", 6);
 		IBinding b17 = getBindingFromASTName("b = &a; /*b*/", 1);
-		IBinding b18 = getBindingFromASTName("func3(&b);", 5);	
+		IBinding b18 = getBindingFromASTName("func3(&b);", 5);
 		IBinding b19 = getBindingFromASTName("b); /*func4*/", 1);
 		IBinding b20 = getBindingFromASTName("func4(a);", 5);
 		IBinding b21 = getBindingFromASTName("a); /*func5*/", 1);
 	}
 
-	// // empty 
-	
-	// typedef struct S {int a;} S; 
+	// // empty
+
+	// typedef struct S {int a;} S;
 	// typedef enum E {A,B} E;
 	// struct A {
 	//    S *s;
@@ -152,27 +152,27 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		IBinding b4 = getBindingFromASTName("E;", 1);
 		IBinding b5 = getBindingFromASTName("S *s", 1);
 		IBinding b6 = getBindingFromASTName("E *e", 1);
-		
+
 		assertInstance(b1, ICompositeType.class);
 		assertInstance(b2, ITypedef.class);
-		
+
 		assertInstance(b3, IEnumeration.class);
 		assertInstance(b4, ITypedef.class);
-		
+
 		assertInstance(b5, ITypedef.class);
 		ITypedef t5= (ITypedef) b5;
 		assertInstance(t5.getType(), ICompositeType.class);
 		assertEquals(ICompositeType.k_struct, ((ICompositeType)t5.getType()).getKey());
-		
+
 		assertInstance(b6, ITypedef.class);
 		ITypedef t6= (ITypedef) b6;
 		assertInstance(t6.getType(), IEnumeration.class);
 	}
 
-	
+
 	// typedef struct S {int a;} S;
 	// typedef enum E {A,B} E;
-	
+
 	// struct A {
 	//    S *s;
 	//    E *e;
@@ -180,17 +180,17 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	public void testTypedefB() throws Exception {
 		IBinding b1 = getBindingFromASTName("S *s", 1);
 		IBinding b2 = getBindingFromASTName("E *e", 1);
-		
+
 		assertInstance(b1, ITypedef.class);
 		ITypedef t1= (ITypedef) b1;
 		assertInstance(t1.getType(), ICompositeType.class);
 		assertEquals(ICompositeType.k_struct, ((ICompositeType)t1.getType()).getKey());
-		
+
 		assertInstance(b2, ITypedef.class);
 		ITypedef t2= (ITypedef) b2;
 		assertInstance(t2.getType(), IEnumeration.class);
 	}
-	
+
 	// union U {
 	//    int x;
 	//    int y;
@@ -200,7 +200,7 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	//    int z;
 	// };
 	// typedef struct S TS;
-	
+
 	// void refs() {
 	//    union U b1;
 	//    struct S b2;
@@ -287,7 +287,7 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		IBinding b28 = getBindingFromASTName("z = 13",1);
 		assertVariable(b28, "z", IBasicType.class, null);
 	}
-	
+
 	//	 // header file
 	//		struct S {struct S* sp;};
 	//		struct S foo1(struct S s);
@@ -313,42 +313,42 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	public void testExpressionKindForFunctionCalls() {
 		IBinding b0 = getBindingFromASTName("foo1/*a*/", 4);
 		IBinding b0a = getBindingFromASTName("sp[1]", 2);
-		
+
 		IBinding b1 = getBindingFromASTName("foo2/*b*/", 4);
 		IBinding b1a = getBindingFromASTName("sp+1);", 2);
-		
+
 		IBinding b2 = getBindingFromASTName("foo2/*c*/", 4);
 		IBinding b2a = getBindingFromASTName("sp);/*1*/", 2);
-		
+
 		IBinding b3 = getBindingFromASTName("foo1/*d*/", 4);
 		IBinding b3a = getBindingFromASTName("s : s);/*2*/", 1);
 		IBinding b3b = getBindingFromASTName("s);/*2*/", 1);
-		
+
 		IBinding b4 = getBindingFromASTName("foo4/*e*/", 4);
 		IBinding b4a = getBindingFromASTName("s);/*3*/", 1);
-		
+
 		IBinding b5 = getBindingFromASTName("foo2/*f*/", 4);
 		IBinding b5a = getBindingFromASTName("s.sp);/*4*/", 1);
 		IBinding b5b = getBindingFromASTName("sp);/*4*/", 2);
 		IBinding b5c = getBindingFromASTName("sp->sp);/*5*/", 2);
 		IBinding b5d = getBindingFromASTName("sp);/*5*/", 2);
-		
+
 		IBinding b6 = getBindingFromASTName("foo1/*g*/", 4);
 		IBinding b6a = getBindingFromASTName("foo1(s));/*6*/", 4);
 		IBinding b6b = getBindingFromASTName("s));/*6*/", 1);
-		
+
 		IBinding b7 = getBindingFromASTName("foo1/*h*/", 4);
 		IBinding b7a = getBindingFromASTName("s);/*7*/", 1);
-		
+
 		IBinding b8 = getBindingFromASTName("foo3/*i*/", 4);
-		
+
 		IBinding b9 = getBindingFromASTName("foo3/*j*/", 4);
 		IBinding b9a = getBindingFromASTName("S));/*8*/", 1);
-		
+
 		IBinding b10 = getBindingFromASTName("foo1/*k*/", 4);
 		IBinding b10a = getBindingFromASTName("sp);/*9*/ ", 2);
 	}
-		
+
 	// // header file
 	// struct myStruct {
 	//    int a;
@@ -358,7 +358,7 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	// };
 
 	// // referencing content
-	// struct myStruct; 
+	// struct myStruct;
 	// union myUnion;
 	// void test() {
 	//    struct myStruct* u;
@@ -370,12 +370,12 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		getBindingFromASTName("a= 1", 1);
 		getBindingFromASTName("b= 1", 1);
 	}
-	
+
 	// int a= 1+2-3*4+10/2; // -4
 	// int b= a+4;
 	// int* c= &b;
 	// enum X {e0, e4=4, e5, e2=2, e3};
-    
+
     // void ref() {
     // a; b; c; e0; e2; e3; e4; e5;
     // }
@@ -405,14 +405,14 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.intValue());
 	}
-	
+
 	//	extern char TableValue[10];
-	
+
 	//	char TableValue[sizeof TableValue];
 	public void testNameLookupFromArrayModifier_435075() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	static union {
 	//	    int a;
 	//	    int b;

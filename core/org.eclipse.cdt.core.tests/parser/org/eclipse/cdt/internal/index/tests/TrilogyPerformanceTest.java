@@ -29,7 +29,7 @@ import org.osgi.framework.Bundle;
 
 /**
  * aftodo - it would be nice to have this as a real performance test
- * 
+ *
  * n.b. this is intentionally not added to any test suite at the moment
  */
 public class TrilogyPerformanceTest extends IndexTestBase {
@@ -56,7 +56,7 @@ public class TrilogyPerformanceTest extends IndexTestBase {
 
 	// you must have the Windows SDK installed and the INETSDK env var setup
 	public void testIndexTrilogyPerformanceTimes() throws CoreException, InterruptedException {
-		if(Platform.getOS().equals(Platform.OS_WIN32)) { 
+		if(Platform.getOS().equals(Platform.OS_WIN32)) {
 			waitForIndexer(cproject);
 			TestScannerProvider.sIncludes = new String[]{EnvironmentReader.getEnvVar("INETSDK")+"\\Include"};
 			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true");

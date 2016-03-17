@@ -15,8 +15,6 @@ package org.eclipse.cdt.internal.index.tests;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -63,6 +61,8 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
+
+import junit.framework.TestSuite;
 
 /**
  * For testing PDOM binding resolution
@@ -1361,7 +1361,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		IWorkingCopy workingCopy = tu.getWorkingCopy();
 		IBuffer buffer = workingCopy.getBuffer();
 		buffer.setContents(buffer.getContents().replace("E {", "E : public C<int> {"));
-		// Release and re-acquire the index lock to clear the caches. 
+		// Release and re-acquire the index lock to clear the caches.
 		getIndex().releaseReadLock();
 		getIndex().acquireReadLock();
 		ast = workingCopy.getAST(strategy.getIndex(), ITranslationUnit.AST_SKIP_INDEXED_HEADERS);

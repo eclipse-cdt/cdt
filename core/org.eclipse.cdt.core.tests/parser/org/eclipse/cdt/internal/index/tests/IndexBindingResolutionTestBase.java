@@ -119,11 +119,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		return null;
 	}
-	
+
 	protected IASTName findName(String section, int offset, int len) {
 		return findName(section, offset, len, false);
 	}
-	
+
 	protected IASTName findName(String section, int len) {
 		return findName(section, 0, len);
 	}
@@ -146,7 +146,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * </ul>
 	 * @param section the code fragment to search for in the AST. The first occurrence of an identical
 	 *     section is used.
-	 * @param offset the offset of the name within the section 
+	 * @param offset the offset of the name within the section
 	 * @param len the length of the name. This can also be useful for distinguishing between template names
 	 *     and template ids.
 	 * @param clazz an expected class type or interface that the binding should extend/implement
@@ -166,13 +166,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
-	
+
 	protected <T> T getBindingFromASTName(String section, int len, Class<T> clazz, Class... cs) {
 		return getBindingFromASTName(section, 0, len, clazz, cs);
 	}
 
 	/**
-	 * Attempts to get an IBinding attached to an implicit name from the initial specified 
+	 * Attempts to get an IBinding attached to an implicit name from the initial specified
 	 * number of characters from the specified code fragment. Fails the test if
 	 * <ul>
 	 *  <li> There is not a unique implicit name with the specified criteria
@@ -181,7 +181,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * </ul>
 	 * @param section the code fragment to search for in the AST. The first occurrence of an identical
 	 *     section is used.
-	 * @param offset the offset of the name within the section 
+	 * @param offset the offset of the name within the section
 	 * @param len the length of the name
 	 * @param clazz an expected class type or interface that the binding should extend/implement
 	 * @return the associated implicit name's binding
@@ -419,7 +419,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public ICProject getCProject();
 		public boolean isCompositeIndex();
 	}
-	
+
 	private abstract class BaseTestStrategy implements ITestStrategy {
 		// This method allows tests to specify test-specific flags by including special strings
 		// in the test source (presumably in a comment).
@@ -486,10 +486,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			if (testData.length < 2)
 				fail("Insufficient test data");
 			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
-			
+
 			String headerContents = testData[0].toString();
 			String sourceContents = testData[1].toString();
-			
+
 			setTestSpecificFlags(sourceContents);
 
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), headerContents);
@@ -583,9 +583,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 			String headerContents = testData[0].toString();
 			String sourceContents = testData[1].toString();
-			
+
 			setTestSpecificFlags(sourceContents);
-			
+
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), headerContents);
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 	        waitForIndexer(cproject);
@@ -796,7 +796,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
 
 			String sourceContents = testData[1].toString();
-			
+
 			setTestSpecificFlags(sourceContents);
 
 			referenced = createReferencedContent();
@@ -901,7 +901,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			fail("Artificially failing - see IndexBindingResolutionTestBase.fakeFailForReferenced()");
 		}
 	}
-	
+
 	protected static void assertSameType(IType first, IType second){
 		assertNotNull(first);
 		assertNotNull(second);

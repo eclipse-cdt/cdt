@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -66,12 +64,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.osgi.service.resolver.VersionRange;
 
+import junit.framework.TestSuite;
+
 /**
  * Example usage and test for IIndexProvider
  */
 public class IndexProviderManagerTest extends IndexTestBase {
 	private static final int A_FRAGMENT_OPTION = IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION;
-	
+
 	final static DummyProviderTraces DPT= DummyProviderTraces.getInstance();
 	final static Class DP1= Providers.Dummy1.class;
 	final static Class DP2= Providers.Dummy2.class;
@@ -79,7 +79,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	final static Class DP4= Providers.Dummy4.class;
 	final static Class DP5= Providers.Dummy5.class;
 	final static Class[] DPS= new Class[] {DP4, DP2, DP1, DP3, DP5};
-	
+
 	/*
 	 * Fictional compatibility ranges for testing
 	 */
@@ -87,9 +87,9 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	final static VersionRange VERSION_401= new VersionRange("[36,37]");
 	final static VersionRange VERSION_405= new VersionRange("[37,39]");
 	final static VersionRange VERSION_502= new VersionRange("[89,91]");
-	
+
 	final CCorePlugin core= CCorePlugin.getDefault();
-	
+
 	public IndexProviderManagerTest() {
 		super("IndexProviderManagerTest");
 	}
@@ -110,11 +110,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
 		ipm.reset(); ipm.startup();
 	}
-	
+
 	public void testProvider_SimpleLifeCycle_200958() throws Exception {
 		for (Class element : DPS)
 			DPT.reset(element);
-		
+
 		List cprojects = new ArrayList(), expectedTrace = new ArrayList();
 		try {
 			for(int i=0; i<3; i++) {
@@ -141,7 +141,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 	public void testProvider_OverDeleteAndAdd() throws Exception {
 		DPT.reset(DP1);
-		
+
 		List expectedTrace = new ArrayList();
 		ICProject cproject = null;
 		try {
@@ -184,7 +184,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			File newLocation = CProjectHelper.freshDir();
 			IProjectDescription description = cproject.getProject().getDescription();
 			description.setLocationURI(newLocation.toURI());
-			cproject.getProject().move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());	
+			cproject.getProject().move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());
 
 			index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
@@ -194,19 +194,19 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	public void testVersioning_IncompatibleIgnored() throws Exception {
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
-		
+
 		ICProject cproject = null;
 		try {
 			cproject= CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
 			IProject project= cproject.getProject();
-			
-			
+
+
 			MockState mockState = new MockState(cproject);
 			mockState.setConfig(MockState.REL_V1_ID);
-			
+
 			IIndexProvider provider1= new IIndexFragmentProvider() {
 				IIndexFragment[] fragments= new IIndexFragment[] {
 					new MockPDOM("contentID.contentA", "36"),
@@ -240,10 +240,10 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			};
 			waitForIndexer(cproject);
 			setExpectedNumberOfLoggedNonOKStatusObjects(3); // foo, bar and baz have no compatible fragments available
-			
+
 			ipm.reset(VERSION_405); ipm.startup();
 			ipm.addIndexProvider(provider1);  ipm.addIndexProvider(provider2);
-			
+
 			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), -1);
 			assertEquals(1, actual.length);
 			assertFragmentPresent("contentID.contentA", "38", actual);
@@ -253,19 +253,19 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	public void testVersioning_NoCompatibleVersionsFound() throws Exception {
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
-		
+
 		ICProject cproject = null;
 		try {
 			cproject= CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
 			IProject project= cproject.getProject();
-			
-			
+
+
 			MockState mockState = new MockState(cproject);
 			mockState.setConfig(MockState.REL_V1_ID);
-			
+
 			IIndexProvider provider1= new IIndexFragmentProvider() {
 				IIndexFragment[] fragments= new IIndexFragment[] {
 					new MockPDOM("contentID.contentA", "36"),
@@ -296,13 +296,13 @@ public class IndexProviderManagerTest extends IndexTestBase {
 					return true;
 				}
 			};
-			
+
 			waitForIndexer(cproject);
 			setExpectedNumberOfLoggedNonOKStatusObjects(1); // contentA has no compatible fragments available
-			
+
 			ipm.reset(VERSION_502); ipm.startup();
 			ipm.addIndexProvider(provider1);  ipm.addIndexProvider(provider2);
-			
+
 			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), -1);
 			assertEquals(3, actual.length);
 			assertFragmentPresent("contentID.foo", "90", actual);
@@ -314,7 +314,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	private void assertFragmentPresent(String id, String version, IIndexFragment[] fragments) throws Exception {
 		for (IIndexFragment candidate : fragments) {
 			String cid= null, csver= null;
@@ -330,49 +330,49 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 		fail("Fragment matching (id="+id+",version="+version+") was not present");
 	}
-	
+
 	public void testIndexFactoryConfigurationUsage() throws Exception {
 		IIndex index;
-		
+
 		ICProject cproject = null;
 		// Modifying the .project file triggers an indexer job, suppress that:
 		DeltaAnalyzer.sSuppressPotentialTUs= true;
 		try {
 			cproject = CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
 			IProject project= cproject.getProject();
-			
+
 			ICProjectDescription pd= core.getProjectDescription(project);
 			ICConfigurationDescription cfg1= newCfg(pd, "project", "config1");
 			ICConfigurationDescription cfg2= newCfg(pd, "project", "config2");
 			core.setProjectDescription(project, pd);
-			
+
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			waitForIndexer(cproject);
-		
+
 			DPT.reset(DP1);
 			changeConfigRelations(cproject, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(0, DPT.getCfgsTrace(DP1).size());
-			
+
 			changeActiveConfiguration(cproject, cfg1);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			assertEquals("project.config1", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
-			
+
 			changeActiveConfiguration(cproject, cfg2);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
-			
+
 			DPT.reset(DP1);
 			changeConfigRelations(cproject, ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(0, DPT.getCfgsTrace(DP1).size());
-			
+
 			changeActiveConfiguration(cproject, cfg1);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
@@ -380,7 +380,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			// should still be config2, as the change in active configuration does not matter
 			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
-			
+
 			changeActiveConfiguration(cproject, cfg2);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
@@ -395,7 +395,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	public void testGetProvidedFragments() throws Exception {
 		ICProject cproject= CProjectHelper.createCProject("IndexProviderManagerTest", "bin", IPDOMManager.ID_NO_INDEXER);
 
@@ -502,7 +502,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	public void testProviderUsageFilter() throws Exception {
 		// The provider 'Providers.Counter' is registered 7 times with different usage filters.
 		ICProject cproject= null;
@@ -548,20 +548,20 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 	}
 
-	
+
 	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
 		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null);
 		data.initEmptyData();
-		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);		
+		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);
 	}
-	
+
 	private void changeActiveConfiguration(ICProject cproject, ICConfigurationDescription cfg) throws CoreException, InterruptedException {
 		ICProjectDescription pd= core.getProjectDescription(cproject.getProject());
 		pd.setActiveConfiguration(pd.getConfigurationById(cfg.getId()));
 		core.setProjectDescription(cproject.getProject(), pd);
 		waitForIndexer(cproject);
 	}
-	
+
 	private void changeConfigRelations(ICProject cproject, int option) throws CoreException, InterruptedException {
 		ICProjectDescription pd= core.getProjectDescription(cproject.getProject());
 		pd.setConfigurationRelations(option);
@@ -586,7 +586,7 @@ class MockStateIndexProvider implements IIndexProvider {
 class MockStateIndexFragmentProvider extends MockStateIndexProvider implements IIndexFragmentProvider {
 	private boolean invert;
 	final IIndexFragment[] fragments;
-	
+
 	public void invert() {
 		invert = !invert;
 	}
@@ -849,12 +849,12 @@ class MockState {
 class MockPDOM extends EmptyIndexFragment {
 	String id;
 	String version;
-	
+
 	MockPDOM(String id, String version) {
 		this.id= id;
 		this.version= version;
 	}
-	
+
 	@Override
 	public String getProperty(String propertyName) throws CoreException {
 		if(IIndexFragment.PROPERTY_FRAGMENT_ID.equals(propertyName)) {
@@ -868,7 +868,7 @@ class MockPDOM extends EmptyIndexFragment {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[Mock index fragment "+id+"."+System.identityHashCode(this)+"]";

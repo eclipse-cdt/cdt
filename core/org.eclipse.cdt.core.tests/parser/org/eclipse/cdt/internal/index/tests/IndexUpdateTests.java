@@ -7,12 +7,10 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import java.util.Arrays;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -59,6 +57,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
+import junit.framework.TestSuite;
+
 public class IndexUpdateTests extends IndexTestBase {
 	private static final String EXPLICIT = "explicit";
 	private static final String VIRTUAL = "virtual";
@@ -89,7 +89,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	private IFile fFile;
 	private IFile fHeader;
 	private int fContentUsed;
-	
+
 	public IndexUpdateTests(String name) {
 		super(name);
 	}
@@ -121,10 +121,10 @@ public class IndexUpdateTests extends IndexTestBase {
 
 	private void updateHeader() throws Exception {
 		// Append variable comment to the end of the file to change its contents.
-		// Indexer would not reindex the file if its contents remain the same. 
+		// Indexer would not reindex the file if its contents remain the same.
 		IProject project= fHeader.getProject();
 		fHeader= TestSourceReader.createFile(project, "header.h",
-				fContents[++fContentUsed].toString() + "\n// " + fContentUsed); 
+				fContents[++fContentUsed].toString() + "\n// " + fContentUsed);
 		waitUntilFileIsIndexed(fIndex, fHeader);
 	}
 
@@ -138,12 +138,12 @@ public class IndexUpdateTests extends IndexTestBase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_TIMEOUT_MILLISEC);
 		waitForIndexer(cproject);
 	}
-	
+
 	private void updateFile() throws Exception {
 		// Append variable comment to the end of the file to change its contents.
-		// Indexer would not reindex the file if its contents remain the same. 
+		// Indexer would not reindex the file if its contents remain the same.
 		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(),
-				fContents[++fContentUsed].toString() + "\n// " + fContentUsed); 
+				fContents[++fContentUsed].toString() + "\n// " + fContentUsed);
 		waitUntilFileIsIndexed(fIndex, fFile);
 	}
 
@@ -158,7 +158,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 		super.tearDown();
 	}
-		
+
 	public void deleteProject() {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
@@ -169,13 +169,13 @@ public class IndexUpdateTests extends IndexTestBase {
 			fCppProject= null;
 		}
 	}
-	
+
 	// int globalVar;
-	
+
 	// short globalVar;
-	
+
 	// auto int globalVar;
-	
+
 	// register int globalVar;
 	public void testGlobalCVariable() throws Exception {
 		setupFile(4, false);
@@ -203,16 +203,16 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			IBinding b = findBinding(name);
 			IValue v= null;
-			if (b instanceof IVariable) 
+			if (b instanceof IVariable)
 				v= ((IVariable) b).getInitialValue();
-			else if (b instanceof IEnumerator) 
+			else if (b instanceof IEnumerator)
 				v= ((IEnumerator) b).getValue();
-			else 
+			else
 				fail();
-			
+
 			if (value == null)
 				assertNull(v);
-			else 
+			else
 				assertEquals(value, v.numericalValue());
 		} finally {
 			fIndex.releaseReadLock();
@@ -282,7 +282,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 
 	// int globalFunction(int a, int b){};
-	
+
 	// short globalFunction(int a, int b){};
 
 	// int globalFunction(char a){};
@@ -322,9 +322,9 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkModifier(modifiers, STATIC, func.isStatic());
 	}
 
-	
+
 	// int globalFunction(int a, int b){};
-	
+
 	// short globalFunction(int a, int b){};
 
 	// int globalFunction(char a){};
@@ -340,10 +340,10 @@ public class IndexUpdateTests extends IndexTestBase {
 		updateFile();
 		checkFunction("globalFunction", new String[] {INT, CHAR}, new String[]{INLINE});
 	}
-	
-	
+
+
 	// struct my_struct {int fField;};
-	
+
 	// struct my_struct {short fField;};
 	public void testCField() throws Exception {
 		setupFile(2, false);
@@ -352,11 +352,11 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkVariable("my_struct::fField", SHORT, new String[]{});
 	}
 
-	
+
 	// class MyClass {int fField;};
-	
+
 	// class MyClass {short fField;};
-	
+
 	// class MyClass {mutable int fField;};
 
 	// class MyClass {public: int fField;};
@@ -402,11 +402,11 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 
 	// class MyClass {int method(int a, int b);};
-	
+
 	// class MyClass {short method(int a, int b);};
-	
+
 	// class MyClass {int method(char a);};
-	
+
 	// class MyClass {inline int method(char a);};
 
 	// class MyClass {virtual int method(char a);};
@@ -418,7 +418,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {private: int method(char a);};
 
 	// class MyClass {int method(char a){};};
-	
+
 	// class MyClass {virtual int method(char a) = 0;};
 	public void testCppMethod() throws Exception {
 		setupFile(10, true);
@@ -444,10 +444,10 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 
 	// class MyClass {protected: int method(int a, int b);};
-	
+
 	// #include "header.h"
 	// int MyClass::method(int a, int b);
-	
+
 	// #include "header.h"
 	// char MyClass::method(int a, int b);
 	public void testFixedCppMethod() throws Exception {
@@ -477,13 +477,13 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkModifier(modifiers, PURE_VIRTUAL, method.isPureVirtual());
 		checkModifier(modifiers, IMPLICIT, method.isImplicit());
 	}
-	
+
 	// class MyClass {MyClass(int a, int b);};
-	
+
 	// class MyClass {MyClass(char a, int b);};
-	
+
 	// class MyClass {explicit MyClass(char a, int b);};
-	
+
 	// class MyClass {public: MyClass(char a, int b);};
 
 	// class MyClass {protected: MyClass(char a, int b);};
@@ -521,38 +521,38 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 
 	// class MyClass {};
-	
+
 	// class MyClass {protected: MyClass(void);};
-	
+
 	// class MyClass {explicit MyClass(const MyClass& rhs);};
-	
+
 	// class MyClass {public: MyClass& operator=(const MyClass& rhs) {}};
 
 	// class MyClass {};
 	public void testImplicitMethods() throws Exception {
 		setupFile(5, true);
-		checkImplicitMethods("MyClass", 
-				new String[] {IMPLICIT, PUBLIC}, 
+		checkImplicitMethods("MyClass",
+				new String[] {IMPLICIT, PUBLIC},
 				new String[] {IMPLICIT, PUBLIC},
 				new String[] {IMPLICIT, PUBLIC});
 		updateFile();
-		checkImplicitMethods("MyClass", 
-				new String[] {PROTECTED}, 
+		checkImplicitMethods("MyClass",
+				new String[] {PROTECTED},
 				new String[] {IMPLICIT, PUBLIC},
 				new String[] {IMPLICIT, PUBLIC});
 		updateFile();
-		checkImplicitMethods("MyClass", 
+		checkImplicitMethods("MyClass",
 				null, // no default constructor, because we declared the copy constructor.
 				new String[] {EXPLICIT, PRIVATE},
 				new String[] {IMPLICIT, PUBLIC});
 		updateFile();
-		checkImplicitMethods("MyClass", 
-				new String[] {IMPLICIT, PUBLIC}, 
+		checkImplicitMethods("MyClass",
+				new String[] {IMPLICIT, PUBLIC},
 				new String[] {IMPLICIT, PUBLIC},
 				new String[] {INLINE, PUBLIC});
 		updateFile();
-		checkImplicitMethods("MyClass", 
-				new String[] {IMPLICIT, PUBLIC}, 
+		checkImplicitMethods("MyClass",
+				new String[] {IMPLICIT, PUBLIC},
 				new String[] {IMPLICIT, PUBLIC},
 				new String[] {IMPLICIT, PUBLIC});
 	}
@@ -597,9 +597,9 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	// typedef int myType;
-	
+
 	// typedef short myType;
 	public void testCTypedef() throws Exception {
 		setupFile(2, false);
@@ -621,9 +621,9 @@ public class IndexUpdateTests extends IndexTestBase {
 	private void checkTypedef(ITypedef var, String type) throws DOMException {
 		assertEquals(msg(), type, ASTTypeUtil.getType(var.getType()));
 	}
-	
+
 	// typedef int myType;
-	
+
 	// typedef short myType;
 	public void testCppTypedef() throws Exception {
 		setupFile(2, true);
@@ -633,9 +633,9 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 
 	// namespace aNs {
-	// } 
+	// }
 	// namespace nsAlias= aNs;
-	
+
 	// namespace bNs {
 	// }
 	// namespace nsAlias= bNs;
@@ -654,12 +654,12 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-	}	
-	
+	}
+
 	// struct myType {
 	//    int a;
 	// };
-	
+
 	// union myType {
 	//    int a;
 	// };
@@ -680,7 +680,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -691,7 +691,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -702,7 +702,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -712,15 +712,15 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	// class myType {
 	//    int a;
 	// };
-	
+
 	// struct myType {
 	//    int a;
 	// };
-	
+
 	// union myType {
 	//    int a;
 	// };
@@ -741,7 +741,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -752,7 +752,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -763,7 +763,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -781,7 +781,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// template<typename T=char> class CT {};
 
 	// template<int U, typename T> struct CT {};
-	
+
 	// template<template<typename T> class V> class CT {};
 
 	// template<template<template<typename I> class T> class V> class CT {};
@@ -853,7 +853,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -909,7 +909,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 
 	// int globalVar;
-	
+
 	// #include "header.h"
 	// void test() {
 	//    globalVar= 1;
@@ -931,7 +931,7 @@ public class IndexUpdateTests extends IndexTestBase {
 
 		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(), fContents[1].toString().replaceAll("globalVar", "newVar"));
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_TIMEOUT_MILLISEC);
-		
+
 		fIndex.acquireReadLock();
 		try {
 			binding = findBinding("globalVar");
@@ -953,19 +953,19 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
-	
+
+
 	// int globalVar;
 	// void func();
-	
+
 	// extern "C" {
 	//    int globalVar;
 	//    void func();
 	// }
-	
+
 	// int globalVar;
 	// void func();
-	
+
 	// extern "C" int globalVar;
 	// extern "C" void func();
 
@@ -995,15 +995,15 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	// int global;
 	// struct C {int mem;};
 	// enum E {e0};
-	
+
 	// int global=1;
 	// struct C {int mem=1;};
 	// enum E {e0=1};
-	
+
 	// int global;
 	// struct C {int mem;};
 	// enum E {e0};
@@ -1021,7 +1021,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkValue("C::mem", null);
 		checkValue("e0", 0L);
 	}
-	
+
 	// class A {
 	//    public: void foo();
 	// };
@@ -1053,7 +1053,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -1101,11 +1101,11 @@ public class IndexUpdateTests extends IndexTestBase {
 	// int global;
 	// struct C {int mem;};
 	// enum E {e0};
-	
+
 	// int global=1;
 	// struct C {int mem=1;};
 	// enum E {e0=1};
-	
+
 	// int global;
 	// struct C {int mem;};
 	// enum E {e0};
@@ -1123,7 +1123,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkValue("C::mem", null);
 		checkValue("e0", 0L);
 	}
-	
+
 	//class A {};
 	//class B {friend class A;};
 
@@ -1132,7 +1132,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		setupFile(2, true);
 		assertFriendRemoval("B", "A");
 	}
-	
+
 	// class X {public: char* foo(int);};
 	// class Y {friend char* X::foo(int);};
 
@@ -1141,7 +1141,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		setupFile(2, true);
 		assertFriendRemoval("Y", "X::foo");
 	}
-	
+
 	// class X {friend void friend_set(X*, int);};
 	// void friend_set(X* p, int i) {}
 
@@ -1150,7 +1150,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		setupFile(2, true);
 		assertFriendRemoval("X", "friend_set");
 	}
-	
+
 	private void assertFriendRemoval(String clientClassBinding, String supplierBinding) throws Exception {
 		fIndex.acquireReadLock();
 		try {
@@ -1164,7 +1164,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 
 		fIndex.acquireReadLock();
@@ -1177,7 +1177,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	// void funcTypeDeletion(int);
 
 	// #include "header.h"
@@ -1200,7 +1200,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// void ref() {
 	//   f(1);
 	// }
-	
+
 	// #include "header.h"
 	// void f(int a, int b) {}
 	// void ref() {
@@ -1216,24 +1216,24 @@ public class IndexUpdateTests extends IndexTestBase {
 
 	private void checkReferenceCount(String name, int count) throws InterruptedException, CoreException {
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			IBinding func = findBinding(name);
 			assertEquals(count, fIndex.findReferences(func).length);
 		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	// enum E {e0};
-	
+
 	// enum class E;
 
 	// enum E : short {e1};
-	
+
 	// enum class E {e2};
-	
+
 	// enum class E : short {e1};
-	
+
 	// enum E : int;
 	public void testEnumCPP() throws Exception {
 		setupFile(6, true);
@@ -1252,7 +1252,7 @@ public class IndexUpdateTests extends IndexTestBase {
 
 	private void checkEnum(boolean scoped, String fixedType, String enumItem) throws Exception {
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			ICPPEnumeration enumType = (ICPPEnumeration) findBinding("E");
 			assertEquals(scoped, enumType.isScoped());
 			if (fixedType == null) {
@@ -1271,7 +1271,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	// class X {};
 
 	// class X {};
@@ -1285,7 +1285,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
 		try {
@@ -1296,7 +1296,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 		assertEquals(id1, id2);
 	}
-	
+
 	// namespace ns {
 	//    namespace m {}
 	// }
@@ -1311,7 +1311,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	public void testInlineNamespaces_305980() throws Exception {
 		setupFile(3, true);
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final ICPPNamespace ns = (ICPPNamespace) findBinding("ns");
 			assertFalse(ns.isInline());
 			final ICPPNamespace m = (ICPPNamespace) findBinding("ns::m");
@@ -1319,10 +1319,10 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		updateFile();
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final ICPPNamespace ns = (ICPPNamespace) findBinding("ns");
 			assertTrue(ns.isInline());
 			final ICPPNamespace m = (ICPPNamespace) findBinding("ns::m");
@@ -1333,7 +1333,7 @@ public class IndexUpdateTests extends IndexTestBase {
 
 		updateFile();
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final ICPPNamespace ns = (ICPPNamespace) findBinding("ns");
 			assertFalse(ns.isInline());
 			final ICPPNamespace m = (ICPPNamespace) findBinding("ns::m");
@@ -1342,14 +1342,14 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	//	typedef enum {
 	//		AE_ON = 0
 	//	} Adaptiv_T;
 	//	struct mystruct {
 	//		Adaptiv_T       eAdapt;
 	//	};
-	
+
 	// int main() {
 	//    mystruct ms;
 	//    ms.eAdapt = AE_ON;
@@ -1367,7 +1367,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		setupFile(3, true);
 		String name1;
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final IEnumerator e = (IEnumerator) findBinding("AE_ON");
 			assertNotNull(e);
 			name1= e.getOwner().getName();
@@ -1376,7 +1376,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 		updateHeader();
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final IEnumerator e = (IEnumerator) findBinding("AE_ON");
 			assertNotNull(e);
 			assertFalse(name1.equals(e.getOwner().getName()));
@@ -1391,7 +1391,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//	struct mystruct {
 	//		Adaptiv_T       eAdapt;
 	//	};
-	
+
 	// int main() {
 	//    mystruct ms;
 	//    ms.eAdapt = AE_ON;
@@ -1409,7 +1409,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		setupFile(3, false);
 		String name1;
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final IEnumerator e = (IEnumerator) findBinding("AE_ON");
 			assertNotNull(e);
 			name1= e.getOwner().getName();
@@ -1418,7 +1418,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 		updateHeader();
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final IEnumerator e = (IEnumerator) findBinding("AE_ON");
 			assertNotNull(e);
 			assertFalse(name1.equals(e.getOwner().getName()));
@@ -1426,14 +1426,14 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	// struct S {};
-	
+
 	// struct S {S(int){}};
 	public void testImplicitDefaultCtor_Bug359376() throws Exception {
 		setupFile(2, true);
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final ICPPClassType s = (ICPPClassType) findBinding("S");
 			assertNotNull(s);
 			final ICPPConstructor[] ctors = s.getConstructors();
@@ -1444,9 +1444,9 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 		updateFile();
-		
+
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final ICPPClassType s = (ICPPClassType) findBinding("S");
 			assertNotNull(s);
 			final ICPPConstructor[] ctors = s.getConstructors();
@@ -1456,7 +1456,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	//	struct Base {
 	//	    void foo() {}
 	//	};
@@ -1473,23 +1473,23 @@ public class IndexUpdateTests extends IndexTestBase {
 	public void testBaseClass_Bug391284() throws Exception {
 		setupFile(2, true);
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final ICPPClassType s = (ICPPClassType) findBinding("Derived");
 			assertNotNull(s);
 			final ICPPBase[] bases = s.getBases();
-			assertEquals(1, bases.length); 
+			assertEquals(1, bases.length);
 			assertEquals("Base", bases[0].getBaseClass().getName());
 		} finally {
 			fIndex.releaseReadLock();
 		}
 		updateFile();
-		
+
 		fIndex.acquireReadLock();
-		try { 
+		try {
 			final ICPPClassType s = (ICPPClassType) findBinding("Derived");
 			assertNotNull(s);
 			final ICPPBase[] bases = s.getBases();
-			assertEquals(1, bases.length); 
+			assertEquals(1, bases.length);
 			assertEquals("Base", bases[0].getBaseClass().getName());
 		} finally {
 			fIndex.releaseReadLock();

@@ -26,22 +26,22 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 		TestScannerProvider.sDefinedSymbols.put("__GNUC__", Integer.toString(GCC_MAJOR_VERSION_FOR_TESTS));
 		TestScannerProvider.sDefinedSymbols.put("__GNUC_MINOR__", Integer.toString(GCC_MINOR_VERSION_FOR_TESTS));
 	}
-	
+
 	private static void gnuTearDown() {
 		TestScannerProvider.clear();
 	}
-	
+
 	public class GPPReferencedProject extends ReferencedProject {
 		public GPPReferencedProject() {
 			super(true /* cpp */);
 		}
-		
+
 		@Override
 		public void setUp() throws Exception {
 			gnuSetUp();
 			super.setUp();
 		}
-		
+
 		@Override
 		public void tearDown() throws Exception {
 			super.tearDown();
@@ -53,13 +53,13 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 		public GPPSinglePDOMTestStrategy() {
 			super(true /* cpp */);
 		}
-		
+
 		@Override
 		public void setUp() throws Exception {
 			gnuSetUp();
 			super.setUp();
 		}
-		
+
 		@Override
 		public void tearDown() throws Exception {
 			super.tearDown();
@@ -107,7 +107,7 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 	//	enum e_int { a2 = -1, b2 = 1 };
 	//	enum e_ulong { a3 = 5000000000, b3 };
 	//	enum e_long { a4 = -5000000000, b4 = 5000000000 };
-	
+
 	//	typedef underlying_type<e_fixed_short1>::type short1_type;
 	//	typedef underlying_type<e_fixed_short2>::type short2_type;
 	//
@@ -122,7 +122,7 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 		assertSameType((ITypedef) getBindingFromASTName("short2_type", 0), CPPBasicType.SHORT);
 
 		assertSameType((ITypedef) getBindingFromASTName("scoped_type", 0), CPPBasicType.INT);
-		
+
 		assertSameType((ITypedef) getBindingFromASTName("unsigned_type", 0), CPPBasicType.UNSIGNED_INT);
 		assertSameType((ITypedef) getBindingFromASTName("int_type", 0), CPPBasicType.INT);
 		assertSameType((ITypedef) getBindingFromASTName("ulong_type", 0), CPPBasicType.UNSIGNED_LONG);

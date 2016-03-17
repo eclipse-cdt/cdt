@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -19,8 +18,8 @@ public class FakeIndexer extends AbstractPDOMIndexer {
 	static final String ID = "org.eclipse.cdt.core.tests.FakeIndexer";
 
 	@Override
-	public IPDOMIndexerTask createTask(ITranslationUnit[] added,
-			ITranslationUnit[] changed, ITranslationUnit[] removed) {
+	public IPDOMIndexerTask createTask(ITranslationUnit[] added, ITranslationUnit[] changed,
+			ITranslationUnit[] removed) {
 		return null;
 	}
 
@@ -28,5 +27,4 @@ public class FakeIndexer extends AbstractPDOMIndexer {
 	public String getID() {
 		return ID;
 	}
-
 }

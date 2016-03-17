@@ -133,7 +133,7 @@ public class EmptyIndexFragment implements IIndexFragment {
 			throws CoreException {
 		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
-	
+
 	@Override
 	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
 		return IIndexFragmentFile.EMPTY_ARRAY;

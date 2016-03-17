@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -44,6 +42,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import junit.framework.Test;
+
 /**
  * Tests the behavior of the IIndex API when dealing with multiple projects
  */
@@ -58,37 +58,37 @@ public class IndexCompositeTests extends BaseTestCase {
 		private final boolean cpp;
 		private List<IProject> dependencies = new ArrayList<IProject>();
 		private Map<String, String> path2content = new HashMap<String, String>();
-	
+
 		ProjectBuilder(String name, boolean cpp) {
 			this.name = name;
 			this.cpp = cpp;
 		}
-	
+
 		ProjectBuilder addDependency(IProject project) {
 			dependencies.add(project);
 			return this;
 		}
-	
+
 		ProjectBuilder addFile(String relativePath, CharSequence content) {
 			path2content.put(relativePath, content.toString());
 			return this;
 		}
-	
+
 		ICProject create() throws Exception {
 			ICProject result = cpp ?
 					CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
 					CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 			createdProjects.add(result.getProject());
-	
+
 			IFile lastFile= null;
 			for (Map.Entry<String, String> entry : path2content.entrySet()) {
 				lastFile= TestSourceReader.createFile(result.getProject(), new Path(entry.getKey()), entry.getValue());
 			}
-	
+
 			IProjectDescription desc = result.getProject().getDescription();
 			desc.setReferencedProjects(dependencies.toArray(new IProject[dependencies.size()]));
 			result.getProject().setDescription(desc, new NullProgressMonitor());
-	
+
 			IIndexManager indexManager = CCorePlugin.getIndexManager();
 			indexManager.setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
 			if (lastFile != null) {
@@ -96,7 +96,7 @@ public class IndexCompositeTests extends BaseTestCase {
 				indexManager.reindex(result);
 				IIndex index= indexManager.getIndex(result);
 				TestSourceReader.waitUntilFileIsIndexed(index, lastFile, INDEXER_TIMEOUT_SEC * 1000);
-			} 
+			}
 			BaseTestCase.waitForIndexer(result);
 			return result;
 		}
@@ -120,9 +120,9 @@ public class IndexCompositeTests extends BaseTestCase {
 			return true;
 		}
 	};
-	
+
 	IIndex index;
-	
+
 	protected StringBuilder[] getContentsForTest(int blocks) throws IOException {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
@@ -208,24 +208,24 @@ public class IndexCompositeTests extends BaseTestCase {
 			final int gC= 6, aC= gC + 2;
 			final int gB= 6, aB= gB + 1;
 			final int gA= 3, aA= gA + 3;
-			
+
 			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
 			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
-			
+
 			setIndex(cprojC, NONE);
 			assertBCount(gC, aC); assertNamespaceXMemberCount(1);
 			assertFieldCount("C1", 1);
-			
+
 			setIndex(cprojC, REFS);
 			assertBCount(gC, aC);
 			assertNamespaceXMemberCount(1);
 			assertFieldCount("C1", 1);
-			
+
 			setIndex(cprojC, REFD);
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
-			
+
 			setIndex(cprojC, BOTH);
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
@@ -235,37 +235,37 @@ public class IndexCompositeTests extends BaseTestCase {
 			assertBCount(gBC, aBC);
 			assertNamespaceXMemberCount(2);
 			assertFieldCount("C1", 1);
-			
+
 			setIndex(cprojB, REFS);
 			assertBCount(gBC, aBC);
 			assertNamespaceXMemberCount(2);
 			assertFieldCount("C1", 1);
-			
+
 			setIndex(cprojB, REFD);
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
-			
+
 			setIndex(cprojB, BOTH);
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
-			
+
 			setIndex(cprojA, NONE);
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
 			// binding C1 is not referenced by cprojA
-			
+
 			setIndex(cprojA, REFS);
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
-			
+
 			setIndex(cprojA, REFD);
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
 			// binding C1 is not referenced by cprojA
-			
+
 			setIndex(cprojA, BOTH);
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
@@ -297,7 +297,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	public void testTripleUpwardV() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
 		List<ICProject> projects = new ArrayList<ICProject>();
-		
+
 		try {
 			ProjectBuilder pb = new ProjectBuilder("projB_" + getName(), true);
 			pb.addFile("h2.h", contents[0]);
@@ -317,17 +317,17 @@ public class IndexCompositeTests extends BaseTestCase {
 			/*  A   C    |
 		     *   \ /     | Depends On / References
 		     *    B      V
-		     *    
+		     *
 			 * Defines Global, Defines Namespace, Ext. References Global, Ext. References Namespace
 			 * projC: 7, 2, 1, 1
 			 * projB: 4, 1, 0, 0
 			 * projA: 4, 1, 1, 1
 			 */
-			
+
 			final int gC= 7, aC= gC + 2;
 			final int gB= 4, aB= gB + 1;
 			final int gA= 4, aA= gA + 1;
-			
+
 			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
 			final int gAB= gA + gB - 1, aAB= aA + aB - 1;
 			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
@@ -388,7 +388,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// namespace X { class B2 {}; C1 c; }
 	// void foo(A1 c) {}
 	// void foo(X::A2 c, B1 c) {}
-	
+
 	// class A1 {};
 	// void foo(A1 a, A1 b) {}
 	// namespace X { class A2 {}; }
@@ -415,7 +415,7 @@ public class IndexCompositeTests extends BaseTestCase {
 			/*    B     |
 		     *   / \    | Depends On / References
 		     *  A   C   V
-		     *    
+		     *
 			 *  Defines Global, Defines Namespace, References Global, References Namespace
 			 * projC: 6, 1, 0, 0
 			 * projB: 4, 2, 2, 1
@@ -425,7 +425,7 @@ public class IndexCompositeTests extends BaseTestCase {
 			final int gC= 6, aC= gC + 1;
 			final int gB= 4, aB= gB + 2;
 			final int gA= 3, aA= gA + 1;
-			
+
 			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
 			final int gAB= gA + gB - 1, aAB= aA + aB - 1;
 			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
@@ -474,7 +474,7 @@ public class IndexCompositeTests extends BaseTestCase {
 			}
 		}
 	}
-	
+
 	/**
 	 * Asserts binding counts, and returns the index tested against
 	 * @param global the number of bindings expected to be found at global scope
@@ -489,19 +489,19 @@ public class IndexCompositeTests extends BaseTestCase {
 		assertEquals(all, bindings.length);
 		return index;
 	}
-	
+
 	private void assertNamespaceXMemberCount(int count) throws CoreException, DOMException {
 		IBinding[] bindings = index.findBindings(Pattern.compile("X"), true, FILTER, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		assertEquals(count, ((ICPPNamespace) bindings[0]).getMemberBindings().length);
 	}
-	
+
 	private void assertFieldCount(String qnPattern, int count) throws CoreException, DOMException {
 		IBinding[] bindings = index.findBindings(Pattern.compile(qnPattern), true, FILTER, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		assertEquals(count, ((ICompositeType) bindings[0]).getFields().length);
 	}
-	
+
 	private void setIndex(ICProject project, int options) throws CoreException, InterruptedException {
 		if (index != null) {
 			index.releaseReadLock();
@@ -509,7 +509,7 @@ public class IndexCompositeTests extends BaseTestCase {
 		index = CCorePlugin.getIndexManager().getIndex(project, options);
 		index.acquireReadLock();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		if (index != null) {

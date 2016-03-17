@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.TestSuite;
@@ -20,7 +20,7 @@ public class IndexCPPBindingResolutionBugsSingleProjectFirstAST extends IndexCPP
 	public static TestSuite suite() {
 		return suite(IndexCPPBindingResolutionBugsSingleProjectFirstAST.class);
 	}
-	
+
 	// Invalid tests for this strategy, they assume that the second file is already indexed.
 	@Override public void test_208558() {}
 	@Override public void test_176708_CCE() {}

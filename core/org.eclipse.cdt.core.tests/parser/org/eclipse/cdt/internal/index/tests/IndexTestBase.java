@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
@@ -42,20 +42,20 @@ public class IndexTestBase extends BaseTestCase {
 					result[0]= CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
 				} else {
 					result[0]= CProjectHelper.createCProject(name, null, IPDOMManager.ID_NO_INDEXER);
-				}					
+				}
 				CProjectHelper.importSourcesFromPlugin(result[0], CTestPlugin.getDefault().getBundle(), importSource);
 			}
 		}, null);
-		CCorePlugin.getIndexManager().setIndexerId(result[0], IPDOMManager.ID_FAST_INDEXER);		
+		CCorePlugin.getIndexManager().setIndexerId(result[0], IPDOMManager.ID_FAST_INDEXER);
 		// wait until the indexer is done
 		waitForIndexer(result[0]);
 		return result[0];
 	}
-	
+
 	protected String readTaggedComment(String tag) throws Exception {
 		return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "parser", getClass(), tag);
 	}
-	
+
     protected StringBuilder[] getContentsForTest(int blocks) throws IOException {
     	return TestSourceReader.getContentsForTest(
     			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);

@@ -8,13 +8,11 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.ByteArrayInputStream;
 import java.util.regex.Pattern;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -41,6 +39,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import junit.framework.TestSuite;
+
 public class IndexIncludeTest extends IndexTestBase {
 
 	public static TestSuite suite() {
@@ -51,7 +51,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	private ICProject fProject;
 	private IIndex fIndex;
-	
+
 	public IndexIncludeTest(String name) {
 		super(name);
 	}
@@ -69,18 +69,18 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
 	}
-	
+
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 	}
-		
+
 	public void deleteProject() {
 		if (fProject != null) {
 			CProjectHelper.delete(fProject);
 		}
 	}
-	
+
 	public void testFastIndexer() throws Exception {
 		CCorePlugin.getIndexManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);
 		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
@@ -90,7 +90,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true");
 		waitForIndexer();
 		checkHeader(true);
-		
+
 		checkContext();
 	}
 
@@ -107,18 +107,18 @@ public class IndexIncludeTest extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	private void checkContext() throws Exception {
 		final long timestamp= System.currentTimeMillis();
 		final IFile file= (IFile) fProject.getProject().findMember(new Path("included.h"));
 		assertNotNull("Can't find included.h", file);
 		waitForIndexer();
-		
+
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				file.setContents(new ByteArrayInputStream("int included; int CONTEXT;\n".getBytes()), false, false, npm());
-				file.setLocalTimeStamp(timestamp + 1000); 
+				file.setLocalTimeStamp(timestamp + 1000);
 			}
 		}, npm());
 		assertTrue("Timestamp was not increased", file.getLocalTimeStamp() >= timestamp);
@@ -143,7 +143,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		assertTrue("Can't find " + file.getLocation(), files.length > 0);
 		assertEquals("Found " + files.length + " files for " + file.getLocation() + " instead of one", 1, files.length);
 		return files[0];
-	}			
+	}
 
 	// {source20061107}
 	// #include "user20061107.h"
@@ -169,7 +169,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	public void testIncludeProperties_2() throws Exception {
 		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		TestSourceReader.createFile(fProject.getProject(), "header20061107.h", "");
@@ -238,7 +238,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		assertEquals(offset, include.getNameOffset());
 		assertEquals(includeName.length(), include.getNameLength());
 		assertEquals(isSystem, include.isSystemInclude());
-	}	
+	}
 
 	public void testUpdateOfIncluded() throws Exception {
 		String content1 = "int CONTEXT_20070404(x);\n";
@@ -264,7 +264,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		Thread.sleep(1000);
 		// now change the header and see whether it gets parsed
 		TestSourceReader.createFile(fProject.getProject(), "included_20070404.h", content2);
@@ -282,12 +282,12 @@ public class IndexIncludeTest extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	// #define SOME_MACRO1 ok_1_220358
 	// #define SOME_MACRO2 ok_2_220358
-	
+
 	// int SOME_MACRO1;
-	
+
 	// int SOME_MACRO2;
 
 	// #include "header1.h"
@@ -310,7 +310,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		// change header2:
 		h2= TestSourceReader.createFile(fProject.getProject(), "header2.h", sources[2].toString());
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, h2, INDEXER_TIMEOUT_MILLISEC);
@@ -321,9 +321,9 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertTrue(binding[0] instanceof IVariable);
 		} finally {
 			fIndex.releaseReadLock();
-		}		
+		}
 	}
-	
+
 	// #include "resolved20070426.h"
 	public void testFixedContext() throws Exception {
 		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
@@ -343,7 +343,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			IIndexFile ifile= getIndexFile(header);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
-			
+
 			IIndexInclude context= ifile.getParsedInContext();
 			assertNotNull(context);
 			assertEquals(s1.getFullPath().toString(), context.getIncludedByLocation().getFullPath());
@@ -353,7 +353,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-		
+
 		s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", source + "\nint a20070426;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		fIndex.acquireReadLock();
@@ -412,42 +412,42 @@ public class IndexIncludeTest extends IndexTestBase {
 		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		CharSequence[] source= getContentsForTest(4);
 		IFile header= TestSourceReader.createFile(fProject.getProject(), "resolved20070427.h", "");
-		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp",
 				source[0].toString() + "\nint a20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "a20070427");
-		
-		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp",
 				source[0].toString() + "\nint b20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "b20070427");
 
-		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp",
 				source[1].toString() + "\nint c20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		checkUpdateIncludes1(header, s1, "c20070427");
 
-		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp",
 				source[0].toString() + "\nint d20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "d20070427");
 
-		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp",
 				source[2].toString() + "\nint e20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		checkUpdateIncludes2(header, s1, "e20070427");
 
-		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp",
 				source[0].toString() + "\nint f20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "f20070427");
 
-		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp",
 				source[3].toString() + "\nint g20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		checkUpdateIncludes3(header, s1, "g20070427");
 
-		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp",
 				source[0].toString() + "\nint h20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_TIMEOUT_MILLISEC);
 		standardCheckUpdateIncludes(header, s1, "h20070427");
@@ -505,7 +505,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
-				h1.setLocalTimeStamp(timestamp + 1000); 
+				h1.setLocalTimeStamp(timestamp + 1000);
 			}
 		}, npm());
 		waitForIndexer();
@@ -580,14 +580,14 @@ public class IndexIncludeTest extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 
-		// Change h1.h so that it has the pragma-once semantics. 
+		// Change h1.h so that it has the pragma-once semantics.
 		final long t1= System.currentTimeMillis();
 		final String changedContents = contents[4].toString();
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				h1.setContents(new ByteArrayInputStream(changedContents.getBytes()), false, false, npm());
-				h1.setLocalTimeStamp(t1 + 1000); 
+				h1.setLocalTimeStamp(t1 + 1000);
 			}
 		}, npm());
 		waitForIndexer();
@@ -606,13 +606,13 @@ public class IndexIncludeTest extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 
-		// Change h1.h back to the original state without the pragma-once semantics. 
+		// Change h1.h back to the original state without the pragma-once semantics.
 		final long t2= System.currentTimeMillis();
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
-				h1.setLocalTimeStamp(t2 + 2000); 
+				h1.setLocalTimeStamp(t2 + 2000);
 			}
 		}, npm());
 		waitForIndexer();
@@ -668,7 +668,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-	}	
+	}
 
 	private void checkUpdateIncludes1(IFile header, IFile s1, String tag) throws Exception {
 		fIndex.acquireReadLock();
@@ -697,7 +697,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-	}	
+	}
 
 	private void checkUpdateIncludes2(IFile header, IFile s1, String tag) throws Exception {
 		fIndex.acquireReadLock();
@@ -730,7 +730,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-	}	
+	}
 
 	private void checkUpdateIncludes3(IFile header, IFile s1, String tag) throws Exception {
 		fIndex.acquireReadLock();
@@ -763,5 +763,5 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-	}	
+	}
 }

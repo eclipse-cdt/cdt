@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.index.tests;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -35,6 +33,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 public class IndexNamesTests extends BaseTestCase {
 	private ICProject fCProject;
@@ -84,7 +84,7 @@ public class IndexNamesTests extends BaseTestCase {
 		String[] parts= qname.split("::");
 		Pattern[] result= new Pattern[parts.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i]= Pattern.compile(parts[i]);			
+			result[i]= Pattern.compile(parts[i]);
 		}
 		return result;
 	}
@@ -99,7 +99,7 @@ public class IndexNamesTests extends BaseTestCase {
 	protected void waitUntilFileIsIndexed(IFile file, int time) throws Exception {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, time);
 	}
-	
+
 	// void func();
 	// int var;
 	//
@@ -112,30 +112,30 @@ public class IndexNamesTests extends BaseTestCase {
 		String content= getComment();
 		IFile file= createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
-		
+
 		fIndex.acquireReadLock();
 		try {
 			IIndexBinding[] mainBS= fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, npm());
 			assertLength(1, mainBS);
 			IIndexBinding mainB= mainBS[0];
-			
+
 			IIndexName[] names= fIndex.findDefinitions(mainB);
 			assertLength(1, names);
 			IIndexName main= names[0];
-			
+
 			assertNull(main.getEnclosingDefinition());
 			IIndexName[] enclosed= main.getEnclosedNames();
 			assertLength(2, enclosed);
 			assertName("func", enclosed[0]);
 			assertName("var", enclosed[1]);
-			
+
 			IIndexName enclosing= enclosed[0].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);
 
 			enclosing= enclosed[1].getEnclosingDefinition();
 			assertNotNull(enclosing);
-			assertName("main", enclosing);			
+			assertName("main", enclosing);
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -149,7 +149,7 @@ public class IndexNamesTests extends BaseTestCase {
 		assertNotNull(array);
 		assertEquals(length, array.length);
 	}
-	
+
 	// class C {
 	// public:
 	//    void func();
@@ -170,17 +170,17 @@ public class IndexNamesTests extends BaseTestCase {
 		String content= getComment();
 		IFile file= createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
-		
+
 		fIndex.acquireReadLock();
 		try {
 			IIndexBinding[] mainBS= fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, npm());
 			assertLength(1, mainBS);
 			IIndexBinding mainB= mainBS[0];
-			
+
 			IIndexName[] names= fIndex.findDefinitions(mainB);
 			assertLength(1, names);
 			IIndexName main= names[0];
-			
+
 			assertNull(main.getEnclosingDefinition());
 			IIndexName[] enclosed= main.getEnclosedNames();
 			assertLength(4, enclosed);
@@ -188,14 +188,14 @@ public class IndexNamesTests extends BaseTestCase {
 			assertName("C", enclosed[1]); // Implicit ctor call
 			assertName("func", enclosed[2]);
 			assertName("var", enclosed[3]);
-			
+
 			IIndexName enclosing= enclosed[0].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);
 
 			enclosing= enclosed[1].getEnclosingDefinition();
 			assertNotNull(enclosing);
-			assertName("main", enclosing);			
+			assertName("main", enclosing);
 
 			enclosing= enclosed[2].getEnclosingDefinition();
 			assertNotNull(enclosing);
@@ -203,32 +203,32 @@ public class IndexNamesTests extends BaseTestCase {
 
 			enclosing= enclosed[3].getEnclosingDefinition();
 			assertNotNull(enclosing);
-			assertName("main", enclosing);			
+			assertName("main", enclosing);
 
 			IIndexBinding funcB= fIndex.findBinding(enclosed[2]);
 			assertNotNull(funcB);
 			names= fIndex.findDefinitions(funcB);
 			assertLength(1, names);
 			IIndexName funcdef= names[0];
-			
+
 			assertNull(funcdef.getEnclosingDefinition());
 			enclosed= funcdef.getEnclosedNames();
 			assertLength(3, enclosed);
 			assertName("C", enclosed[0]);
 			assertName("func", enclosed[1]);
 			assertName("var", enclosed[2]);
-			
+
 			enclosing= enclosed[0].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("func", enclosing);
 
 			enclosing= enclosed[1].getEnclosingDefinition();
 			assertNotNull(enclosing);
-			assertName("func", enclosing);			
+			assertName("func", enclosing);
 
 			enclosing= enclosed[2].getEnclosingDefinition();
 			assertNotNull(enclosing);
-			assertName("func", enclosing);			
+			assertName("func", enclosing);
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -243,14 +243,14 @@ public class IndexNamesTests extends BaseTestCase {
 	//	class Y : public X {
 	//	public:
 	//		virtual void vm() {
-	//		}	
+	//		}
 	//		void test();
 	//	};
 	//	void Y::test() {
 	//		X* x= this;
 	//		X& xr= *this;
 	//		X xc= *this;
-	//		
+	//
 	//		vm();		// polymorphic
 	//		X::vm(); 	// call to X::vm()
 	//		x->vm(); 	// polymorphic
@@ -267,7 +267,7 @@ public class IndexNamesTests extends BaseTestCase {
 		waitUntilFileIsIndexed(file, 4000);
 
 		boolean[] couldbepolymorphic= {true, false, true, false, true, false, false, false};
-		String[] container= 		  {"Y",  "X",   "X",  "X",   "X",  "X",   "X",   "X"  };  
+		String[] container= 		  {"Y",  "X",   "X",  "X",   "X",  "X",   "X",   "X"  };
 
 		fIndex.acquireReadLock();
 		try {
@@ -288,9 +288,9 @@ public class IndexNamesTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
+
 	//	class A {
-	//	    virtual void foo(){} 
+	//	    virtual void foo(){}
 	//	    template<typename C> void SetCallback(C callback){}
 	//	    void InitCallback() {
 	//	        SetCallback(&A::foo); // Can be A::foo or B::foo
@@ -338,11 +338,11 @@ public class IndexNamesTests extends BaseTestCase {
 	//  void fcpcp(int const *const*);
 	//
 	//	void test() {
-	//      _i; 	
-	//		wi= ri, _i, _i; 
-	//      rwi %= ri;     
-	//      ri ? _i : _i;   
-	//      (ri ? wi : wi)= ri; 
+	//      _i;
+	//		wi= ri, _i, _i;
+	//      rwi %= ri;
+	//      ri ? _i : _i;
+	//      (ri ? wi : wi)= ri;
 	//      if (ri) _i;
 	//      for(wi=1; ri>ri; rwi++) _i;
 	//		do {_i;} while (ri);
@@ -373,7 +373,7 @@ public class IndexNamesTests extends BaseTestCase {
 				final char c0= name.length() > 0 ? name.charAt(0) : 0;
 				if ((c0 == '_' || c0 == 'r' || c0 == 'w') && indexName.isReference()) {
 					boolean isRead= name.charAt(0) == 'r';
-					boolean isWrite= c0 == 'w' || (isRead && name.length() > 1 && name.charAt(1) == 'w'); 
+					boolean isWrite= c0 == 'w' || (isRead && name.length() > 1 && name.charAt(1) == 'w');
 					String msg= name + "(j=" + j + "):";
 					assertEquals("Read access for " + msg, isRead, indexName.isReadAccess());
 					assertEquals("Write access for " + msg, isWrite, indexName.isWriteAccess());
@@ -433,7 +433,7 @@ public class IndexNamesTests extends BaseTestCase {
 		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 48);
 	}
 
-	
+
 	//	int _i, ri, wi, rwi;
 	//	void f(int&, int);
 	//	void g(int, int&);
@@ -449,7 +449,7 @@ public class IndexNamesTests extends BaseTestCase {
 
 		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 4);
 	}
-	
+
 	//	struct A {
 	//		A(int p) {}
 	//	};

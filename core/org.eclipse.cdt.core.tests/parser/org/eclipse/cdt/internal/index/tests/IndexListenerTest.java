@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.index.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexChangeEvent;
@@ -28,6 +26,8 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IFile;
+
+import junit.framework.Test;
 
 public class IndexListenerTest extends BaseTestCase {
 	private ICProject fProject1;
@@ -57,7 +57,7 @@ public class IndexListenerTest extends BaseTestCase {
 		IIndexManager im= CCorePlugin.getIndexManager();
 		waitForIndexer(fProject1);
 		waitForIndexer(fProject2);
-		
+
 		IIndexerStateListener listener = new IIndexerStateListener() {
 			@Override
 			public void indexChanged(IIndexerStateEvent event) {
@@ -74,7 +74,7 @@ public class IndexListenerTest extends BaseTestCase {
 				}
 			}
 		};
-		
+
 		im.addIndexerStateListener(listener);
 		try {
 			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
@@ -94,12 +94,12 @@ public class IndexListenerTest extends BaseTestCase {
 			im.removeIndexerStateListener(listener);
 		}
 	}
-		
+
 	public void testChangeListener() throws Exception {
 		final Object mutex= new Object();
 		final List projects= new ArrayList();
 		IIndexManager im= CCorePlugin.getIndexManager();
-		
+
 		waitForIndexer(fProject1);
 		waitForIndexer(fProject2);
 		IIndexChangeListener listener = new IIndexChangeListener() {
@@ -113,11 +113,11 @@ public class IndexListenerTest extends BaseTestCase {
 				}
 			}
 		};
-				
+
 		im.addIndexChangeListener(listener);
 		try {
 			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
-			
+
 			synchronized (mutex) {
 				mutex.wait(8000);
 			}

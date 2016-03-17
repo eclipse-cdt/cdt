@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -48,11 +46,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
+import junit.framework.Test;
+
 public class IndexLocationTest extends BaseTestCase {
 	private static final boolean isWin= Platform.getOS().equals(Platform.OS_WIN32);
 	protected List projects= new ArrayList();
 	protected ICProject cproject;
-	
+
 	public static Test suite() {
 		return suite(IndexLocationTest.class);
 	}
@@ -70,7 +70,7 @@ public class IndexLocationTest extends BaseTestCase {
 			ICProject ptd= (ICProject) i.next();
 			if (ptd != null) {
 				ptd.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
-			}			
+			}
 		}
 		super.tearDown();
 	}
@@ -92,12 +92,12 @@ public class IndexLocationTest extends BaseTestCase {
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			CharSequence[] testData = TestSourceReader.getContentsForTest(b, "parser", getClass(), getName(), 3);
 
-			IFile file1 = TestSourceReader.createFile(cproject.getProject(), "header.h", testData[0].toString());		
+			IFile file1 = TestSourceReader.createFile(cproject.getProject(), "header.h", testData[0].toString());
 			createExternalFile(externalHeader, testData[1].toString());
 			String content = testData[2].toString().replaceAll("ABS_EXTERNAL", externalHeader.getAbsolutePath().replaceAll("\\\\","\\\\\\\\"));
 			IFile file3 = TestSourceReader.createFile(cproject.getProject(), "source.cpp", content);
 
-			CCorePlugin.getIndexManager().reindex(cproject);		
+			CCorePlugin.getIndexManager().reindex(cproject);
 			waitForIndexer(cproject);
 
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
@@ -125,7 +125,7 @@ public class IndexLocationTest extends BaseTestCase {
 				assertEquals(
 						ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(cproject.getProject().getName()+"/header.h")).getLocationURI(),
 						nms1[0].getFile().getLocation().getURI()
-				);		
+				);
 				assertEquals(
 						externalHeader.toURI(),
 						nms2[0].getFile().getLocation().getURI()
@@ -155,15 +155,15 @@ public class IndexLocationTest extends BaseTestCase {
 			externalHeader.getParentFile().delete();
 		}
 	}
-	
+
 	public void testLinkedFilesIndexedAsWithinProject() throws Exception {
-		File location = new File(CProjectHelper.freshDir(), "external2.h"); 
+		File location = new File(CProjectHelper.freshDir(), "external2.h");
 		createExternalFile(location, "struct External {};\n");
 		IFolder content= cproject.getProject().getFolder("content");
 		content.createLink(new Path(location.getParentFile().getAbsolutePath()), IResource.NONE, npm());
-		
+
 		CCorePlugin.getIndexManager().reindex(cproject);
-		
+
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 		waitUntilFileIsIndexed(index, content.getFile("external2.h"));
 		index.acquireReadLock();
@@ -178,20 +178,20 @@ public class IndexLocationTest extends BaseTestCase {
 			index.releaseReadLock();
 		}
 	}
-	
+
 	public void testSameFileLinkedToOnceInTwoProjects_186214() throws Exception {
-		File location = new File(CProjectHelper.freshDir(),"external2.h"); 
+		File location = new File(CProjectHelper.freshDir(),"external2.h");
 		createExternalFile(location, "struct External {};\n");
 		assertTrue(location.isFile());
-		
+
 		IFolder content= cproject.getProject().getFolder("content");
 		content.createLink(new Path(location.getParentFile().getAbsolutePath()), IResource.NONE, null);
 		final IFile file = content.getFile("external2.h");
 		assertTrue(file.exists());
-		
+
 		ICProject cproject2= CProjectHelper.createCProject("LocationTests2"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		deleteOnTearDown(cproject2);
-		
+
 		IFolder content2= cproject2.getProject().getFolder("content");
 		content2.createLink(new Path(location.getParentFile().getAbsolutePath()), IResource.NONE, null);
 		assertTrue(content2.getFile("external2.h").exists());
@@ -212,11 +212,11 @@ public class IndexLocationTest extends BaseTestCase {
 			index.releaseReadLock();
 		}
 	}
-	
+
 	public void testResourceContainerRelativeLocationConverter() throws Exception {
 		ICProject emptyCProject= CProjectHelper.createCProject("Empty", "bin", IPDOMManager.ID_NO_INDEXER);
 		deleteOnTearDown(emptyCProject);
-		
+
 		String[] paths = new String[] {"this.cpp", "inc/header.h", "a b c/d/e f/g.h", "a \\b /c.d"};
 		for (String path : paths) {
 			IFile file= cproject.getProject().getFile(path);
@@ -233,7 +233,7 @@ public class IndexLocationTest extends BaseTestCase {
 			);
 		}
 	}
-	
+
 	public void testURLC_RCRLC_Interaction1() throws Exception {
 		String[] winPaths = new String[] {
 				"c:/foo/bar/baz.cpp",
@@ -272,7 +272,7 @@ public class IndexLocationTest extends BaseTestCase {
 			assertEquals(root.getFile(new Path(expectedFullPaths[i])).getLocationURI(), ifl2.getURI());
 		}
 	}
-	
+
 	public void testURLC_RCRLC_Interaction2() throws Exception {
 		String[] winPaths = new String[] {
 				"a b c/d/e f/g.h",
@@ -308,7 +308,7 @@ public class IndexLocationTest extends BaseTestCase {
 			assertEquals(URIUtil.toURI(basePath+paths[i]).normalize(), ifl2.getURI());
 		}
 	}
-	
+
 	public void testURLC_RCRLC_Interaction3() throws Exception {
 		IFolder linkedFolder= cproject.getProject().getFolder("linkedFolder");
 		String[] winPaths = new String[] {
@@ -345,13 +345,13 @@ public class IndexLocationTest extends BaseTestCase {
 			assertEquals(URIUtil.toURI(basePath+paths[i]).normalize(), ifl2.getURI());
 		}
 	}
-	
+
 	private void deleteOnTearDown(ICProject cproject) {
 		if (cproject != null) {
 			projects.add(cproject);
 		}
 	}
-	
+
 	private void createExternalFile(File dest, String content) throws IOException {
 		FileOutputStream fos = new FileOutputStream(dest);
 		fos.write(content.getBytes());

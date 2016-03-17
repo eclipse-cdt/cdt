@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.Test;
@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
 public class IndexTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new IndexTests();
-		
+
 		suite.addTest(IndexCompositeTests.suite());
 		suite.addTest(IndexListenerTest.suite());
 		suite.addTest(IndexLocationTest.suite());
@@ -34,7 +34,7 @@ public class IndexTests extends TestSuite {
 		suite.addTest(IndexProviderManagerTest.suite());
 		suite.addTest(IndexMultiVariantHeaderTest.suite());
 		suite.addTest(IndexMultiFileTest.suite());
-		
+
 		IndexCPPBindingResolutionBugs.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);
 		IndexGPPBindingResolutionTest.addTests(suite);
@@ -42,7 +42,7 @@ public class IndexTests extends TestSuite {
 		IndexCBindingResolutionBugs.addTests(suite);
 		IndexCBindingResolutionTest.addTests(suite);
 		IndexCPPVariableTemplateResolutionTest.addTests(suite);
-		
+
 		return suite;
-	}	
+	}
 }

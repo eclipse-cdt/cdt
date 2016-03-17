@@ -7,13 +7,11 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import java.util.LinkedList;
 import java.util.regex.Pattern;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
@@ -36,6 +34,8 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 
+import junit.framework.TestSuite;
+
 public class IndexSearchTest extends IndexTestBase {
 	private static final IndexFilter INDEX_FILTER = IndexFilter.ALL_DECLARED;
 
@@ -47,7 +47,7 @@ public class IndexSearchTest extends IndexTestBase {
 
 	private ICProject fProject;
 	private IIndex fIndex;
-	
+
 	public IndexSearchTest(String name) {
 		super(name);
 	}
@@ -61,13 +61,13 @@ public class IndexSearchTest extends IndexTestBase {
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
 		fIndex.acquireReadLock();
 	}
-	
+
 	@Override
 	public void tearDown() throws Exception {
 		fIndex.releaseReadLock();
 		super.tearDown();
 	}
-		
+
 	public void deleteProject() {
 		if (fProject != null) {
 			CProjectHelper.delete(fProject);
@@ -105,9 +105,9 @@ public class IndexSearchTest extends IndexTestBase {
 		Pattern pcl= Pattern.compile(scl);
 		String sns = "ns160913";
 		Pattern pns= Pattern.compile(sns);
-		
+
 		IIndexBinding[] bindings;
-		
+
 		bindings= fIndex.findBindings(pcl, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
@@ -147,13 +147,13 @@ public class IndexSearchTest extends IndexTestBase {
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 	}
-	
+
 	public void testFindNamespaceInNamespace() throws CoreException {
 		Pattern pcl= Pattern.compile("C160913");
 		Pattern pns= Pattern.compile("ns160913");
 		char[] scl= pcl.pattern().toCharArray();
 		char[] sns= pns.pattern().toCharArray();
-		
+
 		IIndexBinding[] bindings;
 
 		bindings= fIndex.findBindings(pns, true, INDEX_FILTER, npm());
@@ -184,7 +184,7 @@ public class IndexSearchTest extends IndexTestBase {
 
 	public void testClassInUnnamedNamespace() throws CoreException {
 		Pattern pcl= Pattern.compile("CInUnnamed160913");
-		
+
 		IIndexBinding[] bindings;
 
 		// The binding in the unnamed namespace is not visible in global scope.
@@ -204,7 +204,7 @@ public class IndexSearchTest extends IndexTestBase {
 		char[] sEnumerator= pEnumerator.pattern().toCharArray();
 
 		IIndexBinding[] bindings;
-		
+
 		// Enumerators are found in global scope.
 		bindings= fIndex.findBindings(pEnumerator, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
@@ -222,7 +222,7 @@ public class IndexSearchTest extends IndexTestBase {
 
 		bindings= fIndex.findBindings(new Pattern[]{pEnumeration, pEnumerator}, false, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
-		
+
 		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
 		checkIsEnumeration(bindings[0]);
@@ -252,7 +252,7 @@ public class IndexSearchTest extends IndexTestBase {
 		assertEquals(2, bindings.length);
 		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, npm());
 		assertEquals(1, bindings.length);
-		
+
 		Pattern macro1= Pattern.compile("Foo", Pattern.CASE_INSENSITIVE);
 		Pattern macro2= Pattern.compile("Foo");
 		bindings= fIndex.findMacroContainers(macro1, INDEX_FILTER, npm());
@@ -268,13 +268,13 @@ public class IndexSearchTest extends IndexTestBase {
 		assertEquals(1, bindings.length);
 	}
 
-	
+
 	public void testFindStatic_161216() throws CoreException {
 		Pattern pFunc= Pattern.compile("staticFunc20061017");
 		Pattern pVar= Pattern.compile("staticVar20061017");
-		
+
 		IIndexBinding[] bindings;
-		
+
 		bindings= fIndex.findBindings(pFunc, false, INDEX_FILTER, npm());
 		assertEquals(2, bindings.length);
 		checkIsFunction(bindings[0]);
@@ -285,7 +285,7 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsVariable(bindings[0]);
 		checkIsVariable(bindings[1]);
 	}
-	
+
 	public void testSanityOfMayHaveChildren() throws CoreException {
 		PDOM pdom= (PDOM) ((CIndex) fIndex).getFragments()[0];
 		pdom.accept(new IPDOMVisitor() {

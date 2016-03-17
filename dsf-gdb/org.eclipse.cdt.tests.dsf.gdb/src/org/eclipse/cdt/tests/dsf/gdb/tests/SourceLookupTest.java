@@ -47,6 +47,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -54,12 +55,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIMixedInstruction;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6.SourceLookupTest_6_6;
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5.SourceLookupTest_7_5;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
@@ -83,15 +82,16 @@ import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * Tests that interaction with source lookups works as expected.
- * 
+ *
  * All of these tests use one of SourceLookup*.exe that was built from a file
  * that was "moved" since build time. At build time the SourceLookup.cc file was
  * located in the {@link #BUILD_PATH} directory, but it is now located in the
  * {@link BaseTestCase#SOURCE_PATH} directory.
- * 
+ *
  * The wild card in SourceLookup*.exe can be one of the following to cover the
  * different effective types of source lookups that need to be done depending on
  * how the program was compiled. Each of these options produces different debug
@@ -110,16 +110,16 @@ import org.junit.runner.RunWith;
  * </ul>
  * In addition, there can also be a <b>Dwarf2</b> in the name. That means it is
  * designed to run with GDB <= 7.4, see comment in Makefile for OLDDWARFFLAGS.
- * 
+ *
  * The result of the variations on compilation arguments means that some of the
  * tests are parameterised.
- * 
+ *
  * Some of the CDT source lookup features require newer versions of GDB than
  * others, therefore the relevant tests are ignored as needed in the subclasses
  * of {@link SourceLookupTest}.
  */
-@RunWith(BackgroundRunner.class)
-public class SourceLookupTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class SourceLookupTest extends BaseParametrizedTestCase {
 	protected static final String BUILD_PATH = "data/launch/build/";
 	protected static final String BUILD2_PATH = "data/launch/build2/";
 	protected static final String SOURCE_NAME = "SourceLookup.cc"; //$NON-NLS-1$
@@ -145,11 +145,22 @@ public class SourceLookupTest extends BaseTestCase {
 	 * {@link SourceLookupTest_7_5#setExeNames()} which restores them.
 	 */
 	protected void setExeNames() {
-		EXEC_AC_NAME = "SourceLookupAC.exe"; //$NON-NLS-1$
-		EXEC_AN_NAME = "SourceLookupAN.exe"; //$NON-NLS-1$
-		EXEC_RC_NAME = "SourceLookupRC.exe"; //$NON-NLS-1$
-		EXEC_RN_NAME = "SourceLookupRN.exe"; //$NON-NLS-1$
-		EXEC_NAME = "SourceLookup.exe"; //$NON-NLS-1$
+		String gdbVersion = getGdbVersion();
+		// has to be strictly lower
+		boolean isLower = LaunchUtils.compareVersions("7.4", gdbVersion) > 0;
+		if (isLower) {
+			EXEC_AC_NAME = "SourceLookupDwarf2AC.exe"; //$NON-NLS-1$
+			EXEC_AN_NAME = "SourceLookupDwarf2AN.exe"; //$NON-NLS-1$
+			EXEC_RC_NAME = "SourceLookupDwarf2RC.exe"; //$NON-NLS-1$
+			EXEC_RN_NAME = "SourceLookupDwarf2RN.exe"; //$NON-NLS-1$
+			EXEC_NAME = "SourceLookupDwarf2.exe"; //$NON-NLS-1$
+		} else {
+			EXEC_AC_NAME = "SourceLookupAC.exe"; //$NON-NLS-1$
+			EXEC_AN_NAME = "SourceLookupAN.exe"; //$NON-NLS-1$
+			EXEC_RC_NAME = "SourceLookupRC.exe"; //$NON-NLS-1$
+			EXEC_RN_NAME = "SourceLookupRN.exe"; //$NON-NLS-1$
+			EXEC_NAME = "SourceLookup.exe"; //$NON-NLS-1$
+		}
 	}
 
 	protected static final String SOURCE_ABSPATH = new File(SOURCE_PATH).getAbsolutePath();
@@ -403,10 +414,10 @@ public class SourceLookupTest extends BaseTestCase {
 
 	/**
 	 * Mapping test common.
-	 * 
+	 *
 	 * If backend is used for mapping then every layer should be able to find
 	 * source.
-	 * 
+	 *
 	 * If backned is not used for mapping then only once the source lookup
 	 * director gets involved should the source be found as GDB will not know
 	 * how to find it on its own.
@@ -456,6 +467,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingAC() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_AC_NAME, false);
 	}
 
@@ -474,6 +486,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingAN() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_AN_NAME, false);
 	}
 
@@ -493,6 +506,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingRC() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_RC_NAME, false);
 	}
 
@@ -511,6 +525,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingRN() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_RN_NAME, false);
 	}
 
@@ -530,6 +545,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsAC() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMappingBreakpoints(EXEC_AC_NAME, false);
 	}
 
@@ -568,6 +584,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsRC() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMappingBreakpoints(EXEC_RC_NAME, false);
 	}
 
@@ -683,7 +700,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Test that if the user changes the source mappings in the middle of a
 	 * debug session (e.g. with CSourceNotFoundEditor) that the lookups are
 	 * updated.
-	 * 
+	 *
 	 * This version is for a new source mapping where there wasn't one
 	 * previously.
 	 */
@@ -724,12 +741,13 @@ public class SourceLookupTest extends BaseTestCase {
 	 * Test with default source locators and a {@link DirectorySourceContainer}
 	 * for SOURCE_ABSPATH that GDB does not locate the file, but the source
 	 * lookup director and the source lookup service do find the file.
-	 * 
+	 *
 	 * This test does not work with modern GDBs because the path passed into
 	 * DirectorySourceContainer is an absolute path. See versioned test suites.
 	 */
 	@Test
 	public void directorySource() throws Throwable {
+		assumeGdbVersionLowerThen("7.6");
 		DirectorySourceContainer container = new DirectorySourceContainer(new Path(SOURCE_ABSPATH), false);
 		setSourceContainer(container);
 		doLaunch(EXEC_PATH + EXEC_RC_NAME);
@@ -739,7 +757,7 @@ public class SourceLookupTest extends BaseTestCase {
 	/**
 	 * Create an IBinary with the minimum necessary for use in
 	 * org.eclipse.cdt.debug.internal.core.srcfinder.CSourceFinder.
-	 * 
+	 *
 	 * A mock is used to avoid having to set up the significant of glue
 	 * necessary to create a real IBinary. All that CSourceFinder needs is the
 	 * path to the file.
@@ -808,7 +826,7 @@ public class SourceLookupTest extends BaseTestCase {
 	/**
 	 * Test the CSourceFinder's use of source lookup when there is an active
 	 * launch.
-	 * 
+	 *
 	 * In this case, the DSF specific director created as part of the launch
 	 * gets used.
 	 */
@@ -831,7 +849,7 @@ public class SourceLookupTest extends BaseTestCase {
 	/**
 	 * Test the CSourceFinder's use of source lookup when there is a terminated
 	 * launch.
-	 * 
+	 *
 	 * In this case, the DSF specific director created as part of the launch
 	 * gets used.
 	 */
@@ -856,7 +874,7 @@ public class SourceLookupTest extends BaseTestCase {
 	/**
 	 * Test the CSourceFinder's use of source lookup when there is a not active
 	 * launch, but a launch configuration that can be used.
-	 * 
+	 *
 	 * In this case, the c general director created as part of the launch gets
 	 * used.
 	 */

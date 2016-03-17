@@ -11,6 +11,11 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.GDBMultiNonStopRunControlTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIExpressionsNonStopTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIRunControlNonStopTargetAvailableTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.OperationsWhileTargetIsRunningNonStopTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.StepIntoSelectionNonStopTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -21,18 +26,41 @@ import org.junit.runners.Suite;
  * If you running this from IDE use java var to control version like this -Dcdt.tests.dsf.gdb.versions=gdb.7.7,gdbserver.7.7
  * If you don't it will run default gdb (without version postfix) for new tests. It will run 7.11 for all non-converted tests.
  *
- * If you adding a new test class do not use gdb version naming. 
+ * If you adding a new test class do not use gdb version naming.
  * Use flat version extending BaseParametrizedTestCase see {@link MIBreakpointsTest}
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	// new style tests
-	MIBreakpointsTest.class, 
-	MICatchpointsTest.class,
-	MIRegistersTest.class,
-	/* Add your test class here */
+		// new style tests
+		MIBreakpointsTest.class,
+		MICatchpointsTest.class,
+		MIRegistersTest.class,
+		MIExpressionsTest.class,
+		LaunchConfigurationAndRestartTest.class,
+		SourceLookupTest.class,
+		StepIntoSelectionTest.class,
+		OperationsWhileTargetIsRunningTest.class,
+		MIRunControlTest.class,
+		MIRunControlTargetAvailableTest.class,
+		GDBPatternMatchingExpressionsTest.class,
+		GDBMultiNonStopRunControlTest.class,
+		GDBConsoleBreakpointsTest.class,
+		MIRunControlNonStopTargetAvailableTest.class,
+		MIExpressionsNonStopTest.class,
+		OperationsWhileTargetIsRunningNonStopTest.class,
+		StepIntoSelectionNonStopTest.class,
+		GDBRemoteTracepointsTest.class,
+		TraceFileTest.class,
+		GDBConsoleSynchronizingTest.class,
+		MIMemoryTest.class,
+		MIDisassemblyTest.class,
+		GDBProcessesTest.class,
+		PostMortemCoreTest.class,
+		CommandTimeoutTest.class,
+		/* Add your test class here */
 })
 public class SuiteGdb {
+
 	@BeforeClass
 	public static void before() {
 		// If we running this suite we have to clean up global options since

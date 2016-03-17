@@ -30,6 +30,10 @@ import org.junit.runners.Suite;
 	MIBreakpointsTest.class, 
 	MICatchpointsTest.class,
 	MIRegistersTest.class,
+	MIExpressionsTest.class,
+	LaunchConfigurationAndRestartTest.class,
+	SourceLookupTest.class,
+	StepIntoSelectionTest.class,
 	/* Add your test class here */
 })
 public class SuiteGdb {

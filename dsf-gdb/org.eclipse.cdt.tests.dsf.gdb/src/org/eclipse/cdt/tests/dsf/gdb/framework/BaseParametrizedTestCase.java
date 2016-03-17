@@ -77,10 +77,19 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		BaseTestCase.removeGlobalLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE);
 		globalVersion = null;
 	}
+	
+	public void assumeGdbVersionNot(String checkVersion) {
+		String gdbVersion = getGdbVersion();
+		// cannot be that version
+		boolean match = LaunchUtils.compareVersions(checkVersion, gdbVersion) == 0;
+		Assume.assumeTrue(
+				"Skipped because gdb " + gdbVersion + " does not support this feature",
+				!match);
+	}
 
 	public void assumeGdbVersionLowerThen(String checkVersion) {
 		String gdbVersion = getGdbVersion();
-		// otherwise it has to be strictly lower
+		// has to be strictly lower
 		boolean isLower = LaunchUtils.compareVersions(checkVersion, gdbVersion) > 0;
 		Assume.assumeTrue(
 				"Skipped because gdb " + gdbVersion + " does not support this feature: removed since " + checkVersion,

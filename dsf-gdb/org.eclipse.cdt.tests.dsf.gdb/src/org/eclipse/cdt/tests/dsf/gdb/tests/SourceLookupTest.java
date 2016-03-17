@@ -45,14 +45,13 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
-import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIMixedInstruction;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
+import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6.SourceLookupTest_6_6;
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5.SourceLookupTest_7_5;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
@@ -76,6 +75,7 @@ import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * Tests that interaction with source lookups works as expected.
@@ -111,8 +111,8 @@ import org.junit.runner.RunWith;
  * others, therefore the relevant tests are ignored as needed in the subclasses
  * of {@link SourceLookupTest}.
  */
-@RunWith(BackgroundRunner.class)
-public class SourceLookupTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class SourceLookupTest extends BaseParametrizedTestCase {
 	protected static final String BUILD_PATH = "data/launch/build/";
 	protected static final String BUILD2_PATH = "data/launch/build2/";
 	protected static final String SOURCE_NAME = "SourceLookup.cc"; //$NON-NLS-1$
@@ -138,11 +138,22 @@ public class SourceLookupTest extends BaseTestCase {
 	 * {@link SourceLookupTest_7_5#setExeNames()} which restores them.
 	 */
 	protected void setExeNames() {
-		EXEC_AC_NAME = "SourceLookupAC.exe"; //$NON-NLS-1$
-		EXEC_AN_NAME = "SourceLookupAN.exe"; //$NON-NLS-1$
-		EXEC_RC_NAME = "SourceLookupRC.exe"; //$NON-NLS-1$
-		EXEC_RN_NAME = "SourceLookupRN.exe"; //$NON-NLS-1$
-		EXEC_NAME = "SourceLookup.exe"; //$NON-NLS-1$
+		String gdbVersion = getGdbVersion();
+		// has to be strictly lower
+		boolean isLower = LaunchUtils.compareVersions("7.4", gdbVersion) > 0;
+		if (isLower) {
+			EXEC_AC_NAME = "SourceLookupDwarf2AC.exe"; //$NON-NLS-1$
+			EXEC_AN_NAME = "SourceLookupDwarf2AN.exe"; //$NON-NLS-1$
+			EXEC_RC_NAME = "SourceLookupDwarf2RC.exe"; //$NON-NLS-1$
+			EXEC_RN_NAME = "SourceLookupDwarf2RN.exe"; //$NON-NLS-1$
+			EXEC_NAME = "SourceLookupDwarf2.exe"; //$NON-NLS-1$
+		} else {
+			EXEC_AC_NAME = "SourceLookupAC.exe"; //$NON-NLS-1$
+			EXEC_AN_NAME = "SourceLookupAN.exe"; //$NON-NLS-1$
+			EXEC_RC_NAME = "SourceLookupRC.exe"; //$NON-NLS-1$
+			EXEC_RN_NAME = "SourceLookupRN.exe"; //$NON-NLS-1$
+			EXEC_NAME = "SourceLookup.exe"; //$NON-NLS-1$
+		}
 	}
 
 	protected static final String SOURCE_ABSPATH = new File(SOURCE_PATH).getAbsolutePath();
@@ -414,6 +425,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingAC() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_AC_NAME);
 	}
 
@@ -423,6 +435,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingAN() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_AN_NAME);
 	}
 
@@ -432,6 +445,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingRC() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_RC_NAME);
 	}
 
@@ -441,6 +455,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingRN() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_RN_NAME);
 	}
 
@@ -450,6 +465,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsAC() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMappingBreakpoints(EXEC_AC_NAME);
 	}
 
@@ -469,6 +485,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsRC() throws Throwable {
+		assumeGdbVersionAtLeast("7.6");
 		sourceMappingBreakpoints(EXEC_RC_NAME);
 	}
 
@@ -553,6 +570,7 @@ public class SourceLookupTest extends BaseTestCase {
 	 */
 	@Test
 	public void directorySource() throws Throwable {
+		assumeGdbVersionLowerThen("7.6");
 		DirectorySourceContainer container = new DirectorySourceContainer(new Path(SOURCE_ABSPATH), false);
 		setSourceContainer(container);
 		doLaunch(EXEC_PATH + EXEC_RC_NAME);

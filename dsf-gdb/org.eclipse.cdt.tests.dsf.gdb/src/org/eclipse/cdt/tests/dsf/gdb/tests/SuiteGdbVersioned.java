@@ -46,13 +46,11 @@ import org.junit.runners.Suite;
 	MIRunControlTest_7_11.class,
 	MIRunControlTargetAvailableTest_7_11.class,
 	MIRunControlNonStopTargetAvailableTest_7_11.class,
-	MIExpressionsTest_7_11.class,
 	MIExpressionsNonStopTest_7_11.class,
 	GDBPatternMatchingExpressionsTest_7_11.class,
 	MIMemoryTest_7_11.class,
 	MIDisassemblyTest_7_11.class,
 	GDBProcessesTest_7_11.class,
-	LaunchConfigurationAndRestartTest_7_11.class,
 	OperationsWhileTargetIsRunningTest_7_11.class,
 	OperationsWhileTargetIsRunningNonStopTest_7_11.class,
 	PostMortemCoreTest_7_11.class,
@@ -60,9 +58,7 @@ import org.junit.runners.Suite;
 	GDBMultiNonStopRunControlTest_7_11.class,
 	GDBConsoleBreakpointsTest_7_11.class,
 	GDBConsoleSynchronizingTest_7_11.class,
-	StepIntoSelectionTest_7_11.class,
 	StepIntoSelectionNonStopTest_7_11.class,
-	SourceLookupTest_7_11.class,
 	/* DO NOT ADD MORE TESTS HERE: User SuiteGdb for new style tests */
 })
 public class SuiteGdbVersioned {

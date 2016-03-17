@@ -4390,6 +4390,66 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template<typename... Ts>
+	//	struct E {};
+	//
+	//	template<int I, typename T>
+	//	struct D;
+	//
+	//	template<int I, typename T, typename... Us>
+	//	struct D<I, E<T, Us...>> : D<I - 1, E<Us...>> {};
+	//
+	//	template<typename T, typename... Us>
+	//	struct D<0, E<T, Us...>> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <typename... Ts>
+	//	class A;
+	//
+	//	template <typename T>
+	//	struct F {
+	//	  using type = T;
+	//	};
+	//
+	//	template <int N, typename T>
+	//	struct C;
+	//
+	//	template <int N, typename... Ts>
+	//	struct C<N, A<Ts...>> {
+	//	  using type = typename D<N, E<F<Ts>...>>::type::type;
+	//	};
+	//
+	//	template <int I, typename T>
+	//	struct B : public B<I - 1, T> {
+	//	  using U = typename C<I, T>::type;
+	//	  using Base = B<I - 1, T>;
+	//	  using Base::Base;
+	//
+	//	  B(const U& value);
+	//	};
+	//
+	//	template <typename... Ts>
+	//	struct B<-1, A<Ts...>> {};
+	//
+	//	template <typename... Ts>
+	//	struct A : public B<sizeof...(Ts) - 1, A<Ts...>> {
+	//	  using B = B<sizeof...(Ts) - 1, A>;
+	//	  using B::B;
+	//	};
+	//
+	//	struct X {};
+	//	struct Y {};
+	//
+	//	void waldo(const A<X, Y>& p);
+	//
+	//	void test() {
+	//	  waldo(X());
+	//	  waldo(Y());
+	//	}
+	public void testInheritedConstructor_489710() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T>
 	//	struct A {

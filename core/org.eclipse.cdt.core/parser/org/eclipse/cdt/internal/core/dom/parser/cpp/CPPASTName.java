@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -34,7 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionContext {
 	public static final IASTName NOT_INITIALIZED= new CPPASTName(null);
-	
+
 	private char[] name;
 
     public CPPASTName(char[] name) {
@@ -55,7 +56,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 		CPPASTName copy = new CPPASTName(name == null ? null : name.clone());
 		return copy(copy, style);
 	}
-    
+
 	@Override
 	protected IBinding createIntermediateBinding() {
 		return CPPVisitor.createBinding(this);
@@ -94,18 +95,16 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 			return filterByElaboratedTypeSpecifier(kind, bindings);
 		} else if (parent instanceof IASTDeclarator) {
 			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
-			if (!isPrefix) {
-				// The lookup does not find the binding, that is defined by this name
-				if (bindings.length == 0) {
-					bindings= new IBinding[] {n.resolveBinding()};
-				}
-			} else {
+			if (isPrefix) {
 				for (int i = 0; i < bindings.length; i++) {
-					if (bindings[i] instanceof ICPPNamespace || bindings[i] instanceof ICPPClassType) {
-					} else {
+					IBinding binding = bindings[i];
+					if (!(binding instanceof ICPPNamespace) && !(binding instanceof ICPPClassType)) {
 						bindings[i] = null;
 					}
 				}
+			} else if (bindings.length == 0) {
+				// The lookup did not find the binding that is defined by this name.
+				bindings= new IBinding[] { n.resolveBinding() };
 			}
 			return ArrayUtil.removeNulls(IBinding.class, bindings);
 		}
@@ -114,27 +113,11 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 
     private IBinding[] filterByElaboratedTypeSpecifier(int kind, IBinding[] bindings) {
 		for (int i = 0; i < bindings.length; i++) {
-			if (bindings[i] instanceof ICPPNamespace) {
-			} else if (bindings[i] instanceof ICPPClassType) {
-				ICPPClassType type = (ICPPClassType) bindings[i];
-				switch (type.getKey()) {
-				case ICompositeType.k_struct:
-					if (kind != ICompositeType.k_struct) {
-						bindings[i] = null;
-					}
-					break;
-				case ICompositeType.k_union:
-					if (kind != ICompositeType.k_union) {
-						bindings[i] = null;
-					}
-					break;
-				case ICPPClassType.k_class:
-					if (kind != ICPPASTElaboratedTypeSpecifier.k_class) {
-						bindings[i] = null;
-					}
-					break;
-				}
-			} else {
+			IBinding binding = bindings[i];
+			if (binding instanceof ICPPClassType) {
+				if (((ICPPClassType) binding).getKey() != kind)
+					bindings[i] = null;
+			} else if (!(binding instanceof ICPPNamespace)) {
 				bindings[i]= null;
 			}
 		}
@@ -155,7 +138,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 	public final char[] getLookupKey() {
 		return name;
 	}
-	
+
 	public void setName(char[] name) {
         assertNotFrozen();
         this.name = name;
@@ -186,7 +169,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
         }
         return true;
     }
-    
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);

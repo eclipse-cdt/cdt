@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Simon Marchi (Ericsson) - Move some tests from AsyncCompletionWaitor to Query
@@ -52,8 +52,7 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -64,9 +63,10 @@ import org.eclipse.core.runtime.Status;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(BackgroundRunner.class)
-public class MIExpressionsTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class MIExpressionsTest extends BaseParametrizedTestCase {
 	private static final String EXEC_NAME = "ExpressionTestApp.exe";
 
     private DsfSession fSession;
@@ -78,14 +78,14 @@ public class MIExpressionsTest extends BaseTestCase {
     private int fExprChangedEventCount = 0;
 
     private IExpressionDMContext fExprChangedCtx = null;
-    
+
     private IExpressionDMContext globalExpressionCtx1 = null;
     private IExpressionDMContext globalExpressionCtx2 = null;
 
     @Override
     protected void setLaunchAttributes() {
     	super.setLaunchAttributes();
-    	    	
+
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
 
@@ -98,7 +98,7 @@ public class MIExpressionsTest extends BaseTestCase {
             @Override
 			public void run() {
            	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-            	
+
             	fExpService = fServicesTracker.getService(IExpressions.class);
             	fSession.addServiceEventListener(MIExpressionsTest.this, null);
             	clearExprChangedData();
@@ -107,20 +107,16 @@ public class MIExpressionsTest extends BaseTestCase {
         fSession.getExecutor().submit(runnable).get();
     }
 
-    @Override
-    public void doAfterTest() throws Exception {
-    	super.doAfterTest();
-    	
-        Runnable runnable = new Runnable() {
-            @Override
-			public void run() {
-            	fSession.removeServiceEventListener(MIExpressionsTest.this);
-            }
-        };
-        fSession.getExecutor().submit(runnable).get();
-        fExpService = null;
-        fServicesTracker.dispose();
-    }
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+		if (fSession != null) {
+			fSession.getExecutor().submit(()->fSession.removeServiceEventListener(MIExpressionsTest.this)).get();
+		}
+		fExpService = null;
+		if (fServicesTracker != null)
+			fServicesTracker.dispose();
+	}
 
     // Handles ExpressionChangedEvent
     @DsfServiceEventHandler
@@ -190,7 +186,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
         tests.clear();
         tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200", "200" });
-        executeExpressionSubTests(tests, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));        
+        executeExpressionSubTests(tests, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
 
     }
 
@@ -314,18 +310,18 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testChildren() throws Throwable {
-
+      	assumeGdbVersionAtLeast("6.7");
     	// Get the children of some variables
         MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testChildren");
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
         IExpressionDMContext exprDMC = SyncUtil.createExpression(frameDmc, "f");
         doTestChildren(exprDMC);
-        
+
         // Now do a step and get the children again, to test the internal cache
         SyncUtil.step(1, StepType.STEP_OVER);
         doTestChildren(exprDMC);
     }
-    
+
     /**
      * This test makes sure we get the right number of children.
      */
@@ -380,22 +376,22 @@ public class MIExpressionsTest extends BaseTestCase {
     /**
      * This test makes sure we properly deal with a GDB display bug.
      * See bug 320277
-     * 
+     *
      * The following code causes a bug in GDB:
-     * 
+     *
      * class Base {};
      * class BaseTest: public Base {
      *   public:
      *     BaseTest() {} // Removing this lines removes GDB's bug
      *     void test() { return; }
      * };
-     * 
+     *
      * We see the bug with the following commands:
      * -var-create - * this
      * -var-list-children var1
      * -var-info-path-expression var1.BaseTest
      * -data-evaluate-expression "(*(Base*) this)"
-     * 
+     *
      * which we can reproduce by creating the children of this
      * and asking for the DETAILS_FORMAT of the var1.BaseTest child.
      */
@@ -630,7 +626,7 @@ public class MIExpressionsTest extends BaseTestCase {
             @Override
 			public void run() {
                 IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a[0]");
-                
+
                 wait.increment();
                 fExpService.getFormattedExpressionValue(fExpService.getFormattedValueContext(exprDmc,
                     IFormattedValues.NATURAL_FORMAT), new DataRequestMonitor<FormattedValueDMData>(fExpService
@@ -702,7 +698,7 @@ public class MIExpressionsTest extends BaseTestCase {
             @Override
 			public void run() {
                 fExpService.getFormattedExpressionValue(
-                		fExpService.getFormattedValueContext(addrDmc, IFormattedValues.NATURAL_FORMAT), 
+                		fExpService.getFormattedValueContext(addrDmc, IFormattedValues.NATURAL_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                 			@Override
                 			protected void handleCompleted() {
@@ -728,7 +724,7 @@ public class MIExpressionsTest extends BaseTestCase {
             @Override
 			public void run() {
                 IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
-                
+
                 wait.increment();
                 fExpService.getFormattedExpressionValue(fExpService.getFormattedValueContext(exprDmc,
                     IFormattedValues.NATURAL_FORMAT), new DataRequestMonitor<FormattedValueDMData>(fExpService
@@ -818,7 +814,7 @@ public class MIExpressionsTest extends BaseTestCase {
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
+
     	// First we get the expected value of the array pointer.
         final IExpressionDMContext addrDmc = SyncUtil.createExpression(frameDmc, "&a");
 
@@ -826,7 +822,7 @@ public class MIExpressionsTest extends BaseTestCase {
             @Override
 			public void run() {
                 fExpService.getFormattedExpressionValue(
-                		fExpService.getFormattedValueContext(addrDmc, IFormattedValues.NATURAL_FORMAT), 
+                		fExpService.getFormattedValueContext(addrDmc, IFormattedValues.NATURAL_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                 			@Override
                 			protected void handleCompleted() {
@@ -1345,11 +1341,11 @@ public class MIExpressionsTest extends BaseTestCase {
             getExprChangedCount() == 0);
     }
 
-    
+
     /**
      * Test that we can correctly evaluate C expressions involving global
      * variables.
-     * 
+     *
      * @return void
      */
     @Test
@@ -1420,7 +1416,7 @@ public class MIExpressionsTest extends BaseTestCase {
     	tests.put("a", new String[] { "0x3", "03", "11", "3", "3", "3" });
     	executeExpressionSubTests(tests, frameDmc);
     }
-    
+
     /**
      * This test verifies that the ExpressionService can handle having a
      * variable with the same name in two methods that also have the same name
@@ -1468,7 +1464,7 @@ public class MIExpressionsTest extends BaseTestCase {
         // a frame that is not the top frame
         tests.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
         executeExpressionSubTests(tests, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1));
-        
+
         // Now check that we get the same values as the top stack when selecting the thread only
         tests = new HashMap<String, String[]>();
         tests.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789" , "6789" });
@@ -1495,7 +1491,7 @@ public class MIExpressionsTest extends BaseTestCase {
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -1509,7 +1505,7 @@ public class MIExpressionsTest extends BaseTestCase {
     								final String valueStr = "1";
     								final IExpressionDMContext child = getData()[0];
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -1528,7 +1524,7 @@ public class MIExpressionsTest extends BaseTestCase {
     							}
 
 
-    						}	
+    						}
     					});
     		}
     	});
@@ -1548,7 +1544,7 @@ public class MIExpressionsTest extends BaseTestCase {
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "z");
 
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -1562,7 +1558,7 @@ public class MIExpressionsTest extends BaseTestCase {
     								final String valueStr = "2";
     								final IExpressionDMContext child = getData()[0];
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -1581,11 +1577,11 @@ public class MIExpressionsTest extends BaseTestCase {
     							}
 
 
-    						}	
+    						}
     					});
     		}
     	});
-    	
+
        	wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
     	assertTrue(wait.getMessage(), wait.isOK());
     	wait.waitReset();
@@ -1601,7 +1597,7 @@ public class MIExpressionsTest extends BaseTestCase {
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc3, "z");
 
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -1615,7 +1611,7 @@ public class MIExpressionsTest extends BaseTestCase {
     								final String valueStr = "3";
     								final IExpressionDMContext child = getData()[0];
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -1634,11 +1630,11 @@ public class MIExpressionsTest extends BaseTestCase {
     							}
 
 
-    						}	
+    						}
     					});
     		}
     	});
-    	
+
        	wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
     	assertTrue(wait.getMessage(), wait.isOK());
     	wait.waitReset();
@@ -1655,13 +1651,13 @@ public class MIExpressionsTest extends BaseTestCase {
     	MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
     	final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	doUpdateTest(frameDmc, 0);
-    	
+
     	// Re-run the test to test out-of-scope update again
     	SyncUtil.step(StepType.STEP_RETURN);
     	stoppedEvent = SyncUtil.step(3, StepType.STEP_INTO);
     	final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	doUpdateTest(frameDmc2, 100);
-    	
+
     	// Re-run the test within a different method test out-of-scope updates
     	SyncUtil.step(StepType.STEP_RETURN);
     	stoppedEvent = SyncUtil.step(3, StepType.STEP_INTO);
@@ -1669,7 +1665,7 @@ public class MIExpressionsTest extends BaseTestCase {
     	doUpdateTest(frameDmc3, 200);
 
     }
-    
+
 
     public void doUpdateTest(final IFrameDMContext frameDmc, final int baseValue) throws Throwable {
     	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -1682,7 +1678,7 @@ public class MIExpressionsTest extends BaseTestCase {
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "a");
 
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -1694,7 +1690,7 @@ public class MIExpressionsTest extends BaseTestCase {
     							} else {
     								// Now list the children of this child
     								fExpService.getSubExpressions(
-    										getData()[0], 
+    										getData()[0],
     										new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -1713,7 +1709,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
     														wait.increment();
     														fExpService.getFormattedExpressionValue(
-    																fExpService.getFormattedValueContext(childDmcs[i], IFormattedValues.NATURAL_FORMAT), 
+    																fExpService.getFormattedValueContext(childDmcs[i], IFormattedValues.NATURAL_FORMAT),
     																new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     																	@Override
     																	protected void handleCompleted() {
@@ -1736,7 +1732,7 @@ public class MIExpressionsTest extends BaseTestCase {
     							}
 
 
-    						}	
+    						}
     					});
     		}
     	});
@@ -1759,7 +1755,7 @@ public class MIExpressionsTest extends BaseTestCase {
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "a");
 
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -1771,7 +1767,7 @@ public class MIExpressionsTest extends BaseTestCase {
     							} else {
     								// Now list the children of this child
     								fExpService.getSubExpressions(
-    										getData()[0], 
+    										getData()[0],
     										new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -1790,7 +1786,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
     														wait.increment();
     														fExpService.getFormattedExpressionValue(
-    																fExpService.getFormattedValueContext(childDmcs[i], IFormattedValues.NATURAL_FORMAT), 
+    																fExpService.getFormattedValueContext(childDmcs[i], IFormattedValues.NATURAL_FORMAT),
     																new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     																	@Override
     																	protected void handleCompleted() {
@@ -1813,7 +1809,7 @@ public class MIExpressionsTest extends BaseTestCase {
     							}
 
 
-    						}	
+    						}
     					});
     		}
     	});
@@ -1822,7 +1818,7 @@ public class MIExpressionsTest extends BaseTestCase {
     	assertTrue(wait.getMessage(), wait.isOK());
     	wait.waitReset();
     }
-    
+
     /**
      * This test creates a variable object with children (not an array) and then gets these children
      * to be deleted because of a large number of other variable objects being created.
@@ -1831,12 +1827,14 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testDeleteChildren() throws Throwable {
+    	assumeGdbVersionAtLeast("6.7");
+    	assumeGdbVersionLowerThen("7.3");
         SyncUtil.runToLocation("testDeleteChildren");
         MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
@@ -1845,7 +1843,7 @@ public class MIExpressionsTest extends BaseTestCase {
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "f");
 
         		fExpService.getSubExpressions(
-        				parentDmc, 
+        				parentDmc,
         				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -1863,7 +1861,7 @@ public class MIExpressionsTest extends BaseTestCase {
         								} else {
         									// Now list the children of the first element
         									fExpService.getSubExpressions(
-        											getData()[0], 
+        											getData()[0],
         											new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
         												@Override
         												protected void handleCompleted() {
@@ -1889,7 +1887,7 @@ public class MIExpressionsTest extends BaseTestCase {
         								}
         							}
         						}
-        					}	
+        					}
         				});
         	}
         });
@@ -1899,7 +1897,7 @@ public class MIExpressionsTest extends BaseTestCase {
         final IExpressionDMContext deletedChildDmc = (IExpressionDMContext)wait.getReturnInfo();
 
         wait.waitReset();
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
@@ -1911,7 +1909,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
         			wait.increment();
         			fExpService.getExpressionData(
-        					dmc, 
+        					dmc,
         					new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
         						@Override
         						protected void handleCompleted() {
@@ -1920,16 +1918,16 @@ public class MIExpressionsTest extends BaseTestCase {
         							} else {
         								wait.waitFinished();
         							}
-        						}	
+        						}
         					});
         		}
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
@@ -1937,7 +1935,7 @@ public class MIExpressionsTest extends BaseTestCase {
         		// Evaluate the expression of a child that we know is deleted to make sure
         		// the expression service can handle that
         		fExpService.getExpressionData(
-        				deletedChildDmc, 
+        				deletedChildDmc,
         				new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -1946,23 +1944,23 @@ public class MIExpressionsTest extends BaseTestCase {
         						} else {
         							wait.waitFinished();
         						}
-        					}	
+        					}
         				});
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
-        
+
     }
-    
+
     /**
 	 * GDB 6.7 has a bug which will cause var-update not to show
 	 * the new value of 'a' if we switch the format to binary,
 	 * since binary of 3 is 11 which is the same as the old value
 	 * in natural format.  Our expression service should work around this.
-	 * 
+	 *
 	 * int main() {
 	 *    int a = 11;
 	 *    a = 3;
@@ -1976,7 +1974,7 @@ public class MIExpressionsTest extends BaseTestCase {
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
@@ -1986,7 +1984,7 @@ public class MIExpressionsTest extends BaseTestCase {
         		// This call will create the variable object in natural format and then change
         		// it to binary to fetch the value
                 fExpService.getFormattedExpressionValue(
-                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.BINARY_FORMAT), 
+                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.BINARY_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -2005,11 +2003,11 @@ public class MIExpressionsTest extends BaseTestCase {
                     });
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
-        
+
         // Now step to change the value of "a" and ask for it again
         stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
         final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
@@ -2023,7 +2021,7 @@ public class MIExpressionsTest extends BaseTestCase {
         		// This call will create the variable object in natural format and then change
         		// it to binary to fetch the value
                 fExpService.getFormattedExpressionValue(
-                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.BINARY_FORMAT), 
+                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.BINARY_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -2042,7 +2040,7 @@ public class MIExpressionsTest extends BaseTestCase {
                     });
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
@@ -2052,15 +2050,15 @@ public class MIExpressionsTest extends BaseTestCase {
 	 * var-update will not show a change if eval-expression is the same
 	 * in the current format.  This is a problem for us because we don't
 	 * know if another format changed:
-	 * 
+	 *
 	 * int main() {
 	 *    double a = 1.99;
 	 *    a = 1.11;
 	 * }
-	 * 
+	 *
 	 * If a is displayed in anything but natural, both values of a are the same
 	 * and we won't know it changed in the natural format.
-	 * 
+	 *
 	 * The test below is in case GDB fixes var-update to keep track of the last
 	 * printed value through eval-expression.  Until they do that, we do not have
 	 * a problem because of our caching: where, if we change formats since the last
@@ -2077,7 +2075,7 @@ public class MIExpressionsTest extends BaseTestCase {
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
@@ -2087,7 +2085,7 @@ public class MIExpressionsTest extends BaseTestCase {
         		// check that we have the proper value
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
-                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT), 
+                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -2104,11 +2102,11 @@ public class MIExpressionsTest extends BaseTestCase {
                             }
                         }
                     });
-        		
+
         		// ask for hex to set the format to hex
         		wait.increment();
                 fExpService.getFormattedExpressionValue(
-                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT), 
+                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -2127,11 +2125,11 @@ public class MIExpressionsTest extends BaseTestCase {
                     });
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
-        
+
         // Now step to change the value of "a" and ask for it again but in the natural format
         stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
         final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
@@ -2143,10 +2141,10 @@ public class MIExpressionsTest extends BaseTestCase {
         		IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc2, "a");
 
         		// trigger the var-update in the last format (hex)
-        		// then request the actual value in natural which should not be taken from the cache 
+        		// then request the actual value in natural which should not be taken from the cache
            		wait.increment();
                 fExpService.getFormattedExpressionValue(
-                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT), 
+                		fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -2165,7 +2163,7 @@ public class MIExpressionsTest extends BaseTestCase {
                     });
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
@@ -2175,16 +2173,16 @@ public class MIExpressionsTest extends BaseTestCase {
 	 * var-update will not show a change if eval-expression is the same
 	 * in the current format.  This is a problem for us because we don't
 	 * know if another format changed:
-	 * 
+	 *
 	 * int main() {
 	 * 	 struct {
 	 *    	double d;
 	 * 	 } z;
-	 * 
+	 *
 	 *   z.d = 1.0;
 	 *   z.d = 1.22;
 	 * }
-	 * 
+	 *
 	 * If a is displayed in anything but natural, both values of a are the same
 	 * and we won't know it changed in the natural format.
 	 * This test uses a child to increase the value of the test.
@@ -2198,15 +2196,15 @@ public class MIExpressionsTest extends BaseTestCase {
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
-        		
+
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -2220,10 +2218,10 @@ public class MIExpressionsTest extends BaseTestCase {
     				        		// This will cache the value 1 in the natural format cache
     								final String valueStr = "1";
     								globalExpressionCtx1 = getData()[0];
-    				        		
+
     								wait.increment();
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -2238,11 +2236,11 @@ public class MIExpressionsTest extends BaseTestCase {
     												}
     											}
     										});
-    								
+
 						       		// ask for decimal to set the format to decimal
     				        		wait.increment();
 									fExpService.getFormattedExpressionValue(
-											fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.DECIMAL_FORMAT), 
+											fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.DECIMAL_FORMAT),
 											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
 												@Override
 												protected void handleCompleted() {
@@ -2265,11 +2263,11 @@ public class MIExpressionsTest extends BaseTestCase {
     					});
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
-        
+
         // Now step to change the value of "a" in natural but it remains the same in decimal
         SyncUtil.step(1, StepType.STEP_OVER);
 
@@ -2278,10 +2276,10 @@ public class MIExpressionsTest extends BaseTestCase {
 			public void run() {
 
         		// trigger the var-update in the last format (decimal)
-        		// then request the actual value in natural which should not be taken from the cache 
+        		// then request the actual value in natural which should not be taken from the cache
            		wait.increment();
                 fExpService.getFormattedExpressionValue(
-                		fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT), 
+                		fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -2300,7 +2298,7 @@ public class MIExpressionsTest extends BaseTestCase {
                     });
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
@@ -2318,7 +2316,7 @@ public class MIExpressionsTest extends BaseTestCase {
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
+
         // Ask for one value to create the var object
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
@@ -2328,7 +2326,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
         		wait.increment();
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -2342,7 +2340,7 @@ public class MIExpressionsTest extends BaseTestCase {
     								final String valueStr = "01";
     								globalExpressionCtx1 = getData()[0];
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.OCTAL_FORMAT), 
+    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.OCTAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -2359,10 +2357,10 @@ public class MIExpressionsTest extends BaseTestCase {
     										});
     							}
     						}
-    					}); 
+    					});
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
@@ -2375,7 +2373,7 @@ public class MIExpressionsTest extends BaseTestCase {
 			public void run() {
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
-        				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.BINARY_FORMAT), 
+        				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.BINARY_FORMAT),
         				new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -2394,7 +2392,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
-        				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.HEX_FORMAT), 
+        				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.HEX_FORMAT),
         				new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -2413,12 +2411,12 @@ public class MIExpressionsTest extends BaseTestCase {
         				});
         	}
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
     }
-    
+
     /**
      * This test verifies some of the logic of dealing with out-of-scope variables.
      * This particular scenario is that we create a parent with a child and then
@@ -2432,11 +2430,11 @@ public class MIExpressionsTest extends BaseTestCase {
     public void testConcurrentUpdateOutOfScopeChildThenParent() throws Throwable {
         SyncUtil.runToLocation("testConcurrentUpdateOutOfScopeChildThenParent");
         MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
-        
+
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
@@ -2445,7 +2443,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
         		wait.increment();
     			fExpService.getSubExpressions(
-    					globalExpressionCtx1, 
+    					globalExpressionCtx1,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -2459,7 +2457,7 @@ public class MIExpressionsTest extends BaseTestCase {
     								final String valueStr = "1";
     								globalExpressionCtx2 = getData()[0];
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -2476,17 +2474,17 @@ public class MIExpressionsTest extends BaseTestCase {
     										});
     							}
     						}
-    					}); 
+    					});
         	}
         });
-        
+
         wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
 
         SyncUtil.step(StepType.STEP_RETURN);
         stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
-        
+
         // Now step to another method to make the previous variable objects out-of-scope
         // then first request the child and then the parent.  We want to test this order
         fExpService.getExecutor().submit(new Runnable() {
@@ -2494,7 +2492,7 @@ public class MIExpressionsTest extends BaseTestCase {
 			public void run() {
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
-        				fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
+        				fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT),
         				new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -2512,7 +2510,7 @@ public class MIExpressionsTest extends BaseTestCase {
         				});
         	}
         });
-        
+
         wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
@@ -2522,7 +2520,7 @@ public class MIExpressionsTest extends BaseTestCase {
 			public void run() {
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
-        				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT), 
+        				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
         				new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -2538,11 +2536,11 @@ public class MIExpressionsTest extends BaseTestCase {
         						}
         					}
         				});
-        		
+
         		// Ask a second time but in a different format, to avoid the cache
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
-        				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.DECIMAL_FORMAT), 
+        				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.DECIMAL_FORMAT),
         				new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -2561,11 +2559,11 @@ public class MIExpressionsTest extends BaseTestCase {
 
         	}
         });
-        
+
         wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
-        
+
         //TODO although this test passes, the variable z is created twice, without being
         // deleted in GDB.  We should fix this
     }
@@ -2582,18 +2580,18 @@ public class MIExpressionsTest extends BaseTestCase {
 
         final String firstValue = "1";
         final String secondValue = "2";
-        final String thirdValue = "3"; 
-        
+        final String thirdValue = "3";
+
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
-        		
+
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -2610,7 +2608,7 @@ public class MIExpressionsTest extends BaseTestCase {
     								// Get the value of the first child
     								wait.increment();
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -2625,11 +2623,11 @@ public class MIExpressionsTest extends BaseTestCase {
     												}
     											}
     										});
-    								
+
     								// Get the value of the second child
     								wait.increment();
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -2658,7 +2656,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
         		// also get the child of the pointer
         		fExpService.getSubExpressions(
-        				globalExpressionCtx2, 
+        				globalExpressionCtx2,
         				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -2671,7 +2669,7 @@ public class MIExpressionsTest extends BaseTestCase {
         							// Get the value of the child of the pointer
         							globalExpressionCtx2 = getData()[0];
         							fExpService.getFormattedExpressionValue(
-        									fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
+        									fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT),
         									new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         										@Override
         										protected void handleCompleted() {
@@ -2695,19 +2693,19 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
-        
+
         // Now step to change the values of all the children
         stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
         final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
         fExpService.getExecutor().submit(new Runnable() {
         	@Override
 			public void run() {
-        		
+
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "z");
 
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
@@ -2724,7 +2722,7 @@ public class MIExpressionsTest extends BaseTestCase {
     								// Get the value of the first child
     								wait.increment();
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -2739,11 +2737,11 @@ public class MIExpressionsTest extends BaseTestCase {
     												}
     											}
     										});
-    								
+
     								// Get the value of the second child
     								wait.increment();
     								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
+    										fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT),
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
@@ -2755,7 +2753,7 @@ public class MIExpressionsTest extends BaseTestCase {
     												} else {
     													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
     															"Failed evaluating " + globalExpressionCtx2.getExpression() + ", got " + getData().getFormattedValue()
-    															+ " instead of some other value", null));												
+    															+ " instead of some other value", null));
     												}
     											}
     										});
@@ -2775,7 +2773,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
         		// also get the child of the pointer
         		fExpService.getSubExpressions(
-        				globalExpressionCtx2, 
+        				globalExpressionCtx2,
         				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
@@ -2788,7 +2786,7 @@ public class MIExpressionsTest extends BaseTestCase {
         							// Get the value of the child of the pointer
         							globalExpressionCtx2 = getData()[0];
         							fExpService.getFormattedExpressionValue(
-        									fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
+        									fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT),
         									new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         										@Override
         										protected void handleCompleted() {
@@ -2813,7 +2811,7 @@ public class MIExpressionsTest extends BaseTestCase {
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
     }
-    
+
     /**
      * This test verifies that we properly return if we can write to different expressions
      */
@@ -2853,7 +2851,7 @@ public class MIExpressionsTest extends BaseTestCase {
     				final int finalIndex = index;
     				wait.increment();
     				fExpService.canWriteExpression(
-    						dmcs[finalIndex], 
+    						dmcs[finalIndex],
     						new DataRequestMonitor<Boolean>(fExpService.getExecutor(), null) {
     							@Override
     							protected void handleCompleted() {
@@ -2863,7 +2861,7 @@ public class MIExpressionsTest extends BaseTestCase {
 										wait.waitFinished();
 									} else {
 										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed establishing proper canWrite for  " + dmcs[finalIndex].getExpression() + 
+												"Failed establishing proper canWrite for  " + dmcs[finalIndex].getExpression() +
 												", got " + getData() + " instead of " + expectedValues[finalIndex], null));
 									}
 
@@ -2885,6 +2883,7 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testCanWriteLValue() throws Throwable {
+    	assumeGdbVersionAtLeast("6.8");
     	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testCanWrite");  // Re-use test
     	final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -2910,7 +2909,7 @@ public class MIExpressionsTest extends BaseTestCase {
     				final int finalIndex = index;
     				wait.increment();
     				fExpService.canWriteExpression(
-    						dmcs[finalIndex], 
+    						dmcs[finalIndex],
     						new DataRequestMonitor<Boolean>(fExpService.getExecutor(), null) {
     							@Override
     							protected void handleCompleted() {
@@ -2920,7 +2919,7 @@ public class MIExpressionsTest extends BaseTestCase {
 										wait.waitFinished();
 									} else {
 										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed establishing proper canWrite for  " + dmcs[finalIndex].getExpression() + 
+												"Failed establishing proper canWrite for  " + dmcs[finalIndex].getExpression() +
 												", got " + getData() + " instead of " + expectedValues[finalIndex], null));
 									}
 
@@ -2938,7 +2937,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
 	/**
 	 * Executes a group of sub-tests.
-	 * 
+	 *
 	 * @param tests
 	 *            A Map in which the key is an expression to evaluate and the
 	 *            value is an array of expected values, one for each of the
@@ -2957,7 +2956,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	 *            caller only supplied "1.2345".
 	 */
     private void executeExpressionSubTests(final Map<String, String[]> tests, final boolean exact, IDMContext dmc)
-        throws Throwable 
+        throws Throwable
     {
 
         // Now evaluate each of the above expressions and compare the actual
@@ -3038,12 +3037,12 @@ public class MIExpressionsTest extends BaseTestCase {
                                                     else
                                                         expectedValue = "[Unrecognized format ID: " + formatId + "]";
 
-                                                    if ((exact == false) && 
+                                                    if ((exact == false) &&
                                                     		(formatId.equals(IFormattedValues.NATURAL_FORMAT) || formatId.equals(MIExpressions.DETAILS_FORMAT)) &&
                                                     		(expectedValue.length() < actualValue.length())) {
                                                     	actualValue = actualValue.substring(0, expectedValue.length());
                                                     }
-                                                    
+
                                                     if (actualValue.equalsIgnoreCase(expectedValue)) {
                                                         wait.waitFinished();
                                                     } else {
@@ -3068,11 +3067,11 @@ public class MIExpressionsTest extends BaseTestCase {
                 getExprChangedCount() == 0);
         }
     }
-    
+
     private void executeExpressionSubTests(final Map<String, String[]> tests, IDMContext dmc) throws Throwable {
     	executeExpressionSubTests(tests, true, dmc);
     }
-    
+
     private boolean addressesEqual(IExpressionDMAddress addrToTest, String addrStr, int size) {
         IAddress addr;
         if (addrStr.length() <= 10) {
@@ -3082,9 +3081,9 @@ public class MIExpressionsTest extends BaseTestCase {
         }
         return addrToTest.getAddress().equals(addr) && addrToTest.getSize() == size;
     }
-    
+
     private void checkAddressData(final IExpressionDMContext dmc, String actualAddrStr, int actualAddrSize) throws Throwable {
-    	
+
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
         fExpService.getExecutor().submit(new Runnable() {
@@ -3103,38 +3102,38 @@ public class MIExpressionsTest extends BaseTestCase {
                 });
             }
         });
-        
+
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
-        
+
        IExpressionDMAddress addr = (IExpressionDMAddress)wait.getReturnInfo();
 
         assertTrue("Unable to get address", addr != null);
         if (addr != null) {
-        	assertTrue("Received wrong address of " + addr.toString() + " instead of (" + 
-        			actualAddrStr + ", " + actualAddrSize + ")", 
+        	assertTrue("Received wrong address of " + addr.toString() + " instead of (" +
+        			actualAddrStr + ", " + actualAddrSize + ")",
         			addressesEqual(addr, actualAddrStr, actualAddrSize));
         }
     }
-    
-    private void doTestChildren(IExpressionDMContext exprDMC) throws Throwable 
+
+    private void doTestChildren(IExpressionDMContext exprDMC) throws Throwable
     {
 	    IExpressionDMContext[] children =
 	    	getChildren(exprDMC, new String[] {"bar", "bar2", "a", "b", "c"});
-	    
+
 	    // f.bar
-	    IExpressionDMContext[] children1 = 
+	    IExpressionDMContext[] children1 =
 	    	getChildren(children[0], new String[] {"d", "e"});
 	    // f.bar.d
 	    getChildren(children1[0], new String[0]);
 	    // f.bar.e
-	    IExpressionDMContext[] children2 = 
+	    IExpressionDMContext[] children2 =
 	    	getChildren(children1[1], new String[] {"e[0]", "e[1]"});
 	    // f.bar.e[0]
 	    getChildren(children2[0], new String[0]);
 	    // f.bar.e[1]
 	    getChildren(children2[1], new String[0]);
-	
+
 	    // f.bar2
 	    children1 =	getChildren(children[1], new String[] {"f", "g"});
 	    // f.bar2.f
@@ -3145,14 +3144,14 @@ public class MIExpressionsTest extends BaseTestCase {
 	    getChildren(children2[0], new String[0]);
 	    // f.bar2.g[1]
 	    getChildren(children2[1], new String[0]);
-	
+
 	    // f.a
 	    children1 =	getChildren(children[2], new String[] {"a[0]", "a[1]"});
 	    // f.a[0]
 	    getChildren(children1[0], new String[0]);
 	    // f.a[1]
 	    getChildren(children1[1], new String[0]);
-	
+
 	    // f.b
 	    children1 =	getChildren(children[3], new String[] {"d", "e"});
 	    // f.b.d
@@ -3163,17 +3162,17 @@ public class MIExpressionsTest extends BaseTestCase {
 	    getChildren(children2[0], new String[0]);
 	    // f.b.e[1]
 	    getChildren(children2[1], new String[0]);
-	
+
 	    // f.c
 	    getChildren(children[4], new String[0]);
-	
+
 	    assertTrue("ExprChangedEvent problem: expected 0, received " + getExprChangedCount(),
 	        getExprChangedCount() == 0);
 	}
 
     // This method tests IExspressions.getSubExpressions(IExpressionDMC, DRM);
     protected IExpressionDMContext[] getChildren(
-    		final IExpressionDMContext parentDmc, 
+    		final IExpressionDMContext parentDmc,
     		String[] expectedValues) throws Throwable {
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -3198,25 +3197,25 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
 
-        IExpressionDMContext[] childDmcs = 
+        IExpressionDMContext[] childDmcs =
         	(IExpressionDMContext[]) wait.getReturnInfo();
 
         String[] childExpressions = new String[childDmcs.length];
         MIExpressionDMCAccessor[] childDmcsAccessor = new MIExpressionDMCAccessor[childDmcs.length];
-        
+
         // Convert to a MIExpressionDMCAccessor to be able to call getRelativeExpression
         // Also convert to String[] to be able to use Arrays.toString()
         for (int i = 0; i < childExpressions.length; i++) {
         	childDmcsAccessor[i] = new MIExpressionDMCAccessor(childDmcs[i]);
         	childExpressions[i] = childDmcsAccessor[i].getRelativeExpression();
-        }        
+        }
         assertTrue("Expected " + Arrays.toString(expectedValues) + " but got " + Arrays.toString(childExpressions),
         		expectedValues.length == childExpressions.length);
 
         for (int i = 0; i < childDmcsAccessor.length; i++) {
             assertEquals(expectedValues[i], childDmcsAccessor[i].getRelativeExpression());
         }
-        
+
         return childDmcs;
     }
 
@@ -3252,18 +3251,18 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
 
-        IExpressionDMContext[] childDmcs = 
+        IExpressionDMContext[] childDmcs =
         	(IExpressionDMContext[]) wait.getReturnInfo();
 
         String[] childExpressions = new String[childDmcs.length];
         MIExpressionDMCAccessor[] childDmcsAccessor = new MIExpressionDMCAccessor[childDmcs.length];
-        
+
         // Convert to a MIExpressionDMCAccessor to be able to call getRelativeExpression
         // Also convert to String[] to be able to use Arrays.toString()
         for (int i = 0; i < childExpressions.length; i++) {
         	childDmcsAccessor[i] = new MIExpressionDMCAccessor(childDmcs[i]);
         	childExpressions[i] = childDmcsAccessor[i].getRelativeExpression();
-        }        
+        }
         assertTrue("Expected " + Arrays.toString(expectedValues) + " but got " + Arrays.toString(childExpressions),
         		expectedValues.length == childExpressions.length);
 
@@ -3271,12 +3270,12 @@ public class MIExpressionsTest extends BaseTestCase {
             assertTrue("Expected: " + expectedValues[i] + " got: " + childDmcsAccessor[i].getRelativeExpression(),
             		childDmcsAccessor[i].getRelativeExpression().equals(expectedValues[i]));
         }
-        
+
         return childDmcs;
     }
 
     /**
-     * This test verifies that large arrays are properly partitioned and 
+     * This test verifies that large arrays are properly partitioned and
      * the handling of "small" arrays is not affected.
      */
     @Test
@@ -3284,10 +3283,10 @@ public class MIExpressionsTest extends BaseTestCase {
     	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testArrays");
 
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-	    
+
         // int array_simple[10];
 	    IExpressionDMContext arraySimpleExprDMC = SyncUtil.createExpression(frameDmc, "array_simple");
-	    
+
 	    assertChildrenCount(arraySimpleExprDMC, 10);
 
 	    // get all children
@@ -3298,7 +3297,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	    IExpressionDMContext[] arraySimpleChildren = getChildren(arraySimpleExprDMC, expectedValues);
 	    for (IExpressionDMContext ctx : arraySimpleChildren)
 	    	getChildren(ctx, new String[0]);
-	    
+
 	    // get some parts of the children array
 	    getChildren(arraySimpleExprDMC, 3, 2, new String[] { "array_simple[3]", "array_simple[4]" });
 	    getChildren(arraySimpleExprDMC, 9, 3, new String[] { "array_simple[9]" });
@@ -3306,13 +3305,13 @@ public class MIExpressionsTest extends BaseTestCase {
 	    // int array_int[24321];
 	    IExpressionDMContext arrayIntExprDMC = SyncUtil.createExpression(frameDmc, "array_int");
 	    assertChildrenCount(arrayIntExprDMC, 3);
-	    
+
 	    // get top level partitions: [0-9999], [10000-19999], [20000-24321]
 	    IExpressionDMContext[] arrayIntPartitions =
 		    	getChildren(arrayIntExprDMC, new String[] {"*((array_int)+0)@10000", "*((array_int)+10000)@10000", "*((array_int)+20000)@4321"});
 	    assertTrue(String.format("Invalid number of partition: expected 3 got %d", arrayIntPartitions.length), arrayIntPartitions.length == 3);
 
-	    // get children of the last partition: [20000-24321] 
+	    // get children of the last partition: [20000-24321]
 	    expectedValues = new String[44];
 	    for(int i = 0; i < expectedValues.length - 1; ++i) {
 	    	expectedValues[i] = String.format("*((array_int)+%d)@100", 20000 + i*100);
@@ -3326,7 +3325,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	    getChildren(arrayIntPartitions1[arrayIntPartitions1.length - 1], expectedValues);
 
 	    // foo array_foo[1200];
-	    IExpressionDMContext arrayFooExprDMC = SyncUtil.createExpression(frameDmc, "array_foo");	    
+	    IExpressionDMContext arrayFooExprDMC = SyncUtil.createExpression(frameDmc, "array_foo");
 	    assertChildrenCount(arrayFooExprDMC, 12);
 	    expectedValues = new String[12];
 	    for (int i = 0; i < expectedValues.length; ++i) {
@@ -3335,8 +3334,8 @@ public class MIExpressionsTest extends BaseTestCase {
 	    IExpressionDMContext[] arrayFooPartitions =	getChildren(arrayFooExprDMC, expectedValues);
 	    for (int i = 0; i < arrayFooPartitions.length; ++i) {
 	    	IExpressionDMContext ctx = arrayFooPartitions[i];
-	    	assertTrue(String.format("Invalid DM context type: expected '%s' got '%s'", 
-	    			IIndexedPartitionDMContext.class.getName(), ctx.getClass().getName()), 
+	    	assertTrue(String.format("Invalid DM context type: expected '%s' got '%s'",
+	    			IIndexedPartitionDMContext.class.getName(), ctx.getClass().getName()),
 	    			ctx instanceof IIndexedPartitionDMContext);
 		    expectedValues = new String[100];
 		    for (int j = 0; j < expectedValues.length; ++j) {
@@ -3346,7 +3345,7 @@ public class MIExpressionsTest extends BaseTestCase {
 		    // check the children of a couple of children
 	    	getChildren(arrayFooChildren[0], new String[] {"bar", "bar2", "a", "b", "c"});
 	    	getChildren(arrayFooChildren[80], new String[] {"bar", "bar2", "a", "b", "c"});
-		    
+
 		    // get parts of the children array
 		    expectedValues = new String[] { String.format("array_foo[%d]", i*100 + 3), String.format("array_foo[%d]", i*100 + 4) };
 		    getChildren(ctx, 3, 2, expectedValues);
@@ -3360,12 +3359,12 @@ public class MIExpressionsTest extends BaseTestCase {
     @Test
     public void testLargeDoubleArray() throws Throwable {
     	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testArrays");
-    	
+
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
         // char array_double_large[111][210]
 	    IExpressionDMContext arrayDoubleLargeExprDMC = SyncUtil.createExpression(frameDmc, "array_double_large");
-	    
+
 	    assertChildrenCount(arrayDoubleLargeExprDMC, 2);
 
 	    // get top level partitions: [0-99], [100-110]
@@ -3375,7 +3374,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
 	    // get children child array_double_large[100-110]
 	    IExpressionDMContext arrayDoubleLargeChildExprDMC = arrayTopPartitions[1];
-	    
+
 	    assertChildrenCount(arrayDoubleLargeChildExprDMC, 11);
 
 	    String[] expectedValues = new String[11];
@@ -3390,14 +3389,14 @@ public class MIExpressionsTest extends BaseTestCase {
 	    assertChildrenCount(arrayDoubleLargeChildExprDMC2, 3);
 
 	    IExpressionDMContext[] arraySecondLevelPartitions =
-		    	getChildren(arrayDoubleLargeChildExprDMC2, new String[] {"*((array_double_large[101])+0)@100", 
+		    	getChildren(arrayDoubleLargeChildExprDMC2, new String[] {"*((array_double_large[101])+0)@100",
 		    			                                           "*((array_double_large[101])+100)@100",
 		    			                                           "*((array_double_large[101])+200)@10"});
 	    assertTrue(String.format("Invalid number of partition: expected 3 got %d", arraySecondLevelPartitions.length), arraySecondLevelPartitions.length == 3);
 
 	    // get children of array_double_large[101][0-99]
 	    IExpressionDMContext arrayDoubleLargeChildExprDMC3 = arraySecondLevelPartitions[0];
-	    
+
 	    assertChildrenCount(arrayDoubleLargeChildExprDMC3, 100);
 
 	    expectedValues = new String[100];
@@ -3406,10 +3405,10 @@ public class MIExpressionsTest extends BaseTestCase {
 	    }
 	    IExpressionDMContext[] arrayChild2 = getChildren(arrayDoubleLargeChildExprDMC3, expectedValues);
 
-	    // No more children for array_double_large[101][*]	    
+	    // No more children for array_double_large[101][*]
 	    for (IExpressionDMContext ctx : arrayChild2)
 	    	getChildren(ctx, new String[0]);
-	    
+
 	    // get some parts of the children array
 	    getChildren(arrayDoubleLargeChildExprDMC3, 3, 2, new String[] { "array_double_large[101][3]", "array_double_large[101][4]" });
 	    getChildren(arrayDoubleLargeChildExprDMC3, 98, 3, new String[] { "array_double_large[101][98]","array_double_large[101][99]" });
@@ -3421,12 +3420,12 @@ public class MIExpressionsTest extends BaseTestCase {
     @Test
     public void testSmallDoubleArray() throws Throwable {
     	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testArrays");
-    	
+
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
         // int array_double_small[11][21];
 	    IExpressionDMContext arrayDoubleSmallExprDMC = SyncUtil.createExpression(frameDmc, "array_double_small");
-	    
+
 	    assertChildrenCount(arrayDoubleSmallExprDMC, 11);
 
 	    // get all children of array_double_small
@@ -3435,10 +3434,10 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	expectedValues[i] = String.format("array_double_small[%d]", i);
 	    }
 	    IExpressionDMContext[] arrayDoubleSmallChildren = getChildren(arrayDoubleSmallExprDMC, expectedValues);
-	    
+
 	    // get all children of array_double_small[3]
 	    IExpressionDMContext arrayDoubleSmallChildExprDMC = arrayDoubleSmallChildren[3];
-	    
+
 	    assertChildrenCount(arrayDoubleSmallChildExprDMC, 21);
 
 	    expectedValues = new String[21];
@@ -3447,27 +3446,29 @@ public class MIExpressionsTest extends BaseTestCase {
 	    }
 	    IExpressionDMContext[] arrayDoubleSmallGrandChildren = getChildren(arrayDoubleSmallChildExprDMC, expectedValues);
 
-	    // No more children for array_double_small[3][*]	    
+	    // No more children for array_double_small[3][*]
 	    for (IExpressionDMContext ctx : arrayDoubleSmallGrandChildren)
 	    	getChildren(ctx, new String[0]);
-	    
+
 	    // get some parts of the children array
 	    getChildren(arrayDoubleSmallChildExprDMC, 3, 2, new String[] { "array_double_small[3][3]", "array_double_small[3][4]" });
 	    getChildren(arrayDoubleSmallChildExprDMC, 19, 3, new String[] { "array_double_small[3][19]","array_double_small[3][20]" });
     }
-    
+
     /**
      * This test verifies that there is no RTTI support before GDB 7.5.
      */
     @Test
     public void testRTTI() throws Throwable {
-    	SyncUtil.runToLocation("testRTTI");    	
-    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+    	assumeGdbVersionNot("6.7"); // crashing
+    	assumeGdbVersionLowerThen("7.5");
+    	SyncUtil.runToLocation("testRTTI");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
         // The expression we will follow as it changes types: derived.ptr
 	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "derived.ptr");
-	    
+
 	    // Now, the expression should be type VirtualBase
 	    getExpressionType(exprDmc, "VirtualBase *");
 	    assertChildrenCount(exprDmc, 2);
@@ -3476,7 +3477,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	    expectedValues[0] = "a";
 	    expectedValues[1] = "b";
 	    getChildren(exprDmc, expectedValues);
-	    
+
 	    // Make the type of our expression change
 	    SyncUtil.step(1, StepType.STEP_OVER);
 	    // Now, the expression should be type Derived, but GDB < 7.5 does not tell us
@@ -3485,7 +3486,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	    assertChildrenCount(exprDmc, 2);
 	    // The children are also the same as before
 	    getChildren(exprDmc, expectedValues);
-	    
+
 	    // Make the type of our expression change
 	    SyncUtil.step(1, StepType.STEP_OVER);
 	    // Now, the expression should be type OtherDerived, but GDB < 7.5 does not tell us
@@ -3501,61 +3502,61 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testCastToType() throws Throwable {
-    	SyncUtil.runToLocation("testCasting");    	
-    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+    	SyncUtil.runToLocation("testCasting");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
 	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "int_ptr");
-	    
+
 	    assertTrue("Expression service does not support casting", fExpService instanceof IExpressions2);
-	    
-	    ICastedExpressionDMContext castExprDmc = 
+
+	    ICastedExpressionDMContext castExprDmc =
 	    		((IExpressions2)fExpService).createCastedExpression(exprDmc, new CastInfo("char*"));
-	    
+
 	    // Check type of original expression and new casted one
 	    getExpressionType(exprDmc, "int *");
 	    getExpressionType(castExprDmc, "char *");
-	    
+
 	    assertChildrenCount(castExprDmc, 1);
 	    // get child and its value
 	    final IExpressionDMContext[] children = getChildren(exprDmc, new String[] {"*int_ptr"});
-	    
+
     	Query<String> query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(children[0], IFormattedValues.NATURAL_FORMAT), 
+						fExpService.getFormattedValueContext(children[0], IFormattedValues.NATURAL_FORMAT),
 						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 							@Override
 							protected void handleCompleted() {
 								rm.done(getData().getFormattedValue());
-							}	
+							}
 						});
 			}
     	};
-    	
+
         fSession.getExecutor().execute(query);
         String value = query.get(500, TimeUnit.MILLISECONDS);
 		assertEquals("65", value);
-	    
+
 		final IExpressionDMContext[] castChildren = getChildren(castExprDmc, new String[] {"*((char*)(int_ptr))"});
     	query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(castChildren[0], IFormattedValues.NATURAL_FORMAT), 
+						fExpService.getFormattedValueContext(castChildren[0], IFormattedValues.NATURAL_FORMAT),
 						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 							@Override
 							protected void handleCompleted() {
 								rm.done(getData().getFormattedValue());
-							}	
+							}
 						});
 			}
-    	};        
+    	};
     	fSession.getExecutor().execute(query);
         value = query.get(500, TimeUnit.MILLISECONDS);
 		assertEquals("65 'A'", value);
-		
+
 		// Now check that the casted type still remembers what its original type is
 		assertEquals(castExprDmc.getParents()[0], exprDmc);
     }
@@ -3565,22 +3566,22 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testDisplayAsArray() throws Throwable {
-    	SyncUtil.runToLocation("testCasting");    	
-    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+    	SyncUtil.runToLocation("testCasting");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
 	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "int_ptr");
-	    
+
 	    assertTrue("Expression service does not support casting", fExpService instanceof IExpressions2);
-	    
+
 	    // Display as an array of 2 elements, starting at index 1
-	    ICastedExpressionDMContext castExprDmc = 
+	    ICastedExpressionDMContext castExprDmc =
 	    		((IExpressions2)fExpService).createCastedExpression(exprDmc, new CastInfo(1,2));
-	    
+
 	    // Check type of original expression and new casted one
 	    getExpressionType(exprDmc, "int *");
 	    getExpressionType(castExprDmc, "int [2]");
-	    
+
 	    assertChildrenCount(castExprDmc, 2);
 	    // get children and their values
 	    final IExpressionDMContext[] children = getChildren(castExprDmc, new String[] {"int_ptr[1]", "int_ptr[2]"});
@@ -3591,12 +3592,12 @@ public class MIExpressionsTest extends BaseTestCase {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
 	    			fExpService.getFormattedExpressionValue(
-	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
 	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 	    						@Override
 	    						protected void handleCompleted() {
 	    							rm.done(getData().getFormattedValue());
-	    						}	
+	    						}
 	    					});
 	    		}
 	    	};
@@ -3605,8 +3606,8 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	String value = query.get(500, TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
 	    }
-	    
-		
+
+
 		// Now check that the casted type still remembers what its original type is
 		assertEquals(castExprDmc.getParents()[0], exprDmc);
     }
@@ -3617,44 +3618,44 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testDisplayAsArrayAndCastToType() throws Throwable {
-    	SyncUtil.runToLocation("testCasting");    	
-    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+    	SyncUtil.runToLocation("testCasting");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
 	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "int_ptr");
-	    
+
 	    assertTrue("Expression service does not support casting", fExpService instanceof IExpressions2);
 
 	    // We create the casted type and the displaying as an array in a single request.  This is because
 	    // that is the way the UI does it.  Furthermore, the service handles the cast first, then the
 	    // array, which is why our array of 2 ints becomes 8 chars, and then we only look at 4 of them
 	    // starting at index 4.
-	    ICastedExpressionDMContext castExprDmc = 
+	    ICastedExpressionDMContext castExprDmc =
 	    		((IExpressions2)fExpService).createCastedExpression(exprDmc, new CastInfo("char*", 4,4));
-	    
+
 	    getExpressionType(castExprDmc, "char [4]");
-	    
+
 	    assertChildrenCount(castExprDmc, 4);
 	    // get children and their values
 	    // The array index starts at 0 again because the cast to char[] creates a new array
-	    final IExpressionDMContext[] children = 
+	    final IExpressionDMContext[] children =
 	    		getChildren(castExprDmc, new String[] {"int_ptr[4]", "int_ptr[5]", "int_ptr[6]", "int_ptr[7]"});
 	    String[] expectedValues = new String[] { "68 'D'", "67 'C'", "66 'B'", "65 'A'"};
 	    for (int i = 0; i<children.length;i++) {
 	    	final IExpressionDMContext child = children[i];
-	    	
+
 	    	getExpressionType(child, "char");
-	    	
+
 	    	Query<String> query = new Query<String>() {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
 	    			fExpService.getFormattedExpressionValue(
-	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
 	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 	    						@Override
 	    						protected void handleCompleted() {
 	    							rm.done(getData().getFormattedValue());
-	    						}	
+	    						}
 	    					});
 	    		}
 	    	};
@@ -3663,8 +3664,8 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	String value = query.get(500, TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
 	    }
-	    
-		
+
+
 		// Now check that the casted type still remembers what its original type is
 		assertEquals(castExprDmc.getParents()[0], exprDmc);
     }
@@ -3674,24 +3675,24 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testCastToTypeOfArray() throws Throwable {
-    	SyncUtil.runToLocation("testCasting");    	
-    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+    	SyncUtil.runToLocation("testCasting");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
 	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "array_small");
-	    
+
 	    assertTrue("Expression service does not support casting", fExpService instanceof IExpressions2);
 
-	    ICastedExpressionDMContext castExprDmc = 
+	    ICastedExpressionDMContext castExprDmc =
 	    		((IExpressions2)fExpService).createCastedExpression(exprDmc, new CastInfo("char[]"));
-	    
+
 	    getExpressionType(exprDmc, "int [4]");
 	    getExpressionType(castExprDmc, "char [16]");
-	    
+
 	    assertChildrenCount(castExprDmc, 16);
 	    // get children and their values
 	    // The array index starts at 0 again because the cast to char[] creates a new array
-	    final IExpressionDMContext[] children = 
+	    final IExpressionDMContext[] children =
 	    		getChildren(castExprDmc, new String[] {"array_small[0]", "array_small[1]", "array_small[2]", "array_small[3]",
 	    											   "array_small[4]", "array_small[5]", "array_small[6]", "array_small[7]",
 	    											   "array_small[8]", "array_small[9]", "array_small[10]", "array_small[11]",
@@ -3700,19 +3701,19 @@ public class MIExpressionsTest extends BaseTestCase {
 	    String[] expectedValues = new String[] { "68 'D'", "67 'C'", "66 'B'", "65 'A'"};
 	    for (int i = 4; i<8;i++) {
 	    	final IExpressionDMContext child = children[i];
-	    	
+
 	    	getExpressionType(child, "char");
-	    	
+
 	    	Query<String> query = new Query<String>() {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
 	    			fExpService.getFormattedExpressionValue(
-	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
 	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 	    						@Override
 	    						protected void handleCompleted() {
 	    							rm.done(getData().getFormattedValue());
-	    						}	
+	    						}
 	    					});
 	    		}
 	    	};
@@ -3721,33 +3722,33 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	String value = query.get(500, TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i-4], value);
 	    }
-	    
-		
+
+
 		// Now check that the casted type still remembers what its original type is
 		assertEquals(castExprDmc.getParents()[0], exprDmc);
     }
-    
+
     /**
      * This test verifies that we can cast to a type and then revert
      * when dealing with an array with partitions.
      */
     @Test
     public void testCastToTypeWithPartition() throws Throwable {
-    	SyncUtil.runToLocation("testCasting");    	
-    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+    	SyncUtil.runToLocation("testCasting");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
 	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "array_large");
-	    
+
 	    assertTrue("Expression service does not support casting", fExpService instanceof IExpressions2);
-	    
-	    ICastedExpressionDMContext castExprDmc = 
+
+	    ICastedExpressionDMContext castExprDmc =
 	    		((IExpressions2)fExpService).createCastedExpression(exprDmc, new CastInfo("char[]"));
-	    
+
 	    // Check type of original expression and new casted one
 	    getExpressionType(exprDmc, "int [111]");
 	    getExpressionType(castExprDmc, "char [444]");
-	    
+
 	    // get the 5 partition children
 	    assertChildrenCount(castExprDmc, 5);
 	    IExpressionDMContext[] children = getChildren(castExprDmc, new String[] {"*((((char[])(array_large)))+0)@100", "*((((char[])(array_large)))+100)@100",
@@ -3761,7 +3762,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	    }
 	    IExpressionDMContext[] castedChildren = getChildren(children[0], expectedChildren);
 	    assertEquals(100, castedChildren.length);
-	    
+
 	    // Check the type and value of a few of the first children
 	    final String[] expectedValues = new String[] { "65 'A'", "0 '\\0'", "0 '\\0'", "0 '\\0'", "68 'D'", "67 'C'", "66 'B'", "65 'A'" };
 	    for (int i = 0; i < expectedValues.length; i++) {
@@ -3772,12 +3773,12 @@ public class MIExpressionsTest extends BaseTestCase {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
 	    			fExpService.getFormattedExpressionValue(
-	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
 	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 	    						@Override
 	    						protected void handleCompleted() {
 	    							rm.done(getData().getFormattedValue());
-	    						}	
+	    						}
 	    					});
 	    		}
 	    	};
@@ -3785,8 +3786,8 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	fSession.getExecutor().execute(query);
 	    	String value = query.get(500, TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
-	    }	    
-		
+	    }
+
 		// Now check that the casted type still remembers what its original type is
 		assertEquals(castExprDmc.getParents()[0], exprDmc);
     }
@@ -3797,23 +3798,23 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testDisplayAsArrayWithPartition() throws Throwable {
-    	SyncUtil.runToLocation("testCasting");    	
-    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+    	SyncUtil.runToLocation("testCasting");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
         // The expression we will cast from int to char
 	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "array_large");
-	    
+
 	    assertTrue("Expression service does not support casting", fExpService instanceof IExpressions2);
-	    
+
 	    // Display as an array of 101 elements, starting at index 1 (we need at least 101 elements to get partitions)
-	    ICastedExpressionDMContext castExprDmc = 
+	    ICastedExpressionDMContext castExprDmc =
 	    		((IExpressions2)fExpService).createCastedExpression(exprDmc, new CastInfo(1, 101));
-	    
+
 	    // Check type of original expression and new casted one
 	    getExpressionType(exprDmc, "int [111]");
 	    getExpressionType(castExprDmc, "int [101]");
-	    
+
 	    // Two partitions as children
 	    assertChildrenCount(castExprDmc, 2);
 	    IExpressionDMContext[] children = getChildren(castExprDmc, new String[] {"*(((*((array_large)+1)@101))+0)@100", "*(((*((array_large)+1)@101))+100)@1" });
@@ -3824,7 +3825,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	    assertTrue("Should have seen the child as a partition", children[1] instanceof IIndexedPartitionDMContext);
 	    assertEquals("Wrong start index for partition", 100, ((IIndexedPartitionDMContext)children[1]).getIndex());
 	    assertEquals("Wrong partition length", 1, ((IIndexedPartitionDMContext)children[1]).getLength());
-	    
+
 	    // Now make sure the children of the partitions have the proper casting and start at the proper index
 	    final String[] expectedChildren = new String[100];
 	    for (int i=0; i < expectedChildren.length; i++) {
@@ -3832,7 +3833,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	    }
 	    IExpressionDMContext[] castedChildren = getChildren(children[0], expectedChildren);
 	    assertEquals(100, castedChildren.length);
-	    
+
 	    // Check the type and value of a few of the first children
 	    final String[] expectedValues = new String[] { "1094861636", "1162233672" };
 	    for (int i = 0; i < expectedValues.length; i++) {
@@ -3843,12 +3844,12 @@ public class MIExpressionsTest extends BaseTestCase {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
 	    			fExpService.getFormattedExpressionValue(
-	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
 	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 	    						@Override
 	    						protected void handleCompleted() {
 	    							rm.done(getData().getFormattedValue());
-	    						}	
+	    						}
 	    					});
 	    		}
 	    	};
@@ -3856,8 +3857,8 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	fSession.getExecutor().execute(query);
 	    	String value = query.get(500, TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
-	    }	    
-		
+	    }
+
 		// Now check that the casted type still remembers what its original type is
 		assertEquals(castExprDmc.getParents()[0], exprDmc);
     }
@@ -3868,21 +3869,21 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testDisplayAsArrayAndCastToTypeWithPartition() throws Throwable {
-    	SyncUtil.runToLocation("testCasting");    	
-    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+    	SyncUtil.runToLocation("testCasting");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
 	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "array_large");
-	    
+
 	    assertTrue("Expression service does not support casting", fExpService instanceof IExpressions2);
-	    
-	    ICastedExpressionDMContext castExprDmc = 
+
+	    ICastedExpressionDMContext castExprDmc =
 	    		((IExpressions2)fExpService).createCastedExpression(exprDmc, new CastInfo("char[]", 4, 101));
-	    
+
 	    // Check type of original expression and new casted one
 	    getExpressionType(exprDmc, "int [111]");
 	    getExpressionType(castExprDmc, "char [101]");
-	    
+
 	    // get the 5 partition children
 	    assertChildrenCount(castExprDmc, 2);
 	    IExpressionDMContext[] children = getChildren(castExprDmc, new String[] {"*(((*(((char[])(array_large))+4)@101))+0)@100", "*(((*(((char[])(array_large))+4)@101))+100)@1"});
@@ -3901,7 +3902,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	    }
 	    IExpressionDMContext[] castedChildren = getChildren(children[0], expectedChildren);
 	    assertEquals(100, castedChildren.length);
-	    
+
 	    // Check the type and value of a few of the first children
 	    final String[] expectedValues = new String[] { "68 'D'", "67 'C'", "66 'B'", "65 'A'" };
 	    for (int i = 0; i < expectedValues.length; i++) {
@@ -3912,12 +3913,12 @@ public class MIExpressionsTest extends BaseTestCase {
 	    		@Override
 	    		protected void execute(final DataRequestMonitor<String> rm) {
 	    			fExpService.getFormattedExpressionValue(
-	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT), 
+	    					fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
 	    					new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 	    						@Override
 	    						protected void handleCompleted() {
 	    							rm.done(getData().getFormattedValue());
-	    						}	
+	    						}
 	    					});
 	    		}
 	    	};
@@ -3925,25 +3926,25 @@ public class MIExpressionsTest extends BaseTestCase {
 	    	fSession.getExecutor().execute(query);
 	    	String value = query.get(500, TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
-	    }	    
-		
+	    }
+
 		// Now check that the casted type still remembers what its original type is
-		assertEquals(castExprDmc.getParents()[0], exprDmc);		
+		assertEquals(castExprDmc.getParents()[0], exprDmc);
     }
-    
+
     /**
      * This test verifies that we display the simple return value of a method after
      * a step-return operation, but only for the first stack frame.
      */
     @Test
     public void testDisplaySimpleReturnValueForStepReturn() throws Throwable {
-    	SyncUtil.runToLocation("testSimpleReturn");    	
+    	SyncUtil.runToLocation("testSimpleReturn");
     	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_RETURN);
-    	
+
     	// Check the return value is shown when looking at the first frame
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	IVariableDMData[] result = SyncUtil.getLocals(frameDmc);
-    	
+
     	assertEquals(3, result.length);  // Two variables and one return value
 
     	// Return value
@@ -3955,7 +3956,7 @@ public class MIExpressionsTest extends BaseTestCase {
     	// Second variable
     	assertEquals("b", result[2].getName());
     	assertEquals("false", result[2].getValue());
-    	
+
     	// Now check how the return value will be displayed to the user
     	final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$2");
 		Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
@@ -3971,7 +3972,7 @@ public class MIExpressionsTest extends BaseTestCase {
 		// Now check the actual value using the expression service
 		String value = SyncUtil.getExpressionValue(returnExprDmc, IFormattedValues.DECIMAL_FORMAT);
 		assertEquals("6", value);
-		
+
     	// Now make sure we don't show the return value for another frame
 		final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1);
     	result = SyncUtil.getLocals(frameDmc2);
@@ -3980,20 +3981,20 @@ public class MIExpressionsTest extends BaseTestCase {
     	assertEquals(1, result.length);
     	assertEquals("b",  result[0].getName());
     }
-    
+
     /**
      * This test verifies that we display the complex return value of a method after
      * a step-return operation, but only for the first stack frame.
      */
     @Test
     public void testDisplayComplexReturnValueForStepReturn() throws Throwable {
-    	SyncUtil.runToLocation("testComplexReturn");    	
+    	SyncUtil.runToLocation("testComplexReturn");
     	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_RETURN);
-    	
+
     	// Check the return value is show when looking at the first frame
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	IVariableDMData[] result = SyncUtil.getLocals(frameDmc);
-    	
+
     	assertEquals(3, result.length);  // Two variables and one return value
 
     	// Return value
@@ -4036,13 +4037,13 @@ public class MIExpressionsTest extends BaseTestCase {
      */
     @Test
     public void testNoReturnValueForEmptyStepReturn() throws Throwable {
-    	SyncUtil.runToLocation("noReturnValue");    	
+    	SyncUtil.runToLocation("noReturnValue");
     	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_RETURN);
-    	
+
     	// Check no return value is shown when looking at the first frame
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	IVariableDMData[] result = SyncUtil.getLocals(frameDmc);
-    	
+
     	assertEquals(2, result.length);  // Two variables and one return value
 
     	// first variable
@@ -4062,7 +4063,7 @@ public class MIExpressionsTest extends BaseTestCase {
         SyncUtil.runToLocation("testExistingChild");
     	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
         final String PARENT_EXPR = "b";
         final String CHILD_EXPR = "((b).d)";
         final String CHILD__REL_EXPR = "d";
@@ -4073,16 +4074,16 @@ public class MIExpressionsTest extends BaseTestCase {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(childDmc, IFormattedValues.NATURAL_FORMAT), 
+						fExpService.getFormattedValueContext(childDmc, IFormattedValues.NATURAL_FORMAT),
 						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 							@Override
 							protected void handleSuccess() {
 								rm.done(getData().getFormattedValue());
-							}	
+							}
 						});
 			}
     	};
-    	
+
         fSession.getExecutor().execute(query);
         String value = query.get(500, TimeUnit.MILLISECONDS);
 		assertEquals("8", value);
@@ -4093,43 +4094,43 @@ public class MIExpressionsTest extends BaseTestCase {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
     						@Override
     						protected void handleSuccess() {
     							if (getData().length != 2) {
-    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
     					            		"Wrong number for children.  Expecting 2 but got " + getData().length, null));
     								return;
     							}
-    							
+
     							MIExpressionDMC firstChildContext = (MIExpressionDMC)getData()[0];
     							if (firstChildContext.getExpression().equals(CHILD_EXPR) == false) {
-    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
     					            		"Got wrong first child. Expected " + CHILD_EXPR + " but got " +  firstChildContext.getExpression(), null));
     								return;
     							}
 
     							if (firstChildContext.getRelativeExpression().equals(CHILD__REL_EXPR) == false) {
-    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
     					            		"Got wrong relative expression. Expected " + CHILD__REL_EXPR + " but got " +  firstChildContext.getRelativeExpression(), null));
     								return;
     							}
-    							
+
     							fExpService.getFormattedExpressionValue(
-    									fExpService.getFormattedValueContext(firstChildContext, IFormattedValues.NATURAL_FORMAT), 
+    									fExpService.getFormattedValueContext(firstChildContext, IFormattedValues.NATURAL_FORMAT),
     									new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
     										@Override
     										protected void handleSuccess() {
     											rm.done(getData().getFormattedValue());
-    										}	
+    										}
     									});
 
     						}
     					});
 			}
     	};
-    	
+
         fSession.getExecutor().execute(query);
         value = query.get(500, TimeUnit.MILLISECONDS);
 		assertEquals("8", value);
@@ -4146,7 +4147,7 @@ public class MIExpressionsTest extends BaseTestCase {
         SyncUtil.runToLocation("testExistingChild");
     	MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
+
         final String PARENT_EXPR = "b";
         final String CHILD_EXPR = "((b).d)";
         final String CHILD__REL_EXPR = "d";
@@ -4157,43 +4158,43 @@ public class MIExpressionsTest extends BaseTestCase {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
     			fExpService.getSubExpressions(
-    					parentDmc, 
+    					parentDmc,
     					new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
     						@Override
     						protected void handleSuccess() {
     							if (getData().length != 2) {
-    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
     					            		"Wrong number for children.  Expecting 2 but got " + getData().length, null));
     								return;
     							}
-    							
+
     							MIExpressionDMC firstChildContext = (MIExpressionDMC)getData()[0];
     							if (firstChildContext.getExpression().equals(CHILD_EXPR) == false) {
-    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
     					            		"Got wrong first child. Expected " + CHILD_EXPR + " but got " +  firstChildContext.getExpression(), null));
     								return;
     							}
 
     							if (firstChildContext.getRelativeExpression().equals(CHILD__REL_EXPR) == false) {
-    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 
+    					            rm.done(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
     					            		"Got wrong relative expression. Expected " + CHILD__REL_EXPR + " but got " +  firstChildContext.getRelativeExpression(), null));
     								return;
     							}
 
     							fExpService.getFormattedExpressionValue(
-    									fExpService.getFormattedValueContext(firstChildContext, IFormattedValues.NATURAL_FORMAT), 
+    									fExpService.getFormattedValueContext(firstChildContext, IFormattedValues.NATURAL_FORMAT),
     									new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
     										@Override
     										protected void handleSuccess() {
     											rm.done(getData().getFormattedValue());
-    										}	
+    										}
     									});
 
     						}
     					});
 			}
     	};
-    	
+
         fSession.getExecutor().execute(query);
         String value = query.get(500, TimeUnit.MILLISECONDS);
 		assertEquals("8", value);
@@ -4204,16 +4205,16 @@ public class MIExpressionsTest extends BaseTestCase {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(childDmc, IFormattedValues.NATURAL_FORMAT), 
+						fExpService.getFormattedValueContext(childDmc, IFormattedValues.NATURAL_FORMAT),
 						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
 							@Override
 							protected void handleSuccess() {
 								rm.done(getData().getFormattedValue());
-							}	
+							}
 						});
 			}
     	};
-    	
+
         fSession.getExecutor().execute(query);
         value = query.get(500, TimeUnit.MILLISECONDS);
 		assertEquals("8", value);
@@ -4237,24 +4238,207 @@ public class MIExpressionsTest extends BaseTestCase {
 	}
 
     protected String getExpressionType(final IExpressionDMContext exprDmc, final String expectedType) throws Throwable {
-    	
+
     	Query<String> query = new Query<String>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getExpressionData(
-						exprDmc, 
+						exprDmc,
 						new ImmediateDataRequestMonitor<IExpressionDMData>(rm) {
 							@Override
 							protected void handleCompleted() {
 								rm.done(getData().getTypeName());
-							}	
+							}
 						});
 			}
     	};
-    	
+
         fSession.getExecutor().execute(query);
         String type = query.get(500, TimeUnit.MILLISECONDS);
 		assertEquals(expectedType, type);
 		return type;
+    }
+
+
+	// Slight change in GDB output to fix a bug, so we must change the test a little
+	// Bug 320277
+	@Test
+    public void testDeleteChildren_7_3() throws Throwable {
+    	assumeGdbVersionAtLeast("7.3");
+        SyncUtil.runToLocation("testDeleteChildren");
+        MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+        fExpService.getExecutor().submit(new Runnable() {
+        	@Override
+			public void run() {
+
+        		// First create the var object and all its children
+        		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "f");
+
+        		fExpService.getSubExpressions(
+        				parentDmc,
+        				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+        					@Override
+        					protected void handleCompleted() {
+        						if (!isSuccess()) {
+        							wait.waitFinished(getStatus());
+        						} else {
+        							if (getData().length != 5) {
+        								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+        										"Failed getting children; expecting 5 got " + getData().length, null));
+        							} else {
+        								String childStr = "((class bar) f)";
+        								if (!getData()[0].getExpression().equals(childStr)) {
+        									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+        											"Got child " + getData()[0].getExpression() + " instead of " + childStr, null));
+        								} else {
+        									// Now list the children of the first element
+        									fExpService.getSubExpressions(
+        											getData()[0],
+        											new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+        												@Override
+        												protected void handleCompleted() {
+        													if (!isSuccess()) {
+        														wait.waitFinished(getStatus());
+        													} else {
+        														if (getData().length != 2) {
+        															wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+        																	"Failed getting children; expecting 2 got " + getData().length, null));
+        														} else {
+        					        								String childStr = "((((class bar) f)).d)";
+        					        								if (!getData()[0].getExpression().equals(childStr)) {
+        					        									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+        					        											"Got child " + getData()[0].getExpression() + " instead of " + childStr, null));
+        					        								} else {
+        					        									wait.setReturnInfo(getData()[0]);
+        								        						wait.waitFinished();
+        					        								}
+        														}
+        													}
+        												}
+        											});
+        								}
+        							}
+        						}
+        					}
+        				});
+        	}
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        final IExpressionDMContext deletedChildDmc = (IExpressionDMContext)wait.getReturnInfo();
+
+        wait.waitReset();
+
+        fExpService.getExecutor().submit(new Runnable() {
+        	@Override
+			public void run() {
+
+        		// Now create more than 1000 expressions to trigger the deletion of the children
+        		// that were created above
+        		for (int i=0; i<1100; i++) {
+        			IExpressionDMContext dmc = fExpService.createExpression(frameDmc, "a[" + i + "]");
+
+        			wait.increment();
+        			fExpService.getExpressionData(
+        					dmc,
+        					new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
+        						@Override
+        						protected void handleCompleted() {
+        							if (!isSuccess()) {
+        								wait.waitFinished(getStatus());
+        							} else {
+        								wait.waitFinished();
+        							}
+        						}
+        					});
+        		}
+        	}
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+
+        fExpService.getExecutor().submit(new Runnable() {
+        	@Override
+			public void run() {
+
+        		// Evaluate the expression of a child that we know is deleted to make sure
+        		// the expression service can handle that
+        		fExpService.getExpressionData(
+        				deletedChildDmc,
+        				new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
+        					@Override
+        					protected void handleCompleted() {
+        						if (!isSuccess()) {
+        							wait.waitFinished(getStatus());
+        						} else {
+        							wait.waitFinished();
+        						}
+        					}
+        				});
+        	}
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+
+    }
+
+
+    /**
+     * This test verifies that there is proper RTTI support starting with GDB 7.5.
+     */
+	@Test
+    public void testRTTI_7_5() throws Throwable {
+    	assumeGdbVersionAtLeast("7.5");
+    	SyncUtil.runToLocation("testRTTI");
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+        // The expression we will follow as it changes types: derived.ptr
+	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "derived.ptr");
+
+	    // Now, the expression should be type VirtualBase
+	    getExpressionType(exprDmc, "VirtualBase *");
+	    assertChildrenCount(exprDmc, 2);
+	    // get all children
+	    String[] expectedValues = new String[2];
+	    expectedValues[0] = "a";
+	    expectedValues[1] = "b";
+	    getChildren(exprDmc, expectedValues);
+
+	    // Make the type of our expression change
+	    SyncUtil.step(1, StepType.STEP_OVER);
+	    // Now, the expression should be type Derived
+	    getExpressionType(exprDmc, "Derived *");
+	    assertChildrenCount(exprDmc, 5);
+	    // get all children
+	    expectedValues = new String[5];
+	    expectedValues[0] = "VirtualBase";
+	    expectedValues[1] = "c";
+	    expectedValues[2] = "ptr";
+	    expectedValues[3] = "d";
+	    expectedValues[4] = "e";
+	    getChildren(exprDmc, expectedValues);
+
+	    // Make the type of our expression change
+	    SyncUtil.step(1, StepType.STEP_OVER);
+	    // Now, the expression should be type OtherDerived
+	    getExpressionType(exprDmc, "OtherDerived *");
+	    assertChildrenCount(exprDmc, 4);
+	    // get all children
+	    expectedValues = new String[4];
+	    expectedValues[0] = "VirtualBase";
+	    expectedValues[1] = "d";
+	    expectedValues[2] = "c";
+	    expectedValues[3] = "f";
+	    getChildren(exprDmc, expectedValues);
     }
 }

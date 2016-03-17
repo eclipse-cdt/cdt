@@ -169,25 +169,6 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			result[fQualifierPos + 1] = fLastName;
 		return result;
 	}
-	
-	@Override
-	@Deprecated
-	public IASTName[] getNames() {
-		IASTName[] result = new IASTName[fQualifierPos + (fLastName == null ? 1 : 2)];
-		int idx = 0;
-		for (ICPPASTNameSpecifier nameSpecifier : getQualifier()) {
-			if (nameSpecifier instanceof IASTName) {
-				result[idx++] = (IASTName) nameSpecifier;
-			} else {
-				throw new UnsupportedOperationException("Can't use getNames() on a " +  //$NON-NLS-1$
-						"qualified name that includes a decltype-specifier. Use " +     //$NON-NLS-1$
-						"getQualifier() and getLastName() instead.");                   //$NON-NLS-1$
-			}
-		}
-		if (fLastName != null)
-			result[fQualifierPos + 1] = fLastName;
-		return result;
-	}
 
 	@Override
 	public IASTName getLastName() {

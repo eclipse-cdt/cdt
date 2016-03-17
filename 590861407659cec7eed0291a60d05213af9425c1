@@ -52,6 +52,24 @@
       "revId": "590861407659cec7eed0291a60d05213af9425c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_72934b2c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-03-17T00:17:11Z",
+      "side": 1,
+      "message": "compareTo on strings! Need to use version comparator, I just added comment so it will get fixed",
+      "parentUuid": "e7dfcf21_32838311",
+      "revId": "590861407659cec7eed0291a60d05213af9425c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

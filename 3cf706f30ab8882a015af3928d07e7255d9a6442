@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_2351732d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-17T15:13:35Z",
+      "side": 1,
+      "message": "Shouldn\u0027t protected be enough for the extender factories ?",
+      "revId": "3cf706f30ab8882a015af3928d07e7255d9a6442",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_43bbdfb9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-17T15:13:35Z",
+      "side": 1,
+      "message": "The previous code had a check for isNonStopSupportedInGdbVersion,\nhowever I see a similar check under launchDebugSession which seems to cover this.\nSo this seems to be fine!",
+      "revId": "3cf706f30ab8882a015af3928d07e7255d9a6442",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

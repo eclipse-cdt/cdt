@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,30 +43,32 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapEntry"; //$NON-NLS-1$
 
 	private IPath fLocalPath;
-	private IPath fBackendPath;
+	private String fBackendPathStr;
 
-	/** 
-	 * Constructor for MapEntrySourceContainer. 
+	/**
+	 * Constructor for MapEntrySourceContainer.
 	 */
 	public MapEntrySourceContainer() {
-		fBackendPath = Path.EMPTY;
+		fBackendPathStr = ""; //$NON-NLS-1$
 		fLocalPath = Path.EMPTY;
 	}
 
-	/** 
-	 * Constructor for MapEntrySourceContainer. 
+	/**
+	 * Constructor for MapEntrySourceContainer.
 	 */
-	public MapEntrySourceContainer(IPath backend, IPath local) {
-		fBackendPath = backend;
+	public MapEntrySourceContainer(String backendPathStr, IPath local) {
+		fBackendPathStr = backendPathStr;
 		fLocalPath = local;
 	}
 
 	/**
-	 * Creates an IPath from a string which may be a Win32 path. <p>
+	 * Creates an IPath from a string which may be a Win32 path.
 	 * <p>
-	 * ("new Path(...)" won't work in Unix when using a Win32 path: the backslash
-	 * separator and the device notation are completely munged.)
+	 * <p>
+	 * ("new Path(...)" won't work in Unix when using a Win32 path: the
+	 * backslash separator and the device notation are completely munged.)
 	 * Copied from org.eclipse.cdt.debug.edc.internal.PathUtils
+	 *
 	 * @param path
 	 * @return converted string
 	 */
@@ -107,11 +109,36 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 
 	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
-		IPath path = createPath(name);
-		if (getBackendPath().isPrefixOf(path)) {
-			path = path.removeFirstSegments(getBackendPath().segmentCount());
-			path = getLocalPath().append(path);
+		IPath path = null;
 
+		if (name != null) {
+			// First try the non-canonical comparison
+			final String backend = getBackendPathStr();
+			if (name.toLowerCase().startsWith(backend.toLowerCase())) {
+				String suffix = name.substring(backend.length());
+				// checkStartsWith only verifies that the paths are the same up
+				// to getBackend(), however if name=/hello2/a.c and backend=/hello
+				// then checkStartsWith will be true, so we have to further check
+				// that we are on a separator
+				if (backend.endsWith("/") || backend.endsWith("\\") || //$NON-NLS-1$ //$NON-NLS-2$
+						suffix.startsWith("/") || suffix.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
+					path = getLocalPath().append(suffix);
+				}
+			}
+
+			// Then if we have not matched, try the legacy way of canonicalizing
+			// the paths and comparing them
+			if (path == null) {
+				IPath input = createPath(name);
+				IPath backendPath = createPath(backend);
+				if (backendPath.isPrefixOf(input)) {
+					IPath suffix = input.removeFirstSegments(backendPath.segmentCount());
+					path = getLocalPath().append(suffix);
+				}
+			}
+		}
+
+		if (path != null) {
 			IFile[] wsFiles = ResourceLookup.findFilesForLocation(path);
 			ArrayList<IFile> list = new ArrayList<IFile>();
 			for (int j = 0; j < wsFiles.length; ++j) {
@@ -157,7 +184,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 
 	@Override
 	public String getName() {
-		return MessageFormat.format("{0} - {1}", new Object[] { getBackendPath().toOSString(), getLocalPath().toOSString() }); //$NON-NLS-1$
+		return MessageFormat.format("{0} - {1}", new Object[] { getBackendPathStr(), getLocalPath().toOSString() }); //$NON-NLS-1$
 	}
 
 	@Override
@@ -168,17 +195,17 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	public IPath getLocalPath() {
 		return fLocalPath;
 	}
-	
-	public IPath getBackendPath() {
-		return fBackendPath;
+
+	public String getBackendPathStr() {
+		return fBackendPathStr;
 	}
 
 	public void setLocalPath(IPath local) {
 		fLocalPath = local;
 	}
-	
-	public void setBackendPath(IPath backend) {
-		fBackendPath = backend;
+
+	public void setBackendPathStr(String backendPathStr) {
+		fBackendPathStr = backendPathStr;
 	}
 
 	@Override
@@ -186,10 +213,10 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		if (!(o instanceof MapEntrySourceContainer))
 			return false;
 		MapEntrySourceContainer entry = (MapEntrySourceContainer)o;
-		return (entry.getBackendPath().equals(getBackendPath()) && entry.getLocalPath().equals(getLocalPath()));
+		return (entry.getBackendPathStr().equals(getBackendPathStr()) && entry.getLocalPath().equals(getLocalPath()));
 	}
 
 	public MapEntrySourceContainer copy() {
-		return new MapEntrySourceContainer(fBackendPath, fLocalPath);
+		return new MapEntrySourceContainer(fBackendPathStr, fLocalPath);
 	}
 }

@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.parser;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IToken {
-	// getters
+	// Getters.
 	public int getType();
 	public String getImage();
 	public char[] getCharImage();
@@ -220,34 +220,34 @@ public interface IToken {
 	@Deprecated
 	public boolean isOperator();
 
-	/** @deprecated use {@link #tAND} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tAND}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_and = 54;
-	/** @deprecated use {@link #tAMPERASSIGN} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tAMPERASSIGN}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_and_eq = 55;
-	/** @deprecated use {@link #tAMPER} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tAMPER}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_bitand = 58;
-	/** @deprecated use {@link #tBITOR} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tBITOR}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_bitor = 59;
-	/** @deprecated use {@link #tBITCOMPLEMENT} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tBITCOMPLEMENT}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int tCOMPL= tBITCOMPLEMENT;
-	/** @deprecated use {@link #tBITCOMPLEMENT} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tBITCOMPLEMENT}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_compl = 66;
-	/** @deprecated use {@link #tNOT} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tNOT}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_not = 93;
-	/** @deprecated use {@link #tNOTEQUAL} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tNOTEQUAL} @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_not_eq = 94;
-	/** @deprecated use {@link #tOR} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tOR} @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_or = 96;
-	/** @deprecated use {@link #tBITORASSIGN} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tBITORASSIGN}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_or_eq = 97;
-	/** @deprecated use {@link #tXOR} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tXOR}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_xor = 127;
-	/** @deprecated use {@link #tXORASSIGN} @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Use {@link #tXORASSIGN}. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int t_xor_eq = 128;
-	/** @deprecated don't use it @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Not used. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int tMACROEXP = 138;
-	/** @deprecated don't use it @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Not used. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int tCOMMENT = 142;
-	/** @deprecated don't use it @noreference This field is not intended to be referenced by clients. */
+	/** @deprecated Not used. @noreference This field is not intended to be referenced by clients. */
 	@Deprecated int tBLOCKCOMMENT = 143;
 }

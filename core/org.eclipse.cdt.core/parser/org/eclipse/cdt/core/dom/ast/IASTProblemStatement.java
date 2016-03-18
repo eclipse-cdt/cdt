@@ -11,14 +11,12 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents a parse problem where we tried to match against a
- * statement.
+ * This interface represents a parse problem where we tried to match against a statement.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTProblemStatement extends IASTStatement, IASTProblemHolder {
-
 	/**
 	 * @since 5.1
 	 */

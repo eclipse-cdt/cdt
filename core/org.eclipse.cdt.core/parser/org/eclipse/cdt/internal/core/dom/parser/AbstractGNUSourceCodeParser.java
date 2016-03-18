@@ -1338,11 +1338,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		while (true) {
 			final boolean ok= acceptInactiveCodeBoundary(codeBranchNesting);
 			if (!ok) {
-				// we left to an enclosing code branch. If we started in inactive code, it's time to leave.
+				// We left to an enclosing code branch. If we started in inactive code, it's time to leave.
 				if (!wasActive)
 					return;
 
-				// if we started in active code, we need to skip the outer and therefore unrelated
+				// If we started in active code, we need to skip the outer and therefore unrelated
 				// inactive branches until we hit active code again.
 				try {
 					skipInactiveCode();
@@ -1351,7 +1351,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				}
 				codeBranchNesting= Math.min(getCodeBranchNesting() + 1, codeBranchNesting);
 
-				// we could be at the start of inactive code so restart the loop
+				// We could be at the start of inactive code so restart the loop.
 				continue;
 			}
 
@@ -1366,7 +1366,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 			final int offset = next.getOffset();
 			declarationMark= next;
-			next= null; // don't hold on to the token while parsing namespaces, class bodies, etc.
+			next= null; // Don't hold on to the token while parsing namespaces, class bodies, etc.
 			try {
 				IASTDeclaration declaration= declaration(options);
 				if (((ASTNode) declaration).getLength() == 0 && LTcatchEOF(1) != IToken.tEOC) {

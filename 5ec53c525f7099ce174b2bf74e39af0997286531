@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_140f4c3e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1010,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Good idea! Done",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_2e06b7d7",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 3
@@ -30,6 +47,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "Add an assert so we eventually catch the case where a tid string is passed that doesn\u0027t translate to an int? ex: tid \u003d \"1.1\".\nThis will be the trigger to tell us we need to adapt the code to these new PIDs.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_542c749a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1422,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_14090ce8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_4e0f83eb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
         "patchSetId": 3
@@ -64,6 +115,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "Add an assert so we eventually catch the case where a tid string is passed that doesn\u0027t translate to an int? ex: tid \u003d \"1.1\".\nThis will be the trigger to tell us we need to adapt the code to these new PIDs.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d47c0467",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +155,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_740c10f6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_8e3c2b80",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
         "patchSetId": 3
@@ -98,6 +183,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "Add an assert so we eventually catch the case where a tid string is passed that doesn\u0027t translate to an int? ex: tid \u003d \"1.1\".\nThis will be the trigger to tell us we need to adapt the code to these new PIDs.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b4ef787b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +223,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_54f47447",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_ce32b3a7",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
         "patchSetId": 3
@@ -132,6 +251,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "Add an assert so we eventually catch the case where a tid string is passed that doesn\u0027t translate to an int? ex: tid \u003d \"1.1\".\nThis will be the trigger to tell us we need to adapt the code to these new PIDs.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_74f17055",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +291,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f4d8201d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerSelectionFinder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_8e9fcb3e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbPinProvider.java",
         "patchSetId": 3
@@ -166,6 +319,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "In this block, you could avoid doing two conversions(String -\u003e int, int -\u003e String), and use directly the String value returned by execDmc.getThreadId()? \n\nThat way this code will be ready to handle the \"new\" thread ids without change.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_34c0c891",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbPinProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Sure, I missed this, no need for any conversions at all !, Thanks !",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +359,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_54c9d4bc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbPinProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "No need, thanks !",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_2eb077c3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/breakpoints/GdbBreakpointVMProvider.java",
         "patchSetId": 3
@@ -206,6 +393,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_97a99e9a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/breakpoints/GdbBreakpointVMProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Ok, I have done this one, which leaves the block with no conversions from the initial code, so the catch in the base code is no longer needed, so I have removed it.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_8ec34b03",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl.java",
         "patchSetId": 3
@@ -217,6 +421,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "I am not sure if we should have propagated the String version of tid deeper here? The commandFactory is API and if we do not make that change now, it might hold us off later, if we want to enable the use String of TIDs, like \"1.2\"?",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1784ae16",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "To be addressed in a new separate commit",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +478,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_54d71468",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "This block is already enclosed by a try catch to NumberFormatException, I have added an assert though.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_aeef277b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
         "patchSetId": 3
@@ -268,6 +506,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "add a try/catch block for the String -\u003e int conversion? Put an assert in the catch, so we are alerted when this fails?",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b40938a5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "This block is already enclosed by a catch to NumberFormatException, I have added an assert though.",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +546,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_1494acc4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "It does not seem internal to me, I will do it in a second pass, hoepfully does not break API.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_2efb173b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
         "patchSetId": 3
@@ -308,6 +580,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_7487b099",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_4ef4e347",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
         "patchSetId": 3
@@ -319,6 +608,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "Same comment as above w/r to propagating the String tid to the framesCache / assert in the catch.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b41058dd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "TB done with a new commit.",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -353,6 +659,23 @@
       "writtenOn": "2016-03-18T11:48:01Z",
       "side": 1,
       "message": "We might need to revisit these hardcoded values - I guess the tests failing will be a good clue, when it\u0027s required.",
+      "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_54255434",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-18T20:21:56Z",
+      "side": 1,
+      "message": "Hard to predict how this test case will evolve with the inroduction of thread groups, good enough for the time being.",
       "revId": "5ec53c525f7099ce174b2bf74e39af0997286531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

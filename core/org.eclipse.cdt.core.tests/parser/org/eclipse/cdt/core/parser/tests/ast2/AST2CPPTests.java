@@ -11746,10 +11746,13 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  int y;
 	//	  int z[10];
 	//	};
-	//	S a = { .x = 10, .y = 11 };
-	//	S b = { .z[4 ... 6] = 3 };
-	//	int c[6] = { [4] = 29, [2] = 15 };
-	//	int d[6] = { [2 ... 4] = 29 };
+	//	void test() {
+	//	  S a = { .x = 10, .y = 11 };
+	//	  S b = { .z[4 ... 6] = 3 };
+	//	  S{ .x = 5 };
+	//	  int c[6] = { [4] = 29, [2] = 15 };
+	//	  int d[6] = { [2 ... 4] = 29 };
+	//	}
 	public void testDesignatedInitializers() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPASTDesignatedInitializer d1 = bh.assertNode(".x = 10");
@@ -11762,20 +11765,23 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(2, d3.getDesignators().length);
 		assertTrue(d3.getDesignators()[0] instanceof ICPPASTFieldDesignator);
 		assertTrue(d3.getDesignators()[1] instanceof IGPPASTArrayRangeDesignator);
-		ICPPASTDesignatedInitializer d4 = bh.assertNode("[4] = 29");
+		ICPPASTDesignatedInitializer d4 = bh.assertNode(".x = 5");
 		assertEquals(1, d4.getDesignators().length);
-		assertTrue(d4.getDesignators()[0] instanceof ICPPASTArrayDesignator);
-		ICPPASTDesignatedInitializer d5 = bh.assertNode("[2] = 15");
+		assertTrue(d4.getDesignators()[0] instanceof ICPPASTFieldDesignator);
+		ICPPASTDesignatedInitializer d5 = bh.assertNode("[4] = 29");
 		assertEquals(1, d5.getDesignators().length);
 		assertTrue(d5.getDesignators()[0] instanceof ICPPASTArrayDesignator);
-		ICPPASTDesignatedInitializer d6 = bh.assertNode("[2 ... 4] = 29");
+		ICPPASTDesignatedInitializer d6 = bh.assertNode("[2] = 15");
 		assertEquals(1, d6.getDesignators().length);
-		assertTrue(d6.getDesignators()[0] instanceof IGPPASTArrayRangeDesignator);
+		assertTrue(d6.getDesignators()[0] instanceof ICPPASTArrayDesignator);
+		ICPPASTDesignatedInitializer d7 = bh.assertNode("[2 ... 4] = 29");
+		assertEquals(1, d7.getDesignators().length);
+		assertTrue(d7.getDesignators()[0] instanceof IGPPASTArrayRangeDesignator);
 		ICPPField x = bh.assertNonProblemOnFirstIdentifier(".x");
 		ICPPField y = bh.assertNonProblemOnFirstIdentifier(".y");
 		ICPPField a = bh.assertNonProblemOnFirstIdentifier(".z[4 ... 6]");
 	}
-	
+
 	//	struct A {
 	//		A() {}
 	//	};

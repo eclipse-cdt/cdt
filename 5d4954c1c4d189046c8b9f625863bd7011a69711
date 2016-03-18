@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_717ee221",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-18T15:37:39Z",
+      "side": 1,
+      "message": "Can this actually happen? (i.e. error when disabling reverse). Just curious...",
+      "revId": "5d4954c1c4d189046c8b9f625863bd7011a69711",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

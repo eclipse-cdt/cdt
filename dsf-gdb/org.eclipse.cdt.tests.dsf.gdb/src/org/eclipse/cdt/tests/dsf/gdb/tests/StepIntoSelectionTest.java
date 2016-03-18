@@ -32,22 +32,21 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.internal.core.model.FunctionDeclaration;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * Tests Non Stop GDB RunControl "Step into Selection feature"
  * 
  */
 @SuppressWarnings("restriction")
-@RunWith(BackgroundRunner.class)
-public class StepIntoSelectionTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 
 	private DsfServicesTracker fServicesTracker;
 	private DsfSession fSession;
@@ -114,7 +113,7 @@ public class StepIntoSelectionTest extends BaseTestCase {
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 
-		fServicesTracker.dispose();
+        if (fServicesTracker!=null) fServicesTracker.dispose();
 	}
 
 	@Override
@@ -456,9 +455,9 @@ public class StepIntoSelectionTest extends BaseTestCase {
 	 * reasons, resulting in two MIStoppedEvent in the step-into-selection machinery. Later
 	 * gdbs generate a stopped event with only one reason, as they should.
 	 */
-	@Ignore
 	@Test
 	public void atDoubleMethodStopAtBreakpointFunctionEntry() throws Throwable {
+		assumeGdbVersionAtLeast("7.4");
 		atDoubleMethodStopAtBreakpointCommon(FOO_LINE);
 	}
 
@@ -497,8 +496,8 @@ public class StepIntoSelectionTest extends BaseTestCase {
 	 * gdbs generate a stopped event with only one reason, as they should.
 	 */
 	@Test
-	@Ignore
 	public void atDoubleMethodSkipBreakpointFunctionEntry() throws Throwable {
+		assumeGdbVersionAtLeast("7.4");
 		atDoubleMethodSkipBreakpointCommon(FOO_LINE);
 	}
 

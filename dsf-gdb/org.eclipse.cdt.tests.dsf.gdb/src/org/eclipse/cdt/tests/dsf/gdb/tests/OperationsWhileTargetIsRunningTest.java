@@ -32,8 +32,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -44,6 +43,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.osgi.service.prefs.Preferences;
 
 
@@ -51,8 +51,8 @@ import org.osgi.service.prefs.Preferences;
  * Tests that we can perform different operations while the target
  * is running. 
  */
-@RunWith(BackgroundRunner.class)
-public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase {
 
 	private static final String TIMEOUT_MESSAGE = "Timeout";
 
@@ -103,7 +103,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 
-		fServicesTracker.dispose();
+        if (fServicesTracker!=null) fServicesTracker.dispose();
 
 		// Restore the different preferences we might have changed
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );

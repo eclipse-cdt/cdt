@@ -781,4 +781,79 @@ public class CDebugUtils {
 		String customModel = System.getProperty(ICDebugConstants.PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER, null);
 		return customModel != null && Boolean.valueOf(customModel);
 	}
+
+	/**
+	 * Return value type for {@link CDebugUtils#getFileParts(String)}
+	 * @since 8.0
+	 */
+	public static class FileParts {
+		private String folder;
+		private String fileName;
+		private String extension;
+
+		/**
+		 * Returns the containing folder of the input file. Can be empty if the
+		 * input file was a filename.
+		 * 
+		 * @return containing folder
+		 */
+		public String getFolder() {
+			return folder;
+		}
+
+		/**
+		 * Returns the filename (after last slash) of the input file. Can be
+		 * empty if input ended with a slash.
+		 * 
+		 * @return file name
+		 */
+		public String getFileName() {
+			return fileName;
+		}
+
+		/**
+		 * Returns the extension of {@link #getFileName()}
+		 * 
+		 * @return the extension
+		 */
+		public String getExtension() {
+			return extension;
+		}
+
+		/**
+		 * CDebugUtils.getFileParts(String) should be called to create FileParts.
+		 */
+		private FileParts() {}
+	}
+
+	/**
+	 * Split a Windows or Unix style path into its constituent parts.
+	 * 
+	 * The split does not modify or canonicalize the individual parts of the
+	 * file name. Nor does it convert between platforms.
+	 * 
+	 * This method is useful for dealing with Windows paths when running on
+	 * Linux and vice versa, it is also useful for non-canonical paths (ones
+	 * with .. in them).
+	 * 
+	 * @param file
+	 *            file name
+	 * @return parts of a file
+	 * @since 8.0
+	 */
+	public static FileParts getFileParts(String file) {
+		FileParts parts = new FileParts();
+		int lastSlash = Math.max(file.lastIndexOf("/"), file.lastIndexOf("\\")); //$NON-NLS-1$ //$NON-NLS-2$
+		// lastSlash may be -1 if no separator found, that means the
+		// whole path is just a fileName and folder ends up as ""
+		parts.fileName = file.substring(lastSlash + 1);
+		parts.folder = file.substring(0, lastSlash + 1);
+		int lastDot = parts.fileName.lastIndexOf("."); //$NON-NLS-1$
+		if (lastDot < 0) {
+			parts.extension = ""; //$NON-NLS-1$
+		} else {
+			parts.extension = parts.fileName.substring(lastDot + 1);
+		}
+		return parts;
+	}
 }

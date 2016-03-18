@@ -16,11 +16,14 @@ import org.junit.runners.Suite;
 /**
  * This suite runs all suites that are part of the tests automatically run with
  * each CDT build.
+ *
+ *
+ * This suite runs tests for gdb versions specified by java system variable "cdt.tests.dsf.gdb.versions", i.e.
+ * -Dcdt.tests.dsf.gdb.versions=gdb.7.7,gdbserver.7.7,gdb.7.11
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	SuiteGdb.class,
-	SuiteGdbVersioned.class,
 })
 public class AutomatedSuite {
 }

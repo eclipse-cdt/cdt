@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_b45a1bfc",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "This class is internal, so we could remove this constructor.\nBut we don\u0027t have to if you prefer to play nice :)",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_34ad2b70",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "Since we\u0027re adding a new API, would it be more future proof to use a\nString for both params?  From a bird\u0027s-eye-view, it seems like using\na path turned out to be limiting, which a string gives us more\nflexibility.\t\nThat being said, this class being internal allows us\nto do this later if we need to.",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_144bcf31",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "To avoid adding this dependency right now (CQ, etc), can we do\n\t\t\t\tname.toLowerCase().startsWith(backend.toLowerCase());",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d45167e0",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "Can you refactor to call it getBackendPathStr()?",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f454a3d0",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "Can you refactor to call it setBackendPathStr()",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9457dfd5",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainerType.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "Same comment as in MappingSourceContainerDialog: can we still do some\nchecking about path validity?",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_34460b28",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "Is it really better to use IOCase instead of equalsIgnoreCase()?\nI\u0027d like to avoid the new depency at this time",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_345febf3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/MappingSourceContainerDialog.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "I guess we cannot check the validity of the path anymore because of\nthe scenario where we debug a remote target?  Is that it?\nBecause if it is not, then we should do that check.",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_94851fea",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/PathMappingDialog.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "Can you refactor to call it getBackendPathStr()\nI find that getBackend() is confusing.",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_74c5f32f",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 14
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T03:28:09Z",
+      "side": 1,
+      "message": "Adding a new dependency requires a CQ.  I believe this kind of CQ is very\nquick and could still be approved.  I\u0027ll check with Marc-Andre who\u0027s a\ncommitter on Orbit.",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

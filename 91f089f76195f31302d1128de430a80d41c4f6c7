@@ -169,6 +169,24 @@
       "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_cee0f38b",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 14
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T11:35:21Z",
+      "side": 1,
+      "message": "Hi Marc, when originally writing this code I had used a lot more of org.apache.commons.io. Therefore the dependency made sense. As things went on I have not contributed some of the rewrites. I don\u0027t know the CQ process yet and I don\u0027t want to add a late issue that may hold anything up for what is today one line of code.\n\nTherefore I will remove this new dependency.",
+      "parentUuid": "e7dfcf21_74c5f32f",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

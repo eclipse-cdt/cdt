@@ -35,8 +35,7 @@ import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
@@ -44,6 +43,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /*
  * This is the Disassembly Service test suite.
@@ -58,8 +58,8 @@ import org.junit.runner.RunWith;
  * Refer to the JUnit4 documentation for an explanation of the annotations.
  */
 
-@RunWith(BackgroundRunner.class)
-public class MIDisassemblyTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class MIDisassemblyTest extends BaseParametrizedTestCase {
     private static final String EXEC_NAME = "MemoryTestApp.exe";
     private static final String SOURCE_NAME = "MemoryTestApp.cc";
     private static final int LINE_NUMBER = 35;
@@ -120,7 +120,7 @@ public class MIDisassemblyTest extends BaseTestCase {
         fExpressionService = null;
         fDisassembly = null;
         fServicesTracker.dispose();
-        fServicesTracker = null;
+        if (fServicesTracker!=null) fServicesTracker.dispose();
     }
 
     // ========================================================================

@@ -24,7 +24,6 @@
 
 package org.eclipse.cdt.launch.remote.launching;
 
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.internal.launch.remote.Activator;
@@ -52,11 +51,10 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	public void launch(ILaunchConfiguration config, String mode,
 			ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
-		IBinaryObject exeFile = null;
 		IPath exePath = CDebugUtils.verifyProgramPath(config);
 		ICProject project = CDebugUtils.verifyCProject(config);
 		if (exePath != null) {
-			exeFile = verifyBinary(project, exePath);
+			verifyBinary(project, exePath);
 			String arguments = getProgramArguments(config);
 			String remoteExePath = config.getAttribute(
 					IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,

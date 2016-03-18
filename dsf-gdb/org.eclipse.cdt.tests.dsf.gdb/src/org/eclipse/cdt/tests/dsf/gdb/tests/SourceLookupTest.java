@@ -170,12 +170,12 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	/**
 	 * Map entry for non-canonical build dirs
 	 */
-	protected MapEntrySourceContainer fMapEntrySourceContainerN = new MapEntrySourceContainer(
-			new Path(BUILD_NONCANONICAL_PATH), new Path(SOURCE_ABSPATH));
+	protected MapEntrySourceContainer fMapEntrySourceContainerN = new MapEntrySourceContainer(BUILD_NONCANONICAL_PATH,
+			new Path(SOURCE_ABSPATH));
 	/**
 	 * Map entry for canonical build dirs
 	 */
-	protected MapEntrySourceContainer fMapEntrySourceContainerC = new MapEntrySourceContainer(new Path(BUILD_ABSPATH),
+	protected MapEntrySourceContainer fMapEntrySourceContainerC = new MapEntrySourceContainer(BUILD_ABSPATH,
 			new Path(SOURCE_ABSPATH));
 
 	protected AsyncCompletionWaitor fBreakpointInstalledWait = new AsyncCompletionWaitor();
@@ -493,8 +493,13 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteAN() throws Throwable {
+		/*
+		 * GDB < 6.8 does not work correctly with substitute-paths with .. in the
+		 * build path when the build path is an absolute path. GDB 6.8 and above
+		 * works fine in this case.
+		 */
+		assumeGdbVersionAtLeast("6.8");
 		sourceMapping(EXEC_AN_NAME, true);
 	}
 
@@ -532,8 +537,13 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteRN() throws Throwable {
+		/*
+		 * GDB < 7.6 does not work correctly with substitute-paths with .. in the
+		 * build path when the build path is a relative path. GDB 7.6 and above
+		 * works fine in this case.
+		 */
+		assumeGdbVersionAtLeast("7.6");
 		sourceMapping(EXEC_RN_NAME, true);
 	}
 
@@ -571,8 +581,13 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteBreakpointsAN() throws Throwable {
+		/*
+		 * GDB < 6.8 does not work correctly with substitute-paths with .. in the
+		 * build path when the build path is an absolute path. GDB 6.8 and above
+		 * works fine in this case.
+		 */
+		assumeGdbVersionAtLeast("6.8");
 		sourceMappingBreakpoints(EXEC_AN_NAME, true);
 	}
 
@@ -610,8 +625,13 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * Non-canonical build path
 	 */
 	@Test
-	@Ignore("Not supported because GDB does not handle non-canonical paths. See Bug 477057")
 	public void sourceSubstituteBreakpointsRN() throws Throwable {
+		/*
+		 * GDB < 7.6 does not work correctly with substitute-paths with .. in the
+		 * build path when the build path is a relative path. GDB 7.6 and above
+		 * works fine in this case.
+		 */
+		assumeGdbVersionAtLeast("7.6");
 		sourceMappingBreakpoints(EXEC_RN_NAME, true);
 	}
 
@@ -640,8 +660,8 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		doMappingAndLaunch(EXEC_AC_NAME, withBackend);
 
 		DsfSourceLookupDirector sourceLocator = (DsfSourceLookupDirector) getGDBLaunch().getSourceLocator();
-		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(
-				new Path(BUILD_ABSPATH + "/incorrectsubpath"), new Path(SOURCE_ABSPATH));
+		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(BUILD_ABSPATH + "/incorrectsubpath",
+				new Path(SOURCE_ABSPATH));
 
 		if (withBackend) {
 			assertSourceFound();
@@ -976,8 +996,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 * substitution, we want to make sure that we process the other
 		 * MappingSourceContainer correctly
 		 */
-		substituteContainer
-				.addMapEntry(new MapEntrySourceContainer(new Path("/from_invalid"), new Path("/to_invalid")));
+		substituteContainer.addMapEntry(new MapEntrySourceContainer("/from_invalid", new Path("/to_invalid")));
 		AbstractSourceLookupDirector director = setSourceContainer(substituteContainer);
 
 		// this is the mapping we want to do the work
@@ -1022,7 +1041,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		MappingSourceContainer mapContainer = new MappingSourceContainer("Mappings");
 		mapContainer.setIsMappingWithBackendEnabled(false);
 		mapContainer
-				.addMapEntry(new MapEntrySourceContainer(new Path("/from_invalid"), new Path(SOURCE_ABSPATH)));
+				.addMapEntry(new MapEntrySourceContainer("/from_invalid", new Path(SOURCE_ABSPATH)));
 		addSourceContainer(director, mapContainer);
 
 		doLaunch(EXEC_PATH + EXEC_AC_NAME);

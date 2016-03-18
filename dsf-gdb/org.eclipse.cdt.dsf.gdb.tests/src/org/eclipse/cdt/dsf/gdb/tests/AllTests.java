@@ -27,6 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
     LaunchUtilsTest.class,
     MIStringHandlerTests.class,
     ProcStatParserTest.class,
+    FilePartsTest.class,
 })	
 public class AllTests {
 	// Often overriding BeforeClass method here

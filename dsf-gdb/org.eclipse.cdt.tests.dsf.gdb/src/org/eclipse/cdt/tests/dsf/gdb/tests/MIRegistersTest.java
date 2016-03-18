@@ -179,7 +179,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 
-		fServicesTracker.dispose();
+		if (fServicesTracker!=null) fServicesTracker.dispose();
 		fRegService = null;
 	}
 

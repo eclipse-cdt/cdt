@@ -50,8 +50,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -60,13 +59,14 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 
 /**
  * Tests MIRunControl class for Multi-threaded application. 
  */
-@RunWith(BackgroundRunner.class)
-public class MIRunControlTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class MIRunControlTest extends BaseParametrizedTestCase {
 
 	/**
 	 * The cygwin runtime/emulation spawns a thread, so even the most basic
@@ -131,7 +131,7 @@ public class MIRunControlTest extends BaseTestCase {
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 		
-		fServicesTracker.dispose();
+        if (fServicesTracker!=null) fServicesTracker.dispose();
 	}
 	
 	@Override
@@ -363,7 +363,7 @@ public class MIRunControlTest extends BaseTestCase {
         	/*
         	 * getModelData should return StateChangeReason.  
         	 */
-	   	 	Assert.assertEquals("Unexpected state change reason.", getExpectedMainThreadStopReason(), data.getStateChangeReason());
+	   	 	Assert.assertEquals("Unexpected state change reason.", StateChangeReason.BREAKPOINT, data.getStateChangeReason());
        } 
 	}
 	

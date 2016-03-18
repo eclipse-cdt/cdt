@@ -39,8 +39,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
@@ -58,14 +57,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * This test case verifies whether breakpoints or watchpoints set from GDB console
  * are properly synchronized with platform breakpoints.
  */
 @SuppressWarnings( "restriction" )
-@RunWith(BackgroundRunner.class)
-public class GDBConsoleBreakpointsTest extends BaseTestCase {
+@RunWith(Parameterized.class)
+public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 
 	final static protected String SOURCE_NAME = "GDBMIGenericTestApp.cc";
 
@@ -128,16 +128,16 @@ public class GDBConsoleBreakpointsTest extends BaseTestCase {
 	@Override
 	@After
 	public void doAfterTest() throws Exception {
-        Runnable runnable = new Runnable() {
-            @Override
-			public void run() {
-            	fSession.removeServiceEventListener(GDBConsoleBreakpointsTest.this);
-            }
-        };
-        fSession.getExecutor().submit(runnable).get();
+		if (fSession != null) {
+			fSession.getExecutor().submit(() -> fSession.removeServiceEventListener(GDBConsoleBreakpointsTest.this))
+					.get();
+		}
+
 		fBreakpointEvents.clear();
-        fServicesTracker.dispose();
-        fServicesTracker = null;
+        if (fServicesTracker != null) {
+            fServicesTracker.dispose();
+        	fServicesTracker = null;
+        }
 		
         super.doAfterTest();
 		

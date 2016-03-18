@@ -8,7 +8,7 @@
       <launchDelegate
             id="org.eclipse.cdt.cdi.launch.localCLaunch"
             type="org.eclipse.cdt.launch.applicationLaunchType"
-            delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
+            delegate="org.eclipse.cdt.launch.internal.LocalRunLaunchDelegate"
             modes="run"
             name="%LocalCDTLaunch.name"
             delegateDescription="%LocalCDTLaunch.description"

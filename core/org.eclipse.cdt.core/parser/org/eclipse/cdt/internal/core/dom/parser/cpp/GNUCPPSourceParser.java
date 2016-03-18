@@ -3864,7 +3864,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 *	braced-init-list
 	 */
 	@Override
-	protected IASTInitializer optionalInitializer(IASTDeclarator dtor, DeclarationOptions option) throws EndOfFileException, BacktrackException {
+	protected IASTInitializer optionalInitializer(IASTDeclarator dtor, DeclarationOptions option)
+			throws EndOfFileException, BacktrackException {
 		final int lt1= LTcatchEOF(1);
 
 		// = initializer-clause
@@ -3903,7 +3904,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (lt1 == IToken.tLPAREN) {
 			return ctorStyleInitializer(true);
 		}
-		return bracedInitList(false, false);
+		return bracedInitList(false, true);
 	}
 
 	/**

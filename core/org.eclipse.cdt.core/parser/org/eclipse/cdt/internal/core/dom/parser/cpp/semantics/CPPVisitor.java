@@ -132,6 +132,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -1284,9 +1285,20 @@ public class CPPVisitor extends ASTQueries {
 					return new CPPScope.CPPScopeProblem(name, ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 				}
 			} else if (parent instanceof ICPPASTFieldDesignator) {
-				ICPPASTDeclarator declarator = ASTQueries.findAncestorWithType(parent, ICPPASTDeclarator.class);
-				if (declarator != null) {
-					IType type = createType(declarator);
+				IType type = null;
+				IASTNode node = parent;
+				do {
+					if (node instanceof ICPPASTDeclarator) {
+						type = createType((ICPPASTDeclarator) node);
+						break;
+					}
+					if (node instanceof ICPPASTSimpleTypeConstructorExpression) {
+						type = ((ICPPASTSimpleTypeConstructorExpression) node).getExpressionType();
+						break;
+					}
+				} while ((node = node.getParent()) != null);
+
+				if (type != null) {
 					type= getNestedType(type, TDEF | CVTYPE);
 					if (type instanceof ICPPClassType) {
 						type= SemanticUtil.mapToAST(type, name);

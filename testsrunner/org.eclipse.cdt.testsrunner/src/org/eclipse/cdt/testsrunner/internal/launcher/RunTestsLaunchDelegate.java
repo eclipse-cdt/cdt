@@ -14,9 +14,10 @@ import org.eclipse.cdt.testsrunner.launcher.BaseTestsLaunchDelegate;
 
 
 /**
- * Launch delegate implementation that redirects its queries to CDI.
+ * Launch delegate implementation that is used for Run mode.
+ * @since 8.0
  */
-public class CdiRunTestsLaunchDelegate extends BaseTestsLaunchDelegate {
+public class RunTestsLaunchDelegate extends BaseTestsLaunchDelegate {
 	
     @Override
     public String getPreferredDelegateId() {

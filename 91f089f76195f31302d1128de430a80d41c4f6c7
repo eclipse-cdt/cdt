@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_77b09272",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "I will clean it up. I think I was being conservative as I come up to speed.",
+      "parentUuid": "e7dfcf21_b45a1bfc",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_34ad2b70",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
         "patchSetId": 14
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-18T03:28:09Z",
       "side": 1,
       "message": "Since we\u0027re adding a new API, would it be more future proof to use a\nString for both params?  From a bird\u0027s-eye-view, it seems like using\na path turned out to be limiting, which a string gives us more\nflexibility.\t\nThat being said, this class being internal allows us\nto do this later if we need to.",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7787b299",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "If I am wrong we can change it later, but in the meantime the local has to refer to an IPath that can be resolved from/to an IFile or a java.io.File. i.e. this limitation is imposed from the platform.",
+      "parentUuid": "e7dfcf21_34ad2b70",
       "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_97a0be24",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_144bcf31",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_d45167e0",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
         "patchSetId": 14
@@ -64,6 +118,24 @@
       "writtenOn": "2016-03-18T03:28:09Z",
       "side": 1,
       "message": "Can you refactor to call it getBackendPathStr()?",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d71166e0",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_d45167e0",
       "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f71662d6",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainer.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_f454a3d0",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_9457dfd5",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainerType.java",
         "patchSetId": 14
@@ -98,6 +188,24 @@
       "writtenOn": "2016-03-18T03:28:09Z",
       "side": 1,
       "message": "Same comment as in MappingSourceContainerDialog: can we still do some\nchecking about path validity?",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d7b5e638",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainerType.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "Sadly there is actually no such check! On Linux any path is valid.\n\nAn example of an obscure case is that using IPath converts a user typing /tmp//build to /tmp/build. It is ok (but questionable) to pass /tmp//build/main.c to gcc, but if you do then gcc leaves the double // in the debug info.\n\nHere is a few lines of shell that show the issue. The first GDB run does a path sub with the extra slash removed (ie using IPath for backend) and the second has the second slash presever (ie using String for backend):\n\n\tmkdir -p /tmp/build\n\tmkdir -p /tmp/local\n\n\techo \"int main() {}\" \u003e /tmp/build/example.c\n\n\tgcc -g -o /tmp/build/example.elf /tmp//build/example.c\n\t\n\tmv -fv /tmp/build/example.elf /tmp/build/example.c /tmp/local\n\t\n\nThe GDB output with the duplicate slash removed is:\n\n    \u0026\"No source file named /tmp/local/example.c.\\n\"\n~\"Make breakpoint pending on future shared library load? (y or [n]) [answered N; input not from terminal]\\n\"\n\n\tgdb --quiet --interpreter\u003dmi2 /tmp/local/example.elf -ex \"set substitute-path /tmp/build /tmp/local\" -ex \"b /tmp/local/example.c:1\"  \u003c /dev/null\n\n\n\n\nBut in this case where the double // is passed to set substitute-path, the output is below. As you can see file field has the double //, but the resolved fullname it is cleaned up.\n\n    \u003dbreakpoint-created,bkpt\u003d{number\u003d\"1\",type\u003d\"breakpoint\",disp\u003d\"keep\",enabled\u003d\"y\",addr\u003d\"0x00000000004004ff\",func\u003d\"main\",file\u003d\"/tmp//build/example.c\",fullname\u003d\"/tmp/local/example.c\",line\u003d\"1\",thread-groups\u003d[\"i1\"],times\u003d\"0\",original-location\u003d\"/tmp/local/example.c:1\"}\n\n\tgdb --quiet --interpreter\u003dmi2 /tmp/local/example.elf -ex \"set substitute-path /tmp//build /tmp/local\" -ex \"b /tmp/local/example.c:1\"  \u003c /dev/null\n\n\n\nFinal point is that on Linux the IPath.isValidPath could be optimized to return true, because AFAIK there is no input you can pass to it to cause it to return false.\n\nHere is a little JUnit test to demonstrate:\n\n\t@Test\n\tpublic void testIPath() {\n\t\t// Really isValidPath is a trivial wrapper on a static\n\t\t// method that is declared on the interface so\n\t\t// you need to access it via an instance.\n\t\tIPath path \u003d new Path(\"/this/is/unused/when/doing/isValidPath\");\n\t\tassertTrue(path.isValidPath(\"\"));\n\t\tassertTrue(path.isValidPath(\"//\"));\n\t\tassertTrue(path.isValidPath(\"\\\\\"));\n\t\tassertTrue(path.isValidPath(\" \"));\n\t}",
+      "parentUuid": "e7dfcf21_9457dfd5",
       "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_62cd2eaa",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_34460b28",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_345febf3",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/MappingSourceContainerDialog.java",
         "patchSetId": 14
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_e20bfe60",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/MappingSourceContainerDialog.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "Two part answer. \n\n1 see rather long comment on createSourceContainer, but summary is that backendPath.isValidPath() always returns true.\n\n2 it isn\u0027t just about remote, but about all cases of cross platform",
+      "parentUuid": "e7dfcf21_345febf3",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_94851fea",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/PathMappingDialog.java",
         "patchSetId": 14
@@ -149,6 +293,24 @@
       "writtenOn": "2016-03-18T03:28:09Z",
       "side": 1,
       "message": "Can you refactor to call it getBackendPathStr()\nI find that getBackend() is confusing.",
+      "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_42f672ca",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/PathMappingDialog.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_94851fea",
       "revId": "91f089f76195f31302d1128de430a80d41c4f6c7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

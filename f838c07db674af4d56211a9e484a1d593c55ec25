@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_c231a225",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/PathMappingDialog.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T22:54:23Z",
+      "side": 0,
+      "message": "BTW in relation to all the discussion about checking valid paths, we always trim the backend path the user provides. It is my one place where we won\u0027t process a technically valid path, but it gets rather insane at that point. The good thing is in that case the workaround is to put the trailing / on the folder name!\n\n\tmkdir -p \"/tmp/build \" # notice the space at the end of build!\n\tmkdir -p /tmp/local\n\n\techo \"int main() {}\" \u003e \"/tmp/build /example.c\"\n\n\tgcc -g -o \"/tmp/build /example.elf\" \"/tmp/build /example.c\"\n\t\n\tmv -fv \"/tmp/build /example.elf\" \"/tmp/build /example.c\" /tmp/local\n\nWe have no way of doing this case because of the trim:\n\n\tgdb --quiet --interpreter\u003dmi2 /tmp/local/example.elf -ex \u0027set substitute-path \"/tmp/build \" /tmp/local\u0027 -ex \"b /tmp/local/example.c:1\"  \u003c /dev/null\n\nBut that is ok, because the trailing slash is our workaround:\n\n\tgdb --quiet --interpreter\u003dmi2 /tmp/local/example.elf -ex \u0027set substitute-path \"/tmp/build /\" /tmp/local\u0027 -ex \"b /tmp/local/example.c:1\"  \u003c /dev/null",
+      "revId": "f838c07db674af4d56211a9e484a1d593c55ec25",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

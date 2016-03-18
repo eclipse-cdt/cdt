@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_91da8e5d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IMemorySpaces2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-18T13:55:35Z",
+      "side": 1,
+      "message": "Such methods are usually not part of DSF but in DSF-GDB.  We should move this to a new IGDBMemorySpaces",
+      "revId": "6b747589c524f137df70fcbe0024bd0e74c313b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

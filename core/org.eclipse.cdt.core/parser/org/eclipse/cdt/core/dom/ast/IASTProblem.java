@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.core.parser.IProblem;
 
 /**
- * Interface for problems in the ast tree.
+ * Interface for problems in the AST tree.
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

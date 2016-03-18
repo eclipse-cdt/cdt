@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_6248ce82",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T23:11:35Z",
+      "side": 0,
+      "message": "This is one example.",
+      "revId": "e977bb49533a75a44ac3386bd6973cb90b6d1401",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8245da6a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-18T23:11:35Z",
+      "side": 0,
+      "message": "This is the example of the @Ignore details.",
+      "revId": "e977bb49533a75a44ac3386bd6973cb90b6d1401",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

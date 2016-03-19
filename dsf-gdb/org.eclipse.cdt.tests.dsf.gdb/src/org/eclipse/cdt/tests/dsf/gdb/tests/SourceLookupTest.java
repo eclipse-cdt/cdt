@@ -140,14 +140,12 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 
 	/**
 	 * For version of GDB <= 7.4 we need to use the strict dwarf2 flags. See
-	 * comment in Makefile on OLDDWARFFLAGS. Also see
-	 * {@link SourceLookupTest_6_6#setExeNames()} which sets up the old exes and
-	 * {@link SourceLookupTest_7_5#setExeNames()} which restores them.
+	 * comment in Makefile on OLDDWARFFLAGS.
 	 */
 	protected void setExeNames() {
 		String gdbVersion = getGdbVersion();
 		// has to be strictly lower
-		boolean isLower = LaunchUtils.compareVersions("7.4", gdbVersion) > 0;
+		boolean isLower = LaunchUtils.compareVersions("7.5", gdbVersion) > 0;
 		if (isLower) {
 			EXEC_AC_NAME = "SourceLookupDwarf2AC.exe"; //$NON-NLS-1$
 			EXEC_AN_NAME = "SourceLookupDwarf2AN.exe"; //$NON-NLS-1$

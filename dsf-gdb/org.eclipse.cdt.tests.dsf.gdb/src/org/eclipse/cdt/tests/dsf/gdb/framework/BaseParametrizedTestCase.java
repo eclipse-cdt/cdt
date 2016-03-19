@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.Assume;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -45,9 +46,13 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		}
 		String gdbVersions = System.getProperty("cdt.tests.dsf.gdb.versions");
 		if (gdbVersions == null) {
-			// this has to be put in maven using -Dcdt.tests.dsf.gdb.versions or in junit config if you run locally
+			// this has to be put in maven using -Dcdt.tests.dsf.gdb.versions or
+			// in junit config if you run locally
 			// like this -Dcdt.tests.dsf.gdb.versions=gdb.7.7,gdbserver.7.7
 			gdbVersions = "gdb,gdbserver";
+		} else if (gdbVersions.equals("all")) {
+			gdbVersions = String.join(",", ITestConstants.ALL_KNOWN_VERSIONS);
+			gdbVersions += ",gdbserver." + String.join(",gdbserver.", ITestConstants.ALL_KNOWN_VERSIONS);
 		}
 		String[] versions = gdbVersions.split(",");
 		return Arrays.asList(versions);

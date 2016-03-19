@@ -16,6 +16,24 @@
       "revId": "528de33113d9f38ea30ef2f44f741a631043047e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_a2f4967e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-19T00:18:08Z",
+      "side": 1,
+      "message": "I have a fix for this issue in gerrit 68822.",
+      "parentUuid": "e7dfcf21_02d9ca1e",
+      "revId": "528de33113d9f38ea30ef2f44f741a631043047e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

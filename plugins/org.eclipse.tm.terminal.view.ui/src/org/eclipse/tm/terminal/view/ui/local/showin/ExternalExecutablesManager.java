@@ -46,7 +46,6 @@ public class ExternalExecutablesManager {
 	 *
 	 * @return The list of all saved external executables or <code>null</code>.
 	 */
-	@SuppressWarnings("cast")
 	public static List<Map<String, String>> load() {
 		List<Map<String, String>> l = new ArrayList<Map<String, String>>();
 

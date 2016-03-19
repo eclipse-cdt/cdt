@@ -166,11 +166,6 @@ public class ExternalExecutablesManager {
 			gitBashSearchDone = true;
 		}
 
-		// Make sure the source provider is initialized properly
-		ISourceProviderService sourceProviderService = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
-		ExternalExecutablesState stateService = (ExternalExecutablesState) sourceProviderService.getSourceProvider(ExternalExecutablesState.CONFIGURED_STATE);
-		if (l.isEmpty()) stateService.disable(); else stateService.enable();
-
 		return l;
 	}
 
@@ -212,7 +207,7 @@ public class ExternalExecutablesManager {
 				@SuppressWarnings("unused")
                 boolean s = f.delete();
 
-				stateService.disable();
+				if (stateService != null) stateService.disable();
 			} else {
 				FileWriter w = null;
 
@@ -234,7 +229,7 @@ public class ExternalExecutablesManager {
 					w = new FileWriter(f);
 					data.store(w, null);
 
-					stateService.enable();
+					if (stateService != null) stateService.enable();
 				} catch (Exception e) {
 					if (Platform.inDebugMode()) {
 						e.printStackTrace();

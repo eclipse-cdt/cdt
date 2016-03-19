@@ -348,7 +348,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		
 		public IMIExecutionDMContext getThreadContext() { return fThreadContext; }
 		/** @since 5.0 */
-		public String getBreakointId() { return fBpId; }
+		public String getBreakpointId() { return fBpId; }
 		public String getFileLocation() { return fFileLocation; }
 		public String getAddrLocation() { return fAddrLocation; }
 		public boolean shouldSkipBreakpoints() { return fSkipBreakpoints; }
@@ -971,7 +971,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
             				public void handleFailure() {
             		    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
             		    				IBreakpointsTargetDMContext.class);
-            		    		String bpId = fRunToLineActiveOperation.getBreakointId();
+            		    		String bpId = fRunToLineActiveOperation.getBreakpointId();
 
             		    		fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new String[] {bpId}),
             		    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
@@ -1879,7 +1879,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			// does a runToLine to a line that is non-executable AND has another breakpoint AND
 			// has multiple addresses for the breakpoint.  I'm mean, come on!
 			if (fileLocation.equals(fRunToLineActiveOperation.getFileLocation()) || addrLocation.equals(fRunToLineActiveOperation.getAddrLocation())
-					|| bpId.equals(fRunToLineActiveOperation.getBreakointId())) {
+					|| bpId.equals(fRunToLineActiveOperation.getBreakpointId())) {
 				// We stopped at the right place. All is well.
 				// Run to line completed
 				fRunToLineActiveOperation = null;
@@ -1900,7 +1900,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 					// be for another thread altogether and should not affect the current thread.
 					IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(), IBreakpointsTargetDMContext.class);
 
-					fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new String[] { fRunToLineActiveOperation.getBreakointId() }), new DataRequestMonitor<MIInfo>(getExecutor(), null));
+					fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new String[] { fRunToLineActiveOperation.getBreakpointId() }), new DataRequestMonitor<MIInfo>(getExecutor(), null));
 					fRunToLineActiveOperation = null;
 					fStepInToSelectionActiveOperation = null;
 				}
@@ -2006,7 +2006,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     	if (fRunToLineActiveOperation != null) {
     		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
     				IBreakpointsTargetDMContext.class);
-    		String bpId = fRunToLineActiveOperation.getBreakointId();
+    		String bpId = fRunToLineActiveOperation.getBreakpointId();
 
     		fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new String[] {bpId}),
     				new DataRequestMonitor<MIInfo>(getExecutor(), null));

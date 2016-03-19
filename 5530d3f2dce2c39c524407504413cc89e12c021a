@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_bd959b46",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugUtils.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 786,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-19T19:31:31Z",
+      "side": 1,
+      "message": "Missing @since.  I will add it.",
+      "revId": "5530d3f2dce2c39c524407504413cc89e12c021a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5da3b7b1",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugUtils.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 822,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-19T19:31:31Z",
+      "side": 1,
+      "message": "There is no public way to set the fields if this class, so it seems weird\nto have a public constructor.  Since I was adding the @since tags, I\u0027ve made this\nconstructor private at the same time and made the three fields private as well.\nLet me know if you find this too limiting as package-private would be fine as well.",
+      "revId": "5530d3f2dce2c39c524407504413cc89e12c021a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fd8ba327",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugUtils.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 839,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-19T19:31:31Z",
+      "side": 1,
+      "message": "Missing @since.  I will add it.",
+      "revId": "5530d3f2dce2c39c524407504413cc89e12c021a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

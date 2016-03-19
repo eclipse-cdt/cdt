@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_02d9ca1e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-19T00:08:05Z",
+      "side": 1,
+      "message": "This check did not match the original code. I suspect it wasn\u0027t spotted because the automated builds don\u0027t run non gdb7.11 tests AFAICT. It was supposed to compare against 7.5.  versions \u003c 7.5 need to use Dwarf2 version of file.",
+      "revId": "528de33113d9f38ea30ef2f44f741a631043047e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

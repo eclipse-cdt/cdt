@@ -122,6 +122,23 @@
       "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7d22332e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-19T23:38:19Z",
+      "side": 1,
+      "message": "We just removed the CDI status handler as part of Jonah\u0027s patch to remove CDI.\nI have opened bug 490013 to change this one.  We can do this for M7.",
+      "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

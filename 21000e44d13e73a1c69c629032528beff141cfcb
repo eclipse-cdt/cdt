@@ -69,6 +69,23 @@
       "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ddafc799",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-19T18:52:56Z",
+      "side": 1,
+      "message": "Mikhail, do you mind if we leave this cleanup for later?  It is not API-breaking\nand I\u0027d like to have the button removed for M6 to give more time for people to react.",
+      "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

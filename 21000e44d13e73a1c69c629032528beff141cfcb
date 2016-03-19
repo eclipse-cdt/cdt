@@ -86,6 +86,42 @@
       "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2adc1192",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-19T23:16:13Z",
+      "side": 1,
+      "message": "CDI has its own ProcessPrompter. I think this one is a copy of the CDI\u0027s.\nRegistering it as a status handler is confusing. I have been working on the patch that adds the stop on startup options to NewExecutableDialog and spent some trying to figure out where this status handler can be called from.\nIt\u0027s up to you to decide. Maybe we should create a new bug for it.",
+      "parentUuid": "e7dfcf21_8a9c45f1",
+      "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3d918bd4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-19T23:16:13Z",
+      "side": 1,
+      "message": "Sure, I have no problem with it.",
+      "parentUuid": "e7dfcf21_ddafc799",
+      "revId": "21000e44d13e73a1c69c629032528beff141cfcb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

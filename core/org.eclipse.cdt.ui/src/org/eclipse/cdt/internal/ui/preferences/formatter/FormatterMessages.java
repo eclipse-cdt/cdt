@@ -359,6 +359,7 @@ final class FormatterMessages extends NLS {
 	public static String IndentationTabPage_switch_group_option_indent_break_statements;
 	public static String IndentationTabPage_namespace_group_option_indent_declarations_within_namespace;
     public static String IndentationTabPage_indent_empty_lines;
+    public static String IndentationTabPage_indent_label_definitions;
 	public static String IndentationTabPage_use_tabs_only_for_leading_indentations;
 	public static String ModifyDialog_dialog_title;
 	public static String ModifyDialog_apply_button;
@@ -378,6 +379,7 @@ final class FormatterMessages extends NLS {
 	public static String NewLinesTabPage_preview_header;
 	public static String NewLinesTabPage_newlines_group_title;
 	public static String NewLinesTabPage_newlines_group_option_before_colon_in_constructor_initializer_list;
+	public static String NewLinesTabPage_newlines_group_option_after_label_in_labeled_statement;
 //	public static String NewLinesTabPage_newlines_group_option_empty_class_body;
 //	public static String NewLinesTabPage_newlines_group_option_empty_method_body;
 //	public static String NewLinesTabPage_newlines_group_option_empty_block;

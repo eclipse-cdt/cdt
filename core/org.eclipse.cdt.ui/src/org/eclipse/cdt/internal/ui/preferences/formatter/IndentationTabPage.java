@@ -71,6 +71,8 @@ public class IndentationTabPage extends FormatterTabPage {
 		"bar += bar;" + //$NON-NLS-1$
 		"break;" + //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
+		"label: for (int i = 0; i < x; i++)" + //$NON-NLS-1$
+		"goto label;" + //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
 		"} // end namespace FOO"; //$NON-NLS-1$
@@ -132,7 +134,8 @@ public class IndentationTabPage extends FormatterTabPage {
 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_namespace_group_option_indent_declarations_within_namespace, DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER, FALSE_TRUE); 
 
-		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_indent_empty_lines, DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES, FALSE_TRUE); 
+		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_indent_empty_lines, DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES, FALSE_TRUE);
+		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_indent_label_definitions, DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_JUMP_TARGETS, FALSE_TRUE);
 	}
 	
 	/*

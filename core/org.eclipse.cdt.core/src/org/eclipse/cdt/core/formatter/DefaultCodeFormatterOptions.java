@@ -120,6 +120,10 @@ public class DefaultCodeFormatterOptions {
 	public boolean indent_declaration_compare_to_template_header;
 	public boolean indent_breaks_compare_to_cases;
 	public boolean indent_empty_lines;
+	/**
+	 * @since 5.12
+	 */
+	public boolean ident_label_definitions;
 	public boolean indent_switchstatements_compare_to_cases;
 	public boolean indent_switchstatements_compare_to_switch;
 	public int indentation_size;
@@ -134,6 +138,10 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_new_line_before_while_in_do_statement;
 	public boolean insert_new_line_before_identifier_in_function_declaration;
 	public boolean insert_new_line_in_empty_block;
+	/**
+	 * @since 5.12
+	 */
+	public boolean insert_new_line_after_label_in_labeled_statement;
 //	public boolean insert_new_line_in_empty_method_body;
 //	public boolean insert_new_line_in_empty_type_declaration;
 	public boolean insert_space_after_assignment_operator;
@@ -332,6 +340,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER, this.indent_body_declarations_compare_to_namespace_header ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BREAKS_COMPARE_TO_CASES, this.indent_breaks_compare_to_cases ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES, this.indent_empty_lines ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_JUMP_TARGETS, this.ident_label_definitions ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);		
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES, this.indent_switchstatements_compare_to_cases ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH, this.indent_switchstatements_compare_to_switch ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, Integer.toString(this.indentation_size));
@@ -345,6 +354,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_WHILE_IN_DO_STATEMENT, this.insert_new_line_before_while_in_do_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_IDENTIFIER_IN_FUNCTION_DECLARATION, this.insert_new_line_before_identifier_in_function_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_BLOCK, this.insert_new_line_in_empty_block? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_LINE_AFTER_LABEL_IN_LABELED_STATEMENT, this.insert_new_line_after_label_in_labeled_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);		
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_METHOD_BODY, this.insert_new_line_in_empty_method_body? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_TYPE_DECLARATION, this.insert_new_line_in_empty_type_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_ASSIGNMENT_OPERATOR, this.insert_space_after_assignment_operator? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -920,6 +930,10 @@ public class DefaultCodeFormatterOptions {
 		if (indentEmptyLinesOption != null) {
 			this.indent_empty_lines = DefaultCodeFormatterConstants.TRUE.equals(indentEmptyLinesOption);
 		}
+		final Object indentlabelDefinitions = settings.get(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_JUMP_TARGETS);
+		if (indentlabelDefinitions != null) {
+			this.ident_label_definitions = DefaultCodeFormatterConstants.TRUE.equals(indentlabelDefinitions);
+		}
 		final Object indentSwitchstatementsCompareToCasesOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES);
 		if (indentSwitchstatementsCompareToCasesOption != null) {
 			this.indent_switchstatements_compare_to_cases = DefaultCodeFormatterConstants.TRUE.equals(indentSwitchstatementsCompareToCasesOption);
@@ -977,6 +991,10 @@ public class DefaultCodeFormatterOptions {
 		final Object insertNewLineInEmptyBlockOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_BLOCK);
 		if (insertNewLineInEmptyBlockOption != null) {
 			this.insert_new_line_in_empty_block = CCorePlugin.INSERT.equals(insertNewLineInEmptyBlockOption);
+		}
+		final Object insertNewLineAfterLabelInLabeledStatement = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_LINE_AFTER_LABEL_IN_LABELED_STATEMENT);
+		if (insertNewLineAfterLabelInLabeledStatement != null) {
+			this.insert_new_line_after_label_in_labeled_statement = CCorePlugin.INSERT.equals(insertNewLineAfterLabelInLabeledStatement);
 		}
 //		final Object insertNewLineInEmptyMethodBodyOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_METHOD_BODY);
 //		if (insertNewLineInEmptyMethodBodyOption != null) {
@@ -1557,6 +1575,7 @@ public class DefaultCodeFormatterOptions {
 		this.indent_body_declarations_compare_to_access_specifier = true;
 		this.indent_breaks_compare_to_cases = true;
 		this.indent_empty_lines = false;
+		this.ident_label_definitions = true;
 		this.indent_switchstatements_compare_to_cases = true;
 		this.indent_switchstatements_compare_to_switch = false;
 		this.indentation_size = 4;
@@ -1568,6 +1587,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_new_line_before_while_in_do_statement = false;
 		this.insert_new_line_before_identifier_in_function_declaration = false;
 		this.insert_new_line_in_empty_block = true;
+		this.insert_new_line_after_label_in_labeled_statement = false;
 //		this.insert_new_line_in_empty_method_body = true;
 //		this.insert_new_line_in_empty_type_declaration = true;
 		this.insert_space_after_assignment_operator = true;
@@ -1747,6 +1767,7 @@ public class DefaultCodeFormatterOptions {
 //		this.indent_body_declarations_compare_to_enum_declaration_header = true;
 		this.indent_breaks_compare_to_cases = true;
 		this.indent_empty_lines = false;
+		this.ident_label_definitions = true; 
 		this.indent_switchstatements_compare_to_cases = true;
 		this.indent_switchstatements_compare_to_switch = false;
 		this.indentation_size = 4;
@@ -1756,6 +1777,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_new_line_before_closing_brace_in_initializer_list = false;
 		this.insert_new_line_before_else_in_if_statement = true;
 		this.insert_new_line_in_empty_block = true;
+		this.insert_new_line_after_label_in_labeled_statement = false;
 //		this.insert_new_line_in_empty_enum_declaration = true;
 //		this.insert_new_line_in_empty_method_body = true;
 //		this.insert_new_line_in_empty_type_declaration = true;
@@ -1813,6 +1835,7 @@ public class DefaultCodeFormatterOptions {
 		this.indent_declaration_compare_to_template_header = true;
 		this.indent_breaks_compare_to_cases = true;
 		this.indent_empty_lines = false;
+		this.ident_label_definitions = false;
 		this.indent_switchstatements_compare_to_cases = true;
 		this.indent_switchstatements_compare_to_switch = true;
 		this.indentation_size = 2;
@@ -1828,6 +1851,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_new_line_before_identifier_in_function_declaration = true;
 		this.insert_new_line_before_while_in_do_statement = true;
 		this.insert_new_line_in_empty_block = true;
+		this.insert_new_line_after_label_in_labeled_statement = false;
 //		this.insert_new_line_in_empty_enum_declaration = false;
 //		this.insert_new_line_in_empty_method_body = false;
 //		this.insert_new_line_in_empty_type_declaration = false;
@@ -1887,6 +1911,7 @@ public class DefaultCodeFormatterOptions {
 		this.indent_body_declarations_compare_to_namespace_header = false;
 		this.indent_breaks_compare_to_cases = true;
 		this.indent_empty_lines = false;
+		this.ident_label_definitions = true;
 		this.indent_switchstatements_compare_to_cases = true;
 		this.indent_switchstatements_compare_to_switch = false;
 		this.indentation_size = 4;
@@ -1898,6 +1923,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_new_line_before_else_in_if_statement = true;
 		this.insert_new_line_before_while_in_do_statement = true;
 		this.insert_new_line_in_empty_block = true;
+		this.insert_new_line_after_label_in_labeled_statement = false;
 //		this.insert_new_line_in_empty_enum_declaration = true;
 //		this.insert_new_line_in_empty_method_body = true;
 //		this.insert_new_line_in_empty_type_declaration = true;

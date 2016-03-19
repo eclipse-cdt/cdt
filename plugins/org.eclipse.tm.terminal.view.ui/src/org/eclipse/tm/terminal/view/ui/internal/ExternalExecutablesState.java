@@ -10,10 +10,8 @@
 package org.eclipse.tm.terminal.view.ui.internal;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesManager;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
@@ -22,11 +20,13 @@ import org.eclipse.ui.ISources;
  */
 public class ExternalExecutablesState extends AbstractSourceProvider {
 	public final static String CONFIGURED_STATE = "org.eclipse.tm.terminal.external.executable.configured"; //$NON-NLS-1$
-	private boolean enabled;
+	private boolean enabled = false;
 
 	public ExternalExecutablesState() {
-		List<Map<String, String>> externals = ExternalExecutablesManager.load();
-		this.enabled = (externals != null && !externals.isEmpty());
+		// Cannot initialize the state here by calling ExternalExecutablesManager.load(),
+		// because it will trigger a ExternalExectuablesManger.save() which tries to call
+		// the enable() or disable() method here. Better initialize the state from the
+		// load method itself.
 	}
 
 	@Override

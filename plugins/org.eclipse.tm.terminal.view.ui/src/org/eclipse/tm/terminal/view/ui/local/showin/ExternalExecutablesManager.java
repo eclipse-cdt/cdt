@@ -46,6 +46,7 @@ public class ExternalExecutablesManager {
 	 *
 	 * @return The list of all saved external executables or <code>null</code>.
 	 */
+	@SuppressWarnings("cast")
 	public static List<Map<String, String>> load() {
 		List<Map<String, String>> l = new ArrayList<Map<String, String>>();
 
@@ -164,6 +165,11 @@ public class ExternalExecutablesManager {
 			// Do not search again for git bash while the session is running
 			gitBashSearchDone = true;
 		}
+
+		// Make sure the source provider is initialized properly
+		ISourceProviderService sourceProviderService = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
+		ExternalExecutablesState stateService = (ExternalExecutablesState) sourceProviderService.getSourceProvider(ExternalExecutablesState.CONFIGURED_STATE);
+		if (l.isEmpty()) stateService.disable(); else stateService.enable();
 
 		return l;
 	}

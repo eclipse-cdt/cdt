@@ -19,29 +19,10 @@ import java.util.Comparator;
  */
 public class MIThreadListIdsInfo extends MIInfo {
 
-	int[] threadIds;
 	private String[] strThreadIds;
 
 	public MIThreadListIdsInfo(MIOutput out) {
 		super(out);
-	}
-
-	public int[] getThreadIds() {
-		if (threadIds == null) {
-			// To make sure that the threads have be parsed
-			String[] tIds = getStrThreadIds();
-			
-			threadIds = new int[tIds.length];
-			for (int i=0; i<tIds.length; i++) {
-				try {
-					threadIds[i] = Integer.parseInt(tIds[i]);
-				} catch (NumberFormatException e) {
-					threadIds[i] = 0;
-				}
-			}
-		}
-
-		return threadIds;
 	}
 
 	/**

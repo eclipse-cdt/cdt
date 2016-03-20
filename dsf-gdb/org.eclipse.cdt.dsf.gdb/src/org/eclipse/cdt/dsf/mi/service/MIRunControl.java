@@ -897,15 +897,15 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     
 
 	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerCtx, MIThreadListIdsInfo info) {
-		if (info.getThreadIds().length == 0) {
+		if (info.getStrThreadIds().length == 0) {
 			// Main thread always exist even if it is not reported by GDB.
 			// So create thread-id = 0 when no thread is reported.
 			// This hack is necessary to prevent AbstractMIControl from issuing a thread-select
 			// because it doesn't work if the application was not compiled with pthread.
 			return new IMIExecutionDMContext[]{createMIExecutionContext(containerCtx, FAKE_THREAD_ID)};
 		} else {
-			IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getThreadIds().length];
-			for (int i = 0; i < info.getThreadIds().length; i++) {
+			IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getStrThreadIds().length];
+			for (int i = 0; i < info.getStrThreadIds().length; i++) {
 				executionDmcs[i] = createMIExecutionContext(containerCtx, info.getStrThreadIds()[i]);
 			}
 			return executionDmcs;

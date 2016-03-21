@@ -364,8 +364,11 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 									new IStatus[] { getStatus() }, "Session shutdown failed", null)); //$NON-NLS-1$
 						}
 						// Last order of business, shutdown the dispatch queue.
-						fTracker.dispose();
-						fTracker = null;
+						if (fTracker != null) {
+                            fTracker.dispose();
+                            fTracker = null;					    
+						}
+
 						DsfSession.endSession(fSession);
 
 						// 'fireTerminate()' removes this launch from the list
@@ -389,14 +392,18 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 		final Step[] steps = new Step[] { new Step() {
 			@Override
-			public void execute(RequestMonitor rm) {
-				IGDBControl control = fTracker.getService(IGDBControl.class);
-				if (control == null) {
-					rm.done();
-					return;
-				}
-				control.terminate(rm);
-			}
+            public void execute(RequestMonitor rm) {
+                if (fTracker != null) {
+                    IGDBControl control = fTracker.getService(IGDBControl.class);
+                    if (control != null) {
+                        control.terminate(rm);
+                        return;
+                    }
+                }
+
+                rm.done();
+                return;
+            }
 		},
 
 				new Step() {

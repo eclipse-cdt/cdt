@@ -53,6 +53,12 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		} else if (gdbVersions.equals("all")) {
 			gdbVersions = String.join(",", ITestConstants.ALL_KNOWN_VERSIONS);
 			gdbVersions += ",gdbserver." + String.join(",gdbserver.", ITestConstants.ALL_KNOWN_VERSIONS);
+		} else if (gdbVersions.equals("supported")) {
+			gdbVersions = String.join(",", ITestConstants.ALL_SUPPORTED_VERSIONS);
+			gdbVersions += ",gdbserver." + String.join(",gdbserver.", ITestConstants.ALL_SUPPORTED_VERSIONS);
+		} else if (gdbVersions.equals("unsupported") || gdbVersions.equals("un-supported")) {
+			gdbVersions = String.join(",", ITestConstants.ALL_UNSUPPORTED_VERSIONS);
+			gdbVersions += ",gdbserver." + String.join(",gdbserver.", ITestConstants.ALL_UNSUPPORTED_VERSIONS);
 		}
 		String[] versions = gdbVersions.split(",");
 		return Arrays.asList(versions);

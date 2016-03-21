@@ -9419,4 +9419,33 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDisambiguationInNoexceptSpecifier_467332() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<bool, typename T = void>
+	//	struct C {};
+	//
+	//	template<typename T>
+	//	struct C<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	  static constexpr bool b() {
+	//	    return true;
+	//	  }
+	//	};
+	//
+	//	struct A {
+	//	  template <typename T, typename = typename C<B<T>::b()>::type>
+	//	  A(T v);
+	//	};
+	//
+	//	void waldo(A p);
+	//
+	//	void test(int x) {
+	//	  waldo(x);
+	//	}
+	public void test_489987() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -217,15 +217,18 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 			return this;
 		// If the arguments are not all constant expressions, there is
 		// no point trying to substitute them into the return expression.
-		if (!areAllConstantExpressions(fArguments, context.getPoint()))
+		if (!areAllConstantExpressions(fArguments, 1, fArguments.length, context.getPoint()))
 			return this;
 		ICPPFunction function = getOverload(context.getPoint());
 		if (function == null) {
+			IBinding binding = null;
 			if (fArguments[0] instanceof EvalBinding) {
-				IBinding binding = ((EvalBinding) fArguments[0]).getBinding();
-				if (binding instanceof ICPPFunction)
-					function = (ICPPFunction) binding;
+				binding = ((EvalBinding) fArguments[0]).getBinding();
+			} else if (fArguments[0] instanceof EvalMemberAccess) {
+				binding = ((EvalMemberAccess) fArguments[0]).getMember();
 			}
+			if (binding instanceof ICPPFunction)
+				function = (ICPPFunction) binding;
 		}
 		if (function == null)
 			return this;

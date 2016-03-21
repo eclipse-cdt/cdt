@@ -56,19 +56,18 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.FixMethodOrder;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Parameterized.class)
 public class TraceFileTest extends BaseParametrizedTestCase {
 
 	private final static String SOURCE_NAME = "TracepointTestApp.cc";
 	private final static String EXEC_NAME = "TracepointTestApp.exe";
 	private final static String TRACE_NAME = "trace";
+	private final static String TRACE_FILE_PATH = EXEC_PATH + TRACE_NAME;
 	private final static int LINE_NUMBER_1 = 17;
 	private final static int LINE_NUMBER_2 = 24;
 	private final static String END_FUNCTION = "lastCall";
@@ -119,7 +118,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	}
 
 	/**
-	 * This test implements the following steps.
+	 * This method implements the following steps.
 	 * 1. Starts a remote session
 	 * 2. Sets two tracepoints in data/launch/src/TracepointTestApp.cc
      *    The first tracepoint's command is "teval a".
@@ -130,8 +129,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	 * 6. Stops tracing
 	 * 7. Saves the trace data into a file (data/launch/bin/trace).
 	 */
-	@Test
-	public void a_createTraceFile() throws Throwable {
+	protected void createTraceFile() throws Throwable {
     	// Make sure that there are no tracepoint actions and no platform breakpoints in the workspace.
     	deleteActionsAndBreakpoints();
 		deleteOldTraceFile();
@@ -147,13 +145,49 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		saveTraceData();
 	}
 
+	/**
+	 * This test verifies that creating a trace file works as expected.
+	 * @see #createTraceFile
+	 */
+	@Test
+	public void testCreateTraceFile() throws Throwable {
+		// This tests forces a remote session by calling startRemoteSession()
+		// The problem is that if gdbserver is not available, the test will fail
+		// If the tests being run are only triggering local tests, then this failure
+		// should not be happening.
+		// Therefore, we only run this tests if we are specifically running remote tests.
+		Assume.assumeTrue("Skipping non-remote", remote);
+
+		createTraceFile();
+	}
+
     /**
-     * This test removes all existing tracepoint actions and tracepoints
+     * This test sets up by first creating a trace file
+     * by calling {@link #createTraceFile}
+     * 
+     * It then removes all existing tracepoint actions and tracepoints
      * and verifies that corresponding platform tracepoints with the proper
      * actions are created.
      */
     @Test
-    public void b_testTraceFile() throws Throwable {
+    public void testTraceFile() throws Throwable {
+    	// This test will force a local post-mortem session, so only run it in local mode
+		Assume.assumeTrue("Skipping remote", !remote);
+
+		try {
+    		createTraceFile();
+    		// Cleanup the interim launch that we just caused
+    		doAfterTest();
+    		// Setup for the upcoming launch
+    		doBeforeTest();
+    	} catch (Throwable t) {
+    		// If we cannot create the trace file, ignore the test using the
+    		// assume check below.  The reason for the failure could be a missing
+    		// gdbserver, and we don't want to fail a local test due to that
+    	}
+    	
+		Assume.assumeTrue("Cannot find trace file: " + TRACE_FILE_PATH, new File(TRACE_FILE_PATH).exists());
+
     	// Make sure that there are no tracepoint actions and no platform breakpoints in the workspace.
     	deleteActionsAndBreakpoints();
 
@@ -163,13 +197,35 @@ public class TraceFileTest extends BaseParametrizedTestCase {
     }
 
     /**
-     * This test verifies that the tracepoint actions and platform tracepoints
-     * created by 'testTraceFile()' are associated with the corresponding target
+     * This test sets up by first creating a trace file and importing it back
+     * by calling {@link #testTraceFile} which also calls {@link #createTraceFile}
+
+     * It then verifies that the tracepoint actions and platform tracepoints
+     * created by {@link #testTraceFile()} are associated with the corresponding target
      * tracepoints and are not created a second time.
      */
     @Test
-    public void c_testTraceFileWithExistingTracepoints() throws Throwable {
-    	// Verify that actions and tracepoints required for this test are in place.
+    public void testTraceFileWithExistingTracepoints() throws Throwable {
+    	// This test will force a local post-mortem session, so only run it in local mode
+		Assume.assumeTrue("Skipping remote", !remote);
+
+		// This test requires the presence of tracepoints created by another test.
+		// To allow our current test to be independent, we explicitly call
+    	// the required test ourselves.
+    	try {
+    		testTraceFile();
+    		// Cleanup the interim launch that we just caused
+    		doAfterTest();
+    		// Setup for the upcoming launch
+    		doBeforeTest();
+    	} catch (Throwable t) {
+    		// If we cannot setup properly, ignore the test using the
+    		// assume check below.  The reason for the failure could be a missing
+    		// gdbserver, and we don't want to fail a local test due to that
+    		Assume.assumeTrue("Cannot properly setup test", false);
+    	}
+
+		// Verify that actions and tracepoints required for this test are in place.
     	checkActionsAndTracepoints();
     	startTraceFileSession();
     	// Verify that no new platform tracepoints or new tracepoint actions are created.
@@ -194,7 +250,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
 		                   IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
 		// Set core file path
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EXEC_PATH + TRACE_NAME);
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, TRACE_FILE_PATH);
 
 		doLaunch();
 
@@ -414,7 +470,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	}
 
 	private void saveTraceData() throws Throwable {
-    	final File traceFile = new Path(EXEC_PATH + TRACE_NAME).toFile();
+    	final File traceFile = new Path(TRACE_FILE_PATH).toFile();
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fSession.getExecutor().submit(new Runnable() {
@@ -440,7 +496,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	}
 
 	private void deleteOldTraceFile() throws Throwable {
-    	File traceFile = new Path(EXEC_PATH + TRACE_NAME).toFile();
+    	File traceFile = new Path(TRACE_FILE_PATH).toFile();
 		traceFile.delete();
 		assertFalse(traceFile.exists());
 	}

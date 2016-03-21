@@ -17,7 +17,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
 import static org.eclipse.cdt.core.parser.util.ArrayUtil.addAll;
-import static org.eclipse.cdt.core.parser.util.ArrayUtil.append;
 import static org.eclipse.cdt.core.parser.util.ArrayUtil.appendAt;
 import static org.eclipse.cdt.core.parser.util.ArrayUtil.trim;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType.UNSPECIFIED_TYPE;
@@ -372,18 +371,23 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (compName instanceof ICPPASTTemplateId) {
 			compName= ((ICPPASTTemplateId) compName).getTemplateName();
 		}
-	    IBinding[] result = null;
+	    IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;
+        int n = 0;
 	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.getLookupKey()))
 				|| (prefixLookup && ContentAssistMatcherFactory.getInstance().match(c, compName.getLookupKey()))) {
 	        final IASTName lookupName = lookup.getLookupName();
 			if (shallReturnConstructors(lookupName, prefixLookup)) {
-	            result = addAll(IBinding.class, result, getConstructors(lookupName, lookup.isResolve()));
+	            ICPPConstructor[] constructors = getConstructors(lookupName, lookup.isResolve());
+				result = addAll(result, constructors);
+				n += constructors.length;
 	        }
             // 9.2 ... The class-name is also inserted into the scope of the class itself.
-            result = append(IBinding.class, result, compName.resolveBinding());
+            result = appendAt(result, n++, compName.resolveBinding());
 	    }
-	    result = addAll(IBinding.class, result, super.getBindings(lookup));
-	    return trim(IBinding.class, result);
+	    IBinding[] bindings = super.getBindings(lookup);
+		result = addAll(result, bindings);
+		n += bindings.length;
+	    return trim(result, n);
 	}
 
 	static protected boolean shouldResolve(boolean force, IASTName candidate, IASTName forName) {
@@ -414,24 +418,26 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        if (o instanceof ObjectSet<?>) {
 	        	ObjectSet<?> set = (ObjectSet<?>) o;
 	        	ICPPConstructor[] bs = ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+    			int n = 0;
         		for (int i = 0; i < set.size(); i++) {
         			Object obj = set.keyAt(i);
         			if (obj instanceof IASTName) {
-        				IASTName n = (IASTName) obj;
-        				binding = shouldResolve(forceResolve, n, forName) ? n.resolveBinding() : n.getBinding();
+        				IASTName name = (IASTName) obj;
+        				binding = shouldResolve(forceResolve, name, forName) ?
+        						name.resolveBinding() : name.getBinding();
         				if (binding instanceof ICPPConstructor) {
-    						bs = append(bs, (ICPPConstructor) binding);
+    						bs = appendAt(bs, n++, (ICPPConstructor) binding);
         				}
         			} else if (obj instanceof ICPPConstructor) {
-						bs = append(bs, (ICPPConstructor) obj);
+						bs = appendAt(bs, n++, (ICPPConstructor) obj);
         			}
         		}
-        		return trim(ICPPConstructor.class, bs);
+        		return trim(bs, n);
 	        } else if (o instanceof IASTName) {
 	        	if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName) o).getBinding() != null) {
 	        		// Always store the name, rather than the binding, so that we can properly flush the scope.
 	        		nameMap.put(CONSTRUCTOR_KEY, o);
-	        		binding = ((IASTName)o).resolveBinding();
+	        		binding = ((IASTName) o).resolveBinding();
 	        	}
 	        } else if (o instanceof IBinding) {
 	        	binding = (IBinding) o;

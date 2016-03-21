@@ -496,12 +496,9 @@ public class CMainTab2 extends CAbstractMainTab {
 				
 				coreName = coreName.trim();
 				File filePath = new File(coreName);
-				if (!filePath.isDirectory()) {
-					IPath corePath = new Path(coreName);
-					if (!corePath.toFile().exists()) {
-						setErrorMessage(LaunchMessages.CMainTab2_File_does_not_exist);
-						return false;
-					}
+				if (!filePath.isDirectory() && !filePath.exists()) {
+					setErrorMessage(LaunchMessages.CMainTab2_File_does_not_exist);
+					return false;
 				}
 			}
 		}

@@ -7,7 +7,7 @@
 <h1 style="text-align: center;"><a class="mozTocH2"
  name="mozTocId598041"></a>Introduction to Programming with DSF</h1>
 <h4>Summary</h4>
-This tutorial intorduces the reader to common techniques and patterns
+This tutorial introduces the reader to common techniques and patterns
 used in the Debugger Services Framework (DSF), which is developed by
 the <a href="http://www.eclipse.org/dsdp/dd/">C/C++ Development Tools
 (CDT)
@@ -89,7 +89,7 @@ Platform SDK</a></li>
 <h4><br>
 </h4>
 <h4>Copyright</h4>
-Copyright (c) 2008, 2010 Wind River Systems and others. All rights
+Copyright (c) 2008, 2016 Wind River Systems and others. All rights
 reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which
 accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ typical debugger integration and where DSF fits in.<br>
   <tbody>
     <tr>
       <td style="text-align: center; vertical-align: middle;"><img
- title="HIgh level view of elements used in a typical DSF-based debugger integration in Eclipse."
+ title="High level view of elements used in a typical DSF-based debugger integration in Eclipse."
  alt="" src="introduction.png" height="324" width="424"><br>
       </td>
     </tr>
@@ -134,20 +134,20 @@ Running example code and performing included exercises is very
 helpful in following this tutorial.&nbsp; In order to run the examples
 in this tutorial the following is needed:<br>
 <ol>
-  <li>Download and install the Eclipse SDK 3.6 (<a
- href="http://download.eclipse.org/eclipse/downloads">http://download.eclipse.org/eclipse/downloads</a>)</li>
-  <li>Install the Eclipse IDE for C/C++ 6.1 and DSF:<br>
+  <li>Download and install the Eclipse IDE for Eclipse Committers (<a
+ href="http://download.eclipse.org/eclipse/downloads">https://www.eclipse.org/downloads/</a>)</li>
+  <li>Install the latest version of the Eclipse IDE for C/C++ and DSF:<br>
   </li>
   <ol style="list-style-type: lower-alpha;">
     <li>Using Update Manager, install the <span
  style="font-style: italic;">Programming Languages -&gt; Eclipse C/C++
 Development Tools</span> feature found in
-the Helios<span style="font-style: italic;">
-Discovery Site (http://download.eclipse.org/releases/helios)</span>.</li>
+the Mars<span style="font-style: italic;">
+Discovery Site (http://download.eclipse.org/releases/mars)</span>.</li>
   </ol>
   <li>Check out the <span style="font-style: italic;">org.eclipse.cdt.examples.dsf</span>
-plugin, found in the <span style="font-style: italic;">/cvsroot/tools</span>
-CVS repository under the <span style="font-style: italic;">org.eclipse.cdt/dsf</span>
+plugin, found in the <span style="font-style: italic;">https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/</span>
+git repository under the <span style="font-style: italic;">https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/dsf/org.eclipse.cdt.examples.dsf</span>
 directory.</li>
   <li>Build the examples plugin:</li>
   <ol style="list-style-type: lower-alpha;">
@@ -261,7 +261,7 @@ the callback method.&nbsp; As a contract with the caller, the
 asynchronous method has to invoke done() when its finished.&nbsp; As
 there is no compiler support for ensuring that the asynchronous method
 completes the request monitor,&nbsp; failure to do so results in common
-but often subtle and difficult to track down bug</li>
+but often subtle and difficult to track down bug.</li>
 </ul>
 <table style="text-align: left; margin-left: auto; margin-right: auto;"
  border="0" cellpadding="5" cellspacing="30">
@@ -344,8 +344,8 @@ purpose. A simple example of using the data request monitor:<br>
 </div>
 <ul>
   <li>Lines 26-27 create the data request monitor using a local class
-declaraion.&nbsp; Note the type parameter to DataRequestMonitor allows
-for compiler checking of the type when calling getData() and setData()
+declaration.&nbsp; Note that the type parameter to DataRequestMonitor
+allows type checking during compile time when calling getData() and setData()
 methods.</li>
   <li>Lines 29-31 override the standard callback to print the result of
 the calculation to the console.<br>
@@ -360,7 +360,7 @@ CountingRequestMonitor can be used for this purpose.&nbsp; It is
 configured such that it's done() method needs to be called a <span
  style="font-style: italic;">count</span> number of times before the
 callback method is invoked.&nbsp; <br>
-The following snipped from the AsyncQuicksort example shows a simple
+The following snippet from the AsyncQuicksort example shows a simple
 example of using the CountingRequestMonitor:<br>
 <br>
 <div style="margin-left: 20px;">
@@ -419,8 +419,8 @@ execution paths!</li>
     <tr>
       <td style="text-align: left;">Note: The use of a parent request
 monitor can simplify the code when implementing nested asynchronous
-methods, since the parent requrest monitor is automatically completed
-when the child requrest monitor is completed.&nbsp; Unfortunately,
+methods, since the parent request monitor is automatically completed
+when the child request monitor is completed.&nbsp; Unfortunately,
 failing to specify a parent request monitor when it is expected can
 sometimes lead to bugs.<br>
       </td>
@@ -440,7 +440,7 @@ synchronous method into an asynchronous one is another common task in
 DSF.&nbsp; This exercise converts the AsyncQuicksort.partition()
 method into asynchronous AsyncQuicksort.asyncPartition().&nbsp; <br>
       <p><span style="font-style: italic;">Look
-for comments preceeded with "// TODO Exercise 2" in the
+for comments preceded with "// TODO Exercise 2" in the
 org.eclipse.cdt.examples.dsf.requestmonitor.AsyncQuicksort
 module.</span></p>
       </td>
@@ -449,7 +449,7 @@ module.</span></p>
 </table>
 <h2><a class="mozTocH3" name="mozTocId732289"></a>3 Concurrency</h2>
 The simple examples in previous section used asynchronous method
-signatures, however no real asynchronous work was performed since all
+signatures. However no real asynchronous work was performed since all
 execution was performed in the main thread.&nbsp; This section examines
 a more typical example of a problem that DSF is intended to solve: a
 viewer and an asynchronous data generator.<br>
@@ -470,7 +470,7 @@ data access methods:<br>
       </td>
       <td style="vertical-align: top;">
       <pre><a name="line48"></a><a name="line49"> 49: </a> void getCount(DataRequestMonitor&lt;Integer&gt; rm);<br><a
- name="line50"> 50: </a> void getValue(int index, DataRequestMonitor&lt;String&gt; rm); <br><a
+ name="line50"> 50: </a> void getValue(int index, DataRequestMonitor&lt;Integer&gt; rm); <br><a
  name="line59"></a></pre>
       </td>
     </tr>
@@ -556,7 +556,7 @@ from SyncDataViewer.getElements()&nbsp; shows the use of Query:<br>
 getCount() method is called</li>
   <li>Line 69 submits the query to an executor.&nbsp; This is very
 important, because a Query object simply implements Runnable, it will
-not perform the work in its exectute() method unless it is submitted to
+not perform the work in its execute() method unless it is submitted to
 an executor.&nbsp; <br>
   </li>
   <li>Line 75 blocks while calling the
@@ -709,7 +709,7 @@ of the generator's thread:<br>
  color="#b22222">// If a request was dequeued, process it.</font><br><a
  name="line147">147: </a>                <font color="#4169e1">if</font> (request != null) {<br><a
  name="line148">148: </a>                    <font color="#b22222">// Simulate a processing delay.</font><br><a
- name="line149">149: </a>                    Thread.sleep(PROCESSING_DELAY);<br><a
+ name="line149">149: </a>                    <br><a
  name="line150">150: </a>                    <br><a name="line151">151: </a>                    <font
  color="#4169e1">if</font> (request instanceof CountRequest) {<br><a
  name="line152">152: </a>                        processCountRequest((CountRequest)request);<br><a
@@ -722,12 +722,14 @@ of the generator's thread:<br>
  name="line157">157: </a>                        <font color="#b22222">// loop and thread will exit.</font><br><a
  name="line158">158: </a>                        request.fRequestMonitor.done();<br><a
  name="line159">159: </a>                        <font color="#4169e1">break</font>;<br><a
- name="line160">160: </a>                    }<br><a name="line161">161: </a>                }<br><a
- name="line162">162: </a>                <br><a name="line163">163: </a>                <font
- color="#b22222">// Simulate data changes.</font><br><a name="line164">164: </a>                randomChanges();<br><a
- name="line165">165: </a>            }<br><a name="line166">166: </a>        }<br><a
- name="line167">167: </a>        <font color="#4169e1">catch</font> (InterruptedException x) {}<br><a
- name="line168">168: </a>    } <br></pre>
+ name="line160">160: </a>                    }<br><a name="line161">161: </a>                }else{<br><a
+ name="line162">162: </a>                    Thread.sleep(PROCESSING_DELAY);<br><a
+ name="line163">163: </a>                }<br><a
+ name="line164">164: </a>                <br><a name="line165">165: </a>                <font
+ color="#b22222">// Simulate data changes.</font><br><a name="line166">166: </a>                randomChanges();<br><a
+ name="line167">167: </a>            }<br><a name="line168">168: </a>        }<br><a
+ name="line169">169: </a>        <font color="#4169e1">catch</font> (InterruptedException x) {}<br><a
+ name="line170">170: </a>    } <br></pre>
       </td>
     </tr>
   </tbody>
@@ -831,7 +833,7 @@ access and modify any of the variables protected by this
 executor.&nbsp; This exercise demonstrates performing a somewhat more
 complicated operation on protected state data.<br>
       <p><span style="font-style: italic;">Look
-for comments preceeded with "// TODO Exercise 3" in the
+for comments preceded with "// TODO Exercise 3" in the
 org.eclipse.cdt.examples.dsf.dataviewer.DataGeneratorWithExcecutor
 module.</span></p>
       </td>
@@ -844,7 +846,7 @@ what are the rules governing access to the various data objects.&nbsp;
 In a DSF system, it is even more important to identify which data
 objects can only be accessed using a designated DSF executor.&nbsp;
 Since there is no Java language mechanisms for this purpose, DSF
-defines a number annotations that can be used for this purpose.&nbsp;
+defines a number of annotations that can be used for this purpose.&nbsp;
 The annotations are hierarchical, so that if a class has a given
 annotation in its declaration, its members and fields are assumed to
 have the same access restriction unless otherwise specified.<br>
@@ -883,7 +885,7 @@ never be called using the executor belonging to the data provider.<br>
       <td style="text-align: left;"> Note: The DSF synchronization
 annotations are no more than a comment intended to help make the code
 more understandable and maintainable.&nbsp; Unfortunately, since there
-is no compiler enforcment of their presence, it is easy to forget to
+is no compiler enforcement of their presence, it is easy to forget to
 add them.<br>
       </td>
     </tr>
@@ -903,7 +905,7 @@ This exercise adds the appropriate synchronization annotations to the
 methods and fields of DataProviderWithExecutor. <br>
       </p>
       <p><span style="font-style: italic;">Look
-for comments preceeded with "// TODO Exercise 4" in the
+for comments preceded with "// TODO Exercise 4" in the
 org.eclipse.cdt.examples.dsf.dataviewer.DataGeneratorWithExcecutor
 module.</span></p>
       </td>
@@ -925,7 +927,7 @@ purposefully puts the data viewer system into a deadlock.&nbsp; The
 deadlock first renders the data viewer unusable, but the main thread
 also gets deadlocked when attempting to exit the program.<br>
       <p><span style="font-style: italic;">Look
-for comments preceeded with "// TODO Exercise 5" in the
+for comments preceded with "// TODO Exercise 5" in the
 org.eclipse.cdt.examples.dsf.dataviewer.SyncDataViewer
 module.</span></p>
       </td>
@@ -996,7 +998,7 @@ alarm context.<br>
     </li>
   </ul>
 </ul>
-The Timers example also features a user interface for displaying and
+The Timers example also features an user interface for displaying and
 manipulating the data in the example's services.&nbsp; The principal
 component of this UI is a view that can be opened by following the
 menus: <span style="font-style: italic;">Window-&gt;Show View-&gt;Other</span>,
@@ -1416,7 +1418,7 @@ listener methods using reflection.&nbsp; <br>
 </p>
 <ol>
   <li>Call <span style="font-style: italic;">DsfSession.dispatchEvent(Object
-event, Dictionary&lt;String, String&gt; serviceProperties)</span>
+event, Dictionary&lt;?, ?&gt; serviceProperties)</span>
 method.&nbsp; The second parameter allows service listeners to filter
 events using specific service properties.</li>
 </ol>
@@ -1427,8 +1429,8 @@ listener method (method name is not important), which takes an <span
  style="font-style: italic;">event</span> parameter. The type of the
 event parameter depends on the event, where the listener will receive
 all service events which can be cast to the declared type.&nbsp; A
-second optional parameter of type <span style="font-style: italic;">Dictionary&lt;String,
-String&gt;</span> allows the event listener to examine the properties
+second optional parameter of type <span style="font-style: italic;">Dictionary&lt;?,
+?&gt;</span> allows the event listener to examine the properties
 of the service that is sending the event.</li>
   <li>Add itself as a service event listener by calling <span
  style="font-style: italic;">DsfSession.addServiceEventListener()</span>.</li>
@@ -1532,7 +1534,7 @@ use is optional.<br>
 </table>
 <h3><a class="mozTocH4" name="mozTocId76941"></a>6.2 Context Hierarchy</h3>
 One of the most powerful features of the IDMContext interface is that
-is is hierarchical.&nbsp; The <span style="font-style: italic;">IDMContext.getParents()</span>
+it is hierarchical.&nbsp; The <span style="font-style: italic;">IDMContext.getParents()</span>
 method returns the immediate ancestors of a given context and following
 the parents' parents allows clients to traverse the full hierarchy of a
 context.&nbsp; <br>
@@ -1706,7 +1708,7 @@ mechanism.</span></small><br>
   <tbody>
     <tr>
       <td style="text-align: left;"> Note: The limitation of posed by
-the adapter problem can best be obseved with the Standard Debug Model
+the adapter problem can best be observed with the Standard Debug Model
 implementation of the Flexible Hierarchy API.&nbsp; If a developer
 would like to extend the Java Debugger to provide a custom Label
 Provider for a Java Stack Frame, than that developer would have to
@@ -1718,7 +1720,7 @@ Provider for it.<br>
 </table>
 <h3><a class="mozTocH3" name="mozTocId715361"></a>7.3 Model Proxy
 Problem</h3>
-There is a second major challange in implementing the flexible
+There is a second major challenge in implementing the flexible
 hierarchy API, which stems from the different life-cycles of the
 Content Provider and Model Proxy objects.&nbsp; <br>
 <ul>
@@ -1750,12 +1752,12 @@ Content Provider and Model Proxy lifecycles.</span></small><br>
   </tbody>
 </table>
 In practice this arrangement means that the content provider and the
-model proxy are implemented using separate object.&nbsp; However, both
+Model Proxy are implemented using separate objects.&nbsp; However, both
 objects need to have knowledge of the layout of elements in the view in
 order to function correctly.<br>
 <h3><a class="mozTocH3" name="mozTocId538479"></a>7.4 View Model Design</h3>
 The DSF View Model is a collection of objects which retrieves
-information from a data model and uses that information to pupulate the
+information from a data model and uses that information to populate the
 content of one or more Flexible Hierarchy viewers.&nbsp; <br>
 <br>
 <table
@@ -1782,7 +1784,7 @@ adapter requests from flexible hierarchy viewers.&nbsp; These are:<br>
 adapter is the top-level object in the view model hierarchy. All the
 content updates from the viewers are handled by a single instance of
 the VM Adapter.&nbsp; The VM Adapter then delegates the handling of
-these updates to the appropriate VM Providern based on the presentation
+these updates to the appropriate VM Provider based on the presentation
 context contained in the update object.<br>
   </li>
   <li><span style="text-decoration: underline;">VM Provider</span> -
@@ -1831,7 +1833,7 @@ Model Design Diagram and Content update handling.<br>
       <td style="text-align: left;"> Note: The most important feature
 of the DSF View Model design is how it overcomes the Adapter
 Problem.&nbsp; The VM Contexts are used to redirect getAdapter()
-requrests from the viewer to the appropriate object.&nbsp; In this way
+requests from the viewer to the appropriate object.&nbsp; In this way
 a particular can have many different View Model representations, rather
 than just one.<br>
       </td>
@@ -1879,11 +1881,11 @@ Example's Data Model<br>
 </table>
 <h4>Timers View Model<br>
 </h4>
-When presentated in a view in a tree hierarchy, either the timers or
+When presented in a view in a tree hierarchy, either the timers or
 the triggers can be shown as top-level elements.&nbsp; In the View
 Model, the layout configuration is controlled by the configuration of
 the VM Nodes within a given VM Provider.&nbsp; This configuration can
-be easily changes as it is done in the Timers example (see figure
+be easily changed as it is done in the Timers example (see figure
 below).<br>
 <table style="text-align: left; margin-left: auto; margin-right: auto;"
  border="0" cellpadding="5" cellspacing="30">
@@ -1916,7 +1918,7 @@ and number of children for each element in the path.&nbsp; <br>
 <h4>Event handling in VM
 Provider</h4>
 The VM Provider is the object in the View Model that listens for Data
-Model events.&nbsp; The events hare handled in the following steps:<br>
+Model events.&nbsp; The events are handled in the following steps:<br>
 <ol>
   <li>The VM Provider receives the vent from the Data Model.</li>
   <li>The VM Provider calls the IVMNode.getDeltaFlags() for each node
@@ -2140,7 +2142,7 @@ update.</li>
 </h3>
 In some use cases, it is desirable to freeze a given view from updating
 and to preserve its content even if the underlying data has
-changed.&nbsp; This is a particular challange for Flexible Hierarchy
+changed.&nbsp; This is a particular challenge for Flexible Hierarchy
 views because they are lazy-loading and cannot be relied on to hold the
 data that they have retrieved.&nbsp; <br>
 <h4>Cache<br>
@@ -2150,7 +2152,7 @@ Model offers an implementation of a VM Provider with an internal
 cache.&nbsp; The cache works in the following steps:<br>
 <ol>
   <li>The viewer or another client requests an update (current the
-cache supports daving element content and element properties data).</li>
+cache supports having element content and element properties data).</li>
   <li>The cache checks whether there is already cached data for the
 element in the update.</li>
   <li>If update data is in cache, skip to Step 8.<br>
@@ -2205,7 +2207,7 @@ a particular value in the viewer has changed since the last viewer
 update. To support this feature, the cache is able to save the last
 known value of an element upon cache reset.&nbsp; The label provider
 can retrieve this last known value and compare it to the current value
-to determine if the element should be hi-lighted in the view.<br>
+to determine if the element should be highlighted in the view.<br>
 <h4>Update Policy<br>
 </h4>
 The update behavior in the view is controlled by the Update Policy
@@ -2236,7 +2238,7 @@ implemented in the following manner:<br>
 all the known VM Providers.&nbsp; <br>
   </li>
   <li>The VM Providers process the event and when the event is fully
-processed, the VM Provider notifiy the VM Adapter that the event
+processed, the VM Provider notify the VM Adapter that the event
 handling is complete.</li>
   <li>When all VM Provider complete handling the event, the VM Adapter
 notifies the event observer.<br>
@@ -2284,16 +2286,16 @@ required.&nbsp; Therefore the long term goal for DSF is to contribute
 it to the Eclipse Platform project.&nbsp; However there are several
 obstacles to that plan:<br>
 <ol>
-  <li>DSF uses Java 5 features including: generics, annotations, and
-the concurrency package.&nbsp; The Platform project is very
-conservative and is resistant to switching to Java 5.&nbsp; One option
-may be to keep the generics and use the Java 5 compiler to produce Java
-1.3 compatible byte code.</li>
+
+  <li>DSF now requires Java 8. Also, the platform, while 
+conservative are now generally requiring Java 8 depending on 
+which parts. </li>
+ 
   <li>DSF relies on the Flexible Hierarchy viewer, which itself is a
 provisional API.&nbsp; The Flexible Hierarchy viewer is a general
 viewer feature and it should be part of the Platform's UI component
 rather than the Debugger.&nbsp; Contributing Flexible Hierarchy to UI
-would require significant refactoring before it would be accpted.</li>
+would require significant refactoring before it would be accepted.</li>
   <li>Ideally the JDT debugger should take advantage of DSF to provide
 a compelling use case for this technology in the SDK.</li>
 </ol>

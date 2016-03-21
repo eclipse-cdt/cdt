@@ -86,7 +86,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 
     @Override
 	public void doBeforeTest() throws Exception {
-    	assumeGdbVersionAtLeast("7.4");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
     	removeTeminatedLaunchesBeforeTest();
     	// Suppress settings of the launch attributes and launching.
     	// Each test sets its own launch attributes

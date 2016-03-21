@@ -23,7 +23,7 @@ import junit.framework.TestSuite;
 @RunWith(AllTests.class)
 public class AllSuites {
 	public static junit.framework.Test suite() {
-		String gdbVersions = String.join(",", ITestConstants.ALL_KNOWN_VERSIONS);
+		String gdbVersions = String.join(",", ITestConstants.ALL_SUPPORTED_VERSIONS);
 		System.setProperty("cdt.tests.dsf.gdb.versions", gdbVersions);
 		TestSuite suite = new TestSuite();
 		suite.addTest(new JUnit4TestAdapter(SuiteGdb.class));

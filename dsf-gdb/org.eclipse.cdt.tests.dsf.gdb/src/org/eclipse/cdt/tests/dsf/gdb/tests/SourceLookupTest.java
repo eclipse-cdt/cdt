@@ -145,7 +145,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	protected void setExeNames() {
 		String gdbVersion = getGdbVersion();
 		// has to be strictly lower
-		boolean isLower = LaunchUtils.compareVersions("7.5", gdbVersion) > 0;
+		boolean isLower = LaunchUtils.compareVersions(ITestConstants.SUFFIX_GDB_7_5, gdbVersion) > 0;
 		if (isLower) {
 			EXEC_AC_NAME = "SourceLookupDwarf2AC.exe"; //$NON-NLS-1$
 			EXEC_AN_NAME = "SourceLookupDwarf2AN.exe"; //$NON-NLS-1$
@@ -465,7 +465,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingAC() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMapping(EXEC_AC_NAME, false);
 	}
 
@@ -484,7 +484,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingAN() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMapping(EXEC_AN_NAME, false);
 	}
 
@@ -499,7 +499,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 * build path when the build path is an absolute path. GDB 6.8 and above
 		 * works fine in this case.
 		 */
-		assumeGdbVersionAtLeast("6.8");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
 		sourceMapping(EXEC_AN_NAME, true);
 	}
 
@@ -509,7 +509,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingRC() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMapping(EXEC_RC_NAME, false);
 	}
 
@@ -528,7 +528,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingRN() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMapping(EXEC_RN_NAME, false);
 	}
 
@@ -543,7 +543,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 * build path when the build path is a relative path. GDB 7.6 and above
 		 * works fine in this case.
 		 */
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMapping(EXEC_RN_NAME, true);
 	}
 
@@ -553,7 +553,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsAC() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMappingBreakpoints(EXEC_AC_NAME, false);
 	}
 
@@ -587,7 +587,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 * build path when the build path is an absolute path. GDB 6.8 and above
 		 * works fine in this case.
 		 */
-		assumeGdbVersionAtLeast("6.8");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
 		sourceMappingBreakpoints(EXEC_AN_NAME, true);
 	}
 
@@ -597,7 +597,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsRC() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMappingBreakpoints(EXEC_RC_NAME, false);
 	}
 
@@ -631,7 +631,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 * build path when the build path is a relative path. GDB 7.6 and above
 		 * works fine in this case.
 		 */
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMappingBreakpoints(EXEC_RN_NAME, true);
 	}
 
@@ -765,7 +765,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void directorySource() throws Throwable {
-		assumeGdbVersionLowerThen("7.6");
+		assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_7_6);
 		DirectorySourceContainer container = new DirectorySourceContainer(new Path(SOURCE_ABSPATH), false);
 		setSourceContainer(container);
 		doLaunch(EXEC_PATH + EXEC_RC_NAME);

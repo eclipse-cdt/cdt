@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_ae047c8c",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Good catch - it is indeed a bit obscure. The change is to permit calling getMemorySpaces(), from TraditionalRendering#init(), line ~\u003d 287. \n\nBasically we did not have a proper context, from that method, to call IMemorySpaceAwareMemoryBlockRetrieval#getMemorySpaces(), so we had to be a bit creative.",
+      "parentUuid": "e7dfcf21_b01ec795",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_64c56506",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "General: \nI think it is best to provide this implementation under an internal package and extract an Interface from it.\n  the interface would then go in the current package i.e. visible with a small factory class to take care of providing a single instance of this implementation.\n   this will make it easier to override/replace the implementation and the factory will provide a single point of entry making updates transparent to the classes needing the implementation.",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_0e4ad0fd",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_64c56506",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_907d4b5a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_44b22933",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_445789d6",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "Normally a Utility class has all methods as static, \nin this case we use multiple instances so wouldn\u0027t it be better to name this class as \u0027helper\u0027 ?\n\nI was wondering if we should in fact make it static, but it might be better to keep it non static so we can provide the ability to e.g. replace the array of colors.",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_30c2b700",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done - renamed to \"Helper\"",
+      "parentUuid": "e7dfcf21_445789d6",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -93,6 +165,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_50c58305",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_e155e749",
+      "range": {
+        "startLine": 31,
+        "startChar": 25,
+        "endLine": 31,
+        "endChar": 26
+      },
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_c4ec7907",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
         "patchSetId": 5
@@ -104,6 +200,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "Although not an strict convention, \nIt\u0027s common to use \u0027f\u0027 as the starting character for field variables, so it makes an easier code reading.",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_70cc3f33",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_c4ec7907",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -127,6 +241,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_90cf0b26",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_84899134",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_442b09b9",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
         "patchSetId": 5
@@ -138,6 +270,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "This method is not needed outside this class, \nlets start with private so we decrease the number of APIs to maintain.",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d0d0b3c2",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_442b09b9",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -161,6 +311,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_8e87c098",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_642e45ca",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_700eff74",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
         "patchSetId": 5
@@ -172,6 +340,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "There is a dependency with getMemorySpaceKeys, \nI think it\u0027s more robust to return a Map\u003cString, String\u003e to provide a direct relation between key and label.",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2e1f8cec",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_700eff74",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -195,6 +381,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_4e1cd8f5",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_9011cb90",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_64072558",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
         "patchSetId": 5
@@ -206,6 +410,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "... number defined colors -\u003e ... number of defined colors",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_30e9d778",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/MemorySpacePreferencesUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_64072558",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -229,6 +451,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f0bbefa6",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_30563733",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_b06967ee",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
         "patchSetId": 5
@@ -240,6 +480,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "missing \u0027private\u0027",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_10b77bbc",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_b06967ee",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -263,6 +521,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_308557e8",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_303d57eb",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_7037df08",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
         "patchSetId": 5
@@ -274,6 +550,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "final is not really needed here as there is no async call and the scope is only for this stack frame.",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b098874b",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 559,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_7037df08",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -297,6 +591,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_9082abdb",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_5040235e",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_d07d138f",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRenderingPreferenceInitializer.java",
         "patchSetId": 5
@@ -308,6 +620,24 @@
       "writtenOn": "2016-03-09T18:59:56Z",
       "side": 1,
       "message": "The default for MEM_USE_GLOBAL_BACKGROUND is true, \nhowever if there are memory spaces available (e.g. memSpaceKeys.length \u003e 0) we could set the default to false.  So the users will benefit from the mem spaces coloring when using new work spaces and with no impacts to the current defaults if mem spaces are not been used.",
+      "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d093532b",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRenderingPreferenceInitializer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-21T18:31:24Z",
+      "side": 1,
+      "message": "yes, I think this is reasonable. Done.",
+      "parentUuid": "e7dfcf21_d07d138f",
       "revId": "5d83f2be428e5e25565a1fe93c319b87eacad076",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

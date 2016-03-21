@@ -92,9 +92,28 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		return false;
 	}
 
+	/**
+	 * Checks if all evaluations contained in the given array are constant expressions.
+	 *
+	 * @param evaluations the evaluations to check
+	 * @param point the point of instantiation
+     */
 	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations, IASTNode point) {
-		for (ICPPEvaluation eval : evaluations) {
-			if (!eval.isConstantExpression(point)) {
+		return areAllConstantExpressions(evaluations, 0, evaluations.length, point);
+	}
+
+	/**
+	 * Checks if all evaluations contained in a range of the given array are constant expressions.
+	 *
+	 * @param evaluations the evaluations to check
+     * @param from the initial index of the range to be checked, inclusive
+     * @param to the final index of the range to be checked, exclusive
+	 * @param point the point of instantiation
+     */
+	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations, int from, int to,
+			IASTNode point) {
+		for (int i = from; i < to; i++) {
+			if (!evaluations[i].isConstantExpression(point)) {
 				return false;
 			}
 		}

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.nonstop;
 
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.MIRunControlTargetAvailableTest;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -27,7 +28,7 @@ public class MIRunControlNonStopTargetAvailableTest extends MIRunControlTargetAv
 
 	@Override
 	public void doBeforeTest() throws Exception {
-		assumeGdbVersionAtLeast("7.0");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_0);
 		super.doBeforeTest();
 	}
 

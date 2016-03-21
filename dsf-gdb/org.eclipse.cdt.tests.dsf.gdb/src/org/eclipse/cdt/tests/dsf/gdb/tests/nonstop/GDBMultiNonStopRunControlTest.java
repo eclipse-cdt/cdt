@@ -11,7 +11,9 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.nonstop;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +38,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.IntermittentRule;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -68,7 +71,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doBeforeTest() throws Exception {
-		assumeGdbVersionAtLeast("7.0");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_0);
 		super.doBeforeTest();
 
 		final DsfSession session = getGDBLaunch().getSession();

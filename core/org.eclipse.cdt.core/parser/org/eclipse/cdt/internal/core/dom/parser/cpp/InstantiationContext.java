@@ -32,8 +32,7 @@ public final class InstantiationContext {
 
 	/**
 	 * @param parameterMap mapping of template parameters to arguments, may be {@code null}.
-	 * @param packOffset parameter pack offset, or -1 if expansion of a parameter pack is not desired
-	 *     pack.
+	 * @param packOffset parameter pack offset, or -1 if expansion of a parameter pack is not desired pack.
 	 * @param contextTypeSpecialization the type specialization if instantiation happens inside a specialized
 	 *     type, otherwise {@code null}.
 	 * @param point the point of instantiation
@@ -132,7 +131,7 @@ public final class InstantiationContext {
 	/**
 	 * Returns the point of instantiation
 	 */
-	public IASTNode getPoint() {
+	public final IASTNode getPoint() {
 		return point;
 	}
 

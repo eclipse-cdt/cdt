@@ -165,8 +165,8 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		return false;
 	}
 
-	public static IType getFieldOwnerType(IType fieldOwnerExpressionType, boolean isDeref, IASTNode point, Collection<ICPPFunction> functionBindings,
-			boolean returnDependent) {
+	public static IType getFieldOwnerType(IType fieldOwnerExpressionType, boolean isDeref, IASTNode point,
+			Collection<ICPPFunction> functionBindings, boolean returnDependent) {
     	IType type= fieldOwnerExpressionType;
     	if (!isDeref)
     		return type;

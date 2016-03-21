@@ -147,8 +147,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
 		return !fRepresentsNewExpression
-			&& areAllConstantExpressions(fArguments, point)
-			&& isNullOrConstexprFunc(getConstructor(point));
+				&& areAllConstantExpressions(fArguments, point)
+				&& isNullOrConstexprFunc(getConstructor(point));
 	}
 
 	@Override

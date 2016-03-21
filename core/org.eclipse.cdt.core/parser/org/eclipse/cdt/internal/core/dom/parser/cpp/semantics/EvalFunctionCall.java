@@ -85,8 +85,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
-		return areAllConstantExpressions(fArguments, point)
-			&& isNullOrConstexprFunc(getOverload(point));
+		return areAllConstantExpressions(fArguments, point) && isNullOrConstexprFunc(getOverload(point));
 	}
 
 	public ICPPFunction getOverload(IASTNode point) {
@@ -184,7 +183,8 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 		if (args[0] instanceof EvalFunctionSet && getOverload(context.getPoint()) == null) {
 			// Resolve the function using the parameters of the function call.
-			args[0] = ((EvalFunctionSet) args[0]).resolveFunction(Arrays.copyOfRange(args, 1, args.length), context.getPoint());
+			EvalFunctionSet functionSet = (EvalFunctionSet) args[0];
+			args[0] = functionSet.resolveFunction(Arrays.copyOfRange(args, 1, args.length), context.getPoint());
 		}
 		return new EvalFunctionCall(args, getTemplateDefinition());
 	}

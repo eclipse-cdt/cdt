@@ -109,6 +109,7 @@ public abstract class ArrayUtil {
 
     /**
      * @deprecated Use {@link #appendAt(Class, Object[], int, Object)} instead.
+     * @noreference This method is not intended to be referenced by clients.
      * @since 4.0
      */
     @Deprecated
@@ -515,6 +516,7 @@ public abstract class ArrayUtil {
 
 	/**
 	 * @deprecated Use {@link #trim(Object[], int)} or {@link #trimAt(Class, Object[], int)} instead
+     * @noreference This method is not intended to be referenced by clients.
 	 */
 	@SuppressWarnings("unchecked")
 	@Deprecated

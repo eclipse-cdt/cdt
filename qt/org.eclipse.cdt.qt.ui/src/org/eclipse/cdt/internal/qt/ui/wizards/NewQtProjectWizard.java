@@ -16,6 +16,10 @@ public class NewQtProjectWizard extends BasicNewResourceWizard {
 
 	private TemplateSelectionPage templateSelectionPage;
 
+	public NewQtProjectWizard() {
+		setForcePreviousAndNextButtons(true);
+	}
+	
 	@Override
 	public void addPages() {
 		templateSelectionPage = new TemplateSelectionPage("templateSelection", QT_TAG_ID); //$NON-NLS-1$

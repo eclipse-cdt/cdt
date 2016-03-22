@@ -98,10 +98,10 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		fStorage.clear();
 
 		if (entries != null) {
-			// note that these entries are intended to be retrieved by
+			// Note that these entries are intended to be retrieved by
 			// LanguageSettingsManager.getSettingEntriesUpResourceTree()
 			// when the whole resource hierarchy has been traversed up
-			setSettingEntries(null, null, null, entries);
+			setSettingEntries((IBuildConfiguration) null, null, null, entries);
 		}
 	}
 
@@ -167,6 +167,15 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	}
 
 	/**
+	 * @deprecated Use {@link #setSettingEntries(IBuildConfiguration, IResource, String, List)}.
+	 */
+	@Deprecated
+	public void setSettingEntries(ICConfigurationDescription config, IResource rc, String languageId,
+			List<? extends ICLanguageSettingEntry> entries) {
+		setSettingEntries((IBuildConfiguration) null, rc, languageId, entries);
+	}
+
+	/**
 	 * {@inheritDoc} <br>
 	 * Note that this list is <b>unmodifiable</b>. To modify the list copy it,
 	 * change and use
@@ -179,7 +188,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * comparison is used) are replaced with the same one instance.
 	 */
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc,
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription config, IResource rc,
 			String languageId) {
 		String rcProjectPath = rc != null ? rc.getProjectRelativePath().toString() : null;
 		List<ICLanguageSettingEntry> entries = fStorage.getSettingEntries(rcProjectPath, languageId);
@@ -190,6 +199,16 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		}
 
 		return entries;
+	}
+
+	/**
+	 * @deprecated Use {@link #getSettingEntries(IBuildConfiguration, IResource, String)}.
+	 */
+	@Deprecated
+	@Override
+	public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc,
+			String languageId) {
+		return getSettingEntries((IBuildConfiguration) null, rc, languageId);
 	}
 
 	/**

@@ -60,6 +60,7 @@ public class TemplateSelectionPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete(templateTable.getSelectedTemplate() != null);
+				getContainer().updateButtons();
 			}
 
 			@Override
@@ -88,7 +89,7 @@ public class TemplateSelectionPage extends WizardPage {
 		templateTable.setTemplates(templates);
 		tagList.setInput(tags);
 		tagList.getList().select(0);
-
+		
 		form.setWeights(new int[] { 20, 80 });
 	}
 

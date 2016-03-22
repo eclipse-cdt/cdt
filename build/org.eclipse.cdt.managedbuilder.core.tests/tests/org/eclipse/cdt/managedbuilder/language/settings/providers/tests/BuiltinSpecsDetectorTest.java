@@ -291,7 +291,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(PROVIDER_ID, provider.getId());
 			assertEquals(PROVIDER_NAME, provider.getName());
 			assertEquals(null, provider.getLanguageScope());
-			assertEquals(null, provider.getSettingEntries(null, null, null));
+			assertEquals(null, provider.getSettingEntries((IBuildConfiguration) null, null, null));
 			assertEquals("", provider.getCommand());
 			assertEquals(false, provider.isExecuted());
 			assertEquals(false, provider.isConsoleEnabled());
@@ -313,7 +313,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(PROVIDER_ID, provider.getId());
 			assertEquals(PROVIDER_NAME, provider.getName());
 			assertEquals(languages, provider.getLanguageScope());
-			assertEquals(entries, provider.getSettingEntries(null, null, null));
+			assertEquals(entries, provider.getSettingEntries((IBuildConfiguration) null, null, null));
 			assertEquals(CUSTOM_COMMAND_1, provider.getCommand());
 			assertEquals(false, provider.isConsoleEnabled());
 			assertEquals(false, provider.isExecuted());
@@ -326,7 +326,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 			provider.execute();
 			assertEquals(true, provider.isExecuted());
-			assertEquals(null, provider.getSettingEntries(null, null, null));
+			assertEquals(null, provider.getSettingEntries((IBuildConfiguration) null, null, null));
 		}
 	}
 
@@ -414,7 +414,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
 			entries2.add(
 					new CMacroEntry("MACRO2", "VALUE2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY));
-			clone.setSettingEntries(null, null, null, entries2);
+			clone.setSettingEntries((IBuildConfiguration) null, null, null, entries2);
 			assertFalse(provider.equals(clone));
 		}
 
@@ -425,7 +425,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(false, clone.isExecuted());
 			assertFalse(provider2.equals(clone));
 
-			provider2.setSettingEntries(null, null, null, null);
+			provider2.setSettingEntries((IBuildConfiguration) null, null, null, null);
 			assertFalse(provider2.equals(clone));
 
 			clone.execute();
@@ -493,7 +493,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			entries.add(new CIncludePathEntry("path0", 1));
-			provider.setSettingEntries(null, null, null, entries);
+			provider.setSettingEntries((IBuildConfiguration) null, null, null, entries);
 			// serialize entries
 			Document doc = XmlUtil.newDocument();
 			rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
@@ -511,7 +511,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 			// load the XML to the new provider
 			provider.load(rootElement);
-			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries((IBuildConfiguration) null, null, null);
 			assertNotNull(entries);
 			assertTrue(entries.size() > 0);
 			assertEquals(new CIncludePathEntry("path0", 1), entries.get(0));
@@ -532,7 +532,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 			// execute provider
 			provider.execute();
-			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries((IBuildConfiguration) null, null, null);
 			assertEquals(null, entries);
 			// executed provider should NOT appear as empty even with no entries set
 			assertEquals(false, provider.isEmpty());
@@ -586,7 +586,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		assertFalse(provider.isEmpty());
 
-		List<ICLanguageSettingEntry> noentries = provider.getSettingEntries(null, null, null);
+		List<ICLanguageSettingEntry> noentries = provider.getSettingEntries((IBuildConfiguration) null, null, null);
 		assertNull(noentries);
 
 		// Check parsed entries
@@ -617,7 +617,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		assertFalse(provider.isEmpty());
 
 		// Check parsed entries
-		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, LANGUAGE_ID);
+		List<ICLanguageSettingEntry> entries =
+				provider.getSettingEntries((IBuildConfiguration) null, null, LANGUAGE_ID);
 		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE",
 				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
@@ -1055,7 +1056,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		provider.shutdown();
 
 		// compare benchmarks, expected well-sorted
-		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
+		List<ICLanguageSettingEntry> entries = provider.getSettingEntries((IBuildConfiguration) null, null, null);
 
 		int i = 0;
 		assertEquals(includePath_1, entries.get(i++));

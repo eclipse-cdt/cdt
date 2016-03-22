@@ -1162,7 +1162,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			// add entries
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			entries.add(SAMPLE_LSE);
-			((MockLanguageSettingsEditableProvider) rawProvider).setSettingEntries(null, project, null, entries);
+			((MockLanguageSettingsEditableProvider) rawProvider).setSettingEntries((IBuildConfiguration) null, project, null, entries);
 			assertEquals(SAMPLE_LSE, wspProvider.getSettingEntries((IBuildConfiguration) null, project, null).get(0));
 
 			// reset count
@@ -1245,7 +1245,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(wspProvider);
 			assertTrue(rawProvider instanceof MockLanguageSettingsEditableProvider);
 			// reset the provider to match extension
-			((MockLanguageSettingsEditableProvider) rawProvider).setSettingEntries(null, null, null, extEntries);
+			((MockLanguageSettingsEditableProvider) rawProvider).setSettingEntries((IBuildConfiguration) null, null, null, extEntries);
 			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true));
 
 			// reset count

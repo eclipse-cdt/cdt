@@ -190,7 +190,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			// add sample entries
 			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			entries.add(nonRefEntry);
-			((LanguageSettingsGenericProvider) userProviderNonRef).setSettingEntries(null, null, null, entries);
+			((LanguageSettingsGenericProvider) userProviderNonRef).setSettingEntries((IBuildConfiguration) null, null, null, entries);
 		}
 		// Confirm that that does not add entries to the main project
 		{
@@ -217,7 +217,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			CIncludePathEntry refEntryNotExported = CDataUtil.createCIncludePathEntry("referenced-not-exported", 0);
 			entries.add(refEntry);
 			entries.add(refEntryNotExported);
-			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries(null, null, null, entries);
+			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries((IBuildConfiguration) null, null, null, entries);
 			List<ICLanguageSettingEntry> entriesActual = LanguageSettingsManager.getSettingEntriesByKind(refConfig,
 					project, null, ICSettingEntry.ALL);
 			assertEquals(entries, entriesActual);
@@ -290,7 +290,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			entries.add(entryExportedA);
 			entries.add(entryNotExportedA);
-			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries(null, null, null, entries);
+			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries((IBuildConfiguration) null, null, null, entries);
 		}
 
 		CIncludePathEntry entryExportedB = CDataUtil.createCIncludePathEntry("referenced-exported-B",
@@ -310,7 +310,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			entries.add(entryExportedB);
 			entries.add(entryNotExportedB);
-			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries(null, null, null, entries);
+			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries((IBuildConfiguration) null, null, null, entries);
 		}
 
 		// Check that the new entries from projectB made it to projectA

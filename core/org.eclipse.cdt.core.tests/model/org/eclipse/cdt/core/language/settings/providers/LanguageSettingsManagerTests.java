@@ -867,7 +867,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			List<ICLanguageSettingEntry> newEntries = new ArrayList<ICLanguageSettingEntry>();
 			newEntries.add(new CIncludePathEntry("path0", 0));
 			newEntries.add(new CIncludePathEntry("path1", 0));
-			((LanguageSettingsSerializableProvider) rawProvider).setSettingEntries(null, null, null, newEntries);
+			((LanguageSettingsSerializableProvider) rawProvider).setSettingEntries((IBuildConfiguration) null, null, null, newEntries);
 
 			// check that the workspace provider gets them too
 			List<ICLanguageSettingEntry> newRawEntries = rawProvider.getSettingEntries((IBuildConfiguration) null, null,
@@ -912,7 +912,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			LanguageSettingsSerializableProvider newRawProvider = new LanguageSettingsSerializableProvider(
 					EXTENSION_EDITABLE_PROVIDER_ID, PROVIDER_NAME_0);
-			newRawProvider.setSettingEntries(null, null, null, newEntries);
+			newRawProvider.setSettingEntries((IBuildConfiguration) null, null, null, newEntries);
 			providers.add(newRawProvider);
 			LanguageSettingsManager.setWorkspaceProviders(providers);
 		}

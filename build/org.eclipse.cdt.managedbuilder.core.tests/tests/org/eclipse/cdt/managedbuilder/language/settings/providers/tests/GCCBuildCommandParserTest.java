@@ -198,7 +198,6 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			Set<String> referencedProjectsNames = new LinkedHashSet<String>(refs.keySet());
 			assertEquals(projectReferenced.getName(), referencedProjectsNames.toArray()[0]);
 		}
-
 	}
 
 	/**
@@ -213,7 +212,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(PROVIDER_ID, provider.getId());
 			assertEquals(PROVIDER_NAME, provider.getName());
 			assertEquals(null, provider.getLanguageScope());
-			assertEquals(null, provider.getSettingEntries(null, null, null));
+			assertEquals(null, provider.getSettingEntries((IBuildConfiguration) null, null, null));
 			assertEquals("", provider.getCompilerPattern());
 			assertEquals(AbstractBuildCommandParser.ResourceScope.FILE, provider.getResourceScope());
 		}
@@ -234,7 +233,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(PROVIDER_ID, provider.getId());
 			assertEquals(PROVIDER_NAME, provider.getName());
 			assertEquals(languages, provider.getLanguageScope());
-			assertEquals(entries, provider.getSettingEntries(null, null, null));
+			assertEquals(entries, provider.getSettingEntries((IBuildConfiguration) null, null, null));
 			assertEquals(CUSTOM_PARAMETER, provider.getCompilerPattern());
 
 			// setters
@@ -359,7 +358,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.processLine(null);
 		parser.shutdown();
 
-		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(null, null, null);
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries((IBuildConfiguration) null, null, null);
 		assertNull(entries);
 	}
 
@@ -1080,11 +1079,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 		// check entries
 		assertEquals(new CIncludePathEntry("/path0", 0),
-				parser.getSettingEntries(null, file, languageId).get(0));
+				parser.getSettingEntries((IBuildConfiguration) null, file, languageId).get(0));
 		assertEquals(
 				new CIncludePathEntry(file.getParent().getFullPath(),
 						ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED),
-				parser.getSettingEntries(null, file, languageId).get(1));
+				parser.getSettingEntries((IBuildConfiguration) null, file, languageId).get(1));
 	}
 
 	/**
@@ -2019,7 +2018,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.processLine("gcc file.wrong-content-type");
 		parser.shutdown();
 
-		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(null, null, null);
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries((IBuildConfiguration) null, null, null);
 		assertNull(entries);
 	}
 
@@ -2382,7 +2381,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		// check populated entries
 		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
 		expected.add(new CIncludePathEntry("/path0", 0));
-		assertEquals(expected, parser.getSettingEntries(null, null, LANG_CPP));
+		assertEquals(expected, parser.getSettingEntries((IBuildConfiguration) null, null, LANG_CPP));
 	}
 
 	/**
@@ -2477,7 +2476,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.shutdown();
 
 		// check entries
-		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(null, null, LANG_CPP);
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries((IBuildConfiguration) null, null, LANG_CPP);
 		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
 	}
 

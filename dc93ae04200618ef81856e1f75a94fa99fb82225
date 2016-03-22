@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_5a91f2d2",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-22T14:22:42Z",
+      "side": 1,
+      "message": "Actually I forgot the naming differences between https://www.eclipse.org/downloads/ and http://download.eclipse.org/eclipse/downloads, on the former there  is not SDK, on the latter there is, so disregard this part of the comment:\n\n\u003e Also, there is no \"Eclipse SDK\" to download anymore. That version was renamed \"Eclipse IDE for Eclipse Committers\"",
+      "parentUuid": "e7dfcf21_24388b86",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_4430379d",
         "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
         "patchSetId": 1

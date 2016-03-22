@@ -856,22 +856,5 @@
             ordering="first">
       </filterMatcher>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.cdt.core.settings.model.ICConfigurationDescription"
-            class="org.eclipse.cdt.internal.core.settings.model.CConfigurationAdapterFactory">
-         <adapter
-               type="org.eclipse.core.resources.IBuildConfiguration">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.core.resources.IBuildConfiguration"
-            class="org.eclipse.cdt.internal.core.settings.model.BuildConfigAdapterFactory">
-         <adapter
-               type="org.eclipse.cdt.core.settings.model.ICConfigurationDescription">
-         </adapter>
-      </factory>
-   </extension>
 
 </plugin>

@@ -71,14 +71,12 @@ import org.eclipse.cdt.internal.core.model.PathEntry;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -105,7 +103,7 @@ public class PathEntryTranslator {
 	static String ATTRIBUTE_PREFIXMAPPING = "prefixmapping"; //$NON-NLS-1$
 	static String ATTRIBUTE_EXCLUDING = "excluding"; //$NON-NLS-1$
 	static String ATTRIBUTE_INCLUDE = "include"; //$NON-NLS-1$
-	static String ATTRIBUTE_INCLUDE_FILE = "include-file"; //$NON-NLS-1$
+	static String ATTRIBUTE_INCLUDE_FILE= "include-file"; //$NON-NLS-1$
 	static String ATTRIBUTE_LIBRARY = "library"; //$NON-NLS-1$
 	static String ATTRIBUTE_SYSTEM = "system"; //$NON-NLS-1$
 	static String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
@@ -128,21 +126,20 @@ public class PathEntryTranslator {
 		ICdtVariableManager fMngr = CCorePlugin.getDefault().getCdtVariableManager();
 
 		public VarSubstitutor(ICConfigurationDescription cfgDescription) {
-			super(new DefaultVariableContextInfo(ICoreVariableContextInfo.CONTEXT_CONFIGURATION,
-					cfgDescription), "", " "); //$NON-NLS-1$ //$NON-NLS-2$
+			super(new DefaultVariableContextInfo(ICoreVariableContextInfo.CONTEXT_CONFIGURATION, cfgDescription), "", " ");  //$NON-NLS-1$  //$NON-NLS-2$
 			fCfg = cfgDescription;
 		}
 
 		@Override
-		protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException {
+		protected ResolvedMacro resolveMacro(ICdtVariable macro)
+				throws CdtVariableException {
 			if (!CdtVarPathEntryVariableManager.isPathEntryVariable(macro, fCfg, fMngr))
 				return super.resolveMacro(macro);
-			return new ResolvedMacro(macro.getName(),
-					CdtVariableResolver.createVariableReference(macro.getName()));
+			return new ResolvedMacro(macro.getName(), CdtVariableResolver.createVariableReference(macro.getName()));
 		}
 	}
 
-	public static final class ReferenceSettingsInfo {
+	public static final class ReferenceSettingsInfo{
 		private IPath[] fRefProjPaths;
 		private ICExternalSetting[] fExtSettings;
 
@@ -200,18 +197,18 @@ public class PathEntryTranslator {
 
 		private static final int STORAGE_SIZE = 9;
 
-		private static final int ENTRY_KINDS[] = new int[] {
-				IPathEntry.CDT_LIBRARY,
-				IPathEntry.CDT_PROJECT,
-				IPathEntry.CDT_SOURCE,
-				IPathEntry.CDT_INCLUDE,
-				IPathEntry.CDT_CONTAINER,
-				IPathEntry.CDT_MACRO,
-				IPathEntry.CDT_OUTPUT,
-				IPathEntry.CDT_INCLUDE_FILE,
-				IPathEntry.CDT_MACRO_FILE,
+		private static final int ENTRY_KINDS[] = new int[]{
+			IPathEntry.CDT_LIBRARY,
+			IPathEntry.CDT_PROJECT,
+			IPathEntry.CDT_SOURCE,
+			IPathEntry.CDT_INCLUDE,
+			IPathEntry.CDT_CONTAINER,
+			IPathEntry.CDT_MACRO,
+			IPathEntry.CDT_OUTPUT,
+			IPathEntry.CDT_INCLUDE_FILE,
+			IPathEntry.CDT_MACRO_FILE,
 		};
-		// private static final int INEXISTENT_INDEX = -1;
+//		private static final int INEXISTENT_INDEX = -1;
 
 		@SuppressWarnings("unchecked")
 		private Map<String, IPathEntry>[] fEntryStorage = new Map[STORAGE_SIZE];
@@ -296,6 +293,7 @@ public class PathEntryTranslator {
 			}
 			return new ICLanguageSettingEntry[0];
 
+
 		}
 	}
 
@@ -318,47 +316,48 @@ public class PathEntryTranslator {
 
 		int kind = entry.fEntry.getEntryKind();
 		switch (kind) {
-		case IPathEntry.CDT_LIBRARY: {
-			if (path != null) {
-				ILibraryEntry libEntry = (ILibraryEntry) entry.fEntry;
-				return (ICLanguageSettingEntry) CDataUtil.createEntry(ICSettingEntry.LIBRARY_FILE, name, null,
-						null, flags, libEntry.getSourceAttachmentPath(),
-						libEntry.getSourceAttachmentRootPath(), libEntry.getSourceAttachmentPrefixMapping());
+			case IPathEntry.CDT_LIBRARY:{
+				if (path != null) {
+					ILibraryEntry libEntry = (ILibraryEntry)entry.fEntry;
+					return (ICLanguageSettingEntry) CDataUtil.createEntry(ICSettingEntry.LIBRARY_FILE, name, null, null, flags,
+							libEntry.getSourceAttachmentPath(),
+							libEntry.getSourceAttachmentRootPath(),
+							libEntry.getSourceAttachmentPrefixMapping());
+				}
+				break;
 			}
-			break;
-		}
-		// case IPathEntry.CDT_PROJECT:
-		// return ICLanguageSettingEntry;
-		// case IPathEntry.CDT_SOURCE:
-		// return INDEX_CDT_SOURCE;
-		case IPathEntry.CDT_INCLUDE: {
-			if (path != null) {
-				return CDataUtil.createCIncludePathEntry(name, flags);
+//			case IPathEntry.CDT_PROJECT:
+//				return ICLanguageSettingEntry;
+//			case IPathEntry.CDT_SOURCE:
+//				return INDEX_CDT_SOURCE;
+			case IPathEntry.CDT_INCLUDE:{
+				if (path != null) {
+					return CDataUtil.createCIncludePathEntry(name, flags);
+				}
+				break;
 			}
-			break;
-		}
-		// case IPathEntry.CDT_CONTAINER:
-		// return INDEX_CDT_CONTAINER;
-		case IPathEntry.CDT_MACRO:
-			if (name.length() != 0) {
-				String value = pathEntryValue.getValue();
-				return CDataUtil.createCMacroEntry(name, value, flags);
+//			case IPathEntry.CDT_CONTAINER:
+//				return INDEX_CDT_CONTAINER;
+			case IPathEntry.CDT_MACRO:
+				if (name.length() != 0) {
+					String value = pathEntryValue.getValue();
+					return CDataUtil.createCMacroEntry(name, value, flags);
+				}
+				break;
+//			case IPathEntry.CDT_OUTPUT:
+//				return INDEX_CDT_OUTPUT;
+			case IPathEntry.CDT_INCLUDE_FILE:{
+				if (path != null) {
+					return CDataUtil.createCIncludeFileEntry(name, flags);
+				}
+				break;
 			}
-			break;
-		// case IPathEntry.CDT_OUTPUT:
-		// return INDEX_CDT_OUTPUT;
-		case IPathEntry.CDT_INCLUDE_FILE: {
-			if (path != null) {
-				return CDataUtil.createCIncludeFileEntry(name, flags);
+			case IPathEntry.CDT_MACRO_FILE:{
+				if (path != null) {
+					return CDataUtil.createCMacroFileEntry(name, flags);
+				}
+				break;
 			}
-			break;
-		}
-		case IPathEntry.CDT_MACRO_FILE: {
-			if (path != null) {
-				return CDataUtil.createCMacroFileEntry(name, flags);
-			}
-			break;
-		}
 		}
 		return null;
 	}
@@ -418,35 +417,35 @@ public class PathEntryTranslator {
 			boolean calcPath = false;
 			switch (peKind) {
 			case IPathEntry.CDT_MACRO:
-				IMacroEntry me = (IMacroEntry) entry;
+				IMacroEntry me = (IMacroEntry)entry;
 				fName = me.getMacroName();
 				fValue = me.getMacroValue();
 				break;
 			case IPathEntry.CDT_LIBRARY:
 				isFile = true;
 				calcPath = true;
-				ILibraryEntry le = (ILibraryEntry) entry;
+				ILibraryEntry le = (ILibraryEntry)entry;
 				basePath = le.getBasePath();
 				valuePath = le.getLibraryPath();
 				break;
 			case IPathEntry.CDT_INCLUDE:
 				isFile = false;
 				calcPath = true;
-				IIncludeEntry ie = (IIncludeEntry) entry;
+				IIncludeEntry ie = (IIncludeEntry)entry;
 				basePath = ie.getBasePath();
 				valuePath = ie.getIncludePath();
 				break;
 			case IPathEntry.CDT_INCLUDE_FILE:
 				isFile = true;
 				calcPath = true;
-				IIncludeFileEntry ife = (IIncludeFileEntry) entry;
+				IIncludeFileEntry ife = (IIncludeFileEntry)entry;
 				basePath = ife.getBasePath();
 				valuePath = ife.getIncludeFilePath();
 				break;
 			case IPathEntry.CDT_MACRO_FILE:
 				isFile = true;
 				calcPath = true;
-				IMacroFileEntry mfe = (IMacroFileEntry) entry;
+				IMacroFileEntry mfe = (IMacroFileEntry)entry;
 				basePath = mfe.getBasePath();
 				valuePath = mfe.getMacroFilePath();
 				break;
@@ -467,8 +466,7 @@ public class PathEntryTranslator {
 					basePath = mngr.resolvePath(basePath);
 					valuePath = mngr.resolvePath(valuePath);
 
-					fName = unresolvedBase.isEmpty() ? unresolvedValue.toString()
-							: unresolvedBase.append(unresolvedValue).toString();
+					fName = unresolvedBase.isEmpty() ? unresolvedValue.toString() : unresolvedBase.append(unresolvedValue).toString();
 					fValue = fName;
 
 					if (!basePath.isEmpty()) {
@@ -490,12 +488,11 @@ public class PathEntryTranslator {
 						ResourceInfo rcInfo = fResolvedEntry.getResourceInfo();
 						if (rcInfo.fExists) {
 							if (rcInfo.fRc.getType() == IResource.FILE) {
-								rcInfo = findResourceInfo(fRoot,
-										rcInfo.fRc.getFullPath().removeLastSegments(1), true);
+								rcInfo = findResourceInfo(fRoot, rcInfo.fRc.getFullPath().removeLastSegments(1), true);
 							}
 							IPath location = rcInfo.fRc.getLocation();
 							if (location != null && rcInfo.fRc.getType() != IResource.FILE) {
-								rcInfo = findResourceInfo((IContainer) rcInfo.fRc, valuePath, !isFile);
+								rcInfo = findResourceInfo((IContainer)rcInfo.fRc, valuePath, !isFile);
 								fResourceInfo = rcInfo;
 								break;
 							}
@@ -557,7 +554,7 @@ public class PathEntryTranslator {
 						} else {
 							List<ResourceInfo> list = new ArrayList<ResourceInfo>();
 							for (IPath path : paths) {
-								list.addAll(Arrays.asList(processFilter((IContainer) rcInfo.fRc, path)));
+								list.addAll(Arrays.asList(processFilter((IContainer)rcInfo.fRc, path)));
 							}
 							fFilterInfos = new ResourceInfo[list.size()];
 							list.toArray(fFilterInfos);
@@ -565,8 +562,7 @@ public class PathEntryTranslator {
 					} else {
 						fFilterInfos = new ResourceInfo[paths.length];
 						for (int i = 0; i < paths.length; i++) {
-							fFilterInfos[i] = processInexistingResourceFilter((IContainer) rcInfo.fRc,
-									paths[i]);
+							fFilterInfos[i] = processInexistingResourceFilter((IContainer)rcInfo.fRc, paths[i]);
 						}
 					}
 				}
@@ -583,7 +579,7 @@ public class PathEntryTranslator {
 			ResourceInfo rcInfo = new ResourceInfo(f, false);
 			addRcInfoToMap(rcInfo);
 
-			addResolvedFilterToMap(container.getFullPath(), new ResourceInfo[] { rcInfo }, true);
+			addResolvedFilterToMap(container.getFullPath(), new ResourceInfo[]{rcInfo}, true);
 			return rcInfo;
 		}
 
@@ -598,6 +594,7 @@ public class PathEntryTranslator {
 			return fResolvedValue;
 		}
 
+
 	}
 
 	private static class PathEntryComposer {
@@ -607,10 +604,7 @@ public class PathEntryTranslator {
 		private boolean fIsExported;
 		private IProject fProject;
 
-		PathEntryComposer(IPath path,
-				IProject project/*
-								 * , ICConfigurationDescription cfgDescription
-								 */) {
+		PathEntryComposer(IPath path, IProject project/*, ICConfigurationDescription cfgDescription*/) {
 			fPath = toProjectPath(path);
 			fProject = project;
 		}
@@ -622,10 +616,7 @@ public class PathEntryTranslator {
 			return path.makeAbsolute();
 		}
 
-		PathEntryComposer(ICExclusionPatternPathEntry entry,
-				IProject project/*
-								 * , ICConfigurationDescription cfgDescription
-								 */) {
+		PathEntryComposer(ICExclusionPatternPathEntry entry, IProject project/*, ICConfigurationDescription cfgDescription*/) {
 			fPath = new Path(entry.getValue());
 			fLangEntry = entry;
 			fProject = project;
@@ -636,10 +627,7 @@ public class PathEntryTranslator {
 			}
 		}
 
-		PathEntryComposer(IPath path, ICLanguageSettingEntry entry, boolean exported,
-				IProject project/*
-								 * , ICConfigurationDescription cfgDescription
-								 */) {
+		PathEntryComposer(IPath path, ICLanguageSettingEntry entry, boolean exported, IProject project/*, ICConfigurationDescription cfgDescription*/) {
 			fPath = path;
 			fLangEntry = entry;
 			fIsExported = exported;
@@ -668,12 +656,10 @@ public class PathEntryTranslator {
 		}
 
 		private IPath[][] getEntryPath(ICSettingEntry entry, ICConfigurationDescription cfgDescription) {
-			return valueToEntryPath(entry.getName(),
-					(entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0, cfgDescription);
+			return valueToEntryPath(entry.getName(), (entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0, cfgDescription);
 		}
 
-		private IPath[][] valueToEntryPath(String value, boolean isWsp,
-				ICConfigurationDescription cfgDescription) {
+		private IPath[][] valueToEntryPath(String value, boolean isWsp, ICConfigurationDescription cfgDescription) {
 			String[] pathVarValues = resolveKeepingPathEntryFars(value, cfgDescription);
 			IPath result[][] = new IPath[2][pathVarValues.length];
 			for (int i = 0; i < pathVarValues.length; i++) {
@@ -691,10 +677,8 @@ public class PathEntryTranslator {
 							if (pathVarPath.segmentCount() != 0) {
 								String resolvedProjName = projName;
 								String varProjName = pathVarPath.segment(0);
-								IPath resolvedProjPath = CCorePlugin.getDefault()
-										.getPathEntryVariableManager().resolvePath(new Path(varProjName));
-								if (resolvedProjPath.segmentCount() == 1
-										&& resolvedProjName.equals(resolvedProjPath.segment(0))) {
+								IPath resolvedProjPath = CCorePlugin.getDefault().getPathEntryVariableManager().resolvePath(new Path(varProjName));
+								if (resolvedProjPath.segmentCount() == 1 && resolvedProjName.equals(resolvedProjPath.segment(0))) {
 									projName = varProjName;
 									valuePath = pathVarPath.removeFirstSegments(1).makeRelative();
 								}
@@ -724,50 +708,45 @@ public class PathEntryTranslator {
 			IPathEntry[] result = new IPathEntry[0];
 			if (fLangEntry != null) {
 				switch (fLangEntry.getKind()) {
-				case ICSettingEntry.INCLUDE_FILE: {
-					IPath paths[][] = getEntryPath(fLangEntry, cfgDescription);
-					result = new IPathEntry[paths[0].length];
-					for (int i = 0; i < result.length; i++)
-						result[i] = CoreModel.newIncludeFileEntry(path, null, paths[0][i], paths[1][i],
-								getExclusionPatterns(), fIsExported);
-					return result;
-				}
-				case ICSettingEntry.INCLUDE_PATH: {
-					IPath paths[][] = getEntryPath(fLangEntry, cfgDescription);
-					ICIncludePathEntry ipe = (ICIncludePathEntry) fLangEntry;
+				case ICSettingEntry.INCLUDE_FILE:{
+						IPath paths[][] = getEntryPath(fLangEntry, cfgDescription);
+						result = new IPathEntry[paths[0].length];
+						for (int i = 0; i < result.length; i++)
+							result[i] = CoreModel.newIncludeFileEntry(path, null, paths[0][i], paths[1][i], getExclusionPatterns(), fIsExported);
+						return result;
+					}
+				case ICSettingEntry.INCLUDE_PATH:{
+						IPath paths[][] = getEntryPath(fLangEntry, cfgDescription);
+						ICIncludePathEntry ipe = (ICIncludePathEntry)fLangEntry;
 
-					result = new IPathEntry[paths[0].length];
-					for (int i = 0; i < result.length; i++)
-						result[i] = CoreModel.newIncludeEntry(path, paths[0][i], paths[1][i], !ipe.isLocal(),
-								getExclusionPatterns(), fIsExported);
-					return result;
-				}
+						result = new IPathEntry[paths[0].length];
+						for (int i = 0; i < result.length; i++)
+							result[i] = CoreModel.newIncludeEntry(path, paths[0][i], paths[1][i], !ipe.isLocal(), getExclusionPatterns(), fIsExported);
+						return result;
+					}
 				case ICSettingEntry.MACRO:
 					result = new IPathEntry[1];
-					result[0] = CoreModel.newMacroEntry(path, fLangEntry.getName(), fLangEntry.getValue(),
-							getExclusionPatterns(), fIsExported);
+					result[0] = CoreModel.newMacroEntry(path, fLangEntry.getName(), fLangEntry.getValue(), getExclusionPatterns(), fIsExported);
 					return result;
-				case ICSettingEntry.MACRO_FILE: {
-					IPath paths[][] = getEntryPath(fLangEntry, cfgDescription);
-					result = new IPathEntry[paths[0].length];
-					for (int i = 0; i < result.length; i++)
-						result[i] = CoreModel.newMacroFileEntry(path, paths[0][i], null, paths[1][i],
-								getExclusionPatterns(), fIsExported);
-					return result;
-				}
+				case ICSettingEntry.MACRO_FILE:{
+						IPath paths[][] = getEntryPath(fLangEntry, cfgDescription);
+						result = new IPathEntry[paths[0].length];
+						for (int i = 0; i < result.length; i++)
+							result[i] = CoreModel.newMacroFileEntry(path, paths[0][i], null, paths[1][i], getExclusionPatterns(), fIsExported);
+						return result;
+					}
 				case ICSettingEntry.LIBRARY_PATH:
 				case ICSettingEntry.LIBRARY_FILE:
 					// Bug 100844 don't contribute library files back to the CModel as a library files, as supplied by the build system,
 					// aren't currently resolved
 					return null;
-				//case ICSettingEntry.LIBRARY_FILE: {
-				//	IPath paths[][] = getEntryPath(fLangEntry, cfgDescription);
-				//	result = new IPathEntry[paths[0].length];
-				//	for (int i = 0; i < result.length; i++)
-				//		result[i] = CoreModel.newLibraryEntry(path, paths[0][i],
-				//				paths[1][i], null, null, null, fIsExported);
-				//	return result;
-				//}
+//				case ICSettingEntry.LIBRARY_FILE:{
+//						IPath paths[][] = getEntryPath(fLangEntry, cfgDescription);
+//						result = new IPathEntry[paths[0].length];
+//						for (int i = 0; i < result.length; i++)
+//							result[i] = CoreModel.newLibraryEntry(path, paths[0][i], paths[1][i], null, null, null, fIsExported);
+//						return result;
+//					}
 				case ICSettingEntry.OUTPUT_PATH:
 					result = new IPathEntry[1];
 					result[0] = CoreModel.newOutputEntry(fPath, getExclusionPatterns());
@@ -790,23 +769,21 @@ public class PathEntryTranslator {
 
 	private static String resolveAll(String value, ICConfigurationDescription cfgDescription) {
 		try {
-			return CCorePlugin.getDefault().getCdtVariableManager().resolveValue(value, "", " ", //$NON-NLS-1$ //$NON-NLS-2$
-					cfgDescription);
+			return CCorePlugin.getDefault().getCdtVariableManager().resolveValue(value, "", " ", cfgDescription); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (CdtVariableException e) {
 			CCorePlugin.log(e);
 		}
 		return value;
 	}
 
-	private static String[] resolveKeepingPathEntryFars(String value,
-			ICConfigurationDescription cfgDescription) {
+	private static String[] resolveKeepingPathEntryFars(String value, ICConfigurationDescription cfgDescription) {
 		String[] result = new String[] { value }; // default value;
 		try {
 			VarSubstitutor substitutor = new VarSubstitutor(cfgDescription);
 
 			result = CdtVariableResolver.resolveToStringList(value, substitutor);
 			if (result == null || result.length == 0)
-				result = new String[] { CdtVariableResolver.resolveToString(value, substitutor) };
+				result = new String[] {	CdtVariableResolver.resolveToString(value, substitutor) };
 		} catch (CdtVariableException e) {
 			CCorePlugin.log(e);
 		}
@@ -816,14 +793,11 @@ public class PathEntryTranslator {
 	public static class PathEntryCollector {
 		private PathSettingsContainer fStorage;
 		private KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> fStore;
-		private KindBasedStore<LinkedHashMap<EntryNameKey, PathEntryComposer>> fNameKeyMapStore; // utility map, does not contain all entries, only those added explicitly
+		private KindBasedStore<LinkedHashMap<EntryNameKey, PathEntryComposer>> fNameKeyMapStore; //utility map, does not contain all entries, only those added explicitly
 		private LinkedHashMap<IPath, PathEntryComposer> fRefProjMap;
 		private IProject fProject;
 
-		private PathEntryCollector(
-				IProject project/*
-								 * , ICConfigurationDescription cfgDescription
-								 */) {
+		private PathEntryCollector(IProject project/*, ICConfigurationDescription cfgDescription*/) {
 			fStorage = PathSettingsContainer.createRootContainer();
 			fStorage.setValue(this);
 			fStore = new KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>>(false);
@@ -831,11 +805,7 @@ public class PathEntryTranslator {
 			fProject = project;
 		}
 
-		private PathEntryCollector(PathSettingsContainer container,
-				KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> store,
-				IProject project/*
-								 * , ICConfigurationDescription cfgDescription
-								 */) {
+		private PathEntryCollector(PathSettingsContainer container, KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> store, IProject project/*, ICConfigurationDescription cfgDescription*/) {
 			fStorage = container;
 			fStore = store;
 			fNameKeyMapStore = new KindBasedStore<LinkedHashMap<EntryNameKey, PathEntryComposer>>(false);
@@ -851,22 +821,22 @@ public class PathEntryTranslator {
 				PathEntryComposer old = nameKeyMap.get(nameKey);
 				if (old != null) {
 					entry = CDataUtil.addRemoveExclusionsToEntry(entry,
-							((ICExclusionPatternPathEntry) old.fLangEntry).getExclusionPatterns(), true);
+							((ICExclusionPatternPathEntry)old.fLangEntry).getExclusionPatterns(),
+							true);
 				}
-				PathEntryComposer newComposer = new PathEntryComposer(entry, fProject/* , fCfg */);
+				PathEntryComposer newComposer = new PathEntryComposer(entry, fProject/*, fCfg*/);
 				map.put(entry, newComposer);
 				nameKeyMap.put(nameKey, newComposer);
 			}
 		}
 
-		public void setRefProjects(IPath[] paths) {
+		public void setRefProjects(IPath []paths) {
 			if (paths == null || paths.length == 0) {
 				fRefProjMap = null;
 			} else {
 				fRefProjMap = new LinkedHashMap<IPath, PathEntryComposer>();
 				for (IPath path : paths) {
-					PathEntryComposer cs = new PathEntryComposer(path,
-							fProject/* , fCfg */);
+					PathEntryComposer cs = new PathEntryComposer(path, fProject/*, fCfg*/);
 					IPath composerPath = cs.getPath();
 					fRefProjMap.put(composerPath, cs);
 				}
@@ -877,8 +847,7 @@ public class PathEntryTranslator {
 			if (path.segmentCount() == 0)
 				return this;
 
-			PathEntryCollector cr = (PathEntryCollector) fStorage.getChildContainer(path, false, false)
-					.getValue();
+			PathEntryCollector cr = (PathEntryCollector)fStorage.getChildContainer(path, false, false).getValue();
 			if (cr != this) {
 				IPath basePath = cr.getPath();
 				path = path.removeFirstSegments(basePath.segmentCount());
@@ -887,21 +856,18 @@ public class PathEntryTranslator {
 
 			PathSettingsContainer newContainer = fStorage.getChildContainer(path, true, true);
 			@SuppressWarnings("unchecked")
-			KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> cloneStore = (KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>>) fStore
-					.clone();
-			IKindBasedInfo<LinkedHashMap<ICSettingEntry, PathEntryComposer>> info[] = cloneStore
-					.getContents();
+			KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> cloneStore =
+				(KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>>)fStore.clone();
+			IKindBasedInfo<LinkedHashMap<ICSettingEntry, PathEntryComposer>> info[] = cloneStore.getContents();
 			for (IKindBasedInfo<LinkedHashMap<ICSettingEntry, PathEntryComposer>> kindInfo : info) {
 				LinkedHashMap<ICSettingEntry, PathEntryComposer> map = kindInfo.getInfo();
 				if (map != null) {
 					@SuppressWarnings("unchecked")
-					LinkedHashMap<ICSettingEntry, PathEntryComposer> clone = (LinkedHashMap<ICSettingEntry, PathEntryComposer>) map
-							.clone();
+					LinkedHashMap<ICSettingEntry, PathEntryComposer> clone = (LinkedHashMap<ICSettingEntry, PathEntryComposer>)map.clone();
 					kindInfo.setInfo(clone);
 				}
 			}
-			PathEntryCollector newCr = new PathEntryCollector(newContainer, cloneStore,
-					fProject/* , fCfg */);
+			PathEntryCollector newCr = new PathEntryCollector(newContainer, cloneStore, fProject/*, fCfg*/);
 			newContainer.setValue(newCr);
 			return newCr;
 		}
@@ -910,16 +876,15 @@ public class PathEntryTranslator {
 			return fStorage.getPath();
 		}
 
-		public void setEntries(int kind, ICLanguageSettingEntry entries[],
-				Set<ICSettingEntry> exportedEntries) {
+		public void setEntries(int kind, ICLanguageSettingEntry entries[], Set<ICSettingEntry> exportedEntries) {
 			IPath path = getPath();
 			HashSet<ICSettingEntry> parentSet = getEntriesSetCopy(kind);
 			@SuppressWarnings("unchecked")
-			HashSet<ICSettingEntry> removedParentSet = (HashSet<ICSettingEntry>) parentSet.clone();
-			HashSet<ICLanguageSettingEntry> addedThisSet = new HashSet<ICLanguageSettingEntry>(
-					Arrays.asList(entries));
+			HashSet<ICSettingEntry> removedParentSet = (HashSet<ICSettingEntry>)parentSet.clone();
+			HashSet<ICLanguageSettingEntry> addedThisSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(entries));
 			removedParentSet.removeAll(addedThisSet);
 			addedThisSet.removeAll(parentSet);
+
 
 			if (removedParentSet.size() != 0) {
 				PathEntryCollector parent = getParent();
@@ -949,8 +914,7 @@ public class PathEntryTranslator {
 						continue;
 
 					ICLanguageSettingEntry entry = entries[i];
-					map.put(entry, new PathEntryComposer(fullPath, entry, exportedEntries.contains(entry),
-							fProject/* , fCfg */));
+					map.put(entry, new PathEntryComposer(fullPath, entry, exportedEntries.contains(entry), fProject/*, fCfg*/));
 				}
 			}
 		}
@@ -964,8 +928,7 @@ public class PathEntryTranslator {
 			return map;
 		}
 
-		private LinkedHashMap<EntryNameKey, PathEntryComposer> getEntriesNameKeyMap(int kind,
-				boolean create) {
+		private LinkedHashMap<EntryNameKey, PathEntryComposer> getEntriesNameKeyMap(int kind, boolean create) {
 			LinkedHashMap<EntryNameKey, PathEntryComposer> map = fNameKeyMapStore.get(kind);
 			if (map == null && create) {
 				map = new LinkedHashMap<EntryNameKey, PathEntryComposer>();
@@ -989,7 +952,7 @@ public class PathEntryTranslator {
 			if (fStorage.isRoot())
 				return null;
 			PathSettingsContainer cr = fStorage.getParentContainer();
-			return (PathEntryCollector) cr.getValue();
+			return (PathEntryCollector)cr.getValue();
 		}
 
 		private HashSet<ICSettingEntry> getEntriesSetCopy(int kind) {
@@ -1007,7 +970,7 @@ public class PathEntryTranslator {
 
 				@Override
 				public boolean visit(PathSettingsContainer container) {
-					PathEntryCollector clr = (PathEntryCollector) container.getValue();
+					PathEntryCollector clr = (PathEntryCollector)container.getValue();
 					clr.getLocalCollectedEntries(kind, list, set);
 					return true;
 				}
@@ -1017,8 +980,7 @@ public class PathEntryTranslator {
 			return list;
 		}
 
-		private void getLocalCollectedEntries(int kind, List<PathEntryComposer> list,
-				Set<PathEntryComposer> addedEntries) {
+		private void getLocalCollectedEntries(int kind, List<PathEntryComposer> list, Set<PathEntryComposer> addedEntries) {
 			Map<ICSettingEntry, PathEntryComposer> map = getEntriesMap(kind, false);
 			if (map == null)
 				return;
@@ -1030,8 +992,7 @@ public class PathEntryTranslator {
 			}
 		}
 
-		public List<IPathEntry> getEntries(int peKind, List<IPathEntry> list, int flags,
-				ICConfigurationDescription cfgDescription) {
+		public List<IPathEntry> getEntries(int peKind, List<IPathEntry> list, int flags, ICConfigurationDescription cfgDescription) {
 			Set<IPathEntry> set = new LinkedHashSet<IPathEntry>();
 
 			int sKind = peKindToSettingKind(peKind);
@@ -1085,8 +1046,8 @@ public class PathEntryTranslator {
 		private static boolean checkFilter(PathEntryComposer cs, ICSettingEntry entry, int flags) {
 			boolean builtIn = isBuiltIn(entry);
 
-			// if (builtIn && cs.getPath().segmentCount() > 1)
-			// return false;
+//			if (builtIn && cs.getPath().segmentCount() > 1)
+//				return false;
 			if ((flags & INCLUDE_BUILT_INS) != 0 && builtIn)
 				return true;
 			if ((flags & INCLUDE_USER) != 0 && !builtIn)
@@ -1095,11 +1056,10 @@ public class PathEntryTranslator {
 		}
 
 		private static boolean isBuiltIn(ICSettingEntry entry) {
-			return entry != null && (entry.isBuiltIn() || entry.isReadOnly());
+			return entry != null &&	(entry.isBuiltIn() || entry.isReadOnly());
 		}
 
-		public List<IPathEntry> getEntries(List<IPathEntry> list, int flags,
-				ICConfigurationDescription cfgDescription) {
+		public List<IPathEntry> getEntries(List<IPathEntry> list, int flags, ICConfigurationDescription cfgDescription) {
 			if (list == null)
 				list = new ArrayList<IPathEntry>();
 			int peKinds[] = PathEntryKyndStore.getSupportedKinds();
@@ -1111,7 +1071,7 @@ public class PathEntryTranslator {
 		}
 
 		public IPathEntry[] getEntries(int flags, ICConfigurationDescription cfgDescription) {
-			List<IPathEntry> list = getEntries(null, flags, cfgDescription);
+			List<IPathEntry> list = getEntries(null, flags,cfgDescription);
 			IPathEntry[] entries = list.toArray(new IPathEntry[list.size()]);
 			return entries;
 		}
@@ -1125,6 +1085,7 @@ public class PathEntryTranslator {
 		return null;
 	}
 
+
 	private static boolean areEntriesReadOnly(PathEntryResolveInfoElement el) {
 		switch (el.getRawEntry().getEntryKind()) {
 		case IPathEntry.CDT_LIBRARY:
@@ -1135,11 +1096,12 @@ public class PathEntryTranslator {
 		case IPathEntry.CDT_SOURCE:
 		case IPathEntry.CDT_OUTPUT:
 			return false;
-		// case IPathEntry.CDT_PROJECT:
-		// case IPathEntry.CDT_CONTAINER:
+//		case IPathEntry.CDT_PROJECT:
+//		case IPathEntry.CDT_CONTAINER:
 		}
 		return true;
 	}
+
 
 	private IPath getEntryFullPath(IPathEntry entry) {
 		IPath path = entry.getPath();
@@ -1158,7 +1120,7 @@ public class PathEntryTranslator {
 		case IPathEntry.CDT_MACRO:
 		case IPathEntry.CDT_OUTPUT:
 		case IPathEntry.CDT_SOURCE:
-			return ((APathEntry) entry).getExclusionPatterns();
+			return ((APathEntry)entry).getExclusionPatterns();
 		}
 		return new IPath[0];
 	}
@@ -1168,7 +1130,7 @@ public class PathEntryTranslator {
 		fCfgData = cfgData;
 		fRcDataHolder = createRcDataHolder(cfgData);
 		fTranslatedFilters = PathSettingsContainer.createRootContainer();
-		fTranslatedFilters.setValue(new ResourceInfo[] { new ResourceInfo(fRoot, true) });
+		fTranslatedFilters.setValue(new ResourceInfo[]{new ResourceInfo(fRoot, true)});
 	}
 
 	private static PathSettingsContainer createRcDataHolder(CConfigurationData cfgData) {
@@ -1184,7 +1146,7 @@ public class PathEntryTranslator {
 		IResource rc = rcInfo.fRc;
 		IPath projPath = rc.getProjectRelativePath();
 		PathSettingsContainer child = cr.getChildContainer(projPath, true, true);
-		RcDesInfo rcDes = (RcDesInfo) child.getValue();
+		RcDesInfo rcDes = (RcDesInfo)child.getValue();
 		if (rcDes == null) {
 			rcDes = new RcDesInfo(rcInfo);
 			child.setValue(rcDes);
@@ -1243,7 +1205,7 @@ public class PathEntryTranslator {
 
 		propagateValues(cr, new ArrayList<LangEntryInfo>(0));
 
-		// applying settings
+		//applying settings
 		applyOutputEntries(outEntries, op);
 		applySourceEntries(srcEntries, op);
 		applyLangSettings(cr, op);
@@ -1257,8 +1219,7 @@ public class PathEntryTranslator {
 		ICExternalSetting extSettings[];
 		if (exportSettingsList.size() != 0) {
 			extSettings = new ICExternalSetting[1];
-			List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(
-					exportSettingsList.size());
+			List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(exportSettingsList.size());
 			for (int i = 0; i < exportSettingsList.size(); i++) {
 				ResolvedEntry re = exportSettingsList.get(i);
 				ICLanguageSettingEntry le = createLangEntry(re);
@@ -1277,7 +1238,7 @@ public class PathEntryTranslator {
 	private static ICSourceEntry[] toCSourceEntries(List<IPathEntry> list) {
 		ICSourceEntry[] entries = new ICSourceEntry[list.size()];
 		for (int i = 0; i < entries.length; i++) {
-			entries[i] = toCSourceEntry((ISourceEntry) list.get(i), true);
+			entries[i] = toCSourceEntry((ISourceEntry)list.get(i), true);
 		}
 		return entries;
 	}
@@ -1285,16 +1246,18 @@ public class PathEntryTranslator {
 	private static ICOutputEntry[] toCOutputEntries(List<IPathEntry> list) {
 		ICOutputEntry[] entries = new ICOutputEntry[list.size()];
 		for (int i = 0; i < entries.length; i++) {
-			entries[i] = toCOutputEntry((IOutputEntry) list.get(i), true);
+			entries[i] = toCOutputEntry((IOutputEntry)list.get(i), true);
 		}
 		return entries;
 	}
+
 
 	private static ICSourceEntry toCSourceEntry(ISourceEntry entry, boolean makeProjRelative) {
 		IPath path = entry.getPath();
 		if (makeProjRelative && path.isAbsolute())
 			path = path.removeFirstSegments(1);
-		return new CSourceEntry(path, entry.getExclusionPatterns(),
+		return new CSourceEntry(path,
+				entry.getExclusionPatterns(),
 				ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 	}
 
@@ -1302,12 +1265,12 @@ public class PathEntryTranslator {
 		IPath path = entry.getPath();
 		if (makeProjRelative && path.isAbsolute())
 			path = path.removeFirstSegments(1);
-		return new COutputEntry(path, entry.getExclusionPatterns(),
+		return new COutputEntry(path,
+				entry.getExclusionPatterns(),
 				ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 	}
 
-	private static ICSettingEntry[] replaceUserEntries(ICSettingEntry[] oldEntries,
-			ICSettingEntry[] newUsrEntries) {
+	private static ICSettingEntry[] replaceUserEntries(ICSettingEntry[] oldEntries, ICSettingEntry[] newUsrEntries) {
 		Set<ICSettingEntry> set = new LinkedHashSet<ICSettingEntry>();
 		Class<?> componentType = null;
 
@@ -1330,7 +1293,7 @@ public class PathEntryTranslator {
 		}
 
 		if (componentType != null) {
-			ICSettingEntry[] result = (ICSettingEntry[]) Array.newInstance(componentType, set.size());
+			ICSettingEntry[] result = (ICSettingEntry[])Array.newInstance(componentType, set.size());
 			set.toArray(result);
 			return result;
 		}
@@ -1339,9 +1302,9 @@ public class PathEntryTranslator {
 
 	private void applySourceEntries(ICSourceEntry entries[], int op) {
 		ICSourceEntry[] oldEntries = fCfgData.getSourceEntries();
-		oldEntries = (ICSourceEntry[]) CDataUtil.makeRelative(fProject, oldEntries, true);
-		entries = (ICSourceEntry[]) CDataUtil.makeRelative(fProject, entries, true);
-		entries = (ICSourceEntry[]) replaceUserEntries(oldEntries, entries);
+		oldEntries = (ICSourceEntry[])CDataUtil.makeRelative(fProject, oldEntries, true);
+		entries = (ICSourceEntry[])CDataUtil.makeRelative(fProject, entries, true);
+		entries = (ICSourceEntry[])replaceUserEntries(oldEntries, entries);
 
 		switch (op) {
 		case OP_ADD:
@@ -1379,9 +1342,9 @@ public class PathEntryTranslator {
 		}
 
 		ICOutputEntry[] oldEntries = bData.getOutputDirectories();
-		oldEntries = (ICOutputEntry[]) CDataUtil.makeRelative(fProject, oldEntries, true);
-		entries = (ICOutputEntry[]) CDataUtil.makeRelative(fProject, entries, true);
-		entries = (ICOutputEntry[]) replaceUserEntries(oldEntries, entries);
+		oldEntries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, oldEntries, true);
+		entries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, entries, true);
+		entries = (ICOutputEntry[])replaceUserEntries(oldEntries, entries);
 
 		switch (op) {
 		case OP_ADD:
@@ -1414,7 +1377,7 @@ public class PathEntryTranslator {
 	private void applyLangSettings(PathSettingsContainer cr, int op) {
 		PathSettingsContainer crs[] = cr.getChildren(true);
 		for (PathSettingsContainer cur : crs) {
-			RcDesInfo desInfo = (RcDesInfo) cur.getValue();
+			RcDesInfo desInfo = (RcDesInfo)cur.getValue();
 			try {
 				CResourceData rcData = getResourceData(cur.getPath(), true, true);
 				applyEntries(rcData, desInfo, op);
@@ -1439,16 +1402,15 @@ public class PathEntryTranslator {
 		PathSettingsContainer crs[] = fRcDataHolder.getChildren(true);
 		List<CResourceData> list = new ArrayList<CResourceData>(crs.length);
 		for (PathSettingsContainer cur : crs) {
-			list.add((CResourceData) cur.getValue());
+			list.add((CResourceData)cur.getValue());
 		}
 		return list.toArray(new CResourceData[list.size()]);
 	}
 
-	private CResourceData getResourceData(IPath path, boolean create, boolean exactPath)
-			throws CoreException {
+	private CResourceData getResourceData(IPath path, boolean create, boolean exactPath) throws CoreException{
 		PathSettingsContainer rcDataH = fRcDataHolder.getChildContainer(path, false, exactPath);
 		if (rcDataH != null) {
-			return (CResourceData) rcDataH.getValue();
+			return (CResourceData)rcDataH.getValue();
 		} else if (create) {
 			ResourceInfo rcInfo = findResourceInfo(fProject, path, true);
 			CResourceData base = getResourceData(path, false, false);
@@ -1456,12 +1418,11 @@ public class PathEntryTranslator {
 			CResourceData newRcData;
 			if (rcInfo.fRc.getType() == IResource.FILE) {
 				if (base.getType() == ICSettingBase.SETTING_FILE) {
-					newRcData = fCfgData.createFileData(path, (CFileData) base);
+					newRcData = fCfgData.createFileData(path, (CFileData)base);
 				} else {
-					CFolderData folderData = (CFolderData) base;
+					CFolderData folderData = (CFolderData)base;
 					CLanguageData lDatas[] = folderData.getLanguageDatas();
-					CLanguageData baseLData = CDataUtil
-							.findLanguagDataForFile(rcInfo.fRc.getFullPath().lastSegment(), fProject, lDatas);
+					CLanguageData baseLData = CDataUtil.findLanguagDataForFile(rcInfo.fRc.getFullPath().lastSegment(), fProject, lDatas);
 					newRcData = fCfgData.createFileData(path, folderData, baseLData);
 				}
 			} else {
@@ -1469,7 +1430,7 @@ public class PathEntryTranslator {
 					base = getResourceData(base.getPath().removeLastSegments(1), false, false);
 				}
 
-				newRcData = fCfgData.createFolderData(path, (CFolderData) base);
+				newRcData = fCfgData.createFolderData(path, (CFolderData)base);
 			}
 
 			fRcDataHolder.getChildContainer(path, true, true).setValue(newRcData);
@@ -1479,9 +1440,9 @@ public class PathEntryTranslator {
 	}
 
 	private void applyEntries(CResourceData rcData, RcDesInfo info, int op) {
-		CLanguageData lDatas[] = rcData.getType() == ICSettingBase.SETTING_FILE
-				? new CLanguageData[] { ((CFileData) rcData).getLanguageData() }
-				: ((CFolderData) rcData).getLanguageDatas();
+		CLanguageData lDatas[] = rcData.getType() == ICSettingBase.SETTING_FILE ?
+				new CLanguageData[] { ((CFileData)rcData).getLanguageData() } :
+				((CFolderData) rcData).getLanguageDatas();
 
 		for (CLanguageData lData : lDatas) {
 			if (lData == null)
@@ -1490,6 +1451,7 @@ public class PathEntryTranslator {
 			applyEntries(lData, info, op);
 		}
 	}
+
 
 	private void applyEntries(CLanguageData lData, RcDesInfo info, int op) {
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
@@ -1500,7 +1462,7 @@ public class PathEntryTranslator {
 
 			ICLanguageSettingEntry opEntries[] = info.getEntries(kind);
 			ICLanguageSettingEntry oldEntries[] = lData.getEntries(kind);
-			opEntries = (ICLanguageSettingEntry[]) replaceUserEntries(oldEntries, opEntries);
+			opEntries = (ICLanguageSettingEntry[])replaceUserEntries(oldEntries, opEntries);
 
 			if (op == OP_REPLACE)
 				oldEntries = null;
@@ -1510,14 +1472,13 @@ public class PathEntryTranslator {
 	}
 
 	private ICLanguageSettingEntry[] composeNewEntries(ICLanguageSettingEntry oldEntries[],
-			ICLanguageSettingEntry newEntries[], int op) {
+			ICLanguageSettingEntry newEntries[],
+			int op) {
 		ICLanguageSettingEntry result[];
 		switch (op) {
-		case OP_ADD: {
-			Set<ICLanguageSettingEntry> oldSet = new HashSet<ICLanguageSettingEntry>(
-					Arrays.asList(oldEntries));
-			Set<ICLanguageSettingEntry> newSet = new HashSet<ICLanguageSettingEntry>(
-					Arrays.asList(newEntries));
+		case OP_ADD:{
+			Set<ICLanguageSettingEntry> oldSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(oldEntries));
+			Set<ICLanguageSettingEntry> newSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(newEntries));
 			newSet.removeAll(oldSet);
 			if (newSet.size() == 0) {
 				result = oldEntries;
@@ -1528,11 +1489,9 @@ public class PathEntryTranslator {
 			}
 			break;
 		}
-		case OP_REMOVE: {
-			Set<ICLanguageSettingEntry> oldSet = new HashSet<ICLanguageSettingEntry>(
-					Arrays.asList(oldEntries));
-			Set<ICLanguageSettingEntry> newSet = new HashSet<ICLanguageSettingEntry>(
-					Arrays.asList(newEntries));
+		case OP_REMOVE:{
+			Set<ICLanguageSettingEntry> oldSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(oldEntries));
+			Set<ICLanguageSettingEntry> newSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(newEntries));
 			oldSet.removeAll(newSet);
 			if (oldSet.size() == 0) {
 				result = new ICLanguageSettingEntry[0];
@@ -1558,11 +1517,10 @@ public class PathEntryTranslator {
 
 	private void propagateValues(PathSettingsContainer cr, List<LangEntryInfo> langEntryInfoList) {
 
-		RcDesInfo rcDes = (RcDesInfo) cr.getValue();
+		RcDesInfo rcDes = (RcDesInfo)cr.getValue();
 		if (rcDes != null) {
 			List<ResolvedEntry> rEntries = rcDes.fResolvedEntries;
-			List<LangEntryInfo> curLanfInfos = new ArrayList<LangEntryInfo>(
-					rEntries.size() + langEntryInfoList.size());
+			List<LangEntryInfo> curLanfInfos = new ArrayList<LangEntryInfo>(rEntries.size() + langEntryInfoList.size());
 			for (ResolvedEntry re : rEntries) {
 				LangEntryInfo li = createLangEntryInfo(re);
 				if (li != null) {
@@ -1608,18 +1566,18 @@ public class PathEntryTranslator {
 		switch (peKind) {
 		case IPathEntry.CDT_LIBRARY:
 			return ICSettingEntry.LIBRARY_FILE;
-		// case IPathEntry.CDT_PROJECT:
-		// return ICLanguageSettingEntry;
-		// case IPathEntry.CDT_SOURCE:
-		// return INDEX_CDT_SOURCE;
+//		case IPathEntry.CDT_PROJECT:
+//			return ICLanguageSettingEntry;
+//		case IPathEntry.CDT_SOURCE:
+//			return INDEX_CDT_SOURCE;
 		case IPathEntry.CDT_INCLUDE:
 			return ICSettingEntry.INCLUDE_PATH;
-		// case IPathEntry.CDT_CONTAINER:
-		// return INDEX_CDT_CONTAINER;
+//		case IPathEntry.CDT_CONTAINER:
+//			return INDEX_CDT_CONTAINER;
 		case IPathEntry.CDT_MACRO:
 			return ICSettingEntry.MACRO;
-		// case IPathEntry.CDT_OUTPUT:
-		// return INDEX_CDT_OUTPUT;
+//		case IPathEntry.CDT_OUTPUT:
+//			return INDEX_CDT_OUTPUT;
 		case IPathEntry.CDT_INCLUDE_FILE:
 			return ICSettingEntry.INCLUDE_FILE;
 		case IPathEntry.CDT_MACRO_FILE:
@@ -1632,14 +1590,14 @@ public class PathEntryTranslator {
 		switch (peKind) {
 		case IPathEntry.CDT_LIBRARY:
 			return ICSettingEntry.LIBRARY_FILE;
-		// case IPathEntry.CDT_PROJECT:
-		// return ICLanguageSettingEntry;
+//		case IPathEntry.CDT_PROJECT:
+//			return ICLanguageSettingEntry;
 		case IPathEntry.CDT_SOURCE:
 			return ICSettingEntry.SOURCE_PATH;
 		case IPathEntry.CDT_INCLUDE:
 			return ICSettingEntry.INCLUDE_PATH;
-		// case IPathEntry.CDT_CONTAINER:
-		// return INDEX_CDT_CONTAINER;
+//		case IPathEntry.CDT_CONTAINER:
+//			return INDEX_CDT_CONTAINER;
 		case IPathEntry.CDT_MACRO:
 			return ICSettingEntry.MACRO;
 		case IPathEntry.CDT_OUTPUT:
@@ -1683,14 +1641,15 @@ public class PathEntryTranslator {
 
 	private ResolvedEntry createResolvedEntry(IPathEntry entry, PathEntryResolveInfoElement el) {
 		switch (entry.getEntryKind()) {
-		// case IPathEntry.CDT_PROJECT:
-		// //should not be here
+//		case IPathEntry.CDT_PROJECT:
+//			//should not be here
 		case IPathEntry.CDT_CONTAINER:
-			// the case of extension path entry container
+			//the case of extension path entry container
 			return null;
 		}
 		return new ResolvedEntry(entry, el);
 	}
+
 
 	private ResolvedEntry[] getResolvedEntries(IPathEntry[] usrEntries, IPathEntry[] sysEntries) {
 		int length = usrEntries != null ? usrEntries.length : 0;
@@ -1716,13 +1675,12 @@ public class PathEntryTranslator {
 		IPath containerFullPath = container.getFullPath();
 		IPath fullPath = containerFullPath.append(path);
 		PathSettingsContainer cr = fTranslatedFilters.getChildContainer(fullPath, false, false);
-		ResourceInfo[] baseInfos = (ResourceInfo[]) cr.getValue();
+		ResourceInfo[] baseInfos = (ResourceInfo[])cr.getValue();
 		ResourceInfo[] result;
 		if (!baseInfos[0].fExists) {
-			// resource does not exist, always create new rc info and not add it
-			// to map
+			// resource does not exist, always create new rc info and not add it to map
 			ResourceInfo inexistent = new ResourceInfo(container.getFolder(path), false);
-			result = new ResourceInfo[] { inexistent };
+			result = new ResourceInfo[]{inexistent};
 		} else {
 			// base exists
 			IPath baseTranslatedPath = cr.getPath();
@@ -1761,7 +1719,7 @@ public class PathEntryTranslator {
 
 			for (int k = 0; k < baseInfos.length; k++) {
 				baseInfo = baseInfos[k];
-				rc = (IFolder) baseInfo.fRc;
+				rc = (IFolder)baseInfo.fRc;
 				rc = rc.getFolder(filter);
 				result[k] = new ResourceInfo(rc, false);
 			}
@@ -1782,7 +1740,7 @@ public class PathEntryTranslator {
 			if (baseRc.getType() == IResource.FILE) {
 				continue;
 			} else {
-				IContainer baseCr = (IContainer) baseRc;
+				IContainer baseCr = (IContainer)baseRc;
 				IResource rc = baseCr.findMember(seg);
 				if (rc != null) {
 					ResourceInfo rcInfo = new ResourceInfo(rc, true);
@@ -1827,10 +1785,10 @@ public class PathEntryTranslator {
 		return false;
 	}
 
-	private void addResolvedFilterToMap(IPath fullFilterPath, ResourceInfo[] resolved, boolean check) {
+	private void addResolvedFilterToMap(IPath fullFilterPath ,ResourceInfo[] resolved, boolean check) {
 		if (check) {
 			PathSettingsContainer cr = fTranslatedFilters.getChildContainer(fullFilterPath, false, false);
-			ResourceInfo[] infos = (ResourceInfo[]) cr.getValue();
+			ResourceInfo[] infos = (ResourceInfo[])cr.getValue();
 			if (!infos[0].fExists)
 				return;
 		}
@@ -1866,7 +1824,7 @@ public class PathEntryTranslator {
 	private void addRcInfoToMap(ResourceInfo rcInfo) {
 		IPath fullPath = rcInfo.fRc.getFullPath();
 		fResourceMap.put(fullPath, rcInfo);
-		addResolvedFilterToMap(fullPath, new ResourceInfo[] { rcInfo }, true);
+		addResolvedFilterToMap(fullPath, new ResourceInfo[]{rcInfo}, true);
 	}
 
 	public static IPathEntry[] decodePathEntries(IProject project, ICStorageElement el) {
@@ -1939,85 +1897,81 @@ public class PathEntryTranslator {
 
 		// recreate the entry
 		switch (kind) {
-		case IPathEntry.CDT_PROJECT:
-			return CoreModel.newProjectEntry(path, isExported);
-		case IPathEntry.CDT_LIBRARY: {
-			IPath libraryPath = new Path(getAttribute(element, ATTRIBUTE_LIBRARY));
-			// source attachment info (optional)
-			IPath sourceAttachmentPath = element.getAttribute(ATTRIBUTE_SOURCEPATH) != null
-					? new Path(element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
-			IPath sourceAttachmentRootPath = element.getAttribute(ATTRIBUTE_ROOTPATH) != null
-					? new Path(element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
-			IPath sourceAttachmentPrefixMapping = element.getAttribute(ATTRIBUTE_PREFIXMAPPING) != null
-					? new Path(element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
+			case IPathEntry.CDT_PROJECT:
+				return CoreModel.newProjectEntry(path, isExported);
+			case IPathEntry.CDT_LIBRARY: {
+				IPath libraryPath = new Path(getAttribute(element, ATTRIBUTE_LIBRARY));
+				// source attachment info (optional)
+				IPath sourceAttachmentPath = element.getAttribute(ATTRIBUTE_SOURCEPATH) != null ? new Path(
+						element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
+				IPath sourceAttachmentRootPath = element.getAttribute(ATTRIBUTE_ROOTPATH) != null ? new Path(
+						element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
+				IPath sourceAttachmentPrefixMapping = element.getAttribute(ATTRIBUTE_PREFIXMAPPING) != null ? new Path(
+						element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
 
-			if (!baseRef.isEmpty()) {
-				return CoreModel.newLibraryRefEntry(path, baseRef, libraryPath);
+				if (!baseRef.isEmpty()) {
+					return CoreModel.newLibraryRefEntry(path, baseRef, libraryPath);
+				}
+				return CoreModel.newLibraryEntry(path, basePath, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath,
+					sourceAttachmentPrefixMapping, isExported);
 			}
-			return CoreModel.newLibraryEntry(path, basePath, libraryPath, sourceAttachmentPath,
-					sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
-		}
-		case IPathEntry.CDT_SOURCE: {
-			// must be an entry in this project or specify another
-			// project
-			String projSegment = path.segment(0);
-			if (projSegment != null && projSegment.equals(project.getName())) { // this
+			case IPathEntry.CDT_SOURCE: {
+				// must be an entry in this project or specify another
 				// project
-				return CoreModel.newSourceEntry(path, exclusionPatterns);
+				String projSegment = path.segment(0);
+				if (projSegment != null && projSegment.equals(project.getName())) { // this
+					// project
+					return CoreModel.newSourceEntry(path, exclusionPatterns);
+				}
+				// another project
+				return CoreModel.newProjectEntry(path, isExported);
 			}
-			// another project
-			return CoreModel.newProjectEntry(path, isExported);
-		}
-		case IPathEntry.CDT_OUTPUT:
-			return CoreModel.newOutputEntry(path, exclusionPatterns);
-		case IPathEntry.CDT_INCLUDE: {
-			// include path info
-			IPath includePath = new Path(getAttribute(element, ATTRIBUTE_INCLUDE));
-			// isSysteminclude
-			boolean isSystemInclude = false;
-			if (element.getAttribute(ATTRIBUTE_SYSTEM) != null) {
-				isSystemInclude = getAttribute(element, ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
+			case IPathEntry.CDT_OUTPUT:
+				return CoreModel.newOutputEntry(path, exclusionPatterns);
+			case IPathEntry.CDT_INCLUDE: {
+				// include path info
+				IPath includePath = new Path(getAttribute(element, ATTRIBUTE_INCLUDE));
+				// isSysteminclude
+				boolean isSystemInclude = false;
+				if (element.getAttribute(ATTRIBUTE_SYSTEM) != null) {
+					isSystemInclude = getAttribute(element, ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
+				}
+				if (!baseRef.isEmpty()) {
+					return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
+				}
+				return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
 			}
-			if (!baseRef.isEmpty()) {
-				return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
+			case IPathEntry.CDT_INCLUDE_FILE: {
+				// include path info
+				IPath includeFilePath = new Path(getAttribute(element, ATTRIBUTE_INCLUDE_FILE));
+				return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);
 			}
-			return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns,
-					isExported);
-		}
-		case IPathEntry.CDT_INCLUDE_FILE: {
-			// include path info
-			IPath includeFilePath = new Path(getAttribute(element, ATTRIBUTE_INCLUDE_FILE));
-			return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns,
-					isExported);
-		}
-		case IPathEntry.CDT_MACRO: {
-			String macroName = getAttribute(element, ATTRIBUTE_NAME);
-			String macroValue = getAttribute(element, ATTRIBUTE_VALUE);
-			if (!baseRef.isEmpty()) {
-				return CoreModel.newMacroRefEntry(path, baseRef, macroName);
+			case IPathEntry.CDT_MACRO: {
+				String macroName = getAttribute(element, ATTRIBUTE_NAME);
+				String macroValue = getAttribute(element, ATTRIBUTE_VALUE);
+				if (!baseRef.isEmpty()) {
+					return CoreModel.newMacroRefEntry(path, baseRef, macroName);
+				}
+				return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
 			}
-			return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
-		}
-		case IPathEntry.CDT_MACRO_FILE: {
-			IPath macroFilePath = new Path(getAttribute(element, ATTRIBUTE_MACRO_FILE));
-			return CoreModel.newMacroFileEntry(path, basePath, baseRef, macroFilePath, exclusionPatterns,
-					isExported);
-		}
-		case IPathEntry.CDT_CONTAINER: {
-			IPath id = new Path(getAttribute(element, ATTRIBUTE_PATH));
-			return CoreModel.newContainerEntry(id, isExported);
-		}
-		default: {
-			ICModelStatus status = new CModelStatus(IStatus.ERROR,
-					"PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-			throw new CModelException(status);
-		}
+			case IPathEntry.CDT_MACRO_FILE: {
+				IPath macroFilePath = new Path(getAttribute(element, ATTRIBUTE_MACRO_FILE));
+				return CoreModel.newMacroFileEntry(path, basePath, baseRef, macroFilePath, exclusionPatterns, isExported);
+			}
+			case IPathEntry.CDT_CONTAINER: {
+				IPath id = new Path(getAttribute(element, ATTRIBUTE_PATH));
+				return CoreModel.newContainerEntry(id, isExported);
+			}
+			default: {
+				ICModelStatus status = new CModelStatus(IStatus.ERROR, "PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new CModelException(status);
+			}
 		}
 	}
 
 	private static CConfigurationData getCfgData(ICConfigurationDescription cfgDescription) {
-		return cfgDescription instanceof CConfigurationDescriptionCache ? (CConfigurationData) cfgDescription
-				: ((IInternalCCfgInfo) cfgDescription).getConfigurationData(false);
+		return cfgDescription instanceof CConfigurationDescriptionCache ?
+				(CConfigurationData)cfgDescription : ((IInternalCCfgInfo)cfgDescription).getConfigurationData(false);
 	}
 
 	private static void addOutputEntries(PathEntryCollector cr, CConfigurationData cfgData) {
@@ -2030,22 +1984,20 @@ public class PathEntryTranslator {
 		}
 	}
 
-	public static PathEntryCollector collectEntries(IProject project,
-			final ICConfigurationDescription cfgDescription) {
+	public static PathEntryCollector collectEntries(IProject project, final ICConfigurationDescription cfgDescription) {
 		CConfigurationData cfgData = getCfgData(cfgDescription);
 
 		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(cfgDescription);
-		ICConfigurationDescription[] allCfgDescriptions = cfgDescription.isPreferenceConfiguration()
-				? new ICConfigurationDescription[] { cfgDescription }
-				: cfgDescription.getProjectDescription().getConfigurations();
+		ICConfigurationDescription[] allCfgDescriptions = cfgDescription.isPreferenceConfiguration() ?
+				new ICConfigurationDescription[] { cfgDescription } :
+				cfgDescription.getProjectDescription().getConfigurations();
 
 		CConfigurationData[] allDatas = new CConfigurationData[allCfgDescriptions.length];
 		for (int i = 0; i < allCfgDescriptions.length; i++) {
 			allDatas[i] = getCfgData(allCfgDescriptions[i]);
 		}
 
-		final PathEntryCollector collector = new PathEntryCollector(
-				project/* , cfgDescription */);
+		final PathEntryCollector collector = new PathEntryCollector(project/*, cfgDescription*/);
 		PathSettingsContainer rcDatas = createRcDataHolder(cfgData);
 		ICSourceEntry sEntries[] = cfgData.getSourceEntries();
 		if (sEntries != null && sEntries.length != 0) {
@@ -2065,14 +2017,13 @@ public class PathEntryTranslator {
 		rcDatas.accept(new IPathSettingsContainerVisitor() {
 			@Override
 			public boolean visit(PathSettingsContainer container) {
-				CResourceData rcData = (CResourceData) container.getValue();
+				CResourceData rcData = (CResourceData)container.getValue();
 				if (rcData != null) {
 					PathEntryCollector child = collector.createChild(container.getPath());
 					for (int kind : kinds) {
 						Set<ICLanguageSettingEntry> set = new LinkedHashSet<ICLanguageSettingEntry>();
 						if (collectResourceDataEntries(cfgDescription, kind, rcData, set)) {
-							ICLanguageSettingEntry[] entries = set
-									.toArray(new ICLanguageSettingEntry[set.size()]);
+							ICLanguageSettingEntry[] entries = set.toArray(new ICLanguageSettingEntry[set.size()]);
 							child.setEntries(kind, entries, exportedSettings);
 						}
 					}
@@ -2083,18 +2034,16 @@ public class PathEntryTranslator {
 		return collector;
 	}
 
-	private static boolean collectResourceDataEntries(ICConfigurationDescription cfgDescription, int kind,
-			CResourceData rcData, Set<ICLanguageSettingEntry> list) {
+	private static boolean collectResourceDataEntries(ICConfigurationDescription cfgDescription, int kind, CResourceData rcData, Set<ICLanguageSettingEntry> list) {
 		CLanguageData[] lDatas = null;
 		if (rcData instanceof CFolderData) {
-			lDatas = ((CFolderData) rcData).getLanguageDatas();
+			lDatas = ((CFolderData)rcData).getLanguageDatas();
 		} else if (rcData instanceof CFileData) {
-			CLanguageData lData = ((CFileData) rcData).getLanguageData();
+			CLanguageData lData = ((CFileData)rcData).getLanguageData();
 			if (lData != null)
-				lDatas = new CLanguageData[] { lData };
+				lDatas = new CLanguageData[] {lData};
 		} else {
-			Exception e = new Exception(
-					UtilMessages.getString("PathEntryTranslator.1") + rcData.getClass().getName()); //$NON-NLS-1$
+			Exception e = new Exception(UtilMessages.getString("PathEntryTranslator.1") + rcData.getClass().getName()); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, e.getMessage(), e);
 			CCorePlugin.log(status);
 		}
@@ -2106,19 +2055,13 @@ public class PathEntryTranslator {
 		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
 			IResource rc = findResourceInWorkspace(project, rcData.getPath());
 			if (rc == null) {
-				// If resource does not exist make a handle to be able to supply
-				// the path.
+				// If resource does not exist make a handle to be able to supply the path.
 				// This does not create actual resource.
-				// Gotta be a folder so language settings provider won't filter
-				// out languages.
+				// Gotta be a folder so language settings provider won't filter out languages.
 				rc = project.getFolder(rcData.getPath());
 			}
-			IBuildConfiguration config = Adapters.adapt(cfgDescription, IBuildConfiguration.class);
-			if (config != null) {
-				for (CLanguageData lData : lDatas) {
-					list.addAll(LanguageSettingsProvidersSerializer.getSettingEntriesByKind(config, rc,
-							lData.getLanguageId(), kind));
-				}
+			for (CLanguageData lData : lDatas) {
+				list.addAll(LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, lData.getLanguageId(), kind));
 			}
 			return list.size() > 0;
 
@@ -2132,8 +2075,7 @@ public class PathEntryTranslator {
 		return supported;
 	}
 
-	private static boolean collectLanguageDataEntries(int kind, CLanguageData lData,
-			Set<ICLanguageSettingEntry> list) {
+	private static boolean collectLanguageDataEntries(int kind, CLanguageData lData, Set<ICLanguageSettingEntry> list) {
 		if ((kind & lData.getSupportedEntryKinds()) != 0) {
 			ICLanguageSettingEntry[] entries = lData.getEntries(kind);
 			if (entries != null && entries.length != 0) {
@@ -2145,8 +2087,7 @@ public class PathEntryTranslator {
 		return false;
 	}
 
-	public static IPathEntry[] getPathEntries(IProject project, ICConfigurationDescription cfgDescription,
-			int flags) {
+	public static IPathEntry[] getPathEntries(IProject project, ICConfigurationDescription cfgDescription, int flags) {
 		PathEntryCollector cr = collectEntries(project, cfgDescription);
 		return cr.getEntries(flags, cfgDescription);
 	}

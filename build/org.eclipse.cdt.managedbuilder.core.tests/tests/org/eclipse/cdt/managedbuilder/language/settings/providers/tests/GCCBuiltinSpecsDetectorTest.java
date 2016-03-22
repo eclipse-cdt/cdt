@@ -36,7 +36,6 @@ import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBu
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -198,7 +197,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CMacroEntry("MACRO", null, ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -215,7 +214,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -232,7 +231,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CMacroEntry("MACRO", "(3)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -252,7 +251,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
 		assertEquals(new CMacroEntry("MACRO_1", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(new CMacroEntry("MACRO_2", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
@@ -273,7 +272,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CMacroEntry("MACRO()", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -290,7 +289,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CMacroEntry("MACRO(X)", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -307,7 +306,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CMacroEntry("MACRO(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -324,7 +323,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CMacroEntry("MACRO(P1, P2)", null, ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -343,7 +342,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
 		assertEquals(new CMacroEntry("MACRO_1(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(new CMacroEntry("MACRO_2(P1, P2)", "VALUE(P1, P2)", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
@@ -390,7 +389,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
 		assertEquals(new CIncludePathEntry(loc+"/local/include", ICSettingEntry.LOCAL | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(new CIncludePathEntry(loc+"/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
@@ -423,7 +422,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
 		assertEquals(new CIncludePathEntry(loc+"/local/include", ICSettingEntry.LOCAL | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(new CIncludePathEntry(loc+"/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
@@ -462,7 +461,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdown();
 
 		// check populated entries
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CIncludePathEntry(dir2.removeLastSegments(1), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -492,7 +491,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
 		assertEquals(new CIncludePathEntry(loc+"/usr/include", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(index, entries.size());
@@ -521,7 +520,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdown();
 
 		// check populated entries
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -556,7 +555,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.shutdown();
 
 		// check populated entries
-		List<ICLanguageSettingEntry> entries = detector.getSettingEntries((IBuildConfiguration) null, null, null);
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
@@ -581,7 +580,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
 			assertTrue(cfgDescriptions.length > 0);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			List<ILanguageSettingsProvider> providers = new ArrayList<>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(detector);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 			// change the default command in all the tools of the toolchain

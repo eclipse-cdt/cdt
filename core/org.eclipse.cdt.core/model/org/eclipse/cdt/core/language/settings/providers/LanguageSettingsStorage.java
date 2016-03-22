@@ -34,14 +34,14 @@ public class LanguageSettingsStorage implements Cloneable {
 	/** Storage to keep settings entries. */
 	protected Map<String, // languageId
 				Map<String, // resource project path
-					List<ICLanguageSettingEntry>>> fStorage = new HashMap<>();
+					List<ICLanguageSettingEntry>>> fStorage = new HashMap<String, Map<String, List<ICLanguageSettingEntry>>>();
 
 	/**
 	 * Pool of LSE lists implemented as WeakHashSet. That allows to gain memory savings
 	 * at the expense of CPU time. WeakHashSet handles garbage collection when a list is not
 	 * referenced anywhere else. See JavaDoc {@link java.lang.ref.WeakReference} about weak reference objects.
 	 */
-	private static WeakHashSet<List<ICLanguageSettingEntry>> listPool = new WeakHashSetSynchronized<>();
+	private static WeakHashSet<List<ICLanguageSettingEntry>> listPool = new WeakHashSetSynchronized<List<ICLanguageSettingEntry>>();
 
 	/**
 	 * Returns the list of setting entries for the given resource and language.
@@ -218,13 +218,13 @@ public class LanguageSettingsStorage implements Cloneable {
 	@Override
 	public LanguageSettingsStorage clone() throws CloneNotSupportedException {
 		LanguageSettingsStorage storageClone = (LanguageSettingsStorage) super.clone();
-		storageClone.fStorage = new HashMap<>();
+		storageClone.fStorage = new HashMap<String, Map<String, List<ICLanguageSettingEntry>>>();
 		synchronized (fStorage) {
 			Set<Entry<String, Map<String, List<ICLanguageSettingEntry>>>> entrySetLang = fStorage.entrySet();
 			for (Entry<String, Map<String, List<ICLanguageSettingEntry>>> entryLang : entrySetLang) {
 				String langId = entryLang.getKey();
 				Map<String, List<ICLanguageSettingEntry>> mapRc = entryLang.getValue();
-				Map<String, List<ICLanguageSettingEntry>> mapRcClone = new HashMap<>();
+				Map<String, List<ICLanguageSettingEntry>> mapRcClone = new HashMap<String, List<ICLanguageSettingEntry>>();
 				Set<Entry<String, List<ICLanguageSettingEntry>>> entrySetRc = mapRc.entrySet();
 				for (Entry<String, List<ICLanguageSettingEntry>> entryRc : entrySetRc) {
 					String rcProjectPath = entryRc.getKey();
@@ -262,4 +262,5 @@ public class LanguageSettingsStorage implements Cloneable {
 			return false;
 		return true;
 	}
+
 }

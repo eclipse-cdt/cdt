@@ -14,8 +14,8 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.List;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IResource;
  */
 public class MockLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsProvider {
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 		return null;
 	}
 }

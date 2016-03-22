@@ -42,14 +42,12 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -63,22 +61,19 @@ import org.w3c.dom.Element;
 /**
  * Abstract class for language settings providers capable to parse build output.
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class interface is not stable yet as it is not currently (CDT
- * 8.1, Juno) clear how it may need to be used in future. There is no guarantee that this API will
- * work or that it will remain the same. Please do not use this API without consulting with the CDT
- * team.
+ * <strong>EXPERIMENTAL</strong>. This class interface is not stable yet as
+ * it is not currently (CDT 8.1, Juno) clear how it may need to be used in future.
+ * There is no guarantee that this API will work or that it will remain the same.
+ * Please do not use this API without consulting with the CDT team.
  * </p>
- * 
  * @noextend This class is not intended to be subclassed by clients.
  *
  * @since 8.1
  */
-public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializableProvider
-		implements ICBuildOutputParser {
+public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializableProvider implements ICBuildOutputParser {
 	protected static final String ATTR_KEEP_RELATIVE_PATHS = "keep-relative-paths"; //$NON-NLS-1$
 	// evaluates to "/${ProjName)/"
-	private static final String PROJ_NAME_PREFIX = '/'
-			+ CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_PROJ_NAME) + '/';
+	private static final String PROJ_NAME_PREFIX = '/' + CdtVariableResolver.createVariableReference(CdtVariableResolver.VAR_PROJ_NAME) + '/';
 
 	protected ICConfigurationDescription currentCfgDescription = null;
 	protected IWorkingDirectoryTracker cwdTracker = null;
@@ -94,32 +89,26 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	private static final EFSExtensionProvider efsProviderDefault = new EFSExtensionProvider() {
 		final EFSExtensionManager efsManager = EFSExtensionManager.getDefault();
-
 		@Override
 		public String getPathFromURI(URI locationURI) {
 			return efsManager.getPathFromURI(locationURI);
 		}
-
 		@Override
 		public URI getLinkedURI(URI locationURI) {
 			return efsManager.getLinkedURI(locationURI);
 		}
-
 		@Override
 		public URI createNewURIFromPath(URI locationOnSameFilesystem, String path) {
 			return efsManager.createNewURIFromPath(locationOnSameFilesystem, path);
 		}
-
 		@Override
 		public String getMappedPath(URI locationURI) {
 			return efsManager.getMappedPath(locationURI);
 		}
-
 		@Override
 		public boolean isVirtual(URI locationURI) {
 			return efsManager.isVirtual(locationURI);
 		}
-
 		@Override
 		public URI append(URI baseURI, String extension) {
 			return efsManager.append(baseURI, extension);
@@ -127,9 +116,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	};
 
 	/**
-	 * Abstract class defining common functionality for option parsers. The purpose of this parser
-	 * is to parse a portion of string representing a single option and create a language settings
-	 * entry out of it.
+	 * Abstract class defining common functionality for option parsers.
+	 * The purpose of this parser is to parse a portion of string representing
+	 * a single option and create a language settings entry out of it.
 	 *
 	 * See {@link GCCBuildCommandParser} for an example how to define the parsers.
 	 */
@@ -147,19 +136,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		/**
 		 * Constructor.
 		 *
-		 * @param kind
-		 *            - kind of language settings entries being parsed by the parser.
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
-		 * @param valueExpression
-		 *            - capturing group expression defining value of an entry.
-		 * @param extraFlag
-		 *            - extra-flag to add while creating language settings entry.
+		 * @param kind - kind of language settings entries being parsed by the parser.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
+		 * @param valueExpression - capturing group expression defining value of an entry.
+		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
-		public AbstractOptionParser(int kind, String pattern, String nameExpression, String valueExpression,
-				int extraFlag) {
+		public AbstractOptionParser(int kind, String pattern, String nameExpression, String valueExpression, int extraFlag) {
 			this.kind = kind;
 			this.patternStr = pattern;
 			this.nameExpression = nameExpression;
@@ -170,16 +153,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 
 		/**
-		 * Create language settings entry of appropriate kind and considering extra-flag passed in
-		 * constructor.
+		 * Create language settings entry of appropriate kind and considering extra-flag passed in constructor.
 		 *
-		 * @param name
-		 *            - name of language settings entry.
-		 * @param value
-		 *            - value of language settings entry.
-		 * @param flag
-		 *            - flag to set. Note that the flag will be amended with the extra-flag defined
-		 *            in constructor.
+		 * @param name - name of language settings entry.
+		 * @param value - value of language settings entry.
+		 * @param flag - flag to set. Note that the flag will be amended with the extra-flag defined in constructor.
 		 * @return new language settings entry.
 		 */
 		public ICLanguageSettingEntry createEntry(String name, String value, int flag) {
@@ -214,13 +192,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 
 		/**
-		 * Test for a match and parse a portion of input string representing a single option to
-		 * retrieve name and value.
+		 * Test for a match and parse a portion of input string representing a single option
+		 * to retrieve name and value.
 		 *
-		 * @param optionString
-		 *            - an option to test and parse, possibly with an argument.
-		 * @return {@code true} if the option is a match to parser's regular expression or
-		 *         {@code false} otherwise.
+		 * @param optionString - an option to test and parse, possibly with an argument.
+		 * @return {@code true} if the option is a match to parser's regular expression
+		 *    or {@code false} otherwise.
 		 */
 		public boolean parseOption(String optionString) {
 			// get rid of extra text at the end (for example file name could be confused for an argument)
@@ -244,7 +221,6 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		public IncludePathOptionParser(String pattern, String nameExpression) {
 			super(ICLanguageSettingEntry.INCLUDE_PATH, pattern, nameExpression, nameExpression, 0);
 		}
-
 		public IncludePathOptionParser(String pattern, String nameExpression, int extraFlag) {
 			super(ICLanguageSettingEntry.INCLUDE_PATH, pattern, nameExpression, nameExpression, extraFlag);
 		}
@@ -256,25 +232,17 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected static class IncludeFileOptionParser extends AbstractOptionParser {
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
 		 */
 		public IncludeFileOptionParser(String pattern, String nameExpression) {
 			super(ICLanguageSettingEntry.INCLUDE_FILE, pattern, nameExpression, nameExpression, 0);
 		}
-
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
-		 * @param extraFlag
-		 *            - extra-flag to add while creating language settings entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
+		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
 		public IncludeFileOptionParser(String pattern, String nameExpression, int extraFlag) {
 			super(ICLanguageSettingEntry.INCLUDE_FILE, pattern, nameExpression, nameExpression, extraFlag);
@@ -287,44 +255,28 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected static class MacroOptionParser extends AbstractOptionParser {
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
-		 * @param valueExpression
-		 *            - capturing group expression defining value of an entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
+		 * @param valueExpression - capturing group expression defining value of an entry.
 		 */
 		public MacroOptionParser(String pattern, String nameExpression, String valueExpression) {
 			super(ICLanguageSettingEntry.MACRO, pattern, nameExpression, valueExpression, 0);
 		}
-
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
-		 * @param valueExpression
-		 *            - capturing group expression defining value of an entry.
-		 * @param extraFlag
-		 *            - extra-flag to add while creating language settings entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
+		 * @param valueExpression - capturing group expression defining value of an entry.
+		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
-		public MacroOptionParser(String pattern, String nameExpression, String valueExpression,
-				int extraFlag) {
+		public MacroOptionParser(String pattern, String nameExpression, String valueExpression, int extraFlag) {
 			super(ICLanguageSettingEntry.MACRO, pattern, nameExpression, valueExpression, extraFlag);
 		}
-
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
-		 * @param extraFlag
-		 *            - extra-flag to add while creating language settings entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
+		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
 		public MacroOptionParser(String pattern, String nameExpression, int extraFlag) {
 			super(ICLanguageSettingEntry.MACRO, pattern, nameExpression, null, extraFlag);
@@ -337,25 +289,17 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected static class MacroFileOptionParser extends AbstractOptionParser {
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
 		 */
 		public MacroFileOptionParser(String pattern, String nameExpression) {
 			super(ICLanguageSettingEntry.MACRO_FILE, pattern, nameExpression, nameExpression, 0);
 		}
-
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
-		 * @param extraFlag
-		 *            - extra-flag to add while creating language settings entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
+		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
 		public MacroFileOptionParser(String pattern, String nameExpression, int extraFlag) {
 			super(ICLanguageSettingEntry.MACRO_FILE, pattern, nameExpression, nameExpression, extraFlag);
@@ -368,25 +312,17 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected static class LibraryPathOptionParser extends AbstractOptionParser {
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
 		 */
 		public LibraryPathOptionParser(String pattern, String nameExpression) {
 			super(ICLanguageSettingEntry.LIBRARY_PATH, pattern, nameExpression, nameExpression, 0);
 		}
-
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
-		 * @param extraFlag
-		 *            - extra-flag to add while creating language settings entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
+		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
 		public LibraryPathOptionParser(String pattern, String nameExpression, int extraFlag) {
 			super(ICLanguageSettingEntry.LIBRARY_PATH, pattern, nameExpression, nameExpression, extraFlag);
@@ -399,25 +335,17 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected static class LibraryFileOptionParser extends AbstractOptionParser {
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
 		 */
 		public LibraryFileOptionParser(String pattern, String nameExpression) {
 			super(ICLanguageSettingEntry.LIBRARY_FILE, pattern, nameExpression, nameExpression, 0);
 		}
-
 		/**
 		 * Constructor.
-		 * 
-		 * @param pattern
-		 *            - regular expression pattern being parsed by the parser.
-		 * @param nameExpression
-		 *            - capturing group expression defining name of an entry.
-		 * @param extraFlag
-		 *            - extra-flag to add while creating language settings entry.
+		 * @param pattern - regular expression pattern being parsed by the parser.
+		 * @param nameExpression - capturing group expression defining name of an entry.
+		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
 		public LibraryFileOptionParser(String pattern, String nameExpression, int extraFlag) {
 			super(ICLanguageSettingEntry.LIBRARY_FILE, pattern, nameExpression, nameExpression, extraFlag);
@@ -425,63 +353,60 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Parse the line returning the resource name as appears in the output. This is the resource
-	 * where {@link ICLanguageSettingEntry} list is being added.
+	 * Parse the line returning the resource name as appears in the output.
+	 * This is the resource where {@link ICLanguageSettingEntry} list is being added.
 	 *
-	 * @param line
-	 *            - one input line from the output stripped from end of line characters.
-	 * @return the resource name as appears in the output or {@code null}. Note that {@code null}
-	 *         can have different semantics and can mean "no resource found" or "applicable to any
-	 *         resource". By default "no resource found" is used in this abstract class but
-	 *         extenders can handle otherwise.
+	 * @param line - one input line from the output stripped from end of line characters.
+	 * @return the resource name as appears in the output or {@code null}.
+	 *    Note that {@code null} can have different semantics and can mean "no resource found"
+	 *    or "applicable to any resource". By default "no resource found" is used in this
+	 *    abstract class but extenders can handle otherwise.
 	 */
 	protected abstract String parseResourceName(String line);
 
 	/**
-	 * Parse the line returning the list of substrings to be treated each as input to the option
-	 * parsers. It is assumed that each substring presents one {@link ICLanguageSettingEntry} (for
-	 * example compiler options {@code -I/path} or {@code -DMACRO=1}).
+	 * Parse the line returning the list of substrings to be treated each as input to
+	 * the option parsers. It is assumed that each substring presents one
+	 * {@link ICLanguageSettingEntry} (for example compiler options {@code -I/path} or
+	 * {@code -DMACRO=1}).
 	 *
-	 * @param line
-	 *            - one input line from the output stripped from end of line characters.
+	 * @param line - one input line from the output stripped from end of line characters.
 	 * @return list of substrings representing language settings entries.
 	 */
 	protected abstract List<String> parseOptions(String line);
 
 	/**
 	 * @return array of option parsers defining how to parse a string to
-	 *         {@link ICLanguageSettingEntry}. See {@link AbstractOptionParser} and its specific
-	 *         extenders.
+	 * {@link ICLanguageSettingEntry}.
+	 * See {@link AbstractOptionParser} and its specific extenders.
 	 */
 	protected abstract AbstractOptionParser[] getOptionParsers();
 
 	/**
-	 * @return {@code true} when the provider tries to resolve relative or remote paths to the
-	 *         existing paths in the workspace or local file-system using certain heuristics.
+	 * @return {@code true} when the provider tries to resolve relative or remote paths
+	 * to the existing paths in the workspace or local file-system using certain heuristics.
 	 */
 	public boolean isResolvingPaths() {
 		return isResolvingPaths;
 	}
 
 	/**
-	 * Enable or disable resolving relative or remote paths to the existing paths in the workspace
-	 * or local file-system.
+	 * Enable or disable resolving  relative or remote paths to the existing paths
+	 * in the workspace or local file-system.
 	 *
-	 * @param resolvePaths
-	 *            - set {@code true} to enable or {@code false} to disable resolving paths. When
-	 *            this parameter is set to {@code false} the paths will be kept as they appear in
-	 *            the build output.
+	 * @param resolvePaths - set {@code true} to enable or {@code false} to disable
+	 *    resolving paths. When this parameter is set to {@code false} the paths will
+	 *    be kept as they appear in the build output.
 	 */
 	public void setResolvingPaths(boolean resolvePaths) {
 		this.isResolvingPaths = resolvePaths;
 	}
 
+
 	@Override
-	public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker)
-			throws CoreException {
+	public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException {
 		this.currentCfgDescription = cfgDescription;
-		this.currentProject = cfgDescription != null ? cfgDescription.getProjectDescription().getProject()
-				: null;
+		this.currentProject = cfgDescription != null ? cfgDescription.getProjectDescription().getProject() : null;
 		this.cwdTracker = cwdTracker;
 		this.efsProvider = getEFSProvider();
 	}
@@ -507,18 +432,18 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 
 		/**
-		 * URI of directory where the build is happening. This URI could point to a remote
-		 * file-system for remote builds. Most often it is the same file-system as for
-		 * currentResource but it can be different file-system (and different URI schema).
+		 * URI of directory where the build is happening. This URI could point to a remote file-system
+		 * for remote builds. Most often it is the same file-system as for currentResource but
+		 * it can be different file-system (and different URI schema).
 		 */
 		URI buildDirURI = null;
 
 		/**
-		 * Where source tree starts if mapped. This kind of mapping is useful for example in cases
-		 * when the absolute path to the source file on the remote system is simulated inside a
-		 * project in the workspace. This URI is rooted on the same file-system where
-		 * currentResource resides. In general this file-system (or even URI schema) does not have
-		 * to match that of buildDirURI.
+		 * Where source tree starts if mapped. This kind of mapping is useful for example in cases when
+		 * the absolute path to the source file on the remote system is simulated inside a project in the
+		 * workspace.
+		 * This URI is rooted on the same file-system where currentResource resides. In general this file-system
+		 * (or even URI schema) does not have to match that of buildDirURI.
 		 */
 		URI mappedRootURI = null;
 
@@ -537,8 +462,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 					try {
 						if (optionParser.parseOption(option)) {
 							ICLanguageSettingEntry entry = null;
-							if (isResolvingPaths
-									&& (optionParser.isForFile() || optionParser.isForFolder())) {
+							if (isResolvingPaths && (optionParser.isForFile() || optionParser.isForFolder())) {
 								URI baseURI = mappedRootURI;
 								if (buildDirURI != null && !new Path(optionParser.parsedName).isAbsolute()) {
 									if (mappedRootURI != null) {
@@ -547,11 +471,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 										baseURI = buildDirURI;
 									}
 								}
-								entry = createResolvedPathEntry(optionParser, optionParser.parsedName, 0,
-										baseURI);
+								entry = createResolvedPathEntry(optionParser, optionParser.parsedName, 0, baseURI);
 							} else {
-								entry = optionParser.createEntry(optionParser.parsedName,
-										optionParser.parsedValue, 0);
+								entry = optionParser.createEntry(optionParser.parsedName, optionParser.parsedValue, 0);
 							}
 
 							if (entry != null && !entries.contains(entry)) {
@@ -561,10 +483,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 						}
 					} catch (Throwable e) {
 						@SuppressWarnings("nls")
-						String msg = "Exception trying to parse option [" + option + "], class "
-								+ getClass().getSimpleName();
-						ManagedBuilderCorePlugin
-								.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
+						String msg = "Exception trying to parse option [" + option + "], class " + getClass().getSimpleName();
+						ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
 					}
 				}
 			}
@@ -578,14 +498,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * In case when absolute path is mapped to the source tree in a project this function will try
-	 * to figure mapping and return "mapped root", i.e URI where the root path would be mapped. The
-	 * mapped root will be used to prepend to other "absolute" paths where appropriate.
+	 * In case when absolute path is mapped to the source tree in a project
+	 * this function will try to figure mapping and return "mapped root",
+	 * i.e URI where the root path would be mapped. The mapped root will be
+	 * used to prepend to other "absolute" paths where appropriate.
 	 *
-	 * @param resource
-	 *            - a resource referred by parsed path
-	 * @param parsedResourceName
-	 *            - path as appears in the output
+	 * @param resource - a resource referred by parsed path
+	 * @param parsedResourceName - path as appears in the output
 	 * @return mapped path as URI
 	 */
 	protected URI getMappedRootURI(IResource resource, String parsedResourceName) {
@@ -623,8 +542,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * Determine current build directory considering currentResource (resource being compiled),
 	 * parsedResourceName and mappedRootURI.
 	 *
-	 * @param mappedRootURI
-	 *            - root of the source tree when mapped to remote file-system.
+	 * @param mappedRootURI - root of the source tree when mapped to remote file-system.
 	 * @return {@link URI} of current build directory
 	 */
 	protected URI getBuildDirURI(URI mappedRootURI) {
@@ -632,8 +550,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 		// try to deduce build directory from full path of currentResource and partial path of parsedResourceName
 		URI cwdURI = null;
-		if (currentResource != null && parsedResourceName != null
-				&& !new Path(parsedResourceName).isAbsolute()) {
+		if (currentResource != null && parsedResourceName != null && !new Path(parsedResourceName).isAbsolute()) {
 			cwdURI = findBaseLocationURI(currentResource.getLocationURI(), parsedResourceName);
 		}
 		String cwdPath = cwdURI != null ? efsProvider.getPathFromURI(cwdURI) : null;
@@ -686,15 +603,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Sets language settings entries for current configuration description, current resource and
-	 * current language ID.
+	 * Sets language settings entries for current configuration description, current resource
+	 * and current language ID.
 	 *
-	 * @param entries
-	 *            - language settings entries to set.
+	 * @param entries - language settings entries to set.
 	 */
 	protected void setSettingEntries(List<? extends ICLanguageSettingEntry> entries) {
-		IBuildConfiguration currentConfig = Adapters.adapt(currentCfgDescription, IBuildConfiguration.class);
-		setSettingEntries(currentConfig, currentResource, currentLanguageId, entries);
+		setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, entries);
 	}
 
 	/**
@@ -723,8 +638,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Determine if the language is in scope of the provider.
 	 *
-	 * @param languageId
-	 *            - language ID.
+	 * @param languageId - language ID.
 	 * @return {@code true} if the language is in scope, {@code false } otherwise.
 	 */
 	protected boolean isLanguageInScope(String languageId) {
@@ -733,11 +647,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Find file resource in the workspace for a given URI with a preference for the resource to
-	 * reside in the given project.
+	 * Find file resource in the workspace for a given URI with a preference for the resource
+	 * to reside in the given project.
 	 */
-	private static IResource findFileForLocationURI(URI uri, IProject preferredProject,
-			boolean checkExistence) {
+	private static IResource findFileForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
 		IResource sourceFile = null;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource[] resources = root.findFilesForLocationURI(uri);
@@ -756,11 +669,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Return a resource in workspace corresponding the given folder {@link URI} preferable residing
-	 * in the provided project.
+	 * Return a resource in workspace corresponding the given folder {@link URI} preferable residing in
+	 * the provided project.
 	 */
-	private static IResource findContainerForLocationURI(URI uri, IProject preferredProject,
-			boolean checkExistence) {
+	private static IResource findContainerForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
 		IResource resource = null;
 		IResource[] resources = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(uri);
 		for (IResource rc : resources) {
@@ -795,7 +707,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		// try to find absolute path in the workspace
 		if (sourceFile == null && new Path(parsedResourceName).isAbsolute()) {
 			URI uri = org.eclipse.core.filesystem.URIUtil.toURI(parsedResourceName);
-			sourceFile = findFileForLocationURI(uri, currentProject, /* checkExistence */ true);
+			sourceFile = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 		}
 
 		// try last known current working directory from build output
@@ -803,7 +715,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			URI cwdURI = cwdTracker.getWorkingDirectoryURI();
 			if (cwdURI != null) {
 				URI uri = efsProvider.append(cwdURI, parsedResourceName);
-				sourceFile = findFileForLocationURI(uri, currentProject, /* checkExistence */ true);
+				sourceFile = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			}
 		}
 
@@ -818,14 +730,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				} catch (Exception e) {
 					@SuppressWarnings("nls")
 					String msg = "Exception trying to resolve value [" + strBuilderCWD + "]";
-					ManagedBuilderCorePlugin
-							.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
+					ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
 				}
 				builderCWD = new Path(strBuilderCWD);
 
 				IPath path = builderCWD.append(parsedResourceName);
 				URI uri = org.eclipse.core.filesystem.URIUtil.toURI(path);
-				sourceFile = findFileForLocationURI(uri, currentProject, /* checkExistence */ true);
+				sourceFile = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			}
 		}
 
@@ -838,9 +749,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Find base location of the file, i.e. location of the directory which results from removing
-	 * trailing relativeFileName from fileURI or {@code null} if fileURI doesn't represent
-	 * relativeFileName.
+	 * Find base location of the file, i.e. location of the directory which
+	 * results from removing trailing relativeFileName from fileURI or
+	 * {@code null} if fileURI doesn't represent relativeFileName.
 	 */
 	private static URI findBaseLocationURI(URI fileURI, String relativeFileName) {
 		URI cwdURI = null;
@@ -869,8 +780,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 
 		try {
-			cwdURI = new URI(fileURI.getScheme(), fileURI.getUserInfo(), fileURI.getHost(), fileURI.getPort(),
-					path + '/', fileURI.getQuery(), fileURI.getFragment());
+			cwdURI = new URI(fileURI.getScheme(), fileURI.getUserInfo(), fileURI.getHost(),
+					fileURI.getPort(), path + '/', fileURI.getQuery(), fileURI.getFragment());
 		} catch (URISyntaxException e) {
 			// It should be valid URI here or something is really wrong
 			ManagedBuilderCorePlugin.log(e);
@@ -880,11 +791,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * The manipulations here are done to resolve problems such as "../" navigation for symbolic
-	 * links where "link/.." cannot be collapsed as it must follow the real file-system path.
-	 * {@link java.io.File#getCanonicalPath()} deals with that correctly but {@link Path} or
-	 * {@link URI} try to normalize the path which would be incorrect here. Another issue being
-	 * resolved here is fixing drive letters in URI syntax.
+	 * The manipulations here are done to resolve problems such as "../" navigation for symbolic links where
+	 * "link/.." cannot be collapsed as it must follow the real file-system path. {@link java.io.File#getCanonicalPath()}
+	 * deals with that correctly but {@link Path} or {@link URI} try to normalize the path which would be incorrect here.
+	 * Another issue being resolved here is fixing drive letters in URI syntax.
 	 */
 	private static URI resolvePathFromBaseLocation(String pathStr0, IPath baseLocation) {
 		String pathStr = pathStr0;
@@ -941,10 +851,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Determine URI on the local file-system considering possible mapping.
 	 *
-	 * @param pathStr
-	 *            - path to the resource, can be absolute or relative
-	 * @param baseURI
-	 *            - base {@link URI} where path to the resource is rooted
+	 * @param pathStr - path to the resource, can be absolute or relative
+	 * @param baseURI - base {@link URI} where path to the resource is rooted
 	 * @return {@link URI} of the resource
 	 */
 	private URI determineMappedURI(String pathStr, URI baseURI) {
@@ -961,8 +869,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			uri = resolvePathFromBaseLocation(pathStr, baseLocation);
 		} else {
 			// location on a remote file-system
-			IPath path = new Path(pathStr); // use canonicalized path here, in particular replace all '\' with
-											// '/' for Windows paths
+			IPath path = new Path(pathStr); // use canonicalized path here, in particular replace all '\' with '/' for Windows paths
 			URI remoteUri = efsProvider.append(baseURI, path.toString());
 			if (remoteUri != null) {
 				String localPath = efsProvider.getMappedPath(remoteUri);
@@ -1008,7 +915,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private IResource findBestFitInWorkspace(String parsedName) {
 		Set<String> referencedProjectsNames = new LinkedHashSet<String>();
 		if (currentCfgDescription != null) {
-			Map<String, String> refs = currentCfgDescription.getReferenceInfo();
+			Map<String,String> refs = currentCfgDescription.getReferenceInfo();
 			referencedProjectsNames.addAll(refs.keySet());
 		}
 
@@ -1057,8 +964,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (projects.length > 0) {
 			IResource rc = null;
 			for (IProject prj : projects) {
-				if (!prj.equals(currentProject) && !referencedProjectsNames.contains(prj.getName())
-						&& prj.isOpen()) {
+				if (!prj.equals(currentProject) && !referencedProjectsNames.contains(prj.getName()) && prj.isOpen()) {
 					List<IResource> result = findPathInFolder(path, prj);
 					int size = result.size();
 					if (size == 1 && rc == null) {
@@ -1080,8 +986,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Get location on the local file-system considering possible mapping by EFS provider. See
-	 * {@link EFSExtensionManager}.
+	 * Get location on the local file-system considering possible mapping by EFS provider. See {@link EFSExtensionManager}.
 	 */
 	private IPath getFilesystemLocation(URI uri) {
 		if (uri == null)
@@ -1108,17 +1013,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Resolve and create language settings path entry.
 	 */
-	private ICLanguageSettingEntry createResolvedPathEntry(AbstractOptionParser optionParser,
-			String parsedPath, int flag, URI baseURI) {
+	private ICLanguageSettingEntry createResolvedPathEntry(AbstractOptionParser optionParser, String parsedPath, int flag, URI baseURI) {
 		URI uri = determineMappedURI(parsedPath, baseURI);
 		boolean isRelative = !new Path(parsedPath).isAbsolute();
 		// is mapped something that is not a project root
-		boolean isRemapped = baseURI != null && currentProject != null
-				&& !baseURI.equals(currentProject.getLocationURI());
+		boolean isRemapped = baseURI != null && currentProject != null && !baseURI.equals(currentProject.getLocationURI());
 		boolean presentAsRelative = isRelative || isRemapped;
 
-		ICLanguageSettingEntry entry = resolvePathEntryInWorkspace(optionParser, uri, flag,
-				presentAsRelative);
+		ICLanguageSettingEntry entry = resolvePathEntryInWorkspace(optionParser, uri, flag, presentAsRelative);
 		if (entry != null) {
 			return entry;
 		}
@@ -1142,11 +1044,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Create a language settings entry for a given resource. This will represent relative path
-	 * using CDT variable ${ProjName}.
+	 * Create a language settings entry for a given resource.
+	 * This will represent relative path using CDT variable ${ProjName}.
 	 */
-	private ICLanguageSettingEntry createPathEntry(AbstractOptionParser optionParser, IResource rc,
-			boolean isRelative, int flag) {
+	private ICLanguageSettingEntry createPathEntry(AbstractOptionParser optionParser, IResource rc, boolean isRelative, int flag) {
 		String path;
 		if (isRelative && rc.getProject().equals(currentProject)) {
 			path = PROJ_NAME_PREFIX + rc.getFullPath().removeFirstSegments(1);
@@ -1161,14 +1062,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Find an existing resource in the workspace and create a language settings entry for it.
 	 */
-	private ICLanguageSettingEntry resolvePathEntryInWorkspace(AbstractOptionParser optionParser, URI uri,
-			int flag, boolean isRelative) {
+	private ICLanguageSettingEntry resolvePathEntryInWorkspace(AbstractOptionParser optionParser, URI uri, int flag, boolean isRelative) {
 		if (uri != null && uri.isAbsolute()) {
 			IResource rc = null;
 			if (optionParser.isForFolder()) {
-				rc = findContainerForLocationURI(uri, currentProject, /* checkExistence */ true);
+				rc = findContainerForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			} else if (optionParser.isForFile()) {
-				rc = findFileForLocationURI(uri, currentProject, /* checkExistence */ true);
+				rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 			}
 			if (rc != null) {
 				return createPathEntry(optionParser, rc, isRelative, flag);
@@ -1180,8 +1080,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Find a resource on the file-system and create a language settings entry for it.
 	 */
-	private ICLanguageSettingEntry resolvePathEntryInFilesystem(AbstractOptionParser optionParser, URI uri,
-			int flag) {
+	private ICLanguageSettingEntry resolvePathEntryInFilesystem(AbstractOptionParser optionParser, URI uri, int flag) {
 		IPath location = getFilesystemLocation(uri);
 		if (location != null) {
 			String loc = location.toString();
@@ -1193,11 +1092,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Find a best fit for the resource in the workspace and create a language settings entry for
-	 * it.
+	 * Find a best fit for the resource in the workspace and create a language settings entry for it.
 	 */
-	private ICLanguageSettingEntry resolvePathEntryInWorkspaceAsBestFit(AbstractOptionParser optionParser,
-			String parsedPath, int flag, boolean isRelative) {
+	private ICLanguageSettingEntry resolvePathEntryInWorkspaceAsBestFit(AbstractOptionParser optionParser, String parsedPath, int flag, boolean isRelative) {
 		IResource rc = findBestFitInWorkspace(parsedPath);
 		if (rc != null) {
 			return createPathEntry(optionParser, rc, isRelative, flag);
@@ -1206,17 +1103,15 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Try to map a resource in the workspace even if it does not exist and create a language
-	 * settings entry for it.
+	 * Try to map a resource in the workspace even if it does not exist and create a language settings entry for it.
 	 */
-	private ICLanguageSettingEntry resolvePathEntryInWorkspaceToNonexistingResource(
-			AbstractOptionParser optionParser, URI uri, int flag, boolean isRelative) {
+	private ICLanguageSettingEntry resolvePathEntryInWorkspaceToNonexistingResource(AbstractOptionParser optionParser, URI uri, int flag, boolean isRelative) {
 		if (uri != null && uri.isAbsolute()) {
 			IResource rc = null;
 			if (optionParser.isForFolder()) {
-				rc = findContainerForLocationURI(uri, currentProject, /* checkExistence */ false);
+				rc = findContainerForLocationURI(uri, currentProject, /*checkExistence*/ false);
 			} else if (optionParser.isForFile()) {
-				rc = findFileForLocationURI(uri, currentProject, /* checkExistence */ false);
+				rc = findFileForLocationURI(uri, currentProject, /*checkExistence*/ false);
 			}
 			if (rc != null) {
 				return createPathEntry(optionParser, rc, isRelative, flag);
@@ -1226,11 +1121,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Try to map a resource on the file-system even if it does not exist and create a language
-	 * settings entry for it.
+	 * Try to map a resource on the file-system even if it does not exist and create a language settings entry for it.
 	 */
-	private ICLanguageSettingEntry resolvePathEntryInFilesystemToNonExistingResource(
-			AbstractOptionParser optionParser, URI uri, int flag) {
+	private ICLanguageSettingEntry resolvePathEntryInFilesystemToNonExistingResource(AbstractOptionParser optionParser, URI uri, int flag) {
 		IPath location = getFilesystemLocation(uri);
 		if (location != null) {
 			return optionParser.createEntry(location.toString(), location.toString(), flag);
@@ -1239,11 +1132,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Count how many groups are present in regular expression. The implementation is simplistic but
-	 * should be sufficient for the cause.
+	 * Count how many groups are present in regular expression.
+	 * The implementation is simplistic but should be sufficient for the cause.
 	 *
-	 * @param str
-	 *            - regular expression to count the groups.
+	 * @param str - regular expression to count the groups.
 	 * @return number of the groups (groups are enclosed in round brackets) present.
 	 */
 	protected static int countGroups(String str) {
@@ -1272,8 +1164,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Construct regular expression to find any file extension for C or C++. Returns expression
-	 * shaped in form of "((cpp)|(c++)|(c))".
+	 * Construct regular expression to find any file extension for C or C++.
+	 * Returns expression shaped in form of "((cpp)|(c++)|(c))".
 	 *
 	 * @return regular expression for searching C/C++ file extensions.
 	 */
@@ -1292,14 +1184,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 		return pattern;
 	}
-
+	
 	/**
 	 * This {@link EFSExtensionProvider} is capable to translate EFS paths to and from local
 	 * file-system. Added mostly for Cygwin translations.
 	 * 
-	 * This usage of {@link EFSExtensionProvider} is somewhat a misnomer. This provider is not an
-	 * "extension" provider but rather a wrapper on {@link EFSExtensionManager} which in fact will
-	 * use genuine {@link EFSExtensionProvider}s defined as extensions.
+	 * This usage of {@link EFSExtensionProvider} is somewhat a misnomer. This provider is not
+	 * an "extension" provider but rather a wrapper on {@link EFSExtensionManager} which in fact
+	 * will use genuine {@link EFSExtensionProvider}s defined as extensions.
 	 *
 	 * @since 8.2
 	 */
@@ -1310,7 +1202,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	@Override
 	public Element serializeAttributes(Element parentElement) {
 		Element elementProvider = super.serializeAttributes(parentElement);
-		elementProvider.setAttribute(ATTR_KEEP_RELATIVE_PATHS, Boolean.toString(!isResolvingPaths));
+		elementProvider.setAttribute(ATTR_KEEP_RELATIVE_PATHS, Boolean.toString( ! isResolvingPaths ));
 		return elementProvider;
 	}
 
@@ -1318,10 +1210,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	public void loadAttributes(Element providerNode) {
 		super.loadAttributes(providerNode);
 
-		String expandRelativePathsValue = XmlUtil.determineAttributeValue(providerNode,
-				ATTR_KEEP_RELATIVE_PATHS);
-		if (expandRelativePathsValue != null)
-			isResolvingPaths = !Boolean.parseBoolean(expandRelativePathsValue);
+		String expandRelativePathsValue = XmlUtil.determineAttributeValue(providerNode, ATTR_KEEP_RELATIVE_PATHS);
+		if (expandRelativePathsValue!=null)
+			isResolvingPaths = ! Boolean.parseBoolean(expandRelativePathsValue);
 	}
 
 	@Override

@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
@@ -56,11 +55,9 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	 * Test that null arguments don't crash the provider.
 	 */
 	public void testNulls() throws Exception {
-		ILanguageSettingsProvider provider = LanguageSettingsManager
-				.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER_ID);
+		ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER_ID);
 		assertNotNull(provider);
-		List<ICLanguageSettingEntry> entries = provider.getSettingEntries((IBuildConfiguration) null, null,
-				null);
+		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
 		assertEquals(null, entries);
 	}
 
@@ -79,8 +76,7 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription)
-					.getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			{
 				ILanguageSettingsProvider provider = providers.get(0);
 				String id = provider.getId();
@@ -114,8 +110,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	}
 
 	/**
-	 * Test that no unnecessary storage file is created for language settings for default set of language
-	 * settings providers.
+	 * Test that no unnecessary storage file is created for language settings for default set
+	 * of language settings providers.
 	 */
 	public void testProjectPersistence_Defaults() throws Exception {
 		// create a new project
@@ -129,10 +125,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription)
-					.getDefaultLanguageSettingsProvidersIds();
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription)
-					.getLanguageSettingProviders();
+			String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription).getDefaultLanguageSettingsProvidersIds();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			assertEquals(defaultIds.length, providers.size());
 			for (int i = 0; i < defaultIds.length; i++) {
 				assertEquals(providers.get(i).getId(), defaultIds[i]);
@@ -146,8 +140,7 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 		assertEquals(false, xmlStorageFile.getParent().exists()); // .settings folder
 
 		// no settings file in workspace area
-		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests
-				.getStoreLocationInWorkspaceArea(project.getName() + '.' + LANGUAGE_SETTINGS_WORKSPACE_XML);
+		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests.getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
 		assertEquals(false, xmlStorageFilePrjWsp.exists());
 	}
@@ -167,10 +160,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			((ILanguageSettingsProvidersKeeper) cfgDescription)
-					.setLanguageSettingProviders(new ArrayList<ILanguageSettingsProvider>());
-			assertTrue(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()
-					.size() == 0);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(new ArrayList<ILanguageSettingsProvider>());
+			assertTrue(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders().size() == 0);
 		}
 
 		CoreModel.getDefault().setProjectDescription(project, prjDescription);
@@ -180,8 +171,7 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 		assertEquals(true, xmlStorageFile.exists());
 
 		// no settings file in workspace area
-		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests
-				.getStoreLocationInWorkspaceArea(project.getName() + '.' + LANGUAGE_SETTINGS_WORKSPACE_XML);
+		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests.getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
 		assertEquals(false, xmlStorageFilePrjWsp.exists());
 

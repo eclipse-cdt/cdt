@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
@@ -27,12 +29,9 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestSuite;
 
 /**
  * Test cases testing LanguageSettingsProvider extensions
@@ -339,7 +338,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 
 		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
 		expected.add(EXTENSION_EDITABLE_PROVIDER_ENTRY);
-		assertEquals(expected, provider.getSettingEntries((IBuildConfiguration) null, null, null));
+		assertEquals(expected, provider.getSettingEntries(null, null, null));
 	}
 
 	/**

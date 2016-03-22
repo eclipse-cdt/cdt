@@ -28,29 +28,16 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CExtensionUtil;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
- * Wrapper class intended to provide backward compatibility with
- * ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider
- * extension point
+ * Wrapper class intended to provide backward compatibility with ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider extension point
  */
 public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettingsBaseProvider {
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(IBuildConfiguration config, IResource rc,
-			String languageId) {
-		if (config == null) {
-			return null;
-		}
-
-		ICConfigurationDescription cfgDescription = config.getAdapter(ICConfigurationDescription.class);
-		if (cfgDescription == null) {
-			return null;
-		}
-
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		IScannerInfoProvider scannerInfoProvider = getScannerInfoProvider(cfgDescription);
 		if (scannerInfoProvider != null) {
@@ -59,15 +46,15 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 				if (si instanceof IExtendedScannerInfo) {
 					addLocalIncludePaths(entries, (IExtendedScannerInfo) si);
 				}
-
+	
 				addSystemIncludePaths(entries, si);
 				addDefinedSymbols(entries, si);
-
+	
 				if (si instanceof IExtendedScannerInfo) {
 					addIncludeFiles(entries, (IExtendedScannerInfo) si);
 					addMacroFiles(entries, (IExtendedScannerInfo) si);
 				}
-
+	
 				if (!entries.isEmpty()) {
 					return LanguageSettingsSerializableStorage.getPooledList(entries);
 				}
@@ -77,11 +64,9 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 	}
 
 	/**
-	 * Return ScannerInfoProvider defined in configuration metadata in
-	 * .cproject.
+	 * Return ScannerInfoProvider defined in configuration metadata in .cproject.
 	 * 
-	 * @param cfgDescription
-	 *            - configuration description.
+	 * @param cfgDescription - configuration description.
 	 * @return an instance of ScannerInfoProvider or {@code null}.
 	 */
 	public IScannerInfoProvider getScannerInfoProvider(ICConfigurationDescription cfgDescription) {
@@ -95,9 +80,8 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 			ICConfigExtensionReference ref = refs[0];
 			try {
 				AbstractCExtension cExtension = null;
-				IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(ref, "cextension", //$NON-NLS-1$
-						false);
-				cExtension = (AbstractCExtension) el.createExecutableExtension("run"); //$NON-NLS-1$
+				IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(ref, "cextension", false); //$NON-NLS-1$
+				cExtension = (AbstractCExtension)el.createExecutableExtension("run"); //$NON-NLS-1$
 				cExtension.setExtensionReference(ref);
 				cExtension.setProject(ref.getConfiguration().getProjectDescription().getProject());
 				if (cExtension instanceof IScannerInfoProvider) {

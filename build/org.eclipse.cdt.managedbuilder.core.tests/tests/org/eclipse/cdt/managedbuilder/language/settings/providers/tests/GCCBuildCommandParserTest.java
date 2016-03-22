@@ -195,7 +195,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 			Map<String, String> refs = cfgDescription.getReferenceInfo();
 			assertEquals(1, refs.size());
-			Set<String> referencedProjectsNames = new LinkedHashSet<String>(refs.keySet());
+			Set<String> referencedProjectsNames = new LinkedHashSet<>(refs.keySet());
 			assertEquals(projectReferenced.getName(), referencedProjectsNames.toArray()[0]);
 		}
 	}
@@ -220,11 +220,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		{
 			// provider configured with non-null parameters
 			MockBuildCommandParser provider = new MockBuildCommandParser();
-			List<String> languages = new ArrayList<String>();
+			List<String> languages = new ArrayList<>();
 			languages.add(LANGUAGE_ID);
-			Map<String, String> properties = new HashMap<String, String>();
+			Map<String, String> properties = new HashMap<>();
 			properties.put(ATTR_PARAMETER, CUSTOM_PARAMETER);
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries = new ArrayList<>();
 			ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE",
 					ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 			entries.add(entry);
@@ -382,7 +382,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			public boolean processLine(String line) {
 				// pretending that we parsed the line
 				currentResource = file;
-				List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+				List<ICLanguageSettingEntry> entries = new ArrayList<>();
 				ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN);
 				entries.add(entry);
 				setSettingEntries(entries);
@@ -2366,10 +2366,10 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	 */
 	public void testEntriesProjectLevelGlobalProvider() throws Exception {
 		// create GCCBuildCommandParser
-		ILanguageSettingsProvider wspProvider = LanguageSettingsManager
-				.getWorkspaceProvider(GCC_BUILD_COMMAND_PARSER_EXT);
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager
-				.getRawProvider(wspProvider);
+		ILanguageSettingsProvider wspProvider =
+				LanguageSettingsManager.getWorkspaceProvider(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser =
+				(GCCBuildCommandParser) LanguageSettingsManager.getRawProvider(wspProvider);
 		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
 		parser.clear();
 
@@ -2379,7 +2379,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.shutdown();
 
 		// check populated entries
-		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> expected = new ArrayList<>();
 		expected.add(new CIncludePathEntry("/path0", 0));
 		assertEquals(expected, parser.getSettingEntries((IBuildConfiguration) null, null, LANG_CPP));
 	}
@@ -2440,8 +2440,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager
-				.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(
+				GCC_BUILD_COMMAND_PARSER_EXT, true);
 		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
 
 		// parse line
@@ -2461,10 +2461,10 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	 */
 	public void testFileAbsolutePath_ProjectLevelGlobalProvider() throws Exception {
 		// create GCCBuildCommandParser
-		ILanguageSettingsProvider wspProvider = LanguageSettingsManager
-				.getWorkspaceProvider(GCC_BUILD_COMMAND_PARSER_EXT);
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager
-				.getRawProvider(wspProvider);
+		ILanguageSettingsProvider wspProvider =
+				LanguageSettingsManager.getWorkspaceProvider(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser =
+				(GCCBuildCommandParser) LanguageSettingsManager.getRawProvider(wspProvider);
 		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
 		parser.clear();
 
@@ -2479,5 +2479,4 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries((IBuildConfiguration) null, null, LANG_CPP);
 		assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
 	}
-
 }

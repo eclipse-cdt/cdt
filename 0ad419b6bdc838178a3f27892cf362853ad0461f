@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_5c756fec",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T18:20:47Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_fc6c7b81",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
         "patchSetId": 1
@@ -30,6 +47,23 @@
       "writtenOn": "2016-03-22T16:22:15Z",
       "side": 1,
       "message": "See the previous comment.",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7c722b06",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T18:20:47Z",
+      "side": 1,
+      "message": "Done",
       "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_9c7b77e0",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T18:20:47Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_1c4f6740",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
         "patchSetId": 1
@@ -64,6 +115,23 @@
       "writtenOn": "2016-03-22T16:22:15Z",
       "side": 1,
       "message": "I\u0027m just trying to understand. Is this the case here? Doesn\u0027t this code run only for a local launch?",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ff00ed0f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T18:20:47Z",
+      "side": 1,
+      "message": "Right, the testTraceFile() test only runs locally.  But it needs a trace file, which it gets by calling\ncreateTraceFile().  createTraceFile() needs gdbserver to succeed.  So, the local test\nbecome dependent on gdbserver, which is why I only want to skip this test, and not\nfail it, if the setup steps fail.  Make sense?",
       "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +155,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_bc7833e4",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T18:20:47Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5c4c8f48",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
         "patchSetId": 1
@@ -98,6 +183,23 @@
       "writtenOn": "2016-03-22T16:22:15Z",
       "side": 1,
       "message": "Same question as above.",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1f02f915",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T18:20:47Z",
+      "side": 1,
+      "message": "See above",
       "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

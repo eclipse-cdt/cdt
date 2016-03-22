@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_c43c4781",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-22T07:29:59Z",
+      "side": 1,
+      "message": "Please add a commit message here without my name in it :-)",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e44143f3",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-22T07:29:59Z",
+      "side": 1,
+      "message": "Great, fixing this stuff up makes it all seem more professional.",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_24388b86",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-22T07:29:59Z",
+      "side": 1,
+      "message": "This documentation will end up as part of the Neon release. There are two choices of how to deal with that. Refer to Eclipse Neon, or refer to \"latest version\" (so we don\u0027t have to update next year). \n\nAlso, there is no \"Eclipse SDK\" to download anymore. That version was renamed \"Eclipse IDE for Eclipse Committers\"",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_4430379d",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-22T07:29:59Z",
+      "side": 1,
+      "message": "Same general comment as above, either latest version or 9.0 (the version that will ship with Neon)",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_642d3347",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-22T07:29:59Z",
+      "side": 1,
+      "message": "For consistency, can you maintain wrapping with the rest of the file.",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

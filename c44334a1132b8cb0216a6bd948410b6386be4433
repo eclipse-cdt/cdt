@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_225eb849",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T20:46:12Z",
+      "side": 1,
+      "message": "Looking at how you use this, you only need IMemorySpaces not the 2 version.\nIt is nice to use the minimum in case someone hasn\u0027t implemented IMemorySpaces2,\nyour new code will still work",
+      "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e205b050",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1299,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T20:46:12Z",
+      "side": 1,
+      "message": "Indentation is messed-up for new code",
+      "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_22d1583f",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T20:46:12Z",
+      "side": 1,
+      "message": "Could you name getMemorySpaceID()?",
+      "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e2a93099",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-22T20:46:12Z",
+      "side": 1,
+      "message": "Where is this information meant to be displayed eventually?",
+      "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

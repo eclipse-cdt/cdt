@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_7c2dcb46",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-22T16:22:15Z",
+      "side": 1,
+      "message": "IMO, createTestFile() should be made protected (probably too late to do it now). The comment from testCreateTraceFile() moved to createTraceFile() and the comments for each test method include a reference to createTraceFile().",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fc6c7b81",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-22T16:22:15Z",
+      "side": 1,
+      "message": "See the previous comment.",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_dc3c1f81",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-22T16:22:15Z",
+      "side": 1,
+      "message": "I think this comment should mention that a trace file is created before anything else is done.",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1c4f6740",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-22T16:22:15Z",
+      "side": 1,
+      "message": "I\u0027m just trying to understand. Is this the case here? Doesn\u0027t this code run only for a local launch?",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7c786b35",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-22T16:22:15Z",
+      "side": 1,
+      "message": "I think this comment should mention that a trace file is created before anything else is done.",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5c4c8f48",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-03-22T16:22:15Z",
+      "side": 1,
+      "message": "Same question as above.",
+      "revId": "0ad419b6bdc838178a3f27892cf362853ad0461f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

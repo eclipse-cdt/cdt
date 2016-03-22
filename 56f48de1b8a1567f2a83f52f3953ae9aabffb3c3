@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_5a33b2f8",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/PlainTextExporter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-22T13:33:27Z",
+      "side": 1,
+      "message": "Yes... I was hesitating between doing the strict minimum, for this bug, and changing the whole thing. You\u0027ll see I went a bit further in the next patch...",
+      "parentUuid": "e7dfcf21_499db271",
+      "revId": "56f48de1b8a1567f2a83f52f3953ae9aabffb3c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_699a6e7b",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/PlainTextExporter.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-21T19:52:01Z",
       "side": 1,
       "message": "The original code suggests that CELLSIZE may be in octets, but it\u0027s never multiplied by addressable size, \nand the derived data i.e. columns, data per line, are used to resolve addresses, so the base unit is addressable size and does not \nneed to be adjusted.   The comment above may help clarify this.",
+      "revId": "56f48de1b8a1567f2a83f52f3953ae9aabffb3c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7a2cee9a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/PlainTextExporter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-22T13:33:27Z",
+      "side": 1,
+      "message": "Let me know if you think it\u0027s clearer in the new patch.",
+      "parentUuid": "e7dfcf21_699a6e7b",
       "revId": "56f48de1b8a1567f2a83f52f3953ae9aabffb3c3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

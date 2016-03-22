@@ -40,6 +40,24 @@
       "revId": "0ac98d99f98b093de6268f1da204c49c071d61ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5ffe412c",
+        "filename": "core/org.eclipse.cdt.ui/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-03-22T19:23:16Z",
+      "side": 1,
+      "message": "This valid concern cannot be addressed by changing the title of the property page. One possible solution is to add a paragraph to the page itself explaining the information being edited. Please notice that only User Settings Entries are editable, the rest are not. Possibly User Setting Entries can be renamed to \"Additional Include Directories and Macros for the C/C++ Parser\".",
+      "parentUuid": "e7dfcf21_ff8b8df9",
+      "revId": "0ac98d99f98b093de6268f1da204c49c071d61ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

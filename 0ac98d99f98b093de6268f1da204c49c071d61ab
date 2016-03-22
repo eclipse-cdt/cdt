@@ -58,6 +58,24 @@
       "revId": "0ac98d99f98b093de6268f1da204c49c071d61ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3f389586",
+        "filename": "core/org.eclipse.cdt.ui/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-03-22T19:31:15Z",
+      "side": 1,
+      "message": "Text on the page will definitely help. I\u0027ll give it a try.\n\nAlso, the fact that only the user settings entry is editable makes for a pretty inconsistent UX. I expect only hard core users will end up here anyway, though.",
+      "parentUuid": "e7dfcf21_5ffe412c",
+      "revId": "0ac98d99f98b093de6268f1da204c49c071d61ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

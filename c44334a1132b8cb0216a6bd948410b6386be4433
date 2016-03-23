@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_85815608",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-23T00:54:51Z",
+      "side": 1,
+      "message": "true, the method being used from this service is present in the base IMemorySpaces interface.\n\nDone\nThanks!",
+      "parentUuid": "e7dfcf21_225eb849",
+      "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_e205b050",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-22T20:46:12Z",
       "side": 1,
       "message": "Indentation is messed-up for new code",
+      "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_0528e689",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1299,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-23T00:54:51Z",
+      "side": 1,
+      "message": "That\u0027s the indentation provided by the built-in Eclipse formatter, I have now shifted it left to be aligned with the base code.\n\nDone!",
+      "parentUuid": "e7dfcf21_e205b050",
       "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_65360aec",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-23T00:54:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_22d1583f",
+      "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_e2a93099",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IExpressions.java",
         "patchSetId": 6
@@ -64,6 +118,24 @@
       "writtenOn": "2016-03-22T20:46:12Z",
       "side": 1,
       "message": "Where is this information meant to be displayed eventually?",
+      "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c5299e8a",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IExpressions.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-23T00:54:51Z",
+      "side": 1,
+      "message": "Good question, it\u0027s not immediately needed. but we could look into it, e.g. as a new column in the variables view and expressions view when applicable.  \nWould you prefer to have a bug to track this ?",
+      "parentUuid": "e7dfcf21_e2a93099",
       "revId": "c44334a1132b8cb0216a6bd948410b6386be4433",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

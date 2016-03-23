@@ -13,7 +13,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 
 /** @since 5.0 */
 public interface IReverseRunControl2 extends IReverseRunControl {
@@ -23,12 +23,12 @@ public interface IReverseRunControl2 extends IReverseRunControl {
      *
      * @param rm Will contain the result of the operation, true or false, not null.
      */
-    void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseTraceMethod> rm);
+    void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseDebugMethod> rm);
 
     /**
      * Change reverse debugging trace method based on the method parameter.
      *
      * @param set the reverse debugging trace method to Full Trace, Branch Trace or Processor Trace
      */
-    void enableReverseMode(ICommandControlDMContext context, ReverseTraceMethod traceMethod, RequestMonitor rm);
+    void enableReverseMode(ICommandControlDMContext context, ReverseDebugMethod traceMethod, RequestMonitor rm);
 }

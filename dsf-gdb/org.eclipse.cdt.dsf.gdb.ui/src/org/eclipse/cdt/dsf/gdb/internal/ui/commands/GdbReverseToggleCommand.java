@@ -14,12 +14,16 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -59,17 +63,19 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
     private final DsfServicesTracker fTracker;
     private final DsfSession fSession;
 
-    private ReverseTraceMethod fTraceMethod = null;
-    private ReverseTraceMethod fLastTraceMethod = null;
-    private ReverseTraceMethod fNextTraceMethod = null;
+    private ReverseDebugMethod fCurrentMethod;
+    /** The reverse debugging method that was used before the new method was selected **/
+    private ReverseDebugMethod fPreviousMethod;
+    /** The reverse debugging method to be used when the toggle button is selected */
+    private ReverseDebugMethod fNextMethod;
 
     public GdbReverseToggleCommand(DsfSession session) {
         fExecutor = session.getExecutor();
         fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
         fSession = session;
-        fTraceMethod = ReverseTraceMethod.STOP_TRACE;
-        fLastTraceMethod = ReverseTraceMethod.STOP_TRACE;
-        fNextTraceMethod = ReverseTraceMethod.STOP_TRACE;
+        fCurrentMethod = ReverseDebugMethod.OFF;
+        fPreviousMethod = ReverseDebugMethod.OFF;
+        fNextMethod = ReverseDebugMethod.OFF;
 
         try {
             fExecutor.execute(new DsfRunnable() {
@@ -113,21 +119,23 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
                    final IReverseRunControl2 runControl = fTracker.getService(IReverseRunControl2.class);
 
                    if (runControl != null) {
-                       ReverseTraceMethod traceMethod = fNextTraceMethod;
-                       if (fNextTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
+                       final ReverseDebugMethod newMethod;
+                       if (fNextMethod == ReverseDebugMethod.HARDWARE) {
                            String defaultValue = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
                                 IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
                                 IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE, null);
                            
                            if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
-                        	   traceMethod = ReverseTraceMethod.BRANCH_TRACE; // Branch Trace
+                        	   newMethod = ReverseDebugMethod.BRANCH_TRACE;
                            } else if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
-                        	   traceMethod = ReverseTraceMethod.PROCESSOR_TRACE; // Processor Trace
+                        	   newMethod = ReverseDebugMethod.PROCESSOR_TRACE;
                            } else {
-                        	   traceMethod = ReverseTraceMethod.GDB_TRACE; // GDB Selected Option
+                        	   newMethod = ReverseDebugMethod.GDB_TRACE;
                            }
+                       } else {
+                    	   newMethod = fNextMethod;
                        }
-                       runControl.enableReverseMode(controlDmc, traceMethod, new DataRequestMonitor<Boolean>(fExecutor, rm) {
+                       runControl.enableReverseMode(controlDmc, newMethod, new RequestMonitor(fExecutor, rm) {
                     	   @Override
                     	   public void handleError() {
                     		   // Call the parent function
@@ -137,16 +145,21 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
                     		   // avoid the default dialog box from eclipse and we propagate the error
                     		   // with the plugin specific code of 1, here the ReverseToggleCommandHandler
                     		   //  interprets it as, the selected trace method is not available
-                    		   request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareTracingNotAvailable, null));
+                    		   if (newMethod == ReverseDebugMethod.PROCESSOR_TRACE) {
+                    			   request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_ProcessorTraceReverseDebugNotAvailable, null));
+                    		   } else if (newMethod == ReverseDebugMethod.BRANCH_TRACE || newMethod == ReverseDebugMethod.GDB_TRACE) {
+                    			   request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareReverseDebugNotAvailable, null));
+                    		   } else {
+                    			   request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_ReverseDebugNotAvailable, null));
+                    		   }
                     	   }
                        });
-
                    } else {
                        final IReverseRunControl runControl_old = fTracker.getService(IReverseRunControl.class);
                        if (runControl_old != null) {
-                           if (fTraceMethod != ReverseTraceMethod.STOP_TRACE && fTraceMethod != ReverseTraceMethod.FULL_TRACE) {
+                           if (fCurrentMethod != ReverseDebugMethod.OFF && fCurrentMethod != ReverseDebugMethod.SOFTWARE) {
                                runControl_old.enableReverseMode(controlDmc, false, rm); // Switch Off tracing
-                               request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareTracingNotAvailable, null));
+                               request.setStatus(new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, 1, Messages.GdbReverseDebugging_HardwareReverseDebugNotAvailable, null));
                                return;
                            }
                            runControl_old.isReverseModeEnabled(controlDmc, new DataRequestMonitor<Boolean>(fExecutor, rm) {
@@ -302,12 +315,12 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
     }
 
     @Override
-    public void setTraceMethod(ReverseTraceMethod traceMethod) {
-    	fNextTraceMethod = traceMethod;
+    public void setReverseDebugMethod(ReverseDebugMethod traceMethod) {
+    	fNextMethod = traceMethod;
     }
 
     @Override
-    public ReverseTraceMethod getTraceMethod(final Object context) {
+    public ReverseDebugMethod getReverseDebugMethod(final Object context) {
         IDMContext dmc;
 
         if (context instanceof IDMContext) {
@@ -315,52 +328,74 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
         } else if (context instanceof IDMVMContext) {
             dmc = ((IDMVMContext)context).getDMContext();
         } else {
-            return ReverseTraceMethod.STOP_TRACE;
+            return ReverseDebugMethod.OFF;
         }
 
         final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
         if (controlDmc == null) {
-            return ReverseTraceMethod.STOP_TRACE;
+            return ReverseDebugMethod.OFF;
         }
 
-        Query<ReverseTraceMethod> ReverseMethodQuery = new Query<ReverseTraceMethod>() {
-        @Override
-            public void execute(final DataRequestMonitor<ReverseTraceMethod> rm) {
-                final IReverseRunControl2 runControl = fTracker.getService(IReverseRunControl2.class);
-                if (runControl != null) {
-                    	runControl.getReverseTraceMethod(controlDmc, rm);
-                    }
-                else {
-                    rm.setData(ReverseTraceMethod.INVALID);
-                    rm.done();
-                }
-              }
-            };
-            try {
-                fExecutor.execute(ReverseMethodQuery);
-                ReverseTraceMethod returnedTrace =  ReverseMethodQuery.get();
-                ReverseTraceMethod currTrace = ReverseTraceMethod.INVALID;
-                if (returnedTrace == ReverseTraceMethod.INVALID)
-                	currTrace = isReverseToggled(context) ? ReverseTraceMethod.FULL_TRACE : ReverseTraceMethod.STOP_TRACE ; 
-                else 
-                	currTrace = (returnedTrace == ReverseTraceMethod.BRANCH_TRACE ||
-                			returnedTrace == ReverseTraceMethod.PROCESSOR_TRACE ||
-                			returnedTrace == ReverseTraceMethod.GDB_TRACE ) ? ReverseTraceMethod.HARDWARE_TRACE : returnedTrace;
-                if (currTrace != fTraceMethod) {
-                	fLastTraceMethod = fTraceMethod;
-                	fTraceMethod = currTrace;
-                }
-                return fTraceMethod;
-            } catch (InterruptedException e) {
-            } catch (ExecutionException e) {
-            } catch (RejectedExecutionException e) {
-            }
+        Query<ReverseDebugMethod> reverseMethodQuery = new Query<ReverseDebugMethod>() {
+        	@Override
+        	public void execute(DataRequestMonitor<ReverseDebugMethod> rm) {
+        		IReverseRunControl2 runControl = fTracker.getService(IReverseRunControl2.class);
+        		if (runControl != null) {
+        			runControl.getReverseTraceMethod(controlDmc, new ImmediateDataRequestMonitor<ReverseDebugMethod>(rm) {
+       					@Override
+       					protected void handleCompleted() {
+       						if (!isSuccess()) {
+       							rm.done(ReverseDebugMethod.OFF);
+       						} else {
+       							ReverseDebugMethod method = getData();
+       							if (method == ReverseDebugMethod.BRANCH_TRACE ||
+       									method == ReverseDebugMethod.PROCESSOR_TRACE ||
+       									method == ReverseDebugMethod.GDB_TRACE) {
+       								method = ReverseDebugMethod.HARDWARE;
+       				        	}
+       							rm.done(method);
+       						}
+       					}
+        			});
+        		} else {
+            		IReverseRunControl runControl_old = fTracker.getService(IReverseRunControl.class);
+           			if (runControl_old != null) {
+           				runControl_old.isReverseModeEnabled(controlDmc, new ImmediateDataRequestMonitor<Boolean>(rm) {
+           					@Override
+           					protected void handleCompleted() {
+           						if (isSuccess() && getData()) {
+           							rm.done(ReverseDebugMethod.SOFTWARE);
+           						} else {
+           							rm.done(ReverseDebugMethod.OFF);
+           						}
+           					}
+           				});
+        			} else {
+        				rm.done(ReverseDebugMethod.OFF);
+        			}
+        		}
+        	}
+        };
+        try {
+        	fExecutor.execute(reverseMethodQuery);
+        	ReverseDebugMethod currMethod = reverseMethodQuery.get(500, TimeUnit.MILLISECONDS);
+        	
+        	if (currMethod != fCurrentMethod) {
+        		fPreviousMethod = fCurrentMethod;
+        		fCurrentMethod = currMethod;
+        	}
+        	return fCurrentMethod;
+        } catch (InterruptedException e) {
+        } catch (ExecutionException e) {
+        } catch (RejectedExecutionException e) {
+        } catch (TimeoutException e) {
+        }
 
-        return ReverseTraceMethod.STOP_TRACE;
+        return ReverseDebugMethod.OFF;
     }
 
 	@Override
-	public ReverseTraceMethod getLastTraceMethod(Object context) {
-		return fLastTraceMethod;
+	public ReverseDebugMethod getPreviousReverseDebugMethod(Object context) {
+		return fPreviousMethod;
 	}
 }

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_18177ad4",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-23T15:35:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_7a7a5d30",
+      "revId": "1a1e4d416c4c87ff39c3451dc2d06b16f44e5030",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_ba5b05cc",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2016-03-10T14:03:40Z",
       "side": 1,
       "message": "This call can be replaced by:\n   registersService.findRegister(ctx, name, rm);\nand you would not need to cast to MIRegisterDMC \nHowever, you will need to implement the \u0027findRegister\u0027 method for dsf-gdb as it currently returns an unsupportted IStatus",
+      "revId": "1a1e4d416c4c87ff39c3451dc2d06b16f44e5030",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8bca5290",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1226,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-23T15:35:18Z",
+      "side": 1,
+      "message": "Good idea!",
+      "parentUuid": "e7dfcf21_603b8af4",
       "revId": "1a1e4d416c4c87ff39c3451dc2d06b16f44e5030",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

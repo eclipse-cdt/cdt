@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -39,7 +39,7 @@ public class StartOrRestartProcessSequence_7_10 extends StartOrRestartProcessSeq
 
     private IGDBControl fCommandControl;
     private IReverseRunControl2 fReverseService;
-    private ReverseTraceMethod fReverseMode = ReverseTraceMethod.FULL_TRACE;
+    private ReverseDebugMethod fReverseMode = ReverseDebugMethod.SOFTWARE;
     private final Map<String, Object> fAttributes;
 
     public StartOrRestartProcessSequence_7_10(DsfExecutor executor, IContainerDMContext containerDmc,
@@ -94,14 +94,14 @@ public class StartOrRestartProcessSequence_7_10 extends StartOrRestartProcessSeq
                                 IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE, null);
                         
 						if (hwTracePref.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
-                            fReverseMode = ReverseTraceMethod.BRANCH_TRACE;
+                            fReverseMode = ReverseDebugMethod.BRANCH_TRACE;
                         } else if (hwTracePref.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
-                            fReverseMode = ReverseTraceMethod.PROCESSOR_TRACE;
+                            fReverseMode = ReverseDebugMethod.PROCESSOR_TRACE;
                         } else {
-                            fReverseMode = ReverseTraceMethod.GDB_TRACE;
+                            fReverseMode = ReverseDebugMethod.GDB_TRACE;
                         }
                     } else if (reverseMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_SOFTWARE)) {
-                        fReverseMode = ReverseTraceMethod.FULL_TRACE;
+                        fReverseMode = ReverseDebugMethod.SOFTWARE;
                     } else {
                         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Unexpected reverse debugging type: " + reverseMode, null)); //$NON-NLS-1$
                     }

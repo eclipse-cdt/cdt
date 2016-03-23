@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -61,18 +61,18 @@ public class GDBProcesses_7_10 extends GDBProcesses_7_4 {
     						launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
     								                                     IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT);
     				if (reverseMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_SOFTWARE)) {
-    					reverseService.enableReverseMode(controlContext, ReverseTraceMethod.FULL_TRACE, rm);
+    					reverseService.enableReverseMode(controlContext, ReverseDebugMethod.SOFTWARE, rm);
     				}
     				else if (reverseMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARDWARE)) {
     					String defaultValue = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
     							IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
     							IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE, null);
     					
-    					ReverseTraceMethod traceMethod = ReverseTraceMethod.GDB_TRACE;
+    					ReverseDebugMethod traceMethod = ReverseDebugMethod.GDB_TRACE;
     					if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
-    						traceMethod = ReverseTraceMethod.BRANCH_TRACE;
+    						traceMethod = ReverseDebugMethod.BRANCH_TRACE;
     					} else if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
-    						traceMethod = ReverseTraceMethod.PROCESSOR_TRACE;
+    						traceMethod = ReverseDebugMethod.PROCESSOR_TRACE;
     					}
     					
 						reverseService.enableReverseMode(controlContext, traceMethod, rm);

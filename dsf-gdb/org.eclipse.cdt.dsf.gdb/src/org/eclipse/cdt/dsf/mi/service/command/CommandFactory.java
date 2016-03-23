@@ -243,7 +243,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowAttributesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 
 /**
  * Factory to create MI/CLI commands.
@@ -329,7 +329,7 @@ public class CommandFactory {
 	}
 
 	/** @since 5.0*/
-	public ICommand<MIInfo> createCLIRecord(ICommandControlDMContext ctx, ReverseTraceMethod traceMethod) {
+	public ICommand<MIInfo> createCLIRecord(ICommandControlDMContext ctx, ReverseDebugMethod traceMethod) {
 		return new CLIRecord(ctx, traceMethod);
 	}
 

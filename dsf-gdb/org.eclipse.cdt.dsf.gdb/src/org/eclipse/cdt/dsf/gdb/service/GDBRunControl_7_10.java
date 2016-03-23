@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.Hashtable;
 
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -35,7 +35,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 	private IMICommandControl fCommandControl;
 	private CommandFactory fCommandFactory;
 
-	private ReverseTraceMethod fReverseTraceMethod; // default: no trace
+	private ReverseDebugMethod fReverseTraceMethod; // default: no trace
 
 	public GDBRunControl_7_10(DsfSession session) {
 		super(session);
@@ -56,7 +56,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 
 		fCommandControl = getServicesTracker().getService(IMICommandControl.class);
 		fCommandFactory = fCommandControl.getCommandFactory();
-		fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
+		fReverseTraceMethod = ReverseDebugMethod.OFF;
 
 		if (fCommandControl == null) {
 			requestMonitor.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Service is not available")); //$NON-NLS-1$
@@ -72,13 +72,13 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 	}
 
 	@Override
-	public void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseTraceMethod> rm) {
+	public void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseDebugMethod> rm) {
 		rm.setData(fReverseTraceMethod);
 		rm.done();
 	}
 
 	@Override
-	public void enableReverseMode(final ICommandControlDMContext context,final ReverseTraceMethod traceMethod, final RequestMonitor rm) {
+	public void enableReverseMode(final ICommandControlDMContext context,final ReverseDebugMethod traceMethod, final RequestMonitor rm) {
 		if (!getReverseSupported()) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Reverse mode is not supported.", null)); //$NON-NLS-1$
 			return;
@@ -89,7 +89,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 			return;
 		}
 
-		if (fReverseTraceMethod == ReverseTraceMethod.STOP_TRACE || traceMethod == ReverseTraceMethod.STOP_TRACE) {
+		if (fReverseTraceMethod == ReverseDebugMethod.OFF || traceMethod == ReverseDebugMethod.OFF) {
 			getConnection().queueCommand(
 				fCommandFactory.createCLIRecord(context, traceMethod),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
@@ -97,7 +97,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 					public void handleSuccess() {
 						boolean enabled = false;
 						fReverseTraceMethod = traceMethod;
-						if (fReverseTraceMethod != ReverseTraceMethod.STOP_TRACE) {
+						if (fReverseTraceMethod != ReverseDebugMethod.OFF) {
 							enabled = true;
 						}
 						setReverseModeEnabled(enabled );
@@ -112,7 +112,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 		}
 
 		getConnection().queueCommand(
-			fCommandFactory.createCLIRecord(context, ReverseTraceMethod.STOP_TRACE),
+			fCommandFactory.createCLIRecord(context, ReverseDebugMethod.OFF),
 			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 				@Override
 				public void handleSuccess() {
@@ -130,7 +130,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 							public void handleFailure() {
 								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Trace method could not be selected", null)); //$NON-NLS-1$
 								setReverseModeEnabled(false);
-								fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
+								fReverseTraceMethod = ReverseDebugMethod.OFF;
 								rm.done();
 							}
 						});
@@ -151,7 +151,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 					if ("record-started".equals(asyncClass) || //$NON-NLS-1$
 						"record-stopped".equals(asyncClass)) {	 //$NON-NLS-1$
 						if ("record-stopped".equals(asyncClass)) { //$NON-NLS-1$
-							fReverseTraceMethod = ReverseTraceMethod.STOP_TRACE;
+							fReverseTraceMethod = ReverseDebugMethod.OFF;
 							setReverseModeEnabled(false);
 						} else {
 							getConnection().queueCommand(
@@ -163,7 +163,7 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 											fReverseTraceMethod = getData().getReverseMethod();
 										} else {
 											// Use a default value in case of error
-											fReverseTraceMethod = ReverseTraceMethod.FULL_TRACE;
+											fReverseTraceMethod = ReverseDebugMethod.SOFTWARE;
 										}
 										setReverseModeEnabled(true);
 									}

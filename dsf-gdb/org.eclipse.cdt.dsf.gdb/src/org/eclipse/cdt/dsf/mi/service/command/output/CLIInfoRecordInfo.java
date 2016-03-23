@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 
 /**
  * 'info record' returns the selected reverse trace method.
@@ -28,7 +28,7 @@ import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTrace
 
 public class CLIInfoRecordInfo extends MIInfo {
 
-	private ReverseTraceMethod fReverseMethod;
+	private ReverseDebugMethod fReverseMethod;
 	
 	public CLIInfoRecordInfo(MIOutput record) {
 		super(record);
@@ -52,17 +52,17 @@ public class CLIInfoRecordInfo extends MIInfo {
 
 	protected void parseReverseMethod(String output) {
 		if (output.contains("Processor")) { //$NON-NLS-1$
-			fReverseMethod = ReverseTraceMethod.PROCESSOR_TRACE;
+			fReverseMethod = ReverseDebugMethod.PROCESSOR_TRACE;
 		} else if (output.contains("Branch")) { //$NON-NLS-1$
-    		fReverseMethod = ReverseTraceMethod.BRANCH_TRACE;
+    		fReverseMethod = ReverseDebugMethod.BRANCH_TRACE;
     	} else if (output.contains("full")) { //$NON-NLS-1$
-    		fReverseMethod = ReverseTraceMethod.FULL_TRACE;
+    		fReverseMethod = ReverseDebugMethod.SOFTWARE;
     	} else {
-    		fReverseMethod = ReverseTraceMethod.STOP_TRACE;
+    		fReverseMethod = ReverseDebugMethod.OFF;
     	}
 	}
 
-	public ReverseTraceMethod getReverseMethod() {
+	public ReverseDebugMethod getReverseMethod() {
 		return fReverseMethod;
 	}
 }

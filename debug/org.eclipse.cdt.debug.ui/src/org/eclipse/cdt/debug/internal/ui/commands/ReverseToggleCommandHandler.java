@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler;
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseTraceMethod;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 import org.eclipse.cdt.debug.core.model.IReverseToggleHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -80,9 +80,9 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     // We must hard-code the command id so as to know it from the very start (bug 290699)
     private static final String REVERSE_TOGGLE_COMMAND_ID = "org.eclipse.cdt.debug.ui.command.reverseToggle"; //$NON-NLS-1$
 
-    private Object fActiveContext = null;
-    private IReverseToggleHandler fTargetAdapter = null;
-    private IDebugContextService fContextService = null;
+    private Object fActiveContext;
+    private IReverseToggleHandler fTargetAdapter;
+    private IDebugContextService fContextService;
 
     private static ImageDescriptor getImageDescriptor (String path) {
         Bundle bundle = Platform.getBundle("org.eclipse.cdt.debug.ui"); //$NON-NLS-1$
@@ -106,7 +106,6 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
                // This constructor might be called after the launch, so we must refresh here too.
                // This can happen if we activate the action set after the launch.
                refresh(fContextService.getActiveContext());
-
            }
        }
     }
@@ -165,7 +164,7 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-    	ReverseTraceMethod traceMethod;
+    	ReverseDebugMethod newMethod;
     	try {
     		if (HandlerUtil.matchesRadioState(event)) {
     			return null;
@@ -174,11 +173,11 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     		String radioState = event.getParameter(RadioState.PARAMETER_ID);
 
     		if (radioState.equals("UseSoftTrace")) { //$NON-NLS-1$
-    			traceMethod = ReverseTraceMethod.FULL_TRACE;
+    			newMethod = ReverseDebugMethod.SOFTWARE;
     		} else if (radioState.equals("TraceOff")) { //$NON-NLS-1$
-    			traceMethod = ReverseTraceMethod.STOP_TRACE;
+    			newMethod = ReverseDebugMethod.OFF;
     		} else if (radioState.equals("UseHardTrace")) { //$NON-NLS-1$
-    			traceMethod = ReverseTraceMethod.HARDWARE_TRACE;
+    			newMethod = ReverseDebugMethod.HARDWARE;
     		} else {
     			// undefined trace method
     			throw new ExecutionException(Messages.ReverseDebugging_UndefinedTraceMethod);
@@ -186,10 +185,11 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
 
     		// store the parameter in the gdb command handler class
     		if (fTargetAdapter != null && fTargetAdapter instanceof IChangeReverseMethodHandler) {
-    			ReverseTraceMethod currMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getTraceMethod(fActiveContext);
-    			if (currMethod == traceMethod)
+    			ReverseDebugMethod currMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getReverseDebugMethod(fActiveContext);
+    			if (currMethod == newMethod) {
     				return null;
-    			((IChangeReverseMethodHandler)fTargetAdapter).setTraceMethod(traceMethod);
+    			}
+    			((IChangeReverseMethodHandler)fTargetAdapter).setReverseDebugMethod(newMethod);
     		}
 
     		// execute the event
@@ -203,18 +203,18 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     		// Disable tracing
     		if (fTargetAdapter != null && fTargetAdapter instanceof IChangeReverseMethodHandler) {
     			if (fTargetAdapter.toggleNeedsUpdating()) {
-    				ReverseTraceMethod LastTraceMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getLastTraceMethod(fActiveContext);
-    				ReverseTraceMethod currMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getTraceMethod(fActiveContext);
-    				if (currMethod == ReverseTraceMethod.STOP_TRACE) {
-    					if (LastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
-    						traceMethod = ReverseTraceMethod.HARDWARE_TRACE;
+    				ReverseDebugMethod currMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getReverseDebugMethod(fActiveContext);
+    				if (currMethod == ReverseDebugMethod.OFF) {
+    					ReverseDebugMethod prevMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getPreviousReverseDebugMethod(fActiveContext);
+    					if (prevMethod == ReverseDebugMethod.HARDWARE) {
+    						newMethod = ReverseDebugMethod.HARDWARE;
     					} else {
-    						traceMethod = ReverseTraceMethod.FULL_TRACE;
+    						newMethod = ReverseDebugMethod.SOFTWARE;
     					}
     				} else {
-    					traceMethod = ReverseTraceMethod.STOP_TRACE;
+    					newMethod = ReverseDebugMethod.OFF;
     				}
-    				((IChangeReverseMethodHandler)fTargetAdapter).setTraceMethod(traceMethod);
+    				((IChangeReverseMethodHandler)fTargetAdapter).setReverseDebugMethod(newMethod);
     			}
     		}
     		super.execute(event);
@@ -269,24 +269,24 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     public void updateElement(UIElement element,
                               @SuppressWarnings("rawtypes") Map parameters) {
        if (fTargetAdapter != null && fTargetAdapter instanceof IChangeReverseMethodHandler) {
-           ReverseTraceMethod reverseMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getTraceMethod(fActiveContext);
-           ReverseTraceMethod LastTraceMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getLastTraceMethod(fActiveContext);
+           ReverseDebugMethod currMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getReverseDebugMethod(fActiveContext);
            ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
            try{
-               if (reverseMethod == ReverseTraceMethod.HARDWARE_TRACE) {
+               if (currMethod == ReverseDebugMethod.HARDWARE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseHardTrace"); //$NON-NLS-1$
                    element.setTooltip(Messages.ReverseDebugging_ToggleHardwareTrace);
                    element.setIcon(REVERSE_TOGGLE_HARDWARE_ON_IMAGE);
-               } else if (reverseMethod == ReverseTraceMethod.FULL_TRACE) {
+               } else if (currMethod == ReverseDebugMethod.SOFTWARE) {
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "UseSoftTrace"); //$NON-NLS-1$
                    element.setTooltip(Messages.ReverseDebugging_ToggleSoftwareTrace);
                    element.setIcon(REVERSE_TOGGLE_SOFTWARE_ON_IMAGE);
                } else {
-                   element.setTooltip(Messages.ReverseDebugging_ToggleReverseDebugging);
                    HandlerUtil.updateRadioState(commandService.getCommand(REVERSE_TOGGLE_COMMAND_ID), "TraceOff"); //$NON-NLS-1$
-                   if (LastTraceMethod == ReverseTraceMethod.HARDWARE_TRACE) {
+                   element.setTooltip(Messages.ReverseDebugging_ToggleReverseDebugging);
+                   ReverseDebugMethod prevMethod = ((IChangeReverseMethodHandler)fTargetAdapter).getPreviousReverseDebugMethod(fActiveContext);
+                   if (prevMethod == ReverseDebugMethod.HARDWARE) {
                        element.setIcon(REVERSE_TOGGLE_HARDWARE_OFF_IMAGE);
-                   } else if (LastTraceMethod == ReverseTraceMethod.FULL_TRACE) {
+                   } else if (prevMethod == ReverseDebugMethod.SOFTWARE) {
                        element.setIcon(REVERSE_TOGGLE_SOFTWARE_OFF_IMAGE);
                    } else {
                        element.setIcon(REVERSE_TOGGLE_DEFAULT_IMAGE);

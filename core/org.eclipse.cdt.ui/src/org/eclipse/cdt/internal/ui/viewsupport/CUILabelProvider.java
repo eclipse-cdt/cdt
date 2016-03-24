@@ -41,6 +41,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	private long fTextFlags;
 	private Color fInactiveColor;
 	private Color fDefaultColor;
+	private Color fBackgroundColor;
 
 	/**
 	 * Creates a new label provider with default flags.
@@ -231,15 +232,22 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		return null;
 	}
 
+	private void initColors() {
+		if (Display.getCurrent() != null) {
+			fInactiveColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
+			fDefaultColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+			fBackgroundColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		}
+	}
+	
 	@Override
 	public Color getForeground(Object element) {
+		if (fDefaultColor == null) {
+			initColors();
+		}
 		if (element instanceof ISourceReference) {
 			ISourceReference sref= (ISourceReference)element;
 			if (!sref.isActive()) {
-				if (fInactiveColor == null && Display.getCurrent() != null) {
-					fInactiveColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
-					fDefaultColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-				}
 				return fInactiveColor;
 			}
 		}
@@ -248,6 +256,9 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 
 	@Override
 	public Color getBackground(Object element) {
-		return null;
+		if (fBackgroundColor == null) {
+			initColors();
+		}
+		return fBackgroundColor;
 	}	
 }

@@ -120,7 +120,7 @@ public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrat
                 try {
                 	StringBuilder content = getDeclarationLines(doc, offset);
 
-                	boolean contentAlreadyThere = (firstLineContainsText && content.toString().contains(commentContentBehindCursor.trim()));
+                	boolean contentAlreadyThere = (firstLineContainsText && content != null && content.toString().contains(commentContentBehindCursor.trim()));
                     if (content == null || content.toString().trim().length() == 0 || contentAlreadyThere)
                     {
                         buf.setLength(0);

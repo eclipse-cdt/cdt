@@ -308,7 +308,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	protected void connectionRemoved(final IRemoteConnection connection) {
 		RemoteConnectionChangeEvent event = new RemoteConnectionChangeEvent(connection,
-				RemoteConnectionChangeEvent.CONNECTION_ADDED);
+				RemoteConnectionChangeEvent.CONNECTION_REMOVED);
 		remoteServicesManager.fireRemoteConnectionChangeEvent(event);
 	}
 

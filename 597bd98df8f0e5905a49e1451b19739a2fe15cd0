@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_fc8630f3",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/META-INF/MANIFEST.MF",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-24T20:42:45Z",
+      "side": 1,
+      "message": "The internal package org.eclipse.cdt.debug.ui.internal can still be exported and in fact I have seen \nthis as a good practice.  \nExtenders can use it at its own risk and will \nget a warning when using it.",
+      "revId": "597bd98df8f0e5905a49e1451b19739a2fe15cd0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9c97ec18",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-24T20:42:45Z",
+      "side": 1,
+      "message": "replace current for associated, as the memory space will not change for this instance.",
+      "revId": "597bd98df8f0e5905a49e1451b19739a2fe15cd0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -176,7 +176,7 @@ public enum OverloadableOperator {
 		switch (binaryOp) {
 		case IASTBinaryExpression.op_binaryAnd:     	return AMPER;
 		case IASTBinaryExpression.op_binaryAndAssign:   return AMPERASSIGN;
-		case IASTBinaryExpression.op_pmarrow:         	return ARROW;
+		case IASTBinaryExpression.op_pmarrow:         	return ARROWSTAR;
 		case IASTBinaryExpression.op_binaryOr:			return BITOR;
 		case IASTBinaryExpression.op_binaryOrAssign:	return BITORASSIGN;
 		case IASTBinaryExpression.op_shiftLeft:         return SHIFTL;

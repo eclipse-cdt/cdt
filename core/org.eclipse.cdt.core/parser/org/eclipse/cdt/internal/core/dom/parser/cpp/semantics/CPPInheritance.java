@@ -252,7 +252,8 @@ public class CPPInheritance {
 			for (ICPPMethod method : ClassTypeHelper.getOwnMethods(classType, point)) {
 				// Skip methods that don't actually belong to us, such as methods brought
 				// into scope via a using-declaration.
-				if (!method.getOwner().equals(classType)) {
+				if (!(method.getOwner() instanceof ICPPClassType &&
+					  ((ICPPClassType) method.getOwner()).isSameType(classType))) {
 					continue;
 				}
 				

@@ -4177,8 +4177,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tCOLONCOLON:
 		case IToken.tIDENTIFIER:
 		case IToken.tCOMPLETION:
-			if (option.fRequireAbstract)
-				throwBacktrack(LA(1));
+			if (option.fRequireAbstract) {
+				// We might have a virt-specifier following a type-id in a trailing-return-type.
+				ContextSensitiveTokenType contextSensitiveType = getContextSensitiveType(LA(1));
+				if (contextSensitiveType == ContextSensitiveTokenType.OVERRIDE ||
+					contextSensitiveType == ContextSensitiveTokenType.FINAL) {
+					// In that case, we're done parsing the declarator of the type-id.
+					break;
+				} else {
+					// Otherwise, we have what looks like a name, but we're not expecting one.
+					throwBacktrack(LA(1));
+				}
+			}
 
 			final IASTName declaratorName= !option.fRequireSimpleName ? qualifiedName() : identifier();
 			endOffset= calculateEndOffset(declaratorName);

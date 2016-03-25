@@ -10056,6 +10056,16 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct Base {
+	//		virtual bool waldo();
+	//	};
+	//	struct Derived : Base {
+	//		virtual auto waldo() -> bool override;
+	//	};
+	public void testOverrideSpecifierAfterTrailingReturnType_489876() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	struct CHAINER {
 	//	    CHAINER const & operator,(int x) const;
 	//	};

@@ -4671,6 +4671,19 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPASTPointerToMember po = (ICPPASTPointerToMember) d.getPointerOperators()[0];
 		assertEquals("X::", po.getName().toString());
 	}
+	
+	//	struct cat {
+	//	    void meow();
+	//	};
+	//	struct waldo {
+	//	    cat operator->*(bool);
+	//	};
+	//	void foo() {
+	//	    (waldo()->*true).meow();  // Method 'meow' could not be resolved
+	//	}
+	public void testOverloadedPointerToMemberOperator_488611() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	struct B {};
 	//	struct D : B {};

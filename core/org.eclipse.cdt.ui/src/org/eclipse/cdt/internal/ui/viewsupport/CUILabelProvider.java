@@ -40,7 +40,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	private int fImageFlags;
 	private long fTextFlags;
 	private Color fInactiveColor;
-	private Color fDefaultColor;
 
 	/**
 	 * Creates a new label provider with default flags.
@@ -238,12 +237,11 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 			if (!sref.isActive()) {
 				if (fInactiveColor == null && Display.getCurrent() != null) {
 					fInactiveColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
-					fDefaultColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 				}
 				return fInactiveColor;
 			}
 		}
-		return fDefaultColor;
+		return null;
 	}
 
 	@Override

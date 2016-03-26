@@ -156,7 +156,7 @@ public class VariableHelpers {
 		return null;
 	}
 
-	private static IASTDeclarator findDeclarator(IASTName name) {
+	public static IASTDeclarator findDeclarator(IASTName name) {
 		IASTNode node = name.getParent();
 		if (node instanceof ICPPASTQualifiedName)
 			node = node.getParent();

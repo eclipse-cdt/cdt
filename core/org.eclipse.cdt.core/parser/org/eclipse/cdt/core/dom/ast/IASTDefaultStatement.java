@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
+
 /**
  * This is the default clause in the switch statement. Note that in the grammar,
  * a statement is part of the clause. For the AST, just go on to the next
@@ -19,7 +21,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTDefaultStatement extends IASTStatement {
+public interface IASTDefaultStatement extends IASTStatement, ICPPExecutionOwner {
 	/**
 	 * @since 5.1
 	 */

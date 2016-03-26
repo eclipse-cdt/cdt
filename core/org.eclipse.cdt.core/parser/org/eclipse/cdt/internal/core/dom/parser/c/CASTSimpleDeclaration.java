@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 
 /**
  * Models a simple declaration.
@@ -131,5 +132,10 @@ public class CASTSimpleDeclaration extends ASTAttributeOwner implements IASTSimp
     			}
     		}
     	}
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		throw new UnsupportedOperationException();
 	}
 }

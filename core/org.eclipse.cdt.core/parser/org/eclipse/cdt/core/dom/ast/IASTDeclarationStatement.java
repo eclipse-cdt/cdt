@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
+
 /**
  * A declaration statement that introduces a declaration.
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTDeclarationStatement extends IASTStatement {
+public interface IASTDeclarationStatement extends IASTStatement, ICPPExecutionOwner {
 	/**
 	 * <code>DECLARATION</code> represents the relationship between a
 	 * declaration statement and the declaration it wraps.

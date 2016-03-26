@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
+
 /**
  * This is a simple declaration which contains a sequence of declSpecifiers
  * followed by a list of declarators.
@@ -18,7 +20,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTSimpleDeclaration extends IASTDeclaration, IASTAttributeOwner {
+public interface IASTSimpleDeclaration extends IASTDeclaration, IASTAttributeOwner, ICPPExecutionOwner {
 	/**
 	 * <code>DECL_SPECIFIER</code> represents the relationship between an
 	 * <code>IASTSimpleDeclaration</code> and it's nested

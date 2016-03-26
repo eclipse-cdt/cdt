@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -35,8 +35,10 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class EvalFixed extends CPPEvaluation {
 	public static final ICPPEvaluation INCOMPLETE =
-			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, Value.ERROR);
+			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, IntegralValue.ERROR);
 
+	
+	
 	private final IType fType;
 	private final IValue fValue;
 	private final ValueCategory fValueCategory;
@@ -55,10 +57,10 @@ public class EvalFixed extends CPPEvaluation {
 		}
 		
 		if (type instanceof CPPBasicType) {
-			Long num = value.numericalValue();
+			Number num = value.numericalValue();
 			if (num != null) {
 				CPPBasicType t = (CPPBasicType) type.clone();
-				t.setAssociatedNumericalValue(num);
+				t.setAssociatedNumericalValue(num.longValue());
 				type = t;
 			}
 		}
@@ -102,7 +104,7 @@ public class EvalFixed extends CPPEvaluation {
 	public boolean isValueDependent() {
 		if (!fCheckedIsValueDependent) {
 			fCheckedIsValueDependent= true;
-			fIsValueDependent= Value.isDependentValue(fValue);
+			fIsValueDependent= IntegralValue.isDependentValue(fValue);
 		}
 		return fIsValueDependent;
 	}
@@ -129,7 +131,7 @@ public class EvalFixed extends CPPEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		includeValue= includeValue && fValue != Value.UNKNOWN;
+		includeValue= includeValue && fValue != IntegralValue.UNKNOWN;
 		short firstBytes = ITypeMarshalBuffer.EVAL_FIXED;
 		if (includeValue)
 			firstBytes |= ITypeMarshalBuffer.FLAG1;
@@ -168,7 +170,7 @@ public class EvalFixed extends CPPEvaluation {
 		}
 
 		IType type= buffer.unmarshalType();
-		value= readValue ? buffer.unmarshalValue() : Value.UNKNOWN;
+		value= readValue ? buffer.unmarshalValue() : IntegralValue.UNKNOWN;
 		return new EvalFixed(type, cat, value);
 	}
 
@@ -180,7 +182,7 @@ public class EvalFixed extends CPPEvaluation {
 			return this;
 		// If an error occurred while instantiating the value (such as a substitution failure), 
 		// propagate that error.
-		if (value == Value.ERROR)
+		if (value == IntegralValue.ERROR)
 			return EvalFixed.INCOMPLETE;
 		// Resolve the parameter pack type to the underlying type if the instantiated value is not dependent. 
 		if (type instanceof ICPPParameterPackType && value.numericalValue() != null)
@@ -189,15 +191,17 @@ public class EvalFixed extends CPPEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPEvaluation eval = fValue.getEvaluation();
-		if (eval == null)
+		if (eval == null) {
 			return this;
-		eval = eval.computeForFunctionCall(parameterMap, context.recordStep());
-		if (eval == fValue.getEvaluation())
+		}
+		eval = eval.computeForFunctionCall(record, context.recordStep());
+		if (eval == fValue.getEvaluation()) {
 			return this;
-		return new EvalFixed(fType, fValueCategory, Value.create(eval));
+		}
+		EvalFixed evalFixed = new EvalFixed(fType, fValueCategory, IntegralValue.create(eval));
+		return evalFixed;
 	}
 
 	@Override
@@ -208,5 +212,10 @@ public class EvalFixed extends CPPEvaluation {
 	@Override
 	public boolean referencesTemplateParameter() {
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return fType.toString() + ": " + fValue.toString(); //$NON-NLS-1$
 	}
 }

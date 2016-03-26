@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
+
 /**
  * This node represents a null statement, ';'
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTNullStatement extends IASTStatement {
+public interface IASTNullStatement extends IASTStatement, ICPPExecutionOwner {
 	/**
 	 * @since 5.1
 	 */

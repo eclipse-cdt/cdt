@@ -94,7 +94,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
@@ -3101,7 +3102,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPDeferredClassInstance ci= ba.assertNonProblem("C<y>", 4, ICPPDeferredClassInstance.class);
 		ICPPTemplateArgument[] args= ci.getTemplateArguments();
 		assertEquals(1, args.length);
-		assertEquals(0, Value.isTemplateParameter(args[0].getNonTypeValue()));
+		assertEquals(0, IntegralValue.isTemplateParameter(args[0].getNonTypeValue()));
 	}
 
 	//	template<int x>
@@ -7862,7 +7863,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper ah = getAssertionHelper();
 		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
 		IValue value = binding.getValue();
-		Long num = value.numericalValue();
+		Number num = value.numericalValue();
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}
@@ -9287,6 +9288,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	template <class T>
 	//	struct D {
+	//	  D(T);
 	//	  T t;
 	//	};
 	//

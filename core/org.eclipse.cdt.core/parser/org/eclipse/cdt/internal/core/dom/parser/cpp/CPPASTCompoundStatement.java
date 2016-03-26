@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecCompoundStatement;
 
 /**
  * @author jcamelon
@@ -120,4 +121,9 @@ public class CPPASTCompoundStatement extends CPPASTAttributeOwner implements ICP
         }
         super.replace(child, other);
     }
+    
+    @Override
+	public ICPPExecution getExecution() {
+    	return new ExecCompoundStatement(this.statements);
+	}
 }

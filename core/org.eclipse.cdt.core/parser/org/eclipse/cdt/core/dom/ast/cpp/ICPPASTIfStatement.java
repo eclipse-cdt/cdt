@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
 
 /**
  * The 'if' statement including the optional else clause.
@@ -20,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTIfStatement extends IASTIfStatement {
+public interface ICPPASTIfStatement extends IASTIfStatement, ICPPExecutionOwner {
 	/**
 	 * Returns the condition declaration. The condition declaration and the condition expression are
 	 * mutually exclusive.

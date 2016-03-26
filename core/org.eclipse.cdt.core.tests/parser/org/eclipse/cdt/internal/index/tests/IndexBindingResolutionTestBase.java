@@ -529,15 +529,21 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 	}
 
-	class SinglePDOMTestStrategy extends BaseTestStrategy {
+	protected class SinglePDOMTestStrategy extends BaseTestStrategy {
 		private IIndex index;
 		private ICProject cproject;
 		private StringBuilder[] testData;
 		private IASTTranslationUnit ast;
 		private final boolean cpp;
+		private final boolean shouldFailWithUnsufficientData;
 
 		public SinglePDOMTestStrategy(boolean cpp) {
+			this(cpp, true);
+		}
+		
+		public SinglePDOMTestStrategy(boolean cpp, boolean shouldFailWithUnsufficientData) {
 			this.cpp = cpp;
+			this.shouldFailWithUnsufficientData = shouldFailWithUnsufficientData;
 		}
 
 		@Override
@@ -577,8 +583,16 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
 
-			if (testData.length < 2)
+			if(testData.length < 1) {
 				fail("Insufficient test data");
+			} else if(shouldFailWithUnsufficientData && testData.length == 1) {
+				fail("Insufficient test data");
+			} else if(testData.length == 1) {
+				StringBuilder newTestData[] = new StringBuilder[2];
+				newTestData[0] = new StringBuilder();
+				newTestData[1] = testData[0];
+				testData = newTestData;
+			}
 			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
 
 			String headerContents = testData[0].toString();

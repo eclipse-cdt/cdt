@@ -174,7 +174,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	private void asserValueEquals(IValue initialValue, long i) {
 		assertNotNull(initialValue);
-		final Long numericalValue = initialValue.numericalValue();
+		final Number numericalValue = initialValue.numericalValue();
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.longValue());
 	}

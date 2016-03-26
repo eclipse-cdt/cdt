@@ -16,9 +16,14 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecWhile;
 
 /**
  * While statement in C++.
@@ -152,4 +157,14 @@ public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPAS
             scope = new CPPBlockScope(this);
         return scope;	
     }
+
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPASTExpression conditionExpr = (ICPPASTExpression)getCondition();
+		IASTSimpleDeclaration conditionDecl = (IASTSimpleDeclaration)getConditionDeclaration();
+		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null; 
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration)conditionDecl.getExecution() : null;
+		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
+		return new ExecWhile(conditionExprEval, conditionDeclExec, bodyExec);
+	}
 }

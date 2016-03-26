@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
+
 /**
  * This represents a block of statements.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTCompoundStatement extends IASTStatement {
+public interface IASTCompoundStatement extends IASTStatement, ICPPExecutionOwner {
 	/**
 	 * {@code NESTED_STATEMENT} represents the relationship between an {@code IASTCompoundStatement}
 	 * and its nested {@code IASTStatement}

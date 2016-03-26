@@ -11,18 +11,13 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 
 /**
  * C++ specific initializer clause.
- * @noextend This interface is not intended to be extended by clients.
+ * @noextend This interface is not intended to be extended by clICPients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.5
  */
-public interface ICPPASTInitializerClause extends IASTInitializerClause {
-	/**
-	 * Returns the evaluation object for this expression.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	ICPPEvaluation getEvaluation();
+public interface ICPPASTInitializerClause extends IASTInitializerClause, ICPPEvaluationOwner {
 }

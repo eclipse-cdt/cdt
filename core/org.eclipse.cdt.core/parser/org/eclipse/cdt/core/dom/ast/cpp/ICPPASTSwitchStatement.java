@@ -14,12 +14,13 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
 
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
+public interface ICPPASTSwitchStatement extends IASTSwitchStatement, ICPPExecutionOwner {
 
     /**
      * <code>CONTROLLER_DECLARATION</code> represents the relationship between an

@@ -22,4 +22,16 @@ public interface ICPPComputableFunction {
 	 * @param point the point of instantiation for name lookups
 	 */
 	public ICPPEvaluation getReturnExpression(IASTNode point);
+	
+	/**
+	 * For a constexpr function returns the ICPPExecution for its body. Otherwise returns
+	 * {@code null}.
+	 */
+	public ICPPExecution getFunctionBodyExecution();
+	
+	/**
+	 * For a constexpr constructor returns the ICPPExecution for its constructor chain. Otherwise returns
+	 * {@code null}.
+	 */
+	public ICPPExecution getConstructorChainExecution();
 }

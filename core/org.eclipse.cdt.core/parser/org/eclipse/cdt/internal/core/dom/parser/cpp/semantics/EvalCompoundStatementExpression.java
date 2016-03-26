@@ -29,14 +29,14 @@ import org.eclipse.core.runtime.CoreException;
  * Performs evaluation of a compound statement expression. Most but not all methods
  * delegate to the evaluation of the last expression in the compound one.
  */
-public class EvalCompound extends CPPDependentEvaluation {
+public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	private final ICPPEvaluation fDelegate;
 
-	public EvalCompound(ICPPEvaluation delegate, IASTNode pointOfDefinition) {
+	public EvalCompoundStatementExpression(ICPPEvaluation delegate, IASTNode pointOfDefinition) {
 		this(delegate, findEnclosingTemplate(pointOfDefinition));
 	}
 
-	public EvalCompound(ICPPEvaluation delegate, IBinding templateDefinition) {
+	public EvalCompoundStatementExpression(ICPPEvaluation delegate, IBinding templateDefinition) {
 		super(templateDefinition);
 		fDelegate= delegate;
 	}
@@ -95,7 +95,7 @@ public class EvalCompound extends CPPDependentEvaluation {
 	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		IBinding templateDefinition= buffer.unmarshalBinding();
-		return new EvalCompound(arg, templateDefinition);
+		return new EvalCompoundStatementExpression(arg, templateDefinition);
 	}
 
 	@Override
@@ -103,16 +103,18 @@ public class EvalCompound extends CPPDependentEvaluation {
 		ICPPEvaluation delegate = fDelegate.instantiate(context, maxDepth);
 		if (delegate == fDelegate)
 			return this;
-		return new EvalCompound(delegate, getTemplateDefinition());
+		return new EvalCompoundStatementExpression(delegate, getTemplateDefinition());
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
-		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(parameterMap, context.recordStep());
-		if (delegate == fDelegate)
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(record, context.recordStep());
+		if(delegate == fDelegate) {
 			return this;
-		return new EvalCompound(delegate, getTemplateDefinition());
+		} else {
+			EvalCompoundStatementExpression evalCompound = new EvalCompoundStatementExpression(delegate, getTemplateDefinition());
+			return evalCompound;
+		}
 	}
 
 	@Override

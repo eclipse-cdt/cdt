@@ -32,6 +32,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -285,7 +287,11 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		for (int i = 1; i < args.length; i++) {
 			args[i]= ((ICPPASTInitializerClause) fArguments[i - 1]).getEvaluation();
 		}
-		return new EvalFunctionCall(args, this);
+		if (fFunctionName instanceof ICPPASTFieldReference) {
+			ICPPASTExpression fieldOwner = ((ICPPASTFieldReference)fFunctionName).getFieldOwner();
+			return new EvalFunctionCall(args, fieldOwner.getEvaluation(), this);
+		}
+		return new EvalFunctionCall(args, null, this);
 	}
 	
 	private ICPPEvaluation checkForExplicitTypeConversion() {
@@ -297,6 +303,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 				for (int i = 0; i < args.length; i++) {
 					args[i]= ((ICPPASTInitializerClause) fArguments[i]).getEvaluation();
 				}
+				
 				return new EvalTypeId((IType) b, this, args);
 			}
 		}

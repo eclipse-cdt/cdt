@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 
 /**
  * @author jcamelon
@@ -52,5 +53,10 @@ public class CASTBreakStatement extends ASTAttributeOwner implements IASTBreakSt
 	public CASTBreakStatement copy(CopyStyle style) {
 		CASTBreakStatement copy = new CASTBreakStatement();
 		return copy(copy, style);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		throw new UnsupportedOperationException();
 	}
 }

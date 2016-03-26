@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.core" version="2">
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/IValue.java" type="org.eclipse.cdt.core.dom.ast.IValue">
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.IValue"/>
+                <message_argument value="numericalValue()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitializerClause.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause">
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause"/>
+                <message_argument value="getEvaluation()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="utils/org/eclipse/cdt/utils/BinaryObjectAdapter.java" type="org.eclipse.cdt.utils.BinaryObjectAdapter">
         <filter comment="NO_SYMBOLS array should be final" id="388100214">
             <message_arguments>

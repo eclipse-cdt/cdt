@@ -30,8 +30,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -325,6 +327,10 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
     public IValue getInitialValue() {
 		return null;
+	}
+    
+    public ICPPEvaluation getInitializerEvaluation() {
+    	return EvalFixed.INCOMPLETE;
 	}
 
     public boolean isAnonymous() {

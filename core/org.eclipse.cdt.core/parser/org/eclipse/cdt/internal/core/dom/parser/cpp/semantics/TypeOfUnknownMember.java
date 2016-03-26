@@ -48,7 +48,7 @@ public class TypeOfUnknownMember implements ICPPUnknownType, ISerializableType {
 	public static IType unmarshal(IIndexFragment fragment, short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytesForMember = buffer.getShort();
 		if ((firstBytesForMember & ITypeMarshalBuffer.KIND_MASK) != ITypeMarshalBuffer.UNKNOWN_MEMBER)
-			throw new CoreException(CCorePlugin.createStatus("Expected an unknown memebr, first bytes=" + firstBytesForMember)); //$NON-NLS-1$;
+			throw new CoreException(CCorePlugin.createStatus("Expected an unknown memebr, first bytes=" + firstBytesForMember)); //$NON-NLS-1$
 		return new TypeOfUnknownMember((CPPUnknownMember) CPPUnknownMember.unmarshal(fragment, firstBytesForMember, buffer));
 	}
 	

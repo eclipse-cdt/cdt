@@ -40,4 +40,8 @@ public class CompositeCPPFieldTemplate extends CompositeCPPVariableTemplate impl
 				(IIndexFragmentBinding) ((ICPPField)rbinding).getClassOwner());
 	}
 
+	@Override
+	public byte getFieldPosition() {
+		return ((ICPPField) rbinding).getFieldPosition();
+	}
 }

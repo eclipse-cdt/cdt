@@ -16,6 +16,9 @@ import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDo;
 
 /**
  * @author jcamelon
@@ -115,4 +118,12 @@ public class CPPASTDoStatement extends CPPASTAttributeOwner implements IASTDoSta
         }
         super.replace(child, other);
     }
+
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPASTExpression conditionExpr = (ICPPASTExpression)getCondition();
+		ICPPEvaluation conditionEval = conditionExpr.getEvaluation();
+		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
+		return new ExecDo(conditionEval, bodyExec);
+	}
 }

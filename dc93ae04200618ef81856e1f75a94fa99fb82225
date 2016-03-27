@@ -88,6 +88,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_6865f6be",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-27T19:40:18Z",
+      "side": 1,
+      "message": "The references to CVS need to be updated to git. The git repo is at https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/ and specifically the plug-in is https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/dsf/org.eclipse.cdt.examples.dsf",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_642d3347",
         "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
         "patchSetId": 1
@@ -99,6 +116,57 @@
       "writtenOn": "2016-03-22T07:29:59Z",
       "side": 1,
       "message": "For consistency, can you maintain wrapping with the rest of the file.",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_886242b5",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-27T19:40:18Z",
+      "side": 1,
+      "message": "good catch",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_a86b7e91",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2286,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-27T19:40:18Z",
+      "side": 1,
+      "message": "Can you make this look less out of date.\n\ne.g. DSF now requires Java 8. Also, the platform, while conservative are now generally requiring Java 8 depending on which parts. \n\nSee interesting links:\nhttp://blog.vogella.com/2015/08/18/eclipse-neon-eclipse-4-6-will-require-a-java-8-runtime/\n\nand specific details on which bundles require 1.8 or lower:\nhttps://www.eclipse.org/projects/project-plan.php?planurl\u003dhttp://www.eclipse.org/eclipse/development/plans/eclipse_project_plan_4_6.xml#appendix",
+      "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e8582608",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2291,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-27T19:40:18Z",
+      "side": 1,
+      "message": "This part is still true. See https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d365672",
       "revId": "dc93ae04200618ef81856e1f75a94fa99fb82225",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

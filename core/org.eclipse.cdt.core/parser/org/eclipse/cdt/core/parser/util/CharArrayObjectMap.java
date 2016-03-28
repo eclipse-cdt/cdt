@@ -23,13 +23,16 @@ public class CharArrayObjectMap <T> extends CharTable {
     public static final CharArrayObjectMap<?> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
         @Override
 		public Object clone() { return this; }
+
         @Override
 		public List<char[]> toList() { return Collections.emptyList(); }
+
         @Override
 		public Object put(char[] key, int start, int length, Object value) {
         	throw new UnsupportedOperationException();
         }
     };
+
 	/**
 	 * @since 5.4
 	 */

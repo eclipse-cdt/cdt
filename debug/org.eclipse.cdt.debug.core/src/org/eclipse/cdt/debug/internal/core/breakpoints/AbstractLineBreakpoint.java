@@ -154,17 +154,22 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
     
     @Override
     public synchronized int decrementInstallCount() throws CoreException {
-        int count = super.decrementInstallCount();
-        if (count == 0) {
-            resetInstalledLocation();
-        }
-        return count;
+    	int count = super.decrementInstallCount();
+    	
+    	if(Boolean.TRUE.equals(this.getMarker().getAttribute(RESET_INSTALLED_LOCATION))){
+        	if (count == 0) {
+        		resetInstalledLocation();
+        	}
+    	}
+    	
+    	return count;
     }
     
     @Override
     public void setInstalledLineNumber(int line) throws CoreException {
         int existingValue = ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
         if (line != existingValue) {
+        	this.getMarker().setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
             setAttribute(IMarker.LINE_NUMBER, line);
             setAttribute( IMarker.MESSAGE, getMarkerMessage() );
         }

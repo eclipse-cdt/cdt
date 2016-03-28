@@ -154,11 +154,15 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
     
     @Override
     public synchronized int decrementInstallCount() throws CoreException {
-        int count = super.decrementInstallCount();
-        if (count == 0) {
-            resetInstalledLocation();
-        }
-        return count;
+    	int count = super.decrementInstallCount();
+    	
+    	if(Boolean.TRUE.equals(this.getMarker().getAttribute(RESET_INSTALLED_LOCATION))){
+        	if (count == 0) {
+        		resetInstalledLocation();
+        	}
+    	}
+    	
+    	return count;
     }
     
     @Override
@@ -166,6 +170,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
         int existingValue = ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
         if (line != existingValue) {
             setAttribute(IMarker.LINE_NUMBER, line);
+        	setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
             setAttribute( IMarker.MESSAGE, getMarkerMessage() );
         }
     }
@@ -175,6 +180,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
         int existingValue = ensureMarker().getAttribute(IMarker.CHAR_START, -1);
         if (charStart != existingValue) {
             setAttribute(IMarker.CHAR_START, charStart);
+        	setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
             setAttribute( IMarker.MESSAGE, getMarkerMessage() );
         }
     }
@@ -184,6 +190,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
         int existingValue = ensureMarker().getAttribute(IMarker.CHAR_END, -1);
         if (charEnd != existingValue) {
             setAttribute(IMarker.CHAR_END, charEnd);
+        	setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
             setAttribute( IMarker.MESSAGE, getMarkerMessage() );
         }
     }
@@ -209,6 +216,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
         if (this.getMarker().getAttribute(REQUESTED_SOURCE_HANDLE) != null) {
             String file = this.getMarker().getAttribute(REQUESTED_SOURCE_HANDLE, ""); //$NON-NLS-1$
             setAttribute(ICBreakpoint.SOURCE_HANDLE, file);
+        	setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
             locationReset = true;
         }
         if (locationReset) {

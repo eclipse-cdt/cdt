@@ -93,13 +93,14 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		if (!name.isActive())
 			return;
 
-		if (bindings == null)
-			bindings = new CharArrayObjectMap<>(1);
 		if (name instanceof ICPPASTQualifiedName &&
 				!(physicalNode instanceof ICPPASTCompositeTypeSpecifier) &&
 				!(physicalNode instanceof ICPPASTNamespaceDefinition)) {
 			return;
 		}
+
+		if (bindings == null)
+			bindings = new CharArrayObjectMap<>(1);
 
 		final char[] c= name.getLookupKey();
 		if (c.length == 0)

@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_7218847c",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/ICLineBreakpoint2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-28T20:28:49Z",
+      "side": 1,
+      "message": "CDT is in API freeze, that means we might not be able to submit this to master until after the freeze, which would be in may or june? We should not change the submission because of that, but just giving you heads up that it may delay when this code makes it into CDT master branch.",
+      "revId": "d65659d5810a648584f1550ca977482f8e66b248",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_921d106e",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/ICLineBreakpoint2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-28T20:28:49Z",
+      "side": 1,
+      "message": "Add documentation like \"This attribute is a \u003ccode\u003eBoolean\u003c/code\u003e\" and what it means.",
+      "range": {
+        "startLine": 65,
+        "startChar": 11,
+        "endLine": 65,
+        "endChar": 14
+      },
+      "revId": "d65659d5810a648584f1550ca977482f8e66b248",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_32cd1c61",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/AbstractLineBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-28T20:28:49Z",
+      "side": 1,
+      "message": "I think the \"if\" is the wrong way around here. Or more precisely, we must always do the super.decrementInstallCount()\n\nThe way to test if super.decrementInstallCount() is working as expected is:\n\n1) insert breakpoint, observe it is a blue dot, no check mark\n2) start debug session, the breakpoint should change to a check mark \n3) Stop debug session and breakpoint should become a dot again.",
+      "revId": "d65659d5810a648584f1550ca977482f8e66b248",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_52d2a8fd",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/AbstractLineBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-28T20:28:49Z",
+      "side": 1,
+      "message": "How about:\nBoolean.TRUE.equals(this.getMarker().getAttribute(MOVE_BACK_BREAKPOINT)) and that saves the separate null check.",
+      "revId": "d65659d5810a648584f1550ca977482f8e66b248",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d23238f4",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/AbstractLineBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-28T20:28:49Z",
+      "side": 1,
+      "message": "At the moment this method is called from somewhere else in CDT source code (use show Call Hierarchy to find where, somewhere in UI code, but I can\u0027t recall exactly). \n\nThat call must not be made anymore from there because the breakpoint is not installed by editing the properties.",
+      "revId": "d65659d5810a648584f1550ca977482f8e66b248",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b235acdf",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/AbstractLineBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-03-28T20:28:49Z",
+      "side": 1,
+      "message": "Rather than call this \"MOVE_BACK_BREAKPOINT\", perhaps something like \"BREAKPOINT_INSTALLED\" or \"RESET_INSTALLED_LOCATION\"?",
+      "revId": "d65659d5810a648584f1550ca977482f8e66b248",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

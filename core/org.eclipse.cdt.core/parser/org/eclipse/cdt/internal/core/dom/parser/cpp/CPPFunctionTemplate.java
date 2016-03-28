@@ -446,4 +446,20 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			return EvalFixed.INCOMPLETE;
 		return CPPFunction.getReturnExpression(functionDefinition);
 	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution() {
+		if (!isConstexpr()) {
+			return null;
+		}
+		return CPPFunction.getFunctionBodyExecution(getDefinition());
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		if (!isConstexpr()) {
+			return null;
+		}
+		return CPPFunction.getConstructorChainExecution(getDefinition());
+	}
 }

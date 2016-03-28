@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecBreak;
 
 /**
  * @author jcamelon
@@ -49,5 +50,10 @@ public class CPPASTBreakStatement extends CPPASTAttributeOwner implements IASTBr
 	public CPPASTBreakStatement copy(CopyStyle style) {
 		CPPASTBreakStatement copy = new CPPASTBreakStatement();
 		return copy(copy, style);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		return new ExecBreak();
 	}
 }

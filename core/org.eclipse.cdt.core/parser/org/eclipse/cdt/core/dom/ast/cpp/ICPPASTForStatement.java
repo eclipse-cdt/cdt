@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
 
 /**
  * The C++ 'for' statement.
@@ -21,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTForStatement extends IASTForStatement, IASTImplicitDestructorNameOwner {
+public interface ICPPASTForStatement extends IASTForStatement, IASTImplicitDestructorNameOwner, ICPPExecutionOwner {
     public static final ASTNodeProperty CONDITION_DECLARATION =
     		new ASTNodeProperty("org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement"); //$NON-NLS-1$
 
@@ -40,3 +41,4 @@ public interface ICPPASTForStatement extends IASTForStatement, IASTImplicitDestr
 	@Override
 	public ICPPASTForStatement copy(CopyStyle style);
 }
+

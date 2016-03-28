@@ -181,7 +181,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -1274,6 +1274,9 @@ public class CPPVisitor extends ASTQueries {
 					type = ((ICPPParameterPackType) type).getType();
 				}
 				type= getUltimateTypeUptoPointers(type);
+				if (type instanceof ICPPParameterPackType) {
+					type = ((ICPPParameterPackType) type).getType();
+				}
 				if (type instanceof ICPPClassType) {
 					type= SemanticUtil.mapToAST(type, fieldReference);
 					return ((ICPPClassType) type).getCompositeScope();
@@ -1990,7 +1993,7 @@ public class CPPVisitor extends ASTQueries {
 	        		IASTInitializerClause clause = ((IASTEqualsInitializer) initializer).getInitializerClause();
 	        		if (clause instanceof IASTInitializerList) {
 	        			IASTInitializerClause[] clauses = ((IASTInitializerList) clause).getClauses();
-	        			sizeValue = Value.create(clauses.length);
+	        			sizeValue = IntegralValue.create(clauses.length);
 	        		} else if (clause instanceof ICPPASTLiteralExpression) {
 	        			ICPPEvaluation value = ((ICPPASTLiteralExpression) clause).getEvaluation();
 	        			IType valueType = value.getType(clause);
@@ -2047,7 +2050,7 @@ public class CPPVisitor extends ASTQueries {
 			if (t instanceof IArrayType) {
 				IArrayType at= (IArrayType) t;
 				if (at.getSize() == null) {
-					type= new CPPArrayType(at.getType(), Value.create(((IASTInitializerList) initClause).getSize()));
+					type= new CPPArrayType(at.getType(), IntegralValue.create(((IASTInitializerList) initClause).getSize()));
 				}
 			}
 		}

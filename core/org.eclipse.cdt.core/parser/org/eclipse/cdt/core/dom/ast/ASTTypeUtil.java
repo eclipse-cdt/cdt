@@ -42,7 +42,7 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
@@ -276,14 +276,14 @@ public class ASTTypeUtil {
 				}
 			}
 			IValue val= ((IArrayType) type).getSize();
-			if (val != null && val != Value.UNKNOWN) {
+			if (val != null && val != IntegralValue.UNKNOWN) {
 				if (normalize) {
 					if (needSpace) {
 						result.append(SPACE); needSpace = false;
 					}
 					result.append(val.getSignature());
 				} else {
-					Long v= val.numericalValue();
+					Number v= val.numericalValue();
 					if (v != null) {
 						if (needSpace) {
 							result.append(SPACE); needSpace = false;

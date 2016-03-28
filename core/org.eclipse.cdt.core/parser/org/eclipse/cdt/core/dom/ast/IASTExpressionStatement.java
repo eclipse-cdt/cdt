@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
+
 /**
  * Expression statement.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTExpressionStatement extends IASTStatement {
+public interface IASTExpressionStatement extends IASTStatement, ICPPExecutionOwner {
 
 	/**
 	 * <code>EXPRESSION</code> is the relationship between an

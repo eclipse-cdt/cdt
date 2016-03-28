@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -59,7 +59,7 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 	private void storeValue(final Database db, IEnumerator enumerator) throws CoreException {
 		IValue value= enumerator.getValue();
 		if (value != null) {
-			Long val= value.numericalValue();
+			Number val= value.numericalValue();
 			db.putInt(record + VALUE, val == null ? -1 : val.intValue());
 		}
 	}
@@ -82,10 +82,10 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 	public IValue getValue() {
 		try {
 			int val= getDB().getInt(record + VALUE);
-			return Value.create(val);
+			return IntegralValue.create(val);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return Value.UNKNOWN;
+		return IntegralValue.UNKNOWN;
 	}
 }

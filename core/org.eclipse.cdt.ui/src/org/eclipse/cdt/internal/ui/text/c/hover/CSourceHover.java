@@ -274,7 +274,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 */
 		private String computeSourceForEnumerator(IASTTranslationUnit ast, IEnumerator binding)
 				throws CoreException {
-			Long numValue = binding.getValue().numericalValue();
+			Number numValue = binding.getValue().numericalValue();
 			if (numValue != null) {
 				return numValue.toString();
 			} else {

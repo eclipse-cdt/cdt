@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 
 /**
  * @author jcamelon
@@ -51,5 +52,10 @@ public class CASTNullStatement extends ASTAttributeOwner implements IASTNullStat
 	public CASTNullStatement copy(CopyStyle style) {
 		CASTNullStatement copy = new CASTNullStatement();
 		return copy(copy, style);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		throw new UnsupportedOperationException();
 	}
 }

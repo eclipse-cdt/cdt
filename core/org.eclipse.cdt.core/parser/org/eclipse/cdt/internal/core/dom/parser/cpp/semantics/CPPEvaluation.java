@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -57,8 +58,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		return unknown;
 	}
 
-	protected static ICPPTemplateArgument[] instantiateArguments(ICPPTemplateArgument[] args,
-			InstantiationContext context) {
+	protected static ICPPTemplateArgument[] instantiateArguments(ICPPTemplateArgument[] args, InstantiationContext context) {
 		try {
 			return CPPTemplates.instantiateArguments(args, context, false);
 		} catch (DOMException e) {
@@ -126,7 +126,11 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		ICPPEvaluation innerEval = value.getEvaluation();
 		if (innerEval == null) {
-			return value.numericalValue() != null;
+			if(value instanceof IntegralValue) {
+				return value.numericalValue() != null;
+			} else {
+				return true;
+			}
 		}
 		return innerEval.isConstantExpression(point);
 	}
@@ -160,7 +164,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 				return EvalFixed.INCOMPLETE;
 			}
 			ICPPEvaluation eval = new EvalBinding(conversion, null, (IBinding) null);
-			argument = new EvalFunctionCall(new ICPPEvaluation[] {eval, argument}, (IBinding) null);
+			argument = new EvalFunctionCall(new ICPPEvaluation[] {eval, argument}, null, (IBinding) null);
 		}
 		return argument;
 	}

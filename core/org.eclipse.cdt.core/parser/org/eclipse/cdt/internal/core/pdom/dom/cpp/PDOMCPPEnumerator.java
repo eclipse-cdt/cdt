@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -100,6 +100,6 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return Value.UNKNOWN;
+		return IntegralValue.UNKNOWN;
 	}
 }

@@ -15,6 +15,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -23,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -38,6 +42,8 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -45,6 +51,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -55,8 +64,13 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil.Pair;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecConstructorChain;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -484,7 +498,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
 	}
 
-	static ICPPASTFunctionDefinition getFunctionDefinition(IASTNode def) {
+	public static ICPPASTFunctionDefinition getFunctionDefinition(IASTNode def) {
 		while (def != null && !(def instanceof IASTDeclaration)) {
 			def= def.getParent();
 		}
@@ -713,6 +727,88 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	public static ICPPEvaluation getReturnExpression(ICPPFunction function, IASTNode point) {
 		if (function instanceof ICPPComputableFunction) {
 			return ((ICPPComputableFunction) function).getReturnExpression(point);
+		}
+		return null;
+	}
+	
+	public static ICPPExecution getFunctionBodyExecution(ICPPFunction function) {
+		if (function instanceof ICPPComputableFunction) {
+			return ((ICPPComputableFunction) function).getFunctionBodyExecution();
+		}
+		return null;
+	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution() {
+		if(!isConstexpr())
+			return null;
+		return getFunctionBodyExecution(getDefinition());
+	}
+	
+	public static ICPPExecution getFunctionBodyExecution(IASTNode def) {
+		ICPPASTFunctionDefinition fnDef = getFunctionDefinition(def);
+		if (fnDef != null) {
+			// Make sure ambiguity resolution has been performed on the function body, even
+			// if it's a class method and we're still processing the class declaration.
+			((ASTNode) fnDef).resolvePendingAmbiguities();
+			if(fnDef.getBody() instanceof CPPASTCompoundStatement) {
+				CPPASTCompoundStatement body = (CPPASTCompoundStatement)fnDef.getBody();
+				return body.getExecution();
+			}
+		}
+		return null;
+	}
+	
+	public static ICPPExecution getConstructorChainExecution(ICPPFunction function) {
+		if (function instanceof ICPPComputableFunction) {
+			return ((ICPPComputableFunction) function).getConstructorChainExecution();
+		}
+		return null;
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return getConstructorChainExecution(getDefinition());
+	}
+	
+	public static ICPPExecution getConstructorChainExecution(IASTNode def) {
+		ICPPASTFunctionDefinition fnDef = getFunctionDefinition(def);
+		if (fnDef != null) {
+			final ICPPASTConstructorChainInitializer[] ccInitializers = fnDef.getMemberInitializers();
+			final List<Pair<IBinding, ICPPEvaluation>> resultPairs = new ArrayList<Pair<IBinding, ICPPEvaluation>>();
+			for(ICPPASTConstructorChainInitializer ccInitializer : ccInitializers) {
+				final IBinding member = ccInitializer.getMemberInitializerId().resolveBinding();
+				if(member instanceof ICPPField) {
+					final ICPPField fieldMember = (ICPPField)member;
+					final ICPPEvaluation memberEval = getMemberEvaluation(fieldMember, ccInitializer, fnDef);
+					final Pair<IBinding, ICPPEvaluation> resultPair = new Pair<IBinding, ICPPEvaluation>(fieldMember, memberEval);
+					resultPairs.add(resultPair);
+				} else if(member instanceof ICPPConstructor) {
+					final ICPPConstructor ctorMember = (ICPPConstructor)member;
+					final IASTInitializer initializer = ccInitializer.getInitializer();
+					if (initializer instanceof ICPPASTConstructorInitializer) {
+						final ICPPClassType baseClassType = (ICPPClassType)ctorMember.getOwner();				
+						EvalConstructor memberEval = new EvalConstructor(baseClassType, ctorMember, EvalConstructor.extractArguments(initializer), fnDef);
+						final Pair<IBinding, ICPPEvaluation> resultPair = new Pair<IBinding, ICPPEvaluation>(ctorMember, memberEval);
+						resultPairs.add(resultPair);
+					}
+				}
+			}
+			return new ExecConstructorChain(resultPairs);
+		}
+		return null;
+	}
+	
+	private static ICPPEvaluation getMemberEvaluation(ICPPField member, ICPPASTConstructorChainInitializer chainInitializer, IASTNode point) {
+		final IASTInitializer initializer = chainInitializer.getInitializer();
+		if(initializer instanceof ICPPASTInitializerClause) {
+			return ((ICPPASTInitializerClause) initializer).getEvaluation();
+		} else if(initializer instanceof ICPPASTConstructorInitializer) {
+			ICPPConstructor constructor = (ICPPConstructor)CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
+			if (constructor == null) {
+				return new EvalTypeId(member.getType(), point, EvalConstructor.extractArguments(initializer));
+			}
+			return new EvalConstructor(member.getType(), constructor, EvalConstructor.extractArguments(initializer), point);
 		}
 		return null;
 	}

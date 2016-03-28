@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
 
 /**
  * This interface accommodates C++ allows for broader while loop syntax.
@@ -21,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTWhileStatement extends IASTWhileStatement {
+public interface ICPPASTWhileStatement extends IASTWhileStatement, ICPPExecutionOwner {
 	/**
 	 * In C++ conditions can be declarations w/side effects.
 	 */

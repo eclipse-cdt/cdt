@@ -52,7 +52,7 @@ public class QEnum implements IQEnum {
 			this.name = enumerator.getName();
 
 			IValue val = enumerator.getValue();
-			this.ordinal = val == null ? null : val.numericalValue();
+			this.ordinal = val == null ? null : val.numericalValue().longValue();
 		}
 
 		@Override

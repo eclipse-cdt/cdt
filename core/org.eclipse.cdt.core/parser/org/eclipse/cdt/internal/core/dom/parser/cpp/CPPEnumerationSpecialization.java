@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -67,7 +67,7 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 			IEnumerator enumerator = enumerators[i];
 			InstantiationContext context = new InstantiationContext(tpMap, this, point);
 			IValue specializedValue =
-					CPPTemplates.instantiateValue(enumerator.getValue(), context, Value.MAX_RECURSION_DEPTH);
+					CPPTemplates.instantiateValue(enumerator.getValue(), context, IntegralValue.MAX_RECURSION_DEPTH);
 			IType internalType = null;
 			if (fFixedType == null && enumerator instanceof ICPPInternalEnumerator) {
 				internalType = ((ICPPInternalEnumerator) enumerator).getInternalType();

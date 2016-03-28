@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
@@ -82,6 +82,6 @@ public class C99Enumerator extends PlatformObject implements IC99Binding, IEnume
 
 	@Override
 	public IValue getValue() {
-		return Value.UNKNOWN;
+		return IntegralValue.UNKNOWN;
 	}
 }

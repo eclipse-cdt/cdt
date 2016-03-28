@@ -73,4 +73,9 @@ public class PDOMCPPFieldTemplatePartialSpecialization extends PDOMCPPVariableTe
 			return null;
 		return new PDOMCPPFieldTemplatePartialSpecialization(getLinkage(), rec);
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return -1;
+	}
 }

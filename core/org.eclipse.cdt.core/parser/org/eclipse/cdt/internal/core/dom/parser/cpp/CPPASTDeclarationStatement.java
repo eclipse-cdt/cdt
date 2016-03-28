@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDeclarationStatement;
 
 /**
  * @author jcamelon
@@ -115,5 +116,14 @@ public class CPPASTDeclarationStatement extends ASTNode
 	public void addAttributeSpecifier(IASTAttributeSpecifier attributeSpecifier) {
 		// Declaration statements don't have attributes.
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		if(declaration instanceof ICPPExecutionOwner) {
+			ICPPExecutionOwner execOwner = (ICPPExecutionOwner)declaration;
+			return new ExecDeclarationStatement(execOwner.getExecution());
+		}
+		return null;
 	}
 }

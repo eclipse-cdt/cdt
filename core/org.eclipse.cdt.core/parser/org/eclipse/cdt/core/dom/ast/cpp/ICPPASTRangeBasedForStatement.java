@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
 
 /**
  * Represents a range-based 'for' loop.
@@ -26,7 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @since 5.3
  */
 public interface ICPPASTRangeBasedForStatement
-		extends IASTStatement, IASTImplicitNameOwner, IASTImplicitDestructorNameOwner {
+		extends IASTStatement, IASTImplicitNameOwner, IASTImplicitDestructorNameOwner, ICPPExecutionOwner {
 	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty(
 			"ICPPASTRangeBasedForStatement.DECLARATION [IASTDeclaration]"); //$NON-NLS-1$
 	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(

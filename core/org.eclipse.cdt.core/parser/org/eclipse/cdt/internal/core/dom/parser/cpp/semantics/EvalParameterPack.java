@@ -18,8 +18,8 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -85,7 +85,7 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(fExpansionPattern);		
+		return IntegralValue.create(fExpansionPattern);		
 	}
 
 	@Override
@@ -102,13 +102,14 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
-		ICPPEvaluation expansionPattern = fExpansionPattern.computeForFunctionCall(parameterMap,
-				context.recordStep());
-		if (expansionPattern == fExpansionPattern)
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		ICPPEvaluation expansionPattern = fExpansionPattern.computeForFunctionCall(record, context.recordStep());
+		if (expansionPattern == fExpansionPattern) {
 			return this;
-		return new EvalParameterPack(expansionPattern, getTemplateDefinition());
+		}
+		
+		EvalParameterPack evalParamPack = new EvalParameterPack(expansionPattern, getTemplateDefinition());
+		return evalParamPack;
 	}
 
 	@Override

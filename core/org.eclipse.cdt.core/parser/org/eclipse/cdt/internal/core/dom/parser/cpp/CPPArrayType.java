@@ -22,13 +22,14 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.core.runtime.CoreException;
 
 public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableType {
     private IType type;
     private IASTExpression sizeExpression;
-    private IValue value= Value.NOT_INITIALIZED;
+    private IValue value= IntegralValue.NOT_INITIALIZED;
 
     public CPPArrayType(IType type, IValue value) {
     	this.value= value;
@@ -78,18 +79,18 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 
     @Override
 	public IValue getSize() {
-    	if (value != Value.NOT_INITIALIZED)
+    	if (value != IntegralValue.NOT_INITIALIZED)
     		return value;
     	
     	if (sizeExpression == null)
     		return value= null;
 
-    	return value= Value.create(sizeExpression);
+    	return value= ValueFactory.create(sizeExpression);
     }
 
     @Override
     public boolean hasSize() {
-    	return value == Value.NOT_INITIALIZED ? sizeExpression != null : value != null;
+    	return value == IntegralValue.NOT_INITIALIZED ? sizeExpression != null : value != null;
     }
 
     @Override
@@ -125,9 +126,9 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 			return;
 		} 
 		
-		Long num= val.numericalValue();
+		Number num= val.numericalValue();
 		if (num != null) {
-			long lnum= num;
+			long lnum= num.longValue();
 			if (lnum >= 0) {
 				buffer.putShort((short) (firstBytes | ITypeMarshalBuffer.FLAG1));
 				buffer.putLong(lnum);
@@ -143,7 +144,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IValue value= null;
 		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
-			value = Value.create(buffer.getLong());
+			value = IntegralValue.create(buffer.getLong());
 		} else if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0) {
 			value = buffer.unmarshalValue();
 		}

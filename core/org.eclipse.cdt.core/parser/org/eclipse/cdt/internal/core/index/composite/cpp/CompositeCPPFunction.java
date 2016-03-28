@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -142,5 +143,15 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 	@Override
 	public ICPPEvaluation getReturnExpression(IASTNode point) {
 		return CPPFunction.getReturnExpression((ICPPFunction) rbinding, point);
+	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution() {
+		return CPPFunction.getFunctionBodyExecution((ICPPFunction) rbinding);
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return CPPFunction.getConstructorChainExecution((ICPPFunction) rbinding);
 	}
 }

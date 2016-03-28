@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
@@ -37,7 +37,7 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 			fEvaluation= evaluation;
 		} else {
 			IValue value = evaluation.getValue(point);
-			if (value == Value.ERROR) {
+			if (value == IntegralValue.ERROR) {
 				fEvaluation = EvalFixed.INCOMPLETE; 
 			} else {
 				fEvaluation= new EvalFixed(evaluation.getType(point),

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 
 /**
  * Binding for implicit constructors (default and copy constructor).
@@ -32,5 +33,20 @@ public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPCon
 
 	private static ICPPFunctionType createFunctionType(IParameter[] params) {
 		return CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, params, false, false);
+	}
+	
+	
+	/*
+	 *	From $12.1 / 5:
+	 *	The implicitly-defined default constructor performs the set of initializations of the class that would
+	 *	be performed by a user-written default constructor for that class with no ctor-initializer (12.6.2) and 
+	 *	an empty compound-statement. […] If that user-written default constructor would satisfy the requirements 
+	 *	of a constexpr constructor (7.1.5), the implicitly-defined default constructor is constexpr.
+	 *
+	 * Therefore, an implicitly-defined constructor should be considered constexpr if the class type is a literal type.
+	*/
+	@Override
+	public boolean isConstexpr() {		
+		return TypeTraits.isLiteralClass(getClassOwner(), null);
 	}
 }

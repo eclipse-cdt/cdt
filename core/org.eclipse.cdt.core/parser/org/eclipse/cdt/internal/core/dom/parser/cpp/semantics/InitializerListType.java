@@ -11,11 +11,14 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Wrapper for initializer lists to allow for participation in the overload resolution.
  */
-class InitializerListType implements IType {
+public class InitializerListType implements IType, ISerializableType {
 	private final EvalInitList fInitializerList;
 
 	public InitializerListType(EvalInitList exprEvalInitList) {
@@ -39,5 +42,21 @@ class InitializerListType implements IType {
 			// Will not happen, we IType extends Clonable.
 			return null;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "InitializerListType";		//$NON-NLS-1$
+	}
+
+	@Override
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		buffer.putShort(ITypeMarshalBuffer.INITIALIZER_LIST_TYPE);
+		buffer.marshalEvaluation(fInitializerList, true);
+	}
+	
+	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		EvalInitList evalInitList = (EvalInitList)buffer.unmarshalEvaluation();
+		return new InitializerListType(evalInitList);
 	}
 }

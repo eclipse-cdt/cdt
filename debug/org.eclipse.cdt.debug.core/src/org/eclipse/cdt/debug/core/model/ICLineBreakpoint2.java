@@ -56,6 +56,18 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
      * This attribute is a <code>String</code>.
      */
     public static final String REQUESTED_SOURCE_HANDLE = "requestedSourceHandle"; //$NON-NLS-1$ 
+    
+    
+    
+    /**
+	 * @since 8.0
+	 * 
+	 * TODO I don't know what to do here
+	 */
+    public static final String MOVE_BACK_BREAKPOINT = "moveBackBreakpoint"; //$NON-NLS-1$ 
+
+    
+    
 
     /**
      * Returns the line number where the breakpoint was set before it was relocated to a 

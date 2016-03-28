@@ -200,10 +200,9 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 						}
 						else if ( property.equals( IMarker.LINE_NUMBER ) ) {
 							if (breakpoint instanceof ICLineBreakpoint2) {
-								// Must set the REQUESTED_LINE attribute first, or else the breakpoint
-								// message will be refreshed improperly
-								((ICLineBreakpoint2)breakpoint).setRequestedLine(getInt(IMarker.LINE_NUMBER));
-								((ICLineBreakpoint2)breakpoint).setInstalledLineNumber(getInt(IMarker.LINE_NUMBER));
+								// refresh message and line number
+								breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, getInt(IMarker.LINE_NUMBER));
+								breakpoint.getMarker().setAttribute(IMarker.MESSAGE, getString(IMarker.MESSAGE));
 							} else {
 								// already workspace runnable, setting markers are safe
 								breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, getInt(IMarker.LINE_NUMBER));

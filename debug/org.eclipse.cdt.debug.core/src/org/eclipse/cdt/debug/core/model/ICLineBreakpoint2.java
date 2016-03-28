@@ -56,6 +56,19 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
      * This attribute is a <code>String</code>.
      */
     public static final String REQUESTED_SOURCE_HANDLE = "requestedSourceHandle"; //$NON-NLS-1$ 
+    
+    /**
+	 * Breakpoint attribute which is set if the installed line number of a breakpoint
+	 * is changed.
+	 * 
+	 * Triggers an update of the installed location, if set.
+	 * 
+	 * This attribute is a <code>Boolean</code>.
+	 * 
+	 * @since 8.0
+	 * 
+	 */
+    public static final String RESET_INSTALLED_LOCATION = "resetInstalledLocation"; //$NON-NLS-1$ 
 
     /**
      * Returns the line number where the breakpoint was set before it was relocated to a 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -24,7 +24,7 @@ public class ObjectMap extends ObjectTable<Object> {
         @Override
 		public Object put(Object key, Object value) { throw new UnsupportedOperationException(); }
     };
-    
+
 	private Object[] valueTable;
 
 	public ObjectMap(int initialSize) {
@@ -39,13 +39,13 @@ public class ObjectMap extends ObjectTable<Object> {
 	    System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
 	    return newMap;
 	}
-	
+
 	@Override
 	final public void clear() {
 	    super.clear();
 	    Arrays.fill(valueTable, null);
 	}
-	
+
 	@Override
 	protected void resize(int size) {
 		Object[] oldValueTable = valueTable;
@@ -53,7 +53,7 @@ public class ObjectMap extends ObjectTable<Object> {
 		System.arraycopy(oldValueTable, 0, valueTable, 0, oldValueTable.length);
 		super.resize(size);
 	}
-	
+
 	public Object put(Object key, Object value) {
 		int i = add(key);
 		Object oldvalue = valueTable[i];
@@ -71,10 +71,10 @@ public class ObjectMap extends ObjectTable<Object> {
 	final public Object getAt(int i) {
 	    if (i < 0 || i > currEntry)
 	        return null;
-	    
+
 	    return valueTable[i];
 	}
-	
+
 	final public Object remove(Object key) {
 	    if (key == null)
 	        return null;
@@ -84,10 +84,10 @@ public class ObjectMap extends ObjectTable<Object> {
 
 		Object value = valueTable[i];
 		removeEntry(i);
-		
+
 		return value;
 	}
-	
+
 	@Override
 	final protected void removeEntry(int i) {
 		// Remove the entry from the valueTable, shifting everything over if necessary
@@ -98,14 +98,14 @@ public class ObjectMap extends ObjectTable<Object> {
 		// Make sure you remove the value before calling super where currEntry will change
 		super.removeEntry(i);
 	}
-	
+
 	@Override
     protected int partition(Comparator<Object> c, int p, int r) {
         Object x = keyTable[p];
         Object temp = null;
         int i = p;
         int j = r;
-        
+
         while (true) {
             while (c.compare(keyTable[j], x) > 0) {
             	j--;
@@ -115,12 +115,12 @@ public class ObjectMap extends ObjectTable<Object> {
                 	i++;
                 }
             }
-            
+
             if (i < j) {
                 temp = keyTable[j];
                 keyTable[j] = keyTable[i];
                 keyTable[i] = temp;
-                
+
                 temp = valueTable[j];
                 valueTable[j] = valueTable[i];
                 valueTable[i] = temp;

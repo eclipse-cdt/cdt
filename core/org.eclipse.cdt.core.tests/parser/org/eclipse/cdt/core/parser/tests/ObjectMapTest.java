@@ -14,6 +14,8 @@
  */
 package org.eclipse.cdt.core.parser.tests;
 
+import java.util.Random;
+
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
@@ -24,7 +26,9 @@ import junit.framework.TestCase;
  */
 public class ObjectMapTest extends TestCase {
 
-    static public class HashObject {
+    private static class HashObject {
+        final public int hash;
+
         HashObject(int h) {
             hash = h;
         }
@@ -33,7 +37,6 @@ public class ObjectMapTest extends TestCase {
 		public int hashCode() {
             return hash;
         }
-        final public int hash;
     }
 
     public void insertContents(ObjectMap map, Object[][] contents) throws Exception {
@@ -60,7 +63,7 @@ public class ObjectMapTest extends TestCase {
         assertContents(map, contents);
 
         assertEquals(map.size(), 1);
-        assertEquals(map.capacity(), 2);
+        assertEquals(map.capacity(), 8);
     }
 
     public void testSimpleCollision() throws Exception{
@@ -75,7 +78,7 @@ public class ObjectMapTest extends TestCase {
         insertContents(map, contents);
 
         assertEquals(map.size(), 2);
-        assertEquals(map.capacity(), 2);
+        assertEquals(map.capacity(), 8);
 
         assertContents(map, contents);
     }
@@ -84,7 +87,7 @@ public class ObjectMapTest extends TestCase {
         ObjectMap map = new ObjectMap(1);
 
         assertEquals(map.size(), 0);
-        assertEquals(map.capacity(), 2);
+        assertEquals(map.capacity(), 8);
 
         Object[][] res = new Object[][] { { "0", "o0" },
 							              { "1", "o1" },
@@ -101,7 +104,7 @@ public class ObjectMapTest extends TestCase {
         ObjectMap map = new ObjectMap(1);
 
         assertEquals(map.size(), 0);
-        assertEquals(map.capacity(), 2);
+        assertEquals(map.capacity(), 8);
 
         Object[][] res = new Object[][] { { new HashObject(0), "o0" },
 							              { new HashObject(1), "o1" },
@@ -118,13 +121,13 @@ public class ObjectMapTest extends TestCase {
         ObjectMap map = new ObjectMap(1);
 
         assertEquals(map.size(), 0);
-        assertEquals(map.capacity(), 2);
+        assertEquals(map.capacity(), 8);
 
         Object[][] res = new Object[][] { { "0", "o0" },
 							              { "1", "o1" } };
 
         insertContents(map, res);
-        assertEquals(map.capacity(), 2);
+        assertEquals(map.capacity(), 8);
         assertContents(map, res);
 
         res = new Object[][]{ { "0",  "o00" },
@@ -134,21 +137,6 @@ public class ObjectMapTest extends TestCase {
 
         insertContents(map, res);
         assertContents(map, res);
-    }
-
-    public void testResizeResolvesCollision() throws Exception{
-        ObjectMap map = new ObjectMap(2);
-
-        Object k1 = new HashObject(0);
-        Object k2 = new HashObject(1);
-        Object k3 = new HashObject(4); // Collision with 0 in a table capacity 2, but ok in table capacity 4
-
-        Object[][] con = new Object[][] { { k1, "1" },
-                						  { k2, "2" },
-                						  { k3, "3" } };
-
-        insertContents(map, con);
-        assertContents(map, con);
     }
 
 	public void testMapAdd() {
@@ -161,14 +149,25 @@ public class ObjectMapTest extends TestCase {
 		Object value2 = map.get(key2);
 		assertEquals(value1, value2);
 
-		for (int i = 0; i < 5; ++i) {
+		for (int i = 0; i < 25; ++i) {
 			map.put(("ikey" + i).toCharArray(), new Integer(i));
 		}
 
-		Object ivalue1 = map.get("ikey1".toCharArray());
-		assertEquals(ivalue1, new Integer(1));
+		for (int i = 0; i < 25; ++i) {
+			Object ivalue1 = map.get(("ikey" + i).toCharArray());
+			assertEquals(i, ivalue1);
+		}
+	}
 
-		Object ivalue4 = map.get("ikey4".toCharArray());
-		assertEquals(ivalue4, new Integer(4));
+	public void testCollisionRatio() {
+		Random random = new Random(239);
+		CharArrayObjectMap map = new CharArrayObjectMap(1);
+		for (int i = 0; i < 20000; i++) {
+			int r = random.nextInt();
+			map.put(("key" + Integer.toUnsignedString(i)).toCharArray(), i);
+			double collisionRatio = (double) map.countCollisions() / map.size();
+			assertTrue(String.format("Collision ratio %.3f is unexpectedly high for map size of %d.", collisionRatio, map.size()),
+					collisionRatio <= 0.4);
+		}
 	}
 }

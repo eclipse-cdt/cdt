@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_867cee65",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IMemorySpaces2.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-29T19:53:59Z",
+      "side": 1,
+      "message": "I don\u0027t understand this very well.\nSay I pass an expression context, I can extract the CommandControl context from its ancestors, and use it to \nask what is the default memory context for this debug session, no?",
+      "revId": "23585ae949db5271d42cb3fa15c838cdf15208a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_06b9beaf",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IMemorySpaces2.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-29T19:53:59Z",
+      "side": 1,
+      "message": "Since we\u0027re adding a default method, how about adding it in IMemorySpaces?\nWould there be a reason for someone to want to extend IMemorySpaces only, and not want this new method?\t\nThe benefit is that we keep this IMemorySapces2 to a minimum.",
+      "revId": "23585ae949db5271d42cb3fa15c838cdf15208a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

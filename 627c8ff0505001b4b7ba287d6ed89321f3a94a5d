@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_1bf11b56",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T16:57:52Z",
+      "side": 1,
+      "message": "This method can be implemented in the base MIRegisters class, \nand be used by other non GDB implementations.\n  This is possible since the interface you use is already available in MI.",
+      "revId": "627c8ff0505001b4b7ba287d6ed89321f3a94a5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9b20cb59",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T16:57:52Z",
+      "side": 1,
+      "message": "I think it\u0027s better to use IStatus.WARNING instead as this is really not an Error, I was considering .INFO although that would make the query successful and would require additional checks on the return handler.",
+      "revId": "627c8ff0505001b4b7ba287d6ed89321f3a94a5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1b0cbbf4",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1232,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T16:57:52Z",
+      "side": 1,
+      "message": "\u0027theOne\u0027 does not need to be an array",
+      "revId": "627c8ff0505001b4b7ba287d6ed89321f3a94a5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9b37eb96",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1235,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T16:57:52Z",
+      "side": 1,
+      "message": "The call to getRegisterData is not needed",
+      "revId": "627c8ff0505001b4b7ba287d6ed89321f3a94a5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3b67b79d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1239,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T16:57:52Z",
+      "side": 1,
+      "message": "this line will be probably gone based on the previous comment, \nif not, this should be replaced by handleSuccess, and DSF will take care of the \u0027done\u0027 for the request monitor on error.",
+      "revId": "627c8ff0505001b4b7ba287d6ed89321f3a94a5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bb2f4740",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1248,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T16:57:52Z",
+      "side": 1,
+      "message": "replace to handleSuccess, \nso the error case handling is left to the DSF framework, i.e. it will call done and the status will be set at the time the error status is set.",
+      "revId": "627c8ff0505001b4b7ba287d6ed89321f3a94a5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9b728b55",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1259,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T16:57:52Z",
+      "side": 1,
+      "message": "I think is clearer if we initialize the String return value to null here, and move the declaration of \u0027data\u0027 inside the try block.",
+      "revId": "627c8ff0505001b4b7ba287d6ed89321f3a94a5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5b6c837f",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1265,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T16:57:52Z",
+      "side": 1,
+      "message": "This catch could be join together with the parent try",
+      "revId": "627c8ff0505001b4b7ba287d6ed89321f3a94a5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

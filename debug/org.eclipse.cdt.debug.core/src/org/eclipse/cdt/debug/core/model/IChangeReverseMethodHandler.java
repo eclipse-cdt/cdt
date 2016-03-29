@@ -31,12 +31,16 @@ public interface IChangeReverseMethodHandler extends IReverseToggleHandler, IDeb
 
    /**
     * Return the reverse debugging method currently selected.
+    * 
+    * @param context is the currently active context in the debug view
     */
     ReverseDebugMethod getReverseDebugMethod(Object context);
 
     /**
      * Return the reverse debugging method that was selected before the
      * currently selected one.
+     * 
+     * @param context is the currently active context in the debug view
      */
     ReverseDebugMethod getPreviousReverseDebugMethod(Object context);
 }

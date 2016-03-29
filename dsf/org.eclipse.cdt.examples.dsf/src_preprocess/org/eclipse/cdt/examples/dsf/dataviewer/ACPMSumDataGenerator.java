@@ -80,11 +80,13 @@ public class ACPMSumDataGenerator
         }
     }    
     
-    public void getCount(final DataRequestMonitor<Integer> rm) {
+    @Override
+	public void getCount(final DataRequestMonitor<Integer> rm) {
         // Artificially delay the retrieval of the sum data to simulate
         // real processing time.
         fExecutor.schedule( new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     // Create the transaction here to put all the ugly
                     // code in one place.
                     new Transaction<Integer>() {
@@ -129,11 +131,13 @@ public class ACPMSumDataGenerator
         return maxCount;
     }
 
-    public void getValue(final int index, final DataRequestMonitor<Integer> rm) 
+    @Override
+	public void getValue(final int index, final DataRequestMonitor<Integer> rm) 
     {
         // Add a processing delay.
         fExecutor.schedule( new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     new Transaction<Integer>() {
                         @Override
                         protected Integer process() 
@@ -175,7 +179,8 @@ public class ACPMSumDataGenerator
         return sum;
     }
     
-    public void shutdown(final RequestMonitor rm) {
+    @Override
+	public void shutdown(final RequestMonitor rm) {
         for (DataGeneratorCacheManager dataGeneratorCM : fDataGeneratorCMs) {
             dataGeneratorCM.getDataGenerator().removeListener(this);
             dataGeneratorCM.dispose();
@@ -184,33 +189,39 @@ public class ACPMSumDataGenerator
         rm.done();
     }
 
-    public void addListener(final Listener listener) {
+    @Override
+	public void addListener(final Listener listener) {
         // Must access fListeners on executor thread.
         try {
             fExecutor.execute( new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     fListeners.add(listener);
                 }
             });
         } catch (RejectedExecutionException e) {}
     }
 
-    public void removeListener(final Listener listener) {
+    @Override
+	public void removeListener(final Listener listener) {
         // Must access fListeners on executor thread.
         try {
             fExecutor.execute( new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     fListeners.remove(listener);
                 }
             });
         } catch (RejectedExecutionException e) {}
     }
 
-    public void countChanged() {
+    @Override
+	public void countChanged() {
         // Must access fListeners on executor thread.          
         try {
             fExecutor.execute( new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     for (Listener listener : fListeners) {
                         listener.countChanged();
                     }
@@ -219,11 +230,13 @@ public class ACPMSumDataGenerator
         } catch (RejectedExecutionException e) {}
     }
     
-    public void valuesChanged(final Set<Integer> changed) {
+    @Override
+	public void valuesChanged(final Set<Integer> changed) {
         // Must access fListeners on executor thread.
         try {
             fExecutor.execute( new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     for (Object listener : fListeners) {
                         ((Listener)listener).valuesChanged(changed);
                     }

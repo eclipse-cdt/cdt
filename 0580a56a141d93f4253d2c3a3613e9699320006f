@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_06c7fe3a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/PlainTextExporter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T20:02:08Z",
+      "side": 1,
+      "message": "The name shall be consistent with dataChunksPerLine, \ne.g. this one could become dataChunkSize.\n\nI am not sure if \u0027chunk\u0027 is clearer than \u0027cell\u0027, since the output looks like a matrix, may be cell would be preferable.",
+      "revId": "0580a56a141d93f4253d2c3a3613e9699320006f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_066b7e93",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/PlainTextExporter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-03-29T20:02:08Z",
+      "side": 1,
+      "message": "The only concern of changing the layout would be the potential impact for memory import,  unlikely! but needs to be verified !",
+      "range": {
+        "startLine": 492,
+        "startChar": 87,
+        "endLine": 493,
+        "endChar": 63
+      },
+      "revId": "0580a56a141d93f4253d2c3a3613e9699320006f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

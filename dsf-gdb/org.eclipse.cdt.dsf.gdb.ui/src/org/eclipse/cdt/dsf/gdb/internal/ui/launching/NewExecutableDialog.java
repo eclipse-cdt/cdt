@@ -13,11 +13,17 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import java.io.File;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.Messages;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,31 +40,33 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewExecutableDialog extends TitleAreaDialog {
 
-	public static final int REMOTE = 0x1;
-
-	private int fFlags = 0;
 	private NewExecutableInfo fInfo = null;
 	
 	private Text fHostBinaryText;
 	private Text fTargetBinaryText;
 	private Text fArgumentsText;
 
-	public NewExecutableDialog( Shell parentShell, int flags ) {
+	private Button fStopInMain;
+	private Text fStopInMainSymbol;
+
+	public NewExecutableDialog( Shell parentShell, NewExecutableInfo info ) {
 		super( parentShell );
+		assert info != null;
 		setShellStyle( getShellStyle() | SWT.RESIZE );
-		fFlags = flags;
+		fInfo = info;
 	}
 
 	@Override
 	protected Control createContents( Composite parent ) {
 		Control control = super.createContents( parent );
+		initialize();
 		validate();
 		return control;
 	}
 
 	@Override
 	protected Control createDialogArea( Composite parent ) {
-		boolean remote = (fFlags & REMOTE) > 0;
+		boolean remote = fInfo.getSessionType() == SessionType.REMOTE;
 
 		getShell().setText( Messages.GdbDebugNewExecutableCommand_Debug_New_Executable ); 
 		setTitle( Messages.GdbDebugNewExecutableCommand_Select_Binary );
@@ -118,23 +126,74 @@ public class NewExecutableDialog extends TitleAreaDialog {
 		fArgumentsText = new Text( comp, SWT.BORDER );
 		fArgumentsText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
 
+		createOptionsArea(comp);
+
 		return control;
+	}
+
+	protected void createOptionsArea(Composite parent) {
+		Composite optionsComp = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginWidth = layout.marginHeight = 0;
+		optionsComp.setLayout(layout);
+		optionsComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+
+		fStopInMain = new Button(optionsComp, SWT.CHECK);
+		fStopInMain.setText(LaunchMessages.getString("CDebuggerTab.Stop_at_main_on_startup")); //$NON-NLS-1$
+		fStopInMain.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				fStopInMainSymbol.setEnabled(fStopInMain.getSelection());
+				validate();
+			}
+		});
+		fStopInMainSymbol = new Text(optionsComp, SWT.SINGLE | SWT.BORDER);
+		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, false, false);
+		gridData.widthHint = 100;
+		fStopInMainSymbol.setLayoutData(gridData);
+		fStopInMainSymbol.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent evt) {
+				validate();
+			}
+		});
+		fStopInMainSymbol.getAccessible().addAccessibleListener(
+			new AccessibleAdapter() {
+				@Override
+				public void getName(AccessibleEvent e) {
+					e.result = LaunchMessages.getString("CDebuggerTab.Stop_at_main_on_startup"); //$NON-NLS-1$
+				}
+			}
+		);
+		
 	}
 
 	@Override
 	protected void okPressed() {
-		String targetPath = ( fTargetBinaryText != null ) ? fTargetBinaryText.getText().trim() : null;
+		fInfo.setHostPath(fHostBinaryText.getText().trim());
+		String targetPath = fTargetBinaryText != null ? fTargetBinaryText.getText().trim() : null;
+		fInfo.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, targetPath);
 		String args = fArgumentsText.getText().trim();
-		fInfo = new NewExecutableInfo( fHostBinaryText.getText().trim(), targetPath, args );
+		fInfo.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, args);
+		saveOptions();
 		super.okPressed();
 	}
 
-	public NewExecutableInfo getExecutableInfo() {
-		return fInfo;
+	protected void initialize() {
+		fHostBinaryText.setText(fInfo.getHostPath());
+		if (fTargetBinaryText != null) {
+			String targetPath = fInfo.getTargetPath();
+			fTargetBinaryText.setText(targetPath != null ? targetPath : ""); //$NON-NLS-1$
+		}
+		fArgumentsText.setText(fInfo.getArguments());
+		if (fStopInMain != null && fStopInMainSymbol != null) {
+			fStopInMain.setSelection((Boolean)fInfo.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN));
+			fStopInMainSymbol.setText((String)fInfo.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL));
+		}
 	}
-	
-	private void validate() {
-		boolean remote = (fFlags & REMOTE) > 0;
+
+	protected void validate() {
+		boolean remote = fInfo.getSessionType() == SessionType.REMOTE;
 		StringBuilder sb = new StringBuilder();
 		String hostBinary = fHostBinaryText.getText().trim();
 		if ( hostBinary.isEmpty() ) {
@@ -163,7 +222,25 @@ public class NewExecutableDialog extends TitleAreaDialog {
 				sb.append( Messages.GdbDebugNewExecutableCommand_Binary_on_target_must_be_specified );
 			}
 		}
+		if (fStopInMain != null && fStopInMainSymbol != null) {
+			// The "Stop on startup at" field must not be empty
+			String mainSymbol = fStopInMainSymbol.getText().trim();
+			if (fStopInMain.getSelection() && mainSymbol.length() == 0) {
+				if (sb.length() > 0) {
+					sb.append("\n "); //$NON-NLS-1$
+				}
+				sb.append(LaunchMessages.getString("CDebuggerTab.Stop_on_startup_at_can_not_be_empty")); //$NON-NLS-1$
+			}
+		}
+
 		setErrorMessage( ( sb.length() != 0 ) ? sb.toString() : null );
 		getButton( IDialogConstants.OK_ID ).setEnabled( getErrorMessage() == null );
+	}
+	
+	protected void saveOptions() {
+		if (fStopInMain != null && fStopInMainSymbol != null) {
+			fInfo.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, Boolean.valueOf(fStopInMain.getSelection()));
+			fInfo.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, fStopInMainSymbol.getText().trim());
+		}
 	}
 }

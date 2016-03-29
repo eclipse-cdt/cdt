@@ -11,20 +11,39 @@
 
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 /**
  * This class provides information required to start 
  * debugging an executable. 
  */
 public class NewExecutableInfo {
-	private String fHostPath;
-	private String fTargetPath;
-	private String fArguments;
+	
+	public static final String ATTR_SESSION_TYPE = "sessionType"; //$NON-NLS-1$
 
-	public NewExecutableInfo(String hostPath, String targetPath, String args) {
+	final private SessionType fSessionType; 
+	private String fHostPath = ""; //$NON-NLS-1$
+
+	private Map<String, Object> fAttributes = new HashMap<String, Object>();
+
+	public NewExecutableInfo(SessionType sessionType) {		
 		super();
-		fHostPath = hostPath;
-		fTargetPath = targetPath;
-		fArguments = args;
+		fSessionType = sessionType;
+		setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, ""); //$NON-NLS-1$
+		setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
+		IPreferenceStore preferences = GdbUIPlugin.getDefault().getPreferenceStore();
+		setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
+			preferences.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN));
+		setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+			preferences.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL));
 	}
 	
 	/**
@@ -33,19 +52,55 @@ public class NewExecutableInfo {
 	public String getHostPath() {
 		return fHostPath;
 	}
-	
+
+	/**
+	 * Sets the host path
+	 */
+	public void setHostPath(String hostPath) {
+		fHostPath = hostPath;
+	}
+
 	/**
 	 * For remote sessions returns the path of the executable 
 	 * on the target. Otherwise returns null.
 	 */
 	public String getTargetPath() {
-		return fTargetPath;
+		return (String)fAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY);
 	}
 	
 	/**
 	 * Returns the arguments to pass to the executable, or null
 	 */
 	public String getArguments() {
-		return fArguments;
+		return (String)fAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS);
+	}
+	
+	/**
+	 * Returns the attribute map
+	 */
+	public Map<String, Object> getAttributes() {
+		return fAttributes;
+	}
+
+	/**
+	 * Returns the session type
+	 */
+	public SessionType getSessionType() {
+		return fSessionType;
+	}
+
+	/**
+	 * Performs cleanup
+	 */
+	public void dispose() {
+		fAttributes.clear();
+	}
+	
+	public Object getAttribute(String name) {
+		return fAttributes.get(name);
+	}
+	
+	public void setAttribute(String name, Object value) {
+		fAttributes.put(name, value);
 	}
 }

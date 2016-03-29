@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_12f10056",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/ICLineBreakpoint2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-03-29T02:20:54Z",
+      "side": 1,
+      "message": "We have until M7 for API changes that don\u0027t break the API.  However, the below is considered an API-breaking change by the API tool.  I believe this is the\ncase because if someone has extended this interface and has already define someting called MOVE_BACK_BREAKPOINT, then there will be a name clash.\nWhat this means is that you will not be able to put this in at all because we cannot break the CDT API after 9.0, since our upcoming releases\nwill be API-compatible releases.\nPersonally, considering the low-risk of actually having a name clash, I suggest asking for an exception on the mailing list and putting this in for M7.\nIf this cannot make it for M7 (you can actually just add this line, if you are too tight for the rest of the review), you will instead need\nto create a new ICLineBreakpoint3 interface...",
+      "revId": "d65659d5810a648584f1550ca977482f8e66b248",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_921d106e",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/ICLineBreakpoint2.java",
         "patchSetId": 1

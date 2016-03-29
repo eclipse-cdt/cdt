@@ -56,12 +56,14 @@ public class SyncDataViewer
         fDataGenerator.addListener(this);
     }
     
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         // Not used
     }
 
     
-    public Object[] getElements(Object inputElement) {
+    @Override
+	public Object[] getElements(Object inputElement) {
         
         // Create the query object for reading data count. 
         Query<Integer> countQuery = new Query<Integer>() {
@@ -126,16 +128,19 @@ public class SyncDataViewer
         return new Object[0];
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         fDataGenerator.removeListener(this);
     }
 
-    public void countChanged() {
+    @Override
+	public void countChanged() {
         // For any event from the generator, refresh the whole viewer.
         refreshViewer();
     }
     
-    public void valuesChanged(Set<Integer> indexes) {
+    @Override
+	public void valuesChanged(Set<Integer> indexes) {
         // For any event from the generator, refresh the whole viewer.
         refreshViewer();
     }
@@ -151,7 +156,8 @@ public class SyncDataViewer
         // thread before calling the viewer.
         Display display = fViewer.getControl().getDisplay(); 
         display.asyncExec( new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 if (!fViewer.getControl().isDisposed()) {
                     fViewer.refresh();
                 }

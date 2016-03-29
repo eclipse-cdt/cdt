@@ -52,11 +52,13 @@ public class AsyncSumDataGenerator implements IDataGenerator {
         fDataGenerators = generators;
     }    
     
-    public void getCount(final DataRequestMonitor<Integer> rm) {
+    @Override
+	public void getCount(final DataRequestMonitor<Integer> rm) {
         // Artificially delay the retrieval of the sum data to simulate
         // real processing time.
         fExecutor.schedule( new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     doGetCount(rm);
                 }
             }, 
@@ -102,12 +104,14 @@ public class AsyncSumDataGenerator implements IDataGenerator {
         crm.setDoneCount(fDataGenerators.length);
     }
 
-    public void getValue(final int index, final DataRequestMonitor<Integer> rm) 
+    @Override
+	public void getValue(final int index, final DataRequestMonitor<Integer> rm) 
     {
         // Artificially delay the retrieval of the sum data to simulate
         // real processing time.
         fExecutor.schedule( new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     doGetValue(index, rm);
                 }
             }, 
@@ -156,15 +160,18 @@ public class AsyncSumDataGenerator implements IDataGenerator {
         crm.setDoneCount(fDataGenerators.length);
     }
 
-    public void shutdown(RequestMonitor rm) {
+    @Override
+	public void shutdown(RequestMonitor rm) {
         rm.done();
     }
 
-    public void addListener(final Listener listener) {
+    @Override
+	public void addListener(final Listener listener) {
         // no events generated
     }
 
-    public void removeListener(Listener listener) {
+    @Override
+	public void removeListener(Listener listener) {
         // no events generated
     }
 

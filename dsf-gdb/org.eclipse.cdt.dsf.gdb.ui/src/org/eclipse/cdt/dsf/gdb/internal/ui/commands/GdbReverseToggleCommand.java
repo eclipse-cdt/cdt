@@ -279,12 +279,15 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
     	};
     	try {
     		fExecutor.execute(isToggledQuery);
-    		return isToggledQuery.get();
+    		return isToggledQuery.get(500, TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     	} catch (ExecutionException e) {
     	} catch (RejectedExecutionException e) {
     		// Can be thrown if the session is shutdown
-    	}
+        } catch (TimeoutException e) {
+        	// If we timeout, we default to false.
+        	// This is to avoid a deadlock
+        }
 
     	return false;
     }
@@ -390,6 +393,8 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
         } catch (ExecutionException e) {
         } catch (RejectedExecutionException e) {
         } catch (TimeoutException e) {
+        	// If we timeout, we default to OFF.
+        	// This is to avoid a deadlock
         }
 
         return ReverseDebugMethod.OFF;

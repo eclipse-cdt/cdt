@@ -420,32 +420,33 @@ public class PDAVirtualMachine {
         pdaVM.run();
     }
 
-    PDAVirtualMachine(String inputFile, boolean debug, int commandPort, int eventPort) throws IOException {
-        fFilename = inputFile;
+	PDAVirtualMachine(String inputFile, boolean debug, int commandPort, int eventPort) throws IOException {
+		fFilename = inputFile;
 
-        // Load all the code into memory
-        FileReader fileReader = new FileReader(inputFile);
-        StringWriter stringWriter = new StringWriter();
-        List<String> code = new LinkedList<String>();
-        int c = fileReader.read();
-        while (c != -1) {
-            if (c == '\n') {
-                code.add(stringWriter.toString().trim());
-                stringWriter = new StringWriter();
-            } else {
-                stringWriter.write(c);
-            }
-            c = fileReader.read();
-        }
-        code.add(stringWriter.toString().trim());
-        fCode = code.toArray(new String[code.size()]);
+		// Load all the code into memory
+		try (FileReader fileReader = new FileReader(inputFile)) {
+			StringWriter stringWriter = new StringWriter();
+			List<String> code = new LinkedList<String>();
+			int c = fileReader.read();
+			while (c != -1) {
+				if (c == '\n') {
+					code.add(stringWriter.toString().trim());
+					stringWriter = new StringWriter();
+				} else {
+					stringWriter.write(c);
+				}
+				c = fileReader.read();
+			}
+			code.add(stringWriter.toString().trim());
+			fCode = code.toArray(new String[code.size()]);
 
-        fLabels = mapLabels(fCode);
+			fLabels = mapLabels(fCode);
 
-        fDebug = debug;
-        fCommandPort = commandPort;
-        fEventPort = eventPort;
-    }
+			fDebug = debug;
+			fCommandPort = commandPort;
+			fEventPort = eventPort;
+		}
+	}
 
     /**
      * Initializes the labels map

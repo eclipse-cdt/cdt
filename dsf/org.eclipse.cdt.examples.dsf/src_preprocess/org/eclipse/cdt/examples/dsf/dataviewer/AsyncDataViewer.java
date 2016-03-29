@@ -79,16 +79,19 @@ public class AsyncDataViewer
         fDataGenerator.addListener(this);
     }    
     
-    public void dispose() {
+    @Override
+	public void dispose() {
         fDataGenerator.removeListener(this);
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         // Set the initial count to the viewer after the input is set.
         queryItemCount();
     }
 
-    public void updateElement(final int index) {
+    @Override
+	public void updateElement(final int index) {
         // Calculate the visible index range.
         final int topIdx = fViewer.getTable().getTopIndex();
         final int botIdx = topIdx + getVisibleItemCount(topIdx);
@@ -100,7 +103,8 @@ public class AsyncDataViewer
         // calls to be combined together improving performance of the viewer.
         fCancelCallsPending++;
         fDisplayExecutor.schedule(
-            new Runnable() { public void run() {
+            new Runnable() { @Override
+			public void run() {
                 cancelStaleRequests(topIdx, botIdx);
             }}, 
             1, TimeUnit.MILLISECONDS);
@@ -120,19 +124,22 @@ public class AsyncDataViewer
             itemCount - top);
     }   
     
-    @ThreadSafe
+    @Override
+	@ThreadSafe
     public void countChanged() {
         queryItemCount();
     }
     
-    @ThreadSafe
+    @Override
+	@ThreadSafe
     public void valuesChanged(final Set<Integer> indexes) {
         // Mark the changed items in table viewer as dirty, this will 
         // trigger update requests for these indexes if they are 
         // visible in the viewer.
         final TableViewer tableViewer = fViewer;
         fDisplayExecutor.execute( new Runnable() { 
-            public void run() {
+            @Override
+			public void run() {
                 if (!fViewer.getTable().isDisposed()) {
                     for (Integer index : indexes) {
                         tableViewer.clear(index);

@@ -107,14 +107,16 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         // Schedule a task to refresh the viewer periodically.
         fRefreshFuture = fDisplayExecutor.scheduleAtFixedRate(
             new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     queryItemCount();
                 }
             }, 
             UPDATE_INTERVAL, UPDATE_INTERVAL, TimeUnit.MILLISECONDS);
     }    
     
-    public void dispose() {
+    @Override
+	public void dispose() {
         // Cancel the periodic task of refreshing the view.
         fRefreshFuture.cancel(false);
         
@@ -147,12 +149,14 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         fItemDataRequestMonitors.clear();
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         // Set the initial count to the viewer after the input is set.
         queryItemCount();
     }
 
-    public void updateElement(final int index) {
+    @Override
+	public void updateElement(final int index) {
         // Calculate the visible index range.
         final int topIdx = fViewer.getTable().getTopIndex();
         final int botIdx = topIdx + getVisibleItemCount(topIdx);
@@ -164,7 +168,8 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         // calls to be combined together improving performance of the viewer.
         fCancelCallsPending++;
         fDisplayExecutor.execute(
-            new Runnable() { public void run() {
+            new Runnable() { @Override
+			public void run() {
                 cancelStaleRequests(topIdx, botIdx);
             }});
     }
@@ -205,7 +210,8 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         // if the cache is reset during processing by an event.  The request 
         // for data will be re-issued. 
         fDataExecutor.execute(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 new Transaction<Integer>() {
                     @Override
                     protected Integer process() 
@@ -274,7 +280,8 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         // if the cache is reset during processing by an event.  The request 
         // for data will be re-issued. 
         fDataExecutor.execute(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 new Transaction<String>() {
                     @Override
                     protected String process() 

@@ -47,9 +47,9 @@ import org.apache.tools.ant.util.FileUtils;
  */
 public class PreProcessor extends Task {
 	
-	private Vector fFileSets = new Vector();
+	private Vector<FileSet> fFileSets = new Vector<FileSet>();
 	private File fDestDir = null;
-	private Set fSymbols = new HashSet(); 
+	private Set<String> fSymbols = new HashSet<String>(); 
 	private FileUtils fUtils = FileUtils.getFileUtils();
 	
 	// possible states
@@ -116,7 +116,7 @@ public class PreProcessor extends Task {
 			throw new BuildException("destdir does not exist: " + fDestDir.getAbsolutePath());
 		}
 		StringBuffer buf = new StringBuffer("Symbols: ");
-		String[] symbols = (String[]) fSymbols.toArray(new String[fSymbols.size()]);
+		String[] symbols = fSymbols.toArray(new String[fSymbols.size()]);
 		for (int i = 0; i < symbols.length; i++) {
 			String symbol = symbols[i];
 			buf.append(symbol);
@@ -126,9 +126,9 @@ public class PreProcessor extends Task {
 		}
 		log(buf.toString());
 		
-		Iterator fileSets = fFileSets.iterator();
+		Iterator<FileSet> fileSets = fFileSets.iterator();
 		while (fileSets.hasNext()) {
-			FileSet fileSet = (FileSet) fileSets.next();
+			FileSet fileSet = fileSets.next();
 			DirectoryScanner scanner = fileSet.getDirectoryScanner(getProject());
 			String[] includedFiles = scanner.getIncludedFiles();
 			File baseDir = fileSet.getDir(getProject());
@@ -188,9 +188,7 @@ public class PreProcessor extends Task {
 	 * @return
 	 */
 	public String preProcessFile(File srcFile, String strip) {
-		try {
-			FileReader fileReader = new FileReader(srcFile);
-			BufferedReader reader = new BufferedReader(fileReader);
+		try (BufferedReader reader = new BufferedReader(new FileReader(srcFile))) {
 			StringBuffer buffer = new StringBuffer();
 			String line = reader.readLine();
 			String activeSymbol = null;

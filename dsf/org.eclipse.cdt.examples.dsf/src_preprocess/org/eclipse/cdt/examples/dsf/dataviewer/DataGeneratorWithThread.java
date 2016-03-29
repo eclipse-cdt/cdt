@@ -82,7 +82,7 @@ public class DataGeneratorWithThread extends Thread
         new LinkedBlockingQueue<Request>();
 
     // ListenerList class provides thread safety.
-    private ListenerList fListeners = new ListenerList();
+    private ListenerList<Listener> fListeners = new ListenerList<Listener>();
     
     // Current number of elements in this generator.
     private int fCount = MIN_COUNT;
@@ -105,7 +105,8 @@ public class DataGeneratorWithThread extends Thread
         start();
     }
      
-    public void shutdown(RequestMonitor rm) {
+    @Override
+	public void shutdown(RequestMonitor rm) {
         // Mark the generator as shut down.  After the fShutdown flag is set,
         // all new requests should be shut down.
         if (!fShutdown.getAndSet(true)) {
@@ -118,7 +119,8 @@ public class DataGeneratorWithThread extends Thread
         }        
     }
 
-    public void getCount(DataRequestMonitor<Integer> rm) {
+    @Override
+	public void getCount(DataRequestMonitor<Integer> rm) {
         if (!fShutdown.get()) {
             fQueue.add(new CountRequest(rm));
         } else {
@@ -128,7 +130,8 @@ public class DataGeneratorWithThread extends Thread
         }        
     }
     
-    public void getValue(int index, DataRequestMonitor<Integer> rm) { 
+    @Override
+	public void getValue(int index, DataRequestMonitor<Integer> rm) { 
         if (!fShutdown.get()) {
             fQueue.add(new ItemRequest(index, rm));
         } else {
@@ -138,11 +141,13 @@ public class DataGeneratorWithThread extends Thread
         }        
     } 
 
-    public void addListener(Listener listener) {
+    @Override
+	public void addListener(Listener listener) {
         fListeners.add(listener);
     }
 
-    public void removeListener(Listener listener) {
+    @Override
+	public void removeListener(Listener listener) {
         fListeners.remove(listener);
     }
     

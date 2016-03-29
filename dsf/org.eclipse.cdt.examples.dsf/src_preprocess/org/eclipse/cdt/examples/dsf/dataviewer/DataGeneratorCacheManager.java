@@ -143,7 +143,8 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
         return value; 
     }
     
-    public void countChanged() {
+    @Override
+	public void countChanged() {
         // Reset the count cache and all the value caches.
         if (fCountCache != null) {
             fCountCache.countChanged();
@@ -153,7 +154,8 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
         }
     }
     
-    public void valuesChanged(Set<Integer> indexes) {
+    @Override
+	public void valuesChanged(Set<Integer> indexes) {
         // Reset selected value caches.
         for (Integer index : indexes) {
             ValueCache value = fValueCaches.get(index);

@@ -190,6 +190,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			IPreferenceStore preferences = GdbUIPlugin.getDefault().getPreferenceStore();
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
 					preferences.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN));
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+					preferences.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL));
 		}
 	}
 

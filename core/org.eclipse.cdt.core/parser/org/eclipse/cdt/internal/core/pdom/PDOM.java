@@ -1043,10 +1043,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 			// Let the readers go first
 			long start= sDEBUG_LOCKS ? System.currentTimeMillis() : 0;
+			int count = 0;
 			while (lockCount > giveupReadLocks || waitingReaders > 0) {
 				mutex.wait(CANCELLATION_CHECK_INTERVAL);
 				if (monitor != null && monitor.isCanceled()) {
 					throw new OperationCanceledException();
+				}
+				count++;
+				if (monitor != null && count == LONG_WRITE_LOCK_REPORT_THRESHOLD / CANCELLATION_CHECK_INTERVAL) {
+					monitor.subTask(Messages.PDOM_waitingForWriteLock);
 				}
 				if (sDEBUG_LOCKS) {
 					start = reportBlockedWriteLock(start, giveupReadLocks);
@@ -1057,6 +1062,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 				timeWriteLockAcquired = System.currentTimeMillis();
 			db.setExclusiveLock();
 		}
+		if (monitor != null)
+			monitor.subTask(""); //$NON-NLS-1$
 	}
 
 	final public void releaseWriteLock() {

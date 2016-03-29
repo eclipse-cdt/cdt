@@ -14,6 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	public static String Checksums_taskComputeChecksums;
+	public static String PDOM_waitingForWriteLock;
 	public static String PDOMImportTask_errorInvalidArchive;
 	public static String PDOMImportTask_errorInvalidPDOMVersion;
 	public static String PDOMManager_ClosePDOMJob;

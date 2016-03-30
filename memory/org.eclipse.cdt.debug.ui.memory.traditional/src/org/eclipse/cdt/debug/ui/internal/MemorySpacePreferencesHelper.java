@@ -30,7 +30,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * by exact key. So the work-around is to use one key to save a csv string, 
  * containing the information necessary to reconstruct the keys for the 
  * unpredictable entries. 
- *
+ * 
+ * @since 1.4
  */
 public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelper {
   /** Reference to the plugin's preference store */

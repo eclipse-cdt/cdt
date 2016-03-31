@@ -16,7 +16,9 @@ package org.eclipse.cdt.dsf.gdb.internal.ui;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
@@ -104,6 +106,12 @@ public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
             if (fgDisposedLaunchAdapterSets.containsKey(launch)) {
                 return null;
             }
+            
+            // Special logic to choose between multiple factories.
+            // It must be called before fetching the adapters below
+            // as it may replace them
+            fgExtensionHandler.handleFactory(this, launch);
+
             adapterSet = fgLaunchAdapterSets.get(launch);
             if (adapterSet == null) {
             	// If the first time we attempt to create an adapterSet is once the session is
@@ -120,6 +128,7 @@ public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
                 adapterSet = createGdbSessionAdapters(launch, session);
                 fgLaunchAdapterSets.put(launch, adapterSet);
             }
+            
         }
         
         // Returns the adapter type for the launch object.
@@ -147,6 +156,8 @@ public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
         for (ILaunch launch : launches) {
             if (launch instanceof GdbLaunch) {
                 disposeAdapterSet(launch);
+       		
+                fgExtensionHandler.launcheRemoved((GdbLaunch)launch);
             }
         }
     }
@@ -165,5 +176,58 @@ public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
     
     protected GdbSessionAdapters createGdbSessionAdapters(ILaunch launch, DsfSession session) {
     	return new GdbSessionAdapters(launch, session, getAdapterList());
+    }
+
+    private static GdbAdapterFactoryExentionHandler fgExtensionHandler = new GdbAdapterFactoryExentionHandler();
+
+    private static class GdbAdapterFactoryExentionHandler {
+    	private Map<GdbLaunch, GdbAdapterFactory> fgSelectedFactory = new HashMap<>();
+    	private Map<GdbLaunch, Set<GdbAdapterFactory>> fgAllFactories = new HashMap<>();
+    	
+    	private void handleFactory(GdbAdapterFactory factory, GdbLaunch launch) {
+        	synchronized(fgLaunchAdapterSets) {
+        		if (fgLaunchAdapterSets.get(launch) == null) {
+        			fgSelectedFactory.put(launch, factory);
+        			Set<GdbAdapterFactory> factorySet = new HashSet<>();
+        			factorySet.add(factory);
+        			fgAllFactories.put(launch, factorySet);
+        		} else {
+        			Set<GdbAdapterFactory> factories = fgAllFactories.get(launch);
+        			if (factories == null) {
+        				// If we have an adapter set for this launch, we should
+        				// have stored the factory by which it was created
+        				assert false;
+        				return;
+        			}
+
+        			if (!factories.contains(factory)) {
+        				// We have a factory we never saw before
+        				factories.add(factory);
+
+        				if (fgSelectedFactory.get(launch).getClass().isAssignableFrom(factory.getClass())) {
+        					// The new factory is a sub-class of the current factory.
+        					// This means we should be using the new factory instead.
+        					fgSelectedFactory.put(launch, factory);
+
+        					// Delete the old adapter set
+        					disposeAdapterSet(launch);
+        					// Special case where we shouldn't keep the adapter set for this launch
+        					// marked as removed since we are about to re-create it
+        					fgDisposedLaunchAdapterSets.remove(launch);
+        					// Create the new set of adapters
+        					GdbSessionAdapters adapters = factory.createGdbSessionAdapters(launch, launch.getSession());
+        					fgLaunchAdapterSets.put(launch, adapters);
+        				}
+        			}
+        		}
+        	}
+    	}
+
+		public void launcheRemoved(GdbLaunch launch) {
+	    	synchronized(fgLaunchAdapterSets) {
+	    		fgAllFactories.remove(launch);
+	    		fgSelectedFactory.remove(launch);
+	    	}
+		}
     }
 }

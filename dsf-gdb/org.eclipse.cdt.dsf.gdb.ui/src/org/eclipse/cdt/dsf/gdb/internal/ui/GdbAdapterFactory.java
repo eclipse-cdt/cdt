@@ -16,7 +16,9 @@ package org.eclipse.cdt.dsf.gdb.internal.ui;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
@@ -50,7 +52,13 @@ public class GdbAdapterFactory
      * which owns the debug services session. 
      */
     private static Map<GdbLaunch, GdbSessionAdapters> fgLaunchAdapterSets =
-        Collections.synchronizedMap(new HashMap<GdbLaunch, GdbSessionAdapters>());
+        Collections.synchronizedMap(new HashMap<>());
+
+    private static Map<GdbLaunch, IAdapterFactory> fgSelectedFactory =
+            Collections.synchronizedMap(new HashMap<>());
+
+    private static Map<GdbLaunch, Set<IAdapterFactory>> fgAllFactories =
+            Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Map of launches for which adapter sets have already been disposed.
@@ -121,6 +129,30 @@ public class GdbAdapterFactory
             	}
                 adapterSet = createGdbSessionAdapters(launch, session);
                 fgLaunchAdapterSets.put(launch, adapterSet);
+                
+                fgSelectedFactory.put(launch, this);
+                Set<IAdapterFactory> factorySet = new HashSet<>();
+                factorySet.add(this);
+                fgAllFactories.put(launch, factorySet);
+            } else {
+            	Set<IAdapterFactory> factories = fgAllFactories.get(launch);
+            	assert factories != null;
+            	if (factories != null) {
+            		if (!factories.contains(this)) {
+            			// A factory we never saw before
+            			if (fgSelectedFactory.get(launch).getClass().isAssignableFrom(this.getClass())) {
+            				// This new factory is a subclass of the currently selected factory
+            				// that means we should be using the subclass instead
+                            fgSelectedFactory.put(launch, this);
+                            factories.add(this);
+                            
+                            disposeAdapterSet(launch);
+                            fgDisposedLaunchAdapterSets.remove(launch);
+                            adapterSet = createGdbSessionAdapters(launch, session);
+                            fgLaunchAdapterSets.put(launch, adapterSet);
+            			}
+            		}
+            	}
             }
         }
         
@@ -149,6 +181,9 @@ public class GdbAdapterFactory
         for (ILaunch launch : launches) {
             if (launch instanceof GdbLaunch) {
                 disposeAdapterSet(launch);
+       		
+        		fgAllFactories.remove(launch);
+        		fgSelectedFactory.remove(launch);
             }
         }
     }

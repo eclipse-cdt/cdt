@@ -11,12 +11,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.build.core.IToolChain;
-import org.eclipse.cdt.build.core.IToolChainManager;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.launchbar.core.target.ILaunchTarget;
-import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.core.runtime.Platform;
 
 public class CMakeBuildConfigurationFactory implements IAdapterFactory {
 
@@ -41,11 +40,11 @@ public class CMakeBuildConfigurationFactory implements IAdapterFactory {
 						cache.put(config, cmakeConfig);
 						return (T) cmakeConfig;
 					} else {
-						// Default to local
-						ILaunchTargetManager targetManager = Activator.getService(ILaunchTargetManager.class);
-						ILaunchTarget localTarget = targetManager
-								.getLaunchTargetsOfType(ILaunchTargetManager.localLaunchTargetTypeId)[0];
-						Collection<IToolChain> toolChains = toolChainManager.getToolChainsSupporting(localTarget);
+						// Default to local toolchain
+						Map<String, String> properties = new HashMap<>();
+						properties.put(IToolChain.ATTR_OS, Platform.getOS());
+						properties.put(IToolChain.ATTR_ARCH, Platform.getOSArch());
+						Collection<IToolChain> toolChains = toolChainManager.getToolChainsMatching(properties);
 						if (!toolChains.isEmpty()) {
 							// TODO propery handle when we have more than one
 							cmakeConfig = new CMakeBuildConfiguration(config, toolChains.iterator().next());
@@ -53,23 +52,15 @@ public class CMakeBuildConfigurationFactory implements IAdapterFactory {
 							return (T) cmakeConfig;
 						}
 
-						// Just find a combination that works
-						for (ILaunchTarget target : targetManager.getLaunchTargets()) {
-							if (!target.equals(localTarget)) {
-								toolChains = toolChainManager.getToolChainsSupporting(target);
-								if (!toolChains.isEmpty()) {
-									// TODO propery handle when we have more
-									// than one
-									cmakeConfig = new CMakeBuildConfiguration(config, toolChains.iterator().next());
-									cache.put(config, cmakeConfig);
-									return (T) cmakeConfig;
-								}
-							}
+						// Use the first toolchain we can find
+						toolChains = toolChainManager.getToolChainsMatching(new HashMap<>());
+						if (!toolChains.isEmpty()) {
+							// TODO propery handle when we have more
+							// than one
+							cmakeConfig = new CMakeBuildConfiguration(config, toolChains.iterator().next());
+							cache.put(config, cmakeConfig);
+							return (T) cmakeConfig;
 						}
-
-						// TODO if we don't have a target, need another way to
-						// match whatever qtInstalls we have with matching
-						// toolchains
 					}
 				} else {
 					return (T) cmakeConfig;

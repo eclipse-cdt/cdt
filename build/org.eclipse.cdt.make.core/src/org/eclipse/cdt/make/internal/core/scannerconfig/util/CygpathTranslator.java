@@ -100,7 +100,7 @@ public class CygpathTranslator {
 				}
 			}
 			if (envPath == null) {
-				IEnvironmentVariable envVar = mngr.getVariable(ENV_PATH, null, true);
+				IEnvironmentVariable envVar = mngr.getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
 				if (envVar != null) {
 					envPath = envVar.getValue();
 				}

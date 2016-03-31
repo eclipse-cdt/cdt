@@ -61,8 +61,6 @@
 
 		<module>releng/org.eclipse.cdt</module>
 		<module>core/org.eclipse.cdt.core</module>
-		<module>build/org.eclipse.cdt.build.core</module>
-		<module>build/org.eclipse.cdt.build.ui</module>
 		<module>codan/org.eclipse.cdt.codan.core</module>
 		<module>codan/org.eclipse.cdt.codan.ui</module>
 		<module>codan/org.eclipse.cdt.codan.core.cxx</module>

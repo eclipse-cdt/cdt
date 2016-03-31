@@ -8,6 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.core.browser,
+ org.eclipse.cdt.core.build,
  org.eclipse.cdt.core.cdtvariables,
  org.eclipse.cdt.core.dom,
  org.eclipse.cdt.core.dom.ast,

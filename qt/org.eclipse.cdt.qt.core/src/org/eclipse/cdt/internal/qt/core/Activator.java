@@ -12,10 +12,8 @@ import java.io.IOException;
 import javax.script.ScriptException;
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory;
 import org.eclipse.cdt.qt.core.IQMLAnalyzer;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -47,7 +45,6 @@ public class Activator extends Plugin {
 	public static final QualifiedName QTINDEX_PROP_NAME = new QualifiedName(ID, "qtindex"); //$NON-NLS-1$
 
 	private static Activator instance;
-	private static QtBuildConfigurationFactory.Cleanup configCleanup;
 
 	public static Activator getDefault() {
 		return instance;
@@ -76,17 +73,11 @@ public class Activator extends Plugin {
 				return Status.OK_STATUS;
 			}
 		}.schedule();
-
-		configCleanup = new QtBuildConfigurationFactory.Cleanup();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(configCleanup);
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		// QMakeProjectInfoManager.stop();
-
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(configCleanup);
-		configCleanup = null;
 
 		super.stop(context);
 	}

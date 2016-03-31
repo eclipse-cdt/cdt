@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_f9d9d4eb",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-31T12:30:14Z",
+      "side": 1,
+      "message": "general comment: I like your version better than the hex render\u0027s; that one considers a cell to be a single address, always. So it always shows the address of the beginning of the cell, even if more than one address is present (when cellSize \u003e addressable size). \n\nBut your implementation does offer more granularity - very good!",
+      "revId": "ae027f6991775d4317790384eeb78d48bc14134b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_12af35ee",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-31T12:30:14Z",
+      "side": 1,
+      "message": "Consider removing the \"/n\" at the end? Without it, the tooltip is more similar to the tooltip of the hex render (i.e. height of a single line)",
+      "revId": "ae027f6991775d4317790384eeb78d48bc14134b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_72ff99d8",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-03-31T12:30:14Z",
+      "side": 1,
+      "message": "Should that be getCellHeight() ?\n(This is more noticeable with a large cell size)",
+      "revId": "ae027f6991775d4317790384eeb78d48bc14134b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

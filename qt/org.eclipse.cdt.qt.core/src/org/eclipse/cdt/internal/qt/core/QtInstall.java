@@ -16,18 +16,11 @@ import org.eclipse.cdt.qt.core.IQtInstall;
 
 public class QtInstall implements IQtInstall {
 
-	private final String name;
 	private final Path qmakePath;
 	private String spec;
 
-	public QtInstall(String name, Path qmakePath) {
-		this.name = name;
+	public QtInstall(Path qmakePath) {
 		this.qmakePath = qmakePath;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override

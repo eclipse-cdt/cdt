@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.core.internal;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -26,9 +24,9 @@ public class CMakeScannerInfoProvider implements IScannerInfoProvider {
 			IBuildConfiguration config = project.getActiveBuildConfig();
 			CMakeBuildConfiguration cmakeConfig = config.getAdapter(CMakeBuildConfiguration.class);
 			if (cmakeConfig != null) {
-				return cmakeConfig.getScannerInfo(resource);
+				return null; // TODO obviously
 			}
-		} catch (CoreException | IOException e) {
+		} catch (CoreException e) {
 			Activator.log(e);
 		}
 		return null;

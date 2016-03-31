@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.envvar;
 
+import java.util.Map;
+
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.core.resources.IBuildConfiguration;
 
 
 
@@ -57,6 +60,37 @@ public interface IEnvironmentVariableManager{
 	 */
 	public IEnvironmentVariable[] getVariables(ICConfigurationDescription cfg, boolean resolveMacros);
 
+	/**
+	 * Returns a list of environment variables for the given build configuration.
+	 * 
+	 * @param config the build configuration
+	 * @param resolveMacros whether to resolve macros in the variable values
+	 * @return the list of environment variables
+	 * @since 6.0
+	 */
+	public IEnvironmentVariable[] getVariables(IBuildConfiguration config, boolean resolveMacros);
+
+	/**
+	 * Returns the named environment variable in the given build configuration.
+	 * 
+	 * @param name the name of the environment variable
+	 * @param config the build configuration
+	 * @param resolveMacros whether to resolve macros
+	 * @return the environment variable
+	 * @since 6.0
+	 */
+	public IEnvironmentVariable getVariable(String name, IBuildConfiguration config, boolean resolveMacros);
+
+	/**
+	 * Set the environment for a given build configuration.
+	 * 
+	 * @param env environment variable map
+	 * @param config build configuration
+	 * @param resolveMacros whether to resolve macros
+	 * @since 6.0
+	 */
+	public void setEnvironment(Map<String, String> env, IBuildConfiguration config, boolean resolveMacros);
+	
 	/**
 	 *
 	 * @return the String representing default system delimiter. That is the ":" for Unix-like

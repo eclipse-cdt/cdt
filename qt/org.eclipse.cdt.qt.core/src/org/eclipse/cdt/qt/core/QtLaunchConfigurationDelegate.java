@@ -7,7 +7,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.qt.core;
 
-import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -21,11 +28,11 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target,
 			IProgressMonitor monitor) throws CoreException {
-		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
+		IQtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
 		// Set it as active
 		if (qtBuildConfig != null) {
-			IProject project = qtBuildConfig.getProject();
+			IProject project = qtBuildConfig.getBuildConfiguration().getProject();
 			IProjectDescription desc = project.getDescription();
 			desc.setActiveBuildConfig(qtBuildConfig.getBuildConfiguration().getName());
 			project.setDescription(desc, monitor);
@@ -43,11 +50,39 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 		return new IProject[] { project };
 	}
 
-	protected QtBuildConfiguration getQtBuildConfiguration(ILaunchConfiguration configuration, String mode,
+	protected void populateToolChainProperties(ILaunchTarget target, Map<String, String> properties) {
+		String os = target.getAttribute(ILaunchTarget.ATTR_OS, null);
+		if (os != null) {
+			properties.put(IToolChain.ATTR_OS, os);
+		}
+		String arch = target.getAttribute(ILaunchTarget.ATTR_ARCH, null);
+		if (arch != null) {
+			properties.put(IToolChain.ATTR_ARCH, arch);
+		}
+	}
+	
+	protected IQtBuildConfiguration getQtBuildConfiguration(ILaunchConfiguration configuration, String mode,
 			ILaunchTarget target, IProgressMonitor monitor) throws CoreException {
 		// Find the Qt build config
+		ICBuildConfigurationManager configManager = Activator.getService(ICBuildConfigurationManager.class);
+		QtBuildConfigurationProvider provider = (QtBuildConfigurationProvider) configManager
+				.getProvider(QtBuildConfigurationProvider.ID);
 		IProject project = configuration.getMappedResources()[0].getProject();
-		return QtBuildConfigurationFactory.getConfig(project, mode, target, monitor);
+
+		// Find the toolchains that support this target
+		Map<String, String> properties = new HashMap<>();
+		populateToolChainProperties(target, properties);
+		
+		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
+		for (IToolChain toolChain : toolChainManager.getToolChainsMatching(properties)) {
+			IQtBuildConfiguration qtConfig = provider.createConfiguration(project, toolChain, mode, monitor);
+			if (qtConfig != null) {
+				return qtConfig;
+			}
+		}
+
+		// Couldn't find any
+		return null;
 	}
 
 }

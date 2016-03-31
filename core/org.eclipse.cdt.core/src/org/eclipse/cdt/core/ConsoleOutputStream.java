@@ -45,4 +45,12 @@ public class ConsoleOutputStream extends OutputStream {
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
         fBuffer.append(new String(b, off, len));
     }
+    
+    /**
+	 * @since 6.0
+	 */
+    public synchronized void write(String msg) throws IOException {
+    	fBuffer.append(msg);
+    }
+
 }

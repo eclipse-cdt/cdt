@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ActivationRecord;
 
 /**
  * Assists in evaluating expressions.
@@ -88,7 +88,7 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	/**
 	 * Keeps track of state during a constexpr evaluation.
 	 */
-	final class ConstexprEvaluationContext {
+	public final class ConstexprEvaluationContext {
 		/**
 		 * The maximum number of steps allowed in a single constexpr evaluation.
 		 * This is used to prevent a buggy constexpr function from causing the
@@ -136,12 +136,11 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	/**
 	 * Computes the evaluation produced by substituting function parameters by their values.
 	 * 
-	 * @param parameterMap maps function parameters to their values
+	 * @param record maps function parameters and local variables to their values
 	 * @param context the context for the current constexpr evaluation
 	 * @return the computed evaluation
 	 */
-	ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, 
-			ConstexprEvaluationContext context);
+	ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context);
 
 	/**
 	 * Searches the evaluation for a usage of a template parameter which is a parameter pack,

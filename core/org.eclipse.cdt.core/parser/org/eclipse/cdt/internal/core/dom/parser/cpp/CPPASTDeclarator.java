@@ -32,12 +32,16 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIncomplete;
 
 /**
  * C++ specific declarator.
@@ -302,5 +306,19 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 			return;
 		}
 		super.replace(child, other);
+	}
+	
+	@Override
+	public ICPPExecution getExecution() {
+		final ICPPBinding binding = (ICPPBinding)getName().resolveBinding();
+		ICPPEvaluation initializerEval = null;
+		if(binding instanceof CPPVariable) {
+			CPPVariable variable = (CPPVariable)binding;
+			initializerEval = variable.getInitializerEvaluation();
+		}
+		if(initializerEval == EvalFixed.INCOMPLETE) {
+			return ExecIncomplete.INSTANCE;
+		}
+		return new ExecDeclarator(binding, initializerEval);
 	}
 }

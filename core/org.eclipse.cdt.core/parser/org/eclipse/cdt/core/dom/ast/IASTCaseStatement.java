@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
+
 /**
  * This is a case in a switch statement. Note that in the grammar, a statement
  * is part of the clause. For the AST, just go on to the next statement to find
@@ -19,7 +21,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTCaseStatement extends IASTStatement {
+public interface IASTCaseStatement extends IASTStatement, ICPPExecutionOwner {
 	/**
 	 * <code>ASTNodeProperty</code> that represents the relationship between a
 	 * case statement and the expression it contains.

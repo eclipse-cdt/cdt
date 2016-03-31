@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 /**
@@ -208,7 +208,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			fEvaluation= new EvalFixed(new CPPClosureType(this), PRVALUE, Value.UNKNOWN);
+			fEvaluation= new EvalFixed(new CPPClosureType(this), PRVALUE, IntegralValue.UNKNOWN);
 		}
 		return fEvaluation;
 	}

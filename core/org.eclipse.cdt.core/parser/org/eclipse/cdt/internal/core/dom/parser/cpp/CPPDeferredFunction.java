@@ -166,4 +166,14 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	public ICPPEvaluation getReturnExpression(IASTNode point) {
 		return null;
 	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution() {
+		return null;
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return null;
+	}
 }

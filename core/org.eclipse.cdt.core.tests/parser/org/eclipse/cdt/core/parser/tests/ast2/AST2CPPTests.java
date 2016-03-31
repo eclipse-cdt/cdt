@@ -7789,11 +7789,11 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testCastInEnumeratorValue_446380() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		IEnumerator i2 = ba.assertNonProblem("i2", IEnumerator.class);
-		Long v2 = i2.getValue().numericalValue();
+		Number v2 = i2.getValue().numericalValue();
 		assertNotNull(v2);
 		assertEquals(1, v2.intValue());
 		IEnumerator i3 = ba.assertNonProblem("i3", IEnumerator.class);
-		Long v3 = i3.getValue().numericalValue();
+		Number v3 = i3.getValue().numericalValue();
 		assertNotNull(v3);
 		assertEquals(2, v3.intValue());
 		ICPPFunction f = ba.assertNonProblemOnFirstIdentifier("f(i3)",ICPPFunction.class);

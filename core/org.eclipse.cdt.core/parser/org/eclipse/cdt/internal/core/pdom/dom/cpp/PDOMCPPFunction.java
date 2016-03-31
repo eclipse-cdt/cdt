@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -82,11 +83,18 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	/** Offset of the return expression for constexpr functions. */
 	private static final int RETURN_EXPRESSION = REQUIRED_ARG_COUNT + 2; // Database.EVALUATION_SIZE
+	
+	/** Offset of the function body execution for constexpr functions. */
+	private static final int FUNCTION_BODY = RETURN_EXPRESSION + Database.EVALUATION_SIZE; // Database.EXECUTION_SIZE
+	
+	/** Offset of the constructor chain execution for constexpr constructors. */
+	private static final int CONSTRUCTOR_CHAIN = FUNCTION_BODY + Database.EXECUTION_SIZE; // Database.EXECUTION_SIZE
+	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = RETURN_EXPRESSION + Database.EVALUATION_SIZE;
+	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
 
 	private short fAnnotation = -1;
 	private int fRequiredArgCount = -1;
@@ -120,12 +128,14 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	public void initData(ICPPFunctionType ftype, ICPPParameter[] params, IType[] exceptionSpec,
-			ICPPEvaluation returnExpression) {
+			ICPPEvaluation returnExpression, ICPPExecution functionBody, ICPPExecution constructorChain) {
 		try {
 			setType(ftype);
 			setParameters(params);
 			storeExceptionSpec(exceptionSpec);
 			getLinkage().storeEvaluation(record + RETURN_EXPRESSION, returnExpression);
+			getLinkage().storeExecution(record + FUNCTION_BODY, functionBody);
+			getLinkage().storeExecution(record + CONSTRUCTOR_CHAIN, constructorChain);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -422,6 +432,32 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 		try {
 			return (ICPPEvaluation) getLinkage().loadEvaluation(record + RETURN_EXPRESSION);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution() {
+		if (!isConstexpr())
+			return null;
+
+		try {
+			return (ICPPExecution) getLinkage().loadExecution(record + FUNCTION_BODY);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		if (!isConstexpr())
+			return null;
+
+		try {
+			return (ICPPExecution) getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

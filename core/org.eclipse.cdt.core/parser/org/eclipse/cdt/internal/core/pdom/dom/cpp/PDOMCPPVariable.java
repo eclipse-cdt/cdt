@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -53,7 +53,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	}
 
 	private void setValue(Database db, IVariable variable) throws CoreException {
-		IValue val= variable.getInitialValue();
+		IValue val = variable.getInitialValue(); 
 		getLinkage().storeValue(record + VALUE_OFFSET, val);
 	}
 
@@ -113,7 +113,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 			return getLinkage().loadValue(record + VALUE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return Value.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		}
 	}
 

@@ -72,7 +72,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
@@ -785,7 +786,7 @@ public class SemanticUtil {
 		for (IEnumerator enumerator : enumerators) {
 			IValue value = enumerator.getValue();
 			if (value != null) {
-				Long val = value.numericalValue();
+				Number val = value.numericalValue();
 				if (val != null) {
 					long v = val.longValue();
 					if (v > maxValue) {
@@ -803,7 +804,7 @@ public class SemanticUtil {
 		for (IEnumerator enumerator : enumerators) {
 			IValue value = enumerator.getValue();
 			if (value != null) {
-				Long val = value.numericalValue();
+				Number val = value.numericalValue();
 				if (val != null) {
 					long v = val.longValue();
 					if (v < minValue) {
@@ -845,14 +846,22 @@ public class SemanticUtil {
 			ICPPASTInitializerList list= (ICPPASTInitializerList) init;
 			switch (list.getSize()) {
 			case 0:
-				return Value.create(0);
+				return IntegralValue.create(0);
 			case 1:
 				clause= list.getClauses()[0];
+				break;
+			default: 
+				return ((ICPPASTInitializerList) init).getEvaluation().getValue(clause);
+				
 			}
 		}
 		if (clause instanceof IASTExpression) {
-			return Value.create((IASTExpression) clause);
+			return ValueFactory.create((IASTExpression) clause);
 		}
-		return Value.UNKNOWN;
+		
+		if (clause instanceof ICPPASTInitializerList) {
+			return ((ICPPASTInitializerList) clause).getEvaluation().getValue(clause);
+		}
+		return IntegralValue.UNKNOWN;
 	}
 }

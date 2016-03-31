@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 
 /**
  * A declaration statement.
@@ -116,6 +117,11 @@ public class CASTDeclarationStatement extends ASTNode
 	@Override
 	public void addAttributeSpecifier(IASTAttributeSpecifier attributeSpecifier) {
 		// Declaration statements don't have attributes.
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
 		throw new UnsupportedOperationException();
 	}
 }

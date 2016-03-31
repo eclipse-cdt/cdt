@@ -401,7 +401,7 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 
 	private void checkValue(IValue initialValue, int i) {
 		assertNotNull(initialValue);
-		final Long numericalValue = initialValue.numericalValue();
+		final Number numericalValue = initialValue.numericalValue();
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.intValue());
 	}

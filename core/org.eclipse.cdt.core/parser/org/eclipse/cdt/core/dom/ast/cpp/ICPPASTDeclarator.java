@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
 
 /**
  * Declarator for c++.
@@ -19,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.2
  */
-public interface ICPPASTDeclarator extends IASTDeclarator {
+public interface ICPPASTDeclarator extends IASTDeclarator, ICPPExecutionOwner {
 	/**
 	 * Returns whether the declarator contains an ellipsis, in which case it declares
 	 * a parameter pack.

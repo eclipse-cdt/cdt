@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 
 /**
  * @author jcamelon
@@ -51,5 +52,10 @@ public class CASTDefaultStatement extends ASTAttributeOwner implements IASTDefau
 	public CASTDefaultStatement copy(CopyStyle style) {
 		CASTDefaultStatement copy = new CASTDefaultStatement();
 		return copy(copy, style);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		throw new UnsupportedOperationException();
 	}
 }

@@ -1,0 +1,577 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
+ *******************************************************************************/
+package org.eclipse.cdt.internal.core.dom.parser;
+
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_alignof;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_nothrow_constructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_nothrow_copy;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_assign;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_constructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_copy;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_destructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_virtual_destructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_abstract;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_class;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_empty;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_enum;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_final;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_literal_type;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_pod;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_polymorphic;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_standard_layout;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_trivial;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_trivially_copyable;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_union;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeof;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeid;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeof;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
+import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
+import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
+
+public class ValueFactory {
+	/**
+	 * Creates the value for an expression.
+	 */
+	public static IValue create(IASTExpression expr) {
+		IValue val= evaluate(expr);
+		if (val != null) {
+			return val;
+		}
+
+		if (expr instanceof ICPPEvaluationOwner) {
+			ICPPEvaluation evaluation = ((ICPPEvaluationOwner) expr).getEvaluation();
+			return evaluation.getValue(expr);
+		}
+		return IntegralValue.UNKNOWN;
+	}
+	
+	public static IValue evaluateUnaryExpression(final int unaryOp, final IValue value) {
+		IValue val = applyUnaryOperator(unaryOp, value);
+		if (isInvalidValue(val))
+			return IntegralValue.UNKNOWN;
+		return val; 
+	}
+	
+	public static IValue evaluateBinaryExpression(final int op, final IValue v1, final IValue v2) {
+		if(v1 instanceof FloatingPointValue && v2 instanceof FloatingPointValue) {
+			FloatingPointValue fv1 = (FloatingPointValue)v1;
+			FloatingPointValue fv2 = (FloatingPointValue)v2;
+			return applyBinaryOperator(op, fv1.numericalValue().doubleValue(), fv2.numericalValue().doubleValue());
+		} else if(v1 instanceof FloatingPointValue && v2 instanceof IntegralValue) {
+			FloatingPointValue fv1 = (FloatingPointValue)v1;
+			IntegralValue iv2 = (IntegralValue)v2;
+			return applyBinaryOperator(op, fv1.numericalValue().doubleValue(), iv2.numericalValue().doubleValue());
+		} else if(v1 instanceof IntegralValue && v2 instanceof FloatingPointValue) {
+			IntegralValue iv1 = (IntegralValue)v1;
+			FloatingPointValue fv2 = (FloatingPointValue)v2;
+			return applyBinaryOperator(op, iv1.numericalValue().doubleValue(), fv2.numericalValue().doubleValue());
+		} else if(v1 instanceof IntegralValue && v2 instanceof IntegralValue) {
+			IntegralValue iv1 = (IntegralValue)v1;
+			IntegralValue iv2 = (IntegralValue)v2;
+			return applyBinaryOperator(op, iv1.numericalValue().longValue(), iv2.numericalValue().longValue());	
+		}
+		return IntegralValue.UNKNOWN;
+	}
+	
+	private static IValue applyBinaryOperator(final int op, final double v1, final double v2) {
+		Double doubleValue = null;
+		Long longValue = null;
+		
+		switch (op) {
+		case IASTBinaryExpression.op_multiply:
+			doubleValue = v1 * v2;
+			break;
+		case IASTBinaryExpression.op_divide:
+			if (v2 != 0) {
+				doubleValue = v1 / v2;
+			}
+			break;
+		case IASTBinaryExpression.op_plus:
+			doubleValue = v1 + v2;
+			break;
+		case IASTBinaryExpression.op_minus:
+			doubleValue = v1 - v2;
+			break;
+		case IASTBinaryExpression.op_lessThan:
+			longValue = v1 < v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_greaterThan:
+			longValue = v1 > v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_lessEqual:
+			longValue = v1 <= v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_greaterEqual:
+			longValue = v1 >= v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_logicalAnd:
+			longValue = v1 != 0 && v2 != 0 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_logicalOr:
+			longValue = v1 != 0 || v2 != 0 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_equals:
+			longValue = v1 == v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_notequals:
+			longValue = v1 != v2 ? 1l : 0l;
+			break;
+		}
+		
+		if(doubleValue != null) {
+			return FloatingPointValue.create(doubleValue);
+		} else if(longValue != null) {
+			return IntegralValue.create(longValue);
+		} else {
+			return IntegralValue.UNKNOWN;
+		}
+	}
+	
+	private static IntegralValue applyBinaryOperator(final int op, final long v1, final long v2) {
+		Long value = null;
+		switch (op) {
+		case IASTBinaryExpression.op_multiply:
+			value = v1 * v2;
+			break;
+		case IASTBinaryExpression.op_divide:
+			if (v2 != 0) {
+				value = v1 / v2;
+			}
+			break;
+		case IASTBinaryExpression.op_modulo:
+			if (v2 != 0) {
+				value = v1 % v2;
+			}
+			break;
+		case IASTBinaryExpression.op_plus:
+			value = v1 + v2;
+			break;
+		case IASTBinaryExpression.op_minus:
+			value = v1 - v2;
+			break;
+		case IASTBinaryExpression.op_shiftLeft:
+			value = v1 << v2;
+			break;
+		case IASTBinaryExpression.op_shiftRight:
+			value = v1 >> v2;
+			break;
+		case IASTBinaryExpression.op_lessThan:
+			value = v1 < v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_greaterThan:
+			value = v1 > v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_lessEqual:
+			value = v1 <= v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_greaterEqual:
+			value = v1 >= v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_binaryAnd:
+			value = v1 & v2;
+			break;
+		case IASTBinaryExpression.op_binaryXor:
+			value = v1 ^ v2;
+			break;
+		case IASTBinaryExpression.op_binaryOr:
+			value = v1 | v2;
+			break;
+		case IASTBinaryExpression.op_logicalAnd:
+			value = v1 != 0 && v2 != 0 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_logicalOr:
+			value = v1 != 0 || v2 != 0 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_equals:
+			value = v1 == v2 ? 1l : 0l;
+			break;
+		case IASTBinaryExpression.op_notequals:
+			value = v1 != v2 ? 1l : 0l;
+			break;
+        case IASTBinaryExpression.op_max:
+        	value = Math.max(v1, v2);
+        	break;
+        case IASTBinaryExpression.op_min:
+        	value = Math.min(v1, v2);
+        	break;
+		}
+		
+		if(value != null) {
+			return IntegralValue.create(value);
+		} else {
+			return IntegralValue.UNKNOWN;
+		}
+	}
+
+	public static IValue evaluateUnaryTypeIdExpression(int operator, IType type, IASTNode point) {
+		IValue val = applyUnaryTypeIdOperator(operator, type, point);
+		if (isInvalidValue(val))
+			return IntegralValue.UNKNOWN;
+		return val;
+	}
+
+	public static IValue evaluateBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator operator,
+			IType type1, IType type2, IASTNode point) {
+		IValue val = applyBinaryTypeIdOperator(operator, type1, type2, point);
+		if (isInvalidValue(val))
+			return IntegralValue.UNKNOWN;
+		return val;
+	}
+	
+	/**
+	 * Computes the canonical representation of the value of the expression.
+	 * Returns a {@code Number} for numerical values or {@code null}, otherwise.
+	 * @throws UnknownValueException
+	 */
+	private static IValue evaluate(IASTExpression exp) {
+		if (exp == null)
+			return IntegralValue.UNKNOWN;
+
+		if (exp instanceof IASTArraySubscriptExpression) {
+			return IntegralValue.UNKNOWN;
+		}
+		if (exp instanceof IASTBinaryExpression) {
+			return evaluateBinaryExpression((IASTBinaryExpression) exp);
+		}
+		if (exp instanceof IASTCastExpression) { // must be ahead of unary
+			return evaluate(((IASTCastExpression) exp).getOperand());
+		}
+		if (exp instanceof IASTUnaryExpression) {
+			return evaluateUnaryExpression((IASTUnaryExpression) exp);
+		}
+		if (exp instanceof IASTConditionalExpression) {
+			IASTConditionalExpression cexpr= (IASTConditionalExpression) exp;
+			IValue v= evaluate(cexpr.getLogicalConditionExpression());
+			if (isInvalidValue(v))
+				return v;
+			if (v.numericalValue().longValue() == 0) {
+				return evaluate(cexpr.getNegativeResultExpression());
+			}
+			final IASTExpression pe = cexpr.getPositiveResultExpression();
+			if (pe == null) // gnu-extension allows to omit the positive expression.
+				return v;
+			return evaluate(pe);
+		}
+		if (exp instanceof IASTIdExpression) {
+			IBinding b= ((IASTIdExpression) exp).getName().resolvePreBinding();
+			return evaluateBinding(b);
+		}
+		if (exp instanceof IASTLiteralExpression) {
+			IASTLiteralExpression litEx= (IASTLiteralExpression) exp;
+			switch (litEx.getKind()) {
+			case IASTLiteralExpression.lk_false:
+			case IASTLiteralExpression.lk_nullptr:
+				return IntegralValue.create(0);
+			case IASTLiteralExpression.lk_true:
+				return IntegralValue.create(1);
+			case IASTLiteralExpression.lk_integer_constant:
+				try {
+					return IntegralValue.create(ExpressionEvaluator.getNumber(litEx.getValue()));
+				} catch (EvalException e) {
+					return IntegralValue.UNKNOWN;
+				}
+			case IASTLiteralExpression.lk_char_constant:
+				try {
+					final char[] image= litEx.getValue();
+					if (image.length > 1 && image[0] == 'L')
+						return IntegralValue.create(ExpressionEvaluator.getChar(image, 2));
+					return IntegralValue.create(ExpressionEvaluator.getChar(image, 1));
+				} catch (EvalException e) {
+					return IntegralValue.UNKNOWN;
+				}
+			case IASTLiteralExpression.lk_float_constant:
+				return FloatingPointValue.create(litEx.getValue());
+			case IASTLiteralExpression.lk_string_literal:
+				return CStringValue.create(litEx.getValue());
+			}
+		}
+			
+		if (exp instanceof IASTTypeIdExpression) {
+			IASTTypeIdExpression typeIdExp = (IASTTypeIdExpression) exp;
+			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
+			final IType type = ast.createType(typeIdExp.getTypeId());
+			if (type instanceof ICPPUnknownType)
+				return null;
+			return applyUnaryTypeIdOperator(typeIdExp.getOperator(), type, exp);
+		}
+		if (exp instanceof IASTBinaryTypeIdExpression) {
+			IASTBinaryTypeIdExpression typeIdExp = (IASTBinaryTypeIdExpression) exp;
+			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
+			IType t1= ast.createType(typeIdExp.getOperand1());
+			IType t2= ast.createType(typeIdExp.getOperand2());
+			if (CPPTemplates.isDependentType(t1) || CPPTemplates.isDependentType(t2))
+				return null;
+			return applyBinaryTypeIdOperator(typeIdExp.getOperator(), t1, t2, exp);
+		}
+		if (exp instanceof IASTFunctionCallExpression || exp instanceof ICPPASTSimpleTypeConstructorExpression) {
+			return null;  // The value will be obtained from the evaluation.
+		}
+		return IntegralValue.UNKNOWN;
+	}
+
+	/**
+	 * Extract a value off a binding.
+	 */
+	private static IValue evaluateBinding(IBinding b) {
+		if (b instanceof IType) {
+			return IntegralValue.UNKNOWN;
+		}
+		if (b instanceof ICPPTemplateNonTypeParameter) {
+			return null;
+		}
+
+		if (b instanceof ICPPUnknownBinding) {
+			return null;
+		}
+
+		IValue value= null;
+		if (b instanceof IVariable) {
+			value= ((IVariable) b).getInitialValue();
+		} else if (b instanceof IEnumerator) {
+			value= ((IEnumerator) b).getValue();
+		}
+		if (isInvalidValue(value)) {
+			return IntegralValue.UNKNOWN;	
+		}
+		return value;
+	}
+	
+	private static IValue applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) {
+		switch (operator) {
+			case op_sizeof:
+				return getSize(type, point);
+			case op_alignof:
+				return getAlignment(type, point);
+			case op_typeid:
+				break;
+			case op_has_nothrow_copy:
+				break;  // TODO(sprigogin): Implement
+			case op_has_nothrow_constructor:
+				break;  // TODO(sprigogin): Implement
+			case op_has_trivial_assign:
+				break;  // TODO(sprigogin): Implement
+			case op_has_trivial_constructor:
+				break;  // TODO(sprigogin): Implement
+			case op_has_trivial_copy:
+				return IntegralValue.create(!(type instanceof ICPPClassType) ||
+						TypeTraits.hasTrivialCopyCtor((ICPPClassType) type, point) ? 1 : 0);
+			case op_has_trivial_destructor:
+				break;  // TODO(sprigogin): Implement
+			case op_has_virtual_destructor:
+				break;  // TODO(sprigogin): Implement
+			case op_is_abstract:
+				return IntegralValue.create(type instanceof ICPPClassType &&
+						TypeTraits.isAbstract((ICPPClassType) type, point) ? 1 : 0);
+			case op_is_class:
+				return IntegralValue.create(type instanceof ICompositeType &&
+						((ICompositeType) type).getKey() != ICompositeType.k_union ? 1 : 0);
+			case op_is_empty:
+				return IntegralValue.create(TypeTraits.isEmpty(type, point) ? 1 : 0);
+			case op_is_enum:
+				return IntegralValue.create(type instanceof IEnumeration ? 1 : 0);
+			case op_is_final:
+				return IntegralValue.create(type instanceof ICPPClassType && ((ICPPClassType) type).isFinal() ? 1 : 0);
+			case op_is_literal_type:
+				break;  // TODO(sprigogin): Implement
+			case op_is_pod:
+				return IntegralValue.create(TypeTraits.isPOD(type, point) ? 1 : 0);
+			case op_is_polymorphic:
+				return IntegralValue.create(type instanceof ICPPClassType &&
+						TypeTraits.isPolymorphic((ICPPClassType) type, point) ? 1 : 0);
+			case op_is_standard_layout:
+				return IntegralValue.create(TypeTraits.isStandardLayout(type, point) ? 1 : 0);
+			case op_is_trivial:
+				return IntegralValue.create(type instanceof ICPPClassType &&
+						TypeTraits.isTrivial((ICPPClassType) type, point) ? 1 : 0);
+            case op_is_trivially_copyable:
+            	return IntegralValue.create(TypeTraits.isTriviallyCopyable(type, point) ? 1 : 0);
+			case op_is_union:
+				return IntegralValue.create(type instanceof ICompositeType &&
+						((ICompositeType) type).getKey() == ICompositeType.k_union ? 1 : 0);
+			case op_typeof:
+				break;
+		}
+		return IntegralValue.UNKNOWN;
+	}
+	
+	private static IValue getAlignment(IType type, IASTNode point) {
+		SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(type, point);
+		if (sizeAndAlignment == null)
+			 return IntegralValue.UNKNOWN;
+		return IntegralValue.create(sizeAndAlignment.alignment);
+	}
+
+	private static IValue getSize(IType type, IASTNode point) {
+		SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(type, point);
+		if (sizeAndAlignment == null)
+			 return IntegralValue.UNKNOWN;
+		return IntegralValue.create(sizeAndAlignment.size);
+	}
+	
+	private static IValue evaluateUnaryExpression(IASTUnaryExpression exp) {
+		final int unaryOp= exp.getOperator();
+
+		if (unaryOp == IASTUnaryExpression.op_sizeof) {
+			final IASTExpression operand = exp.getOperand();
+			if (operand != null) {
+				IType type = operand.getExpressionType();
+				if (type instanceof ICPPUnknownType)
+					return null;
+				ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
+				SizeofCalculator calculator = ast.getSizeofCalculator();
+				SizeAndAlignment info = calculator.sizeAndAlignment(type);
+				if (info != null)
+					return IntegralValue.create(info.size);
+			}
+			return IntegralValue.UNKNOWN;
+		}
+
+		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star ||
+				unaryOp == IASTUnaryExpression.op_sizeofParameterPack) {
+			return IntegralValue.UNKNOWN;
+		}
+
+		final IValue value= evaluate(exp.getOperand());
+		if (isInvalidValue(value))
+			return value;
+		if (isDeferredValue(value))
+			return null;  // the value will be computed using the evaluation
+		return applyUnaryOperator(unaryOp, value);
+	}
+
+	private static IValue applyUnaryOperator(final int unaryOp, final IValue value) {
+		if(isInvalidValue(value)) {
+			return IntegralValue.UNKNOWN;
+		}
+		
+		if(!(value instanceof IntegralValue) && !(value instanceof FloatingPointValue)) {
+			return IntegralValue.UNKNOWN;
+		}
+		
+		switch (unaryOp) {
+		case IASTUnaryExpression.op_bracketedPrimary:
+		case IASTUnaryExpression.op_plus:
+			return value;
+		case IASTUnaryExpression.op_prefixIncr:
+		case IASTUnaryExpression.op_postFixIncr:
+			if(value instanceof IntegralValue) {
+				return IntegralValue.create(value.numericalValue().longValue() + 1);
+			} else {
+				FloatingPointValue fpv = (FloatingPointValue) value;
+				return FloatingPointValue.create(fpv.numericalValue().doubleValue() + 1);
+			}
+		case IASTUnaryExpression.op_prefixDecr:
+		case IASTUnaryExpression.op_postFixDecr:
+			if(value instanceof IntegralValue) {
+				return IntegralValue.create(value.numericalValue().longValue() - 1);
+			} else {
+				FloatingPointValue fpv = (FloatingPointValue) value;
+				return FloatingPointValue.create(fpv.numericalValue().doubleValue() - 1);
+			}
+		case IASTUnaryExpression.op_minus:
+			if(value instanceof IntegralValue) {
+				return IntegralValue.create(-value.numericalValue().longValue());
+			} else {
+				FloatingPointValue fpv = (FloatingPointValue) value;
+				return FloatingPointValue.create(-fpv.numericalValue().doubleValue());
+			}
+		case IASTUnaryExpression.op_tilde:
+			if(value instanceof IntegralValue) {
+				return IntegralValue.create(~value.numericalValue().longValue());
+			} else {
+				return IntegralValue.UNKNOWN;
+			}
+		case IASTUnaryExpression.op_not:
+			if(value instanceof IntegralValue) {
+				Long num = value.numericalValue().longValue();
+				return IntegralValue.create(num == 0 ? 1 : 0);
+			} else {
+				FloatingPointValue fpv = (FloatingPointValue) value;
+				Double num = fpv.numericalValue().doubleValue();
+				return IntegralValue.create(num == 0 ? 1 : 0);
+			}
+		}
+		return IntegralValue.UNKNOWN;
+	}
+
+	private static IValue evaluateBinaryExpression(IASTBinaryExpression exp) {
+		final int op= exp.getOperator();
+		final IValue o1= evaluate(exp.getOperand1());
+		if (isInvalidValue(o1))
+			return o1;
+		final IValue o2= evaluate(exp.getOperand2());
+		if (isInvalidValue(o2))
+			return o2;
+		if (isDeferredValue(o1) || isDeferredValue(o2))
+			return null;  // the value will be computed using the evaluation
+		return evaluateBinaryExpression(op, o1, o2);
+	}
+	
+	private static IValue applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator,
+			IType type1, IType type2, IASTNode point) {
+		switch (operator) {
+		case __is_base_of:
+			type1 = SemanticUtil.getNestedType(type1, TDEF);
+			type2 = SemanticUtil.getNestedType(type2, TDEF);
+			if (type1 instanceof ICPPClassType && type2 instanceof ICPPClassType &&
+					(type1.isSameType(type2) ||
+							ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1, point))) {
+				return IntegralValue.create(1);
+			}
+			return IntegralValue.create(0);
+		case __is_trivially_assignable:
+			return IntegralValue.UNKNOWN;		// TODO: Implement.
+		}
+		return IntegralValue.UNKNOWN;
+	}
+	
+	private static boolean isInvalidValue(IValue value) {
+		return value == null || value == IntegralValue.UNKNOWN || value == IntegralValue.ERROR;
+	}
+	
+	private static boolean isDeferredValue(IValue value) {
+		return value instanceof IntegralValue && ((IntegralValue) value).numericalValue() == null;
+	}
+}

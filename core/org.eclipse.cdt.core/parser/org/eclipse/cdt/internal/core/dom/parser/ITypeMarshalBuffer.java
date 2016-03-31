@@ -37,28 +37,59 @@ public interface ITypeMarshalBuffer {
 	final static byte UNKNOWN_MEMBER                = 0x0C;
 	final static byte UNKNOWN_MEMBER_CLASS_INSTANCE = 0x0D;
 	final static byte DEFERRED_CLASS_INSTANCE       = 0x0E;
-	final static byte TYPE_TRANSFORMATION           = 0x0F;
-	final static byte UNKNOWN_MEMBER_TYPE           = 0x10;
+	final static byte ALIAS_TEMPLATE                = 0x0F;
+	final static byte TYPE_TRANSFORMATION           = 0x10;
+	final static byte UNKNOWN_MEMBER_TYPE           = 0x11;
+	final static byte INTEGRAL_VALUE				= 0x12;
+	final static byte FLOATING_POINT_VALUE			= 0x13;
+	final static byte C_STRING_VALUE				= 0x14;
+	final static byte COMPOSITE_VALUE				= 0x15;
+	final static byte INITIALIZER_LIST_TYPE			= 0x16;
 	// Can add more types up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE. 
 
 	final static byte
-		EVAL_BINARY         = 0x01,
-		EVAL_BINARY_TYPE_ID = 0x02,
-		EVAL_BINDING        = 0x03,
-		EVAL_COMMA          = 0x04,
-		EVAL_COMPOUND       = 0x05,
-		EVAL_CONDITIONAL    = 0x06,
-		EVAL_FIXED          = 0x07,
-		EVAL_FUNCTION_CALL  = 0x08,
-		EVAL_FUNCTION_SET   = 0x09,
-		EVAL_ID             = 0x0A,
-		EVAL_INIT_LIST      = 0x0B,
-		EVAL_MEMBER_ACCESS  = 0x0C,
-		EVAL_PARAMETER_PACK = 0x0D,
-		EVAL_TYPE_ID        = 0x0E,
-		EVAL_UNARY          = 0x0F,
-		EVAL_UNARY_TYPE_ID  = 0x10;
+		EVAL_BINARY         	= 0x01,
+		EVAL_BINARY_TYPE_ID 	= 0x02,
+		EVAL_BINDING        	= 0x03,
+		EVAL_COMMA          	= 0x04,
+		EVAL_COMPOUND       	= 0x05,
+		EVAL_CONDITIONAL    	= 0x06,
+		EVAL_FIXED          	= 0x07,
+		EVAL_FUNCTION_CALL  	= 0x08,
+		EVAL_FUNCTION_SET   	= 0x09,
+		EVAL_ID             	= 0x0A,
+		EVAL_INIT_LIST      	= 0x0B,
+		EVAL_MEMBER_ACCESS  	= 0x0C,
+		EVAL_PARAMETER_PACK 	= 0x0D,
+		EVAL_TYPE_ID        	= 0x0E,
+		EVAL_UNARY          	= 0x0F,
+		EVAL_UNARY_TYPE_ID  	= 0x10,
+		EVAL_CONSTRUCTOR		= 0x11,
+		EVAL_REFERENCE			= 0x12,
+		EVAL_COMPOSITE_ACCESS 	= 0x13;
 	// Can add more evaluations up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
+	
+	final static byte
+		EXEC_COMPOUND_STATEMENT 	= 0x01,
+		EXEC_BREAK					= 0x02,
+		EXEC_CASE					= 0x03,
+		EXEC_CONTINUE				= 0x04,
+		EXEC_DECLARATION_STATEMENT	= 0x05,
+		EXEC_DECLARATOR				= 0x06,
+		EXEC_DEFAULT				= 0x07,
+		EXEC_NULL					= 0x08,
+		EXEC_SIMPLE_DECLARATION		= 0x09,
+		EXEC_RETURN					= 0x0A,
+		EXEC_EXPRESSION_STATEMENT	= 0x0B,
+		EXEC_IF						= 0x0C,
+		EXEC_WHILE					= 0x0D,
+		EXEC_DO						= 0x0E,
+		EXEC_FOR					= 0x0F,
+		EXEC_ALIAS_DECLARATION		= 0x10,
+		EXEC_RANGE_BASED_FOR		= 0x11,
+		EXEC_SWITCH					= 0x12,
+		EXEC_CONSTRUCTOR_CHAIN		= 0x13;
+	// Can add more executions up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
 
 	static final short KIND_MASK = 0x001F;
 
@@ -82,6 +113,7 @@ public interface ITypeMarshalBuffer {
 	IValue unmarshalValue() throws CoreException;
 	IBinding unmarshalBinding() throws CoreException;
 	ISerializableEvaluation unmarshalEvaluation() throws CoreException;
+	ISerializableExecution unmarshalExecution() throws CoreException;
 	ICPPTemplateArgument unmarshalTemplateArgument() throws CoreException;
 	int getByte() throws CoreException;
 	int getFixedInt() throws CoreException;
@@ -107,6 +139,7 @@ public interface ITypeMarshalBuffer {
 	void marshalValue(IValue value) throws CoreException;
 	void marshalBinding(IBinding binding) throws CoreException;
 	void marshalEvaluation(ISerializableEvaluation eval, boolean includeValue) throws CoreException;
+	void marshalExecution(ISerializableExecution exec, boolean includeValue) throws CoreException;
 	void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException;
 	void putByte(byte data);
 	void putFixedInt(int data);

@@ -11,11 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
+
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTReturnStatement extends IASTStatement {
+public interface IASTReturnStatement extends IASTStatement, ICPPExecutionOwner {
 	public static final ASTNodeProperty RETURNVALUE = new ASTNodeProperty(
 			"IASTReturnValue.RETURNVALUE - [IASTInitializerClause]"); //$NON-NLS-1$
 

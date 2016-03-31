@@ -21,16 +21,23 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecRangeBasedFor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -229,5 +236,28 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 			return;
 		}
 		super.replace(child, other);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		ExecSimpleDeclaration declarationExec = (ExecSimpleDeclaration)((IASTSimpleDeclaration)fDeclaration).getExecution();
+		ICPPEvaluation initClauseEval = ((ICPPASTInitializerClause)fInitClause).getEvaluation();
+		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(fBody);
+		IASTImplicitName[] implicitNames = getImplicitNames();
+		ICPPFunction begin = null;
+		ICPPFunction end = null;
+		if(implicitNames.length == 2) {
+			IBinding beginBinding = implicitNames[0].resolveBinding();
+			IBinding endBinding = implicitNames[1].resolveBinding();
+			if(isValidFunctionBinding(beginBinding) && isValidFunctionBinding(endBinding)) {
+				begin = (ICPPFunction)beginBinding;
+				end = (ICPPFunction)endBinding;	
+			}
+		}
+		return new ExecRangeBasedFor(declarationExec, initClauseEval, begin, end, bodyExec);
+	}
+	
+	private static boolean isValidFunctionBinding(IBinding binding) {
+		return binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding);
 	}
 }

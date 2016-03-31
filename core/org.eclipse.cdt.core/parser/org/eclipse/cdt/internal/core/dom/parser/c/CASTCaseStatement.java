@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 
 /**
  * @author jcamelon
@@ -87,4 +88,9 @@ public class CASTCaseStatement extends ASTAttributeOwner implements IASTCaseStat
             expression = (IASTExpression) other;
         }
     }
+
+	@Override
+	public ICPPExecution getExecution() {
+		throw new UnsupportedOperationException();
+	}
 }

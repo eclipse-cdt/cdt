@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecContinue;
 
 /**
  * @author jcamelon
@@ -49,5 +50,10 @@ public class CPPASTContinueStatement extends CPPASTAttributeOwner implements IAS
 	public CPPASTContinueStatement copy(CopyStyle style) {
 		CPPASTContinueStatement copy = new CPPASTContinueStatement();
 		return copy(copy, style);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		return new ExecContinue();
 	}
 }

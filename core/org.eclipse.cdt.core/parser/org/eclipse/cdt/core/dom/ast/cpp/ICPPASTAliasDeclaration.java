@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
 
 /**
  * Represents a C++ alias declaration.
@@ -25,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTAliasDeclaration extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner {
+public interface ICPPASTAliasDeclaration extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner, ICPPExecutionOwner {
 	public static final ICPPASTAliasDeclaration[] EMPTY_ALIAS_DECLARATION_ARRAY = {};
 
 	/**

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 
 /**
  * @author jcamelon
@@ -103,4 +104,9 @@ public class CASTCompoundStatement extends ASTAttributeOwner implements IASTComp
             }
         }
     }
+
+	@Override
+	public ICPPExecution getExecution() {
+		throw new UnsupportedOperationException();
+	}
 }

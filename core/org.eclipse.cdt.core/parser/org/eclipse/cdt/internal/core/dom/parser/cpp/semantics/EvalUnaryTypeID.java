@@ -46,8 +46,9 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -179,9 +180,9 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent())
-			return Value.create(this);
+			return IntegralValue.create(this);
 
-		return Value.evaluateUnaryTypeIdExpression(fOperator, fOrigType, point);
+		return ValueFactory.evaluateUnaryTypeIdExpression(fOperator, fOrigType, point);
 	}
 
 	@Override
@@ -212,7 +213,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 				return EvalFixed.INCOMPLETE;
 			} else if (packSize != CPPTemplates.PACK_SIZE_DEFER) {
 				IASTNode point = context.getPoint();
-				return new EvalFixed(getType(point), getValueCategory(point), Value.create(packSize));
+				return new EvalFixed(getType(point), getValueCategory(point), IntegralValue.create(packSize));
 			}
 		}
 		IType type = CPPTemplates.instantiateType(fOrigType, context);
@@ -222,8 +223,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		return this;
 	}
 

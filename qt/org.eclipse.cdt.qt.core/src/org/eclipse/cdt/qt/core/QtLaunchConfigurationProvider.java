@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.qt.core.launch.QtLaunchDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,6 +46,9 @@ public abstract class QtLaunchConfigurationProvider extends AbstractLaunchConfig
 	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target,
 			ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 		super.populateLaunchConfiguration(descriptor, target, workingCopy);
+		
+		// Main is actually in the library. Don't stop there
+		workingCopy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 
 		// Set the project and the connection
 		QtLaunchDescriptor qtDesc = (QtLaunchDescriptor) descriptor;

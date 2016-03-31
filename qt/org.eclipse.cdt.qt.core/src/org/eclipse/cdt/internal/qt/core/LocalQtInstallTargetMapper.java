@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core;
 
-import org.eclipse.cdt.build.core.IToolChain;
 import org.eclipse.cdt.build.gcc.core.GCCToolChainType;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallTargetMapper;
 import org.eclipse.core.runtime.Platform;

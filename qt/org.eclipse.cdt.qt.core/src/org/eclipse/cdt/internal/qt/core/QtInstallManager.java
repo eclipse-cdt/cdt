@@ -7,15 +7,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
+import org.eclipse.cdt.qt.core.IQtInstallProvider;
 import org.eclipse.cdt.qt.core.IQtInstallTargetMapper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -29,7 +31,7 @@ import org.osgi.service.prefs.Preferences;
 
 public class QtInstallManager implements IQtInstallManager {
 
-	private Map<String, IQtInstall> installs;
+	private Map<Path, IQtInstall> installs;
 	private Map<String, IConfigurationElement> mapperElements;
 	private Map<String, IQtInstallTargetMapper> mappers;
 
@@ -43,10 +45,24 @@ public class QtInstallManager implements IQtInstallManager {
 			try {
 				Preferences prefs = getPreferences();
 				for (String key : prefs.keys()) {
-					installs.put(key, new QtInstall(key, Paths.get(prefs.get(key, "/")))); //$NON-NLS-1$
+					QtInstall install = new QtInstall(Paths.get(prefs.get(key, "/"))); //$NON-NLS-1$
+					installs.put(install.getQmakePath(), install);
 				}
 			} catch (BackingStoreException e) {
 				Activator.log(e);
+			}
+			
+			// Auto installs
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID, "qtInstallProvider"); //$NON-NLS-1$
+			for (IConfigurationElement element : point.getConfigurationElements()) {
+				try {
+					IQtInstallProvider provider = (IQtInstallProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
+					for (IQtInstall install : provider.getInstalls()) {
+						installs.put(install.getQmakePath(), install);
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
 			}
 		}
 	}
@@ -63,7 +79,8 @@ public class QtInstallManager implements IQtInstallManager {
 			}
 
 			// Add new ones
-			for (String key : installs.keySet()) {
+			for (Path path : installs.keySet()) {
+				String key = path.toString();
 				if (prefs.get(key, null) == null) {
 					prefs.put(key, installs.get(key).getQmakePath().toString());
 				}
@@ -84,19 +101,19 @@ public class QtInstallManager implements IQtInstallManager {
 	@Override
 	public void addInstall(IQtInstall qt) {
 		initInstalls();
-		installs.put(qt.getName(), qt);
+		installs.put(qt.getQmakePath(), qt);
 		saveInstalls();
 	}
 
 	@Override
-	public IQtInstall getInstall(String name) {
+	public IQtInstall getInstall(Path qmakePath) {
 		initInstalls();
-		return installs.get(name);
+		return installs.get(qmakePath);
 	}
 
 	@Override
 	public void removeInstall(IQtInstall install) {
-		installs.remove(install.getName());
+		installs.remove(install.getQmakePath());
 		saveInstalls();
 	}
 

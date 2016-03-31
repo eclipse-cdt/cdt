@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.qt.core;
 
+import java.nio.file.Path;
 import java.util.Collection;
 
-import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
@@ -23,7 +24,7 @@ public interface IQtInstallManager {
 
 	public void addInstall(IQtInstall install);
 
-	public IQtInstall getInstall(String name);
+	public IQtInstall getInstall(Path qmakePath);
 
 	public void removeInstall(IQtInstall install);
 

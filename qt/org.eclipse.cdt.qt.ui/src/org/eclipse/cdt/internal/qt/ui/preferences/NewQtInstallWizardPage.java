@@ -8,6 +8,7 @@
 package org.eclipse.cdt.internal.qt.ui.preferences;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -31,13 +32,12 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewQtInstallWizardPage extends WizardPage {
 
-	private Text nameText;
 	private Text locationText;
 	private Text specText;
 
-	private final Map<String, IQtInstall> existing;
+	private final Map<Path, IQtInstall> existing;
 
-	public NewQtInstallWizardPage(Map<String, IQtInstall> existing) {
+	public NewQtInstallWizardPage(Map<Path, IQtInstall> existing) {
 		super(Messages.NewQtInstallWizardPage_0, Messages.NewQtInstallWizardPage_1, null);
 		this.existing = existing;
 	}
@@ -51,10 +51,6 @@ public class NewQtInstallWizardPage extends WizardPage {
 		Label nameLabel = new Label(comp, SWT.NONE);
 		nameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		nameLabel.setText(Messages.NewQtInstallWizardPage_2);
-
-		nameText = new Text(comp, SWT.BORDER);
-		nameText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		nameText.addModifyListener(e -> validate());
 
 		Label locationLabel = new Label(comp, SWT.NONE);
 		locationLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -88,9 +84,6 @@ public class NewQtInstallWizardPage extends WizardPage {
 							String spec = QtInstall.getSpec(selected);
 							getControl().getDisplay().asyncExec(() -> {
 								specText.setText(spec);
-								if (nameText.getText().isEmpty() && !existing.containsKey(spec)) {
-									nameText.setText(spec);
-								}
 							});
 							return Status.OK_STATUS;
 						} catch (IOException e) {
@@ -114,13 +107,7 @@ public class NewQtInstallWizardPage extends WizardPage {
 
 	private void validate() {
 		setPageComplete(false);
-		String name = nameText.getText().trim();
-		if (name.isEmpty()) {
-			setErrorMessage(Messages.NewQtInstallWizardPage_10);
-			return;
-		}
-
-		if (existing.containsKey(name)) {
+		if (existing.containsKey(Paths.get(locationText.getText()))) {
 			setErrorMessage(Messages.NewQtInstallWizardPage_11);
 			return;
 		}
@@ -130,7 +117,7 @@ public class NewQtInstallWizardPage extends WizardPage {
 	}
 
 	IQtInstall getInstall() {
-		return new QtInstall(nameText.getText(), Paths.get(locationText.getText()));
+		return new QtInstall(Paths.get(locationText.getText()));
 	}
 
 }

@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.gcc.core;
 
-import org.eclipse.cdt.build.core.IToolChain;
-import org.eclipse.cdt.build.core.IToolChainType;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainType;
 import org.osgi.service.prefs.Preferences;
 
 public class GCCToolChainType implements IToolChainType {

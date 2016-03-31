@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="qtInstallTargetMapper" name="Qt Install Target Mapper" schema="schema/qtInstallTargetMapper.exsd"/>
+   <extension-point id="qtInstallProvider" name="Qt Install Provider" schema="schema/qtInstallProvider.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templates">
@@ -159,23 +160,6 @@
        </configProvider>
     </extension>
     <extension
-          point="org.eclipse.cdt.core.ScannerInfoProvider2">
-       <provider
-             builder="org.eclipse.cdt.qt.core.qtBuilder"
-             class="org.eclipse.cdt.internal.qt.core.build.QtScannerInfoProvider">
-       </provider>
-    </extension>
-    <extension
-          point="org.eclipse.core.runtime.adapters">
-       <factory
-             adaptableType="org.eclipse.core.resources.IBuildConfiguration"
-             class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory">
-          <adapter
-                type="org.eclipse.cdt.qt.core.QtBuildConfiguration">
-          </adapter>
-       </factory>
-    </extension>
-    <extension
           point="org.eclipse.cdt.qt.core.qtInstallTargetMapper">
        <mapper
              class="org.eclipse.cdt.internal.qt.core.LocalQtInstallTargetMapper"
@@ -203,5 +187,31 @@
              name="Qt Local Debug launcher"
              type="org.eclipse.cdt.qt.core.launchConfigurationType">
        </launchDelegate>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.core.buildConfigProvider">
+       <provider
+             class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationProvider"
+             id="org.eclipse.cdt.qt.core.qtBuildConfigProvider"
+             natureId="org.eclipse.cdt.qt.core.qtNature">
+       </provider>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.qt.core.qtInstallProvider">
+       <provider
+             class="org.eclipse.cdt.internal.qt.core.provider.Msys2QtInstallProvider">
+       </provider>
+       <provider
+             class="org.eclipse.cdt.internal.qt.core.provider.HomebrewQtInstallProvider">
+       </provider>
+       <provider
+             class="org.eclipse.cdt.internal.qt.core.provider.QtInstallProvider">
+       </provider>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.core.toolChainProvider">
+       <provider
+             class="org.eclipse.cdt.qt.core.QtMinGWToolChainProvider">
+       </provider>
     </extension>
 </plugin>

@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.build.core.IToolChain;
-import org.eclipse.cdt.build.core.IToolChainManager;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.launchbar.core.target.ILaunchTarget;

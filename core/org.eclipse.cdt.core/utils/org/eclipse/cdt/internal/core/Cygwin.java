@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.WindowsRegistry;
@@ -61,7 +62,7 @@ public class Cygwin {
 	private static String findCygpathLocation(String envPath) {
 		if (envPath == null) {
 			// $PATH from user preferences
-			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, null, true);
+			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
 			if (varPath != null) {
 				envPath = varPath.getValue();
 			}
@@ -234,9 +235,9 @@ public class Cygwin {
 			return null;
 		}
 
-		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, null, true);
+		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
 		String envPathValue = varPath != null ? varPath.getValue() : null;
-		IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_CYGWIN_HOME, null, true);
+		IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_CYGWIN_HOME, (ICConfigurationDescription) null, true);
 		String envCygwinHomeValue = varCygwinHome != null ? varCygwinHome.getValue() : null;
 
 		 // isCygwinLocationCached is used to figure fact of caching when all cached objects are null

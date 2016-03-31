@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.qt.core;
 
-import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 public interface IQtInstallTargetMapper {

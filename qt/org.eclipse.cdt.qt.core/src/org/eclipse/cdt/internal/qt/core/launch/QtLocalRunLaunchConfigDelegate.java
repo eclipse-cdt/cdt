@@ -7,17 +7,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core.launch;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.qt.core.QtBuildConfiguration;
+import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.QtLaunchConfigurationDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -33,32 +35,29 @@ public class QtLocalRunLaunchConfigDelegate extends QtLaunchConfigurationDelegat
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
 		ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
-		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
-
-		// get the executable
-		Path exeFile = qtBuildConfig.getProgramPath();
-
-		ProcessBuilder builder = new ProcessBuilder(exeFile.toString())
-				.directory(qtBuildConfig.getProject().getLocation().toFile());
+		IQtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
 		// set up the environment
-		Map<String, String> env = builder.environment();
-		qtBuildConfig.setProgramEnvironment(env);
+		List<String> env = new ArrayList<>();
+
+		for (IEnvironmentVariable var : CCorePlugin.getDefault().getBuildEnvironmentManager()
+				.getVariables(qtBuildConfig.getBuildConfiguration(), true)) {
+			env.add(var.getName() + '=' + var.getValue());
+		}
 
 		Map<String, String> configEnv = configuration.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,
 				(Map<String, String>) null);
 		if (configEnv != null) {
 			for (Map.Entry<String, String> entry : configEnv.entrySet()) {
-				env.put(entry.getKey(), entry.getValue());
+				env.add(entry.getKey() + '=' + entry.getValue());
 			}
 		}
 
-		try {
-			Process process = builder.start();
-			DebugPlugin.newProcess(launch, process, "main");
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Failed to start", e));
-		}
+		ICommandLauncher commandLauncher = new CommandLauncher();
+		Process process = commandLauncher.execute(qtBuildConfig.getProgramPath(), new String[0],
+				env.toArray(new String[env.size()]),
+				qtBuildConfig.getBuildConfiguration().getProject().getLocation().toFile().toPath(), monitor);
+		DebugPlugin.newProcess(launch, process, "main");
 	}
 
 }

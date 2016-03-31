@@ -5,30 +5,23 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.qt.core;
+package org.eclipse.cdt.core.build;
 
 import java.util.Collection;
 
-import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
- * The manager for Qt installs.
- * 
- * @noimplement
+ * The global toolchain manager. Accessed as an OSGi service.
+ *
+ * @since 6.0
  */
-public interface IQtInstallManager {
+public interface IToolChainManager {
 
-	public Collection<IQtInstall> getInstalls();
+	IToolChainType getToolChainType(String id);
 
-	public void addInstall(IQtInstall install);
+	IToolChain getToolChain(String typeId, String name);
 
-	public IQtInstall getInstall(String name);
-
-	public void removeInstall(IQtInstall install);
-
-	public boolean supports(IQtInstall install, ILaunchTarget target);
-
-	public boolean supports(IQtInstall install, IToolChain toolChain);
+	Collection<IToolChain> getToolChainsSupporting(ILaunchTarget target);
 
 }

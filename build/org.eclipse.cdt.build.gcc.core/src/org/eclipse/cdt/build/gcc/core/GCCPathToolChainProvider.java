@@ -22,11 +22,11 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.build.core.IToolChain;
-import org.eclipse.cdt.build.core.IToolChainManager;
-import org.eclipse.cdt.build.core.IToolChainProvider;
-import org.eclipse.cdt.build.core.IToolChainType;
 import org.eclipse.cdt.build.gcc.core.internal.Activator;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.core.build.IToolChainProvider;
+import org.eclipse.cdt.core.build.IToolChainType;
 
 /**
  * Finds gcc and clang on the path.

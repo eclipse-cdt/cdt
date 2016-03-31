@@ -7,9 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.gcc.core;
 
-import org.eclipse.cdt.build.core.IToolChain;
-import org.eclipse.cdt.build.core.IToolChainType;
-import org.osgi.service.prefs.Preferences;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainType;
 
 public class GCCToolChainType implements IToolChainType {
 
@@ -21,7 +20,7 @@ public class GCCToolChainType implements IToolChainType {
 	}
 
 	@Override
-	public IToolChain getToolChain(String name, Preferences properties) {
+	public IToolChain getToolChain(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}

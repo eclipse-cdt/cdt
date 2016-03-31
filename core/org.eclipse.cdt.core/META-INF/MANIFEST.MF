@@ -8,6 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.core.browser,
+ org.eclipse.cdt.core.build,
  org.eclipse.cdt.core.cdtvariables,
  org.eclipse.cdt.core.dom,
  org.eclipse.cdt.core.dom.ast,
@@ -126,6 +127,7 @@ Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[5.7.0,6.0.0)";visib
  org.eclipse.core.variables;bundle-version="[3.1.100,4.0.0)",
  org.eclipse.ltk.core.refactoring;bundle-version="3.4.0",
  org.eclipse.text;bundle-version="[3.2.0,4.0.0)",
- com.ibm.icu;bundle-version="4.4.2"
+ com.ibm.icu;bundle-version="4.4.2",
+ org.eclipse.launchbar.core;bundle-version="2.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core;
 
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
@@ -99,6 +100,24 @@ public interface ICommandLauncher {
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory,
 			IProgressMonitor monitor) throws CoreException;
 
+	/**
+	 * Execute a command.
+	 * 
+	 * @param commandPath path to the command
+	 * @param args arguments for the command
+	 * @param env environment variables for the command
+	 * @param workingDirectory working directory for the command
+	 * @param monitor progress monitor
+	 * @return process object created.
+	 * @throws CoreException
+	 * @since 6.0
+	 */
+	default public Process execute(Path commandPath, String[] args, String[] env, Path workingDirectory,
+			IProgressMonitor monitor) throws CoreException {
+		return execute(new org.eclipse.core.runtime.Path(commandPath.toString()), args, env, 
+				new org.eclipse.core.runtime.Path(workingDirectory.toString()), monitor);
+	}
+	
 	/**
 	 * @deprecated Use {@link #waitAndRead(OutputStream, OutputStream, IProgressMonitor)} instead.
 	 * @noreference This method is not intended to be referenced by clients.

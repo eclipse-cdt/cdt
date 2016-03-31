@@ -13,29 +13,26 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.build.core.CConsoleParser;
-import org.eclipse.cdt.build.core.IToolChain;
-import org.eclipse.cdt.build.core.IToolChainType;
 import org.eclipse.cdt.build.gcc.core.internal.Activator;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainType;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * The GCC toolchain. Placing it in cdt.core for now.
@@ -44,7 +41,7 @@ import org.osgi.service.prefs.Preferences;
  * 
  * @since 5.12
  */
-public class GCCToolChain implements IToolChain {
+public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	private final IToolChainType type;
 	private final String name;
@@ -104,13 +101,6 @@ public class GCCToolChain implements IToolChain {
 		} catch (IOException e) {
 			Activator.log(e);
 		}
-	}
-
-	@Override
-	public void setEnvironment(Map<String, String> env) {
-		// TODO Auto-generated method stub
-		// The base one could just assume the toolchain is already set up in the
-		// user's env
 	}
 
 	protected void addDiscoveryOptions(List<String> command) {
@@ -177,7 +167,6 @@ public class GCCToolChain implements IToolChain {
 		// Startup the command
 		ProcessBuilder processBuilder = new ProcessBuilder(commandLine).directory(buildDirectory.toFile())
 				.redirectErrorStream(true);
-		setEnvironment(processBuilder.environment());
 		Process process = processBuilder.start();
 
 		// Scan for the scanner info
@@ -215,41 +204,16 @@ public class GCCToolChain implements IToolChain {
 	}
 
 	@Override
-	public Collection<CConsoleParser> getConsoleParsers() {
-		// ../src/Test.cpp:4:1: error: 'x' was not declared in this scope
-		return Arrays.asList(new CConsoleParser("(.*?):(\\d+):(\\d+:)? (fatal )?error: (.*)") { //$NON-NLS-1$
-			@Override
-			protected int getSeverity(Matcher matcher) {
-				return IMarker.SEVERITY_ERROR;
-			}
-
-			@Override
-			protected String getMessage(Matcher matcher) {
-				return matcher.group(5);
-			}
-
-			@Override
-			protected int getLineNumber(Matcher matcher) {
-				return Integer.parseInt(matcher.group(2));
-			}
-
-			@Override
-			protected String getFileName(Matcher matcher) {
-				return matcher.group(1);
-			}
-
-			@Override
-			protected int getLinkOffset(Matcher matcher) {
-				return 0;
-			}
-
-			@Override
-			protected int getLinkLength(Matcher matcher) {
-				return matcher.group(1).length() + 1 + matcher.group(2).length() + 1 + matcher.group(3).length();
-			}
-		});
+	public String[] getErrorParserIds() {
+		return new String[] {
+				"org.eclipse.cdt.core.GCCErrorParser", //$NON-NLS-1$
+				"org.eclipse.cdt.core.GASErrorParser", //$NON-NLS-1$
+				"org.eclipse.cdt.core.GLDErrorParser", //$NON-NLS-1$
+				"org.eclipse.cdt.core.GmakeErrorParser", //$NON-NLS-1$
+				"org.eclipse.cdt.core.CWDLocator" //$NON-NLS-1$
+		};
 	}
-
+	
 	@Override
 	public boolean supports(ILaunchTarget target) {
 		if (target.getTypeId().equals(ILaunchTargetManager.localLaunchTargetTypeId)) {
@@ -263,9 +227,15 @@ public class GCCToolChain implements IToolChain {
 	}
 
 	@Override
-	public void save(Preferences properties) {
+	public IEnvironmentVariable getVariable(String name) {
 		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public IEnvironmentVariable[] getVariables() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

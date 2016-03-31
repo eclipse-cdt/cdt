@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.qt.core.QtBuildConfiguration;
+import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.QtLaunchConfigurationDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,7 +60,7 @@ public class QtLocalDebugLaunchConfigDelegate extends QtLaunchConfigurationDeleg
 			throws CoreException {
 		GdbLaunch gdbLaunch = (GdbLaunch) launch;
 		ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
-		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
+		IQtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
 		// TODO get it from the toolchain
 		gdbLaunch.setGDBPath("/usr/local/bin/gdb");

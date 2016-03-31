@@ -16,6 +16,7 @@ import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.IPath;
@@ -86,7 +87,7 @@ public class MinGW {
 	private static String findMingwInPath(String envPath) {
 		if (envPath == null) {
 			// $PATH from user preferences
-			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, null, true);
+			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
 			if (varPath != null) {
 				envPath = varPath.getValue();
 			}
@@ -168,9 +169,9 @@ public class MinGW {
 			return null;
 		}
 
-		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, null, true);
+		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
 		String envPathValue = varPath != null ? varPath.getValue() : null;
-		IEnvironmentVariable varMinGWHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_MINGW_HOME, null, true);
+		IEnvironmentVariable varMinGWHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_MINGW_HOME, (ICConfigurationDescription) null, true);
 		String envMinGWHomeValue = varMinGWHome != null ? varMinGWHome.getValue() : null;
 
 		 // isMinGWLocationCached is used to figure fact of caching when all cached objects are null
@@ -201,7 +202,7 @@ public class MinGW {
 		}
 
 		// Use $MSYS_HOME if defined
-		IEnvironmentVariable varMsysHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_MSYS_HOME, null, true);
+		IEnvironmentVariable varMsysHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_MSYS_HOME, (ICConfigurationDescription) null, true);
 		String msysHomeValue = varMsysHome != null ? varMsysHome.getValue() : null;
 		if (msysHomeValue != null) {
 			return msysHomeValue;

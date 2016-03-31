@@ -16,11 +16,13 @@ import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDo;
 
 /**
  * @author jcamelon
  */
-public class CPPASTDoStatement extends CPPASTAttributeOwner implements IASTDoStatement {
+public class CPPASTDoStatement extends CPPASTAttributeOwner implements IASTDoStatement, ICPPExecutionOwner {
 	private IASTStatement body;
     private IASTExpression condition;
 
@@ -115,4 +117,12 @@ public class CPPASTDoStatement extends CPPASTAttributeOwner implements IASTDoSta
         }
         super.replace(child, other);
     }
+
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner)getCondition();
+		ICPPEvaluation conditionEval = conditionExpr.getEvaluation();
+		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
+		return new ExecDo(conditionEval, bodyExec);
+	}
 }

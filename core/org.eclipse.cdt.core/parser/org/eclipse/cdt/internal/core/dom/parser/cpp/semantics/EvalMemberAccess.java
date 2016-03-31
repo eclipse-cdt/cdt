@@ -28,6 +28,7 @@ import java.util.Collection;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -40,12 +41,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -59,6 +63,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	private final IBinding fMember;
 	private final ValueCategory fOwnerValueCategory;
 	private final boolean fIsPointerDeref;
+	private ICPPEvaluation fOwnerEval;
 
 	private IType fType;
 	private boolean fIsTypeDependent;
@@ -74,10 +79,21 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	public EvalMemberAccess(IType ownerType, ValueCategory ownerValueCat, IBinding member,
 			boolean isPointerDeref, IBinding templateDefinition) {
 		super(templateDefinition);
-		fOwnerType= ownerType;
-		fOwnerValueCategory= ownerValueCat;
-		fMember= member;
-		fIsPointerDeref= isPointerDeref;
+		fOwnerType = ownerType;
+		fOwnerValueCategory = ownerValueCat;
+		fMember = member;
+		fIsPointerDeref = isPointerDeref;
+	}
+
+	public EvalMemberAccess(IType ownerType, ValueCategory ownerValueCat, IBinding member,
+			ICPPEvaluation ownerEval, boolean isDeref, IASTNode pointOfDefinition) {
+		this(ownerType, ownerValueCat, member, ownerEval, isDeref, findEnclosingTemplate(pointOfDefinition));
+	}
+
+	private EvalMemberAccess(IType ownerType, ValueCategory ownerValueCat, IBinding member,
+			ICPPEvaluation ownerEval, boolean isDeref, IBinding templateDefinition) {
+		this(ownerType, ownerValueCat, member, isDeref, templateDefinition);
+		this.fOwnerEval = ownerEval;
 	}
 
 	public IType getOwnerType() {
@@ -109,8 +125,8 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	@Override
 	public boolean isTypeDependent() {
 		if (!fCheckedIsTypeDependent) {
-			fCheckedIsTypeDependent= true;
-			fIsTypeDependent= computeIsTypeDependent();
+			fCheckedIsTypeDependent = true;
+			fIsTypeDependent = computeIsTypeDependent();
 		}
 		return fIsTypeDependent;
 	}
@@ -120,11 +136,11 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		if (fMember instanceof ICPPUnknownBinding) {
 			return true;
 		} else if (fMember instanceof IEnumerator) {
-			t= ((IEnumerator) fMember).getType();
+			t = ((IEnumerator) fMember).getType();
 		} else if (fMember instanceof IVariable) {
 			t = ((IVariable) fMember).getType();
 		} else if (fMember instanceof IFunction) {
-			t= ((IFunction) fMember).getType();
+			t = ((IFunction) fMember).getType();
 		} else {
 			return false;
 		}
@@ -134,21 +150,21 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	@Override
 	public boolean isValueDependent() {
 		if (!fCheckedIsValueDependent) {
-			fCheckedIsValueDependent= true;
-			fIsValueDependent= computeIsValueDependent();
+			fCheckedIsValueDependent = true;
+			fIsValueDependent = computeIsValueDependent();
 		}
 		return fIsValueDependent;
 	}
-	
+
 	private boolean computeIsValueDependent() {
 		if (fMember instanceof ICPPUnknownBinding) {
 			return true;
 		}
 		if (fMember instanceof IEnumerator) {
-			return Value.isDependentValue(((IEnumerator) fMember).getValue());
+			return IntegralValue.isDependentValue(((IEnumerator) fMember).getValue());
 		}
 		if (fMember instanceof IVariable) {
-			return Value.isDependentValue(((IVariable) fMember).getInitialValue());
+			return IntegralValue.isDependentValue(((IVariable) fMember).getInitialValue());
 		}
 		if (fMember instanceof IFunction) {
 			return false;
@@ -158,10 +174,9 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
-		// TODO(nathanridge):
-		//   This could be a constant expression if the field owner
-		//   is a constant expression, but we don't have access to
-		//   the field owner's evaluation, only its type.
+		if (fOwnerEval != null) {
+			return fOwnerEval.isConstantExpression(point);
+		}
 		return false;
 	}
 
@@ -190,29 +205,29 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
     		 * examine for type information.
     		 */
 
-    		ICPPEvaluation[] args= { new EvalFixed(type, LVALUE, Value.UNKNOWN) };
+    		ICPPEvaluation[] args= { new EvalFixed(type, LVALUE, IntegralValue.UNKNOWN) };
 			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, null, args, classType,
 					OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
-    		if (op == null)
-    			break;
+			if (op == null)
+				break;
 
-    		if (functionBindings != null)
-    			functionBindings.add(op);
+			if (functionBindings != null)
+				functionBindings.add(op);
 
-    		type= typeFromFunctionCall(op);
-			type= SemanticUtil.mapToAST(type, point);
-    	}
+			type = typeFromFunctionCall(op);
+			type = SemanticUtil.mapToAST(type, point);
+		}
 
-		IType prValue=  prvalueTypeWithResolvedTypedefs(type);
+		IType prValue = prvalueTypeWithResolvedTypedefs(type);
 		if (prValue instanceof IPointerType) {
 			return glvalueType(((IPointerType) prValue).getType());
 		}
 
 		if (CPPTemplates.isDependentType(type)) {
-			return returnDependent 
-					  // The type resulting from dereferecing 'type' 
-					? new TypeOfDependentExpression(new EvalUnary(IASTUnaryExpression.op_star, 
-							new EvalFixed(type, LVALUE, Value.UNKNOWN), null, point)) 
+			return returnDependent
+					// The type resulting from dereferecing 'type'
+					? new TypeOfDependentExpression(new EvalUnary(IASTUnaryExpression.op_star,
+							new EvalFixed(type, LVALUE, IntegralValue.UNKNOWN), null, point))
 					: null;
 		}
 
@@ -222,7 +237,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	@Override
 	public IType getType(IASTNode point) {
 		if (fType == null) {
-			fType= computeType(point);
+			fType = computeType(point);
 		}
 		return fType;
 	}
@@ -236,18 +251,18 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		}
 		if (fMember instanceof IVariable) {
 			IType e2 = ((IVariable) fMember).getType();
-			e2= SemanticUtil.getNestedType(e2, TDEF);
+			e2 = SemanticUtil.getNestedType(e2, TDEF);
 			if (e2 instanceof ICPPReferenceType) {
-				e2= glvalueType(e2);
+				e2 = glvalueType(e2);
 			} else if (fMember instanceof ICPPField && !((ICPPField) fMember).isStatic()) {
 				e2 = addQualifiersForAccess((ICPPField) fMember, e2, fOwnerType);
 				if (!fIsPointerDeref && fOwnerValueCategory == PRVALUE) {
-					e2= prvalueType(e2);
+					e2 = prvalueType(e2);
 				} else {
-					e2= glvalueType(e2);
+					e2 = glvalueType(e2);
 				}
 			}
-		    return SemanticUtil.mapToAST(e2, point);
+			return SemanticUtil.mapToAST(e2, point);
 		}
 		if (fMember instanceof IFunction) {
 			return SemanticUtil.mapToAST(((IFunction) fMember).getType(), point);
@@ -261,35 +276,47 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		if (field.isMutable()) {
 			// Remove const, add union of volatile.
 			if (cvq2.isConst()) {
-				fieldType= SemanticUtil.getNestedType(fieldType, ALLCVQ | TDEF | REF);
+				fieldType = SemanticUtil.getNestedType(fieldType, ALLCVQ | TDEF | REF);
 			}
-			fieldType= SemanticUtil.addQualifiers(fieldType, false, cvq1.isVolatile() || cvq2.isVolatile(), cvq2.isRestrict());
+			fieldType = SemanticUtil.addQualifiers(fieldType, false, cvq1.isVolatile() || cvq2.isVolatile(),
+					cvq2.isRestrict());
 		} else {
-			fieldType= SemanticUtil.addQualifiers(fieldType, cvq1.isConst(), cvq1.isVolatile(), cvq2.isRestrict());
+			fieldType = SemanticUtil.addQualifiers(fieldType, cvq1.isConst(), cvq1.isVolatile(),
+					cvq2.isRestrict());
 		}
 		return fieldType;
 	}
 
 	@Override
 	public IValue getValue(IASTNode point) {
+		if (fOwnerEval != null) {
+			int fieldPos = CPPASTFieldReference.getFieldPosition(fMember, fOwnerType);
+			CompositeValue compValue = (CompositeValue) fOwnerEval.getValue(point);
+			ICPPEvaluation field = compValue.get(fieldPos);
+			if(field != null) {
+				return field.getValue(point);
+			} else {
+				return IntegralValue.UNKNOWN;
+			}
+		}
 		if (fMember instanceof IEnumerator) {
 			return ((IEnumerator) fMember).getValue();
 		}
 		if (fMember instanceof IVariable) {
 			IValue initialValue = ((IVariable) fMember).getInitialValue();
-			return initialValue == null ? Value.UNKNOWN : initialValue;
+			return initialValue == null ? IntegralValue.UNKNOWN : initialValue;
 		}
 		if (fMember instanceof IFunction) {
-			return Value.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		}
-		return Value.create(this);
+		return IntegralValue.create(this);
 	}
 
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
 		if (fMember instanceof IVariable) {
-			IType e2= ((IVariable) fMember).getType();
-			e2= SemanticUtil.getNestedType(e2, TDEF);
+			IType e2 = ((IVariable) fMember).getType();
+			e2 = SemanticUtil.getNestedType(e2, TDEF);
 			if (e2 instanceof ICPPReferenceType) {
 				return LVALUE;
 			}
@@ -321,24 +348,27 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		buffer.putShort(firstBytes);
 		buffer.marshalType(fOwnerType);
 		buffer.marshalBinding(fMember);
+		buffer.marshalEvaluation(fOwnerEval, includeValue);
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		boolean isDeref= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
+	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
+			throws CoreException {
+		boolean isDeref = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		ValueCategory ownerValueCat;
 		if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0) {
-			ownerValueCat= LVALUE;
+			ownerValueCat = LVALUE;
 		} else if ((firstBytes & ITypeMarshalBuffer.FLAG3) != 0) {
-			ownerValueCat= XVALUE;
+			ownerValueCat = XVALUE;
 		} else {
-			ownerValueCat= PRVALUE;
+			ownerValueCat = PRVALUE;
 		}
 
-		IType ownerType= buffer.unmarshalType();
-		IBinding member= buffer.unmarshalBinding();
-		IBinding templateDefinition= buffer.unmarshalBinding();
-		return new EvalMemberAccess(ownerType, ownerValueCat, member, isDeref, templateDefinition);
+		IType ownerType = buffer.unmarshalType();
+		IBinding member = buffer.unmarshalBinding();
+		ICPPEvaluation ownerEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
+		IBinding templateDefinition = buffer.unmarshalBinding();
+		return new EvalMemberAccess(ownerType, ownerValueCat, member, ownerEval, isDeref, templateDefinition);
 	}
 
 	@Override
@@ -352,13 +382,59 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		if (ownerClass instanceof ICPPClassSpecialization) {
 			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerClass, fMember, context.getPoint());
 		}
-		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref, getTemplateDefinition());
+		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref,
+				getTemplateDefinition());
+	}
+
+
+	private boolean isMemberAccessThroughThisPointer() {
+		if(fOwnerEval == null) {
+			return true;
+		} else if(fOwnerEval instanceof EvalFixed) {
+			EvalFixed evalFixed = (EvalFixed)fOwnerEval;
+			return evalFixed.getValue() == IntegralValue.THIS;
+		}
+		return false;
+	}
+
+	private ICPPEvaluation getOwnerEval(ActivationRecord record) {
+		if(isMemberAccessThroughThisPointer()) {
+			return record.getImplicitThis();
+		}
+		return fOwnerEval;
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
-		return this;
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		final ICPPEvaluation ownerEval = getOwnerEval(record);
+		if (fMember instanceof ICPPMethod) {
+			EvalBinding evalBinding = new EvalBinding(fMember, fType, getTemplateDefinition());
+			return evalBinding;
+		}
+		if(ownerEval == null) {
+			return this;
+		}
+
+		int fieldPos = CPPASTFieldReference.getFieldPosition(fMember, fOwnerType);
+		ICPPEvaluation evaluatedOwner = ownerEval.computeForFunctionCall(record, context);
+		if (evaluatedOwner instanceof EvalPointer) {
+			evaluatedOwner = ((EvalPointer) evaluatedOwner).dereference();
+		}
+
+		if(fMember instanceof ICPPField) {
+			ICPPField field = (ICPPField) fMember;
+			if(field.getType() instanceof IArrayType) {
+				EvalPointer evalPointer = new EvalPointer(record,
+						new EvalCompositeAccess(new EvalCompositeAccess(evaluatedOwner, fieldPos), 0),
+						getTemplateDefinition());
+				return evalPointer;
+			}
+		}
+
+		EvalReference evalRef = new EvalReference(record,
+				new EvalCompositeAccess(evaluatedOwner, fieldPos), 
+				getTemplateDefinition());
+		return evalRef;
 	}
 
 	@Override

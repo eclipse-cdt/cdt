@@ -40,6 +40,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -53,10 +54,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
@@ -69,16 +71,18 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil.Pair;
 import org.eclipse.core.runtime.CoreException;
 
 public class EvalUnary extends CPPDependentEvaluation {
-	private static final ICPPEvaluation ZERO_EVAL = new EvalFixed(CPPSemantics.INT_TYPE, PRVALUE, Value.create(0));
+	private static final ICPPEvaluation ZERO_EVAL = new EvalFixed(CPPSemantics.INT_TYPE, PRVALUE, IntegralValue.create(0));
 
 	private final int fOperator;
 	private final ICPPEvaluation fArgument;
 	private final IBinding fAddressOfQualifiedNameBinding;
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
+
 
 	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding,
 			IASTNode pointOfDefinition) {
@@ -276,7 +280,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent())
-			return Value.create(this);
+			return IntegralValue.create(this);
 
 		ICPPEvaluation arg = fArgument;
 		ICPPFunction overload = getOverload(point);
@@ -287,9 +291,9 @@ public class EvalUnary extends CPPDependentEvaluation {
 			
 			if (!(overload instanceof CPPImplicitFunction)) {
 				if (!overload.isConstexpr())
-					return Value.ERROR;
+					return IntegralValue.ERROR;
 				ICPPEvaluation eval = new EvalBinding(overload, null, (IBinding) null);
-				arg = new EvalFunctionCall(new ICPPEvaluation[] {eval, arg}, (IBinding) null);
+				arg = new EvalFunctionCall(new ICPPEvaluation[] {eval, arg}, null, (IBinding) null);
 				return arg.getValue(point);
 			}
 		}
@@ -298,32 +302,29 @@ public class EvalUnary extends CPPDependentEvaluation {
 			case op_sizeof: {
 				SizeAndAlignment info =
 						SizeofCalculator.getSizeAndAlignment(fArgument.getType(point), point);
-				return info == null ? Value.UNKNOWN : Value.create(info.size);
+				return info == null ? IntegralValue.UNKNOWN : IntegralValue.create(info.size);
 			}
 			case op_alignOf: {
 				SizeAndAlignment info =
 						SizeofCalculator.getSizeAndAlignment(fArgument.getType(point), point);
-				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
+				return info == null ? IntegralValue.UNKNOWN : IntegralValue.create(info.alignment);
 			}
 			case op_noexcept:
-				return Value.UNKNOWN;  // TODO(sprigogin): Implement
+				return IntegralValue.UNKNOWN;  // TODO(sprigogin): Implement
 			case op_sizeofParameterPack:
-				return Value.UNKNOWN;  // TODO(sprigogin): Implement
+				IValue opVal = fArgument.getValue(point);
+				return IntegralValue.create(opVal.numberOfValues());
 			case op_typeid:
-				return Value.UNKNOWN;  // TODO(sprigogin): Implement
+				return IntegralValue.UNKNOWN;  // TODO(sprigogin): Implement
 			case op_throw:
-				return Value.UNKNOWN;  // TODO(sprigogin): Implement
+				return IntegralValue.UNKNOWN;  // TODO(sprigogin): Implement
 		}
 
 		IValue val = arg.getValue(point);
 		if (val == null)
-			return Value.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 
-		Long num = val.numericalValue();
-		if (num != null) {
-			return Value.evaluateUnaryExpression(fOperator, num);
-		}
-		return Value.create(this);
+		return ValueFactory.evaluateUnaryExpression(fOperator, val);
 	}
 
 	@Override
@@ -377,16 +378,106 @@ public class EvalUnary extends CPPDependentEvaluation {
 		return new EvalUnary(fOperator, argument, binding, getTemplateDefinition());
 	}
 
+	
+	private ICPPEvaluation createOperatorOverloadEvaluation(ICPPFunction overload, IASTNode point, ICPPEvaluation arg) {
+		if(overload instanceof ICPPMethod) {
+			EvalMemberAccess opAccess = new EvalMemberAccess(arg.getType(point), ValueCategory.LVALUE, overload, arg, false, point);
+			ICPPEvaluation[] args = new ICPPEvaluation[]{opAccess};
+			return new EvalFunctionCall(args, arg, point);
+		} else {
+			EvalBinding op = new EvalBinding(overload, overload.getType(), point);
+			ICPPEvaluation[] args = new ICPPEvaluation[]{op, arg};
+			return new EvalFunctionCall(args, null, point);
+		}
+	}
+	
+	private static boolean isModifyingOperation(int op) {
+		return op == op_prefixIncr || op == op_prefixDecr || op == op_postFixIncr || op == op_postFixDecr;
+	}
+	
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, 
-			ConstexprEvaluationContext context) {
-		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, context.recordStep());
-		if (argument == fArgument)
-			return this;
-
-		return new EvalUnary(fOperator, argument, fAddressOfQualifiedNameBinding, getTemplateDefinition());
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		ICPPFunction overload = getOverload(context.getPoint());
+		if (overload != null) {
+			ICPPEvaluation operatorCall = createOperatorOverloadEvaluation(overload, context.getPoint(), fArgument);
+			ICPPEvaluation eval = operatorCall.computeForFunctionCall(record, context);
+			return eval;
+		}
+		
+		Pair<ICPPEvaluation, ICPPEvaluation> vp = EvalUtil.getValuePair(fArgument, record, context);
+		final ICPPEvaluation updateable = vp.getFirst();
+		final ICPPEvaluation fixed = vp.getSecond();
+		
+		ICPPEvaluation evalUnary = fixed == fArgument || fixed == EvalFixed.INCOMPLETE ? this : new EvalUnary(fOperator, fixed, fAddressOfQualifiedNameBinding, getTemplateDefinition());
+		if(fOperator == op_star) {
+			if(fixed instanceof EvalPointer) {
+				EvalPointer evalPointer = (EvalPointer)fixed;
+				return evalPointer.dereference();
+			} else if (updateable instanceof EvalBinding && isStarOperatorOnArrayName(context)) {
+				EvalBinding evalBinding = (EvalBinding)updateable;
+				IBinding binding = evalBinding.getBinding();
+				ICPPEvaluation value = record.getVariable(binding);
+				EvalCompositeAccess compositeAccess = new EvalCompositeAccess(value, 0);
+				return new EvalReference(record, compositeAccess, getTemplateDefinition());	
+			}
+			return evalUnary;
+		} else if(fOperator == op_amper) {
+			if(updateable instanceof EvalBinding) {
+				EvalBinding evalBinding = (EvalBinding)updateable;
+				IBinding binding = evalBinding.getBinding();
+				return new EvalPointer(record, binding, getTemplateDefinition());
+			} else if(updateable instanceof EvalReference) {
+				EvalReference evalRef = (EvalReference)updateable;
+				return EvalPointer.createFromAddress(evalRef);
+			}
+			return evalUnary;
+		} else if(isModifyingOperation(fOperator)) {
+			if(fixed instanceof EvalPointer) {
+				EvalPointer evalPointer = (EvalPointer)fixed;
+				applyPointerArithmetics(evalPointer);
+				return evalUnary;
+			} else {
+				EvalFixed newValue = new EvalFixed(evalUnary.getType(context.getPoint()), evalUnary.getValueCategory(context.getPoint()), evalUnary.getValue(context.getPoint()));
+				if(updateable instanceof EvalReference) {
+					EvalReference evalRef = (EvalReference)updateable; 
+					evalRef.update(newValue);
+				} else if(updateable instanceof EvalCompositeAccess) {
+					EvalCompositeAccess evalCompAccess = (EvalCompositeAccess)updateable;
+					evalCompAccess.update(newValue);
+				} else if(updateable instanceof EvalBinding) {
+					EvalBinding evalBinding = (EvalBinding)updateable;
+					IBinding binding = evalBinding.getBinding();
+					record.update(binding, newValue);
+				}
+				
+				if (this.getValueCategory(context.getPoint()) == ValueCategory.LVALUE) {
+					return updateable;
+				} else {
+					return fixed;
+				}
+			}
+		} else {
+			return evalUnary;
+		}
 	}
 
+	private boolean isStarOperatorOnArrayName(ConstexprEvaluationContext context) {
+		return fOperator==op_star && fArgument.getType(context.getPoint()) instanceof IArrayType;
+	}
+
+	private void applyPointerArithmetics(EvalPointer poiner) {
+		switch(fOperator) {
+		case op_postFixIncr: 
+		case op_prefixIncr:
+			poiner.setPosition(poiner.getPosition() + 1);
+			break;
+		case op_postFixDecr:
+		case op_prefixDecr:
+			poiner.setPosition(poiner.getPosition() - 1);
+			break;
+		}
+	}
+	
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return fArgument.determinePackSize(tpMap);

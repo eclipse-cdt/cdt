@@ -339,7 +339,7 @@ public class Conversions {
 	static Cost listInitializationSequenceHelper(EvalInitList arg, IType target, UDCMode udc, boolean isDirect, IASTNode point) throws DOMException {
 		IType listType= getInitListType(target);
 		if (listType == null && target instanceof IArrayType) {
-			Long arraySize = ((IArrayType) target).getSize().numericalValue();
+			Number arraySize = ((IArrayType) target).getSize().numericalValue();
 			if (arraySize != null) {
 				IType elementType = ((IArrayType) target).getType();
 				// TODO(nathanridge): If there are fewer initializer clauses than the array size,

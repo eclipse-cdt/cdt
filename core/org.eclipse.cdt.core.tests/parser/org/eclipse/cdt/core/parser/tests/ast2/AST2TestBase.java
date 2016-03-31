@@ -514,7 +514,7 @@ public class AST2TestBase extends BaseTestCase {
 	protected static void assertConstantValue(long expected, IVariable constant) {
 		IValue value = constant.getInitialValue();
 		assertNotNull(value);
-		Long numericalValue = value.numericalValue();
+		Number numericalValue = value.numericalValue();
 		assertNotNull(numericalValue);
 		assertEquals(expected, numericalValue.longValue());
 	}

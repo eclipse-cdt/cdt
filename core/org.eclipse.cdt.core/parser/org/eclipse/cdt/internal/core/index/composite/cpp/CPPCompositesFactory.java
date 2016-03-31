@@ -65,7 +65,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecializatio
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
@@ -89,7 +89,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
@@ -332,12 +332,12 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				e= new EvalComma(a2, compositeTemplateDefinition);
 			return e;
 		}
-		if (eval instanceof EvalCompound) {
-			EvalCompound e= (EvalCompound) eval;
+		if (eval instanceof EvalCompoundStatementExpression) {
+			EvalCompoundStatementExpression e= (EvalCompoundStatementExpression) eval;
 			ICPPEvaluation a = e.getLastEvaluation();
 			ICPPEvaluation a2 = getCompositeEvaluation(a);
 			if (a != a2 || templateDefinition != compositeTemplateDefinition)
-				e= new EvalCompound(a2, compositeTemplateDefinition);
+				e= new EvalCompoundStatementExpression(a2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalConditional) {
@@ -367,7 +367,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPEvaluation[] a = e.getArguments();
 			ICPPEvaluation[] a2 = getCompositeEvaluationArray(a);
 			if (a != a2 || templateDefinition != compositeTemplateDefinition)
-				e= new EvalFunctionCall(a2, compositeTemplateDefinition);
+				e= new EvalFunctionCall(a2, null, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalFunctionSet) {
@@ -443,7 +443,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType a2= getCompositeType(a);
 			ICPPEvaluation[] b2 = getCompositeEvaluationArray(b);
 			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
-				e= new EvalTypeId(a2, compositeTemplateDefinition, b2);
+				e= new EvalTypeId(a2, compositeTemplateDefinition, e.representsNewExpression(),
+						e.usesBracedInitList(), b2);
 			return e;
 		}
 		if (eval instanceof EvalUnary) {
@@ -513,7 +514,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			return v;
 
 		eval = getCompositeEvaluation(eval);
-		return Value.fromInternalRepresentation(eval);
+		return IntegralValue.fromInternalRepresentation(eval);
 	}
 
 	private ICPPNamespace[] getNamespaces(IBinding rbinding) throws CoreException {

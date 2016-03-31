@@ -23,30 +23,36 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.CStringValue;
+import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 
 /**
  * Represents a C++ literal.
  */
-public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression {
-	private static final EvalFixed EVAL_TRUE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, Value.create(1));
-	private static final EvalFixed EVAL_FALSE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, Value.create(0));
-	private static final EvalFixed EVAL_NULL_PTR = new EvalFixed(CPPBasicType.NULL_PTR, PRVALUE, Value.create(0));
+public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression, ICPPEvaluationOwner {
+	private static final EvalFixed EVAL_TRUE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, IntegralValue.create(true));
+	private static final EvalFixed EVAL_FALSE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, IntegralValue.create(false));
+	private static final EvalFixed EVAL_NULL_PTR = new EvalFixed(CPPBasicType.NULL_PTR, PRVALUE, IntegralValue.create(0));
 
 	public static final CPPASTLiteralExpression INT_ZERO =
 			new CPPASTLiteralExpression(lk_integer_constant, new char[] {'0'});
@@ -224,7 +230,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     }
     
     private int computeStringLiteralSize() {
-    	int start = 0, end = fValue.length - 1;
+    	int start = 0, end = fValue.length - 1 - getSuffix().length;
     	boolean isRaw = false;
     	
     	// Skip past a prefix affecting the character type.
@@ -289,7 +295,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		if (fStringLiteralSize == -1) {
 			fStringLiteralSize = computeStringLiteralSize();
 		}
-		return Value.create(fStringLiteralSize);
+		return IntegralValue.create(fStringLiteralSize);
 	}
 	
 	private IType getStringType() {
@@ -631,49 +637,98 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		return fEvaluation;
 	}
 	
-	private ICPPEvaluation createEvaluation() {
+	private ICPPEvaluation createLiteralEvaluation() {
     	switch (fKind) {
-    		case lk_this: {
-    			IScope scope = CPPVisitor.getContainingScope(this);
-    			IType type= CPPVisitor.getImpliedObjectType(scope);
-    			if (type == null) 
-    				return EvalFixed.INCOMPLETE;
-    			return new EvalFixed(new CPPPointerType(type), PRVALUE, Value.UNKNOWN);
-    		}
-    		case lk_true:
-    			return EVAL_TRUE;
-    		case lk_false:
-    			return EVAL_FALSE;
-    		case lk_char_constant:
-    			return new EvalFixed(getCharType(), PRVALUE, createCharValue());
-    		case lk_float_constant:
-    			return new EvalFixed(classifyTypeOfFloatLiteral(), PRVALUE, Value.UNKNOWN);
-    		case lk_integer_constant:
-    			return new EvalFixed(classifyTypeOfIntLiteral(), PRVALUE, createIntValue());
-    		case lk_string_literal:
-    			return new EvalFixed(getStringType(), LVALUE, Value.UNKNOWN);
-    		case lk_nullptr:
-    			return EVAL_NULL_PTR;
+		case lk_this: {
+			IScope scope = CPPVisitor.getContainingScope(this);
+			IType type= CPPVisitor.getImpliedObjectType(scope);
+			if (type == null) 
+				return EvalFixed.INCOMPLETE;
+			return new EvalFixed(new CPPPointerType(type), PRVALUE, IntegralValue.THIS);
+		}
+		case lk_true:
+			return EVAL_TRUE;
+		case lk_false:
+			return EVAL_FALSE;
+		case lk_char_constant:
+			return new EvalFixed(getCharType(), PRVALUE, createCharValue());
+		case lk_float_constant:
+			return new EvalFixed(classifyTypeOfFloatLiteral(), PRVALUE, FloatingPointValue.create(getValue()));
+		case lk_integer_constant:
+			return new EvalFixed(classifyTypeOfIntLiteral(), PRVALUE, createIntValue());
+		case lk_string_literal:
+			return new EvalFixed(getStringType(), LVALUE, CStringValue.create(getValue()));
+		case lk_nullptr:
+			return EVAL_NULL_PTR;
     	}
-		return EvalFixed.INCOMPLETE;
+    	return EvalFixed.INCOMPLETE;
+	}
+	
+	private ICPPEvaluation createEvaluation() {
+		ICPPEvaluation literalEval = createLiteralEvaluation();
+		
+		IBinding udlOperator = getUserDefinedLiteralOperator();
+		if(udlOperator != null && literalEval != EvalFixed.INCOMPLETE) {
+			if(udlOperator instanceof ICPPFunction) {
+				ICPPFunction udlOpFunction = (ICPPFunction)udlOperator;
+				EvalBinding op = new EvalBinding(udlOpFunction, udlOpFunction.getType(), this);
+				ICPPEvaluation[] args = null;
+				
+				ICPPParameter params[] = udlOpFunction.getParameters();
+				int paramCount = params.length;
+				if(paramCount == 0) {
+					args = new ICPPEvaluation[]{op};
+				} else if(paramCount == 1) {
+					//this means that we need to fall back to the raw literal operator
+					if(params[0].getType() instanceof IPointerType) {
+						char numValue[] = getValue();
+						int numLen = numValue.length;
+						char strValue[] = new char[numLen + 2];
+						strValue[0] = '"';
+						strValue[numLen + 1] = '"';
+						System.arraycopy(numValue, 0, strValue, 1, numLen);
+						
+						IType type = new CPPBasicType(Kind.eChar, 0, this);
+						type = new CPPQualifierType(type, true, false);
+						type = new CPPArrayType(type, IntegralValue.create(numLen+1));
+						EvalFixed strEval = new EvalFixed(type, LVALUE, CStringValue.create(strValue));
+						args = new ICPPEvaluation[]{op, strEval};
+					} else {
+						args = new ICPPEvaluation[]{op, literalEval};
+					}
+				} else if(paramCount == 2) {
+					IValue sizeValue = IntegralValue.create(computeStringLiteralSize() - 1);
+					EvalFixed literalSizeEval = new EvalFixed(CPPBasicType.INT, PRVALUE, sizeValue);
+					args = new ICPPEvaluation[]{op, literalEval, literalSizeEval};
+				}
+				return new EvalFunctionCall(args, null, this);
+			}
+		}
+		
+		//has a user-defined literal suffix but didn't find a udl operator function => error
+		if(getSuffix().length > 0 && (getKind() == lk_string_literal || !fIsCompilerSuffix)) {
+			return EvalFixed.INCOMPLETE;
+		}
+		
+		return literalEval;
 	}
 
 	private IValue createCharValue() {
 		try {
 			final char[] image= getValue();
 			if (image.length > 1 && image[0] == 'L') 
-				return Value.create(ExpressionEvaluator.getChar(image, 2));
-			return Value.create(ExpressionEvaluator.getChar(image, 1));
+				return IntegralValue.create(ExpressionEvaluator.getChar(image, 2));
+			return IntegralValue.create(ExpressionEvaluator.getChar(image, 1));
 		} catch (EvalException e) {
-			return Value.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		}
 	}
 	
 	private IValue createIntValue() {
 		try {
-			return Value.create(ExpressionEvaluator.getNumber(getValue()));
+			return IntegralValue.create(ExpressionEvaluator.getNumber(getValue()));
 		} catch (EvalException e) {
-			return Value.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		}
 	}
 

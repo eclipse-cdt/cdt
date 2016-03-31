@@ -19,9 +19,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
@@ -77,9 +78,18 @@ public class EvalInitList extends CPPDependentEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		if (isValueDependent())
-			return Value.create(this);
-		return Value.UNKNOWN;  // TODO(sprigogin): Is this correct?
+		if (isValueDependent()) {
+			return IntegralValue.create(this);
+		}
+		if (getClauses().length > 1) {
+			return CompositeValue.create(this);
+		}
+		else if (getClauses().length == 1) {
+			return IntegralValue.create(getClauses()[0]);
+		} else {
+			return IntegralValue.UNKNOWN;
+		}
+		
 	}
 
 	@Override
@@ -116,11 +126,13 @@ public class EvalInitList extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPEvaluation[] clauses = fClauses;
+		if (fClauses.length == 1) {
+			return fClauses[0].computeForFunctionCall(record, context.recordStep());
+		}
 		for (int i = 0; i < fClauses.length; i++) {
-			ICPPEvaluation clause = fClauses[i].computeForFunctionCall(parameterMap, context.recordStep());
+			ICPPEvaluation clause = fClauses[i].computeForFunctionCall(record, context.recordStep());
 			if (clause != fClauses[i]) {
 				if (clauses == fClauses) {
 					clauses = new ICPPEvaluation[fClauses.length];
@@ -129,9 +141,8 @@ public class EvalInitList extends CPPDependentEvaluation {
 				clauses[i] = clause;
 			}
 		}
-		if (clauses == fClauses)
-			return this;
-		return new EvalInitList(clauses, getTemplateDefinition());
+		EvalInitList evalInit = new EvalInitList(clauses, this.getTemplateDefinition());
+		return evalInit;
 	}
 
 	@Override

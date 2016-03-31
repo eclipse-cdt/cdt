@@ -51,4 +51,9 @@ public class PDOMCPPFieldInstance extends PDOMCPPVariableInstance implements ICP
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_FIELD_INSTANCE;
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return ((ICPPField)getSpecializedBinding()).getFieldPosition();
+	}
 }

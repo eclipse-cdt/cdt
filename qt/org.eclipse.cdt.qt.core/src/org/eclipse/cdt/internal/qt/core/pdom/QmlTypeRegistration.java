@@ -83,7 +83,7 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 			return null;
 
 		 IValue val = args[1].getNonTypeValue();
-		 return val == null ? null : val.numericalValue();
+		 return val == null ? null : val.numericalValue().longValue();
 	}
 
 	public String getUri() {

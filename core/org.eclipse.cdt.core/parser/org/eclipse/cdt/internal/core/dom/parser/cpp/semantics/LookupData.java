@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -76,6 +75,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 
 /**
  * Context data for IASTName lookup
@@ -524,7 +524,7 @@ public class LookupData extends ScopeLookupData {
 	public void setFunctionArguments(boolean containsImpliedObject, IASTInitializerClause... exprs) {
 		ICPPEvaluation[] evals= new ICPPEvaluation[exprs.length];
 		for (int i = 0; i < evals.length; i++) {
-			evals[i]= ((ICPPASTInitializerClause) exprs[i]).getEvaluation();
+			evals[i]= ((ICPPEvaluationOwner) exprs[i]).getEvaluation();
 		}
 		setFunctionArguments(containsImpliedObject, evals);
 	}

@@ -20,11 +20,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIf;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
 
 /**
  * If statement in C++
  */
-public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIfStatement {
+public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIfStatement, ICPPExecutionOwner {
     private IASTExpression condition;
     private IASTStatement thenClause;
     private IASTStatement elseClause;
@@ -214,4 +217,15 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
             scope = new CPPBlockScope(this);
         return scope;	
     }
+	
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner)getConditionExpression();
+		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner)getConditionDeclaration();
+		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration)conditionDecl.getExecution() : null;
+		ICPPExecution thenClauseExec = EvalUtil.getExecutionFromStatement(getThenClause());
+		ICPPExecution elseClauseExec = getElseClause() != null ? EvalUtil.getExecutionFromStatement(getElseClause()) : null;
+		return new ExecIf(conditionExprEval, conditionDeclExec, thenClauseExec, elseClauseExec);
+	}
 }

@@ -39,4 +39,9 @@ public class CompositeCPPFieldInstance extends CompositeCPPVariableInstance impl
 		return (ICPPClassType) cf.getCompositeBinding(
 				(IIndexFragmentBinding) ((ICPPField) rbinding).getClassOwner());
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return ((ICPPField)rbinding).getFieldPosition();
+	}
 }

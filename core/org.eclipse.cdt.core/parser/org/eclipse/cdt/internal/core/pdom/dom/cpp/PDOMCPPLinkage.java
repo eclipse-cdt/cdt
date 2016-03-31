@@ -50,7 +50,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -87,12 +86,14 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.ast.tag.TagManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
@@ -107,6 +108,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -114,8 +116,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompositeAccess;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
@@ -123,9 +127,30 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecAliasDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecBreak;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecCase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecCompoundStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecConstructorChain;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecContinue;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDeclarationStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDefault;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDo;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecExpressionStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecFor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIf;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecNull;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecRangeBasedFor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSwitch;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecWhile;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.InitializerListType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
@@ -251,6 +276,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPParameter[] fOriginalParameters;
 		private final IType[] fOriginalExceptionSpec;
 		private final ICPPEvaluation fReturnExpression;
+		private final ICPPExecution fFunctionBody;
+		private final ICPPExecution fConstructorChain;
 
 		public ConfigureFunction(ICPPFunction original, PDOMCPPFunction function, IASTNode point) 
 				throws DOMException {
@@ -259,30 +286,35 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= function.extractExceptionSpec(original);
 			fReturnExpression= CPPFunction.getReturnExpression(original, point);
+			fFunctionBody = CPPFunction.getFunctionBodyExecution(original);
+			fConstructorChain = CPPFunction.getConstructorChainExecution(original);
 			postProcesses.add(this);
 		}
 
 		@Override
 		public void run() {
 			fFunction.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec,
-					fReturnExpression);
+					fReturnExpression, fFunctionBody, fConstructorChain);
 		}
 	}
 
 	class ConfigureFunctionSpecialization implements Runnable {
 		private final PDOMCPPFunctionSpecialization fSpec;
 		private final ICPPEvaluation fReturnExpression;
-
-		public ConfigureFunctionSpecialization(ICPPFunction original, PDOMCPPFunctionSpecialization spec,
-				IASTNode point) {
+		private final ICPPExecution fFunctionBody;
+		private final ICPPExecution fConstructorChain;
+		
+		public ConfigureFunctionSpecialization(ICPPFunction original, PDOMCPPFunctionSpecialization spec, IASTNode point) {
 			fSpec = spec;
 			fReturnExpression = CPPFunction.getReturnExpression(original, point);
+			fFunctionBody = CPPFunction.getFunctionBodyExecution(original);
+			fConstructorChain = CPPFunction.getConstructorChainExecution(original);
 			postProcesses.add(this);
 		}
 
 		@Override
 		public void run() {
-			fSpec.initData(fReturnExpression);
+			fSpec.initData(fReturnExpression, fFunctionBody, fConstructorChain);
 		}
 	}
 	
@@ -310,6 +342,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPParameter[] fOriginalParameters;
 		private final IType[] fOriginalExceptionSpec;
 		private final ICPPEvaluation fReturnExpression;
+		private final ICPPExecution fFunctionBody;
+		private final ICPPExecution fConstructorChain;
 
 		public ConfigureFunctionTemplate(ICPPFunctionTemplate original, PDOMCPPFunctionTemplate template,
 				IASTNode point) throws DOMException {
@@ -320,6 +354,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= template.extractExceptionSpec(original);
 			fReturnExpression= CPPFunction.getReturnExpression(original, point);
+			fFunctionBody = CPPFunction.getFunctionBodyExecution(original);
+			fConstructorChain = CPPFunction.getConstructorChainExecution(original);
 			postProcesses.add(this);
 		}
 
@@ -331,7 +367,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					tp.configure(fOriginalTemplateParameters[i]);
 			}
 			fTemplate.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec,
-					fReturnExpression);
+					fReturnExpression, fFunctionBody, fConstructorChain);
 		}
 	}
 
@@ -1035,8 +1071,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 */
  	private final PDOMNode adaptOrAddParent(boolean add, IBinding binding) throws CoreException {
  		IBinding owner= binding.getOwner();
-		if (owner instanceof IFunction && !(binding instanceof ICPPTemplateParameter)) {
-			return null;
+		if (owner instanceof IFunction) {
+			boolean isTemplateParameter = binding instanceof ICPPTemplateParameter;
+			boolean ownerIsConstexprFunc = owner instanceof ICPPFunction && ((ICPPFunction) owner).isConstexpr();
+			boolean isVariableOrTypedef = binding instanceof ICPPVariable || binding instanceof ITypedef;
+			if (!isTemplateParameter && !(ownerIsConstexprFunc && isVariableOrTypedef)) {
+				return null;
+			}
 		}
 
 		if (binding instanceof IIndexBinding) {
@@ -1260,12 +1301,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (parentNode instanceof ICPPASTCompositeTypeSpecifier) {
 			IBinding classBinding = name.resolveBinding();
 			if (classBinding instanceof ICPPClassType) {
-				ICPPBase[] bases;
-				if (classBinding instanceof ICPPClassSpecialization) {
-					bases= ((ICPPClassSpecialization) classBinding).getBases(name);
-				} else {
-					bases= ((ICPPClassType) classBinding).getBases();
-				}
+				ICPPBase[] bases = ClassTypeHelper.getBases((ICPPClassType)classBinding, name);
 				if (bases.length > 0) {
 					PDOMBinding pdomBinding = pdomName.getBinding();
 					if (pdomBinding instanceof PDOMCPPClassType) {
@@ -1407,6 +1443,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPUnaryTypeTransformation.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.UNKNOWN_MEMBER_TYPE:
 			return TypeOfUnknownMember.unmarshal(getPDOM(), firstBytes, buffer);
+		case ITypeMarshalBuffer.INITIALIZER_LIST_TYPE:
+			return InitializerListType.unmarshal(firstBytes, buffer);
+		// Don't handle DEFERRED_FUNCTION, because it's never a type.
 		}
 
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
@@ -1422,6 +1461,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE:
 			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
+		case ITypeMarshalBuffer.DEFERRED_FUNCTION:
+			return CPPDeferredFunction.unmarshal(firstBytes, buffer);
 		}
 
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
@@ -1442,7 +1483,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		case ITypeMarshalBuffer.EVAL_COMMA:
 			return EvalComma.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_COMPOUND:
-			return EvalCompound.unmarshal(firstBytes, buffer);
+			return EvalCompoundStatementExpression.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_CONDITIONAL:
 			return EvalConditional.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_FIXED:
@@ -1465,7 +1506,61 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return EvalUnary.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_UNARY_TYPE_ID:
 			return EvalUnaryTypeID.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EVAL_CONSTRUCTOR:
+			return EvalConstructor.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EVAL_REFERENCE:
+			return EvalReference.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EVAL_COMPOSITE_ACCESS:
+			return EvalCompositeAccess.unmarshal(firstBytes, buffer);
 		}
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an evaluation, first bytes=" + firstBytes)); //$NON-NLS-1$
+	}
+	
+	@Override
+	public ISerializableExecution unmarshalExecution(ITypeMarshalBuffer buffer) throws CoreException {
+		short firstBytes = buffer.getShort();
+		if(firstBytes == TypeMarshalBuffer.NULL_TYPE)
+			return null;
+		switch((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
+		case ITypeMarshalBuffer.EXEC_COMPOUND_STATEMENT:
+			return ExecCompoundStatement.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_BREAK:
+			return ExecBreak.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_CASE:
+			return ExecCase.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_CONTINUE:
+			return ExecContinue.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_DECLARATION_STATEMENT:
+			return ExecDeclarationStatement.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_DECLARATOR:
+			return ExecDeclarator.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_DEFAULT:
+			return ExecDefault.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_NULL:
+			return ExecNull.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_SIMPLE_DECLARATION:
+			return ExecSimpleDeclaration.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_RETURN:
+			return ExecReturn.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_EXPRESSION_STATEMENT:
+			return ExecExpressionStatement.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_IF:
+			return ExecIf.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_WHILE:
+			return ExecWhile.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_DO:
+			return ExecDo.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_FOR:
+			return ExecFor.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_ALIAS_DECLARATION:
+			return ExecAliasDeclaration.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_RANGE_BASED_FOR:
+			return ExecRangeBasedFor.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_SWITCH:
+			return ExecSwitch.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_CONSTRUCTOR_CHAIN:
+			return ExecConstructorChain.unmarshal(firstBytes, buffer);
+		}
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an execution, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
 }

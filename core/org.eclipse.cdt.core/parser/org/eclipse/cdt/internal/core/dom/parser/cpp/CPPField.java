@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -46,6 +47,11 @@ public class CPPField extends CPPVariable implements ICPPField {
 		@Override
 		public ICompositeType getCompositeTypeOwner() {
 			return getClassOwner();
+		}
+
+		@Override
+		public byte getFieldPosition() {
+			return -1;
 		}
     }
 
@@ -90,5 +96,20 @@ public class CPPField extends CPPVariable implements ICPPField {
 	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
+	}
+
+	@Override
+	public byte getFieldPosition() {
+		return getFieldPosition(getName(), getClassOwner());
+	}
+	
+	public static byte getFieldPosition(String fieldName, ICPPClassType classOwner) {
+		IField[] fields = ClassTypeHelper.getDeclaredFields(classOwner, null);
+		for (byte fieldPos = 0; fieldPos < fields.length; fieldPos++) {
+			if (fields[fieldPos].getName().equals(fieldName)) {
+				return fieldPos;
+			}
+		}
+		return -1;
 	}
 }

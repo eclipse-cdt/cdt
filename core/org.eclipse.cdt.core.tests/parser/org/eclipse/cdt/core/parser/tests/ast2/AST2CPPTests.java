@@ -7789,11 +7789,11 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testCastInEnumeratorValue_446380() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		IEnumerator i2 = ba.assertNonProblem("i2", IEnumerator.class);
-		Long v2 = i2.getValue().numericalValue();
+		Number v2 = i2.getValue().numericalValue();
 		assertNotNull(v2);
 		assertEquals(1, v2.intValue());
 		IEnumerator i3 = ba.assertNonProblem("i3", IEnumerator.class);
-		Long v3 = i3.getValue().numericalValue();
+		Number v3 = i3.getValue().numericalValue();
 		assertNotNull(v3);
 		assertEquals(2, v3.intValue());
 		ICPPFunction f = ba.assertNonProblemOnFirstIdentifier("f(i3)",ICPPFunction.class);
@@ -11883,5 +11883,42 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testShadowingAliasDeclaration_484200() throws Exception {
 		parseAndCheckBindings();
+	}
+	
+	//	class S {
+	//	    static S waldo;
+	//	};
+	//	void foo(const S& = S());
+	public void testValueRepresentationOfClassWithStaticMemberOfOwnType_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
+	}
+	
+	//	class S {
+	//		S waldo;  // invalid
+	//	};
+	//	void foo(const S& = S());
+	public void testClassDirectlyAggregatingItself_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
+	}
+	
+	//	class T;
+	//	class S {
+	//		T waldo;  // invalid
+	//	};
+	//	class T {
+	//		S waldo;
+	//	};
+	//	void foo(const T& = T());
+	public void testClassIndirectlyAggregatingItself_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
 	}
 }

@@ -52,7 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -159,7 +159,7 @@ public class EvalID extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		// Name lookup is not needed here because it was already done in the "instantiate" method.
-		return Value.create(this);
+		return IntegralValue.create(this);
 	}
 
 	@Override
@@ -250,7 +250,7 @@ public class EvalID extends CPPDependentEvaluation {
 			ICPPEvaluation fieldOwner= null;
 			IType fieldOwnerType= withinNonStaticMethod(expr);
 			if (fieldOwnerType != null) {
-				fieldOwner= new EvalFixed(fieldOwnerType, ValueCategory.LVALUE, Value.UNKNOWN);
+				fieldOwner= new EvalFixed(fieldOwnerType, ValueCategory.LVALUE, IntegralValue.UNKNOWN);
 			}
 
 			return new EvalID(fieldOwner, owner, name.getSimpleID(), isAddressOf(expr),
@@ -370,7 +370,7 @@ public class EvalID extends CPPDependentEvaluation {
 			return this;
 
 		if (nameOwner instanceof ICPPClassType) {
-			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, null, context.getPoint());
+			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, null, templateArgs, null, context.getPoint());
 			if (eval != null)
 				return eval;
 			if (!CPPTemplates.isDependentType((ICPPClassType) nameOwner))
@@ -390,8 +390,7 @@ public class EvalID extends CPPDependentEvaluation {
 			IType fieldOwnerClassTypeCV = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF);
 			IType fieldOwnerClassType = SemanticUtil.getNestedType(fieldOwnerClassTypeCV, CVTYPE);
 			if (fieldOwnerClassType instanceof ICPPClassType) {
-				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, templateArgs,
-						fieldOwnerClassTypeCV, context.getPoint());
+				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, fieldOwner, templateArgs, fieldOwnerClassTypeCV, context.getPoint());
 				if (eval != null)
 					return eval;
 			}
@@ -402,18 +401,19 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
-		if (fFieldOwner == null)
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		if (fFieldOwner == null) {
 			return this;
-		ICPPEvaluation fieldOwner = fFieldOwner.computeForFunctionCall(parameterMap, context.recordStep());
-		if (fieldOwner == fFieldOwner)
+		}
+		ICPPEvaluation fieldOwner = fFieldOwner.computeForFunctionCall(record, context.recordStep());
+		if (fieldOwner == fFieldOwner) {
 			return this;
-		return new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fIsPointerDeref, 
-				fTemplateArgs, getTemplateDefinition());
+		}
+		EvalID newEvalID = new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fIsPointerDeref, fTemplateArgs, getTemplateDefinition());
+		return newEvalID;
 	}
 
-	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,
+	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPEvaluation ownerEval, ICPPTemplateArgument[] templateArgs,
 			IType impliedObjectType, IASTNode point) {
 		LookupData data = new LookupData(fName, templateArgs, point);
 		data.qualified = fQualified;
@@ -432,7 +432,11 @@ public class EvalID extends CPPDependentEvaluation {
 		if (binding instanceof IEnumerator) {
 			return new EvalBinding(binding, null, getTemplateDefinition());
 		} else if (binding instanceof ICPPMember) {
-			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
+			if(ownerEval != null) {
+				return new EvalMemberAccess(nameOwner, ownerEval.getValueCategory(point), binding, ownerEval, false, point);
+			} else {
+				return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
+			}
 		} else if (binding instanceof CPPFunctionSet) {
 			return new EvalFunctionSet((CPPFunctionSet) binding, fQualified, fAddressOf, impliedObjectType, 
 					getTemplateDefinition());

@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTArraySubscriptExpression extends ASTNode
-		implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
+		implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
     private ICPPASTExpression arrayExpression;
     private ICPPASTInitializerClause subscriptExp;
     private ICPPEvaluation evaluation;
@@ -195,7 +195,10 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 	private ICPPEvaluation computeEvaluation() {
 		if (arrayExpression == null || subscriptExp == null)
 			return EvalFixed.INCOMPLETE;
-		return new EvalBinary(EvalBinary.op_arrayAccess, arrayExpression.getEvaluation(), subscriptExp.getEvaluation(), this);
+		return new EvalBinary(EvalBinary.op_arrayAccess, 
+							 ((ICPPEvaluationOwner)arrayExpression).getEvaluation(), 
+							 ((ICPPEvaluationOwner)subscriptExp).getEvaluation(), 
+							 this);
 	}
     
     @Override

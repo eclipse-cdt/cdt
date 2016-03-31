@@ -52,4 +52,9 @@ public class CPPFieldInstance extends CPPVariableInstance implements ICPPField {
 			return null;
 		}
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return ((ICPPFieldTemplate)getSpecializedBinding()).getFieldPosition();
+	}
 }

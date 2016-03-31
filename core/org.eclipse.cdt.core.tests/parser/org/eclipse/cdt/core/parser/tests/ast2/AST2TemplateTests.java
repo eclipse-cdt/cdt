@@ -94,7 +94,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
@@ -3101,7 +3101,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPDeferredClassInstance ci= ba.assertNonProblem("C<y>", 4, ICPPDeferredClassInstance.class);
 		ICPPTemplateArgument[] args= ci.getTemplateArguments();
 		assertEquals(1, args.length);
-		assertEquals(0, Value.isTemplateParameter(args[0].getNonTypeValue()));
+		assertEquals(0, IntegralValue.isTemplateParameter(args[0].getNonTypeValue()));
 	}
 
 	//	template<int x>
@@ -7862,7 +7862,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper ah = getAssertionHelper();
 		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
 		IValue value = binding.getValue();
-		Long num = value.numericalValue();
+		Number num = value.numericalValue();
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}
@@ -9287,6 +9287,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	template <class T>
 	//	struct D {
+	//	  D(T);
 	//	  T t;
 	//	};
 	//
@@ -9447,5 +9448,44 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void waldo() noexcept(S<Int>::value) {}
 	public void testDisambiguationInNoexceptSpecifier_467332() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	struct C {
+	//	    T field;
+	//	    void meow();
+	//	};
+	//	struct S {
+	//	    template <typename U>
+	//	    auto operator()(U u) -> decltype(C<U>{u});
+	//	};
+	//	int main() {
+	//	    S()(0).meow();  // ERROR: Method 'meow' could not be resolved
+	//	}
+	public void testBraceInitialization_490475a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct S {
+	//	    int x;
+	//	    int y;
+	//	};
+	//
+	//	constexpr int foo(S a, S b) {
+	//	    return a.x - b.x;
+	//	}
+	//
+	//	constexpr S a = S{8, 0};
+	//	constexpr S b = S{21, 0};
+	//
+	//	constexpr int waldo = foo(a, b);
+	public void testBraceInitialization_490475b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable waldo = helper.assertNonProblem("waldo");
+		// TODO(nathanridge): 
+		//   Actually test that we get the correct value.
+		//   For this, we need to add support for aggregate initialization in EvalTypeId.
+		//	 For now, just test that attempting to evaluate doesn't throw an exception.
+		waldo.getInitialValue();
 	}
 }

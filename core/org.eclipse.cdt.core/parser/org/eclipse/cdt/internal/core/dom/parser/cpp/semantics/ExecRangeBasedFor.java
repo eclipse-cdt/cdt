@@ -1,0 +1,185 @@
+/*******************************************************************************
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Rapperswil, University of applied sciences and others
+* All rights reserved. This program and the accompanying materials
+* are made available under the terms of the Eclipse Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v10.html
+*******************************************************************************/
+package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
+import org.eclipse.core.runtime.CoreException;
+
+public class ExecRangeBasedFor implements ICPPExecution {
+	private final ExecSimpleDeclaration declarationExec;
+	private final ICPPEvaluation initClauseEval;
+	private final ICPPFunction begin;
+	private final ICPPFunction end;
+	private final ICPPExecution bodyExec;
+
+	public ExecRangeBasedFor(ExecSimpleDeclaration declarationExec, ICPPEvaluation initClauseEval, ICPPFunction begin, ICPPFunction end, ICPPExecution bodyExec) {
+		this.declarationExec = declarationExec;
+		this.initClauseEval = initClauseEval;
+		this.begin = begin;
+		this.end = end;
+		this.bodyExec = bodyExec;
+	}
+
+	private ICPPExecution loopOverArray(IVariable rangeVar, ICPPEvaluation valueRange, ActivationRecord record, ConstexprEvaluationContext context) {
+		ICPPEvaluation[] range = valueRange.getValue(context.getPoint()).getAll();
+		for(int i = 0; i < range.length; i++ ) {
+			ICPPEvaluation value = new EvalFixed(range[i].getType(context.getPoint()), range[i].getValueCategory(context.getPoint()), range[i].getValue(context.getPoint()));
+			if(rangeVar.getType() instanceof ICPPReferenceType) {
+				value = new EvalReference(record, new EvalCompositeAccess(valueRange, i), value.getTemplateDefinition());
+			}
+			record.update(rangeVar, value);
+
+			ICPPExecution result = EvalUtil.executeStatement(bodyExec, record, context);
+			if(result instanceof ExecReturn) {
+				return result;
+			} else if(result instanceof ExecBreak) {
+				break;
+			} else if(result instanceof ExecContinue) {
+				continue;
+			}
+		}
+		return null;
+	}
+	
+	private ICPPExecution loopOverObject(IVariable rangeVar, ICPPEvaluation rangeEval, boolean rangeIsConst, ICPPClassType classType, ActivationRecord record, ConstexprEvaluationContext context) {		
+		if(begin != null && end != null) {
+			ICPPEvaluation beginEval = callFunction(classType, begin, rangeEval, record, context);
+			ICPPEvaluation endEval = callFunction(classType, end, rangeEval, record, context);
+			boolean isRef = rangeVar.getType() instanceof ICPPReferenceType; 
+			
+			for(; !isEqual(beginEval, endEval, context.getPoint()); beginEval = inc(beginEval, context.getPoint())) {
+				record.update(rangeVar, deref(beginEval, isRef, record, context));
+				
+				ICPPExecution result = EvalUtil.executeStatement(bodyExec, record, context);
+				if(result instanceof ExecReturn) {
+					return result;
+				} else if(result instanceof ExecBreak) {
+					break;
+				} else if(result instanceof ExecContinue) {
+					continue;
+				}
+			}
+			return null;
+		}
+		return ExecIncomplete.INSTANCE;
+	}
+	
+	private static boolean isEqual(ICPPEvaluation a, ICPPEvaluation b, IASTNode point) {
+		Number result = new EvalBinary(IASTBinaryExpression.op_equals, a, b, point).getValue(point).numericalValue();
+		return result != null && result.longValue() != 0;
+	}
+	
+	private static ICPPEvaluation deref(ICPPEvaluation ptr, boolean isRef, ActivationRecord record, ConstexprEvaluationContext context) {
+		ICPPEvaluation derefEval = new EvalUnary(ICPPASTUnaryExpression.op_star, ptr, null, context.getPoint()).computeForFunctionCall(record, context);
+		if(isRef) {
+			return derefEval;
+		} else {
+			return new EvalFixed(derefEval.getType(context.getPoint()), derefEval.getValueCategory(context.getPoint()), derefEval.getValue(context.getPoint()));
+		}
+	}
+	
+	private static ICPPEvaluation inc(ICPPEvaluation ptr, IASTNode point) {
+		EvalFixed one = new EvalFixed(CPPBasicType.INT, ValueCategory.PRVALUE, IntegralValue.create(1));
+		return new EvalBinary(IASTBinaryExpression.op_plus, ptr, one, point);
+	}
+	
+	private static ICPPEvaluation callFunction(ICPPClassType classType, ICPPFunction func, ICPPEvaluation rangeEval, ActivationRecord record, ConstexprEvaluationContext context) {
+		EvalFunctionCall call = null;
+		if(func instanceof ICPPMethod) {
+			EvalMemberAccess memberAccess = new EvalMemberAccess(classType, ValueCategory.LVALUE, func, rangeEval, false, context.getPoint());
+			ICPPEvaluation[] args = new ICPPEvaluation[]{ memberAccess };
+			call = new EvalFunctionCall(args, rangeEval, context.getPoint());	
+		} else {
+			EvalBinding op = new EvalBinding(func, func.getType(), context.getPoint());
+			ICPPEvaluation[] args = new ICPPEvaluation[]{ op, rangeEval};
+			call = new EvalFunctionCall(args, null, context.getPoint());
+		}
+		return call.computeForFunctionCall(record, context);
+	}
+	
+	@Override
+	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		if (context.getStepsPerformed() >= ConstexprEvaluationContext.MAX_CONSTEXPR_EVALUATION_STEPS) {
+			return ExecIncomplete.INSTANCE;
+		}
+		
+		ICPPEvaluation valueRange = initClauseEval.computeForFunctionCall(record, context.recordStep());
+		ExecDeclarator declaratorExec = (ExecDeclarator) declarationExec.getDeclaratorExecutions()[0];
+		IVariable rangeVar = (IVariable)declaratorExec.getDeclaredBinding();
+		
+		boolean rangeIsConst = SemanticUtil.isConst(initClauseEval.getType(context.getPoint()));
+		IType type = SemanticUtil.getNestedType(valueRange.getType(context.getPoint()), ALLCVQ | TDEF | REF);
+		if(type instanceof IArrayType || type instanceof InitializerListType) {
+			return loopOverArray(rangeVar, valueRange, record, context);
+		} else if(type instanceof ICPPClassType) {
+			ICPPClassType classType = (ICPPClassType)type;
+			return loopOverObject(rangeVar, initClauseEval, rangeIsConst, classType, record, context);
+		}
+		return ExecIncomplete.INSTANCE;
+	}
+
+	@Override
+	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
+		ExecSimpleDeclaration newDeclarationExec = (ExecSimpleDeclaration)declarationExec.instantiate(context, maxDepth);
+		ICPPEvaluation newInitClauseEval = initClauseEval.instantiate(context, maxDepth);
+		ICPPFunction newBegin = begin != null ? (ICPPFunction)CPPTemplates.createSpecialization(context.getContextSpecialization(), begin, context.getPoint()) : null;
+		ICPPFunction newEnd = end != null ? (ICPPFunction)CPPTemplates.createSpecialization(context.getContextSpecialization(), end, context.getPoint()) : null;
+		ICPPExecution newBodyExec = bodyExec.instantiate(context, maxDepth);
+		
+		if (newDeclarationExec == declarationExec && 
+			newInitClauseEval == initClauseEval && 
+			newBegin == begin &&
+			newEnd == end &&
+			newBodyExec == bodyExec) {
+			return this;
+		}
+		return new ExecRangeBasedFor(newDeclarationExec, newInitClauseEval, newBegin, newEnd, newBodyExec);
+	}
+
+	@Override
+	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
+		buffer.putShort(ITypeMarshalBuffer.EXEC_RANGE_BASED_FOR);
+		buffer.marshalExecution(declarationExec, includeValue);
+		buffer.marshalEvaluation(initClauseEval, includeValue);
+		buffer.marshalBinding(begin);
+		buffer.marshalBinding(end);
+		buffer.marshalExecution(bodyExec, includeValue);
+	}
+	
+	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		ExecSimpleDeclaration declarationExec = (ExecSimpleDeclaration)buffer.unmarshalExecution();
+		ICPPEvaluation initClauseEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
+		ICPPFunction begin = (ICPPFunction)buffer.unmarshalBinding();
+		ICPPFunction end = (ICPPFunction)buffer.unmarshalBinding();
+		ICPPExecution bodyExec = (ICPPExecution)buffer.unmarshalExecution();
+		return new ExecRangeBasedFor(declarationExec, initClauseEval, begin, end, bodyExec);
+	}
+}

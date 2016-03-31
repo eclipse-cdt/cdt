@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.qt.core.index.IQMethod;
@@ -141,7 +142,7 @@ public class ASTUtil {
 			return null;
 
 		ICPPASTInitializerClause cppInit = (ICPPASTInitializerClause) init;
-		ICPPEvaluation eval = cppInit.getEvaluation();
+		ICPPEvaluation eval = ((ICPPEvaluationOwner)cppInit).getEvaluation();
 		return eval == null ? null : getBaseType(eval.getType(cppInit));
 	}
 

@@ -37,13 +37,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -224,13 +226,13 @@ public class EvalBinding extends CPPDependentEvaluation {
  	private boolean computeIsValueDependent() {
  		// No need to call getBinding() since a function parameter never has an initial value.
 		if (fBinding instanceof IEnumerator) {
-			return Value.isDependentValue(((IEnumerator) fBinding).getValue());
+			return IntegralValue.isDependentValue(((IEnumerator) fBinding).getValue());
 		}
 		if (fBinding instanceof ICPPTemplateNonTypeParameter) {
 			return true;
 		}
 		if (fBinding instanceof IVariable) {
-			return Value.isDependentValue(((IVariable) fBinding).getInitialValue());
+			return IntegralValue.isDependentValue(((IVariable) fBinding).getInitialValue());
 		}
 		if (fBinding instanceof ICPPUnknownBinding) {
 			return true;
@@ -323,17 +325,20 @@ public class EvalBinding extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent())
-			return Value.create(this);
+			return IntegralValue.create(this);
 
 		IValue value= null;
- 		// No need to call getBinding() since a function parameter never has an initial value.
-		if (fBinding instanceof IVariable) {
-			value= ((IVariable) fBinding).getInitialValue();
+		
+		if(fBinding instanceof ICPPVariable) {
+			ICPPEvaluation valueEval = EvalUtil.getVariableValue((ICPPVariable)fBinding, new ActivationRecord(), null);
+			if(valueEval != null) {
+				value = valueEval.getValue(point);
+			}
 		} else if (fBinding instanceof IEnumerator) {
 			value= ((IEnumerator) fBinding).getValue();
 		}
 		if (value == null)
-			value = Value.UNKNOWN;
+			value = IntegralValue.UNKNOWN;
 
 		return value;
 	}
@@ -386,22 +391,45 @@ public class EvalBinding extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		IBinding origBinding = getBinding();
-		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
-			if (context != null) {
-				ICPPTemplateArgument argument = context.getArgument((ICPPTemplateNonTypeParameter) origBinding);
-				if (argument != null && argument.isNonTypeValue()) {
-					return argument.getNonTypeEvaluation();
+		final CPPTemplateParameterMap tpMap = (CPPTemplateParameterMap)context.getParameterMap();
+		final int packOffset = context.getPackOffset();
+		
+		IVariable newBinding = tpMap == null ? null : (IVariable)tpMap.getInstantiatedBinding(origBinding);
+		if(newBinding != null) {
+			IType origType = ((IVariable)origBinding).getType();
+			EvalBinding newBindingEval = null;
+			if(origType instanceof ICPPParameterPackType) {
+				origType = ((ICPPParameterPackType) origType).getType();
+				IType instantiatedType = CPPTemplates.instantiateType(origType, context);
+				if(origType != instantiatedType) {
+					newBindingEval = new EvalBinding(newBinding, instantiatedType, getTemplateDefinition());
 				}
 			}
+			
+			if(newBindingEval == null) { 
+				newBindingEval = new EvalBinding(newBinding, newBinding.getType(), getTemplateDefinition());
+			}
+			if(context.hasPackOffset()) {
+				return new EvalCompositeAccess(newBindingEval, packOffset);
+			} else {
+				return newBindingEval;
+			}
+		}
+		
+		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
+			ICPPTemplateArgument argument = context.getArgument((ICPPTemplateNonTypeParameter) origBinding);
+			if (argument != null && argument.isNonTypeValue()) {
+				return argument.getNonTypeEvaluation();
+			}
 		} else if (origBinding instanceof ICPPParameter) {
-			ICPPParameter parameter = (ICPPParameter) origBinding;
+			ICPPParameter parameter = (ICPPParameter) origBinding;	
 			IType origType = parameter.getType();
 			if (origType instanceof ICPPParameterPackType && context.hasPackOffset()) {
 				origType = ((ICPPParameterPackType) origType).getType();
 			}
 			IType instantiatedType = CPPTemplates.instantiateType(origType, context);
 			if (origType != instantiatedType) {
-				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this));
+				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, IntegralValue.create(this));
 			}
 		} else {
 			IBinding instantiatedBinding = instantiateBinding(origBinding, context, maxDepth);
@@ -412,15 +440,14 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
-		int pos = getFunctionParameterPosition();
-		if (pos >= 0) {
-			ICPPEvaluation eval = parameterMap.getArgument(pos);
-			if (eval != null)
-				return eval;
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		ICPPEvaluation eval = record.getVariable(getBinding());
+		
+		if(eval != null) {
+			return eval;
+		} else {
+			return this;
 		}
-		return this;
 	}
 
 	@Override
@@ -460,5 +487,10 @@ public class EvalBinding extends CPPDependentEvaluation {
 		// No need to call getBinding method since fBinding cannot be null if the evaluation
 		// represents a template parameter.
 		return fBinding instanceof ICPPTemplateParameter;
+	}
+	
+	@Override
+	public String toString() {
+		return getBinding().toString();
 	}
 }

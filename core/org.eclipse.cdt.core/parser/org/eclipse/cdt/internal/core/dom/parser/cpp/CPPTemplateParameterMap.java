@@ -10,7 +10,11 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -23,16 +27,19 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	public static final CPPTemplateParameterMap EMPTY = new CPPTemplateParameterMap(0);
 	
 	private final ObjectMap fMap;
+	private final Map<IBinding, IBinding> fBindingMap;
 
 	/**
 	 * Constructs an empty parameter map.
 	 */
 	public CPPTemplateParameterMap(int initialSize) {
 		fMap= new ObjectMap(initialSize);
+		fBindingMap = new HashMap<IBinding, IBinding>();
 	}
 
 	public CPPTemplateParameterMap(CPPTemplateParameterMap other) {
 		fMap= (ObjectMap) other.fMap.clone();
+		fBindingMap = new HashMap<IBinding, IBinding>();
 	}
 
 	/**
@@ -241,5 +248,13 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 		sb.append(key & 0xffff);
 		sb.append(": "); //$NON-NLS-1$
 		sb.append(ASTTypeUtil.getArgumentString(value, true));
+	}
+	
+	public void putBinding(IBinding binding, IBinding instantiatedBinding) {
+		fBindingMap.put(binding, instantiatedBinding);
+	}
+	
+	public IBinding getInstantiatedBinding(IBinding binding) {
+		return fBindingMap.get(binding);
 	}
 }

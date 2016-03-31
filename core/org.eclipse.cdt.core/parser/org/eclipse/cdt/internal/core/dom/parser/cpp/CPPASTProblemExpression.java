@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
-public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTProblemExpression, ICPPASTExpression {
+public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTProblemExpression, ICPPASTExpression, ICPPEvaluationOwner {
 
     public CPPASTProblemExpression() {
 		super();

@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -49,7 +48,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Represents a new expression [expr.new].
  */
-public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression, IASTAmbiguityParent {
+public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
     private IASTInitializerClause[] fPlacement;
     private IASTTypeId fTypeId;
     private IASTInitializer fInitializer;
@@ -294,7 +293,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 				IASTInitializerClause[] args = ((ICPPASTConstructorInitializer) fInitializer).getArguments();
 				arguments= new ICPPEvaluation[args.length];
 				for (int i = 0; i < arguments.length; i++) {
-					arguments[i] = ((ICPPASTInitializerClause) args[i]).getEvaluation();
+					arguments[i] = ((ICPPEvaluationOwner) args[i]).getEvaluation();
 				}
 			}
 			fEvaluation = EvalTypeId.createForNewExpression(t, this, arguments);

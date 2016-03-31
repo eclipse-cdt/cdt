@@ -24,13 +24,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 /**
  * Gnu-extension: ({ ... })
  */
-public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
+public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression, ICPPASTExpression, ICPPEvaluationOwner {
     private IASTCompoundStatement fStatement;
     private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
@@ -46,7 +46,9 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 			if (statements.length > 0) {
 				IASTStatement st = statements[statements.length - 1];
 				if (st instanceof IASTExpressionStatement) {
-					fEval= new EvalCompound(((ICPPASTExpression) ((IASTExpressionStatement) st).getExpression()).getEvaluation(), this);
+					IASTExpressionStatement exprStmt = (IASTExpressionStatement)st;
+					ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)exprStmt.getExpression();
+					fEval= new EvalCompoundStatementExpression(evalOwner.getEvaluation(), this);
 				}
 			}
 			if (fEval == null)

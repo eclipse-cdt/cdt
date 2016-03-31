@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -43,6 +42,7 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.DeclaredBindingsFilter;
@@ -163,10 +163,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			if (!lookup.isPrefixLookup()) {
 				if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
 			        if (CPPClassScope.shallReturnConstructors(lookup.getLookupName(), false)){
-			        	if (fBinding instanceof ICPPClassSpecialization) {
-			        		return ((ICPPClassSpecialization) fBinding).getConstructors(lookup.getLookupPoint());
-			        	}
-			        	return fBinding.getConstructors();
+			        	return ClassTypeHelper.getConstructors(fBinding, lookup.getLookupPoint());
 			        }
 			        return new IBinding[] { getClassNameBinding() };
 				}

@@ -15,11 +15,12 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecCase;
 
 /**
  * @author jcamelon
  */
-public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCaseStatement {
+public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCaseStatement, ICPPExecutionOwner {
 	private IASTExpression expression;
 
     public CPPASTCaseStatement() {
@@ -89,4 +90,11 @@ public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCas
         }
         super.replace(child, other);
     }
+	
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPEvaluationOwner caseExpr = (ICPPEvaluationOwner)getExpression();
+		ICPPEvaluation caseExprEval = caseExpr.getEvaluation();
+		return new ExecCase(caseExprEval);
+	}
 }

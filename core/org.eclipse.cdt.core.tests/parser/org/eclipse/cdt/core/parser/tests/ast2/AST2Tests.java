@@ -5769,7 +5769,7 @@ public class AST2Tests extends AST2TestBase {
 
 	private void checkValue(IValue initialValue, int i) {
 		assertNotNull(initialValue);
-		final Long numericalValue = initialValue.numericalValue();
+		final Number numericalValue = initialValue.numericalValue();
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.intValue());
 	}
@@ -7413,7 +7413,8 @@ public class AST2Tests extends AST2TestBase {
 			ITypedef tdef= (ITypedef) sdecl.getDeclarators()[0].getName().resolveBinding();
 			IArrayType at= (IArrayType) tdef.getType();
 			IValue v= at.getSize();
-			assertTrue(v.numericalValue() == 4);
+			assertNotNull(v.numericalValue());
+			assertTrue(v.numericalValue().longValue() == 4);
 		}
 	}
 

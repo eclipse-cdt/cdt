@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -70,7 +70,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		}
 		fModifiers= qualifiers;
 		if (expression instanceof ICPPASTInitializerClause) {
-			fAssociatedValue = Value.create(expression).numericalValue();
+			Number num = ValueFactory.create(expression).numericalValue();
+			fAssociatedValue = num != null ? num.longValue() : null;
 		}
 	}
 

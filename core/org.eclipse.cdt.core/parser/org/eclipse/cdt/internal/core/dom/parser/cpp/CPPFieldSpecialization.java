@@ -91,4 +91,9 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 	public IValue getInitialValue() {
 		return value;
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return getField().getFieldPosition();
+	}
 }

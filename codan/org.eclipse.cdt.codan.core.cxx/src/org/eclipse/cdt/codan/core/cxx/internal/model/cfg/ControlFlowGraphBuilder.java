@@ -60,7 +60,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -581,11 +581,11 @@ public class ControlFlowGraphBuilder {
 		if (node instanceof ICfgData) {
 			IASTNode ast = (IASTNode) ((ICfgData) node).getData();
 			if (ast instanceof IASTExpression) {
-				IValue dvalue = Value.create((IASTExpression) ast);
-				Long numericalValue = dvalue.numericalValue();
+				IValue dvalue = ValueFactory.create((IASTExpression) ast);
+				Number numericalValue = dvalue.numericalValue();
 				if (numericalValue == null)
 					return false;
-				return numericalValue == testvalue;
+				return numericalValue.longValue() == testvalue;
 			}
 		}
 		return false;

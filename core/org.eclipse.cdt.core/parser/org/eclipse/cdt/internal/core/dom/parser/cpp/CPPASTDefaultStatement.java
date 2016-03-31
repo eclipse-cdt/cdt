@@ -13,11 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDefault;
 
 /**
  * @author jcamelon
  */
-public class CPPASTDefaultStatement extends CPPASTAttributeOwner implements IASTDefaultStatement {
+public class CPPASTDefaultStatement extends CPPASTAttributeOwner implements IASTDefaultStatement, ICPPExecutionOwner {
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {
@@ -49,5 +50,10 @@ public class CPPASTDefaultStatement extends CPPASTAttributeOwner implements IAST
 	public CPPASTDefaultStatement copy(CopyStyle style) {
 		CPPASTDefaultStatement copy = new CPPASTDefaultStatement();
 		return copy(copy, style);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		return new ExecDefault();
 	}
 }

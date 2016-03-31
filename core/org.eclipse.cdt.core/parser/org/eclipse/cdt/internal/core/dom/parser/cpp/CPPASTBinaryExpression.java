@@ -36,7 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 
-public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
+public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
 	private int fOperator;
     private ICPPASTExpression fOperand1;
     private ICPPASTInitializerClause fOperand2;
@@ -280,7 +280,9 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		if (fOperand1 == null || fOperand2 == null)
 			return EvalFixed.INCOMPLETE;
 		
-		return new EvalBinary(fOperator, fOperand1.getEvaluation(), fOperand2.getEvaluation(), this);
+		ICPPEvaluation eval1 = ((ICPPEvaluationOwner)fOperand1).getEvaluation();
+		ICPPEvaluation eval2 = ((ICPPEvaluationOwner)fOperand2).getEvaluation();
+		return new EvalBinary(fOperator, eval1, eval2, this);
 	}
 
     @Override

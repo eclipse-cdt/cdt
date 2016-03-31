@@ -26,7 +26,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -81,7 +82,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 			ICPPASTInitializerList list= (ICPPASTInitializerList) dc;
 			switch (list.getSize()) {
 			case 0:
-				return new CPPTemplateNonTypeArgument(Value.create(0), getType());
+				return new CPPTemplateNonTypeArgument(IntegralValue.create(0), getType());
 			case 1:
 				dc= list.getClauses()[0];
 				if (dc instanceof IASTExpression) {
@@ -93,7 +94,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 		if (d == null)
 			return null;
 		
-		IValue val= Value.create(d);
+		IValue val= ValueFactory.create(d);
 		IType t= getType();
 		return new CPPTemplateNonTypeArgument(val, t);
 	}

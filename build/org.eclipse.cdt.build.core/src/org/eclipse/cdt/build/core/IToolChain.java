@@ -9,7 +9,6 @@ package org.eclipse.cdt.build.core;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public interface IToolChain {
 	IExtendedScannerInfo getScannerInfo(String command, List<String> args, List<String> includePaths,
 			IResource resource, Path buildDirectory) throws IOException;
 
-	Collection<CConsoleParser> getConsoleParsers();
+	String[] getErrorParserIds();
 
 	void setEnvironment(Map<String, String> env);
 

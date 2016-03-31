@@ -683,6 +683,7 @@
    <extension-point id="LanguageSettingsProvider" name="%LanguageSettingsProvider.name" schema="schema/LanguageSettingsProvider.exsd"/>
    <extension-point id="UNCPathConverter" name="%uncPathConverter.name" schema="schema/UNCPathConverter.exsd"/>
    <extension-point id="ProblemMarkerFilter" name="%problemMarkerFilter.name" schema="schema/ProblemMarkerFilter.exsd"/>
+   <extension-point id="CBuildConfigProvider" name="CBuildConfigProvider" schema="schema/CBuildConfigProvider.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">
@@ -855,6 +856,16 @@
             name="Export Index File Info Matcher"
             ordering="first">
       </filterMatcher>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.core.resources.IBuildConfiguration"
+            class="org.eclipse.cdt.internal.core.build.CBuildConfigAdapterFactory">
+         <adapter
+               type="org.eclipse.cdt.core.build.ICBuildConfiguration">
+         </adapter>
+      </factory>
    </extension>
 
 </plugin>

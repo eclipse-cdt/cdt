@@ -166,16 +166,6 @@
        </provider>
     </extension>
     <extension
-          point="org.eclipse.core.runtime.adapters">
-       <factory
-             adaptableType="org.eclipse.core.resources.IBuildConfiguration"
-             class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory">
-          <adapter
-                type="org.eclipse.cdt.qt.core.QtBuildConfiguration">
-          </adapter>
-       </factory>
-    </extension>
-    <extension
           point="org.eclipse.cdt.qt.core.qtInstallTargetMapper">
        <mapper
              class="org.eclipse.cdt.internal.qt.core.LocalQtInstallTargetMapper"
@@ -203,5 +193,12 @@
              name="Qt Local Debug launcher"
              type="org.eclipse.cdt.qt.core.launchConfigurationType">
        </launchDelegate>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.core.CBuildConfigProvider">
+       <provider
+             class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationProvider"
+             natureId="org.eclipse.cdt.qt.core.qtNature">
+       </provider>
     </extension>
 </plugin>

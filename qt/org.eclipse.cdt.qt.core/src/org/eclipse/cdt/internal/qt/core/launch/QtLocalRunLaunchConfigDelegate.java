@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.qt.core.QtBuildConfiguration;
+import org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration;
 import org.eclipse.cdt.qt.core.QtLaunchConfigurationDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

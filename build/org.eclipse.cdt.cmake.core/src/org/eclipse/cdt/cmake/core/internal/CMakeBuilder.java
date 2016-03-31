@@ -15,7 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.build.core.IConsoleService;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -30,7 +32,9 @@ public class CMakeBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		try {
-			IConsoleService console = Activator.getService(IConsoleService.class);
+			IConsole console = CCorePlugin.getDefault().getConsole();
+			ConsoleOutputStream outStream = console.getOutputStream();
+			
 			CMakeBuildConfiguration cmakeConfig = project.getActiveBuildConfig()
 					.getAdapter(CMakeBuildConfiguration.class);
 			Path buildDir = cmakeConfig.getBuildDirectory();
@@ -43,8 +47,8 @@ public class CMakeBuilder extends IncrementalProjectBuilder {
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 				cmakeConfig.getToolChain().setEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
-				console.writeOutput(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				console.monitor(process, null, buildDir);
+				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
+				//console.monitor(process, null, buildDir);
 			}
 
 			// TODO need to figure out which builder to call. Hardcoding to make
@@ -53,8 +57,8 @@ public class CMakeBuilder extends IncrementalProjectBuilder {
 			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile()); // $NON-NLS-1$
 			cmakeConfig.getToolChain().setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
-			console.writeOutput(String.join(" ", command) + '\n'); //$NON-NLS-1$
-			console.monitor(process, null, buildDir);
+			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
+			//console.monitor(process, null, buildDir);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			return new IProject[] { project };

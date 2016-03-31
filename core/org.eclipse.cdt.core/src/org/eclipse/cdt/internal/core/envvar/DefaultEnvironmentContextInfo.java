@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.envvar;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.core.resources.IBuildConfiguration;
 
 /**
  * The default implementation of the IContextInfo used by the Environment Variable Provider
@@ -43,6 +44,9 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 		ICoreEnvironmentVariableSupplier suppliers[];
 		if(context instanceof ICConfigurationDescription)
 			suppliers = new ICoreEnvironmentVariableSupplier[]{EnvironmentVariableManager.fUserSupplier,EnvironmentVariableManager.fExternalSupplier};
+		else if (context instanceof IBuildConfiguration)
+			suppliers = new ICoreEnvironmentVariableSupplier[]{EnvironmentVariableManager.fBuildConfigSupplier,
+					EnvironmentVariableManager.fUserSupplier, EnvironmentVariableManager.fEclipseSupplier};
 		else
 			suppliers = new ICoreEnvironmentVariableSupplier[]{EnvironmentVariableManager.fUserSupplier, EnvironmentVariableManager.fEclipseSupplier};
 		return suppliers;

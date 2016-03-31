@@ -5,39 +5,45 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.qt.core;
+package org.eclipse.cdt.internal.qt.core.build;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.build.core.CBuildConfiguration;
 import org.eclipse.cdt.build.core.IToolChain;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.build.core.IToolChainManager;
+import org.eclipse.cdt.core.build.ICBuildConfigEnvVarSupplier;
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.cdt.qt.core.IQtInstall;
+import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.core.resources.IBuildConfiguration;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class QtBuildConfiguration extends CBuildConfiguration {
+public class QtBuildConfiguration extends CBuildConfiguration implements ICBuildConfiguration, ICBuildConfigEnvVarSupplier {
+
+	private static IQtInstallManager qtInstallManager = Activator.getService(IQtInstallManager.class);
+	private static IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
 
 	private static final String QTINSTALL_NAME = "cdt.qt.install.name"; //$NON-NLS-1$
 	private static final String LAUNCH_MODE = "cdt.qt.launchMode"; //$NON-NLS-1$
@@ -61,8 +67,42 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 		launchMode = settings.get(LAUNCH_MODE, ""); //$NON-NLS-1$
 	}
 
-	public QtBuildConfiguration(IBuildConfiguration config, IToolChain toolChain, IQtInstall qtInstall,
-			String launchMode) {
+	public static QtBuildConfiguration createConfiguration(IProject project, ILaunchTarget target, String launchMode,
+			IProgressMonitor monitor) throws CoreException {
+		for (IQtInstall qtInstall : qtInstallManager.getInstalls()) {
+			if (qtInstallManager.supports(qtInstall, target)) {
+				// Create the build config
+				Set<String> configNames = new HashSet<>();
+				for (IBuildConfiguration config : project.getBuildConfigs()) {
+					configNames.add(config.getName());
+				}
+				String baseName = qtInstall.getSpec() + "." + launchMode; //$NON-NLS-1$
+				String newName = baseName;
+				int n = 0;
+				while (configNames.contains(newName)) {
+					newName = baseName + (++n);
+				}
+				configNames.add(newName);
+				IProjectDescription projectDesc = project.getDescription();
+				projectDesc.setBuildConfigs(configNames.toArray(new String[configNames.size()]));
+				project.setDescription(projectDesc, monitor);
+
+				// Find the toolchain
+				for (IToolChain toolChain : toolChainManager.getToolChainsSupporting(target)) {
+					if (qtInstallManager.supports(qtInstall, toolChain)) {
+						QtBuildConfiguration qtConfig = new QtBuildConfiguration(project.getBuildConfig(newName),
+								toolChain, qtInstall, launchMode);
+						return qtConfig;
+						// TODO what if there's more than toolChain supported?
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private QtBuildConfiguration(IBuildConfiguration config, IToolChain toolChain, IQtInstall qtInstall,
+			String launchMode) throws CoreException {
 		super(config, toolChain);
 		this.qtInstall = qtInstall;
 		this.launchMode = launchMode;
@@ -77,6 +117,20 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (ICBuildConfigEnvVarSupplier.class.equals(adapter)) {
+			return (T) this;
+		} else {
+			return super.getAdapter(adapter);
+		}
+	}
+	
+	public boolean supports(ILaunchTarget target, String launchMode) {
+		return qtInstallManager.supports(qtInstall, target) && this.launchMode.equals(launchMode);
+	}
+	
 	public IQtInstall getQtInstall() {
 		return qtInstall;
 	}
@@ -85,8 +139,8 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 		return launchMode;
 	}
 
-	public String getQmakeCommand() {
-		return qtInstall.getQmakePath().toString();
+	public Path getQmakeCommand() {
+		return qtInstall.getQmakePath();
 	}
 
 	public String getQmakeConfig() {
@@ -158,7 +212,7 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 	public String getProperty(String key) {
 		if (properties == null) {
 			List<String> cmd = new ArrayList<>();
-			cmd.add(getQmakeCommand());
+			cmd.add(getQmakeCommand().toString());
 			cmd.add("-E"); //$NON-NLS-1$
 
 			String config = getQmakeConfig();
@@ -192,58 +246,15 @@ public class QtBuildConfiguration extends CBuildConfiguration {
 	}
 
 	@Override
-	public IScannerInfo getScannerInfo(IResource resource) throws IOException {
-		IScannerInfo info = getCachedScannerInfo(resource);
-		if (info == null) {
-			String cxx = getProperty("QMAKE_CXX"); //$NON-NLS-1$
-			if (cxx == null) {
-				Activator.log("No QMAKE_CXX for " + qtInstall.getSpec()); //$NON-NLS-1$
-				return null;
-			}
-			String[] cxxSplit = cxx.split(" "); //$NON-NLS-1$
-			String command = cxxSplit[0];
-
-			List<String> args = new ArrayList<>();
-			for (int i = 1; i < cxxSplit.length; ++i) {
-				args.add(cxxSplit[i]);
-			}
-			args.addAll(Arrays.asList(getProperty("QMAKE_CXXFLAGS").split(" "))); //$NON-NLS-1$ //$NON-NLS-2$
-			args.add("-o"); //$NON-NLS-1$
-			args.add("-"); //$NON-NLS-1$
-
-			String srcFile;
-			if (resource instanceof IFile) {
-				srcFile = resource.getLocation().toOSString();
-				// Only add file if it's an IFile
-				args.add(srcFile);
-			} else {
-				// Doesn't matter, the toolchain will create a tmp file for this
-				srcFile = "scannerInfo.cpp"; //$NON-NLS-1$
-			}
-
-			String[] includePaths = getProperty("INCLUDEPATH").split(" "); //$NON-NLS-1$ //$NON-NLS-2$
-			for (int i = 0; i < includePaths.length; ++i) {
-				Path path = Paths.get(includePaths[i]);
-				if (!path.isAbsolute()) {
-					includePaths[i] = getBuildDirectory().resolve(path).toString();
-				}
-			}
-
-			ILanguage language = LanguageManager.getInstance()
-					.getLanguage(CCorePlugin.getContentType(getProject(), srcFile), getProject()); // $NON-NLS-1$
-			Path dir = Paths.get(getProject().getLocationURI());
-			IExtendedScannerInfo extendedInfo = getToolChain().getScannerInfo(command, args,
-					Arrays.asList(includePaths), resource, dir);
-			putScannerInfo(language, extendedInfo);
-			info = extendedInfo;
-		}
-		return info;
+	public IEnvironmentVariable getVariable(String name) {
+		// TODO Auto-generated method stub
+		return null;
 	}
-
+	
 	@Override
-	public void clearScannerInfoCache() throws CoreException {
-		super.clearScannerInfoCache();
-		properties = null;
+	public IEnvironmentVariable[] getVariables() {
+		// TODO
+		return new IEnvironmentVariable[0];
 	}
-
+	
 }

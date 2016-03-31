@@ -8,16 +8,22 @@
 package org.eclipse.cdt.internal.qt.core.build;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.build.core.IConsoleService;
+import org.eclipse.cdt.build.core.CMarkerGenerator;
 import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.Messages;
-import org.eclipse.cdt.qt.core.QtBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -36,39 +42,48 @@ public class QtBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		try {
-			IConsoleService console = Activator.getService(IConsoleService.class);
+			IConsole console = CCorePlugin.getDefault().getConsole();
+			ConsoleOutputStream errStream = console.getErrorStream();
+
 			QtBuildConfiguration qtConfig = getBuildConfig().getAdapter(QtBuildConfiguration.class);
 			if (qtConfig == null) {
 				// Qt hasn't been configured yet print a message and bale
-				console.writeError(Messages.QtBuilder_0);
+				errStream.write(Messages.QtBuilder_0);
 				return null;
 			}
 			IToolChain toolChain = qtConfig.getToolChain();
 
+			ICommandLauncher launcher = new CommandLauncher();
+			ConsoleOutputStream outStream = console.getOutputStream();
+			ErrorParserManager epm = new ErrorParserManager(project, qtConfig.getBuildFolder().getLocationURI(),
+					new CMarkerGenerator(project), toolChain.getErrorParserIds());
+			epm.setOutputStream(outStream);
+
 			Path buildDir = qtConfig.getBuildDirectory();
 			if (!buildDir.resolve("Makefile").toFile().exists()) { //$NON-NLS-1$
 				// Need to run qmake
-				List<String> command = new ArrayList<>();
-				command.add(qtConfig.getQmakeCommand());
+				List<String> arglist = new ArrayList<>();
 
 				String config = qtConfig.getQmakeConfig();
 				if (config != null) {
-					command.add(config);
+					arglist.add(config);
 				}
 
 				IFile projectFile = qtConfig.getProject().getFile(project.getName() + ".pro"); //$NON-NLS-1$
-				command.add(projectFile.getLocation().toOSString());
+				arglist.add(projectFile.getLocation().toOSString());
 
-				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
-				toolChain.setEnvironment(processBuilder.environment());
-				Process process = processBuilder.start();
+				String[] env = null; // TODO
+
+				launcher.execute(qtConfig.getQmakeCommand(),
+						arglist.toArray(new String[arglist.size()]), env, qtConfig.getBuildDirectory(), monitor);
 				StringBuffer msg = new StringBuffer();
-				for (String arg : command) {
+				msg.append(qtConfig.getQmakeCommand().toString()).append(' ');
+				for (String arg : arglist) {
 					msg.append(arg).append(' ');
 				}
 				msg.append('\n');
-				console.writeOutput(msg.toString());
-				console.monitor(process, null, buildDir);
+				outStream.write(msg.toString());
+				launcher.waitAndRead(outStream, errStream, monitor);
 			}
 
 			// run make
@@ -85,21 +100,27 @@ public class QtBuilder extends IncrementalProjectBuilder {
 			}
 			toolChain.setEnvironment(procBuilder.environment());
 			Process process = procBuilder.start();
-			console.writeOutput("make\n"); //$NON-NLS-1$
-			console.monitor(process, null, buildDir);
+			outStream.write("make\n"); //$NON-NLS-1$
+			//console.monitor(process, null, buildDir);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
 			// clear the scanner info cache
 			// TODO be more surgical about what to clear based on what was
 			// built.
-			qtConfig.clearScannerInfoCache();
+			//qtConfig.clearScannerInfoCache();
 
-			console.writeOutput("Complete.\n");
+			outStream.write("Complete.\n");
 			return new IProject[] { project };
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Building " + project.getName(), e)); //$NON-NLS-1$
 		}
+	}
+
+	private void monitorProcess(Process process, OutputStream outStream) {
+		new Thread() {
+
+		};
 	}
 
 }

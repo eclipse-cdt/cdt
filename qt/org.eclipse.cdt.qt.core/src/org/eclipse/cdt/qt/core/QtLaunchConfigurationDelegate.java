@@ -7,7 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.qt.core;
 
-import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory;
+import org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration;
+import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -47,7 +48,7 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 			ILaunchTarget target, IProgressMonitor monitor) throws CoreException {
 		// Find the Qt build config
 		IProject project = configuration.getMappedResources()[0].getProject();
-		return QtBuildConfigurationFactory.getConfig(project, mode, target, monitor);
+		return QtBuildConfigurationProvider.getConfiguration(project, target, mode, monitor);
 	}
 
 }

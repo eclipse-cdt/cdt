@@ -30,6 +30,7 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
+import org.eclipse.core.resources.IBuildConfiguration;
 
 
 /**
@@ -49,6 +50,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	public static final UserDefinedEnvironmentSupplier fUserSupplier = new UserDefinedEnvironmentSupplier();
 	public static final BuildSystemEnvironmentSupplier fExternalSupplier = new BuildSystemEnvironmentSupplier();
 	public static final EclipseEnvironmentSupplier fEclipseSupplier = new EclipseEnvironmentSupplier();
+	public static final BuildConfigEnvironmentSupplier fBuildConfigSupplier = new BuildConfigEnvironmentSupplier();
 
 	private ContributedEnvironment fContributedEnvironment;
 
@@ -187,6 +189,21 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		return null;
 	}
 
+	@Override
+	public IEnvironmentVariable getVariable(String name, IBuildConfiguration config, boolean resolveMacros) {
+		if (name == null || "".equals(name)) //$NON-NLS-1$
+			return null;
+
+		IEnvironmentContextInfo info = getContextInfo(config);
+		EnvVarDescriptor var = getVariable(name, info, true);
+		
+		if (var != null && var.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE) {
+			return resolveMacros ? calculateResolvedVariable(var, info) : var;
+		} else {
+			return null;
+		}
+	}
+	
 	IEnvironmentContextInfo getDefaultContextInfo(Object level) {
 		DefaultEnvironmentContextInfo info = new DefaultEnvironmentContextInfo(level);
 		if (info.getSuppliers() == null)
@@ -199,10 +216,12 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	 * or null if the the given level is not supported
 	 */
 	public IEnvironmentContextInfo getContextInfo(Object level) {
-		if (level instanceof ICConfigurationDescription)
+		if (level instanceof ICConfigurationDescription) {
 			return fContributedEnvironment.appendEnvironment((ICConfigurationDescription)level) ?
 					getDefaultContextInfo(level) : fContributedEnvironment.getContextInfo(level);
-		return getDefaultContextInfo(level);
+		} else {
+			return getDefaultContextInfo(level);
+		}
 	}
 
 	/**
@@ -289,6 +308,25 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		return new EnvVarDescriptor[0];
 	}
 
+	@Override
+	public IEnvironmentVariable[] getVariables(IBuildConfiguration config, boolean resolveMacros) {
+		IEnvironmentContextInfo info = getContextInfo(config);
+		EnvVarCollector varSet = getVariables(info, true);
+		EnvVarDescriptor vars[] = varSet != null ? varSet.toArray(false) : null;
+		
+		if (vars != null) {
+			if (!resolveMacros)
+				return vars;
+			
+			IEnvironmentVariable resolved[] = new IEnvironmentVariable[vars.length];
+			for (int i = 0; i < vars.length; i++) {
+				resolved[i] = calculateResolvedVariable(vars[i], info);
+			}
+			return resolved;
+		}
+		return null;
+	}
+	
 	/**
 	 * @return an array of the IContextInfo that holds the context informations
 	 * starting from the one passed to this method and including all subsequent parents

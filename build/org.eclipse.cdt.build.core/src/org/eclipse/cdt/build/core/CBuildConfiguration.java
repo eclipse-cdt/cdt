@@ -7,16 +7,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.core;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
 
 import org.eclipse.cdt.build.core.internal.Activator;
-import org.eclipse.cdt.build.core.internal.ScannerInfoData;
-import org.eclipse.cdt.build.core.internal.ToolChainScannerInfo;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -43,8 +36,6 @@ public abstract class CBuildConfiguration extends PlatformObject {
 
 	private final IBuildConfiguration config;
 	private final IToolChain toolChain;
-
-	private ScannerInfoData scannerInfoCache;
 
 	protected CBuildConfiguration(IBuildConfiguration config) {
 		this.config = config;
@@ -129,40 +120,6 @@ public abstract class CBuildConfiguration extends PlatformObject {
 
 	public IToolChain getToolChain() {
 		return toolChain;
-	}
-
-	public IScannerInfo getScannerInfo(IResource resource) throws IOException {
-		return getCachedScannerInfo(resource);
-	}
-
-	protected IScannerInfo getCachedScannerInfo(IResource resource) throws IOException {
-		return getScannerInfoCache().getScannerInfo(resource);
-	}
-
-	public void putScannerInfo(ILanguage language, IExtendedScannerInfo info) {
-		getScannerInfoCache().putScannerInfo(language, info);
-	}
-
-	public void putScannerInfo(IResource resource, ToolChainScannerInfo info) {
-		getScannerInfoCache().putScannerInfo(resource, info);
-	}
-
-	private ScannerInfoData getScannerInfoCache() {
-		if (scannerInfoCache == null) {
-			scannerInfoCache = ScannerInfoData.load(this);
-		}
-		return scannerInfoCache;
-	}
-
-	public void clearScannerInfoCache() throws CoreException {
-		if (scannerInfoCache != null) {
-			scannerInfoCache.clear();
-		}
-	}
-
-	public Collection<CConsoleParser> getConsoleParsers() throws CoreException {
-		IToolChain toolChain = getToolChain();
-		return toolChain != null ? toolChain.getConsoleParsers() : null;
 	}
 
 }

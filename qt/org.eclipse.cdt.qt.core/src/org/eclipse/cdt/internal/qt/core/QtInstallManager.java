@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.cdt.qt.core.IQtInstallTargetMapper;

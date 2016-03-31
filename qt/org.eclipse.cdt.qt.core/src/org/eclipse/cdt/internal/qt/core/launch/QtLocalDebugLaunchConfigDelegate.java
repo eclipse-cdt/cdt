@@ -10,6 +10,7 @@ package org.eclipse.cdt.internal.qt.core.launch;
 import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
@@ -22,7 +23,7 @@ import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.qt.core.QtBuildConfiguration;
+import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.QtLaunchConfigurationDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,10 +61,10 @@ public class QtLocalDebugLaunchConfigDelegate extends QtLaunchConfigurationDeleg
 			throws CoreException {
 		GdbLaunch gdbLaunch = (GdbLaunch) launch;
 		ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
-		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
+		IQtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
-		// TODO get it from the toolchain
-		gdbLaunch.setGDBPath("/usr/local/bin/gdb");
+		IToolChain toolChain = qtBuildConfig.getToolChain();
+		gdbLaunch.setGDBPath(toolChain.getCommandPath("gdb").toString()); //$NON-NLS-1$
 		String gdbVersion = gdbLaunch.getGDBVersion();
 
 		Path exeFile = qtBuildConfig.getProgramPath();

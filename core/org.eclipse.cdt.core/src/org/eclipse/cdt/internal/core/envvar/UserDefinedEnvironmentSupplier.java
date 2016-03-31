@@ -28,6 +28,7 @@ import org.eclipse.cdt.utils.envvar.IEnvironmentChangeListener;
 import org.eclipse.cdt.utils.envvar.PrefsStorableEnvironment;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.cdt.utils.envvar.StorableEnvironmentLoader;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ProjectScope;
@@ -79,7 +80,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 				CCorePlugin.log(e);
 			}
 		}
-		else if (context instanceof IWorkspace || context == null) {
+		else if (context == null || context instanceof IBuildConfiguration || context instanceof IWorkspace) {
 			if (fWorkspaceVariables == null || forceLoad)
 				fWorkspaceVariables = (PrefsStorableEnvironment) loadEnvironment(context, false);
 			env = fWorkspaceVariables;

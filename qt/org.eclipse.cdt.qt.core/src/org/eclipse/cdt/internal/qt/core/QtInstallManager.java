@@ -7,31 +7,29 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
-import org.eclipse.cdt.qt.core.IQtInstallTargetMapper;
+import org.eclipse.cdt.qt.core.IQtInstallProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
-import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class QtInstallManager implements IQtInstallManager {
 
-	private Map<String, IQtInstall> installs;
-	private Map<String, IConfigurationElement> mapperElements;
-	private Map<String, IQtInstallTargetMapper> mappers;
+	private Map<Path, IQtInstall> installs;
+	private Map<String, IConfigurationElement> toolChainMap;
 
 	private Preferences getPreferences() {
 		return ConfigurationScope.INSTANCE.getNode(Activator.ID).node("qtInstalls"); //$NON-NLS-1$
@@ -43,10 +41,24 @@ public class QtInstallManager implements IQtInstallManager {
 			try {
 				Preferences prefs = getPreferences();
 				for (String key : prefs.keys()) {
-					installs.put(key, new QtInstall(key, Paths.get(prefs.get(key, "/")))); //$NON-NLS-1$
+					QtInstall install = new QtInstall(Paths.get(prefs.get(key, "/"))); //$NON-NLS-1$
+					installs.put(install.getQmakePath(), install);
 				}
 			} catch (BackingStoreException e) {
 				Activator.log(e);
+			}
+			
+			// Auto installs
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID, "qtInstallProvider"); //$NON-NLS-1$
+			for (IConfigurationElement element : point.getConfigurationElements()) {
+				try {
+					IQtInstallProvider provider = (IQtInstallProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
+					for (IQtInstall install : provider.getInstalls()) {
+						installs.put(install.getQmakePath(), install);
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
 			}
 		}
 	}
@@ -63,7 +75,8 @@ public class QtInstallManager implements IQtInstallManager {
 			}
 
 			// Add new ones
-			for (String key : installs.keySet()) {
+			for (Path path : installs.keySet()) {
+				String key = path.toString();
 				if (prefs.get(key, null) == null) {
 					prefs.put(key, installs.get(key).getQmakePath().toString());
 				}
@@ -84,64 +97,49 @@ public class QtInstallManager implements IQtInstallManager {
 	@Override
 	public void addInstall(IQtInstall qt) {
 		initInstalls();
-		installs.put(qt.getName(), qt);
+		installs.put(qt.getQmakePath(), qt);
 		saveInstalls();
 	}
 
 	@Override
-	public IQtInstall getInstall(String name) {
+	public IQtInstall getInstall(Path qmakePath) {
 		initInstalls();
-		return installs.get(name);
+		return installs.get(qmakePath);
 	}
 
 	@Override
 	public void removeInstall(IQtInstall install) {
-		installs.remove(install.getName());
+		installs.remove(install.getQmakePath());
 		saveInstalls();
 	}
 
 	@Override
-	public boolean supports(IQtInstall install, ILaunchTarget target) {
-		if (mapperElements == null) {
-			// init the extension point
-			mapperElements = new HashMap<>();
-			mappers = new HashMap<>();
-
-			IExtensionPoint point = Platform.getExtensionRegistry()
-					.getExtensionPoint(Activator.ID + ".qtInstallTargetMapper"); //$NON-NLS-1$
-			for (IExtension extension : point.getExtensions()) {
-				for (IConfigurationElement element : extension.getConfigurationElements()) {
-					String targetTypeId = element.getAttribute("targetTypeId"); //$NON-NLS-1$
-					mapperElements.put(targetTypeId, element);
+	public boolean supports(IQtInstall install, IToolChain toolChain) {
+		if (toolChainMap == null) {
+			toolChainMap = new HashMap<>();
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID, "qtToolChainMapper"); //$NON-NLS-1$
+			for (IConfigurationElement element : point.getConfigurationElements()) {
+				if (element.getName().equals("mapping")) { //$NON-NLS-1$
+					String spec = element.getAttribute("spec"); //$NON-NLS-1$
+					toolChainMap.put(spec, element);
 				}
 			}
 		}
-
-		String targetTypeId = target.getTypeId();
-		IQtInstallTargetMapper mapper = mappers.get(targetTypeId);
-		if (mapper == null) {
-			IConfigurationElement element = mapperElements.get(targetTypeId);
-			if (element != null) {
-				try {
-					mapper = (IQtInstallTargetMapper) element.createExecutableExtension("class"); //$NON-NLS-1$
-					mappers.put(targetTypeId, mapper);
-				} catch (CoreException e) {
-					Activator.log(e);
+		
+		IConfigurationElement element = toolChainMap.get(install.getSpec());
+		if (element != null) {
+			for (IConfigurationElement property : element.getChildren("property")) { //$NON-NLS-1$
+				String key = property.getAttribute("key"); //$NON-NLS-1$
+				String value = property.getAttribute("value"); //$NON-NLS-1$
+				if (!value.equals(toolChain.getProperty(key))) {
+					return false;
 				}
 			}
-		}
-
-		if (mapper == null) {
+			return true;
+		} else {
+			// Don't know so returning false
 			return false;
 		}
-
-		return mapper.supported(install, target);
-	}
-
-	@Override
-	public boolean supports(IQtInstall install, IToolChain toolChain) {
-		// TODO need another extension point for this
-		return true;
 	}
 
 }

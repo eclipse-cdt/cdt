@@ -17,8 +17,6 @@ import java.nio.file.Path;
  */
 public interface IQtInstall {
 
-	String getName();
-
 	Path getQmakePath();
 
 	String getSpec();

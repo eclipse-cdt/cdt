@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.gnu.cygwin;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
@@ -49,7 +50,7 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 			return new BuildEnvVar(ENV_PATH, path, IBuildEnvironmentVariable.ENVVAR_PREPEND);
 
 		} else if (variableName.equals(Cygwin.ENV_CYGWIN_HOME)) {
-			IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(Cygwin.ENV_CYGWIN_HOME, null, false);
+			IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(Cygwin.ENV_CYGWIN_HOME, (ICConfigurationDescription) null, false);
 			if (varCygwinHome == null) {
 				// Contribute if the variable does not already come from workspace environment
 				String home = Cygwin.getCygwinHome();

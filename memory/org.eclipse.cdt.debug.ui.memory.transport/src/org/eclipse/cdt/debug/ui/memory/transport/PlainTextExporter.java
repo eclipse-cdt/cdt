@@ -486,7 +486,7 @@ public class PlainTextExporter implements IMemoryExporter {
 					// These variables control how the output will be formatted
 					
 					// The output data is split by chunks of 1 addressable unit size.
-					final BigInteger dataCellSize = BigInteger.valueOf(4);
+					final BigInteger dataCellSize = BigInteger.valueOf(1);
 					// show 32 bytes of data per line, total. Adjust number of columns to compensate
 					// for longer addressable unit size
 					final BigInteger numberOfColumns = BigInteger.valueOf(32).divide(addressableSize);

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -62,6 +63,7 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -1099,6 +1101,14 @@ public class CCorePlugin extends Plugin {
 			// Next search the extension registry to see if a provider is
 			// registered with a build command
 			provider = getExtensionScannerInfoProvider2(project);
+			
+			// If we are new style build configurations, get the provider there
+			IBuildConfiguration activeConfig = project.getActiveBuildConfig();
+			ICBuildConfiguration cconfig = activeConfig.getAdapter(ICBuildConfiguration.class);
+			if (cconfig != null) {
+				// the build configuration is our scanner info provider
+				return cconfig;
+			}
 
 			// Regular usage is where Language Settings Providers are employed
 			if (provider == null && ScannerDiscoveryLegacySupport

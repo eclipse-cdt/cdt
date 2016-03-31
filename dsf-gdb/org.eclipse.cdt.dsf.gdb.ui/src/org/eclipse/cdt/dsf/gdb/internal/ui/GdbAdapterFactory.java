@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,15 +42,13 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
  * IDMContext.getAdapter() methods.
  */
 @ThreadSafe
-public class GdbAdapterFactory
-    implements IAdapterFactory, ILaunchesListener2
-{
+public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
     /**
      * Active adapter sets.  They are accessed using the launch instance 
      * which owns the debug services session. 
      */
     private static Map<GdbLaunch, GdbSessionAdapters> fgLaunchAdapterSets =
-        Collections.synchronizedMap(new HashMap<GdbLaunch, GdbSessionAdapters>());
+        Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Map of launches for which adapter sets have already been disposed.
@@ -67,12 +65,12 @@ public class GdbAdapterFactory
     private static Map<ILaunch, GdbSessionAdapters> fgDisposedLaunchAdapterSets = new WeakHashMap<>();
 
     static void disposeAdapterSet(ILaunch launch) {
-	synchronized(fgLaunchAdapterSets) {
-	    if ( fgLaunchAdapterSets.containsKey(launch) ) {
-		fgLaunchAdapterSets.remove(launch).dispose();
-		fgDisposedLaunchAdapterSets.put(launch, null);
-	    }
-	}
+    	synchronized(fgLaunchAdapterSets) {
+    		if (fgLaunchAdapterSets.containsKey(launch)) {
+    			fgLaunchAdapterSets.remove(launch).dispose();
+    			fgDisposedLaunchAdapterSets.put(launch, null);
+    		}
+    	}
     }
 
     public GdbAdapterFactory() {

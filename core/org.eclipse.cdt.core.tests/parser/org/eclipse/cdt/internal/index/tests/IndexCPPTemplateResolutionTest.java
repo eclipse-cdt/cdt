@@ -2195,7 +2195,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testDependentEnumValue_389009() throws Exception {
 		IEnumerator binding = getBindingFromASTName("id;", 2, IEnumerator.class);
 		IValue value = binding.getValue();
-		Long num = value.numericalValue();
+		Number num = value.numericalValue();
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}

@@ -273,7 +273,7 @@ public class SizeofCalculator {
 		IValue value = type.getSize();
 		if (value == null)
 			return null;
-		Long numElements = value.numericalValue();
+		Number numElements = value.numericalValue();
 		if (numElements == null)
 			return null;
 		IType elementType = type.getType();

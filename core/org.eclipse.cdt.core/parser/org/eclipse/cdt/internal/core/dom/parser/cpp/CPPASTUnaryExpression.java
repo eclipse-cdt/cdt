@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 /**
  * Unary expression in c++
  */
-public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
+public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
 	private int fOperator;
     private ICPPASTExpression fOperand;
 	private ICPPEvaluation fEvaluation;
@@ -196,7 +196,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		if (fOperand == null)
 			return EvalFixed.INCOMPLETE;
 
-		final ICPPEvaluation nestedEval = fOperand.getEvaluation();
+		final ICPPEvaluation nestedEval = ((ICPPEvaluationOwner)fOperand).getEvaluation();
 		if (fOperator == op_bracketedPrimary) 
 			return nestedEval;
 

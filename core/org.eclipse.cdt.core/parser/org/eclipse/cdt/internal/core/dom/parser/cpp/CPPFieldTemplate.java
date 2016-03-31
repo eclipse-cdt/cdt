@@ -38,4 +38,9 @@ public class CPPFieldTemplate extends CPPVariableTemplate implements ICPPFieldTe
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		return scope.getClassType();
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return CPPField.getFieldPosition(getName(), getClassOwner());
+	}
 }

@@ -127,7 +127,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 				}
 			}		
 			if (integralValue == null) {
-				integralValue= Value.UNKNOWN;
+				integralValue= IntegralValue.UNKNOWN;
 			}
 		}
 		return integralValue;
@@ -151,7 +151,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 				IValue val;
 				IASTExpression expr= etor.getValue();
 				if (expr != null) {
-					val= Value.create(expr);
+					val= ValueFactory.create(expr);
 					previousExplicitValue = val;
 					delta = 1;
 					if (fixedType == null) {
@@ -163,9 +163,9 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 					}
 				} else {
 					if (previousExplicitValue != null) {
-						val = Value.incrementedValue(previousExplicitValue, delta);
+						val = IntegralValue.incrementedValue(previousExplicitValue, delta);
 					} else {
-						val = Value.create(delta);
+						val = IntegralValue.create(delta);
 					}
 					delta++;
 					if (fixedType == null && type instanceof IBasicType) {
@@ -196,7 +196,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 	 * @return the type of the incremented value
 	 */
 	public static IBasicType getTypeOfIncrementedValue(IBasicType type, IValue val) {
-		Long numericalValue = val.numericalValue();
+		Number numericalValue = val.numericalValue();
 		if (numericalValue != null) {
 			long longValue = numericalValue.longValue();
 			if ((type.getKind() != Kind.eInt && type.getKind() != Kind.eInt128) ||

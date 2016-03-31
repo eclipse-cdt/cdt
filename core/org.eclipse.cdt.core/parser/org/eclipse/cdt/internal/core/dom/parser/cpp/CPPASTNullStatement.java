@@ -13,11 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecNull;
 
 /**
  * @author jcamelon
  */
-public class CPPASTNullStatement extends CPPASTAttributeOwner implements IASTNullStatement {
+public class CPPASTNullStatement extends CPPASTAttributeOwner implements IASTNullStatement, ICPPExecutionOwner {
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {
@@ -49,5 +50,10 @@ public class CPPASTNullStatement extends CPPASTAttributeOwner implements IASTNul
 	public CPPASTNullStatement copy(CopyStyle style) {
 		CPPASTNullStatement copy = new CPPASTNullStatement();
 		return copy(copy, style);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		return new ExecNull();
 	}
 }

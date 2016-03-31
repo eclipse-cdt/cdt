@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTIdExpression extends ASTNode
-		implements IASTIdExpression, ICPPASTExpression, ICPPASTCompletionContext {
+		implements IASTIdExpression, ICPPASTExpression, ICPPASTCompletionContext, ICPPEvaluationOwner {
 	private IASTName fName;
 	private ICPPEvaluation fEvaluation;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;

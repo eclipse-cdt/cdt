@@ -118,7 +118,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -196,8 +195,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -228,6 +227,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalNamespaceScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -1251,7 +1251,7 @@ public class CPPSemantics {
 				if (expression instanceof ICPPASTLiteralExpression) {
 					final ICPPASTLiteralExpression litExpr = (ICPPASTLiteralExpression) expression;
 					if (litExpr.getKind() == IASTLiteralExpression.lk_this) {
-						final IType thisType = SemanticUtil.getNestedType(litExpr.getEvaluation().getType(litExpr), TDEF | ALLCVQ | PTR | ARRAY | MPTR | REF);
+						final IType thisType = SemanticUtil.getNestedType(((ICPPEvaluationOwner)litExpr).getEvaluation().getType(litExpr), TDEF | ALLCVQ | PTR | ARRAY | MPTR | REF);
 						if (thisType instanceof ICPPUnknownBinding || thisType instanceof ICPPTemplateDefinition) {
 							result[0]= true;
 							return PROCESS_ABORT;
@@ -3096,7 +3096,7 @@ public class CPPSemantics {
 
 			// If we're in a dependent context, we don't have enough information
 			// to resolve the function set.
-			if (((ICPPASTExpression) parent).getEvaluation().isTypeDependent()) {
+			if (((ICPPEvaluationOwner) parent).getEvaluation().isTypeDependent()) {
 				return CPPDeferredFunction.createForCandidates(functionSet.getBindings());
 			}
 		}
@@ -3108,7 +3108,26 @@ public class CPPSemantics {
     	return function;
     }
 	
-	/**
+    private static boolean isViableUserDefinedLiteralOperator(IBinding binding, int kind) {
+    	if(binding == null || binding instanceof ProblemBinding) {
+    		return false;
+    	}
+    	if(binding instanceof ICPPFunction) {
+    		ICPPFunction func = (ICPPFunction) binding;
+    		if(func.getRequiredArgumentCount() == 1) {
+    			IType type = null;
+    			if(kind == IASTLiteralExpression.lk_integer_constant) {
+    				type = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG_LONG);
+    			} else if(kind == IASTLiteralExpression.lk_float_constant) {
+    				type = new CPPBasicType(Kind.eDouble, IBasicType.IS_LONG);
+    			}
+    			return func.getParameters()[0].getType().isSameType(type);
+    		}
+    	}
+    	return false;
+    }
+    
+    /**
 	 * Given a LiteralExpression with a user-defined literal suffix,
 	 * finds the corresponding defined operator.
 	 * Tries to implement 2.14.8.(2-10)
@@ -3168,7 +3187,7 @@ public class CPPSemantics {
 				CPPBasicType t = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG_LONG, exp);
 				data.setFunctionArguments(false, createArgForType(exp, t));
 				ret = resolveFunction(data, funcs, true);
-				if (ret != null && !(ret instanceof ProblemBinding)) {
+				if (isViableUserDefinedLiteralOperator(ret, kind)) {
 					return ret;
 				}
 			} else if (kind == IASTLiteralExpression.lk_float_constant) {
@@ -3182,7 +3201,7 @@ public class CPPSemantics {
 				CPPBasicType t = new CPPBasicType(Kind.eDouble, IBasicType.IS_LONG, exp);
 				data.setFunctionArguments(false, createArgForType(exp, t));
 				ret = resolveFunction(data, funcs, true);
-				if (ret != null && !(ret instanceof ProblemBinding)) {
+				if (isViableUserDefinedLiteralOperator(ret, kind)) {
 					return ret;
 				}
 			}
@@ -3205,27 +3224,27 @@ public class CPPSemantics {
 			// "literal"_op -> operator "" _op<'l', 'i', 't', 'e', 'r', 'a', 'l'>();
 			ICPPTemplateArgument args[] = new ICPPTemplateArgument[stringLiteral.length];
 			for (int k = 0; k < stringLiteral.length; k++) {
-				args[k] = new CPPTemplateNonTypeArgument(new EvalFixed(CPPBasicType.CHAR, PRVALUE, Value.create(stringLiteral[k])), exp);
+				args[k] = new CPPTemplateNonTypeArgument(new EvalFixed(CPPBasicType.CHAR, PRVALUE, IntegralValue.create(stringLiteral[k])), exp);
 			}
 			
 			data = new LookupData(((CPPASTLiteralExpression) exp).getOperatorName(), args, exp);
 			IBinding litTpl = resolveFunction(data, tplFunctions, true);
 			
 			// Do we have valid template and non-template bindings?
-			if (ret != null && litTpl != null) {
-				if (!(ret instanceof IProblemBinding) && litTpl instanceof ICPPFunctionInstance) {
+			if(ret != null && !(ret instanceof IProblemBinding)) {
+				// Do we have valid template and non-template bindings?
+				if(litTpl instanceof ICPPFunctionInstance) {
 					// Ambiguity? It has two valid options, and the spec says it shouldn't
-					return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, tplFunctions);
+					return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, tplFunctions); 
 				}
-				
-				if ((ret instanceof IProblemBinding) && litTpl instanceof ICPPFunctionInstance) {
+			} else {
+				if(litTpl instanceof ICPPFunctionInstance) {
 					// Only the template binding is valid
 					ret = litTpl;
+				} else {
+					// Couldn't find a valid operator
+					return ret;
 				}
-			}
-			else if (ret == null) {
-				// Couldn't find a valid operator
-				return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_INVALID_OVERLOAD);
 			}
 		} else if (kind == IASTLiteralExpression.lk_string_literal) {
 			/*
@@ -3257,7 +3276,7 @@ public class CPPSemantics {
 		
 		return ret;
 	}
-
+    
 	static ICPPFunction resolveTargetedFunction(IType targetType, CPPFunctionSet set, IASTNode point) {
 		targetType= getNestedType(targetType, TDEF | REF | CVTYPE | PTR | MPTR);
     	if (!(targetType instanceof ICPPFunctionType))
@@ -3330,7 +3349,7 @@ public class CPPSemantics {
 
     public static ICPPFunction findOverloadedOperator(ICPPASTNewExpression expr) {
 		OverloadableOperator op = OverloadableOperator.fromNewExpression(expr);
-		final ICPPEvaluation evaluation = expr.getEvaluation();
+		final ICPPEvaluation evaluation = ((ICPPEvaluationOwner)expr).getEvaluation();
 		if (evaluation.isTypeDependent())
 			return null;
 
@@ -3347,7 +3366,7 @@ public class CPPSemantics {
     		args[1]= arg2;
     		int i= 2;
     		for (IASTInitializerClause p : placement) {
-    			final ICPPASTInitializerClause arg = (ICPPASTInitializerClause) p;
+    			final ICPPEvaluationOwner arg = (ICPPEvaluationOwner) p;
 				final ICPPEvaluation a = arg.getEvaluation();
 				if (a.isTypeDependent())
 					return null;
@@ -3365,8 +3384,8 @@ public class CPPSemantics {
     		return null;
 
     	ICPPEvaluation[] args = {
-    			new EvalFixed(type, LVALUE, Value.UNKNOWN),
-    			((ICPPASTExpression) expr.getOperand()).getEvaluation()
+    			new EvalFixed(type, LVALUE, IntegralValue.UNKNOWN),
+    			((ICPPEvaluationOwner) expr.getOperand()).getEvaluation()
     		};
 		return findOverloadedOperator(expr, null, args, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
     }
@@ -3449,8 +3468,8 @@ public class CPPSemantics {
 	    	if (initializer instanceof IASTEqualsInitializer) {
 		    	// Copy initialization.
 	    		IASTEqualsInitializer eqInit= (IASTEqualsInitializer) initializer;
-	    		ICPPASTInitializerClause initClause = (ICPPASTInitializerClause) eqInit.getInitializerClause();
-	    		final ICPPEvaluation evaluation = initClause.getEvaluation();
+	    		ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) eqInit.getInitializerClause();
+	    		final ICPPEvaluation evaluation = evalOwner.getEvaluation();
 	    		IType sourceType= evaluation.getType(typeId);
 				ValueCategory isLValue= evaluation.getValueCategory(typeId);
 	    		if (sourceType != null) {
@@ -3469,7 +3488,7 @@ public class CPPSemantics {
 	    		}
 	    	} else if (initializer instanceof ICPPASTInitializerList) {
 	    		// List initialization.
-	    		ICPPEvaluation eval= ((ICPPASTInitializerList) initializer).getEvaluation();
+	    		ICPPEvaluation eval= ((ICPPEvaluationOwner) initializer).getEvaluation();
 	    		if (eval instanceof EvalInitList) {
 	    			Cost c= Conversions.listInitializationSequence((EvalInitList) eval, type, UDCMode.ALLOWED, true, typeId);
 	    			if (c.converts()) {
@@ -3530,7 +3549,7 @@ public class CPPSemantics {
 	    final char[] name = CharArrayUtils.concat("~".toCharArray(), cls.getNameCharArray()); //$NON-NLS-1$
 	    LookupData data = new LookupData(name, null, expr);
 	    data.qualified = true;
-	    data.setFunctionArguments(true, new EvalFixed(cls, LVALUE, Value.UNKNOWN));
+	    data.setFunctionArguments(true, new EvalFixed(cls, LVALUE, IntegralValue.UNKNOWN));
 	    try {
 		    lookup(data, scope);
 		    IBinding[] found= data.getFoundBindings();

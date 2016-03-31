@@ -50,4 +50,9 @@ public class PDOMCPPFieldTemplate extends PDOMCPPVariableTemplate implements ICP
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return -1;
+	}
 }

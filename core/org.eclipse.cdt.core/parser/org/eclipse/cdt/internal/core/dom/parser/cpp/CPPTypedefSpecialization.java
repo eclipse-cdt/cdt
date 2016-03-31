@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
@@ -28,7 +27,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 
 	private IType fType;
 
-    public CPPTypedefSpecialization(IBinding specialized, ICPPClassType owner,
+    public CPPTypedefSpecialization(IBinding specialized, IBinding owner,
     		ICPPTemplateParameterMap tpmap, IType type) {
         super(specialized, owner, tpmap);
         fType= type;

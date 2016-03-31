@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.ast.tag.TagManager;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CArrayType;
@@ -383,5 +384,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	public ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer buffer)
 			throws CoreException {
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an evaluation, first byte=" + buffer.getByte())); //$NON-NLS-1$
+	}
+	
+	@Override
+	public ISerializableExecution unmarshalExecution(ITypeMarshalBuffer buffer)
+			throws CoreException {
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an execution, first byte=" + buffer.getByte())); //$NON-NLS-1$
 	}
 }

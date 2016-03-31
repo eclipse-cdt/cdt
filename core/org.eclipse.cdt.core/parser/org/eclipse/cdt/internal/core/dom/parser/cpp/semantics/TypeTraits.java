@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -34,9 +35,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 
 /**
  * A collection of static methods for determining type traits.
@@ -57,6 +61,56 @@ public class TypeTraits {
 
 	private TypeTraits() {}
 
+	
+	
+	public static boolean isDefaultedMethod(ICPPMethod method) {
+		if(method instanceof ICPPInternalFunction) {
+			ICPPInternalFunction internalFunc = (ICPPInternalFunction)method;
+			IASTNode definition = internalFunc.getDefinition();
+			ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(definition);
+			if(functionDefinition != null) {
+				return functionDefinition.isDefaulted();
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 *	From $3.9 / 10:
+	 *	A type is a literal type if it is:
+	 *	[...]
+	 *	- a possibly cv-qualified class type that has all the following properties:
+	 *		- it has a trivial destructor
+	 *		- it is an aggregate type or has at least one constexpr constructor or constructor template that is not a
+	 *		  copy or move constructor, and
+	 *		- all of its non-static data members and base classes are of non-volatile literal types
+	*/
+	public static boolean isLiteralClass(ICPPClassType classType, IASTNode point) {
+		if(!hasTrivialDestructor(classType, point)) {
+			return false;
+		}
+		
+		if(isAggregateClass(classType, point)) {
+			return true;
+		}
+		
+		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors(classType, point);
+		for(ICPPConstructor ctor : ctors) {
+			MethodKind methodKind = ClassTypeHelper.getMethodKind(classType, ctor);
+			if(methodKind == MethodKind.COPY_CTOR || methodKind == MethodKind.MOVE_CTOR) {
+				continue;
+			}
+			
+			// implicit constructors are automatically constexpr when the class is a literal type
+			if(ctor instanceof CPPImplicitConstructor || ctor.isConstexpr()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * C++11: 9-6
 	 */
@@ -314,7 +368,7 @@ public class TypeTraits {
 	 * Returns {@code true} if and only if the given class has a trivial destructor.
 	 * A destructor is trivial if:
 	 * <ul>
-	 * <li>it is implicitly defined by the compiler, and</li>
+	 * <li>it is implicitly defined by the compiler or defaulted, and</li>
 	 * <li>every direct base class has trivial destructor, and</li>
 	 * <li>for every nonstatic data member that has class type or array of class type, that type
 	 * has trivial destructor.</li>
@@ -326,7 +380,7 @@ public class TypeTraits {
 	 */
 	public static boolean hasTrivialDestructor(ICPPClassType classType, IASTNode point) {
 		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
-			if (method.isDestructor())
+			if (method.isDestructor() && !isDefaultedMethod(method))
 				return false;
 		}
 		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType, null)) {

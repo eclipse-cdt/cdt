@@ -91,6 +91,11 @@ public class CPPClassSpecialization extends CPPSpecialization
 		public ICompositeType getCompositeTypeOwner() {
 			return null;
 		}
+
+		@Override
+		public byte getFieldPosition() {
+			return -1;
+		}
 	}
 
 	public final static class RecursionResolvingMethod extends RecursionResolvingBinding implements ICPPMethod {

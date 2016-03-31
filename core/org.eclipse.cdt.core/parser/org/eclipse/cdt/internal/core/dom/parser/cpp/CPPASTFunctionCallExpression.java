@@ -32,8 +32,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -49,7 +49,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 
 public class CPPASTFunctionCallExpression extends ASTNode
-		implements ICPPASTFunctionCallExpression, IASTAmbiguityParent {
+		implements ICPPASTFunctionCallExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
     private ICPPASTExpression fFunctionName;
     private IASTInitializerClause[] fArguments;
 
@@ -281,11 +281,16 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			return conversion;
 		
 		ICPPEvaluation[] args= new ICPPEvaluation[fArguments.length + 1];
-		args[0]= fFunctionName.getEvaluation();
+		args[0]= ((ICPPEvaluationOwner)fFunctionName).getEvaluation();
 		for (int i = 1; i < args.length; i++) {
-			args[i]= ((ICPPASTInitializerClause) fArguments[i - 1]).getEvaluation();
+			args[i]= ((ICPPEvaluationOwner) fArguments[i - 1]).getEvaluation();
 		}
-		return new EvalFunctionCall(args, this);
+		if (fFunctionName instanceof ICPPASTFieldReference) {
+			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference)fFunctionName;
+			ICPPEvaluationOwner fieldOwner = (ICPPEvaluationOwner)fieldRef.getFieldOwner();
+			return new EvalFunctionCall(args, fieldOwner.getEvaluation(), this);
+		}
+		return new EvalFunctionCall(args, null, this);
 	}
 	
 	private ICPPEvaluation checkForExplicitTypeConversion() {
@@ -295,8 +300,9 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			if (b instanceof IType) {
 				ICPPEvaluation[] args= new ICPPEvaluation[fArguments.length];
 				for (int i = 0; i < args.length; i++) {
-					args[i]= ((ICPPASTInitializerClause) fArguments[i]).getEvaluation();
+					args[i]= ((ICPPEvaluationOwner) fArguments[i]).getEvaluation();
 				}
+				
 				return new EvalTypeId((IType) b, this, args);
 			}
 		}

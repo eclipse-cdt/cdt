@@ -15,8 +15,10 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecAliasDeclaration;
 
-public class CPPASTAliasDeclaration extends CPPASTAttributeOwner implements ICPPASTAliasDeclaration {
+public class CPPASTAliasDeclaration extends CPPASTAttributeOwner implements ICPPASTAliasDeclaration, ICPPExecutionOwner {
 	private IASTName aliasName;
 	private ICPPASTTypeId mappingTypeId;
 
@@ -97,5 +99,11 @@ public class CPPASTAliasDeclaration extends CPPASTAttributeOwner implements ICPP
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPBinding declaredBinding = (ICPPBinding)getAlias().resolveBinding();
+		return new ExecAliasDeclaration(declaredBinding);
 	}
 }

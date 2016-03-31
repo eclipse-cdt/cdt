@@ -2,16 +2,19 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.cdt.build.core.toolChainType">
+         point="org.eclipse.cdt.core.toolChainType">
       <toolChainType
             class="org.eclipse.cdt.build.gcc.core.GCCToolChainType"
             id="org.eclipse.cdt.build.gcc">
       </toolChainType>
    </extension>
    <extension
-         point="org.eclipse.cdt.build.core.toolChainProvider">
+         point="org.eclipse.cdt.core.toolChainProvider">
       <provider
             class="org.eclipse.cdt.build.gcc.core.GCCPathToolChainProvider">
+      </provider>
+      <provider
+            class="org.eclipse.cdt.build.gcc.core.Msys2ToolChainProvider">
       </provider>
    </extension>
 

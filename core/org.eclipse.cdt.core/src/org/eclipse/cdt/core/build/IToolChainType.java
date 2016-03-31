@@ -5,25 +5,29 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.build.gcc.core;
+package org.eclipse.cdt.core.build;
 
-import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.core.build.IToolChainType;
 import org.osgi.service.prefs.Preferences;
 
-public class GCCToolChainType implements IToolChainType {
+/**
+ * A type of toolchain.
+ * 
+ * @since 6.0
+ */
+public interface IToolChainType {
 
-	public static final String ID = "org.eclipse.cdt.build.gcc"; //$NON-NLS-1$
+	String getId();
 
-	@Override
-	public String getId() {
-		return ID;
-	}
-
-	@Override
-	public IToolChain getToolChain(String name, Preferences properties) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * Called by the toolchain to inflate the toolchain from the user preference
+	 * store.
+	 * 
+	 * @param name
+	 *            the name of the toolchain
+	 * @param properties
+	 *            the persisted settings for the toolchain
+	 * @return the toolchain initialized with the settings.
+	 */
+	IToolChain getToolChain(String name, Preferences properties);
 
 }

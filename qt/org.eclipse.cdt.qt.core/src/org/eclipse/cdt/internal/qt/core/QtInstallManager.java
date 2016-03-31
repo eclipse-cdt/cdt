@@ -7,16 +7,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.build.core.IToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.cdt.qt.core.IQtInstallTargetMapper;
+import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -47,6 +49,27 @@ public class QtInstallManager implements IQtInstallManager {
 				}
 			} catch (BackingStoreException e) {
 				Activator.log(e);
+			}
+			
+			// Auto installs
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				// On Windows, look for MSYS2, MinGW 64/32 locations
+				String name = "MSYS2 Qt 64-bit";
+				if (!installs.containsKey(name)) {
+					// Look in the current user Uninstall key to look for the uninstaller
+					WindowsRegistry registry = WindowsRegistry.getRegistry();
+					String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+					String subkey;
+					for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
+						String compKey = uninstallKey + '\\' + subkey;
+						String displayName = registry.getCurrentUserValue(compKey, "DisplayName");
+						if ("MSYS2 64bit".equals(displayName)) {
+							String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation");
+							Path qmakePath = Paths.get(installLocation + "\\mingw64\\bin\\qmake.exe");
+							installs.put(name, new QtInstall(name, qmakePath));
+						}
+					}
+				}
 			}
 		}
 	}

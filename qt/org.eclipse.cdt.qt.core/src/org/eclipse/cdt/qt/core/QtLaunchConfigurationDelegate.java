@@ -7,7 +7,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.qt.core;
 
-import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationFactory;
+import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
+import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
+import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -21,11 +24,11 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target,
 			IProgressMonitor monitor) throws CoreException {
-		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
+		IQtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
 		// Set it as active
 		if (qtBuildConfig != null) {
-			IProject project = qtBuildConfig.getProject();
+			IProject project = qtBuildConfig.getBuildConfiguration().getProject();
 			IProjectDescription desc = project.getDescription();
 			desc.setActiveBuildConfig(qtBuildConfig.getBuildConfiguration().getName());
 			project.setDescription(desc, monitor);
@@ -43,11 +46,17 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 		return new IProject[] { project };
 	}
 
-	protected QtBuildConfiguration getQtBuildConfiguration(ILaunchConfiguration configuration, String mode,
+	protected IQtBuildConfiguration getQtBuildConfiguration(ILaunchConfiguration configuration, String mode,
 			ILaunchTarget target, IProgressMonitor monitor) throws CoreException {
 		// Find the Qt build config
+		ICBuildConfigurationManager configManager = Activator.getService(ICBuildConfigurationManager.class);
+		QtBuildConfigurationProvider provider = (QtBuildConfigurationProvider) configManager.getProvider(QtBuildConfigurationProvider.ID);
 		IProject project = configuration.getMappedResources()[0].getProject();
-		return QtBuildConfigurationFactory.getConfig(project, mode, target, monitor);
+		IQtBuildConfiguration qtConfig = provider.getConfiguration(project, target, mode, monitor);
+		if (qtConfig == null) {
+			qtConfig = provider.createConfiguration(project, target, mode, monitor);
+		}
+		return qtConfig;
 	}
 
 }

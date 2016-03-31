@@ -16,6 +16,7 @@ import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchWithAdapterFactory;
 import org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.launching.ServicesLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
@@ -39,7 +40,7 @@ public class QtLocalDebugLaunchConfigDelegate extends QtLaunchConfigurationDeleg
 	@Override
 	public ITargetedLaunch getLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target)
 			throws CoreException {
-		GdbLaunch launch = new GdbLaunch(configuration, mode, null);
+		GdbLaunch launch = new GdbLaunchWithAdapterFactory(configuration, mode, null);
 		launch.setLaunchTarget(target);
 		launch.initialize();
 

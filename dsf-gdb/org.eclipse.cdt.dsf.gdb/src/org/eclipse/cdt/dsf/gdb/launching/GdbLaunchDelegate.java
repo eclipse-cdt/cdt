@@ -386,7 +386,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
      * @since 4.1
      */
     protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator) throws CoreException {
-    	return new GdbLaunch(configuration, mode, locator);
+    	return new GdbLaunchWithAdapterFactory(configuration, mode, locator);
     }
 
     /**

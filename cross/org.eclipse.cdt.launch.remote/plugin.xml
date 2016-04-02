@@ -68,12 +68,19 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
         <placement after="org.eclipse.cdt.launch.remote.dsf.mainTab"/>
       </tab>
+      <tab id="org.eclipse.rse.remotecdt.dsf.debug.environmentTab"
+           group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+           name="Environment"
+           class="org.eclipse.debug.ui.EnvironmentTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
       <tab id="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"
             group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Debugger"
             class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFDebuggerTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
-        <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
       </tab>
       <tab
             id="org.eclipse.rse.remotecdt.debug.dsf.SourceLookupTab"

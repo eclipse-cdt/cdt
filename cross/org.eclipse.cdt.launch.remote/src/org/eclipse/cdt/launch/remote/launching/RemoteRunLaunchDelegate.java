@@ -53,6 +53,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 		IPath exePath = CDebugUtils.verifyProgramPath(config);
 		ICProject project = CDebugUtils.verifyCProject(config);
+		String[] env = getEnvironment(config);
 		if (exePath != null) {
 			verifyBinary(project, exePath);
 			String arguments = getProgramArguments(config);
@@ -90,7 +91,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 					// Use a remote shell to launch the binary.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12);
 					remoteProcess = RSEHelper.remoteShellExec(config, prelaunchCmd,
-							remoteExePath, arguments, new SubProgressMonitor(
+							remoteExePath, arguments, env, new SubProgressMonitor(
 									monitor, 20));
 					DebugPlugin.newProcess(launch, remoteProcess,
 							renderProcessLabel(exePath.toOSString()));

@@ -84,12 +84,28 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
         <placement after="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"/>        
       </tab>         
       <tab
+            id="org.eclipse.rse.remotecdt.launch.EnvironmentTab"
+            group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
+            name="Environment"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+         <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.rse.remotecdt.debug.dsf.EnvironmentTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="Environment"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>         
+      <tab
             id="org.eclipse.rse.remotecdt.launch.CommonTab"
             group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
-        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
+        <placement after="org.eclipse.debug.ui.environmentTab"/>        
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.debug.dsf.CommonTab"
@@ -97,9 +113,8 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
-        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>                
-      </tab>         
-      
+        <placement after="org.eclipse.debug.ui.environmentTab"/>                
+      </tab>
    </extension>
    
 	<!-- ============================================ -->

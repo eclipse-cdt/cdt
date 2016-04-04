@@ -93,6 +93,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	}
 
 	private ILaunchTargetProvider getProvider(String typeId) {
+		initTargets();
 		ILaunchTargetProvider provider = typeProviders.get(typeId);
 		if (provider == null) {
 			IConfigurationElement element = typeElements.get(typeId);

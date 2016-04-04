@@ -16,6 +16,24 @@
       "revId": "75c2dcebf9f5b0c6cf120136784ace05189f140c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_75b93865",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-04-04T17:18:41Z",
+      "side": 1,
+      "message": "My understanding is that\u0027s required when figuring out proxy settings. Some platforms need native code or platform-specific code to do that but it doesn\u0027t seem to exist for Mac OS. So at worst, when \"native\" proxy settings are selected on Mac, it might not correctly detect proxy settings.",
+      "parentUuid": "e7dfcf21_75da1860",
+      "revId": "75c2dcebf9f5b0c6cf120136784ace05189f140c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

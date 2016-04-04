@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_6fcde75f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointPreferenceStore.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-04-04T08:25:02Z",
+      "side": 0,
+      "message": "I don\u0027t think simply removing this line of code can be right as the breakpoint won\u0027t move if the line number is not set. Is the line number set somewhere else too?",
+      "revId": "5a5de4b1db175e02c38f3e197589489f6d2bc653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_75da1860",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-04T16:51:09Z",
+      "side": 1,
+      "message": "I was looking for core.net.macosx, but did not find it, \nwould you know why we don\u0027t have / need one ?",
+      "revId": "75c2dcebf9f5b0c6cf120136784ace05189f140c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

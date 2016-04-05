@@ -8,6 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *     Torkild U. Resheim - add preference to control target selector
+ *     Vincent Guignot - Ingenico - add preference to control Build button     
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -59,6 +60,7 @@ public class Activator extends AbstractUIPlugin {
 	// Preference ids
 	public static final String PREF_ENABLE_LAUNCHBAR = "enableLaunchBar"; //$NON-NLS-1$
 	public static final String PREF_ENABLE_TARGETSELECTOR = "enableTargetSelector"; //$NON-NLS-1$
+	public static final String PREF_ENABLE_BUILDBUTTON = "enableBuildButton"; //$NON-NLS-1$
 	public static final String PREF_LAUNCH_HISTORY_SIZE = "launchHistorySize"; //$NON-NLS-1$
 
 	// The shared instance

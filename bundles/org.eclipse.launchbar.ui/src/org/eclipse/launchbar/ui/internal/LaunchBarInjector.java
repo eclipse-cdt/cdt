@@ -8,6 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *     Torkild U. Resheim - add preference to control target selector
+ *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -36,16 +37,16 @@ public class LaunchBarInjector {
 
 	@Inject
 	MApplication application;
-	
+
 	@Inject
 	IEventBroker eventBroker;
-	
+
 	@Execute
 	void execute() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		boolean enabled = store.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
 		injectIntoAll(enabled);
-		
+
 		// Watch for new trimmed windows and inject there too.
 		eventBroker.subscribe(UIEvents.TrimmedWindow.TOPIC_TRIMBARS, new EventHandler() {
 			@Override
@@ -72,13 +73,13 @@ public class LaunchBarInjector {
 					boolean enabled = Boolean.parseBoolean(event.getNewValue().toString());
 					injectIntoAll(enabled);
 				}
-				if (event.getProperty().equals(Activator.PREF_ENABLE_TARGETSELECTOR)) {
+				if (event.getProperty().equals(Activator.PREF_ENABLE_TARGETSELECTOR)|| event.getProperty().equals(Activator.PREF_ENABLE_BUILDBUTTON)) {
 					IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-					boolean enabled = store.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR); 
+					boolean enabled = store.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
 					if (enabled){
 						injectIntoAll(false);
 						injectIntoAll(true);
-					}					
+					}
 				}
 			}
 		});
@@ -99,7 +100,7 @@ public class LaunchBarInjector {
 
 	private void injectLaunchBar(MTrimBar trimBar, boolean enabled) {
 		// are we enabled or not
-		
+
 		// Search for control in trimbar
 		MTrimElement launchBarElement = null;
 		for (MTrimElement trimElement : trimBar.getChildren()) {
@@ -129,5 +130,5 @@ public class LaunchBarInjector {
 			trimBar.getChildren().add(0, launchBar);
 		}
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 QNX Software Systems and others.
+ * Copyright (c) 2014, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Doug Schaefer
- *     Torkild U. Resheim - add preference to control target selector     
+ *     Torkild U. Resheim - add preference to control target selector
+ *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -19,6 +20,7 @@ public class LaunchBarPreferenceInitializer extends AbstractPreferenceInitialize
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		store.setDefault(Activator.PREF_ENABLE_BUILDBUTTON, true);
 		store.setDefault(Activator.PREF_ENABLE_LAUNCHBAR, true);
 		store.setDefault(Activator.PREF_ENABLE_TARGETSELECTOR, true);
 		store.setDefault(Activator.PREF_LAUNCH_HISTORY_SIZE, 3);

@@ -8,6 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *     Torkild U. Resheim - add preference to control target selector
+ *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.controls;
 
@@ -66,7 +67,12 @@ public class LaunchBarControl implements ILaunchBarListener {
 		});
 
 		ToolBar toolBar = new ToolBar(container, SWT.FLAT);
-		createButton(toolBar, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		boolean buildEnabled = store.getBoolean(Activator.PREF_ENABLE_BUILDBUTTON);
+		if (buildEnabled) {
+			createButton(toolBar, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
+		}
+
 		createButton(toolBar, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch, Activator.CMD_LAUNCH);
 		createButton(toolBar, Activator.IMG_BUTTON_STOP, Messages.LaunchBarControl_Stop, Activator.CMD_STOP);
 
@@ -78,7 +84,7 @@ public class LaunchBarControl implements ILaunchBarListener {
 		configSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		configSelector.setInput(manager);
 
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+
 		boolean enabled = store.getBoolean(Activator.PREF_ENABLE_TARGETSELECTOR);
 		if (enabled) {
 			Label label = new Label(container, SWT.NONE);

@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Doug Schaefer
- *     Torkild U. Resheim - add preference to control target selector     
+ *     Torkild U. Resheim - add preference to control target selector
+ *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -34,6 +35,7 @@ public class Messages extends NLS {
 	public static String LaunchBarPreferencePage_0;
 	public static String LaunchBarPreferencePage_1;
 	public static String LaunchBarPreferencePage_EnableTargetSelector;
+	public static String LaunchBarPreferencePage_EnableBuildButton;
 	public static String LaunchConfigurationEditDialog_0;
 	public static String LaunchConfigurationEditDialog_1;
 	public static String LaunchConfigurationEditDialog_2;

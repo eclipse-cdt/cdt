@@ -8,6 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *     Torkild U. Resheim - add preference to control target selector
+ *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -33,6 +34,7 @@ public class LaunchBarPreferencePage extends FieldEditorPreferencePage implement
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_LAUNCHBAR, Messages.LaunchBarPreferencePage_1, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_TARGETSELECTOR, Messages.LaunchBarPreferencePage_EnableTargetSelector, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_BUILDBUTTON, Messages.LaunchBarPreferencePage_EnableBuildButton, getFieldEditorParent()));
 	}
-	
+
 }

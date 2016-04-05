@@ -1,0 +1,412 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_dbe79ace",
+        "filename": "build/org.eclipse.cdt.make.core.tests/.settings/org.eclipse.jdt.core.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "This and other preference changes are not related to the bug. Please remove.",
+      "range": {
+        "startLine": 154,
+        "startChar": 56,
+        "endLine": 154,
+        "endChar": 60
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9b7c3266",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Only the micro version can incremented on the cdt_8_8 bug fixing branch.",
+      "range": {
+        "startLine": 5,
+        "startChar": 18,
+        "endLine": 5,
+        "endChar": 20
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fb61b6b2",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 678,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "range": {
+        "startLine": 678,
+        "startChar": 0,
+        "endLine": 678,
+        "endChar": 1
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fb0536cb",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 682,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Does \"indent\" means negative indent in this context? Please clarify.",
+      "range": {
+        "startLine": 682,
+        "startChar": 26,
+        "endLine": 682,
+        "endChar": 32
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_dbfdda2f",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 682,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "What is \"jump targets\"?",
+      "range": {
+        "startLine": 682,
+        "startChar": 39,
+        "endLine": 682,
+        "endChar": 43
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7b1a062f",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 682,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Please explain how this option affects formatting if FORMATTER_INSERT_LINE_AFTER_LABEL_IN_LABELED_STATEMENT is false.",
+      "range": {
+        "startLine": 682,
+        "startChar": 16,
+        "endLine": 682,
+        "endChar": 51
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1b42e211",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "A blank line is missing between constants.",
+      "range": {
+        "startLine": 691,
+        "startChar": 1,
+        "endLine": 691,
+        "endChar": 7
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bbce4e28",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "No new APIs can be introduced on cdt_8_8 branch at this point.",
+      "range": {
+        "startLine": 691,
+        "startChar": 28,
+        "endLine": 691,
+        "endChar": 63
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5b4e2a16",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Remove \"_in_labeled_statement\"",
+      "range": {
+        "startLine": 881,
+        "startChar": 148,
+        "endLine": 881,
+        "endChar": 169
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1bf4a246",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Rename to FORMATTER_INSERT_NEW_LINE_AFTER_LABEL",
+      "range": {
+        "startLine": 881,
+        "startChar": 28,
+        "endLine": 881,
+        "endChar": 82
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bb200e59",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "No new APIs are allowed on a bug fixing branch.",
+      "range": {
+        "startLine": 126,
+        "startChar": 16,
+        "endLine": 126,
+        "endChar": 39
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_db087ae6",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Ditto.",
+      "range": {
+        "startLine": 144,
+        "startChar": 16,
+        "endLine": 144,
+        "endChar": 64
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3b55de96",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Remove this blank line.",
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_dbacfa26",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3073,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Split into 4 separate test cases.",
+      "range": {
+        "startLine": 3073,
+        "startChar": 13,
+        "endLine": 3073,
+        "endChar": 37
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_db615a7c",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3097,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "range": {
+        "startLine": 3097,
+        "startChar": 0,
+        "endLine": 3097,
+        "endChar": 1
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bbc48ed9",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3111,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "Remove lines 3107-3108 and replace by assertFormatterResult();",
+      "range": {
+        "startLine": 3111,
+        "startChar": 2,
+        "endLine": 3111,
+        "endChar": 23
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3bb07e71",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/IndentationTabPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "x -\u003e 10",
+      "range": {
+        "startLine": 74,
+        "startChar": 30,
+        "endLine": 74,
+        "endChar": 31
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5ba0ea22",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/NewLinesTabPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-05T18:34:15Z",
+      "side": 1,
+      "message": "x -\u003e 10",
+      "range": {
+        "startLine": 28,
+        "startChar": 33,
+        "endLine": 28,
+        "endChar": 34
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

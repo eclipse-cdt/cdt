@@ -55,7 +55,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	private List directoriesList;
 	private String imageName;
 	private String connectionName;
-	private String connectionUri;
+	private String connectionUri = "";
 	private Boolean keepValue;
 	private Boolean stdinValue;
 	private IDockerConnection connection;
@@ -77,11 +77,12 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			if (connection != null)
 				connection.removeImageListener(containerTab);
 			connection = connections[index];
-			if (!connectionName.equals(connection.getName()))
-				updateLaunchConfigurationDialog();
-			connectionName = connection.getName();
 			connectionUri = connection.getUri();
-			connection.addImageListener(containerTab);
+			if (!connectionName.equals(connection.getName())) {
+				updateLaunchConfigurationDialog();
+				initializeImageCombo();
+			}
+			connectionName = connection.getName();
 		}
 
 	};
@@ -321,15 +322,13 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 				defaultIndex = i;
 		}
 		if (defaultIndex < 0) {
-			setWarningMessage(Messages.bind(
-					Messages.ContainerTab_Warning_Connection_Not_Found,
-					connectionUri, connections[0].getName()));
 			defaultIndex = 0;
 		}
 		connectionSelector.setItems(connectionNames);
 		if (connections.length > 0) {
 			connectionSelector.setText(connectionNames[defaultIndex]);
 			connection = connections[defaultIndex];
+			connectionName = connection.getName();
 			connectionUri = connection.getUri();
 		}
 	}
@@ -461,11 +460,26 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		try {
-			return launchConfig.getAttribute(ILaunchConstants.ATTR_IMAGE,
-					(String) null) != null;
+			String image = launchConfig
+					.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
+			if (image == null)
+				return false;
+			int index = image.lastIndexOf(':'); // $NON-NLS-1$
+			if (index <= 0)
+				return false;
+			if (connection.hasImage(image.substring(0, index),
+					image.substring(index + 1))) {
+				setWarningMessage(null);
+				return true;
+			} else {
+				setWarningMessage(Messages.bind(
+						Messages.ContainerTab_Warning_Image_Not_Found,
+						image, connections[0].getName()));
+			}
 		} catch (CoreException e) {
 			return false;
 		}
+		return false;
 	}
 
 	@Override

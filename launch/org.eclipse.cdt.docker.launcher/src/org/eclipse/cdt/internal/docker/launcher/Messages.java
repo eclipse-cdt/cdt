@@ -44,6 +44,7 @@ public class Messages extends NLS {
 	public static String ContainerTab_Error_No_Connections;
 	public static String ContainerTab_Error_No_Images;
 	public static String ContainerTab_Warning_Connection_Not_Found;
+	public static String ContainerTab_Warning_Image_Not_Found;
 
 	public static String Remote_GDB_Debugger_Options;
 	public static String Gdbserver_Settings_Tab_Name;

@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_7b86866c",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-06T16:50:55Z",
+      "side": 1,
+      "message": "it seems useful, so the user does not need to do the math, Thanks!",
+      "revId": "ae027f6991775d4317790384eeb78d48bc14134b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_12af35ee",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
         "patchSetId": 5
@@ -36,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_1bc902be",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-06T16:50:55Z",
+      "side": 1,
+      "message": "Good point, we don\u0027t need to use an additional line each time.  Done!",
+      "revId": "ae027f6991775d4317790384eeb78d48bc14134b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_72ff99d8",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
         "patchSetId": 5
@@ -47,6 +81,23 @@
       "writtenOn": "2016-03-31T12:30:14Z",
       "side": 1,
       "message": "Should that be getCellHeight() ?\n(This is more noticeable with a large cell size)",
+      "revId": "ae027f6991775d4317790384eeb78d48bc14134b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fba6160a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-06T16:50:55Z",
+      "side": 1,
+      "message": "Nice find !, really not noticeable when using a small cell width. Done!",
       "revId": "ae027f6991775d4317790384eeb78d48bc14134b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

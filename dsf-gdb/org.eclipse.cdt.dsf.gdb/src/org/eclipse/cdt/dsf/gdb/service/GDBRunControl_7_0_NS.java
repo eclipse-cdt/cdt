@@ -310,6 +310,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		boolean fSuspended = false;
 		boolean fResumePending = false;
 		boolean fStepping = false;
+		boolean fReverseStepping = false;
+
 		RunControlEvent<IExecutionDMContext, ?> fLatestEvent = null;
 
 		/**
@@ -452,6 +454,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		fRunControlOperationsEnabled = runControlEnabled;
 	}
 	
+    /** @since 5.0 */
+    protected boolean isTerminated() { 
+    	return fTerminated; 
+    }
+
 	///////////////////////////////////////////////////////////////////////////
 	// AbstractDsfService
 	///////////////////////////////////////////////////////////////////////////

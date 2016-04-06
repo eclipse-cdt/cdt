@@ -88,6 +88,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
 	/** @since 4.8 */
 	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
+	/** @since 5.0 */
+	public static final String GDB_7_11_VERSION = "7.11"; //$NON-NLS-1$
 
 	private final String fVersion;
 	private final ILaunchConfiguration fConfiguration;
@@ -270,6 +272,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	protected IRunControl createRunControlService(DsfSession session) {
 		// First check for the non-stop case
 		if (LaunchUtils.getIsNonStopMode(getConfiguration())) {
+			if (compareVersionWith(GDB_7_11_VERSION) >= 0) {
+				return new GDBRunControl_7_11_NS(session);
+			}
 			if (compareVersionWith(GDB_7_2_VERSION) >= 0) {
 				return new GDBRunControl_7_2_NS(session);
 			}

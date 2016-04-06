@@ -8,7 +8,7 @@
 package org.eclipse.cdt.dsf.gdb.service.extensions;
 
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.gdb.service.GDBRunControl_7_2_NS;
+import org.eclipse.cdt.dsf.gdb.service.GDBRunControl_7_11_NS;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
@@ -37,14 +37,14 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * 
  * @since 4.8
  */
-public class GDBRunControl_NS_HEAD extends GDBRunControl_7_2_NS {
+public class GDBRunControl_NS_HEAD extends GDBRunControl_7_11_NS {
 	public GDBRunControl_NS_HEAD(DsfSession session) {
 		super(session);
 		
 		validateGdbVersion(session);
 	}
 	
-	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_2_VERSION; }
+	protected String getMinGDBVersionSupported() { return GdbDebugServicesFactory.GDB_7_11_VERSION; }
 	
 	protected void validateGdbVersion(DsfSession session) {
 		GdbDebugServicesFactory.validateGdbVersion(session, getMinGDBVersionSupported(), this);

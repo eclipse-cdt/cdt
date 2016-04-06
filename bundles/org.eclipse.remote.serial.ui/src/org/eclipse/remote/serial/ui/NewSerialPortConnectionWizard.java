@@ -69,7 +69,7 @@ public class NewSerialPortConnectionWizard extends Wizard implements IRemoteUICo
 	public IRemoteConnectionWorkingCopy getConnection() {
 		if (workingCopy == null) {
 			try {
-				workingCopy = connectionType.newConnection(page.getName());
+				workingCopy = connectionType.newConnection(page.getConnectionName());
 			} catch (RemoteConnectionException e) {
 				Activator.log(e.getStatus());
 			}

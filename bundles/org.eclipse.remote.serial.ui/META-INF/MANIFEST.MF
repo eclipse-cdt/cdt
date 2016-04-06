@@ -10,9 +10,11 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.remote.serial.ui
 Import-Package: org.eclipse.cdt.serial,
+ org.eclipse.core.expressions,
  org.eclipse.core.runtime,
  org.eclipse.jface.dialogs,
  org.eclipse.jface.operation,
+ org.eclipse.jface.preference,
  org.eclipse.jface.resource,
  org.eclipse.jface.viewers,
  org.eclipse.jface.window,
@@ -27,5 +29,7 @@ Import-Package: org.eclipse.cdt.serial,
  org.eclipse.swt.graphics,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets,
+ org.eclipse.ui,
+ org.eclipse.ui.dialogs,
  org.eclipse.ui.plugin,
  org.osgi.framework

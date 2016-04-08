@@ -22,36 +22,20 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 
 public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel {
-
 	private final IPath fLocation;
 	private final int fDepth;
 	private final String fLocationAttribute;
 	
-	/**
-	 * @param markerResource
-	 * @param location
-	 */
 	public ExternalSearchAnnotationModel(IResource markerResource, IPath location) {
 		this(markerResource, location, IResource.DEPTH_ZERO, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 	}
 
-	/**
-	 * @param markerResource
-	 * @param location
-	 * @param depth
-	 */
 	ExternalSearchAnnotationModel(IResource markerResource, IPath location, int depth) {
 		this(markerResource, location, depth, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 	}
 
-	/**
-	 * @param markerResource
-	 * @param location
-	 * @param depth
-	 * @param locationAttribute
-	 */
-	ExternalSearchAnnotationModel(IResource markerResource,
-			IPath location, int depth, String locationAttribute) {
+	ExternalSearchAnnotationModel(IResource markerResource, IPath location, int depth,
+			String locationAttribute) {
 		super(markerResource);
 		fLocation= location;
 		fDepth= depth;
@@ -71,16 +55,11 @@ public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel
 	protected boolean isAcceptable(IMarker marker) {
 		boolean acceptable = false;
 		String externalFileName = marker.getAttribute(fLocationAttribute, null);
-		if (externalFileName != null) { // Only accept markers with external
-										// paths set
+		if (externalFileName != null) { // Only accept markers with external paths set.
 			IPath externalPath = new Path(externalFileName);
-			acceptable = externalPath.equals(fLocation); // Only accept
-															// markers for this
-															// annotation
-															// model's external
-															// editor
+			// Accept only markers for this annotation model's external editor.
+			acceptable = externalPath.equals(fLocation);
 		}
 		return acceptable;
 	}
-
 }

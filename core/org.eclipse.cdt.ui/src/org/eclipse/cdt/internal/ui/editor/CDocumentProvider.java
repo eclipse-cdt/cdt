@@ -27,9 +27,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -664,10 +663,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	protected static class GlobalAnnotationModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
-		private ListenerList fListenerList;
+		private ListenerList<IAnnotationModelListener> fListenerList;
 
 		public GlobalAnnotationModelListener() {
-			fListenerList= new ListenerList(ListenerList.IDENTITY);
+			fListenerList= new ListenerList<IAnnotationModelListener>(ListenerList.IDENTITY);
 		}
 
 		@Override
@@ -872,27 +871,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		super.disposeFileInfo(element, info);
 	}
 
-	/**
-	 * Creates and returns a new sub-progress monitor for the
-	 * given parent monitor.
-	 *
-	 * @param monitor the parent progress monitor
-	 * @param ticks the number of work ticks allocated from the parent monitor
-	 * @return the new sub-progress monitor
-	 */
-	private IProgressMonitor getSubProgressMonitor(IProgressMonitor monitor, int ticks) {
-		if (monitor != null)
-			return new SubProgressMonitor(monitor, ticks, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-
-		return new NullProgressMonitor();
-	}
-
 	protected void commitWorkingCopy(IProgressMonitor monitor, Object element, TranslationUnitInfo info,
 			boolean overwrite) throws CoreException {
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
-
-		monitor.beginTask("", 100); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
 
 		try {
 			IDocument document= info.fTextFileBuffer.getDocument();
@@ -900,7 +881,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 			if (resource instanceof IFile && !resource.exists()) {
 				// The underlying resource has been deleted, just recreate the file, ignore the rest
-				createFileFromDocument(getSubProgressMonitor(monitor, 20), (IFile) resource, document);
+				createFileFromDocument(progress.split(20), (IFile) resource, document);
 				return;
 			}
 
@@ -912,12 +893,12 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 					if (resource != null) {
 						cproject = CoreModel.getDefault().create(resource.getProject());
 					}
-					performSaveActions(cproject, info.fTextFileBuffer, getSubProgressMonitor(monitor, 20));
+					performSaveActions(cproject, info.fTextFileBuffer, progress.split(20));
 				} catch (CoreException e) {
 					saveActionException = e;
 				}
 
-				commitFileBuffer(getSubProgressMonitor(monitor, 20), info, overwrite);
+				commitFileBuffer(progress.split(20), info, overwrite);
 
 				if (saveActionException != null) {
 					CUIPlugin.log(saveActionException);
@@ -1003,10 +984,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * if the last line of the file was changed.
 	 * @throws BadLocationException
 	 */
-	private void performSaveActions(ICProject project, ITextFileBuffer buffer, IProgressMonitor monitor) throws CoreException {
+	private void performSaveActions(ICProject project, ITextFileBuffer buffer, IProgressMonitor monitor)
+			throws CoreException {
 		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldStyleFormatCode()) {
 			IRegion[] changedRegions= needsChangedRegions() ?
-					EditorUtility.calculateChangedLineRegions(buffer, getSubProgressMonitor(monitor, 20)) :
+					EditorUtility.calculateChangedLineRegions(buffer, monitor) :
 				    null;
 			IDocument document = buffer.getDocument();
 			formatCode(project, document);

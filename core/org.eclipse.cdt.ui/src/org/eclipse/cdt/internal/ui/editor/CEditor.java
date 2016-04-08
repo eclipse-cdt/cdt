@@ -1319,7 +1319,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * AST reconciling listeners.
 	 * @since 4.0
 	 */
-	private final ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList<ICReconcilingListener> fReconcilingListeners=
+			new ListenerList<ICReconcilingListener>(ListenerList.IDENTITY);
 
 	/**
 	 * Semantic highlighting manager
@@ -1342,7 +1343,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	private final IndexUpdateRequestor fIndexUpdateRequestor = new IndexUpdateRequestor();
 
-	private final ListenerList fPostSaveListeners;
+	private final ListenerList<IPostSaveListener> fPostSaveListeners;
 
 	private static final Set<String> angularIntroducers = new HashSet<>();
 	static {
@@ -1379,7 +1380,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
-		fPostSaveListeners = new ListenerList();
+		fPostSaveListeners = new ListenerList<IPostSaveListener>();
 	}
 
 	@Override
@@ -1545,12 +1546,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Object getAdapter(Class adapterClass) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapterClass) {
 		if (adapterClass.isAssignableFrom(IContentOutlinePage.class)) {
-			return getOutlinePage();
+			return (T) getOutlinePage();
 		} else if (adapterClass.isAssignableFrom(IShowInTargetList.class)) {
-			return new IShowInTargetList() {
+			return (T) new IShowInTargetList() {
 				@Override
 				@SuppressWarnings("deprecation")
 				public String[] getShowInTargetIds() {
@@ -1563,7 +1564,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				ce = null;
 			}
 			final ISelection selection= ce != null ? new StructuredSelection(ce) : null;
-			return new IShowInSource() {
+			return (T) new IShowInSource() {
 				@Override
 				public ShowInContext getShowInContext() {
 					return new ShowInContext(getEditorInput(), selection);
@@ -1571,21 +1572,21 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			};
 		} else if (adapterClass.isAssignableFrom(ProjectionAnnotationModel.class)) {
 			if (fProjectionSupport != null) {
-				Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), adapterClass);
+				T adapter = fProjectionSupport.getAdapter(getSourceViewer(), adapterClass);
 				if (adapter != null)
 					return adapter;
 			}
 		} else if (adapterClass.isAssignableFrom(IContextProvider.class)) {
-			return new CUIHelp.CUIHelpContextProvider(this);
+			return (T) new CUIHelp.CUIHelpContextProvider(this);
 		} else if (adapterClass.isAssignableFrom(IGotoMarker.class)) {
-			return new GotoMarkerAdapter();
+			return (T) new GotoMarkerAdapter();
 		} else if (adapterClass.isAssignableFrom(ITemplatesPage.class)) {
 			if (fTemplatesPage == null) {
 				fTemplatesPage = new CTemplatesPage(this);
 			}
-			return fTemplatesPage;
+			return (T) fTemplatesPage;
 		} else if (adapterClass.isAssignableFrom(ITranslationUnitHolder.class))
-			return this;
+			return (T) this;
 		return super.getAdapter(adapterClass);
 	}
 	
@@ -2485,7 +2486,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		parent.addHelpListener(new HelpListener() {
 			@Override
 			public void helpRequested(HelpEvent e) {
-				IContextProvider provider = (IContextProvider) CEditor.this.getAdapter(IContextProvider.class);
+				IContextProvider provider = CEditor.this.getAdapter(IContextProvider.class);
 				if (provider != null) {
 					IContext context = provider.getContext(CEditor.this);
 					if (context != null) {
@@ -2657,15 +2658,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		if (model == null)
 			return null;
 		
-		@SuppressWarnings("rawtypes")
-		Iterator parent;
+		Iterator<Annotation> parent;
 		if (model instanceof IAnnotationModelExtension2) {
 			parent= ((IAnnotationModelExtension2) model).getAnnotationIterator(offset, length, true, true);
 		} else {
 			parent= model.getAnnotationIterator();
 		}
 
-		@SuppressWarnings("unchecked")
 		Iterator<Annotation> e= new CAnnotationIterator(parent, false);
 		Annotation annotation = null;
 		while (e.hasNext()) {

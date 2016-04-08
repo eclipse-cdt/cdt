@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_c67def24",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/ICLineBreakpoint2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-04-08T12:55:03Z",
+      "side": 1,
+      "message": "Somewhat pedantic, but the @since should be after the docs.\n\nSpecifically see the order of tags part in:\nhttp://www.oracle.com/technetwork/java/javase/documentation/index-137868.html#tag",
+      "revId": "c4ec5c62951a45d2b02df9de003082d44e6f078d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e64f4b0f",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/AbstractLineBreakpoint.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-04-08T12:55:03Z",
+      "side": 1,
+      "message": "As setInstalledLineNumber, this should also set RESET_INSTALLED_LOCATION",
+      "revId": "c4ec5c62951a45d2b02df9de003082d44e6f078d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_065357b9",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/AbstractLineBreakpoint.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-04-08T12:55:03Z",
+      "side": 1,
+      "message": "As setInstalledLineNumber, this should also set RESET_INSTALLED_LOCATION",
+      "revId": "c4ec5c62951a45d2b02df9de003082d44e6f078d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_a659c3d5",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/AbstractLineBreakpoint.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-04-08T12:55:03Z",
+      "side": 1,
+      "message": "As setInstalledLineNumber, changing the installed source handle should also RESET_INSTALLED_LOCATION",
+      "revId": "c4ec5c62951a45d2b02df9de003082d44e6f078d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e6baeb59",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CLineTracepoint.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-04-08T12:55:03Z",
+      "side": 1,
+      "message": "Same comments about places RESET_INSTALLED_LOCATION should be installed.\n\nPS don\u0027t be afraid to refactor the code, especially if you can do it without breaking API. The slight complication is that the refactor needs to be a separate commit. i.e 1 commit to improve code, but not change functionality, and then 1 commit to fix the bug.",
+      "revId": "c4ec5c62951a45d2b02df9de003082d44e6f078d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

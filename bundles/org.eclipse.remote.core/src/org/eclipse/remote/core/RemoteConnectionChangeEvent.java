@@ -34,7 +34,8 @@ public class RemoteConnectionChangeEvent {
 	public static final int CONNECTION_ABORTED = 1 << 2;
 
 	/**
-	 * Event indicating that the connection name was changed.
+	 * Event indicating that the connection name will be changed. It is sent prior to the name change taking place.
+	 * The event passes an IRemoteConnectionWorkingCopy so that the original and new name can be used by the listener.
 	 */
 	public static final int CONNECTION_RENAMED = 1 << 3;
 

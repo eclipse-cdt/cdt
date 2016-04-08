@@ -189,7 +189,7 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 	 */
 	@Override
 	public void fireConnectionChangeEvent(int type) {
-		if (original != null) {
+		if (original != null && type != RemoteConnectionChangeEvent.CONNECTION_RENAMED) {
 			original.fireConnectionChangeEvent(type);
 		} else {
 			RemoteConnectionChangeEvent event = new RemoteConnectionChangeEvent(this, type);
@@ -273,7 +273,7 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 	public IRemoteConnection save() throws RemoteConnectionException {
 		if (newName != null && original != null) {
 			// rename, delete the old one
-			original.fireConnectionChangeEvent(RemoteConnectionChangeEvent.CONNECTION_RENAMED);
+			fireConnectionChangeEvent(RemoteConnectionChangeEvent.CONNECTION_RENAMED);
 			connectionType.removeConnection(original.getName());
 			original.rename(newName);
 		}

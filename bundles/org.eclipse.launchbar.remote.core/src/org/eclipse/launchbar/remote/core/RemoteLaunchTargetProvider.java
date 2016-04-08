@@ -17,6 +17,7 @@ import org.eclipse.launchbar.remote.core.internal.Messages;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
 import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 
@@ -82,7 +83,19 @@ public abstract class RemoteLaunchTargetProvider implements ILaunchTargetProvide
 					targetManager.removeLaunchTarget(target);
 				}
 				break;
+			case RemoteConnectionChangeEvent.CONNECTION_RENAMED:
+				if (connection instanceof IRemoteConnectionWorkingCopy) {
+					IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) connection;
+					IRemoteConnection original = ((IRemoteConnectionWorkingCopy) connection).getOriginal();
+					target = targetManager.getLaunchTarget(getTypeId(), original.getName());
+					if (target != null ) {
+						targetManager.removeLaunchTarget(target);
+					}
+					targetManager.addLaunchTarget(getTypeId(), wc.getName());
+				}
+				break;
 			}
+			
 		}
 	}
 

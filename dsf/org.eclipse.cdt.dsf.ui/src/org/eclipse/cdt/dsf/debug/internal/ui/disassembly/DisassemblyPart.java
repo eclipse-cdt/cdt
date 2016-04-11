@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems and others.
+ * Copyright (c) 2007, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1863,6 +1863,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			} else {
 				doPendingPCUpdates();
 				if (fBackend != null && fBackend.hasDebugContext()) {
+					// refresh disassembly context if available
+					debugContextChanged();
 					int frame = getActiveStackFrame();
 					if (frame < 0 && isSuspended()) {
 						frame= 0;
@@ -1871,6 +1873,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 						gotoFrame(frame);
 					}
 				}
+				
 			}
 		} else {
 			fGotoAddressPending= fFocusAddress= PC_UNKNOWN;

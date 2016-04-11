@@ -55,23 +55,12 @@ public class CharArraySet extends CharTable {
 	    }
 	}
 	
-	final public boolean remove(char[] key) {
+	public final boolean remove(char[] key) {
 		int i = lookup(key);
 		if (i < 0)
 			return false;
 
 		removeEntry(i);
 		return true;
-	}
-
-	@Override
-	final public void clear() {
-	    for (int i = 0; i < keyTable.length; i++) {
-	        keyTable[i] = null;
-	        hashTable[2 * i] = 0;
-	        hashTable[2 * i + 1] = 0;
-	        nextTable[i] = 0;
-	    }
-	    currEntry = -1;
 	}
 }

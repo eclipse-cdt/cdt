@@ -13,6 +13,7 @@
 package org.eclipse.cdt.core.parser.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,8 +38,7 @@ public class CharTable extends HashTable {
 	@Override
 	public void clear() {
 		super.clear();
-		for (int i = 0; i < capacity(); i++)
-			keyTable[i] = null;
+		Arrays.fill(keyTable, null);
 	}
 
 	@Override

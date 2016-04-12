@@ -19,7 +19,9 @@ import org.eclipse.swt.widgets.Shell;
  
 /**
  * Adds a path mapping to the source lookup path.
+ * @deprecated Long since replaced with {@link NewMappingSourceContainerBrowser}.
  */
+@Deprecated
 public class MappingSourceContainerBrowser extends AbstractSourceContainerBrowser {
 	private static final String MAPPING = SourceLookupUIMessages.MappingSourceContainerBrowser_0;
 

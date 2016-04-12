@@ -84,7 +84,7 @@ public class StandaloneTest1 extends StandaloneTest {
 			@SuppressWarnings("unused")
 			SWTBotMenu projectMenu = textMenu.menu("Project");
 			notThere = bot.menu("Project", 1);
-		} catch (IndexOutOfBoundsException e) {
+		} catch (WidgetNotFoundException e) {
 			// correct
 		}
 		assertNull(notThere);

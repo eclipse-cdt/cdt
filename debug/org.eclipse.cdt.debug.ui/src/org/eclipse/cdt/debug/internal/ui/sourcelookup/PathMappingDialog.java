@@ -58,7 +58,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * A dialog for editing a path mapping source container.
+ * @deprecated Long since replaced with {@link MappingSourceContainerDialog}.
  */
+@Deprecated
 public class PathMappingDialog extends TitleAreaDialog {
 
 	class MapEntryDialog extends TitleAreaDialog {

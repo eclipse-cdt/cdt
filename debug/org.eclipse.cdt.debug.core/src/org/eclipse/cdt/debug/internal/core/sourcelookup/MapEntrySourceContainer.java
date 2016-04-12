@@ -71,7 +71,18 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	 *
 	 * @param path
 	 * @return converted string
+	 * 
+	 * @deprecated createPath existed as a solution to try and store non-current
+	 *             platform paths in an IPath, however that was limited.
+	 *             createPath only exists for legacy case (see
+	 *             findSourceElements below). See <a href=
+	 *             "https://bugs.eclipse.org/bugs/show_bug.cgi?id=472765">Bug
+	 *             472765</a> for more details.
+	 *             <p>
+	 *             Instead of using createPath, keep paths as Strings and use
+	 *             other methods to compare paths.
 	 */
+	@Deprecated
 	public static IPath createPath(String path) {
 		if (path == null)
 			return null;

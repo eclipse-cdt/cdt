@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Source Lookup Path preferences</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+<body>
+
+<div role="main"><h1>Edit Source Lookup Path Mappings</h1>
+
+<p>Use the Source Lookup Path Mappings to edit the Path Mapping source container type.</p>
+
+<p><img src="../images/debug_src_path_mapping.png" alt="Debug Source Lookup Path Mapping" ></p>
+
+  <table width="600px" cellpadding="5" cellspacing="0" border="1" >
+    <caption>
+      <strong>Source Lookup Path Mappings Options</strong>
+    </caption>
+    <colgroup>
+      <col width="30%" valign="top" >
+      <col width="70%" valign="top" >
+    </colgroup>
+    <tbody>
+      <tr style="text-align:center;">
+        <th valign="top" id="option"><strong>Options</strong></th>
+        <th id="description"><strong>Description</strong></th>
+      </tr>
+      <tr>
+        <td valign="top" headers="option"><strong>Name</strong></td>
+        <td headers="description">The name of the Path Mapping. Only the name "Found Mappings" is used by CDT when automatically creating path mappings, such as from the C Source Not Found Editor.</td>
+      </tr>
+      <tr>
+        <td valign="top" headers="option"><strong>Compilation path:</strong></td>
+        <td headers="description">The path of the folder as it is in the debug information. This is the folder path when the source was compiled.
+        <p>
+        This path must exactly match the path as it is in the debug information. For example, if a file was compiled with forward (/) slashes, then forward slashes should be entered as path separator.
+        Similarly, if there is a relative path (such as "..") in the compilation path, that should be included as well.
+        <p>
+        The C Source Not Found Editor automatically creates the correct form when "Locate File..." is used.  
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" headers="option"><strong>Local file system path:</strong></td>
+        <td headers="description">The path of the folder as it is locally, where Eclipse can find the file.  
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" headers="option"><strong>Resolve path mappings using debugger backend.</strong></td>
+        <td headers="description">Allow the mapping to be performed with the debugger backend where supported. This allows any direct interaction with the backend (for example via the console) to have a consistent view of file names.
+        <p>
+        This option is the default and provides a more complete path mapping solution.   
+        </td>
+      </tr>
+      <tr>
+        <td style="width:99" valign="top" headers="option"><strong>Add</strong></td>
+        <td style="width:475" headers="description">Add a new row to the table. Both the Compilation path and Local file system path need to be specified. 
+        </td>
+      </tr>
+      <tr>
+        <td valign="top" headers="option"><strong>Remove</strong></td>
+        <td headers="description">Remove the currently selected row.</td>
+      </tr>
+      <tr>
+        <td valign="top" headers="option"><strong>Up</strong></td>
+        <td headers="description">Move the currently selected row higher in the list.</td>
+      </tr>
+      <tr>
+        <td valign="top" headers="option"><strong>Down</strong></td>
+        <td headers="description">Move the currently selected row lower in the list.</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>

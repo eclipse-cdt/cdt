@@ -86,12 +86,12 @@ import org.junit.runners.Parameterized;
 
 /**
  * Tests that interaction with source lookups works as expected.
- *
+ * <p>
  * All of these tests use one of SourceLookup*.exe that was built from a file
  * that was "moved" since build time. At build time the SourceLookup.cc file was
  * located in the {@link #BUILD_PATH} directory, but it is now located in the
  * {@link BaseTestCase#SOURCE_PATH} directory.
- *
+ * <p>
  * The wild card in SourceLookup*.exe can be one of the following to cover the
  * different effective types of source lookups that need to be done depending on
  * how the program was compiled. Each of these options produces different debug
@@ -110,13 +110,13 @@ import org.junit.runners.Parameterized;
  * </ul>
  * In addition, there can also be a <b>Dwarf2</b> in the name. That means it is
  * designed to run with GDB <= 7.4, see comment in Makefile for OLDDWARFFLAGS.
- *
+ * <p>
  * The result of the variations on compilation arguments means that some of the
  * tests are parameterised.
- *
+ * <p>
  * Some of the CDT source lookup features require newer versions of GDB than
- * others, therefore the relevant tests are ignored as needed in the subclasses
- * of {@link SourceLookupTest}.
+ * others, therefore the relevant tests use assumeGdbVersion* methods to be
+ * skipped when appropriate.
  */
 @RunWith(Parameterized.class)
 public class SourceLookupTest extends BaseParametrizedTestCase {
@@ -460,12 +460,43 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	}
 
 	/**
+	 * Tests that GDB >= 7.6 because DSF is using the full path name to pass to
+	 * the {@link ISourceContainer#findSourceElements(String)}. In versions
+	 * prior to 7.6 the fullname field was not returned from GDB if the file was
+	 * not found by GDB. See
+	 * <a href= "https://sourceware.org/ml/gdb-patches/2012-12/msg00557.html">
+	 * the mailing list</a> and associated <a href=
+	 * "https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff;h=ec83d2110de6831ac2ed0e5a56dc33c60a477eb6">
+	 * gdb/NEWS item</a> (although you have to dig quite deep on these changes.)
+	 * 
+	 * Therefore in version < 7.6 the MI frame info has file="SourceLookup.cc"
+	 * and no fullname field. This means there is no path to source map against.
+	 * 
+	 * In version >= 7.6 the MI frame info has file="SourceLookup.cc",fullname=
+	 * "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build/SourceLookup.cc"
+	 * fields, so there is a path to do the mapping against. Recall that the
+	 * test maps
+	 * "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build"
+	 * to "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src"
+	 */
+	protected void assumeGdbVersionFullnameWorking() {
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+	}
+
+	/**
+	 * Inverse of {@link #assumeGdbVersionFullnameWorking()}
+	 */
+	protected void assumeGdbVersionFullnameNotWorking() {
+		assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_7_6);
+	}
+
+	/**
 	 * Test source mappings with executable built with an Absolute and Canonical
 	 * build path
 	 */
 	@Test
 	public void sourceMappingAC() throws Throwable {
-		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+		assumeGdbVersionFullnameWorking();
 		sourceMapping(EXEC_AC_NAME, false);
 	}
 
@@ -484,7 +515,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingAN() throws Throwable {
-		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+		assumeGdbVersionFullnameWorking();
 		sourceMapping(EXEC_AN_NAME, false);
 	}
 
@@ -495,9 +526,9 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	@Test
 	public void sourceSubstituteAN() throws Throwable {
 		/*
-		 * GDB < 6.8 does not work correctly with substitute-paths with .. in the
-		 * build path when the build path is an absolute path. GDB 6.8 and above
-		 * works fine in this case.
+		 * GDB < 6.8 does not work correctly with substitute-paths with .. in
+		 * the build path when the build path is an absolute path. GDB 6.8 and
+		 * above works fine in this case.
 		 */
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
 		sourceMapping(EXEC_AN_NAME, true);
@@ -509,7 +540,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingRC() throws Throwable {
-		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+		assumeGdbVersionFullnameWorking();
 		sourceMapping(EXEC_RC_NAME, false);
 	}
 
@@ -528,7 +559,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingRN() throws Throwable {
-		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+		assumeGdbVersionFullnameWorking();
 		sourceMapping(EXEC_RN_NAME, false);
 	}
 
@@ -539,9 +570,9 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	@Test
 	public void sourceSubstituteRN() throws Throwable {
 		/*
-		 * GDB < 7.6 does not work correctly with substitute-paths with .. in the
-		 * build path when the build path is a relative path. GDB 7.6 and above
-		 * works fine in this case.
+		 * GDB < 7.6 does not work correctly with substitute-paths with .. in
+		 * the build path when the build path is a relative path. GDB 7.6 and
+		 * above works fine in this case.
 		 */
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMapping(EXEC_RN_NAME, true);
@@ -553,7 +584,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsAC() throws Throwable {
-		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+		assumeGdbVersionFullnameWorking();
 		sourceMappingBreakpoints(EXEC_AC_NAME, false);
 	}
 
@@ -583,9 +614,9 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	@Test
 	public void sourceSubstituteBreakpointsAN() throws Throwable {
 		/*
-		 * GDB < 6.8 does not work correctly with substitute-paths with .. in the
-		 * build path when the build path is an absolute path. GDB 6.8 and above
-		 * works fine in this case.
+		 * GDB < 6.8 does not work correctly with substitute-paths with .. in
+		 * the build path when the build path is an absolute path. GDB 6.8 and
+		 * above works fine in this case.
 		 */
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
 		sourceMappingBreakpoints(EXEC_AN_NAME, true);
@@ -597,7 +628,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsRC() throws Throwable {
-		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+		assumeGdbVersionFullnameWorking();
 		sourceMappingBreakpoints(EXEC_RC_NAME, false);
 	}
 
@@ -627,9 +658,9 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	@Test
 	public void sourceSubstituteBreakpointsRN() throws Throwable {
 		/*
-		 * GDB < 7.6 does not work correctly with substitute-paths with .. in the
-		 * build path when the build path is a relative path. GDB 7.6 and above
-		 * works fine in this case.
+		 * GDB < 7.6 does not work correctly with substitute-paths with .. in
+		 * the build path when the build path is a relative path. GDB 7.6 and
+		 * above works fine in this case.
 		 */
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMappingBreakpoints(EXEC_RN_NAME, true);
@@ -765,7 +796,11 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void directorySource() throws Throwable {
-		assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_7_6);
+		/*
+		 * DirectorySourceContainer only works if there is no fullname coming
+		 * from GDB
+		 */
+		assumeGdbVersionFullnameNotWorking();
 		DirectorySourceContainer container = new DirectorySourceContainer(new Path(SOURCE_ABSPATH), false);
 		setSourceContainer(container);
 		doLaunch(EXEC_PATH + EXEC_RC_NAME);
@@ -1015,7 +1050,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		assertSourceFoundByDirectorOnly();
 		assertInsertBreakpointSuccessful();
 	}
-	
+
 	/**
 	 * Test verifies interaction between director that has two mappers, one with
 	 * backend enabled and one without, with the first being the only valid one,
@@ -1029,26 +1064,28 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		substituteContainer.addMapEntry(fMapEntrySourceContainerC);
 		AbstractSourceLookupDirector director = setSourceContainer(substituteContainer);
 
-		// Because of the above valid mapping substitution, GDB will provide the proper path
-		// to the source and it will be found no matter what the below mapping is set to.
-		// On the other hand, when setting a breakpoint, we have to make sure that the below
-		// mapping does not change the path to something GDB does not know.
-		// Therefore, we set the below mapping from an invalid compilation path to the proper source path.
-		// This is so that if the below mapping is triggered it will cause us to try to set a breakpoint
-		// in GDB on an invalid path, thus failing the test.
-		// This allows to verify that the first mapping is used once it is found to be valid
-		// and does not fallback to the next mapping.
+		/*
+		 * Because of the above valid mapping substitution, GDB will provide the
+		 * proper path to the source and it will be found no matter what the
+		 * below mapping is set to. On the other hand, when setting a
+		 * breakpoint, we have to make sure that the below mapping does not
+		 * change the path to something GDB does not know. Therefore, we set the
+		 * below mapping from an invalid compilation path to the proper source
+		 * path. This is so that if the below mapping is triggered it will cause
+		 * us to try to set a breakpoint in GDB on an invalid path, thus failing
+		 * the test. This allows to verify that the first mapping is used once
+		 * it is found to be valid and does not fallback to the next mapping.
+		 */
 		MappingSourceContainer mapContainer = new MappingSourceContainer("Mappings");
 		mapContainer.setIsMappingWithBackendEnabled(false);
-		mapContainer
-				.addMapEntry(new MapEntrySourceContainer("/from_invalid", new Path(SOURCE_ABSPATH)));
+		mapContainer.addMapEntry(new MapEntrySourceContainer("/from_invalid", new Path(SOURCE_ABSPATH)));
 		addSourceContainer(director, mapContainer);
 
 		doLaunch(EXEC_PATH + EXEC_AC_NAME);
 
 		/*
-		 * because the backend substitution applies, we should be able to find the
-		 * source with the director or without it.
+		 * because the backend substitution applies, we should be able to find
+		 * the source with the director or without it.
 		 */
 		assertSourceFound();
 		assertInsertBreakpointSuccessful();

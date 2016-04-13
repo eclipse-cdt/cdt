@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_4a96321e",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/MappingSourceContainerBrowser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-04-13T15:03:03Z",
+      "side": 1,
+      "message": "This class in internal, so 9.0 is the ideal time to remove it.\nWhat do you think?",
+      "revId": "59040c325cecf29b9e42114f657d8fb0dcdd98d2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8a675ac4",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/PathMappingDialog.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-04-13T15:03:03Z",
+      "side": 1,
+      "message": "Same here, we could remove.",
+      "revId": "59040c325cecf29b9e42114f657d8fb0dcdd98d2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

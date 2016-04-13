@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_8a283a86",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-04-13T14:58:00Z",
+      "side": 1,
+      "message": "I assume it is on purpose that you didn\u0027t use assumeGdbVersionFullnameWorking() here.",
+      "revId": "7cee534c28db920cfe071b123062fb30232ba44a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ead45ee9",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 665,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-04-13T14:58:00Z",
+      "side": 1,
+      "message": "I assume it is on purpose that you didn\u0027t use assumeGdbVersionFullnameWorking() here.",
+      "revId": "7cee534c28db920cfe071b123062fb30232ba44a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

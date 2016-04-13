@@ -1633,7 +1633,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// };
 
 	// CT<int> v1;
-	public void testUniqueSpecializations_Bug241641() throws Exception {
+	public void testUniqueSpecializations_241641() throws Exception {
 		ICPPVariable v1= getBindingFromASTName("v1", 2, ICPPVariable.class);
 		ICPPVariable v2= getBindingFromASTName("v1", 2, ICPPVariable.class);
 
@@ -1652,7 +1652,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// };
 
 	// CT<int> v1;
-	public void testUniqueInstance_Bug241641() throws Exception {
+	public void testUniqueInstance_241641() throws Exception {
 		IASTName name= findName("v1", 2);
 		ICPPVariable v1= getBindingFromASTName("v1", 2, ICPPVariable.class);
 
@@ -1677,7 +1677,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	void test() {
 	//     x.method();
 	//  }
-	public void testMethodSpecialization_Bug248927() throws Exception {
+	public void testMethodSpecialization_248927() throws Exception {
 		ICPPMethod m= getBindingFromASTName("method", 6, ICPPMethod.class);
 		assertInstance(m, ICPPSpecialization.class);
 		ICPPClassType ct= m.getClassOwner();
@@ -1711,7 +1711,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     //    this->m(); // 2
     //    this->f; // 2
     // };
-    public void testUnknownBindings_Bug264988() throws Exception {
+    public void testUnknownBindings_264988() throws Exception {
 		ICPPMethod m= getBindingFromASTName("m(); // 1", 1, ICPPMethod.class);
 		assertFalse(m instanceof ICPPUnknownBinding);
 		m= getBindingFromASTName("m(); // 2", 1, ICPPMethod.class);
@@ -1945,7 +1945,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//  struct TXT : XT<int> {};
 
 	// TXT x;
-	public void testClassSpecialization_Bug354086() throws Exception {
+	public void testClassSpecialization_354086() throws Exception {
 		ICPPClassType ct= getBindingFromASTName("TXT", 0, ICPPClassType.class);
 		ICPPMethod[] methods = ct.getAllDeclaredMethods();
 		assertEquals(2, methods.length);
@@ -2160,7 +2160,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	template<template<class,class> class ListT, class UType, class Alloc, class StringT>
 	//	void CString::split(ListT<UType,Alloc>& out, const StringT& sep, bool keepEmptyElements, bool trimElements, bool emptyBefore) const {
 	//	}
-	public void testMemberOfTemplateTemplateParameter_Bug381824() throws Exception {
+	public void testMemberOfTemplateTemplateParameter_381824() throws Exception {
 		checkBindings();
 	}
 

@@ -66,6 +66,24 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			targets = new LinkedHashMap<>();
 			Preferences prefs = getTargetsPref();
 			try {
+				// For backwards compat pre-attributes, load targets from type keys
+				for (String childName : prefs.childrenNames()) {
+					String[] segments = childName.split(DELIMETER1);
+					if (segments.length == 2) {
+						String typeId = segments[0];
+						String name = segments[1];
+
+						Map<String, ILaunchTarget> type = targets.get(typeId);
+						if (type == null) {
+							type = new LinkedHashMap<>();
+							targets.put(typeId, type);
+						}
+
+						// Creates the node. Will flush when attributes are added
+						type.put(name, new LaunchTarget(typeId, name, prefs.node(childName)));
+					}
+				}
+
 				for (String typeId : prefs.keys()) {
 					Map<String, ILaunchTarget> type = targets.get(typeId);
 					if (type == null) {
@@ -74,8 +92,13 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 					}
 
 					for (String name : prefs.get(typeId, "").split(DELIMETER1)) { //$NON-NLS-1$
-						type.put(name, new LaunchTarget(typeId, name));
+						if (!type.containsKey(name)) {
+							type.put(name, new LaunchTarget(typeId, name, prefs.node(typeId + DELIMETER1 + name)));
+						}
 					}
+
+					// Use children going forward
+					prefs.remove(typeId);
 				}
 			} catch (BackingStoreException e) {
 				Activator.log(e);
@@ -166,11 +189,15 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			targets.put(typeId, type);
 		}
 
-		ILaunchTarget target = new LaunchTarget(typeId, id);
+		Preferences prefs = getTargetsPref();
+		String childName = typeId + DELIMETER1 + id;
+		ILaunchTarget target = new LaunchTarget(typeId, id, prefs.node(childName));
 		type.put(id, target);
-
-		getTargetsPref().put(typeId,
-				type.values().stream().map(t -> t.getId()).collect(Collectors.joining(DELIMETER1)));
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
 
 		for (ILaunchTargetListener listener : listeners) {
 			listener.launchTargetAdded(target);

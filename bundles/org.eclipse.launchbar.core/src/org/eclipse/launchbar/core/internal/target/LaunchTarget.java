@@ -9,15 +9,29 @@ package org.eclipse.launchbar.core.internal.target;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
+import org.osgi.service.prefs.Preferences;
 
 public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 
 	private final String typeId;
 	private final String id;
+	final Preferences attributes;
 
+	/**
+	 * This should only be used to create the null target. There are no attributes supported on the
+	 * null target.
+	 */
 	public LaunchTarget(String typeId, String id) {
 		this.typeId = typeId;
 		this.id = id;
+		this.attributes = null;
+	}
+
+	public LaunchTarget(String typeId, String id, Preferences attributes) {
+		this.typeId = typeId;
+		this.id = id;
+		this.attributes = attributes;
 	}
 
 	@Override
@@ -28,6 +42,20 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 	@Override
 	public String getTypeId() {
 		return typeId;
+	}
+
+	@Override
+	public ILaunchTargetWorkingCopy getWorkingCopy() {
+		return new LaunchTargetWorkingCopy(this);
+	}
+
+	@Override
+	public String getAttribute(String key, String defValue) {
+		if (attributes != null) {
+			return attributes.get(key, defValue);
+		} else {
+			return defValue;
+		}
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,21 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.launchbar.core.internal.target.LaunchTarget;
 
 /**
- * A launch target is a thing that a launch will run on. Launch targets are
- * simple objects with the intention that the launch delegates and launches will
- * adapt this object to an object that will assist in performing the launch.
+ * A launch target is a thing that a launch will run on. Launch targets are simple objects with the
+ * intention that the launch delegates and launches will adapt this object to an object that will
+ * assist in performing the launch.
  *
  * @noimplement not to be implemented by clients
  */
 public interface ILaunchTarget extends IAdaptable {
+
+	// Standard attributes
+	public static final String ATTR_OS = "os"; //$NON-NLS-1$
+	public static final String ATTR_ARCH = "arch"; //$NON-NLS-1$
+
+	/**
+	 * The null target, which is the default when no other target is available.
+	 */
 	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
@@ -44,5 +52,24 @@ public interface ILaunchTarget extends IAdaptable {
 	 * @return type of the target
 	 */
 	String getTypeId();
+
+	/**
+	 * Return a string attribute of this target
+	 * 
+	 * @param key
+	 *            key
+	 * @param defValue
+	 *            default value
+	 * @return value of attribute
+	 */
+	String getAttribute(String key, String defValue);
+
+	/**
+	 * Create a working copy of this launch target to allow setting of attributes. Note that when
+	 * saving the attributes this target is updated. A new one is not created.
+	 * 
+	 * @return launch target working copy
+	 */
+	ILaunchTargetWorkingCopy getWorkingCopy();
 
 }

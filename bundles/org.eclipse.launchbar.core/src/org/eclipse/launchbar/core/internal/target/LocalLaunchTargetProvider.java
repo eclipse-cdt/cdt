@@ -7,10 +7,12 @@
  *******************************************************************************/
 package org.eclipse.launchbar.core.internal.target;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.launchbar.core.internal.Messages;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetProvider;
+import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
 import org.eclipse.launchbar.core.target.TargetStatus;
 
 public class LocalLaunchTargetProvider implements ILaunchTargetProvider {
@@ -19,7 +21,11 @@ public class LocalLaunchTargetProvider implements ILaunchTargetProvider {
 	public void init(ILaunchTargetManager targetManager) {
 		if (targetManager.getLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
 				Messages.LocalTarget_name) == null) {
-			targetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId, Messages.LocalTarget_name);
+			ILaunchTarget target = targetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId, Messages.LocalTarget_name);
+			ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
+			wc.setAttribute(ILaunchTarget.ATTR_OS, Platform.getOS());
+			wc.setAttribute(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
+			wc.save();
 		}
 	}
 

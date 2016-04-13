@@ -152,6 +152,9 @@
       </tab>
    </extension>
    <extension point="org.eclipse.core.runtime.adapters">
+      <!-- Extentenders providing their own subclass of GdbLaunch must extend GdbAdapterFactory also
+           and declare that the extended versions adapt to all of these types. See class comment in
+           GdbAdapterFactory for more details. -->
       <factory 
         	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbAdapterFactory" 
 	        adaptableType="org.eclipse.cdt.dsf.gdb.launching.GdbLaunch">

@@ -815,13 +815,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     // interface in platform, but it is more generic than the public TreeModelViewer.
     // Using ITreeModelViewer will allow us to write unit tests using the 
     // VirtualTreeModelViewer.
-    @SuppressWarnings("restriction") 
     private class ViewUpdateFinishedListener implements IViewerUpdateListener, IModelChangedListener {
-        private final org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer fViewer;
+        private final org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer fViewer;
         private boolean fViewerChangeStarted = false;
         private RequestMonitor fRm;
         
-        ViewUpdateFinishedListener(org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer viewer) {
+        ViewUpdateFinishedListener(org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer viewer) {
             fViewer = viewer;
         }
 
@@ -891,9 +890,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                         // If we need to wait for the view to finish updating, then before posting the delta to the 
                         // viewer install a listener, which will in turn call rm.done().
                         if (fDelayEventHandleForViewUpdate) {
-                            @SuppressWarnings("restriction")
-                            org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer viewer = 
-                                (org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer) proxyStrategy.getViewer();
+                            org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer viewer = 
+                                (org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer) proxyStrategy.getViewer();
                             new ViewUpdateFinishedListener(viewer).start(rm);
                         }
                         

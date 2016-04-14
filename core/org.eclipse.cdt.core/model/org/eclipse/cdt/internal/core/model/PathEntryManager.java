@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     James Blackburn (Broadcom Corporation)
+ *     John Dallaway - Re-implement path entry removal job (bug 410529)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -59,6 +60,8 @@ import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfoElement;
 import org.eclipse.cdt.core.settings.model.util.ThreadLocalMap;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCExtensionProxy;
 import org.eclipse.cdt.internal.core.settings.model.ConfigBasedPathEntryStore;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -1472,37 +1475,20 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	 * @throws CModelException
 	 */
 	void updatePathEntryFromDeleteSource(final ISourceRoot sourceRoot) throws CModelException {
-		final ICProject cproject = sourceRoot.getCProject();
-		IPathEntry[] rawEntries = getRawPathEntries(cproject);
-		boolean change = false;
-		ArrayList<IPathEntry> list = new ArrayList<>(rawEntries.length);
-		for (IPathEntry rawEntrie : rawEntries) {
-			if (rawEntrie.getEntryKind() == IPathEntry.CDT_SOURCE) {
-				if (sourceRoot.getPath().equals(rawEntrie.getPath())) {
-					change = true;
-				} else {
-					list.add(rawEntrie);
+		final IContainer container = sourceRoot.getResource();
+		final IProject project = sourceRoot.getCProject().getProject();
+		Job updatePathEntry = new WorkspaceJob("PathEntry Update source roots") { //$NON-NLS-1$
+			@Override
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				// If the folder which triggered this change exists when we
+				// run this job then preserve the source entry
+				if (!container.exists()) {
+					InternalCoreModelUtil.removeSourceEntry(project, (IFolder) container, monitor);
 				}
-			} else {
-				list.add(rawEntrie);
+				return Status.OK_STATUS;
 			}
-		}
-		if (change) {
-			IPathEntry[] newEntries = new IPathEntry[list.size()];
-			list.toArray(newEntries);
-			final IPathEntry[] finalEntries = newEntries;
-			Job updatePathEntry = new WorkspaceJob("PathEntry Update source roots") { //$NON-NLS-1$
-				@Override
-				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					// If the path which triggered this change exists when we
-					// run this job then
-					// nothing to do.
-					if (sourceRoot.getResource() == null || !sourceRoot.getResource().exists())
-						setRawPathEntries(cproject, finalEntries, monitor);
-					return Status.OK_STATUS;
-				}
-			};
-			IProject project = cproject.getProject();
+		};
+		if (container instanceof IFolder) {
 			ISchedulingRule rule = project.getWorkspace().getRoot();
 			updatePathEntry.setRule(rule);
 			updatePathEntry.schedule();

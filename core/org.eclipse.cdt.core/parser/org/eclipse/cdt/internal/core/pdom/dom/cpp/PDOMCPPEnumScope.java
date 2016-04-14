@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.parser.util.CharArrayMap;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -66,7 +66,7 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
-			CharArrayMap<IPDOMCPPEnumerator> map= getBindingMap(fBinding);
+			CharArrayObjectMap<IPDOMCPPEnumerator> map= getBindingMap(fBinding);
 			return map.get(name.toCharArray());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -82,7 +82,7 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
 		try {
-			CharArrayMap<IPDOMCPPEnumerator> map= getBindingMap(fBinding);
+			CharArrayObjectMap<IPDOMCPPEnumerator> map= getBindingMap(fBinding);
 			if (lookup.isPrefixLookup()) {
 				final List<IBinding> result= new ArrayList<IBinding>();
 				final char[] nc= lookup.getLookupKey();
@@ -141,22 +141,23 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 		return fBinding.hashCode();
 	}
 
-	private static CharArrayMap<IPDOMCPPEnumerator> getBindingMap(IPDOMCPPEnumType enumeration) throws CoreException {
+	private static CharArrayObjectMap<IPDOMCPPEnumerator> getBindingMap(IPDOMCPPEnumType enumeration) throws CoreException {
 		final Long key= enumeration.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 		final PDOM pdom = enumeration.getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<CharArrayMap<IPDOMCPPEnumerator>> cached= (Reference<CharArrayMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
-		CharArrayMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
+		Reference<CharArrayObjectMap<IPDOMCPPEnumerator>> cached=
+				(Reference<CharArrayObjectMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
+		CharArrayObjectMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
 
 		if (map == null) {
 			// there is no cache, build it:
 			List<IPDOMCPPEnumerator> enumerators = new ArrayList<>();
 			enumeration.loadEnumerators(enumerators);
-			map = new CharArrayMap<IPDOMCPPEnumerator>();
+			map = new CharArrayObjectMap<IPDOMCPPEnumerator>(enumerators.size());
 			for (IPDOMCPPEnumerator enumerator : enumerators) {
 				map.put(enumerator.getNameCharArray(), enumerator);
 			}
-			pdom.putCachedResult(key, new SoftReference<CharArrayMap<?>>(map));
+			pdom.putCachedResult(key, new SoftReference<CharArrayObjectMap<?>>(map));
 		}
 		return map;
 	}
@@ -165,8 +166,9 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 		final Long key= enumType.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 		final PDOM pdom = enumType.getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<CharArrayMap<IPDOMCPPEnumerator>> cached= (Reference<CharArrayMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
-		CharArrayMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
+		Reference<CharArrayObjectMap<IPDOMCPPEnumerator>> cached=
+				(Reference<CharArrayObjectMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
+		CharArrayObjectMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
 		if (map != null) {
 			map.put(enumItem.getNameCharArray(), enumItem);
 		}
@@ -194,7 +196,7 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 
 	public static void acceptViaCache(IPDOMCPPEnumType enumType, IPDOMVisitor visitor) {
 		try {
-			CharArrayMap<IPDOMCPPEnumerator> map = getBindingMap(enumType);
+			CharArrayObjectMap<IPDOMCPPEnumerator> map = getBindingMap(enumType);
 			for (IPDOMCPPEnumerator enumItem : map.values()) {
 				visitor.visit(enumItem);
 				visitor.leave(enumItem);

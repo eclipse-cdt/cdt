@@ -17,20 +17,31 @@ public class TargetAttributesTest {
 		ILaunchTargetManager manager = Activator.getLaunchTargetManager();
 		String targetType = "testType";
 		String targetId = "testTarget";
+		String attributeKey = "testKey";
+		String attributeValue = "testValue";
+		// Make sure the target doesn't exist
 		ILaunchTarget target = manager.getLaunchTarget(targetType, targetId);
 		if (target != null) {
 			manager.removeLaunchTarget(target);
 		}
+		// Add the target
 		target = manager.addLaunchTarget(targetType, targetId);
-		String attributeKey = "testKey";
-		String attributeValue = "testValue";
+		// Attribute should be empty
 		assertEquals(target.getAttribute(attributeKey, ""), "");
+		// Set the attribute and make sure it's set
 		ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
 		assertNotEquals(target, wc);
 		wc.setAttribute(attributeKey, attributeValue);
 		assertEquals(wc.getAttribute(attributeKey, ""), attributeValue);
 		ILaunchTarget savedTarget = wc.save();
+		// Make sure we get our original back
 		assertEquals(target, savedTarget);
 		assertEquals(target.getAttribute(attributeKey, ""), attributeValue);
+		// Make sure remove removes the attribute
+		manager.removeLaunchTarget(target);
+		target = manager.addLaunchTarget(targetType, targetId);
+		assertEquals(target.getAttribute(attributeKey, ""), "");
+		// Cleanup
+		manager.removeLaunchTarget(target);
 	}
 }

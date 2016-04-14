@@ -12,7 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -66,7 +65,6 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			targets = new LinkedHashMap<>();
 			Preferences prefs = getTargetsPref();
 			try {
-				// For backwards compat pre-attributes, load targets from type keys
 				for (String childName : prefs.childrenNames()) {
 					String[] segments = childName.split(DELIMETER1);
 					if (segments.length == 2) {
@@ -79,26 +77,30 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 							targets.put(typeId, type);
 						}
 
-						// Creates the node. Will flush when attributes are added
 						type.put(name, new LaunchTarget(typeId, name, prefs.node(childName)));
 					}
 				}
 
-				for (String typeId : prefs.keys()) {
-					Map<String, ILaunchTarget> type = targets.get(typeId);
-					if (type == null) {
-						type = new LinkedHashMap<>();
-						targets.put(typeId, type);
-					}
-
-					for (String name : prefs.get(typeId, "").split(DELIMETER1)) { //$NON-NLS-1$
-						if (!type.containsKey(name)) {
-							type.put(name, new LaunchTarget(typeId, name, prefs.node(typeId + DELIMETER1 + name)));
+				// convert old type keys
+				if (prefs.keys().length > 0) {
+					for (String typeId : prefs.keys()) {
+						Map<String, ILaunchTarget> type = targets.get(typeId);
+						if (type == null) {
+							type = new LinkedHashMap<>();
+							targets.put(typeId, type);
 						}
-					}
 
-					// Use children going forward
-					prefs.remove(typeId);
+						for (String name : prefs.get(typeId, "").split(DELIMETER1)) { //$NON-NLS-1$
+							if (!type.containsKey(name)) {
+								type.put(name, new LaunchTarget(typeId, name, prefs.node(typeId + DELIMETER1 + name)));
+							}
+						}
+
+						// Use children going forward
+						prefs.remove(typeId);
+					}
+					
+					prefs.flush();
 				}
 			} catch (BackingStoreException e) {
 				Activator.log(e);
@@ -209,17 +211,21 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	@Override
 	public void removeLaunchTarget(ILaunchTarget target) {
 		initTargets();
-		Map<String, ILaunchTarget> type = targets.get(target.getTypeId());
+		String typeId = target.getTypeId();
+		Map<String, ILaunchTarget> type = targets.get(typeId);
 		if (type != null) {
-			type.remove(target.getId());
+			type.remove(target);
 			if (type.isEmpty()) {
 				targets.remove(target.getTypeId());
-				getTargetsPref().remove(target.getTypeId());
-			} else {
-				getTargetsPref().put(target.getTypeId(),
-						type.values().stream().map(t -> t.getId()).collect(Collectors.joining(DELIMETER1)));
 			}
 
+			// Remove the attribute node
+			try {
+				getTargetsPref().node(typeId + DELIMETER1 + target.getId()).removeNode();
+			} catch (BackingStoreException e) {
+				Activator.log(e);
+			}
+			
 			for (ILaunchTargetListener listener : listeners) {
 				listener.launchTargetRemoved(target);
 			}

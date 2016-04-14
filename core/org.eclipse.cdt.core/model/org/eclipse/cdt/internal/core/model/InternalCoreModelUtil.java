@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Google, Inc and others.
+ * Copyright (c) 2010, 2016 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Sergey Prigogin (Google) - initial API and implementation
+ *     John Dallaway - add source entry removal methods
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -86,5 +87,33 @@ public class InternalCoreModelUtil {
 				}
 			}
 		}
+	}
+
+	public static void removeSourceEntry(IProject project, IFolder folder,
+			IProgressMonitor monitor) throws CoreException {
+		ICSourceEntry oldEntry = new CSourceEntry(folder, null, 0);
+		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, true);
+		removeEntryFromAllCfgs(des, oldEntry);
+		CCorePlugin.getDefault().setProjectDescription(project, des, false, monitor);
+	}
+
+	private static void removeEntryFromAllCfgs(ICProjectDescription des,
+			ICSourceEntry entry) throws WriteAccessException, CoreException {
+		ICConfigurationDescription cfgs[] = des.getConfigurations();
+		for (ICConfigurationDescription cfg : cfgs) {
+			ICSourceEntry[] entries = cfg.getSourceEntries();
+			entries = removeEntry(entries, entry);
+			cfg.setSourceEntries(entries);
+		}
+	}
+
+	private static ICSourceEntry[] removeEntry(ICSourceEntry[] entries, ICSourceEntry sourceEntry) {
+		Set<ICSourceEntry> set = new HashSet<>();
+		for (ICSourceEntry entry : entries) {
+			if (!entry.equalsByContents(sourceEntry)) {
+				set.add(entry);
+			}
+		}
+		return set.toArray(new ICSourceEntry[set.size()]);
 	}
 }

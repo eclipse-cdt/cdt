@@ -24,20 +24,20 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  */
 public interface ICPPASTTemplateId extends ICPPASTName, IASTNameOwner {
 	/**
-	 * TEMPLATE_NAME is the IASTName.
+	 * The template name in the template ID.
 	 */
 	public static final ASTNodeProperty TEMPLATE_NAME = new ASTNodeProperty(
 			"ICPPASTTemplateId.TEMPLATE_NAME - TemplateId Name"); //$NON-NLS-1$
 
 	/**
-	 * Get the name.
+	 * Returns the name.
 	 * 
 	 * @return {@code IASTName}
 	 */
 	public IASTName getTemplateName();
 
 	/**
-	 * Set the name.
+	 * Sets the name.
 	 * 
 	 * @param name {@code IASTName}
 	 */
@@ -50,9 +50,10 @@ public interface ICPPASTTemplateId extends ICPPASTName, IASTNameOwner {
 			"ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT - TemplateId Argument"); //$NON-NLS-1$
 
 	/**
-	 * Constant.
+	 * @deprecated Use IASTNode.EMPTY_NODE_ARRAY instead.
 	 */
-	public static final IASTNode[] EMPTY_ARG_ARRAY = {};
+	@Deprecated
+	public static final IASTNode[] EMPTY_ARG_ARRAY = IASTNode.EMPTY_NODE_ARRAY;
 
 	/**
 	 * Adds template argument.

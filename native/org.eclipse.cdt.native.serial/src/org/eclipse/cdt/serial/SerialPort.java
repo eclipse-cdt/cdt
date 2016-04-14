@@ -179,7 +179,11 @@ public class SerialPort {
 	 *            name for the serial device.
 	 */
 	public SerialPort(String portName) {
-		this.portName = portName;
+		if (System.getProperty("os.name").startsWith("Windows") && !portName.startsWith("\\\\.\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			this.portName = "\\\\.\\" + portName; //$NON-NLS-1$
+		} else {
+			this.portName = portName;
+		}
 	}
 
 	private native long open0(String portName, int baudRate, int byteSize, int parity, int stopBits) throws IOException;

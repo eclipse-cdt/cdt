@@ -193,16 +193,6 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     }
 
 	@Override
-	public boolean isDeclaration() {
-		return false; // For now this seems to be true.
-	}
-
-	@Override
-	public boolean isReference() {
-		return true; // For now this seems to be true.
-	}
-
-	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == templateName)
 			return r_reference;

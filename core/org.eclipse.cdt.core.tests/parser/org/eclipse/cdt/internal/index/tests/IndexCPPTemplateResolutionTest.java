@@ -2036,6 +2036,24 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		getBindingFromASTName("type type", 4, ITypedef.class);
 	}
 
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	template <>
+	//	struct A<void> {
+	//	  template <typename U>
+	//	  A<void>(const A<U>& o);
+	//	};
+
+	//	void waldo(A<void> p);
+	//
+	//	void test(A<int> a) {
+	//	  waldo(a);
+	//	}
+	public void testSpecializationInIndex_491636() throws Exception {
+		checkBindings();
+	}
+
 	//	template <typename T> struct remove_const_impl {};
 	//	template <typename T> struct remove_const_impl<T*> {
 	//	    typedef T type;

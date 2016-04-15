@@ -54,7 +54,7 @@ public class LRKnRTests extends AST2KnRTests {
     	try {
     		super.testKRCProblem3();
     		fail();
-    	} catch(Throwable _) { }
+    	} catch(Throwable expectedException) { }
     }
     
     @Override
@@ -62,7 +62,7 @@ public class LRKnRTests extends AST2KnRTests {
     	try {
     		super.testKRCProblem4();
     		fail();
-    	} catch(Throwable _) { }
+    	} catch(Throwable expectedException) { }
     }
 
     @Override
@@ -70,7 +70,7 @@ public class LRKnRTests extends AST2KnRTests {
     	try {
     		super.testKRCProblem5();
     		fail();
-    	} catch(Throwable _) { }
+    	} catch(Throwable expectedException) { }
     }
     
     @Override
@@ -78,7 +78,7 @@ public class LRKnRTests extends AST2KnRTests {
     	try {
     		super.testKRCProblem2();
     		fail();
-    	} catch(Throwable _) { }
+    	} catch(Throwable expectedException) { }
     }
     
 }

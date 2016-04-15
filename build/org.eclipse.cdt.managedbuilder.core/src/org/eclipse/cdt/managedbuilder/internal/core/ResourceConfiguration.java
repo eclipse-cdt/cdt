@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,7 +140,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 		setDirty(false);
 		toolsToInvoke = EMPTY_STRING;
-		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+		rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 
 
 		//	Get file extension.
@@ -190,7 +190,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			toolsToInvoke = new String(cloneConfig.toolsToInvoke);
 		}
 		if (cloneConfig.rcbsApplicability != null) {
-			rcbsApplicability = new Integer(cloneConfig.rcbsApplicability.intValue());
+			rcbsApplicability = cloneConfig.rcbsApplicability;
 		}
 
 		boolean copyIds = cloneChildren && id.equals(cloneConfig.id);
@@ -316,7 +316,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		//  Copy the remaining attributes
 		toolsToInvoke = baseInfo.toolsToInvoke;
 
-		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+		rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 
 		// Clone the resource configuration's tool children
 		if (baseInfo.toolList != null) {
@@ -354,13 +354,13 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		// rcbsApplicability
 		String rcbsApplicabilityStr = element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY);
 		if (rcbsApplicabilityStr == null || rcbsApplicabilityStr.equals(DISABLE_RCBS_TOOL)) {
-			rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+			rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_BEFORE)) {
-			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_BEFORE);
+			rcbsApplicability = KIND_APPLY_RCBS_TOOL_BEFORE;
 		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AFTER)) {
-			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AFTER);
+			rcbsApplicability = KIND_APPLY_RCBS_TOOL_AFTER;
 		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AS_OVERRIDE)) {
-			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
+			rcbsApplicability = KIND_APPLY_RCBS_TOOL_AS_OVERRIDE;
 		}
 	}
 
@@ -380,13 +380,13 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		if (element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY) != null) {
 			String rcbsApplicabilityStr = element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY);
 			if (rcbsApplicabilityStr == null || rcbsApplicabilityStr.equals(DISABLE_RCBS_TOOL)) {
-				rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+				rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_BEFORE)) {
-				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_BEFORE);
+				rcbsApplicability = KIND_APPLY_RCBS_TOOL_BEFORE;
 			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AFTER)) {
-				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AFTER);
+				rcbsApplicability = KIND_APPLY_RCBS_TOOL_AFTER;
 			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AS_OVERRIDE)) {
-				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
+				rcbsApplicability = KIND_APPLY_RCBS_TOOL_AS_OVERRIDE;
 			}
 		}
 	}
@@ -694,7 +694,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * Choices are before, after, or override other tools, or disable rcbs tool.
 		 */
 		if (rcbsApplicability == null || !(rcbsApplicability.intValue() == newValue)) {
-			rcbsApplicability = new Integer(newValue);
+			rcbsApplicability = newValue;
 			setDirty(true);
 			setRebuildState(true);
 		}

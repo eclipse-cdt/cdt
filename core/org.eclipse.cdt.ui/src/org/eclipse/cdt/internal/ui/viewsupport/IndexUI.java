@@ -552,9 +552,9 @@ public class IndexUI {
 		IResource res= tu.getResource();
 		if (res != null) {
 			Properties props= IndexerPreferences.getProperties(res.getProject());
-			if (props == null || !"true".equals(props.get(IndexerPreferences.KEY_INDEX_ALL_FILES)) || //$NON-NLS-1$
-					(!"true".equals(props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) && //$NON-NLS-1$
-					 !"true".equals(props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)))) { //$NON-NLS-1$
+			if (props == null || !Boolean.parseBoolean((String) props.get(IndexerPreferences.KEY_INDEX_ALL_FILES)) ||
+					(!Boolean.parseBoolean((String) props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) &&
+					 !Boolean.parseBoolean((String) props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)))) {
 				msg= msg + " " + Messages.IndexUI_infoSelectIndexAllFiles; //$NON-NLS-1$
 			}
 		}

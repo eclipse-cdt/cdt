@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -228,7 +228,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint2, I
 		StringBuffer sb = new StringBuffer();
 		int ignoreCount = getIgnoreCount();
 		if ( ignoreCount > 0 ) {
-			sb.append( MessageFormat.format( BreakpointMessages.getString( "CBreakpoint.1" ), new Object[] { new Integer( ignoreCount ) } ) ); //$NON-NLS-1$
+			sb.append( MessageFormat.format( BreakpointMessages.getString( "CBreakpoint.1" ), new Object[] { ignoreCount } ) ); //$NON-NLS-1$
 		}
 		String condition = getCondition();
 		if ( condition != null && condition.length() > 0 ) {

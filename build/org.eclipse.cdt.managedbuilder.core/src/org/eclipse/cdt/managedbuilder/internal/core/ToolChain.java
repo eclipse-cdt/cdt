@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ import org.osgi.framework.Version;
 
 public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProvider<ToolChain>, IRealBuildObjectAssociation {
 
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
 
@@ -302,7 +302,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		setSuperClassInternal(toolChain.getSuperClass());
 		if (getSuperClass() != null) {
 			if (toolChain.superClassId != null) {
-				superClassId = new String(toolChain.superClassId);
+				superClassId = toolChain.superClassId;
 			}
 		}
 		setId(Id);
@@ -316,17 +316,17 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 		//  Copy the remaining attributes
 		if(toolChain.versionsSupported != null) {
-			versionsSupported = new String(toolChain.versionsSupported);
+			versionsSupported = toolChain.versionsSupported;
 		}
 		if(toolChain.convertToId != null) {
-			convertToId = new String(toolChain.convertToId);
+			convertToId = toolChain.convertToId;
 		}
 
 		if (toolChain.unusedChildren != null) {
-			unusedChildren = new String(toolChain.unusedChildren);
+			unusedChildren = toolChain.unusedChildren;
 		}
 		if (toolChain.errorParserIds != null) {
-			errorParserIds = new String(toolChain.errorParserIds);
+			errorParserIds = toolChain.errorParserIds;
 		}
 		if (toolChain.osList != null) {
 			osList = new ArrayList<String>(toolChain.osList);
@@ -335,16 +335,16 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			archList = new ArrayList<String>(toolChain.archList);
 		}
 		if (toolChain.targetToolIds != null) {
-			targetToolIds = new String(toolChain.targetToolIds);
+			targetToolIds = toolChain.targetToolIds;
 		}
 		if (toolChain.secondaryOutputIds != null) {
-			secondaryOutputIds = new String(toolChain.secondaryOutputIds);
+			secondaryOutputIds = toolChain.secondaryOutputIds;
 		}
 		if (toolChain.isAbstract != null) {
-			isAbstract = Boolean.valueOf(toolChain.isAbstract.booleanValue());
+			isAbstract = toolChain.isAbstract;
 		}
 		if (toolChain.scannerConfigDiscoveryProfileId != null) {
-			scannerConfigDiscoveryProfileId = new String(toolChain.scannerConfigDiscoveryProfileId);
+			scannerConfigDiscoveryProfileId = toolChain.scannerConfigDiscoveryProfileId;
 		}
 
 		isRcTypeBasedDiscovery = toolChain.isRcTypeBasedDiscovery;
@@ -545,7 +545,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		// isAbstract
 		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 		if (isAbs != null){
-			isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+			isAbstract = Boolean.parseBoolean(isAbs);
 		}
 
 		// Get the semicolon separated list of IDs of the error parsers
@@ -665,7 +665,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.parseBoolean(isAbs);
 			}
 		}
 
@@ -1390,7 +1390,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = Boolean.valueOf(b);
+		isAbstract = b;
 		setDirty(true);
 	}
 

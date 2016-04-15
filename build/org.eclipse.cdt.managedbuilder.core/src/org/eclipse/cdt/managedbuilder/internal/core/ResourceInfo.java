@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		// exclude
         String excludeStr = element.getAttribute(EXCLUDE);
         if (excludeStr != null){
-    		config.setExcluded(getPath(), isFolderInfo(), ("true".equals(excludeStr))); //$NON-NLS-1$
+    		config.setExcluded(getPath(), isFolderInfo(), (Boolean.parseBoolean(excludeStr)));
         }
 	}
 
@@ -168,7 +168,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if (element.getAttribute(EXCLUDE) != null) {
 			String excludeStr = element.getAttribute(EXCLUDE);
 			if (excludeStr != null){
-	    		config.setExcluded(getPath(), isFolderInfo(), ("true".equals(excludeStr))); //$NON-NLS-1$
+	    		config.setExcluded(getPath(), isFolderInfo(), (Boolean.parseBoolean(excludeStr)));
 			}
 		}
 	}

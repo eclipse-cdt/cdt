@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import org.osgi.framework.Version;
 public class OutputType extends BuildObject implements IOutputType {
 
 	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//  Superclass
 	private IOutputType superClass;
@@ -149,7 +149,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		superClass = outputType.superClass;
 		if (superClass != null) {
 			if (outputType.superClassId != null) {
-				superClassId = new String(outputType.superClassId);
+				superClassId = outputType.superClassId;
 			}
 		}
 		setId(Id);
@@ -159,36 +159,36 @@ public class OutputType extends BuildObject implements IOutputType {
 
 		//  Copy the remaining attributes
 		if (outputType.outputContentTypeId != null) {
-			outputContentTypeId = new String(outputType.outputContentTypeId);
+			outputContentTypeId = outputType.outputContentTypeId;
 		}
 		outputContentType = outputType.outputContentType;
 		if (outputType.outputs != null) {
-			outputs = new String(outputType.outputs);
+			outputs = outputType.outputs;
 		}
 		if (outputType.optionId != null) {
-			optionId = new String(outputType.optionId);
+			optionId = outputType.optionId;
 		}
 		if (outputType.buildVariable != null) {
-			buildVariable = new String(outputType.buildVariable);
+			buildVariable = outputType.buildVariable;
 		}
 		if (outputType.multipleOfType != null) {
-			multipleOfType = Boolean.valueOf(outputType.multipleOfType.booleanValue());
+			multipleOfType = outputType.multipleOfType;
 		}
 		if (outputType.primaryInputTypeId != null) {
-			primaryInputTypeId = new String(outputType.primaryInputTypeId);
+			primaryInputTypeId = outputType.primaryInputTypeId;
 		}
 		primaryInputType = outputType.primaryInputType;
 		if (outputType.primaryOutput != null) {
-			primaryOutput = Boolean.valueOf(outputType.primaryOutput.booleanValue());
+			primaryOutput = outputType.primaryOutput;
 		}
 		if (outputType.outputPrefix != null) {
-			outputPrefix = new String(outputType.outputPrefix);
+			outputPrefix = outputType.outputPrefix;
 		}
 		if (outputType.outputNames != null) {
-			outputNames = new String(outputType.outputNames);
+			outputNames = outputType.outputNames;
 		}
 		if (outputType.namePattern != null) {
-			namePattern = new String(outputType.namePattern);
+			namePattern = outputType.namePattern;
 		}
 
 		nameProviderElement = outputType.nameProviderElement;
@@ -237,7 +237,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		// multipleOfType
         String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
         if (isMOT != null){
-    		multipleOfType = Boolean.valueOf("true".equals(isMOT)); //$NON-NLS-1$
+    		multipleOfType = Boolean.parseBoolean(isMOT);
         }
 
 		// primaryInputType
@@ -246,7 +246,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		// primaryOutput
         String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
         if (isPO != null){
-    		primaryOutput = Boolean.valueOf("true".equals(isPO)); //$NON-NLS-1$
+    		primaryOutput = Boolean.parseBoolean(isPO);
         }
 
 		// outputPrefix
@@ -312,7 +312,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (element.getAttribute(IOutputType.MULTIPLE_OF_TYPE) != null) {
 			String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
 			if (isMOT != null){
-				multipleOfType = Boolean.valueOf("true".equals(isMOT)); //$NON-NLS-1$
+				multipleOfType = Boolean.parseBoolean(isMOT);
 			}
 		}
 
@@ -326,7 +326,7 @@ public class OutputType extends BuildObject implements IOutputType {
         if (element.getAttribute(IOutputType.PRIMARY_OUTPUT) != null) {
 			String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
 			if (isPO != null){
-				primaryOutput = Boolean.valueOf("true".equals(isPO)); //$NON-NLS-1$
+				primaryOutput = Boolean.parseBoolean(isPO);
 			}
         }
 
@@ -510,7 +510,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	@Override
 	public void setMultipleOfType(boolean b) {
 		if (multipleOfType == null || !(b == multipleOfType.booleanValue())) {
-			multipleOfType = Boolean.valueOf(b);
+			multipleOfType = b;
 			setDirty(true);
 			setRebuildState(true);
 		}
@@ -820,7 +820,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	@Override
 	public void setPrimaryOutput(boolean b) {
 		if (primaryOutput == null || !(b == primaryOutput.booleanValue())) {
-			primaryOutput = Boolean.valueOf(b);
+			primaryOutput = b;
 			setDirty(true);
 			setRebuildState(true);
 		}

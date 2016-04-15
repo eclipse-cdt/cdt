@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public class CDataUtil {
 	}
 
 	public static String genId(String baseId) {
-		String suffix = new Integer(genRandomNumber()).toString();
+		String suffix = Integer.toString(genRandomNumber());
 		return baseId != null ?
 				new StringBuilder(baseId).append(".").append(suffix).toString() : //$NON-NLS-1$
 				suffix;
@@ -1131,7 +1131,7 @@ public class CDataUtil {
 	}
 
 	public static void setInteger(ICStorageElement el, String attr, int value) {
-		el.setAttribute(attr, new Integer(value).toString());
+		el.setAttribute(attr, Integer.toString(value));
 	}
 
 	public static ICExclusionPatternPathEntry addRemoveExclusionsToEntry(ICExclusionPatternPathEntry entry, IPath[] paths, boolean add) throws IllegalArgumentException{

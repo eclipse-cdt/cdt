@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 public class ConfigurationBuildState implements IConfigurationBuildState {
-	private final static Integer REBUILD_STATE = new Integer(NEED_REBUILD);
-	private final static Integer REMOVED_STATE = new Integer(REMOVED);
-	private final static Integer NONE_STATE = new Integer(0);
+	private final static Integer REBUILD_STATE = NEED_REBUILD;
+	private final static Integer REMOVED_STATE = REMOVED;
+	private final static Integer NONE_STATE = 0;
 
 	private HashMap<Integer, Set<String>> fStateToPathListMap;
 	private Properties fPathToStateProps;
@@ -49,7 +49,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 		if(fStateToPathListMap == null)
 			return new IPath[0];
 
-		Set<String> set = fStateToPathListMap.get(new Integer(state));
+		Set<String> set = fStateToPathListMap.get(Integer.valueOf(state));
 		if(set == null)
 			return new IPath[0];
 
@@ -91,13 +91,13 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 			fPathToStateProps = new Properties();
 			fStateToPathListMap = new HashMap<Integer, Set<String>>();
 		}
-		String strState = stateToString(new Integer(state));
+		String strState = stateToString(Integer.valueOf(state));
 		Integer iState = stateToInt(strState);
 		if(iState == null)
 			throw new IllegalArgumentException();
 
 		if(cur != 0){
-			Set<String> set = fStateToPathListMap.get(new Integer(cur));
+			Set<String> set = fStateToPathListMap.get(Integer.valueOf(cur));
 			set.remove(str);
 			if(set.size() == 0)
 				fStateToPathListMap.remove(iState);
@@ -170,7 +170,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 
 	private Integer stateToInt(String state){
 		try {
-		Integer i = new Integer(state);
+		Integer i = Integer.valueOf(state);
 		if(i.equals(REBUILD_STATE))
 			return REBUILD_STATE;
 		if(i.equals(REMOVED_STATE))

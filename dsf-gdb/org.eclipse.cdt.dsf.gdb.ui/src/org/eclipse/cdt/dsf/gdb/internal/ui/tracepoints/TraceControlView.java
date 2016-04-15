@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Ericsson and others.
+ * Copyright (c) 2010, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -550,7 +550,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 			if (traceData.getCurrentTraceFrameId() != null) {
 				fl += TracepointsMessages.bind(TracepointsMessages.TraceControlView_frame_looking,
 						new Object[] { traceData.getCurrentTraceFrameId(), 
-										new Integer(traceData.getTracepointNumberForCurrentTraceFrame())} );
+										Integer.valueOf(traceData.getTracepointNumberForCurrentTraceFrame())} );
 				int recId = 0;
 				try {
 					recId = Integer.parseInt(traceData.getCurrentTraceFrameId());

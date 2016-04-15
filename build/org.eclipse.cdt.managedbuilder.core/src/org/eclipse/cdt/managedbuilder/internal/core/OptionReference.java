@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -354,7 +354,7 @@ public class OptionReference implements IOption {
 				return command;
 			} catch (BuildException e) {}
 		}
-		return new String();
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -368,7 +368,7 @@ public class OptionReference implements IOption {
 				return command;
 			} catch (BuildException e) {}
 		}
-		return new String();
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -679,7 +679,7 @@ public class OptionReference implements IOption {
 	@Override
 	public void setValue(boolean value) throws BuildException {
 		if (getValueType() == BOOLEAN) {
-			this.value = Boolean.valueOf(value);
+			this.value = value;
 		}
 		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -729,7 +729,7 @@ public class OptionReference implements IOption {
 
 	@Override
 	public String toString() {
-		String answer = new String();
+		String answer = ""; //$NON-NLS-1$
 		if (option != null) {
 			answer += "Reference to " + option.getName();	//$NON-NLS-1$
 		}

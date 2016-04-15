@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,7 +104,7 @@ public class TriggerCellModifier implements ICellModifier {
         Integer intValue = 0;
         if (value instanceof String) {
             try {
-                intValue = new Integer(((String)value).trim());
+                intValue = Integer.valueOf(((String)value).trim());
             } catch (NumberFormatException e) {
                 MessageDialog.openError(shell, "Invalid Value", 
                     "Please enter a positive integer");  

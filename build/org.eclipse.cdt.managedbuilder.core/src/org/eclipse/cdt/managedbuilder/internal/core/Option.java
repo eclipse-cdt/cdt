@@ -202,7 +202,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			unusedChildren = new String(option.unusedChildren);
 		}
 		if (option.isAbstract != null) {
-			isAbstract = new Boolean(option.isAbstract.booleanValue());
+			isAbstract = Boolean.valueOf(option.isAbstract.booleanValue());
 		}
 		if (option.command != null) {
 			command = new String(option.command);
@@ -211,7 +211,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			commandFalse = new String(option.commandFalse);
 		}
 		if (option.isForScannerDiscovery != null) {
-			isForScannerDiscovery = new Boolean(option.isForScannerDiscovery.booleanValue());
+			isForScannerDiscovery = Boolean.valueOf(option.isForScannerDiscovery.booleanValue());
 		}
 		if (option.tip != null) {
 			tip = new String(option.tip);
@@ -255,10 +255,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			switch (vType.intValue()) {
 			case BOOLEAN:
 				if (option.value != null) {
-					value = new Boolean(((Boolean)option.value).booleanValue());
+					value = Boolean.valueOf(((Boolean)option.value).booleanValue());
 				}
 				if (option.defaultValue != null) {
-					defaultValue = new Boolean(((Boolean)option.defaultValue).booleanValue());
+					defaultValue = Boolean.valueOf(((Boolean)option.defaultValue).booleanValue());
 				}
 				break;
 			case STRING:
@@ -364,7 +364,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// isAbstract
 		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 		if (isAbs != null){
-			isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+			isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
 		}
 
 		// Get the command defined for the option
@@ -382,7 +382,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// isForScannerDiscovery
 		String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
 		if (isForSD != null){
-			isForScannerDiscovery = new Boolean("true".equals(isForSD)); //$NON-NLS-1$
+			isForScannerDiscovery = Boolean.valueOf("true".equals(isForSD)); //$NON-NLS-1$
 		}
 
 		// Get the tooltip for the option
@@ -506,7 +506,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
 			}
 		}
 
@@ -524,7 +524,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (element.getAttribute(USE_BY_SCANNER_DISCOVERY) != null) {
 			String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
 			if (isForSD != null){
-				isForScannerDiscovery = new Boolean("true".equals(isForSD)); //$NON-NLS-1$
+				isForScannerDiscovery = Boolean.valueOf("true".equals(isForSD)); //$NON-NLS-1$
 			}
 		}
 
@@ -551,10 +551,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			case BOOLEAN:
 				// Convert the string to a boolean
 				if (element.getAttribute(VALUE) != null) {
-					value = new Boolean(element.getAttribute(VALUE));
+					value = Boolean.valueOf(element.getAttribute(VALUE));
 				}
 				if (element.getAttribute(DEFAULT_VALUE) != null) {
-					defaultValue = new Boolean(element.getAttribute(DEFAULT_VALUE));
+					defaultValue = Boolean.valueOf(element.getAttribute(DEFAULT_VALUE));
 				}
 				break;
 			case STRING:
@@ -596,7 +596,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						}
 						getNameMap().put(optId, SafeStringInterner.safeIntern(configElement.getAttribute(NAME)));
 						if (configElement.getAttribute(IS_DEFAULT) != null) {
-							Boolean isDefault = new Boolean(configElement.getAttribute(IS_DEFAULT));
+							Boolean isDefault = Boolean.valueOf(configElement.getAttribute(IS_DEFAULT));
 							if (isDefault.booleanValue()) {
 								defaultValue = optId;
 							}
@@ -1277,7 +1277,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public boolean isForScannerDiscovery() {
 		if (isForScannerDiscovery == null) {
-			isForScannerDiscovery = new Boolean(superClass != null && superClass.isForScannerDiscovery());
+			isForScannerDiscovery = Boolean.valueOf(superClass != null && superClass.isForScannerDiscovery());
 		}
 		return isForScannerDiscovery;
 	}
@@ -1601,7 +1601,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				}
 				switch (valType) {
 				case BOOLEAN:
-					val = new Boolean(false);
+					val = Boolean.valueOf(false);
 					break;
 				case STRING:
 				case TREE:
@@ -1662,7 +1662,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				}
 				switch (valType) {
 				case BOOLEAN:
-					val = new Boolean(false);
+					val = Boolean.valueOf(false);
 					break;
 				case STRING:
 				case TREE:
@@ -1906,7 +1906,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public void setValue(boolean value) throws BuildException {
 		if (/*!isExtensionElement() && */getValueType() == BOOLEAN){
-			this.value = new Boolean(value);
+			this.value = Boolean.valueOf(value);
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
@@ -2196,11 +2196,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					// Convert the string to a boolean
 					String val = element.getAttribute(VALUE);
 					if (val != null) {
-						value = new Boolean(val);
+						value = Boolean.valueOf(val);
 					}
 					val = element.getAttribute(DEFAULT_VALUE);
 					if (val != null) {
-						defaultValue = new Boolean(val);
+						defaultValue = Boolean.valueOf(val);
 					}
 					break;
 				case STRING:
@@ -2226,7 +2226,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						applicableValuesList.add(optId);
 						getCommandMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(COMMAND)));
 						getNameMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(NAME)));
-						Boolean isDefault = new Boolean(enumElements[i].getAttribute(IS_DEFAULT));
+						Boolean isDefault = Boolean.valueOf(enumElements[i].getAttribute(IS_DEFAULT));
 						if (isDefault.booleanValue()) {
 							defaultValue = optId;
 						}

@@ -156,7 +156,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			errorParserIds = new String(targetPlatform.errorParserIds);
 		}
 		if (targetPlatform.isAbstract != null) {
-			isAbstract = new Boolean(targetPlatform.isAbstract.booleanValue());
+			isAbstract = Boolean.valueOf(targetPlatform.isAbstract.booleanValue());
 		}
 		if (targetPlatform.osList != null) {
 			osList = new ArrayList<String>(targetPlatform.osList);
@@ -199,7 +199,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
         }
 
 		// Get the comma-separated list of valid OS
@@ -267,7 +267,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
 			}
 		}
 
@@ -527,7 +527,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 */
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = new Boolean(b);
+		isAbstract = Boolean.valueOf(b);
 		setDirty(true);
 	}
 

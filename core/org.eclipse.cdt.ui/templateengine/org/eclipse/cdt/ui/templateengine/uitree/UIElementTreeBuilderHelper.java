@@ -105,7 +105,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 			return null;
 		}
 
-		if (new Boolean(uiAttributes.get(InputUIElement.HIDDEN)).booleanValue()) {
+		if (Boolean.valueOf(uiAttributes.get(InputUIElement.HIDDEN)).booleanValue()) {
 			return null;
 		}
 

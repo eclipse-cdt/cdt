@@ -336,7 +336,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			propagate(parent, option,
 					(oldVal ? Boolean.TRUE : Boolean.FALSE),
 					(value  ? Boolean.TRUE : Boolean.FALSE));
-			NotificationManager.getInstance().optionChanged(this, parent, option, new Boolean(oldVal));
+			NotificationManager.getInstance().optionChanged(this, parent, option, Boolean.valueOf(oldVal));
 		}
 		return retOpt;
 	}

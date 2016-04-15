@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -26,9 +25,9 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
-
 /**
- * A toolbar action which toggles the {@linkplain org.eclipse.cdt.ui.PreferenceConstants#EDITOR_MARK_OCCURRENCES mark occurrences preference}.
+ * A toolbar action which toggles the
+ * {@linkplain org.eclipse.cdt.ui.PreferenceConstants#EDITOR_MARK_OCCURRENCES mark occurrences preference}.
  *
  * @since 5.0
  */
@@ -46,17 +45,11 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 		update();
 	}
 
-	/*
-	 * @see IAction#actionPerformed
-	 */
 	@Override
 	public void run() {
 		fStore.setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, isChecked());
 	}
 
-	/*
-	 * @see TextEditorAction#update
-	 */
 	@Override
 	public void update() {
 		ITextEditor editor= getTextEditor();
@@ -69,21 +62,15 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 		setEnabled(editor != null);
 	}
 
-	/*
-	 * @see TextEditorAction#setEditor(ITextEditor)
-	 */
 	@Override
 	public void setEditor(ITextEditor editor) {
-
 		super.setEditor(editor);
 
 		if (editor != null) {
-
 			if (fStore == null) {
 				fStore= CUIPlugin.getDefault().getPreferenceStore();
 				fStore.addPropertyChangeListener(this);
 			}
-
 		} else if (fStore != null) {
 			fStore.removePropertyChangeListener(this);
 			fStore= null;
@@ -92,12 +79,9 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 		update();
 	}
 
-	/*
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.EDITOR_MARK_OCCURRENCES))
-			setChecked(Boolean.valueOf(event.getNewValue().toString()).booleanValue());
+			setChecked(Boolean.parseBoolean(event.getNewValue().toString()));
 	}
 }

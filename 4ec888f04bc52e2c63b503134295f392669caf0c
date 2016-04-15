@@ -22,6 +22,193 @@
       "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_aabde800",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "I suspect I can get rid of this cast here",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_cac7948a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "Ditto",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_eac29079",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "Ditto",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_0acedca6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "Ditto",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_4adb8462",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "Should this use Boolean.valueOf() instead? It supports case insensitive comparisons though but might be cleaner.",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8ad10c41",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6868,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "Suspect this can be replaced with 4L but since it\u0027s an in an assertion didn\u0027t want to change it",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_aad4082f",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/BTreeTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "NB it\u0027s not safe to use this as \u0027int\u0027 because the remove also takes an int argument which is the index",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_eae9b0f3",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/settings/model/util/SettingsSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "This can probably be replaced with a 1",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2ae0f802",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/BTree.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 667,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "Since this is just in a message format, I\u0027m fairly sure we could replace this with node, indexFirstBlankKey, indexLastNonBlankKey",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8a0cac7b",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/coff/Exe.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "shorts will be automatically promoted to a long value here",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_caf954bb",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/CView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 994,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:21:59Z",
+      "side": 1,
+      "message": "There are two lines that are repeated here. It looks like a mistake to me. Should these lines be deleted?",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

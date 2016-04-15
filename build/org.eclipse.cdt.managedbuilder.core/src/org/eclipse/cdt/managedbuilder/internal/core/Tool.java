@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2013 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$
 	//private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
 	//private static final IOption[] EMPTY_OPTIONS = new IOption[0];
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String EMPTY_QUOTED_STRING = "\"\""; //$NON-NLS-1$
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final String DEFAULT_ANNOUNCEMENT_PREFIX = "Tool.default.announcement";	//$NON-NLS-1$
@@ -396,25 +396,25 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 		//  Copy the remaining attributes
 		if(tool.versionsSupported != null) {
-			versionsSupported = new String(tool.versionsSupported);
+			versionsSupported = tool.versionsSupported;
 		}
 		if(tool.convertToId != null) {
-			convertToId = new String(tool.convertToId);
+			convertToId = tool.convertToId;
 		}
 		if (tool.unusedChildren != null) {
-			unusedChildren = new String(tool.unusedChildren);
+			unusedChildren = tool.unusedChildren;
 		}
 		if (tool.errorParserIds != null) {
-			errorParserIds = new String(tool.errorParserIds);
+			errorParserIds = tool.errorParserIds;
 		}
 		if (tool.isAbstract != null) {
-			isAbstract = Boolean.valueOf(tool.isAbstract.booleanValue());
+			isAbstract = tool.isAbstract;
 		}
 		if (tool.command != null) {
-			command = new String(tool.command);
+			command = tool.command;
 		}
 		if (tool.commandLinePattern != null) {
-			commandLinePattern = new String(tool.commandLinePattern);
+			commandLinePattern = tool.commandLinePattern;
 		}
 		if (tool.inputExtensions != null) {
 			inputExtensions = new ArrayList<String>(tool.inputExtensions);
@@ -423,25 +423,25 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			interfaceExtensions = new ArrayList<String>(tool.interfaceExtensions);
 		}
 		if (tool.natureFilter != null) {
-			natureFilter = new Integer(tool.natureFilter.intValue());
+			natureFilter = tool.natureFilter;
 		}
 		if (tool.outputExtensions != null) {
-			outputExtensions = new String(tool.outputExtensions);
+			outputExtensions = tool.outputExtensions;
 		}
 		if (tool.outputFlag != null) {
-			outputFlag = new String(tool.outputFlag);
+			outputFlag = tool.outputFlag;
 		}
 		if (tool.outputPrefix != null) {
-			outputPrefix = new String(tool.outputPrefix);
+			outputPrefix = tool.outputPrefix;
 		}
 		if (tool.advancedInputCategory != null) {
-			advancedInputCategory = Boolean.valueOf(tool.advancedInputCategory.booleanValue());
+			advancedInputCategory = tool.advancedInputCategory;
 		}
 		if (tool.customBuildStep != null) {
-			customBuildStep = Boolean.valueOf(tool.customBuildStep.booleanValue());
+			customBuildStep = tool.customBuildStep;
 		}
 		if (tool.announcement != null) {
-			announcement = new String(tool.announcement);
+			announcement = tool.announcement;
 		}
 		if (tool.isHidden != null) {
 			isHidden = tool.isHidden;
@@ -701,7 +701,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = "true".equals(isAbs); //$NON-NLS-1$
         }
 
 		// Get the semicolon separated list of IDs of the error parsers
@@ -711,13 +711,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		String nature = element.getAttribute(NATURE);
 		if (nature != null) {
 			if ("both".equals(nature)) {	//$NON-NLS-1$
-				natureFilter = new Integer(FILTER_BOTH);
+				natureFilter = FILTER_BOTH;
 			} else if ("cnature".equals(nature)) {	//$NON-NLS-1$
-				natureFilter = new Integer(FILTER_C);
+				natureFilter = FILTER_C;
 			} else if ("ccnature".equals(nature)) {	//$NON-NLS-1$
-				natureFilter = new Integer(FILTER_CC);
+				natureFilter = FILTER_CC;
 			} else {
-				natureFilter = new Integer(FILTER_BOTH);
+				natureFilter = FILTER_BOTH;
 			}
 		}
 
@@ -757,13 +757,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		// Get advancedInputCategory
         String advInput = element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY);
         if (advInput != null){
-			advancedInputCategory = Boolean.valueOf("true".equals(advInput)); //$NON-NLS-1$
+			advancedInputCategory = "true".equals(advInput); //$NON-NLS-1$
         }
 
 		// Get customBuildStep
         String cbs = element.getAttribute(ITool.CUSTOM_BUILD_STEP);
         if (cbs != null){
-			customBuildStep = Boolean.valueOf("true".equals(cbs)); //$NON-NLS-1$
+			customBuildStep = "true".equals(cbs); //$NON-NLS-1$
         }
 
 		// Get the announcement text
@@ -842,7 +842,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = "true".equals(isAbs); //$NON-NLS-1$
 			}
 		}
 
@@ -866,13 +866,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			String nature = element.getAttribute(NATURE);
 			if (nature != null) {
 				if ("both".equals(nature)) {	//$NON-NLS-1$
-					natureFilter = new Integer(FILTER_BOTH);
+					natureFilter = FILTER_BOTH;
 				} else if ("cnature".equals(nature)) {	//$NON-NLS-1$
-					natureFilter = new Integer(FILTER_C);
+					natureFilter = FILTER_C;
 				} else if ("ccnature".equals(nature)) {	//$NON-NLS-1$
-					natureFilter = new Integer(FILTER_CC);
+					natureFilter = FILTER_CC;
 				} else {
-					natureFilter = new Integer(FILTER_BOTH);
+					natureFilter = FILTER_BOTH;
 				}
 			}
 		}
@@ -928,7 +928,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY) != null) {
 			String advInput = element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY);
 			if (advInput != null){
-				advancedInputCategory = Boolean.valueOf("true".equals(advInput)); //$NON-NLS-1$
+				advancedInputCategory = "true".equals(advInput); //$NON-NLS-1$
 			}
 		}
 
@@ -936,7 +936,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(ITool.CUSTOM_BUILD_STEP) != null) {
 			String cbs = element.getAttribute(ITool.CUSTOM_BUILD_STEP);
 			if (cbs != null){
-				customBuildStep = Boolean.valueOf("true".equals(cbs)); //$NON-NLS-1$
+				customBuildStep = "true".equals(cbs); //$NON-NLS-1$
 			}
 		}
 
@@ -1673,7 +1673,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 */
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = Boolean.valueOf(b);
+		isAbstract = b;
 		setDirty(true);
 	}
 
@@ -2081,9 +2081,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				return getSuperClass().getCommandLinePattern();
 			} else {
 				if (getCustomBuildStep()) {
-					return new String(DEFAULT_CBS_PATTERN);  // Default pattern
+					return DEFAULT_CBS_PATTERN;  // Default pattern
 				} else {
-					return new String(DEFAULT_PATTERN);  // Default pattern
+					return DEFAULT_PATTERN;  // Default pattern
 				}
 			}
 		}
@@ -2530,7 +2530,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	@Override
 	public void setAdvancedInputCategory(boolean b) {
 		if (advancedInputCategory == null || !(b == advancedInputCategory.booleanValue())) {
-			advancedInputCategory = Boolean.valueOf(b);
+			advancedInputCategory = b;
 			setDirty(true);
 		}
 	}
@@ -2541,7 +2541,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	@Override
 	public void setCustomBuildStep(boolean b) {
 		if (customBuildStep == null || !(b == customBuildStep.booleanValue())) {
-			customBuildStep = Boolean.valueOf(b);
+			customBuildStep = b;
 			setDirty(true);
 		}
 	}
@@ -3087,7 +3087,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	    }
 	    if (found)
 	    	return ret.trim();
-    	return (new String(command + values)).trim();
+    	return (command + values).trim();
 	}
 
 	/* (non-Javadoc)

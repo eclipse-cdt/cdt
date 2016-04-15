@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -278,7 +278,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			errorParserIds = builder.errorParserIds;
 		}
 		if (builder.isAbstract != null) {
-			isAbstract = builder.isAbstract.booleanValue();
+			isAbstract = builder.isAbstract;
 		}
 		if (builder.command != null) {
 			command = builder.command;
@@ -314,7 +314,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		builderVariablePattern = builder.builderVariablePattern;
 		
 		if (builder.isVariableCaseSensitive != null)
-			isVariableCaseSensitive = Boolean.valueOf(builder.isVariableCaseSensitive.booleanValue());
+			isVariableCaseSensitive = builder.isVariableCaseSensitive;
 
 		if (builder.reservedMacroNames != null)
 			reservedMacroNames = builder.reservedMacroNames.clone();
@@ -476,7 +476,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		// get the 'isVariableCaseSensitive' attribute
 		String isCS = element.getAttribute(IS_VARIABLE_CASE_SENSITIVE);
 		if(isCS != null)
-			isVariableCaseSensitive = Boolean.valueOf("true".equals(isCS)); //$NON-NLS-1$
+			isVariableCaseSensitive = "true".equals(isCS); //$NON-NLS-1$
 
 		// get the reserved macro names
 		String reservedNames = element.getAttribute(RESERVED_MACRO_NAMES);
@@ -495,7 +495,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = "true".equals(isAbs); //$NON-NLS-1$
         }
 
         // command
@@ -581,7 +581,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		
         tmp = element.getAttribute(IS_SYSTEM);
         if(tmp != null)
-        	isTest = Boolean.valueOf(tmp).booleanValue();
+        	isTest = Boolean.parseBoolean(tmp);
         
         IManagedConfigElement[] children = element.getChildren();
         for(int i = 0; i < children.length; i++){
@@ -704,7 +704,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = "true".equals(isAbs); //$NON-NLS-1$
 			}
 		}
 
@@ -1224,12 +1224,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 						int numEnd = numStart + PARALLEL_PATTERN_NUM.length();
 						numPrefix = numStr.substring(0, numStart);
 						numSuffix = numStr.substring(numEnd);
-						resolvedNum = numPrefix + new Integer(num).toString() + numSuffix;
+						resolvedNum = numPrefix + Integer.toString(num) + numSuffix;
 					} else {
 						resolvedNum = EMPTY_STRING;
 					}
 				} else {
-					resolvedNum = new Integer(num).toString();
+					resolvedNum = Integer.toString(num);
 				}
 				result = prefix + resolvedNum + suffix;
 			}
@@ -1328,7 +1328,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = Boolean.valueOf(b);
+		isAbstract = b;
 		setDirty(true);
 	}
 	
@@ -1931,7 +1931,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			String updatedArgs = removeCmd(args, curCmd);
 			if(!updatedArgs.equals(args))
 				setArgumentsAttribute(updatedArgs);
-			stopOnErr = Boolean.valueOf(on);
+			stopOnErr = on;
 		}
 		setDirty(true);
 	}
@@ -2079,7 +2079,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setAutoBuildEnable(boolean enabled) throws CoreException {
-		autoBuildEnabled = Boolean.valueOf(enabled);
+		autoBuildEnabled = enabled;
 	}
 
 	@Override
@@ -2089,7 +2089,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setCleanBuildEnable(boolean enabled) throws CoreException {
-		cleanBuildEnabled = Boolean.valueOf(enabled);
+		cleanBuildEnabled = enabled;
 	}
 
 	@Override
@@ -2109,7 +2109,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setIncrementalBuildEnable(boolean enabled) throws CoreException {
-		incrementalBuildEnabled = Boolean.valueOf(enabled);
+		incrementalBuildEnabled = enabled;
 	}
 
 	@Override
@@ -2295,7 +2295,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setAppendEnvironment(boolean append) throws CoreException {
-		appendEnvironment = Boolean.valueOf(append);
+		appendEnvironment = append;
 	}
 
 	@Override
@@ -2320,7 +2320,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		} else if(BuilderFactory.STOP_ON_ERROR.equals(name)){
 			stopOnErr = Boolean.valueOf(value);
 		} else if(BuilderFactory.USE_DEFAULT_BUILD_CMD.equals(name)){
-			if(value == null || Boolean.valueOf(value).booleanValue()){
+			if(value == null || Boolean.parseBoolean(value)){
 				if(superClass != null)
 					command = null;
 			}
@@ -2412,7 +2412,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setManagedBuildOn(boolean on) throws CoreException {
-		managedBuildOn = Boolean.valueOf(on);
+		managedBuildOn = on;
 	}
 
 	@Override
@@ -2432,7 +2432,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setKeepEnvironmentVariablesInBuildfile(boolean keep) {
-		keepEnvVarInBuildfile = Boolean.valueOf(keep);
+		keepEnvVarInBuildfile = keep;
 	}
 
 	@Override
@@ -2440,9 +2440,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(fSupportsCustomizedBuild == null){
 			IManagedBuilderMakefileGenerator makeGen = getBuildFileGenerator();
 			if(makeGen instanceof IManagedBuilderMakefileGenerator2)
-				fSupportsCustomizedBuild = Boolean.valueOf(true);
+				fSupportsCustomizedBuild = true;
 			else
-				fSupportsCustomizedBuild = Boolean.valueOf(false);
+				fSupportsCustomizedBuild = false;
 		}
 		return fSupportsCustomizedBuild.booleanValue();
 	}

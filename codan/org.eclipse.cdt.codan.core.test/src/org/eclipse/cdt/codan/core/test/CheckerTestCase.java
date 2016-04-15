@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Alena Laskavaia
+ * Copyright (c) 2009, 2016 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class CheckerTestCase extends CodanTestCase {
 			line = (Integer) m.getAttribute(IMarker.LINE_NUMBER);
 			if (line == null || line.equals(-1)) {
 				Object pos = m.getAttribute(IMarker.CHAR_START);
-				line = new Integer(pos2line(((Integer) pos).intValue()));
+				line = pos2line(((Integer) pos).intValue());
 			}
 		} catch (CoreException e) {
 			fail(e.getMessage());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 QNX Software Systems and others.
+ * Copyright (c) 2006, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,18 +103,18 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 
 	// These must be in the same order as the Text
 	private static final Integer[] searchForData = {
-		new Integer(CSearchPatternQuery.FIND_CLASS_STRUCT),
-		new Integer(CSearchPatternQuery.FIND_FUNCTION),
-		new Integer(CSearchPatternQuery.FIND_VARIABLE),
-		new Integer(CSearchPatternQuery.FIND_UNION),
-		new Integer(CSearchPatternQuery.FIND_METHOD),
-		new Integer(CSearchPatternQuery.FIND_FIELD),
-		new Integer(CSearchPatternQuery.FIND_ENUM),
-		new Integer(CSearchPatternQuery.FIND_ENUMERATOR),
-		new Integer(CSearchPatternQuery.FIND_NAMESPACE),
-		new Integer(CSearchPatternQuery.FIND_TYPEDEF),
-		new Integer(CSearchPatternQuery.FIND_MACRO),
-		new Integer(CSearchPatternQuery.FIND_ALL_TYPES)
+		CSearchPatternQuery.FIND_CLASS_STRUCT,
+		CSearchPatternQuery.FIND_FUNCTION,
+		CSearchPatternQuery.FIND_VARIABLE,
+		CSearchPatternQuery.FIND_UNION,
+		CSearchPatternQuery.FIND_METHOD,
+		CSearchPatternQuery.FIND_FIELD,
+		CSearchPatternQuery.FIND_ENUM,
+		CSearchPatternQuery.FIND_ENUMERATOR,
+		CSearchPatternQuery.FIND_NAMESPACE,
+		CSearchPatternQuery.FIND_TYPEDEF,
+		CSearchPatternQuery.FIND_MACRO,
+		CSearchPatternQuery.FIND_ALL_TYPE)
 	};
 	
 	// the index of FIND_ALL_TYPES
@@ -129,10 +129,10 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 
 	// Must be in the same order as the text
 	private static Integer[] limitToData = {
-		new Integer(CSearchQuery.FIND_DECLARATIONS),
-		new Integer(CSearchQuery.FIND_DEFINITIONS),
-		new Integer(CSearchQuery.FIND_REFERENCES),
-		new Integer(CSearchQuery.FIND_ALL_OCCURRENCES),
+		CSearchQuery.FIND_DECLARATIONS,
+		CSearchQuery.FIND_DEFINITIONS,
+		CSearchQuery.FIND_REFERENCES,
+		CSearchQuery.FIND_ALL_OCCURRENCES,
 	};
 	
 	// The index of FIND_ALL_OCCURANCES

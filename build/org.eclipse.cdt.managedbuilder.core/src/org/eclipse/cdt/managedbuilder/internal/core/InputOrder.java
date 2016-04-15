@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public class InputOrder implements IInputOrder {
 		}
 
 		if (inputOrder.fExcluded != null) {
-			fExcluded = inputOrder.fExcluded.booleanValue();
+			fExcluded = inputOrder.fExcluded;
 		}
 
 		setDirty(true);

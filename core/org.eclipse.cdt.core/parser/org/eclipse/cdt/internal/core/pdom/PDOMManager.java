@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1185,8 +1185,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 
 		String msg= MessageFormat.format(Messages.PDOMManager_indexMonitorDetail, new Object[] {
-					new Integer(sourceCount), new Integer(sourceEstimate),
-					new Integer(headerCount)});
+					Integer.valueOf(sourceCount), Integer.valueOf(sourceEstimate),
+					Integer.valueOf(headerCount)});
 		if (detail != null) {
 			msg += ": " + detail;  //$NON-NLS-1$
 		}

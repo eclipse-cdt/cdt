@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ import org.osgi.framework.Version;
 public class InputType extends BuildObject implements IInputType {
 
 	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//  Superclass
 	private IInputType superClass;
@@ -262,10 +262,10 @@ public class InputType extends BuildObject implements IInputType {
 			buildVariable = inputType.buildVariable;
 		}
 		if (inputType.multipleOfType != null) {
-			multipleOfType = inputType.multipleOfType.booleanValue();
+			multipleOfType = inputType.multipleOfType;
 		}
 		if (inputType.primaryInput != null) {
-			primaryInput = inputType.primaryInput.booleanValue();
+			primaryInput = inputType.primaryInput;
 		}
 		dependencyGeneratorElement = inputType.dependencyGeneratorElement;
 		dependencyGenerator = inputType.dependencyGenerator;
@@ -397,13 +397,13 @@ public class InputType extends BuildObject implements IInputType {
 		// multipleOfType
         String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
         if (isMOT != null){
-    		multipleOfType = Boolean.valueOf("true".equals(isMOT)); //$NON-NLS-1$
+    		multipleOfType = "true".equals(isMOT); //$NON-NLS-1$
         }
 
 		// primaryInput
         String isPI = element.getAttribute(IInputType.PRIMARY_INPUT);
         if (isPI != null){
-			primaryInput = Boolean.valueOf("true".equals(isPI)); //$NON-NLS-1$
+			primaryInput = "true".equals(isPI); //$NON-NLS-1$
         }
 
 		// buildVariable
@@ -577,7 +577,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (element.getAttribute(IInputType.MULTIPLE_OF_TYPE) != null) {
 			String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
 			if (isMOT != null){
-				multipleOfType = Boolean.valueOf("true".equals(isMOT)); //$NON-NLS-1$
+				multipleOfType = "true".equals(isMOT); //$NON-NLS-1$
 			}
 		}
 
@@ -585,7 +585,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (element.getAttribute(IInputType.PRIMARY_INPUT) != null) {
 	        String isPI = element.getAttribute(IInputType.PRIMARY_INPUT);
 	        if (isPI != null){
-				primaryInput = Boolean.valueOf("true".equals(isPI)); //$NON-NLS-1$
+				primaryInput = "true".equals(isPI); //$NON-NLS-1$
 	        }
 		}
 
@@ -1158,7 +1158,7 @@ public class InputType extends BuildObject implements IInputType {
 	@Override
 	public void setMultipleOfType(boolean b) {
 		if (multipleOfType == null || !(b == multipleOfType.booleanValue())) {
-			multipleOfType = Boolean.valueOf(b);
+			multipleOfType = b;
 			setDirty(true);
 			setRebuildState(true);
 		}
@@ -1185,7 +1185,7 @@ public class InputType extends BuildObject implements IInputType {
 	@Override
 	public void setPrimaryInput(boolean b) {
 		if (primaryInput == null || !(b == primaryInput.booleanValue())) {
-			primaryInput = Boolean.valueOf(b);
+			primaryInput = b;
 			setDirty(true);
 			setRebuildState(true);
 		}

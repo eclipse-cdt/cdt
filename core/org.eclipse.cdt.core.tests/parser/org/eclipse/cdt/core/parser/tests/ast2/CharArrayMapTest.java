@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -288,85 +288,85 @@ public class CharArrayMapTest extends TestCase {
 		try {
 			map.put(null, value);
 			fail();
-		} catch(NullPointerException _) {}
+		} catch(NullPointerException e) {}
 
 		try {
 			map.put(hello, -1, 5, value);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.put(hello, 0, -1, value);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.put(hello, 0, 100, value);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.get(null);
 			fail();
-		} catch(NullPointerException _) {}
+		} catch(NullPointerException e) {}
 
 		try {
 			map.get(hello, -1, 5);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.get(hello, 0, -1);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.get(hello, 0, 100);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.remove(null);
 			fail();
-		} catch(NullPointerException _) {}
+		} catch(NullPointerException e) {}
 
 		try {
 			map.remove(hello, -1, 5);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.remove(hello, 0, -1);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.remove(hello, 0, 100);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.containsKey(null);
 			fail();
-		} catch(NullPointerException _) {}
+		} catch(NullPointerException e) {}
 
 		try {
 			map.containsKey(hello, -1, 5);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.containsKey(hello, 0, -1);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			map.containsKey(hello, 0, 100);
 			fail();
-		} catch(IndexOutOfBoundsException _) {}
+		} catch(IndexOutOfBoundsException e) {}
 
 		try {
 			new CharArrayMap<Integer>(-1);
-		} catch(IllegalArgumentException _) {}
+		} catch(IllegalArgumentException e) {}
 	}
 }

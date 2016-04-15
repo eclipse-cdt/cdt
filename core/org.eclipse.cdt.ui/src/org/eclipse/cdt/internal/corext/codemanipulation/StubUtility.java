@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2015 IBM Corporation and others.
+ * Copyright (c) 2001, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -471,7 +471,7 @@ public class StubUtility {
 					IRegion lineInfo= doc.getLineInformation(line);
 					int offset= lineInfo.getOffset();
 					String str= doc.get(offset, lineInfo.getLength());
-					if (Strings.containsOnlyWhitespaces(str) && nLines > line + 1 && removedLines.add(new Integer(line))) {
+					if (Strings.containsOnlyWhitespaces(str) && nLines > line + 1 && removedLines.add(Integer.valueOf(line))) {
 						int nextStart= doc.getLineOffset(line + 1);
 						int length= nextStart - offset;
 						edit.addChild(new DeleteEdit(offset, length));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		};
 		fUnrefJob.setSystem(true);
-		fTrace= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/resourceLookup"));  //$NON-NLS-1$//$NON-NLS-2$
+		fTrace= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/resourceLookup"));  //$NON-NLS-1$
 	}
 
 	public void startup() {

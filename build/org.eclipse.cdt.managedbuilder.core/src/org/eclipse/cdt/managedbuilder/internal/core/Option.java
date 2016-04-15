@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2013 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ import org.osgi.framework.Version;
 
 public class Option extends BuildObject implements IOption, IBuildPropertiesRestriction {
 	// Static default return values
-	public static final String EMPTY_STRING = new String().intern();
+	public static final String EMPTY_STRING = "";
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	public static final OptionStringValue[] EMPTY_LV_ARRAY = new OptionStringValue[0];
 
@@ -199,34 +199,34 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		//  Copy the remaining attributes
 		if (option.unusedChildren != null) {
-			unusedChildren = new String(option.unusedChildren);
+			unusedChildren = option.unusedChildren;
 		}
 		if (option.isAbstract != null) {
-			isAbstract = Boolean.valueOf(option.isAbstract.booleanValue());
+			isAbstract = option.isAbstract;
 		}
 		if (option.command != null) {
-			command = new String(option.command);
+			command = option.command;
 		}
 		if (option.commandFalse != null) {
-			commandFalse = new String(option.commandFalse);
+			commandFalse = option.commandFalse;
 		}
 		if (option.isForScannerDiscovery != null) {
-			isForScannerDiscovery = Boolean.valueOf(option.isForScannerDiscovery.booleanValue());
+			isForScannerDiscovery = option.isForScannerDiscovery;
 		}
 		if (option.tip != null) {
-			tip = new String(option.tip);
+			tip = option.tip;
 		}
 		if (option.contextId != null) {
-			contextId = new String(option.contextId);
+			contextId = option.contextId;
 		}
 		if (option.categoryId != null) {
-			categoryId = new String(option.categoryId);
+			categoryId = option.categoryId;
 		}
 		if (option.builtIns != null) {
 			builtIns = new ArrayList<OptionStringValue>(option.builtIns);
 		}
 		if (option.browseType != null) {
-			browseType = new Integer(option.browseType.intValue());
+			browseType = option.browseType;
 		}
 		if (option.browseFilterPath != null) {
 			browseFilterPath = option.browseFilterPath;
@@ -235,7 +235,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			browseFilterExtensions = option.browseFilterExtensions.clone();
 		}
 		if (option.resourceFilter != null) {
-			resourceFilter = new Integer(option.resourceFilter.intValue());
+			resourceFilter = option.resourceFilter;
 		}
 		if (option.applicableValuesList != null) {
 			applicableValuesList = new ArrayList<String>(option.applicableValuesList);
@@ -247,28 +247,27 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 
 		if (option.valueType != null) {
-			valueType = new Integer(option.valueType.intValue());
+			valueType = option.valueType;
 		}
-		Integer vType = null;
 		try {
-			vType = new Integer(option.getValueType());
-			switch (vType.intValue()) {
+			int vType = option.getValueType();
+			switch (vType) {
 			case BOOLEAN:
 				if (option.value != null) {
-					value = Boolean.valueOf(((Boolean)option.value).booleanValue());
+					value = (Boolean)option.value;
 				}
 				if (option.defaultValue != null) {
-					defaultValue = Boolean.valueOf(((Boolean)option.defaultValue).booleanValue());
+					defaultValue = (Boolean)option.defaultValue;
 				}
 				break;
 			case STRING:
 			case ENUMERATED:
 			case TREE:
 				if (option.value != null) {
-					value = new String((String)option.value);
+					value = (String)option.value;
 				}
 				if (option.defaultValue != null) {
-					defaultValue = new String((String)option.defaultValue);
+					defaultValue = (String)option.defaultValue;
 				}
 				break;
 			case STRING_LIST:
@@ -317,14 +316,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			valueHandler = option.valueHandler;
 		}
 		if (option.valueHandlerExtraArgument != null) {
-			valueHandlerExtraArgument = new String(option.valueHandlerExtraArgument);
+			valueHandlerExtraArgument = option.valueHandlerExtraArgument;
 		}
 
 		if (option.fieldEditorId != null) {
 			fieldEditorId = option.fieldEditorId;
 		}
 		if (option.fieldEditorExtraArgument != null) {
-			fieldEditorExtraArgument = new String(option.fieldEditorExtraArgument);
+			fieldEditorExtraArgument = option.fieldEditorExtraArgument;
 		}
 
 		if(copyIds){
@@ -364,7 +363,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// isAbstract
 		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 		if (isAbs != null){
-			isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+			isAbstract = Boolean.parseBoolean(isAbs);
 		}
 
 		// Get the command defined for the option
@@ -382,7 +381,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// isForScannerDiscovery
 		String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
 		if (isForSD != null){
-			isForScannerDiscovery = Boolean.valueOf("true".equals(isForSD)); //$NON-NLS-1$
+			isForScannerDiscovery = Boolean.parseBoolean(isForSD);
 		}
 
 		// Get the tooltip for the option
@@ -394,7 +393,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Options hold different types of values
 		String valueTypeStr = element.getAttribute(VALUE_TYPE);
 		if (valueTypeStr != null) {
-			valueType = new Integer(ValueTypeStrToInt(valueTypeStr));
+			valueType = Integer.valueOf(ValueTypeStrToInt(valueTypeStr));
 		}
 
 		// Note: The value and defaultValue attributes are loaded in the resolveReferences routine.
@@ -410,11 +409,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			// which they should be
 			browseType = null;
 		} else if (browseTypeStr.equals(NONE)) {
-			browseType = new Integer(BROWSE_NONE);
+			browseType = BROWSE_NONE;
 		} else if (browseTypeStr.equals(FILE)) {
-			browseType = new Integer(BROWSE_FILE);
+			browseType = BROWSE_FILE;
 		} else if (browseTypeStr.equals(DIR)) {
-			browseType = new Integer(BROWSE_DIR);
+			browseType = BROWSE_DIR;
 		}
 
 		// Get the browseFilterPath attribute
@@ -437,11 +436,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			// which they should be
 			resourceFilter = null;
 		} else if (resFilterStr.equals(ALL)) {
-			resourceFilter = new Integer(FILTER_ALL);
+			resourceFilter = FILTER_ALL;
 		} else if (resFilterStr.equals(FILE)) {
-			resourceFilter = new Integer(FILTER_FILE);
+			resourceFilter = FILTER_FILE;
 		} else if (resFilterStr.equals(PROJECT)) {
-			resourceFilter = new Integer(FILTER_PROJECT);
+			resourceFilter = FILTER_PROJECT;
 		}
 
 		//get enablements
@@ -506,7 +505,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.parseBoolean(isAbs);
 			}
 		}
 
@@ -524,7 +523,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (element.getAttribute(USE_BY_SCANNER_DISCOVERY) != null) {
 			String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
 			if (isForSD != null){
-				isForScannerDiscovery = Boolean.valueOf("true".equals(isForSD)); //$NON-NLS-1$
+				isForScannerDiscovery = Boolean.parseBoolean(isForSD);
 			}
 		}
 
@@ -541,7 +540,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Options hold different types of values
 		if (element.getAttribute(VALUE_TYPE) != null) {
 			String valueTypeStr = element.getAttribute(VALUE_TYPE);
-			valueType = new Integer(ValueTypeStrToInt(valueTypeStr));
+			valueType = Integer.valueOf(ValueTypeStrToInt(valueTypeStr));
 		}
 
 		// Now get the actual value based upon value-type
@@ -680,11 +679,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				// which they should be
 				browseType = null;
 			} else if (browseTypeStr.equals(NONE)) {
-				browseType = new Integer(BROWSE_NONE);
+				browseType = BROWSE_NONE;
 			} else if (browseTypeStr.equals(FILE)) {
-				browseType = new Integer(BROWSE_FILE);
+				browseType = BROWSE_FILE;
 			} else if (browseTypeStr.equals(DIR)) {
-				browseType = new Integer(BROWSE_DIR);
+				browseType = BROWSE_DIR;
 			}
 		}
 
@@ -718,11 +717,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				// which they should be
 				resourceFilter = null;
 			} else if (resFilterStr.equals(ALL)) {
-				resourceFilter = new Integer(FILTER_ALL);
+				resourceFilter = FILTER_ALL;
 			} else if (resFilterStr.equals(FILE)) {
-				resourceFilter = new Integer(FILTER_FILE);
+				resourceFilter = FILTER_FILE;
 			} else if (resFilterStr.equals(PROJECT)) {
-				resourceFilter = new Integer(FILTER_PROJECT);
+				resourceFilter = FILTER_PROJECT;
 			}
 		}
 
@@ -1277,7 +1276,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public boolean isForScannerDiscovery() {
 		if (isForScannerDiscovery == null) {
-			isForScannerDiscovery = Boolean.valueOf(superClass != null && superClass.isForScannerDiscovery());
+			isForScannerDiscovery = superClass != null && superClass.isForScannerDiscovery();
 		}
 		return isForScannerDiscovery;
 	}
@@ -1601,7 +1600,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				}
 				switch (valType) {
 				case BOOLEAN:
-					val = Boolean.valueOf(false);
+					val = Boolean.FALSE;
 					break;
 				case STRING:
 				case TREE:
@@ -1662,7 +1661,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				}
 				switch (valType) {
 				case BOOLEAN:
-					val = Boolean.valueOf(false);
+					val = Boolean.FALSE;
 					break;
 				case STRING:
 				case TREE:
@@ -1862,7 +1861,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public void setResourceFilter(int filter) {
 		if (resourceFilter == null || !(filter == resourceFilter.intValue())) {
-			resourceFilter = new Integer(filter);
+			resourceFilter = Integer.valueOf(filter);
 			if(!isExtensionElement()){
 				isDirty = true;
 				rebuildState = true;
@@ -1873,7 +1872,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public void setBrowseType(int type) {
 		if (browseType == null || !(type == browseType.intValue())) {
-			browseType = new Integer(type);
+			browseType = Integer.valueOf(type);
 			if(!isExtensionElement()){
 				isDirty = true;
 				rebuildState = true;
@@ -1906,7 +1905,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public void setValue(boolean value) throws BuildException {
 		if (/*!isExtensionElement() && */getValueType() == BOOLEAN){
-			this.value = Boolean.valueOf(value);
+			this.value = value;
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
@@ -2020,7 +2019,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public void setValueType(int type) {
 		// TODO:  Verify that this is a valid type
 		if (valueType == null || valueType.intValue() != type) {
-			valueType = new Integer(type);
+			valueType = Integer.valueOf(type);
 			if(!isExtensionElement()){
 				setDirty(true);
 				rebuildState = true;

@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * Copyright (c) 2012, 2016 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +86,7 @@ import org.eclipse.cdt.internal.formatter.ChangeFormatter;
  */
 public class IncludeOrganizer {
 	private static boolean DEBUG_HEADER_SUBSTITUTION =
-			"true".equalsIgnoreCase(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/debug/includeOrganizer/headerSubstitution")); //$NON-NLS-1$ //$NON-NLS-2$
+			Boolean.parseBoolean(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/debug/includeOrganizer/headerSubstitution")); //$NON-NLS-1$
 
 	private static final Collator COLLATOR = Collator.getInstance();
 

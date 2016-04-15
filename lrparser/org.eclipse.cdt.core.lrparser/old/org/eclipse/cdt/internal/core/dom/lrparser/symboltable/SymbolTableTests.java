@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008 IBM Corporation and others.
+ *  Copyright (c) 2008, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class SymbolTableTests {//extends TestCase {
 		
 		// a new symbol table was created
 		assertFalse(st1.isEmpty());
-		assertEquals(new Integer(1), st1.lookup(KEYS[0]));
+		assertEquals(Integer.valueOf(1), st1.lookup(KEYS[0]));
 		
 		FunctionalMap<String,Integer> st2 = st1.insert(KEYS[1], 2);
 		FunctionalMap<String,Integer> st3 = st2.insert(KEYS[2], 3);
@@ -95,8 +95,8 @@ public class SymbolTableTests {//extends TestCase {
 		FunctionalMap<String,Integer> map2 = map1.insert(KEYS[5], 999);
 		FunctionalMap<String,Integer> map3 = map2.insert(KEYS[5], null);
 		
-		assertEquals(new Integer(5), map1.lookup(KEYS[5]));
-		assertEquals(new Integer(999), map2.lookup(KEYS[5]));
+		assertEquals(Integer.valueOf(5), map1.lookup(KEYS[5]));
+		assertEquals(Integer.valueOf(999), map2.lookup(KEYS[5]));
 		assertNull(map3.lookup(KEYS[5]));
 	}
 	

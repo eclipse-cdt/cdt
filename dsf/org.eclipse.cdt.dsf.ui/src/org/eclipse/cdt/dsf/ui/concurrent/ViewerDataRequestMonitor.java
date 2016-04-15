@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
     /**
      * Same as {@link DsfExecutable#DEBUG_MONITORS} 
      */
-    static private boolean DEBUG_MONITORS = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+    static private boolean DEBUG_MONITORS = DsfPlugin.DEBUG && Boolean.parseBoolean(
             Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$
     
 

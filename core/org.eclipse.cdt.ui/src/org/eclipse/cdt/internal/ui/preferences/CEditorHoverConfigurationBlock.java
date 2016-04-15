@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 QNX Software Systems and others.
+ * Copyright (c) 2002, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -532,7 +532,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		while (fStatus.isOK() && i < fHoverConfigs.length) {
 			if (fHoverConfigs[i].fIsEnabled) {
 				String label= getContributedHovers()[i].getLabel();
-				Integer stateMask= new Integer(fHoverConfigs[i].fStateMask);
+				Integer stateMask= fHoverConfigs[i].fStateMask;
 				if (fHoverConfigs[i].fStateMask == -1)
 					fStatus= new StatusInfo(IStatus.ERROR, NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_modifierIsNotValidForHover, new String[] {fHoverConfigs[i].fModifierString, label})); 
 				else if (stateMasks.containsKey(stateMask))

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ import org.eclipse.cdt.internal.ui.util.Messages;
  * @since 4.0
  */
 public class ContentAssistProcessor implements IContentAssistProcessor {
-	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/contentassist"));  //$NON-NLS-1$//$NON-NLS-2$
+	private static final boolean DEBUG= Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.ui/debug/contentassist"));  //$NON-NLS-1$
 
 	/**
 	 * Dialog settings key for the "all categories are disabled" warning dialog.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -570,7 +570,7 @@ public class PathEntryUtil {
 		try {
 			IMarker marker = project.createMarker(ICModelMarker.PATHENTRY_PROBLEM_MARKER);
 			marker.setAttributes(new String[]{IMarker.MESSAGE, IMarker.SEVERITY, IMarker.LOCATION,
-					ICModelMarker.PATHENTRY_FILE_FORMAT,}, new Object[]{status.getMessage(), new Integer(severity), "pathentry",//$NON-NLS-1$
+					ICModelMarker.PATHENTRY_FILE_FORMAT,}, new Object[]{status.getMessage(), Integer.valueOf(severity), "pathentry",//$NON-NLS-1$
 					"false",//$NON-NLS-1$
 			});
 		} catch (CoreException e) {

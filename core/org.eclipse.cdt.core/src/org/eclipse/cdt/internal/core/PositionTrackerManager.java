@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,7 +189,7 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
     private synchronized void addChain(SortedMap<Long, List<PositionTrackerChain>> map, PositionTrackerChain chain) {
         long or= chain.getOldestRetirement();
         if (or != Long.MAX_VALUE) {
-            Long lor= new Long(or);
+            Long lor= Long.valueOf(or);
             List<PositionTrackerChain> list= map.get(lor);
             if (list == null) {
                 list= new LinkedList<PositionTrackerChain>();

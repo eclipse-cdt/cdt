@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2012 QNX Software Systems and others.
+ *  Copyright (c) 2009, 2016 QNX Software Systems and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -528,7 +528,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 							el.action = action;
 							el.actionParam = actionParam;
 							el.mode = (String) attrs.get(getProp(index, MODE_PROP));
-							el.enabled = "true".equals(attrs.get(getProp(index, ENABLED_PROP))); //$NON-NLS-1$
+							el.enabled = Boolean.parseBoolean((String) attrs.get(getProp(index, ENABLED_PROP)));
 							try {
 								el.data = findLaunch(el.name);
 							} catch (Exception e) {

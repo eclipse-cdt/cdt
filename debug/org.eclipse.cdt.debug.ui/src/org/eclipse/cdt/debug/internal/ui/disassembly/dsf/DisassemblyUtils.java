@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ public class DisassemblyUtils {
 	 * Trace option. The view started out and continues to be in DSF but
 	 * backends can be non-DSF.
 	 */
-	public final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly"));  //$NON-NLS-1$//$NON-NLS-2$
+	public final static boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly"));  //$NON-NLS-1$
 	
 	public static String getAddressText(BigInteger address) {
 		if (address == null) {

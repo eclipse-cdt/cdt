@@ -364,6 +364,19 @@ public abstract class ArithmeticConversion {
 			}
 			return n < (Integer.MAX_VALUE + 1L) * 2;
 
+		case eChar:
+			return 0 <= n && n <= 0xFF;
+
+		case eChar16:
+		case eWChar:
+			return 0 <= n && n <= 0xFFFF;
+
+		case eChar32:
+			return 0 <= n && n <= 0xFFFFFFFFL;
+
+		case eDecimal32:
+			return Integer.MIN_VALUE <= n && n <= Integer.MAX_VALUE;
+
 		case eFloat:
 			float f= n;
 			return (long) f == n;

@@ -10834,6 +10834,15 @@ public class AST2CPPTests extends AST2TestBase {
 		helper.assertNonProblemOnFirstIdentifier("fint({vchar");
 	}
 
+	//	void waldo(char x);
+	//
+	//	void test() {
+	//	  waldo({1});
+	//	}
+	public void testNarrowingConversionInListInitialization_491748() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	namespace std {
 	//		struct string {};
 	//	 	struct exception {};

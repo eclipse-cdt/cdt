@@ -95,15 +95,15 @@ public class InputOrder implements IInputOrder {
 
 		//  Copy the remaining attributes
 		if (inputOrder.fPath != null) {
-			fPath = new String(inputOrder.fPath);
+			fPath = inputOrder.fPath;
 		}
 
 		if (inputOrder.fOrder != null) {
-			fOrder = new String(inputOrder.fOrder);
+			fOrder = inputOrder.fOrder;
 		}
 
 		if (inputOrder.fExcluded != null) {
-			fExcluded = new Boolean(inputOrder.fExcluded.booleanValue());
+			fExcluded = inputOrder.fExcluded.booleanValue();
 		}
 
 		setDirty(true);
@@ -131,7 +131,7 @@ public class InputOrder implements IInputOrder {
 		// excluded
         String isEx = element.getAttribute(IInputOrder.EXCLUDED);
         if (isEx != null){
-    		fExcluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
+    		fExcluded = Boolean.parseBoolean(isEx);
         }
 	}
 
@@ -142,7 +142,6 @@ public class InputOrder implements IInputOrder {
 	 * @param element An XML element containing the InputOrder information
 	 */
 	protected void loadFromProject(ICStorageElement element) {
-
 		// path
 		if (element.getAttribute(IInputOrder.PATH) != null) {
 			fPath = SafeStringInterner.safeIntern(element.getAttribute(IInputOrder.PATH));
@@ -157,7 +156,7 @@ public class InputOrder implements IInputOrder {
 		if (element.getAttribute(IInputOrder.EXCLUDED) != null) {
 			String isEx = element.getAttribute(IInputOrder.EXCLUDED);
 			if (isEx != null){
-				fExcluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
+				fExcluded = Boolean.parseBoolean(isEx);
 			}
 		}
 	}
@@ -166,7 +165,6 @@ public class InputOrder implements IInputOrder {
 	 * Persist the InputOrder to the project file.
 	 */
 	public void serialize(ICStorageElement element) {
-
 		if (fPath != null) {
 			element.setAttribute(IInputOrder.PATH, fPath);
 		}
@@ -255,7 +253,7 @@ public class InputOrder implements IInputOrder {
 	@Override
 	public void setExcluded(boolean b) {
 		if (fExcluded == null || !(b == fExcluded.booleanValue())) {
-			fExcluded = new Boolean(b);
+			fExcluded = b;
 			setDirty(true);
 			setRebuildState(true);
 		}

@@ -195,13 +195,13 @@ public class ProjectTargets {
 		}
 
 		elem = targetElem.createChild(TARGET_STOP_ON_ERROR);
-		elem.setValue(new Boolean(target.isStopOnError()).toString());
+		elem.setValue(String.valueOf(target.isStopOnError()));
 
 		elem = targetElem.createChild(TARGET_USE_DEFAULT_CMD);
-		elem.setValue(new Boolean(target.isDefaultBuildCmd()).toString());
+		elem.setValue(String.valueOf(target.isDefaultBuildCmd()));
 
 		elem = targetElem.createChild(TARGET_RUN_ALL_BUILDERS);
-		elem.setValue(new Boolean(target.runAllBuilders()).toString());
+		elem.setValue(String.valueOf(target.runAllBuilders()));
 
 		return targetElem;
 	}

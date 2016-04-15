@@ -68,7 +68,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setUseDefaultBuildCmd(boolean on) throws CoreException {
-			putString(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
+			putString(USE_DEFAULT_BUILD_CMD, String.valueOf(on));
 		}
 
 		@Override
@@ -212,7 +212,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setStopOnError(boolean enabled) throws CoreException {
-			putString(STOP_ON_ERROR, new Boolean(enabled).toString());
+			putString(STOP_ON_ERROR, String.valueOf(enabled));
 		}
 
 		@Override
@@ -286,7 +286,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setAutoBuildEnable(boolean enabled) throws CoreException {
-			putString(BUILD_AUTO_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_AUTO_ENABLED, String.valueOf(enabled));
 		}
 
 		@Override
@@ -296,7 +296,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setIncrementalBuildEnable(boolean enabled) throws CoreException {
-			putString(BUILD_INCREMENTAL_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_INCREMENTAL_ENABLED, String.valueOf(enabled));
 		}
 
 		@Override
@@ -306,7 +306,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setFullBuildEnable(boolean enabled) throws CoreException {
-			putString(BUILD_FULL_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_FULL_ENABLED, String.valueOf(enabled));
 		}
 
 		@Override
@@ -316,7 +316,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setCleanBuildEnable(boolean enabled) throws CoreException {
-			putString(BUILD_CLEAN_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_CLEAN_ENABLED, String.valueOf(enabled));
 		}
 
 		@Override
@@ -327,9 +327,9 @@ public class BuildInfoFactory {
 		@Override
 		public String[] getErrorParsers() {
 			String parsers = getString(ErrorParserManager.PREF_ERROR_PARSER);
-			if (parsers != null && parsers.length() > 0) {
+			if (parsers != null && !parsers.isEmpty()) {
 				StringTokenizer tok = new StringTokenizer(parsers, ";"); //$NON-NLS-1$
-				List<String> list = new ArrayList<String>(tok.countTokens());
+				List<String> list = new ArrayList<>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -367,15 +367,15 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setAppendEnvironment(boolean append) throws CoreException {
-			putString(BUILD_APPEND_ENVIRONMENT, new Boolean(append).toString());
+			putString(BUILD_APPEND_ENVIRONMENT, String.valueOf(append));
 		}
 
 		public boolean getBoolean(String property) {
-			return Boolean.valueOf(getString(property)).booleanValue();
+			return Boolean.parseBoolean(getString(property));
 		}
 
 		protected Map<String, String> decodeMap(String value) {
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			if (value != null) {
 				StringBuffer envStr = new StringBuffer(value);
 				String escapeChars = "|\\"; //$NON-NLS-1$

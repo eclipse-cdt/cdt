@@ -1114,7 +1114,7 @@ public class CDataUtil {
 	}
 
 	public static void setBoolean(ICStorageElement el, String attr, boolean value) {
-		el.setAttribute(attr, Boolean.valueOf(value).toString());
+		el.setAttribute(attr, String.valueOf(value));
 	}
 
 	public static int getInteger(ICStorageElement el, String attr, int defaultValue) {

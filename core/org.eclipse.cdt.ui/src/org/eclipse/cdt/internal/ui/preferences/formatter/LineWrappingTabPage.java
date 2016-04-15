@@ -257,9 +257,9 @@ public class LineWrappingTabPage extends FormatterTabPage {
             try {
                 wrappingStyle= new Integer(DefaultCodeFormatterConstants.getWrappingStyle(value));
                 indentStyle= new Integer(DefaultCodeFormatterConstants.getIndentStyle(value));
-                forceWrapping= new Boolean(DefaultCodeFormatterConstants.getForceWrapping(value));
+                forceWrapping= Boolean.valueOf(DefaultCodeFormatterConstants.getForceWrapping(value));
             } catch (IllegalArgumentException e) {
-				forceWrapping= new Boolean(false);
+				forceWrapping= Boolean.valueOf(false);
 				indentStyle= new Integer(DefaultCodeFormatterConstants.INDENT_DEFAULT);
 				wrappingStyle= new Integer(DefaultCodeFormatterConstants.WRAP_NO_SPLIT);
 			} 

@@ -209,6 +209,23 @@
       "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8a5e6c47",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-15T23:24:32Z",
+      "side": 1,
+      "message": "This is the line that\u0027s causing the build to fail",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

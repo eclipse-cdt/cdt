@@ -417,7 +417,7 @@ class UpdateManagedProject20 {
 				switch(type){
 					case IOption.BOOLEAN:{
 						if(optRef.hasAttribute(IOption.DEFAULT_VALUE)){
-							Boolean bool = new Boolean(optRef.getAttribute(IOption.DEFAULT_VALUE));
+							Boolean bool = Boolean.valueOf(optRef.getAttribute(IOption.DEFAULT_VALUE));
 							configuration.setOption(tool,option,bool.booleanValue());
 						}
 						break;
@@ -439,7 +439,7 @@ class UpdateManagedProject20 {
 						for (int j = 0; j < nodes.getLength(); ++j) {
 							Node node = nodes.item(j);
 							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
+								Boolean isBuiltIn = Boolean.valueOf(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
 								if (!isBuiltIn.booleanValue()) {
 									values.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
 								}

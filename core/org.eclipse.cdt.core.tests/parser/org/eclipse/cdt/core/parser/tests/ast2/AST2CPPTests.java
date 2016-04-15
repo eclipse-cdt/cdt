@@ -11909,4 +11909,15 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testShadowingAliasDeclaration_484200() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct S {
+	//	    void foo() {
+	//	        bar(E::A);       // ERROR: Symbol 'A' could not be resolved
+	//	    }
+	//	    enum class E { A };
+	//	    void bar(E);
+	//	};
+	public void testEnumDeclaredLaterInClass_491747() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,10 +103,10 @@ public class Target extends BuildObject implements ITarget {
 		defaultExtension = SafeStringInterner.safeIntern(element.getAttribute(DEFAULT_EXTENSION));
 
 		// isAbstract
-		isAbstract = ("true".equals(element.getAttribute(IS_ABSTRACT))); //$NON-NLS-1$
+		isAbstract = Boolean.parseBoolean(element.getAttribute(IS_ABSTRACT));
 
 		// Is this a test target
-		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
+		isTest = Boolean.parseBoolean(element.getAttribute(IS_TEST));
 
 		// Get the clean command
 		cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
@@ -225,11 +225,11 @@ public class Target extends BuildObject implements ITarget {
 			parent = ManagedBuildManager.getTarget(null, parentId);
 
 		// isAbstract
-		if ("true".equals(element.getAttribute(IS_ABSTRACT))) //$NON-NLS-1$
+		if (Boolean.parseBoolean(element.getAttribute(IS_ABSTRACT)))
 			isAbstract = true;
 
 		// Is this a test target
-		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
+		isTest = Boolean.parseBoolean(element.getAttribute(IS_TEST));
 
 		// Get the clean command
 		if (element.hasAttribute(CLEAN_COMMAND)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Andrew Gvozdev.
+ * Copyright (c) 2008, 2016 Andrew Gvozdev.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,7 +162,7 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 		if (makeTargets.length > 1) {
 			String title = MakeUIPlugin.getResourceString("MakeTargetDnD.title.createFromTextConfirm"); //$NON-NLS-1$
 			String question = MessageFormat.format(MakeUIPlugin.getResourceString("MakeTargetDnD.message.createFromTextConfirm"), //$NON-NLS-1$
-				new Object[] { new Integer(makeTargets.length) });
+				new Object[] { Integer.valueOf(makeTargets.length) });
 
 			String topTargets = ""; //$NON-NLS-1$
 			for (int i=0;i<makeTargets.length;i++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,11 +135,11 @@ public class AdditionalInput implements IAdditionalInput {
 
 		//  Copy the remaining attributes
 		if (additionalInput.fPaths != null) {
-			fPaths = new String(additionalInput.fPaths);
+			fPaths = additionalInput.fPaths;
 		}
 
 		if (additionalInput.fKind != null) {
-			fKind = new Integer(additionalInput.fKind.intValue());
+			fKind = additionalInput.fKind;
 		}
 
 		setDirty(true);
@@ -164,11 +164,11 @@ public class AdditionalInput implements IAdditionalInput {
 		// kind
 		String kindStr = element.getAttribute(IAdditionalInput.KIND);
 		if (kindStr == null || kindStr.equals(ADDITIONAL_INPUT_DEPENDENCY)) {
-			fKind = new Integer(KIND_ADDITIONAL_INPUT_DEPENDENCY);
+			fKind = Integer.valueOf(KIND_ADDITIONAL_INPUT_DEPENDENCY);
 		} else if (kindStr.equals(ADDITIONAL_INPUT)) {
-			fKind = new Integer(KIND_ADDITIONAL_INPUT);
+			fKind = Integer.valueOf(KIND_ADDITIONAL_INPUT);
 		} else if (kindStr.equals(ADDITIONAL_DEPENDENCY)) {
-			fKind = new Integer(KIND_ADDITIONAL_DEPENDENCY);
+			fKind = Integer.valueOf(KIND_ADDITIONAL_DEPENDENCY);
 		}
 	}
 
@@ -189,11 +189,11 @@ public class AdditionalInput implements IAdditionalInput {
 		if (element.getAttribute(IAdditionalInput.KIND) != null) {
 			String kindStr = element.getAttribute(IAdditionalInput.KIND);
 			if (kindStr == null || kindStr.equals(ADDITIONAL_INPUT_DEPENDENCY)) {
-				fKind = new Integer(KIND_ADDITIONAL_INPUT_DEPENDENCY);
+				fKind = Integer.valueOf(KIND_ADDITIONAL_INPUT_DEPENDENCY);
 			} else if (kindStr.equals(ADDITIONAL_INPUT)) {
-				fKind = new Integer(KIND_ADDITIONAL_INPUT);
+				fKind = Integer.valueOf(KIND_ADDITIONAL_INPUT);
 			} else if (kindStr.equals(ADDITIONAL_DEPENDENCY)) {
-				fKind = new Integer(KIND_ADDITIONAL_DEPENDENCY);
+				fKind = Integer.valueOf(KIND_ADDITIONAL_DEPENDENCY);
 			}
 		}
 	}
@@ -288,7 +288,7 @@ public class AdditionalInput implements IAdditionalInput {
 	@Override
 	public void setKind(int newKind) {
 		if (fKind == null || !(fKind.intValue() == newKind)) {
-			fKind = new Integer(newKind);
+			fKind = Integer.valueOf(newKind);
 			fIsDirty = true;
 			setRebuildState(true);
 		}

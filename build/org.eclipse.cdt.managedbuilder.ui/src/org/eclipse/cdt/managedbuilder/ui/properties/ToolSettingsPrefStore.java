@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class ToolSettingsPrefStore implements IPreferenceStore {
 	public static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
-	private final static String EMPTY_STRING = new String();
+	private final static String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	static ToolSettingsPrefStore store = null;
 

@@ -6865,8 +6865,8 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPSpecialization buffRef = assertionHelper.assertNonProblem("myA.buff[0] = 1;", "buff", ICPPSpecialization.class);
 
 		assertEquals(buff, buffRef.getSpecializedBinding());
-		assertEquals(buffRef.getTemplateParameterMap().getArgument(0).getNonTypeValue().numericalValue(), new Long(4));
-		assertEquals(buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numericalValue(), new Long(5));
+		assertEquals(4L,buffRef.getTemplateParameterMap().getArgument(0).getNonTypeValue().numericalValue());
+		assertEquals(5L,buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numericalValue());
 	}
 
 	// template<typename T, int Size>
@@ -6890,7 +6890,7 @@ public class AST2TemplateTests extends AST2TestBase {
 
 		assertEquals(buff, buffRef.getSpecializedBinding());
 		assertSameType(buffRef.getTemplateParameterMap().getArgument(0).getTypeValue(), new CPPBasicType(IBasicType.Kind.eInt, 0));
-		assertEquals(buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numericalValue(), new Long(5));
+		assertEquals(5L,buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numericalValue());
 	}
 
 	// template<typename T>

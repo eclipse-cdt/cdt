@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,7 +201,7 @@ class UpdateManagedProject12 {
 				name = "default";	//$NON-NLS-1$
 			}
 			// Reconstruct the extension
-			String extension = new String();
+			String extension = ""; //$NON-NLS-1$
 			for (int index = 1; index < nameElements.length; ++index) {
 				extension += nameElements[index];
 				if (index < nameElements.length - 1) {
@@ -322,7 +322,7 @@ class UpdateManagedProject12 {
 			}
 			
 			// Construct the new ID
-			optId = new String();
+			optId = ""; //$NON-NLS-1$
 			for (int rebuildIndex = 0; rebuildIndex < newIdVector.size(); ++ rebuildIndex) {
 				String token = newIdVector.get(rebuildIndex);
 				optId += token;

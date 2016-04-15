@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,8 +81,8 @@ public class XMLDumper {
 		clsName = clsName.replace('$', '.');
 		
 		Element element = document.createElement(clsName);
-		map.put(obj, new Integer(id));
-		element.setAttribute("id",String.valueOf(id++)); //$NON-NLS-1$
+		map.put(obj, Integer.valueOf(id));
+		element.setAttribute("id",Integer.toString(id++)); //$NON-NLS-1$
 		
 		Field [] fields = cls.getDeclaredFields();
 		for (int i = 0; i < fields.length; ++i) {

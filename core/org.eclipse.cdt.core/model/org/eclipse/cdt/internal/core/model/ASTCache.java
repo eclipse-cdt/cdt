@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -36,7 +36,7 @@ public class ASTCache {
 	/**
 	 * Tells whether this class is in debug mode.
 	 */
-	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/ASTCache"));  //$NON-NLS-1$//$NON-NLS-2$
+	private static final boolean DEBUG= Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.core/debug/ASTCache"));  //$NON-NLS-1$
 	private static final String DEBUG_PREFIX= "[ASTCache] "; //$NON-NLS-1$
 
 	/** Fast parse mode (use PDOM) */

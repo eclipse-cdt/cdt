@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -423,7 +423,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		fEnabledFilterIds= new HashMap<String, Boolean>(filterDescs.length);
 		for (FilterDescriptor filterDesc : filterDescs) {
 			String id= filterDesc.getId();
-			Boolean isEnabled= Boolean.valueOf(filterDesc.isEnabled());
+			Boolean isEnabled= filterDesc.isEnabled();
 			//if (fEnabledFilterIds.containsKey(id))
 			//	CUIPlugin.log(new Status("WARNING: Duplicate id for extension-point \"org.eclipse.jdt.ui.CElementFilters\"")); //$NON-NLS-1$
 			fEnabledFilterIds.put(id, isEnabled);
@@ -523,7 +523,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		Iterator<String> iter= fEnabledFilterIds.keySet().iterator();
 		while (iter.hasNext()) {
 			String id= iter.next();
-			Boolean isEnabled= Boolean.valueOf(store.getBoolean(id));
+			Boolean isEnabled= store.getBoolean(id);
 			fEnabledFilterIds.put(id, isEnabled);
 		}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class CharArrayMapTest extends TestCase {
 		}
 		assertEquals(keys.length, map.size());
 		for(int i = 0; i < keys.length; i++) {
-			assertEquals(new Integer(i), map.get(keys[i]));
+			assertEquals(Integer.valueOf(i), map.get(keys[i]));
 		}
 		return System.currentTimeMillis() - start;
 	}
@@ -78,11 +78,11 @@ public class CharArrayMapTest extends TestCase {
 		long start = System.currentTimeMillis();
 		CharArrayObjectMap oldMap = new CharArrayObjectMap(keys.length);
 		for(int i = 0; i < keys.length; i++) {
-			oldMap.put(keys[i], new Integer(i));
+			oldMap.put(keys[i], Integer.valueOf(i));
 		}
 		assertEquals(keys.length, oldMap.size());
 		for(int i = 0; i < keys.length; i++) {
-			assertEquals(new Integer(i), oldMap.get(keys[i]));
+			assertEquals(Integer.valueOf(i), oldMap.get(keys[i]));
 		}
 		return System.currentTimeMillis() - start;
 	}
@@ -105,10 +105,10 @@ public class CharArrayMapTest extends TestCase {
 		assertFalse(map.isEmpty());
 		assertEquals(4, map.size());
 
-		assertEquals(new Integer(1), map.get(key1));
-		assertEquals(new Integer(2), map.get(key2));
-		assertEquals(new Integer(3), map.get(key3));
-		assertEquals(new Integer(4), map.get(key4));
+		assertEquals(Integer.valueOf(1), map.get(key1));
+		assertEquals(Integer.valueOf(2), map.get(key2));
+		assertEquals(Integer.valueOf(3), map.get(key3));
+		assertEquals(Integer.valueOf(4), map.get(key4));
 
 		assertTrue(map.containsKey(key1));
 		assertTrue(map.containsKey(key2));
@@ -131,7 +131,7 @@ public class CharArrayMapTest extends TestCase {
 		}
 
 		// remove a mapping
-		assertEquals(new Integer(1), map.remove(key1));
+		assertEquals(Integer.valueOf(1), map.remove(key1));
 		assertEquals(3, map.size());
 	    assertNull(map.get(key1));
 	    assertFalse(map.containsKey(key1));
@@ -152,13 +152,13 @@ public class CharArrayMapTest extends TestCase {
 		// overrideing values should
 		map.put(key1, 100);
 		assertEquals(1, map.size());
-		assertEquals(new Integer(100), map.get(key1));
+		assertEquals(Integer.valueOf(100), map.get(key1));
 		assertTrue(map.containsValue(100));
 		assertFalse(map.containsValue(null));
 		// override the value
 		map.put(key1, 200);
 		assertEquals(1, map.size());
-		assertEquals(new Integer(200), map.get(key1));
+		assertEquals(Integer.valueOf(200), map.get(key1));
 		assertTrue(map.containsValue(200));
 		assertFalse(map.containsValue(100));
 	}
@@ -201,8 +201,8 @@ public class CharArrayMapTest extends TestCase {
 		// should still work with equivalent keys
 		for(int i = 0; i < keys.length; i++) {
 			Slice slice = slices[i];
-			assertEquals(new Integer(i), map.get(slice.chars, slice.start, slice.length));
-			assertEquals(new Integer(i), map.get(keys[i]));
+			assertEquals(Integer.valueOf(i), map.get(slice.chars, slice.start, slice.length));
+			assertEquals(Integer.valueOf(i), map.get(keys[i]));
 			assertTrue(map.containsKey(slice.chars, slice.start, slice.length));
 			assertTrue(map.containsKey(keys[i]));
 			assertTrue(map.containsValue(i));
@@ -226,8 +226,8 @@ public class CharArrayMapTest extends TestCase {
 		// remaining keys should still be there
 		for(int i = 0; i < 5; i++) {
 			Slice slice = slices[i];
-			assertEquals(new Integer(i), map.get(slice.chars, slice.start, slice.length));
-			assertEquals(new Integer(i), map.get(keys[i]));
+			assertEquals(Integer.valueOf(i), map.get(slice.chars, slice.start, slice.length));
+			assertEquals(Integer.valueOf(i), map.get(keys[i]));
 			assertTrue(map.containsKey(slice.chars, slice.start, slice.length));
 			assertTrue(map.containsKey(keys[i]));
 			assertTrue(map.containsValue(i));
@@ -283,7 +283,7 @@ public class CharArrayMapTest extends TestCase {
 	public void testProperFail() {
 		char[] hello = "hello".toCharArray();
 		CharArrayMap<Integer> map = new CharArrayMap<Integer>();
-		Integer value = new Integer(9);
+		Integer value = 9;
 
 		try {
 			map.put(null, value);

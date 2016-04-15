@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -197,7 +197,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	boolean fTraceIndexerSetup;
 
 	public PDOMManager() {
-		PDOM.sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
+		PDOM.sDEBUG_LOCKS= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$
 		addIndexerSetupParticipant(new WaitForRefreshJobs());
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);
@@ -596,7 +596,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 						boolean resume= false;
 						pdom.acquireReadLock();
 						try {
-							resume= "true".equals(pdom.getProperty(IIndexFragment.PROPERTY_RESUME_INDEXER)); //$NON-NLS-1$
+							resume= Boolean.parseBoolean(pdom.getProperty(IIndexFragment.PROPERTY_RESUME_INDEXER));
 						} finally {
 							pdom.releaseReadLock();
 						}
@@ -1185,8 +1185,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 
 		String msg= MessageFormat.format(Messages.PDOMManager_indexMonitorDetail, new Object[] {
-					new Integer(sourceCount), new Integer(sourceEstimate),
-					new Integer(headerCount)});
+					Integer.valueOf(sourceCount), Integer.valueOf(sourceEstimate),
+					Integer.valueOf(headerCount)});
 		if (detail != null) {
 			msg += ": " + detail;  //$NON-NLS-1$
 		}
@@ -1557,7 +1557,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @throws CoreException in case of a file access or other internal error
 	 */
 	public IStatus getProjectContentSyncState(ICProject cproject) throws CoreException {
-		if (!"true".equals(IndexerPreferences.get(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)))  //$NON-NLS-1$
+		if (!Boolean.parseBoolean(IndexerPreferences.get(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)))
 			return null; // No check is performed in this case
 
 		Set<ITranslationUnit> sources= new HashSet<>();

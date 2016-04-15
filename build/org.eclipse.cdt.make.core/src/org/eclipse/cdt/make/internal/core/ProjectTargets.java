@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,13 +195,13 @@ public class ProjectTargets {
 		}
 
 		elem = targetElem.createChild(TARGET_STOP_ON_ERROR);
-		elem.setValue(new Boolean(target.isStopOnError()).toString());
+		elem.setValue(Boolean.valueOf(target.isStopOnError()).toString());
 
 		elem = targetElem.createChild(TARGET_USE_DEFAULT_CMD);
-		elem.setValue(new Boolean(target.isDefaultBuildCmd()).toString());
+		elem.setValue(Boolean.valueOf(target.isDefaultBuildCmd()).toString());
 
 		elem = targetElem.createChild(TARGET_RUN_ALL_BUILDERS);
-		elem.setValue(new Boolean(target.runAllBuilders()).toString());
+		elem.setValue(Boolean.valueOf(target.runAllBuilders()).toString());
 
 		return targetElem;
 	}

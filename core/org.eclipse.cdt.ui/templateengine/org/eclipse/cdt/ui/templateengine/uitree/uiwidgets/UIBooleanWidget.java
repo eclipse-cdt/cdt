@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2016 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class UIBooleanWidget extends InputUIElement {
 	 */
 	@Override
 	public void setValues(Map<String, String> valueMap) {
-		booleanValue = new Boolean(valueMap.get(uiAttributes.get(UIElement.ID))).booleanValue();
+		booleanValue = Boolean.parseBoolean(valueMap.get(uiAttributes.get(UIElement.ID)));
 	}
 
 	/*
@@ -102,7 +102,7 @@ public class UIBooleanWidget extends InputUIElement {
 		booleanContainer.setLayoutData(gridcData);
 		button = new Button(booleanContainer, SWT.CHECK);
 		button.setData(".uid", uiAttributes.get(UIElement.ID)); //$NON-NLS-1$
-		button.setSelection(new Boolean(booleanValue).booleanValue());
+		button.setSelection(booleanValue);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -373,7 +373,7 @@ class UpdateManagedProject12 {
 			try {
 				switch (newOpt.getValueType()) {
 					case IOption.BOOLEAN:
-						Boolean bool = new Boolean(optRef.getAttribute(IOption.DEFAULT_VALUE));
+						Boolean bool = Boolean.valueOf(optRef.getAttribute(IOption.DEFAULT_VALUE));
 						configuration.setOption(tool, newOpt, bool.booleanValue());
 						break;
 					case IOption.STRING:
@@ -416,7 +416,7 @@ class UpdateManagedProject12 {
 						for (int i = 0; i < nodes.getLength(); ++i) {
 							Node node = nodes.item(i);
 							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
+								Boolean isBuiltIn = Boolean.valueOf(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
 								if (!isBuiltIn.booleanValue()) {
 									values.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
 								}

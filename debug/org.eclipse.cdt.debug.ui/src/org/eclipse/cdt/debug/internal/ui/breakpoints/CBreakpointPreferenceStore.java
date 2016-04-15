@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -351,18 +351,18 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     public void setValue(String name, boolean value) {
         boolean oldValue = getBoolean(name);
         if (oldValue != value) {
-            fProperties.put( name, new Boolean(value) );
+            fProperties.put( name, Boolean.valueOf(value) );
             setDirty(true);
-            firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value) );
+            firePropertyChangeEvent(name, Boolean.valueOf(oldValue), Boolean.valueOf(value) );
         }
     }
 
     public void setValue(String name, int value) {
         int oldValue = getInt(name);
         if (oldValue != value) {
-            fProperties.put( name, new Integer(value) );
+            fProperties.put( name, Integer.valueOf(value) );
             setDirty(true);
-            firePropertyChangeEvent(name, new Integer(oldValue), new Integer(value) );
+            firePropertyChangeEvent(name, Integer.valueOf(oldValue), Integer.valueOf(value) );
         }
     }
 

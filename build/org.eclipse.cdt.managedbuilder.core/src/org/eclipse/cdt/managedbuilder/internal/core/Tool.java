@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2013 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -408,7 +408,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			errorParserIds = new String(tool.errorParserIds);
 		}
 		if (tool.isAbstract != null) {
-			isAbstract = new Boolean(tool.isAbstract.booleanValue());
+			isAbstract = tool.isAbstract;
 		}
 		if (tool.command != null) {
 			command = new String(tool.command);
@@ -435,10 +435,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			outputPrefix = new String(tool.outputPrefix);
 		}
 		if (tool.advancedInputCategory != null) {
-			advancedInputCategory = new Boolean(tool.advancedInputCategory.booleanValue());
+			advancedInputCategory = tool.advancedInputCategory;
 		}
 		if (tool.customBuildStep != null) {
-			customBuildStep = new Boolean(tool.customBuildStep.booleanValue());
+			customBuildStep = tool.customBuildStep;
 		}
 		if (tool.announcement != null) {
 			announcement = new String(tool.announcement);
@@ -701,7 +701,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = "true".equals(isAbs); //$NON-NLS-1$
         }
 
 		// Get the semicolon separated list of IDs of the error parsers
@@ -757,13 +757,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		// Get advancedInputCategory
         String advInput = element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY);
         if (advInput != null){
-			advancedInputCategory = new Boolean("true".equals(advInput)); //$NON-NLS-1$
+			advancedInputCategory = "true".equals(advInput); //$NON-NLS-1$
         }
 
 		// Get customBuildStep
         String cbs = element.getAttribute(ITool.CUSTOM_BUILD_STEP);
         if (cbs != null){
-			customBuildStep = new Boolean("true".equals(cbs)); //$NON-NLS-1$
+			customBuildStep = "true".equals(cbs); //$NON-NLS-1$
         }
 
 		// Get the announcement text
@@ -842,7 +842,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = "true".equals(isAbs); //$NON-NLS-1$
 			}
 		}
 
@@ -928,7 +928,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY) != null) {
 			String advInput = element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY);
 			if (advInput != null){
-				advancedInputCategory = new Boolean("true".equals(advInput)); //$NON-NLS-1$
+				advancedInputCategory = "true".equals(advInput); //$NON-NLS-1$
 			}
 		}
 
@@ -936,7 +936,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(ITool.CUSTOM_BUILD_STEP) != null) {
 			String cbs = element.getAttribute(ITool.CUSTOM_BUILD_STEP);
 			if (cbs != null){
-				customBuildStep = new Boolean("true".equals(cbs)); //$NON-NLS-1$
+				customBuildStep = "true".equals(cbs); //$NON-NLS-1$
 			}
 		}
 
@@ -1673,7 +1673,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 */
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = new Boolean(b);
+		isAbstract = b;
 		setDirty(true);
 	}
 
@@ -2530,7 +2530,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	@Override
 	public void setAdvancedInputCategory(boolean b) {
 		if (advancedInputCategory == null || !(b == advancedInputCategory.booleanValue())) {
-			advancedInputCategory = new Boolean(b);
+			advancedInputCategory = b;
 			setDirty(true);
 		}
 	}
@@ -2541,7 +2541,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	@Override
 	public void setCustomBuildStep(boolean b) {
 		if (customBuildStep == null || !(b == customBuildStep.booleanValue())) {
-			customBuildStep = new Boolean(b);
+			customBuildStep = b;
 			setDirty(true);
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,7 +121,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 						new FileContextData(sourceLocation, outputLocation,
 								null, tool)).length > 0;
 
-		if (needExplicitRuleForFile) genericCommands = new Boolean(false);
+		if (needExplicitRuleForFile) genericCommands = false;
 	}
 
 	/**
@@ -158,14 +158,14 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		if (genericCommands != null) return genericCommands.booleanValue();
 		//  If the context is a Configuration, yes
 		if (buildContext instanceof IConfiguration || buildContext instanceof IFolderInfo) {
-			genericCommands = new Boolean(true);
+			genericCommands = true;
 			return true;
 		}
 		//  If the context is a Resource Configuration, determine if it overrides any
 		//  of its parent configuration's options that would affect dependency file
 		//  generation.
 		// TODO
-		genericCommands = new Boolean(false);
+		genericCommands = false;
 		return false;
 	}
 

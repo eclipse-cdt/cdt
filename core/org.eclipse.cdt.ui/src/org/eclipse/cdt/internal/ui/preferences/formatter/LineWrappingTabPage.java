@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -255,13 +255,13 @@ public class LineWrappingTabPage extends FormatterTabPage {
             Boolean forceWrapping;
             
             try {
-                wrappingStyle= new Integer(DefaultCodeFormatterConstants.getWrappingStyle(value));
-                indentStyle= new Integer(DefaultCodeFormatterConstants.getIndentStyle(value));
-                forceWrapping= new Boolean(DefaultCodeFormatterConstants.getForceWrapping(value));
+                wrappingStyle= Integer.valueOf(DefaultCodeFormatterConstants.getWrappingStyle(value));
+                indentStyle= Integer.valueOf(DefaultCodeFormatterConstants.getIndentStyle(value));
+                forceWrapping= Boolean.valueOf(DefaultCodeFormatterConstants.getForceWrapping(value));
             } catch (IllegalArgumentException e) {
-				forceWrapping= new Boolean(false);
-				indentStyle= new Integer(DefaultCodeFormatterConstants.INDENT_DEFAULT);
-				wrappingStyle= new Integer(DefaultCodeFormatterConstants.WRAP_NO_SPLIT);
+				forceWrapping= Boolean.FALSE;
+				indentStyle= Integer.valueOf(DefaultCodeFormatterConstants.INDENT_DEFAULT);
+				wrappingStyle= Integer.valueOf(DefaultCodeFormatterConstants.WRAP_NO_SPLIT);
 			} 
 			
             increaseMapEntry(wrappingMap, wrappingStyle);

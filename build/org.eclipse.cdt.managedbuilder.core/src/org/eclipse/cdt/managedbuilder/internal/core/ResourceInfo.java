@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -336,7 +336,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			propagate(parent, option,
 					(oldVal ? Boolean.TRUE : Boolean.FALSE),
 					(value  ? Boolean.TRUE : Boolean.FALSE));
-			NotificationManager.getInstance().optionChanged(this, parent, option, new Boolean(oldVal));
+			NotificationManager.getInstance().optionChanged(this, parent, option, Boolean.valueOf(oldVal));
 		}
 		return retOpt;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,13 +187,13 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		// isAbstract
         String isAbs = element.getAttribute(IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = "true".equals(isAbs); //$NON-NLS-1$
         }
 
 		// Is this a test project type
 		String isTestStr = element.getAttribute(IS_TEST);
         if (isTestStr != null){
-    		isTest = new Boolean("true".equals(isTestStr)); //$NON-NLS-1$
+    		isTest = "true".equals(isTestStr); //$NON-NLS-1$
         }
 
 		// Store the configuration element IFF there is a configuration name provider defined
@@ -382,14 +382,14 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 */
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = new Boolean(b);
+		isAbstract = b;
 	}
 
 	/**
 	 * Sets the isTest attribute
 	 */
 	public void setIsTest(boolean b) {
-		isTest = new Boolean(b);
+		isTest = b;
 	}
 
 	/*

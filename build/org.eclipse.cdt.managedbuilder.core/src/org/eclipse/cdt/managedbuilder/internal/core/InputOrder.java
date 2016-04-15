@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,15 +95,15 @@ public class InputOrder implements IInputOrder {
 
 		//  Copy the remaining attributes
 		if (inputOrder.fPath != null) {
-			fPath = new String(inputOrder.fPath);
+			fPath = inputOrder.fPath;
 		}
 
 		if (inputOrder.fOrder != null) {
-			fOrder = new String(inputOrder.fOrder);
+			fOrder = inputOrder.fOrder;
 		}
 
 		if (inputOrder.fExcluded != null) {
-			fExcluded = new Boolean(inputOrder.fExcluded.booleanValue());
+			fExcluded = inputOrder.fExcluded;
 		}
 
 		setDirty(true);
@@ -131,7 +131,7 @@ public class InputOrder implements IInputOrder {
 		// excluded
         String isEx = element.getAttribute(IInputOrder.EXCLUDED);
         if (isEx != null){
-    		fExcluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
+    		fExcluded = "true".equals(isEx); //$NON-NLS-1$
         }
 	}
 
@@ -157,7 +157,7 @@ public class InputOrder implements IInputOrder {
 		if (element.getAttribute(IInputOrder.EXCLUDED) != null) {
 			String isEx = element.getAttribute(IInputOrder.EXCLUDED);
 			if (isEx != null){
-				fExcluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
+				fExcluded = "true".equals(isEx); //$NON-NLS-1$
 			}
 		}
 	}
@@ -255,7 +255,7 @@ public class InputOrder implements IInputOrder {
 	@Override
 	public void setExcluded(boolean b) {
 		if (fExcluded == null || !(b == fExcluded.booleanValue())) {
-			fExcluded = new Boolean(b);
+			fExcluded = b;
 			setDirty(true);
 			setRebuildState(true);
 		}

@@ -1371,13 +1371,13 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		}
 
 		elem = targetElem.createChild(TARGET_STOP_ON_ERROR);
-		elem.setValue(Boolean.valueOf(target.isStopOnError()).toString());
+		elem.setValue(String.valueOf(target.isStopOnError()));
 
 		elem = targetElem.createChild(TARGET_USE_DEFAULT_CMD);
-		elem.setValue(Boolean.valueOf(target.isDefaultBuildCmd()).toString());
+		elem.setValue(String.valueOf(target.isDefaultBuildCmd()));
 
 		elem = targetElem.createChild(TARGET_RUN_ALL_BUILDERS);
-		elem.setValue(Boolean.valueOf(target.runAllBuilders()).toString());
+		elem.setValue(String.valueOf(target.runAllBuilders()));
 
 		return targetElem;
 	}

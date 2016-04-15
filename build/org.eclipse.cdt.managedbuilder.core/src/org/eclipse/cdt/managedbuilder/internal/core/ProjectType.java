@@ -187,13 +187,13 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		// isAbstract
         String isAbs = element.getAttribute(IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
         }
 
 		// Is this a test project type
 		String isTestStr = element.getAttribute(IS_TEST);
         if (isTestStr != null){
-    		isTest = new Boolean("true".equals(isTestStr)); //$NON-NLS-1$
+    		isTest = Boolean.valueOf("true".equals(isTestStr)); //$NON-NLS-1$
         }
 
 		// Store the configuration element IFF there is a configuration name provider defined
@@ -382,14 +382,14 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 */
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = new Boolean(b);
+		isAbstract = Boolean.valueOf(b);
 	}
 
 	/**
 	 * Sets the isTest attribute
 	 */
 	public void setIsTest(boolean b) {
-		isTest = new Boolean(b);
+		isTest = Boolean.valueOf(b);
 	}
 
 	/*

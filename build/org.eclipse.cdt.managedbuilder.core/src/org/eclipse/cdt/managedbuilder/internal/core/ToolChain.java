@@ -341,7 +341,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			secondaryOutputIds = new String(toolChain.secondaryOutputIds);
 		}
 		if (toolChain.isAbstract != null) {
-			isAbstract = new Boolean(toolChain.isAbstract.booleanValue());
+			isAbstract = Boolean.valueOf(toolChain.isAbstract.booleanValue());
 		}
 		if (toolChain.scannerConfigDiscoveryProfileId != null) {
 			scannerConfigDiscoveryProfileId = new String(toolChain.scannerConfigDiscoveryProfileId);
@@ -545,7 +545,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		// isAbstract
 		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 		if (isAbs != null){
-			isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+			isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
 		}
 
 		// Get the semicolon separated list of IDs of the error parsers
@@ -665,7 +665,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
 			}
 		}
 
@@ -1390,7 +1390,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = new Boolean(b);
+		isAbstract = Boolean.valueOf(b);
 		setDirty(true);
 	}
 

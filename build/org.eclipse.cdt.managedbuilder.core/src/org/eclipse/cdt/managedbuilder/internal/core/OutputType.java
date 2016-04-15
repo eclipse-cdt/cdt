@@ -172,14 +172,14 @@ public class OutputType extends BuildObject implements IOutputType {
 			buildVariable = new String(outputType.buildVariable);
 		}
 		if (outputType.multipleOfType != null) {
-			multipleOfType = new Boolean(outputType.multipleOfType.booleanValue());
+			multipleOfType = Boolean.valueOf(outputType.multipleOfType.booleanValue());
 		}
 		if (outputType.primaryInputTypeId != null) {
 			primaryInputTypeId = new String(outputType.primaryInputTypeId);
 		}
 		primaryInputType = outputType.primaryInputType;
 		if (outputType.primaryOutput != null) {
-			primaryOutput = new Boolean(outputType.primaryOutput.booleanValue());
+			primaryOutput = Boolean.valueOf(outputType.primaryOutput.booleanValue());
 		}
 		if (outputType.outputPrefix != null) {
 			outputPrefix = new String(outputType.outputPrefix);
@@ -237,7 +237,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		// multipleOfType
         String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
         if (isMOT != null){
-    		multipleOfType = new Boolean("true".equals(isMOT)); //$NON-NLS-1$
+    		multipleOfType = Boolean.valueOf("true".equals(isMOT)); //$NON-NLS-1$
         }
 
 		// primaryInputType
@@ -246,7 +246,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		// primaryOutput
         String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
         if (isPO != null){
-    		primaryOutput = new Boolean("true".equals(isPO)); //$NON-NLS-1$
+    		primaryOutput = Boolean.valueOf("true".equals(isPO)); //$NON-NLS-1$
         }
 
 		// outputPrefix
@@ -312,7 +312,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (element.getAttribute(IOutputType.MULTIPLE_OF_TYPE) != null) {
 			String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
 			if (isMOT != null){
-				multipleOfType = new Boolean("true".equals(isMOT)); //$NON-NLS-1$
+				multipleOfType = Boolean.valueOf("true".equals(isMOT)); //$NON-NLS-1$
 			}
 		}
 
@@ -326,7 +326,7 @@ public class OutputType extends BuildObject implements IOutputType {
         if (element.getAttribute(IOutputType.PRIMARY_OUTPUT) != null) {
 			String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
 			if (isPO != null){
-				primaryOutput = new Boolean("true".equals(isPO)); //$NON-NLS-1$
+				primaryOutput = Boolean.valueOf("true".equals(isPO)); //$NON-NLS-1$
 			}
         }
 
@@ -510,7 +510,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	@Override
 	public void setMultipleOfType(boolean b) {
 		if (multipleOfType == null || !(b == multipleOfType.booleanValue())) {
-			multipleOfType = new Boolean(b);
+			multipleOfType = Boolean.valueOf(b);
 			setDirty(true);
 			setRebuildState(true);
 		}
@@ -820,7 +820,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	@Override
 	public void setPrimaryOutput(boolean b) {
 		if (primaryOutput == null || !(b == primaryOutput.booleanValue())) {
-			primaryOutput = new Boolean(b);
+			primaryOutput = Boolean.valueOf(b);
 			setDirty(true);
 			setRebuildState(true);
 		}

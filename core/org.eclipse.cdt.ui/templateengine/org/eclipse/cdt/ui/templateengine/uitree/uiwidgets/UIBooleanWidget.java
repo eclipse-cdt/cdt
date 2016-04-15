@@ -74,7 +74,7 @@ public class UIBooleanWidget extends InputUIElement {
 	 */
 	@Override
 	public void setValues(Map<String, String> valueMap) {
-		booleanValue = new Boolean(valueMap.get(uiAttributes.get(UIElement.ID))).booleanValue();
+		booleanValue = Boolean.valueOf(valueMap.get(uiAttributes.get(UIElement.ID))).booleanValue();
 	}
 
 	/*
@@ -102,7 +102,7 @@ public class UIBooleanWidget extends InputUIElement {
 		booleanContainer.setLayoutData(gridcData);
 		button = new Button(booleanContainer, SWT.CHECK);
 		button.setData(".uid", uiAttributes.get(UIElement.ID)); //$NON-NLS-1$
-		button.setSelection(new Boolean(booleanValue).booleanValue());
+		button.setSelection(Boolean.valueOf(booleanValue).booleanValue());
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

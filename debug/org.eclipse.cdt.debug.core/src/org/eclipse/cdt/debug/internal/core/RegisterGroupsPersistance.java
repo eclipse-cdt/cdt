@@ -242,7 +242,7 @@ public class RegisterGroupsPersistance {
 		Document document = DebugPlugin.newDocument();
 		Element element = document.createElement(ELEMENT_REGISTER_GROUP);
 		element.setAttribute(ATTR_REGISTER_GROUP_NAME, group.getName());
-		element.setAttribute(ATTR_REGISTER_GROUP_ENABLED, Boolean.valueOf(group.isEnabled()).toString());
+		element.setAttribute(ATTR_REGISTER_GROUP_ENABLED, String.valueOf(group.isEnabled()));
 		IRegisterDescriptor[] registerDescriptors = group.getChildren();
 		for (int i = 0; i < registerDescriptors.length; ++i) {
 			Element child = document.createElement(ELEMENT_REGISTER);

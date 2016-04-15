@@ -103,7 +103,7 @@ public class InputOrder implements IInputOrder {
 		}
 
 		if (inputOrder.fExcluded != null) {
-			fExcluded = new Boolean(inputOrder.fExcluded.booleanValue());
+			fExcluded = Boolean.valueOf(inputOrder.fExcluded.booleanValue());
 		}
 
 		setDirty(true);
@@ -131,7 +131,7 @@ public class InputOrder implements IInputOrder {
 		// excluded
         String isEx = element.getAttribute(IInputOrder.EXCLUDED);
         if (isEx != null){
-    		fExcluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
+    		fExcluded = Boolean.valueOf("true".equals(isEx)); //$NON-NLS-1$
         }
 	}
 
@@ -157,7 +157,7 @@ public class InputOrder implements IInputOrder {
 		if (element.getAttribute(IInputOrder.EXCLUDED) != null) {
 			String isEx = element.getAttribute(IInputOrder.EXCLUDED);
 			if (isEx != null){
-				fExcluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
+				fExcluded = Boolean.valueOf("true".equals(isEx)); //$NON-NLS-1$
 			}
 		}
 	}
@@ -255,7 +255,7 @@ public class InputOrder implements IInputOrder {
 	@Override
 	public void setExcluded(boolean b) {
 		if (fExcluded == null || !(b == fExcluded.booleanValue())) {
-			fExcluded = new Boolean(b);
+			fExcluded = Boolean.valueOf(b);
 			setDirty(true);
 			setRebuildState(true);
 		}

@@ -280,7 +280,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			errorParserIds = new String(builder.errorParserIds);
 		}
 		if (builder.isAbstract != null) {
-			isAbstract = new Boolean(builder.isAbstract.booleanValue());
+			isAbstract = Boolean.valueOf(builder.isAbstract.booleanValue());
 		}
 		if (builder.command != null) {
 			command = new String(builder.command);
@@ -297,30 +297,28 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		managedBuildOn = builder.managedBuildOn;
 		keepEnvVarInBuildfile = builder.keepEnvVarInBuildfile;
 		supportsManagedBuild = builder.supportsManagedBuild;
-		if(builder.customizedErrorParserIds != null)
+		if (builder.customizedErrorParserIds != null)
 			customizedErrorParserIds = builder.customizedErrorParserIds.clone();
-		if(builder.customizedEnvironment != null)
+		if (builder.customizedEnvironment != null)
 			customizedEnvironment = cloneMap(builder.customizedEnvironment);
 		appendEnvironment = builder.appendEnvironment;
 		buildPath = builder.buildPath;
-		if(builder.customBuildProperties != null)
+		if (builder.customBuildProperties != null)
 			customBuildProperties = cloneMap(builder.customBuildProperties);
-
-			
 			
 		buildFileGeneratorElement = builder.buildFileGeneratorElement; 
 		
-		if(builder.fileContextBuildMacroValues != null){
+		if (builder.fileContextBuildMacroValues != null){
 			fileContextBuildMacroValues = (FileContextBuildMacroValues)builder.fileContextBuildMacroValues.clone();
 			fileContextBuildMacroValues.setBuilder(this);
 		}
 		
 		builderVariablePattern = builder.builderVariablePattern;
 		
-		if(builder.isVariableCaseSensitive != null)
-			isVariableCaseSensitive = new Boolean(builder.isVariableCaseSensitive.booleanValue());
+		if (builder.isVariableCaseSensitive != null)
+			isVariableCaseSensitive = Boolean.valueOf(builder.isVariableCaseSensitive.booleanValue());
 
-		if(builder.reservedMacroNames != null)
+		if (builder.reservedMacroNames != null)
 			reservedMacroNames = builder.reservedMacroNames.clone();
 
 		reservedMacroNameSupplierElement = builder.reservedMacroNameSupplierElement;
@@ -480,7 +478,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		// get the 'isVariableCaseSensitive' attribute
 		String isCS = element.getAttribute(IS_VARIABLE_CASE_SENSITIVE);
 		if(isCS != null)
-			isVariableCaseSensitive = new Boolean("true".equals(isCS)); //$NON-NLS-1$
+			isVariableCaseSensitive = Boolean.valueOf("true".equals(isCS)); //$NON-NLS-1$
 
 		// get the reserved macro names
 		String reservedNames = element.getAttribute(RESERVED_MACRO_NAMES);
@@ -499,7 +497,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
         }
 
         // command
@@ -708,7 +706,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
 			}
 		}
 
@@ -986,21 +984,21 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		
 		if(getAutoBuildTargetAttribute() != null)
 			element.setAttribute(ATTRIBUTE_TARGET_AUTO, getAutoBuildTargetAttribute());
-		element.setAttribute(ATTRIBUTE_AUTO_ENABLED, Boolean.valueOf(isAutoBuildEnable()).toString());
+		element.setAttribute(ATTRIBUTE_AUTO_ENABLED, String.valueOf(isAutoBuildEnable()));
 		if(getIncrementalBuildTargetAttribute() != null)
 			element.setAttribute(ATTRIBUTE_TARGET_INCREMENTAL, getIncrementalBuildTargetAttribute());
-		element.setAttribute(ATTRIBUTE_INCREMENTAL_ENABLED, Boolean.valueOf(isIncrementalBuildEnabled()).toString());
+		element.setAttribute(ATTRIBUTE_INCREMENTAL_ENABLED, String.valueOf(isIncrementalBuildEnabled()));
 		if(getCleanBuildTargetAttribute() != null)
 			element.setAttribute(ATTRIBUTE_TARGET_CLEAN, getCleanBuildTargetAttribute());
-		element.setAttribute(ATTRIBUTE_CLEAN_ENABLED, Boolean.valueOf(isCleanBuildEnabled()).toString());
-		element.setAttribute(ATTRIBUTE_MANAGED_BUILD_ON, Boolean.valueOf(isManagedBuildOn()).toString());
-		element.setAttribute(ATTRIBUTE_KEEP_ENV, Boolean.valueOf(keepEnvironmentVariablesInBuildfile()).toString());
-		element.setAttribute(ATTRIBUTE_SUPORTS_MANAGED_BUILD, Boolean.valueOf(supportsBuild(true)).toString());
+		element.setAttribute(ATTRIBUTE_CLEAN_ENABLED, String.valueOf(isCleanBuildEnabled()));
+		element.setAttribute(ATTRIBUTE_MANAGED_BUILD_ON, String.valueOf(isManagedBuildOn()));
+		element.setAttribute(ATTRIBUTE_KEEP_ENV, String.valueOf(keepEnvironmentVariablesInBuildfile()));
+		element.setAttribute(ATTRIBUTE_SUPORTS_MANAGED_BUILD, String.valueOf(supportsBuild(true)));
 		if(customizedErrorParserIds != null)
 			element.setAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS, CDataUtil.arrayToString(customizedErrorParserIds, ";")); //$NON-NLS-1$
 		if(customizedEnvironment != null)
 			element.setAttribute(ATTRIBUTE_ENVIRONMENT, MapStorageElement.encodeMap(customizedEnvironment));
-		element.setAttribute(ATTRIBUTE_APPEND_ENVIRONMENT, Boolean.valueOf(appendEnvironment()).toString());
+		element.setAttribute(ATTRIBUTE_APPEND_ENVIRONMENT, String.valueOf(appendEnvironment()));
 		if(getBuildPathAttribute() != null)	
 			element.setAttribute(ATTRIBUTE_BUILD_PATH, getBuildPathAttribute());
 		if(customBuildProperties != null)
@@ -1008,7 +1006,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		if (getIgnoreErrCmdAttribute() != null)
 			element.setAttribute(ATTRIBUTE_IGNORE_ERR_CMD, getIgnoreErrCmdAttribute());
-		element.setAttribute(ATTRIBUTE_STOP_ON_ERR, Boolean.valueOf(isStopOnError()).toString());
+		element.setAttribute(ATTRIBUTE_STOP_ON_ERR, String.valueOf(isStopOnError()));
 
 		if (parallelBuildCmd != null)
 			element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD, parallelBuildCmd);
@@ -1332,7 +1330,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = new Boolean(b);
+		isAbstract = Boolean.valueOf(b);
 		setDirty(true);
 	}
 	
@@ -2152,9 +2150,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		} else if(BuilderFactory.BUILD_LOCATION.equals(name)){
 			result = getBuildPathAttribute();
 		} else if(BuilderFactory.STOP_ON_ERROR.equals(name)){
-			result = Boolean.valueOf(isStopOnError()).toString();
+			result = String.valueOf(isStopOnError());
 		} else if(BuilderFactory.USE_DEFAULT_BUILD_CMD.equals(name)){
-			result = Boolean.valueOf(isDefaultBuildCmd()).toString();
+			result = String.valueOf(isDefaultBuildCmd());
 		} else if(BuilderFactory.BUILD_TARGET_AUTO.equals(name)){
 			result = getAutoBuildTargetAttribute();
 		} else if(BuilderFactory.BUILD_TARGET_INCREMENTAL.equals(name)){
@@ -2164,20 +2162,20 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		} else if(BuilderFactory.BUILD_TARGET_CLEAN.equals(name)){
 			result = getCleanBuildTargetAttribute();
 		} else if(BuilderFactory.BUILD_FULL_ENABLED.equals(name)){
-			result = Boolean.valueOf(isFullBuildEnabled()).toString();
+			result = String.valueOf(isFullBuildEnabled());
 		} else if(BuilderFactory.BUILD_CLEAN_ENABLED.equals(name)){
-			result = Boolean.valueOf(isCleanBuildEnabled()).toString();
+			result = String.valueOf(isCleanBuildEnabled());
 		} else if(BuilderFactory.BUILD_INCREMENTAL_ENABLED.equals(name)){
-			result = Boolean.valueOf(isIncrementalBuildEnabled()).toString();
+			result = String.valueOf(isIncrementalBuildEnabled());
 		} else if(BuilderFactory.BUILD_AUTO_ENABLED.equals(name)){
-			result = Boolean.valueOf(isAutoBuildEnable()).toString();
+			result = String.valueOf(isAutoBuildEnable());
 		} else if(BuilderFactory.BUILD_ARGUMENTS.equals(name)){
 			result = getArguments();
 		} else if(BuilderFactory.ENVIRONMENT.equals(name)){
 			result = customizedEnvironment != null ?
 				MapStorageElement.encodeMap(customizedEnvironment) : null;
 		} else if(BuilderFactory.BUILD_APPEND_ENVIRONMENT.equals(name)){
-			result = Boolean.valueOf(appendEnvironment()).toString();
+			result = String.valueOf(appendEnvironment());
 		} else if(customBuildProperties != null){
 			result = customBuildProperties.get(name);
 		}

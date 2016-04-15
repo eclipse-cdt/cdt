@@ -114,7 +114,7 @@ public class OptionReference implements IOption {
 		// value
 		switch (optValType) {
 		case BOOLEAN:
-			value = new Boolean(element.getAttribute(DEFAULT_VALUE));
+			value = Boolean.valueOf(element.getAttribute(DEFAULT_VALUE));
 			break;
 		case STRING:
 		case TREE:
@@ -143,7 +143,7 @@ public class OptionReference implements IOption {
 			for (int i = 0; i < nodes.getLength(); ++i) {
 				Node node = nodes.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(LIST_ITEM_BUILTIN));
+					Boolean isBuiltIn = Boolean.valueOf(((Element)node).getAttribute(LIST_ITEM_BUILTIN));
 					if (isBuiltIn.booleanValue()) {
 						getBuiltInList().add(((Element)node).getAttribute(LIST_ITEM_VALUE));
 					} else {
@@ -185,7 +185,7 @@ public class OptionReference implements IOption {
 			// value
 			switch (optValType) {
 			case BOOLEAN:
-				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
+				value = Boolean.valueOf(element.getAttribute(DEFAULT_VALUE));
 				break;
 			case STRING:
 				value = element.getAttribute(DEFAULT_VALUE);
@@ -215,7 +215,7 @@ public class OptionReference implements IOption {
 				List<String> valueList = new ArrayList<String>();
 				IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
 				for (IManagedConfigElement valueElement : valueElements) {
-					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
+					Boolean isBuiltIn = Boolean.valueOf(valueElement.getAttribute(LIST_ITEM_BUILTIN));
 					if (isBuiltIn.booleanValue()) {
 						getBuiltInList().add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
 					}
@@ -679,7 +679,7 @@ public class OptionReference implements IOption {
 	@Override
 	public void setValue(boolean value) throws BuildException {
 		if (getValueType() == BOOLEAN) {
-			this.value = new Boolean(value);
+			this.value = Boolean.valueOf(value);
 		}
 		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$

@@ -284,7 +284,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
     		node.setAttribute(ATTR_DIRECTORY, getDirectory().toOSString());
     		if (getAssociation() != null)
     			node.setAttribute(ATTR_ASSOCIATION, getAssociation().toOSString());
-    		node.setAttribute(ATTR_SEARCH_SUBFOLDERS, Boolean.valueOf(searchSubfolders()).toString());
+    		node.setAttribute(ATTR_SEARCH_SUBFOLDERS, String.valueOf(searchSubfolders()));
 			return CDebugUtils.serializeDocument(document);
         } catch (ParserConfigurationException e) {
         	ex = e;

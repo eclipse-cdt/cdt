@@ -117,7 +117,7 @@ public class DefaultGCCDependencyCalculator2Commands implements
 						new FileContextData(sourceLocation, outputLocation,
 								null, tool)).length > 0;
 
-		if (needExplicitRuleForFile) genericCommands = new Boolean(false);
+		if (needExplicitRuleForFile) genericCommands = Boolean.valueOf(false);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class DefaultGCCDependencyCalculator2Commands implements
 	 */
 	@Override
 	public boolean areCommandsGeneric() {
-		if (genericCommands == null) genericCommands = new Boolean(true);
+		if (genericCommands == null) genericCommands = Boolean.valueOf(true);
 		return genericCommands.booleanValue();
 	}
 

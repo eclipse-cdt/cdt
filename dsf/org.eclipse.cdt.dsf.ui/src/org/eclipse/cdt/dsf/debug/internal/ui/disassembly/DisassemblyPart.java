@@ -1495,7 +1495,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	@Override
 	public void viewportChanged(int verticalOffset) {
-		if (fDebugSessionId != null && fGotoAddressPending == PC_UNKNOWN && fScrollPos == null && !fUpdatePending && !fRefreshViewPending) {
+		if (fDebugSessionId != null && fGotoAddressPending == PC_UNKNOWN && fScrollPos == null && !fUpdatePending && !fRefreshViewPending 
+				&& fFocusAddress != PC_UNKNOWN) {
 			fUpdatePending = true;
             final int updateCount = fUpdateCount;
             invokeLater(new Runnable() {

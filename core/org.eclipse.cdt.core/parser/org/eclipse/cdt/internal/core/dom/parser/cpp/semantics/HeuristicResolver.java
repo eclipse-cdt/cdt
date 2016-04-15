@@ -96,6 +96,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
  * implementing more advanced heuristics that could deal with this.
  */
 public class HeuristicResolver {
+	// Infrastructure to protect against infinite recursion in heuristic resolution.
+	private static final int RESOLUTION_DEPTH_LIMIT = 32;
+	private static final ThreadLocal<Integer> fResolutionDepth = new ThreadLocal<Integer>() {
+		@Override
+		protected Integer initialValue() {
+			return 0;
+		}
+	};
+
 	/**
 	 * Given a dependent type, heuristically tries to find a concrete scope (i.e. not an unknown scope)
 	 * for it.
@@ -342,78 +351,91 @@ public class HeuristicResolver {
 	}
 	
 	/**
-	 * Helper function for resolveUnknownType() which does one round of resolution.
+	 * Helper function for {@link #resolveUnknownType} which does one round of resolution.
 	 */
 	private static IType resolveUnknownTypeOnce(ICPPUnknownType type, IASTNode point) {
-		if (type instanceof ICPPDeferredClassInstance) {
-			ICPPDeferredClassInstance deferredInstance = (ICPPDeferredClassInstance) type;
-			return deferredInstance.getClassTemplate();
-		} else if (type instanceof TypeOfDependentExpression) {
-			ICPPEvaluation evaluation = ((TypeOfDependentExpression) type).getEvaluation();
-			if (evaluation instanceof EvalUnary) {
-				EvalUnary unary = (EvalUnary) evaluation;
-				// Handle the common case of a dependent type representing the result of
-				// dereferencing another dependent type.
-				if (unary.getOperator() == IASTUnaryExpression.op_star) {
-					IType argument = unary.getArgument().getType(point);
-					if (argument instanceof ICPPUnknownType) {
-						IType resolved = resolveUnknownType((ICPPUnknownType) argument, point);
-						if (resolved instanceof IPointerType) {
-							return ((IPointerType) resolved).getType();
+		// Guard against infinite recursion.
+		int resolutionDepth = fResolutionDepth.get();
+		if (resolutionDepth > RESOLUTION_DEPTH_LIMIT) {
+			return type;
+		}
+		// Increment the resolution depth for the duration of this call.
+		fResolutionDepth.set(resolutionDepth + 1);
+
+		try {
+			if (type instanceof ICPPDeferredClassInstance) {
+				ICPPDeferredClassInstance deferredInstance = (ICPPDeferredClassInstance) type;
+				return deferredInstance.getClassTemplate();
+			} else if (type instanceof TypeOfDependentExpression) {
+				ICPPEvaluation evaluation = ((TypeOfDependentExpression) type).getEvaluation();
+				if (evaluation instanceof EvalUnary) {
+					EvalUnary unary = (EvalUnary) evaluation;
+					// Handle the common case of a dependent type representing the result of
+					// dereferencing another dependent type.
+					if (unary.getOperator() == IASTUnaryExpression.op_star) {
+						IType argument = unary.getArgument().getType(point);
+						if (argument instanceof ICPPUnknownType) {
+							IType resolved = resolveUnknownType((ICPPUnknownType) argument, point);
+							if (resolved instanceof IPointerType) {
+								return ((IPointerType) resolved).getType();
+							}
 						}
 					}
-				}
-			} else if (evaluation instanceof EvalID) {
-				EvalID id = (EvalID) evaluation;
-				ICPPEvaluation fieldOwner = id.getFieldOwner();
-				if (fieldOwner != null) {
-					IType fieldOwnerType = fieldOwner.getType(point);
-					IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(), 
-							id.getTemplateArgs(), point);
-					if (candidates.length == 1) {
-						return typeForBinding(candidates[0]);
-					}
-				}
-			} else if (evaluation instanceof EvalFunctionCall) {
-				EvalFunctionCall evalFunctionCall = (EvalFunctionCall) evaluation;
-				ICPPEvaluation function = evalFunctionCall.getArguments()[0];
-				IType functionType = function.getType(point);
-				if (functionType instanceof ICPPUnknownType) {
-					functionType = resolveUnknownType((ICPPUnknownType) functionType, point);
-				}
-				return ExpressionTypes.typeFromFunctionCall(functionType);
-			} else if (evaluation instanceof EvalMemberAccess) {
-				IBinding member = ((EvalMemberAccess) evaluation).getMember();
-				// Presumably the type will be unknown. That's fine, it will be
-				// resolved during subsequent resolution rounds.
-				return typeForBinding(member);
-			}
-			// TODO(nathanridge): Handle more cases.
-		} else if (type instanceof ICPPUnknownMemberClass) {
-			ICPPUnknownMemberClass member = (ICPPUnknownMemberClass) type;
-			IType ownerType = member.getOwnerType();
-			IBinding[] candidates = lookInside(ownerType, false, member.getNameCharArray(), null, point);
-			if (candidates.length == 1) { 
-				if (candidates[0] instanceof IType) {
-					IType result = (IType) candidates[0];
-					if (type instanceof ICPPUnknownMemberClassInstance) {
-						ICPPTemplateArgument[] args = ((ICPPUnknownMemberClassInstance) type).getArguments();
-						if (result instanceof ICPPClassTemplate) {
-							result = (IType) CPPTemplates.instantiate((ICPPClassTemplate) result, args, point);
-						} else if (result instanceof ICPPAliasTemplate) {
-							result = (IType) CPPTemplates.instantiateAliasTemplate((ICPPAliasTemplate) result,
-									args, point); 
-						} else if (result instanceof ICPPAliasTemplateInstance) {
-							// TODO(nathanridge): Remove this branch once we properly represent
-							// specializations of alias templates (which will then implement
-							// ICPPAliasTemplate and be caught by the previous branch).
-							result = (IType) CPPTemplates.instantiateAliasTemplateInstance(
-									(ICPPAliasTemplateInstance) result, args, point);
+				} else if (evaluation instanceof EvalID) {
+					EvalID id = (EvalID) evaluation;
+					ICPPEvaluation fieldOwner = id.getFieldOwner();
+					if (fieldOwner != null) {
+						IType fieldOwnerType = fieldOwner.getType(point);
+						IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(), 
+								id.getTemplateArgs(), point);
+						if (candidates.length == 1) {
+							return typeForBinding(candidates[0]);
 						}
 					}
-					return result;
+				} else if (evaluation instanceof EvalFunctionCall) {
+					EvalFunctionCall evalFunctionCall = (EvalFunctionCall) evaluation;
+					ICPPEvaluation function = evalFunctionCall.getArguments()[0];
+					IType functionType = function.getType(point);
+					if (functionType instanceof ICPPUnknownType) {
+						functionType = resolveUnknownType((ICPPUnknownType) functionType, point);
+					}
+					return ExpressionTypes.typeFromFunctionCall(functionType);
+				} else if (evaluation instanceof EvalMemberAccess) {
+					IBinding member = ((EvalMemberAccess) evaluation).getMember();
+					// Presumably the type will be unknown. That's fine, it will be
+					// resolved during subsequent resolution rounds.
+					return typeForBinding(member);
+				}
+				// TODO(nathanridge): Handle more cases.
+			} else if (type instanceof ICPPUnknownMemberClass) {
+				ICPPUnknownMemberClass member = (ICPPUnknownMemberClass) type;
+				IType ownerType = member.getOwnerType();
+				IBinding[] candidates = lookInside(ownerType, false, member.getNameCharArray(), null, point);
+				if (candidates.length == 1) { 
+					if (candidates[0] instanceof IType) {
+						IType result = (IType) candidates[0];
+						if (type instanceof ICPPUnknownMemberClassInstance) {
+							ICPPTemplateArgument[] args = ((ICPPUnknownMemberClassInstance) type).getArguments();
+							if (result instanceof ICPPClassTemplate) {
+								result = (IType) CPPTemplates.instantiate((ICPPClassTemplate) result, args, point);
+							} else if (result instanceof ICPPAliasTemplate) {
+								result = (IType) CPPTemplates.instantiateAliasTemplate((ICPPAliasTemplate) result,
+										args, point); 
+							} else if (result instanceof ICPPAliasTemplateInstance) {
+								// TODO(nathanridge): Remove this branch once we properly represent
+								// specializations of alias templates (which will then implement
+								// ICPPAliasTemplate and be caught by the previous branch).
+								result = (IType) CPPTemplates.instantiateAliasTemplateInstance(
+										(ICPPAliasTemplateInstance) result, args, point);
+							}
+						}
+						return result;
+					}
 				}
 			}
+		} finally {
+			// Restore original resolution depth.
+			fResolutionDepth.set(resolutionDepth);
 		}
 		return null;
 	}

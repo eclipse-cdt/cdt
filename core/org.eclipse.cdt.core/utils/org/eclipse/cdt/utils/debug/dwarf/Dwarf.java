@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -566,7 +566,7 @@ public class Dwarf {
 						if (printEnabled)
 							System.out.println("\t\t " + Long.toHexString(name) + " " + Long.toHexString(form)); //$NON-NLS-1$ //$NON-NLS-2$
 					} while (name != 0 && form != 0);
-					abbrevs.put(new Long(code), entry);
+					abbrevs.put(Long.valueOf(code), entry);
 				}
 			}
 		}
@@ -577,7 +577,7 @@ public class Dwarf {
 		throws IOException {
 		while (in.remaining() > 0) {
 			long code = read_unsigned_leb128(in);
-			AbbreviationEntry entry = abbrevs.get(new Long(code));
+			AbbreviationEntry entry = abbrevs.get(Long.valueOf(code));
 			if (entry != null) {
 				int len = entry.attributes.size();
 				List<AttributeValue> list = new ArrayList<AttributeValue>(len);
@@ -768,15 +768,15 @@ public class Dwarf {
 				}
 			case DwarfConstants.DW_FORM_GNU_ref_alt :
 				if (header.offsetSize == 8)
-					obj = new Long(read_8_bytes(in));
+					obj = Long.valueOf(read_8_bytes(in));
 				else
-					obj = new Long(read_4_bytes(in)  & 0xffffffffL);
+					obj = Long.valueOf(read_4_bytes(in)  & 0xffffffffL);
 				break;
 			case DwarfConstants.DW_FORM_sec_offset :
 					if (header.offsetSize == 8)
-						obj = new Long(read_8_bytes(in));
+						obj = Long.valueOf(read_8_bytes(in));
 					else
-						obj = new Long(read_4_bytes(in)  & 0xffffffffL);
+						obj = Long.valueOf(read_4_bytes(in)  & 0xffffffffL);
 					break;
 			case DwarfConstants.DW_FORM_exprloc :
 					long size = read_unsigned_leb128(in);
@@ -789,7 +789,7 @@ public class Dwarf {
 					obj = Byte.valueOf((byte)1);
 					break;
 			case DwarfConstants.DW_FORM_ref_sig8 :
-					obj = new Long(read_8_bytes(in));
+					obj = Long.valueOf(read_8_bytes(in));
 					break;
 
 			default :
@@ -903,7 +903,7 @@ public class Dwarf {
 			default :
 				// ????
 		}
-		return new Long(value);
+		return Long.valueOf(value);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Nokia and others.
+ * Copyright (c) 2007, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -309,7 +309,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				 */
 				
 				// Remember the CU line tables we've parsed.
-				Integer cuOffset = new Integer(cuStmtList);
+				Integer cuOffset = Integer.valueOf(cuStmtList);
 				
 				boolean dwarf64Bit = false;
 				if (! m_parsedLineTableOffsets.contains(cuOffset)) {
@@ -429,7 +429,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 			while (lineTableStart < sectionSize - minHeaderSize) {
 				data.position(lineTableStart);
 
-				Integer currLineTableStart = new Integer(lineTableStart);
+				Integer currLineTableStart = Integer.valueOf(lineTableStart);
 				
 				// Read length of the line table for one compile unit
 				// Note the length does not including the "length" field(s) itself.

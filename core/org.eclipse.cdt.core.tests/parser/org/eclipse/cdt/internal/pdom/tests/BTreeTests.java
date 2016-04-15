@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2016 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class BTreeTests extends BaseTestCase {
 			System.out.print("\t " + seed + " " + (nIterations/1000) + "K: ");
 		for (int i = 0; i < nIterations; i++) {
 			if (random.nextDouble() < pInsert) {
-				Integer value = new Integer(random.nextInt(Integer.MAX_VALUE));
+				Integer value = random.nextInt(Integer.MAX_VALUE);
 				boolean newEntry = expected.add(value);
 				if (newEntry) {
 					BTMockRecord btValue = new BTMockRecord(db, value.intValue());
@@ -160,7 +160,7 @@ public class BTreeTests extends BaseTestCase {
 					int index = random.nextInt(history.size());
 					BTMockRecord btValue = (BTMockRecord) history.get(index);
 					history.remove(index);
-					expected.remove(new Integer(btValue.intValue()));
+					expected.remove(Integer.valueOf(btValue.intValue()));
 					if (DEBUG > 1)
 						System.out.println("Remove: " + btValue.intValue() + " @ " + btValue.record);
 					btree.delete(btValue.getRecord());

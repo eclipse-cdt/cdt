@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -320,7 +320,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 					+ hits + " hits, "      //$NON-NLS-1$
 					+ misses + "(" + nfPercent.format(missPct) + ") misses.");      //$NON-NLS-1$ //$NON-NLS-2$
 
-			if ("true".equals(System.getProperty("SHOW_COMPRESSED_INDEXER_INFO"))) {    //$NON-NLS-1$ //$NON-NLS-2$
+			if (Boolean.parseBoolean(System.getProperty("SHOW_COMPRESSED_INDEXER_INFO"))) {    //$NON-NLS-1$
 				Calendar cal = Calendar.getInstance();
 				NumberFormat twoDigits= NumberFormat.getNumberInstance();
 				twoDigits.setMinimumIntegerDigits(2);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,7 +314,7 @@ public class BTree {
 				}
 				throw new BTreeKeyNotFoundException(
 						MessageFormat.format(Messages.getString("BTree.DeletionOnAbsentKey"), //$NON-NLS-1$
-								new Object[] { new Long(key), new Integer(mode) }));
+								new Object[] { Long.valueOf(key), Integer.valueOf(mode) }));
 			}
 		} else {
 			if (keyIndexInNode != -1) {
@@ -407,7 +407,7 @@ public class BTree {
 
 					throw new BTreeKeyNotFoundException(
 							MessageFormat.format(Messages.getString("BTree.DeletionOnAbsentKey"), //$NON-NLS-1$
-									new Object[]{new Long(key), new Integer(mode)}));
+									new Object[]{Long.valueOf(key), Integer.valueOf(mode)}));
 				}
 			}
 		}
@@ -664,14 +664,14 @@ public class BTree {
 				if (!full && !empty) { 
 					valid = false;
 					msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorA"), //$NON-NLS-1$
-							new Object[] { new Long(node), new Integer(indexFirstBlankKey), new Integer(indexLastNonBlankKey) });
+							new Object[] { Long.valueOf(node), Integer.valueOf(indexFirstBlankKey), Integer.valueOf(indexLastNonBlankKey) });
 				}
 			}
 
 			// Check: Key number constrains child numbers
 			if (childCount != 0 && childCount != keyCount + 1) {
 				valid = false;
-				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorB"), new Object[] { new Long(node) }); //$NON-NLS-1$
+				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorB"), new Object[] { Long.valueOf(node) }); //$NON-NLS-1$
 			}
 
 			// The root node is excused from the remaining node constraints.
@@ -682,13 +682,13 @@ public class BTree {
 			// Check: Non-root nodes must have a keyCount within a certain range
 			if (keyCount < MIN_RECORDS || keyCount > MAX_RECORDS) {
 				valid = false;
-				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorC"), new Object[] { new Long(node) }); //$NON-NLS-1$
+				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorC"), new Object[] { Long.valueOf(node) }); //$NON-NLS-1$
 			}
 
 			// Check: All leaf nodes are at the same depth
 			if (childCount == 0) {
 				if (leafDepth == null) {
-					leafDepth = new Integer(depth);
+					leafDepth = Integer.valueOf(depth);
 				}
 				if (depth != leafDepth.intValue()) {
 					valid = false;

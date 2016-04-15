@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 Symbian Ltd and others.
+ * Copyright (c) 2005, 2016 Symbian Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -582,9 +582,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 					String version = ManagedBuildManager.getVersionFromIdAndVersion(newSuperClass.getId());
 					String baseId = ManagedBuildManager.getIdFromIdAndVersion(newSuperClass.getId());
 					if ( version != null) {
-						subId = baseId + ".adjusted." + new Integer(ManagedBuildManager.getRandomNumber()) + "_" + version; //$NON-NLS-1$ //$NON-NLS-2$
+						subId = baseId + ".adjusted." + Integer.toString(ManagedBuildManager.getRandomNumber()) + "_" + version; //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						subId = baseId + ".adjusted." + new Integer(ManagedBuildManager.getRandomNumber()); //$NON-NLS-1$
+						subId = baseId + ".adjusted." + Integer.toString(ManagedBuildManager.getRandomNumber()); //$NON-NLS-1$
 					}
 					setOption = createOption(newSuperClass, subId, null, true);
 					((Option)setOption).setAdjusted(true);

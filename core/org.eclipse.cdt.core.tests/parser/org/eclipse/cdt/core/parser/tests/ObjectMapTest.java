@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,7 +142,7 @@ public class ObjectMapTest extends TestCase {
 	public void testMapAdd() {
 		CharArrayObjectMap map = new CharArrayObjectMap(4);
 		char[] key1 = "key1".toCharArray();
-		Object value1 = new Integer(43);
+		Integer value1 = 43;
 		map.put(key1, value1);
 
 		char[] key2 = "key1".toCharArray();
@@ -150,7 +150,7 @@ public class ObjectMapTest extends TestCase {
 		assertEquals(value1, value2);
 
 		for (int i = 0; i < 25; ++i) {
-			map.put(("ikey" + i).toCharArray(), new Integer(i));
+			map.put(("ikey" + i).toCharArray(), Integer.valueOf(i));
 		}
 
 		for (int i = 0; i < 25; ++i) {

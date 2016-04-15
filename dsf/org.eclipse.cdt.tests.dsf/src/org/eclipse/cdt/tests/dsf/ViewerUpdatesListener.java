@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Wind River Systems and others.
+ * Copyright (c) 2009, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -197,13 +197,13 @@ public class ViewerUpdatesListener
             childrenIndexes = new TreeSet<Integer>();
             fChildrenUpdatesScheduled.put(path, childrenIndexes);
         }
-        childrenIndexes.add(new Integer(index));
+        childrenIndexes.add(index);
     }
 
     public void removeChildrenUpdate(TreePath path, int index) {
         Set<Integer> childrenIndexes = fChildrenUpdatesScheduled.get(path);
         if (childrenIndexes != null) {
-            childrenIndexes.remove(new Integer(index));
+            childrenIndexes.remove(Integer.valueOf(index));
             if (childrenIndexes.isEmpty()) {
                 fChildrenUpdatesScheduled.remove(path);
             }
@@ -368,7 +368,7 @@ public class ViewerUpdatesListener
                 Set<Integer> childrenIndexes = fChildrenUpdatesScheduled.get(update.getElementPath());
                 if (childrenIndexes != null) {
                     for (int i = start; i < end; i++) {
-                        childrenIndexes.remove(new Integer(i));
+                        childrenIndexes.remove(Integer.valueOf(i));
                     }
                     if (childrenIndexes.isEmpty()) {
                         fChildrenUpdatesScheduled.remove(update.getElementPath());

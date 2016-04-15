@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.osgi.framework.Version;
 
 public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//  Superclass
 	private ITargetPlatform superClass;
@@ -156,7 +156,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			errorParserIds = new String(targetPlatform.errorParserIds);
 		}
 		if (targetPlatform.isAbstract != null) {
-			isAbstract = Boolean.valueOf(targetPlatform.isAbstract.booleanValue());
+			isAbstract = targetPlatform.isAbstract;
 		}
 		if (targetPlatform.osList != null) {
 			osList = new ArrayList<String>(targetPlatform.osList);
@@ -199,7 +199,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = Boolean.parseBoolean(isAbs);
         }
 
 		// Get the comma-separated list of valid OS
@@ -267,7 +267,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.parseBoolean(isAbs);
 			}
 		}
 
@@ -527,7 +527,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 */
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = Boolean.valueOf(b);
+		isAbstract = b;
 		setDirty(true);
 	}
 

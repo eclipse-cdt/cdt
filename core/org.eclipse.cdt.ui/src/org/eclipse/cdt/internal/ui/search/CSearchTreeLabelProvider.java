@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 QNX Software Systems and others.
+ * Copyright (c) 2006, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class CSearchTreeLabelProvider extends CSearchLabelProvider {
 			return text;
 		}
 		return text + " " //$NON-NLS-1$
-				+ Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(count)); 
+				+ Messages.format(CSearchMessages.CSearchResultCollector_matches, Integer.valueOf(count)); 
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class CSearchTreeLabelProvider extends CSearchLabelProvider {
 			final int count= getMatchCount(element);
 			if (count > 1) {
 				final String matchesCount = " " //$NON-NLS-1$
-					+ Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(count));
+					+ Messages.format(CSearchMessages.CSearchResultCollector_matches, Integer.valueOf(count));
 				styled.append(matchesCount, StyledString.COUNTER_STYLER);
 				return styled;
 			}

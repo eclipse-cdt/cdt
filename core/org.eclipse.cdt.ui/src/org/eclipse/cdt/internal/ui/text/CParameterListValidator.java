@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,12 +218,12 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		final int length= code.length();
 	    int pos= 0;
 		List<Integer> positions= new ArrayList<>();
-		positions.add(new Integer(-1));
+		positions.add(Integer.valueOf(-1));
 		while (pos < length && pos != -1) {
 			char ch= code.charAt(pos);
 			switch (ch) {
 	            case ',':
-		            positions.add(new Integer(pos));
+		            positions.add(Integer.valueOf(pos));
 		            break;
 	            case '(':
 	            	pos= indexOfClosingPeer(code, '(', ')', pos);
@@ -243,7 +243,7 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 			if (pos != -1)
 				pos++;
 		}
-		positions.add(new Integer(length));
+		positions.add(Integer.valueOf(length));
 		
 		int[] fields= new int[positions.size()];
 		for (int i= 0; i < fields.length; i++)

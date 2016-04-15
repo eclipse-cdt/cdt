@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,54 +97,54 @@ public class Exe {
 			buffer.append(NL);
 
 			buffer.append("lastsize: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_lastsize).longValue()));
+			buffer.append(Long.toHexString(e_lastsize));
 			buffer.append(NL);
 
 			buffer.append("nblocks: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_nblocks).longValue()));
+			buffer.append(Long.toHexString(e_nblocks));
 			buffer.append(NL);
 
 			buffer.append("nreloc: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_nreloc).longValue()));
+			buffer.append(Long.toHexString(e_nreloc));
 			buffer.append(NL);
 
 			buffer.append("hdrsize: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_hdrsize).longValue()));
+			buffer.append(Long.toHexString(e_hdrsize));
 			buffer.append(NL);
 
 			buffer.append("minalloc: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_minalloc).longValue()));
+			buffer.append(Long.toHexString(e_minalloc));
 			buffer.append(NL);
 
 			buffer.append("maxalloc: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_maxalloc).longValue()));
+			buffer.append(Long.toHexString(e_maxalloc));
 			buffer.append(NL);
 			buffer.append("ss: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_ss).longValue()));
+			buffer.append(Long.toHexString(e_ss));
 			buffer.append(NL);
 
 			buffer.append("sp: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_sp).longValue()));
+			buffer.append(Long.toHexString(e_sp));
 			buffer.append(NL);
 
 			buffer.append("checksum: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_checksum).longValue()));
+			buffer.append(Long.toHexString(e_checksum));
 			buffer.append(NL);
 
 			buffer.append("ip: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_ip).longValue()));
+			buffer.append(Long.toHexString(e_ip));
 			buffer.append(NL);
 
 			buffer.append("cs: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_cs).longValue()));
+			buffer.append(Long.toHexString(e_cs));
 			buffer.append(NL);
 
 			buffer.append("relocoffs: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_relocoffs).longValue()));
+			buffer.append(Long.toHexString(e_relocoffs));
 			buffer.append(NL);
 
 			buffer.append("overlay: 0x"); //$NON-NLS-1$
-			buffer.append(Long.toHexString(new Short(e_noverlay).longValue()));
+			buffer.append(Long.toHexString(e_noverlay));
 			buffer.append(NL);
 			return buffer.toString();
 		}

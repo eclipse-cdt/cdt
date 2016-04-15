@@ -110,7 +110,7 @@ public class Binary extends Openable implements IBinary {
 			if (hasDebug == null || hasChanged()) {
 				IBinaryObject obj = getBinaryObject();
 				if (obj != null) {
-					hasDebug = new Boolean(obj.hasDebug()).toString();
+					hasDebug = String.valueOf(obj.hasDebug());
 				}
 			}
 		}
@@ -199,7 +199,7 @@ public class Binary extends Openable implements IBinary {
 			if (endian == null || hasChanged()) {
 				IBinaryObject obj = getBinaryObject();
 				if (obj != null) {
-					endian = new Boolean(obj.isLittleEndian()).toString();
+					endian = String.valueOf(obj.isLittleEndian());
 				}
 			}
 		}

@@ -404,7 +404,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 		if (!provisionMap.containsKey(key)) {
 			try {
 				ICProject cproject= CoreModel.getDefault().create(project);
-				provisionMap.put(key, new Boolean(provider.providesFor(cproject)));
+				provisionMap.put(key, Boolean.valueOf(provider.providesFor(cproject)));
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				provisionMap.put(key, Boolean.FALSE);

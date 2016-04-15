@@ -290,7 +290,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 
 	@Override
 	public void setValue(String name, boolean value) {
-		setOptionValue(name,new Boolean(value));
+		setOptionValue(name,Boolean.valueOf(value));
 	}
 
 	protected void setOptionValue(String name, Object value){

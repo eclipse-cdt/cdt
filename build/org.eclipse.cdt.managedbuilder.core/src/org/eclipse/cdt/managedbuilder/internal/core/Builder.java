@@ -280,7 +280,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			errorParserIds = new String(builder.errorParserIds);
 		}
 		if (builder.isAbstract != null) {
-			isAbstract = new Boolean(builder.isAbstract.booleanValue());
+			isAbstract = Boolean.valueOf(builder.isAbstract.booleanValue());
 		}
 		if (builder.command != null) {
 			command = new String(builder.command);
@@ -297,30 +297,28 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		managedBuildOn = builder.managedBuildOn;
 		keepEnvVarInBuildfile = builder.keepEnvVarInBuildfile;
 		supportsManagedBuild = builder.supportsManagedBuild;
-		if(builder.customizedErrorParserIds != null)
+		if (builder.customizedErrorParserIds != null)
 			customizedErrorParserIds = builder.customizedErrorParserIds.clone();
-		if(builder.customizedEnvironment != null)
+		if (builder.customizedEnvironment != null)
 			customizedEnvironment = cloneMap(builder.customizedEnvironment);
 		appendEnvironment = builder.appendEnvironment;
 		buildPath = builder.buildPath;
-		if(builder.customBuildProperties != null)
+		if (builder.customBuildProperties != null)
 			customBuildProperties = cloneMap(builder.customBuildProperties);
-
-			
 			
 		buildFileGeneratorElement = builder.buildFileGeneratorElement; 
 		
-		if(builder.fileContextBuildMacroValues != null){
+		if (builder.fileContextBuildMacroValues != null){
 			fileContextBuildMacroValues = (FileContextBuildMacroValues)builder.fileContextBuildMacroValues.clone();
 			fileContextBuildMacroValues.setBuilder(this);
 		}
 		
 		builderVariablePattern = builder.builderVariablePattern;
 		
-		if(builder.isVariableCaseSensitive != null)
-			isVariableCaseSensitive = new Boolean(builder.isVariableCaseSensitive.booleanValue());
+		if (builder.isVariableCaseSensitive != null)
+			isVariableCaseSensitive = Boolean.valueOf(builder.isVariableCaseSensitive.booleanValue());
 
-		if(builder.reservedMacroNames != null)
+		if (builder.reservedMacroNames != null)
 			reservedMacroNames = builder.reservedMacroNames.clone();
 
 		reservedMacroNameSupplierElement = builder.reservedMacroNameSupplierElement;
@@ -480,7 +478,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		// get the 'isVariableCaseSensitive' attribute
 		String isCS = element.getAttribute(IS_VARIABLE_CASE_SENSITIVE);
 		if(isCS != null)
-			isVariableCaseSensitive = new Boolean("true".equals(isCS)); //$NON-NLS-1$
+			isVariableCaseSensitive = Boolean.valueOf("true".equals(isCS)); //$NON-NLS-1$
 
 		// get the reserved macro names
 		String reservedNames = element.getAttribute(RESERVED_MACRO_NAMES);
@@ -499,7 +497,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
-    		isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+    		isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
         }
 
         // command
@@ -708,7 +706,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.valueOf("true".equals(isAbs)); //$NON-NLS-1$
 			}
 		}
 
@@ -1332,7 +1330,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = new Boolean(b);
+		isAbstract = Boolean.valueOf(b);
 		setDirty(true);
 	}
 	

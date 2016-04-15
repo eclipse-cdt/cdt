@@ -264,10 +264,10 @@ public class InputType extends BuildObject implements IInputType {
 			buildVariable = new String(inputType.buildVariable);
 		}
 		if (inputType.multipleOfType != null) {
-			multipleOfType = new Boolean(inputType.multipleOfType.booleanValue());
+			multipleOfType = Boolean.valueOf(inputType.multipleOfType.booleanValue());
 		}
 		if (inputType.primaryInput != null) {
-			primaryInput = new Boolean(inputType.primaryInput.booleanValue());
+			primaryInput = Boolean.valueOf(inputType.primaryInput.booleanValue());
 		}
 		dependencyGeneratorElement = inputType.dependencyGeneratorElement;
 		dependencyGenerator = inputType.dependencyGenerator;
@@ -399,13 +399,13 @@ public class InputType extends BuildObject implements IInputType {
 		// multipleOfType
         String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
         if (isMOT != null){
-    		multipleOfType = new Boolean("true".equals(isMOT)); //$NON-NLS-1$
+    		multipleOfType = Boolean.valueOf("true".equals(isMOT)); //$NON-NLS-1$
         }
 
 		// primaryInput
         String isPI = element.getAttribute(IInputType.PRIMARY_INPUT);
         if (isPI != null){
-			primaryInput = new Boolean("true".equals(isPI)); //$NON-NLS-1$
+			primaryInput = Boolean.valueOf("true".equals(isPI)); //$NON-NLS-1$
         }
 
 		// buildVariable
@@ -580,7 +580,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (element.getAttribute(IInputType.MULTIPLE_OF_TYPE) != null) {
 			String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
 			if (isMOT != null){
-				multipleOfType = new Boolean("true".equals(isMOT)); //$NON-NLS-1$
+				multipleOfType = Boolean.valueOf("true".equals(isMOT)); //$NON-NLS-1$
 			}
 		}
 
@@ -588,7 +588,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (element.getAttribute(IInputType.PRIMARY_INPUT) != null) {
 	        String isPI = element.getAttribute(IInputType.PRIMARY_INPUT);
 	        if (isPI != null){
-				primaryInput = new Boolean("true".equals(isPI)); //$NON-NLS-1$
+				primaryInput = Boolean.valueOf("true".equals(isPI)); //$NON-NLS-1$
 	        }
 		}
 
@@ -1159,7 +1159,7 @@ public class InputType extends BuildObject implements IInputType {
 	@Override
 	public void setMultipleOfType(boolean b) {
 		if (multipleOfType == null || !(b == multipleOfType.booleanValue())) {
-			multipleOfType = new Boolean(b);
+			multipleOfType = Boolean.valueOf(b);
 			setDirty(true);
 			setRebuildState(true);
 		}
@@ -1186,7 +1186,7 @@ public class InputType extends BuildObject implements IInputType {
 	@Override
 	public void setPrimaryInput(boolean b) {
 		if (primaryInput == null || !(b == primaryInput.booleanValue())) {
-			primaryInput = new Boolean(b);
+			primaryInput = Boolean.valueOf(b);
 			setDirty(true);
 			setRebuildState(true);
 		}

@@ -33,7 +33,7 @@
           <useUIThread>false</useUIThread>
           <product>org.eclipse.cdt.debug.application.product</product>
           <application>org.eclipse.cdt.debug.application.app</application>
-          <argLine>${base.ui.test.vmargs}</argLine>
+          <argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
           <includes>
              <include>**/AllTests.*</include>
           </includes>

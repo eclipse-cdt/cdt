@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_b1cd632f",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1867,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-04-15T14:17:28Z",
+      "side": 1,
+      "message": "This is a too harsh of a forced refresh. With this change, try scrolling the view, then making tab active and inactive again. In that case the debugContextChanged() causes the scroll position to be lost.",
+      "revId": "ebe4d6390fae20a4a9b3ff413161c543a587b372",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -127,6 +127,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_0a725cd3",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6868,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-15T23:32:15Z",
+      "side": 1,
+      "message": "In any case the order of arguments is wrong and needs to be reversed.",
+      "parentUuid": "e7dfcf21_8ad10c41",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_aad4082f",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/BTreeTests.java",
         "patchSetId": 1
@@ -138,6 +156,24 @@
       "writtenOn": "2016-04-15T23:21:59Z",
       "side": 1,
       "message": "NB it\u0027s not safe to use this as \u0027int\u0027 because the remove also takes an int argument which is the index",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2a6d58f5",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/BTreeTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-15T23:32:15Z",
+      "side": 1,
+      "message": "It would be nice to add a comment to this effect.",
+      "parentUuid": "e7dfcf21_aad4082f",
       "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -206,6 +242,24 @@
       "writtenOn": "2016-04-15T23:21:59Z",
       "side": 1,
       "message": "There are two lines that are repeated here. It looks like a mistake to me. Should these lines be deleted?",
+      "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ca6b14e3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/CView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 994,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-15T23:32:15Z",
+      "side": 1,
+      "message": "Agree.",
+      "parentUuid": "e7dfcf21_caf954bb",
       "revId": "4ec888f04bc52e2c63b503134295f392669caf0c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

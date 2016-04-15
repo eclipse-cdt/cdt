@@ -211,7 +211,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
             Element node = document.createElement(ELEMENT_NAME);
             document.appendChild(node);
     		node.setAttribute(ATTR_PROJECT, getProject().getName());
-    		node.setAttribute(ATTR_GENERIC, Boolean.valueOf(isGeneric()).toString());
+    		node.setAttribute(ATTR_GENERIC, String.valueOf(isGeneric()));
 			return CDebugUtils.serializeDocument(document);
         } catch (ParserConfigurationException e) {
         	ex = e;

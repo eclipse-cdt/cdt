@@ -351,9 +351,9 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     public void setValue(String name, boolean value) {
         boolean oldValue = getBoolean(name);
         if (oldValue != value) {
-            fProperties.put( name, new Boolean(value) );
+            fProperties.put( name, Boolean.valueOf(value) );
             setDirty(true);
-            firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value) );
+            firePropertyChangeEvent(name, Boolean.valueOf(oldValue), Boolean.valueOf(value) );
         }
     }
 

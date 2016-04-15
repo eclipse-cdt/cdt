@@ -287,7 +287,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
 			throws BuildException {
-		return setOption(parent, option, new Boolean(value), MODE_BOOL);
+		return setOption(parent, option, Boolean.valueOf(value), MODE_BOOL);
 	}
 
 	/* (non-Javadoc)

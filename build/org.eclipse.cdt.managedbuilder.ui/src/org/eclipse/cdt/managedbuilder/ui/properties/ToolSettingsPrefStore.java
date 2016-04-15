@@ -49,7 +49,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 	private IResourceInfo rcInfo = null;
 	private IOptionCategory optCategory;
 	private ToolListElement selectedElement;
-	private ListenerList listenerList;
+	private ListenerList<IPropertyChangeListener> listenerList;
 	private boolean dirtyFlag;
 
 	public static ToolSettingsPrefStore getDefault() {
@@ -181,10 +181,12 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			}
 		} else {
 			Object val = getOptionValue(name);
-			if(val instanceof String)
-				return (String)val;
-			else if(val instanceof Collection)
-				return listToString((String[])((Collection)val).toArray(new String[0]));
+			if (val instanceof String) {
+				return (String) val;
+			} else if (val instanceof Collection) {
+				Collection<?> collection = (Collection<String>) val;
+				return listToString(collection.toArray(new String[collection.size()]));
+			}
 		}
 
 		return getDefaultString(name);
@@ -290,7 +292,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 
 	@Override
 	public void setValue(String name, boolean value) {
-		setOptionValue(name,new Boolean(value));
+		setOptionValue(name, Boolean.valueOf(value));
 	}
 
 	protected void setOptionValue(String name, Object value){
@@ -300,21 +302,21 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			IHoldsOptions holder = (IHoldsOptions)opt[0];
 			IOption newOption = null;
 			try{
-				switch(option.getValueType()){
+				switch (option.getValueType()){
 					case IOption.STRING:
-						if(value instanceof String){
+						if (value instanceof String) {
 							newOption = rcInfo.setOption(holder, option, (String)value);
 						}
 						break;
 					case IOption.BOOLEAN:
-						if(value instanceof Boolean){
-							boolean val = ((Boolean)value).booleanValue();
+						if (value instanceof Boolean){
+							boolean val = ((Boolean) value).booleanValue();
 							newOption = rcInfo.setOption(holder,option,val);
 						}
 						break;
 					case IOption.ENUMERATED:
 					case IOption.TREE:
-						if(value instanceof String){
+						if (value instanceof String){
 							String val = (String)value;
 							String enumId = option.getId(val);
 							newOption = rcInfo.setOption(holder, option,
@@ -336,19 +338,19 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:
-						if(value instanceof String){
-							String val[] = parseString((String)value);
-							newOption = rcInfo.setOption(holder,option,val);
+						if (value instanceof String) {
+							String val[] = parseString((String) value);
+							newOption = rcInfo.setOption(holder, option, val);
 						}
 						break;
 					default:
 						break;
 				}
 
-				if(newOption != option){
+				if (newOption != option) {
 					//TODO: ???
 				}
-			} catch (BuildException e){
+			} catch (BuildException e) {
 			}
 		}
 	}
@@ -362,7 +364,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 	}
 
 	public static String listToString(String items[], String separator){
-		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
+		StringBuilder path = new StringBuilder();
 
 		for (int i = 0; i < items.length; i++) {
 			path.append(items[i]);

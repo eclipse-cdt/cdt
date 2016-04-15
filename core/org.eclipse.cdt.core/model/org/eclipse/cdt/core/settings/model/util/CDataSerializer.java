@@ -375,7 +375,7 @@ public class CDataSerializer {
 			setAttribute(el, PATH, path.toString());
 		}
 
-//		setAttribute(el, EXCLUDED, Boolean.valueOf(data.isExcluded()).toString());
+//		setAttribute(el, EXCLUDED, String.valueOf(data.isExcluded()));
 
 		CLanguageData lDatas[] = data.getLanguageDatas();
 		ICStorageElement child;
@@ -394,7 +394,7 @@ public class CDataSerializer {
 			setAttribute(el, PATH, path.toString());
 		}
 
-//		setAttribute(el, EXCLUDED, Boolean.valueOf(data.isExcluded()).toString());
+//		setAttribute(el, EXCLUDED, String.valueOf(data.isExcluded()));
 
 		CLanguageData lData = data.getLanguageData();
 		if(lData != null){

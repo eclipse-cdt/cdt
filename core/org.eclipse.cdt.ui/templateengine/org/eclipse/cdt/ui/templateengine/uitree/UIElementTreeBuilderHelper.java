@@ -101,11 +101,11 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 		String id= uiAttributes.get(UIElement.ID);
 		String type= uiAttributes.get(UIElement.TYPE);
 
-		if (type == null || type.length()==0 ) {
+		if (type == null || type.length() == 0) {
 			return null;
 		}
 
-		if (new Boolean(uiAttributes.get(InputUIElement.HIDDEN)).booleanValue()) {
+		if (Boolean.parseBoolean(uiAttributes.get(InputUIElement.HIDDEN))) {
 			return null;
 		}
 
@@ -116,19 +116,19 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 		} else if (type.equalsIgnoreCase(InputUIElement.SELECTTYPE)) {
 			String defaultValue= element.getAttribute(InputUIElement.DEFAULT);
 
-			Map<String,String> value2name= new LinkedHashMap<String,String>();
-			for(Element item : TemplateEngine.getChildrenOfElement(element)) {
+			Map<String, String> value2name= new LinkedHashMap<>();
+			for (Element item : TemplateEngine.getChildrenOfElement(element)) {
 				String label= item.getAttribute(InputUIElement.COMBOITEM_LABEL); // item displayed in Combo
 				String value= item.getAttribute(InputUIElement.COMBOITEM_NAME); // value stored when its selected
-				if(value.length() == 0) {
+				if (value.length() == 0) {
 					value= item.getAttribute(InputUIElement.COMBOITEM_VALUE);
 				}
-				if(label==null || value==null) {
+				if (label == null || value == null) {
 					String msg = MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.InvalidEmptyLabel"), //$NON-NLS-1$
 							new Object[] {id});
 					CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 				} else {
-					if(value2name.put(value, label)!=null) {
+					if (value2name.put(value, label) != null) {
 						String msg = MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.InvalidNonUniqueValue"), //$NON-NLS-1$
 								new Object[] {value, id});
 						CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));

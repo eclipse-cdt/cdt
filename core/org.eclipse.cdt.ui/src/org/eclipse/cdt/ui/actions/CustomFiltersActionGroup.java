@@ -284,7 +284,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		fLRUFilterIdsStack.remove(filterId);
 		fLRUFilterIdsStack.add(0, filterId);
 
-		fEnabledFilterIds.put(filterId, new Boolean(state));
+		fEnabledFilterIds.put(filterId, Boolean.valueOf(state));
 		storeViewDefaults();
 
 		updateViewerFilters(true);
@@ -423,7 +423,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		fEnabledFilterIds= new HashMap<String, Boolean>(filterDescs.length);
 		for (FilterDescriptor filterDesc : filterDescs) {
 			String id= filterDesc.getId();
-			Boolean isEnabled= new Boolean(filterDesc.isEnabled());
+			Boolean isEnabled= Boolean.valueOf(filterDesc.isEnabled());
 			//if (fEnabledFilterIds.containsKey(id))
 			//	CUIPlugin.log(new Status("WARNING: Duplicate id for extension-point \"org.eclipse.jdt.ui.CElementFilters\"")); //$NON-NLS-1$
 			fEnabledFilterIds.put(id, isEnabled);
@@ -523,7 +523,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		Iterator<String> iter= fEnabledFilterIds.keySet().iterator();
 		while (iter.hasNext()) {
 			String id= iter.next();
-			Boolean isEnabled= new Boolean(store.getBoolean(id));
+			Boolean isEnabled= Boolean.valueOf(store.getBoolean(id));
 			fEnabledFilterIds.put(id, isEnabled);
 		}
 
@@ -577,7 +577,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	 */
 	public void saveState(IMemento memento) {
 		IMemento customFilters= memento.createChild(TAG_CUSTOM_FILTERS);
-		customFilters.putString(TAG_USER_DEFINED_PATTERNS_ENABLED, new Boolean(fUserDefinedPatternsEnabled).toString());
+		customFilters.putString(TAG_USER_DEFINED_PATTERNS_ENABLED, String.valueOf(fUserDefinedPatternsEnabled));
 		saveUserDefinedPatterns(customFilters);
 		saveXmlDefinedFilters(customFilters);
 		saveLRUFilters(customFilters);
@@ -671,7 +671,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 			IMemento[] children= xmlDefinedFilters.getChildren(TAG_CHILD);
 			for (IMemento element : children) {
 				String id= element.getString(TAG_FILTER_ID);
-				Boolean isEnabled= new Boolean(element.getString(TAG_IS_ENABLED));
+				Boolean isEnabled= Boolean.valueOf(element.getString(TAG_IS_ENABLED));
 				fEnabledFilterIds.put(id, isEnabled);
 			}
 		}

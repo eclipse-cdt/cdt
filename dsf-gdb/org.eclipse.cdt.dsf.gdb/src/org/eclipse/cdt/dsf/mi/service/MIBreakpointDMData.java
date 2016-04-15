@@ -99,7 +99,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
 				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
 				fProperties.put(MIBreakpoints.IGNORE_COUNT,    dsfMIBreakpoint.getIgnoreCount());
-				fProperties.put(MIBreakpoints.IS_ENABLED,      new Boolean(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.IS_ENABLED,      Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
 				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
 	
 				// MI-specific breakpoint attributes
@@ -108,8 +108,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
 				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
 				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
-				fProperties.put(IS_TEMPORARY, new Boolean(dsfMIBreakpoint.isTemporary()));
-				fProperties.put(IS_HARDWARE,  new Boolean(dsfMIBreakpoint.isHardware()));
+				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
+				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
 				fProperties.put(LOCATION,     formatLocation());
 				break;
 			}
@@ -137,7 +137,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
 				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
 				fProperties.put(MIBreakpoints.PASS_COUNT,      dsfMIBreakpoint.getPassCount());
-				fProperties.put(MIBreakpoints.IS_ENABLED,      new Boolean(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.IS_ENABLED,      Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
 				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
 	
 				// MI-specific breakpoint attributes
@@ -146,8 +146,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
 				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
 				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
-				fProperties.put(IS_TEMPORARY, new Boolean(dsfMIBreakpoint.isTemporary()));
-				fProperties.put(IS_HARDWARE,  new Boolean(dsfMIBreakpoint.isHardware()));
+				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
+				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
 				fProperties.put(LOCATION,     formatLocation());
 				break;
 			}
@@ -162,7 +162,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
 				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
 				fProperties.put(MIBreakpoints.PRINTF_STRING,   dsfMIBreakpoint.getPrintfString());
-				fProperties.put(MIBreakpoints.IS_ENABLED,      new Boolean(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.IS_ENABLED,      Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
 				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
 	
 				// MI-specific breakpoint attributes
@@ -171,8 +171,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
 				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
 				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
-				fProperties.put(IS_TEMPORARY, new Boolean(dsfMIBreakpoint.isTemporary()));
-				fProperties.put(IS_HARDWARE,  new Boolean(dsfMIBreakpoint.isHardware()));
+				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
+				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
 				fProperties.put(LOCATION,     formatLocation());
 				break;
 			}

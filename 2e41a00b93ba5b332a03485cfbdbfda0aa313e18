@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_4a91c457",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/IndexerPreferences.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-16T00:25:28Z",
+      "side": 1,
+      "message": "A space is missing after the type in cast.",
+      "range": {
+        "startLine": 185,
+        "startChar": 35,
+        "endLine": 185,
+        "endChar": 36
+      },
+      "revId": "2e41a00b93ba5b332a03485cfbdbfda0aa313e18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6a94c048",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/IndexerPreferences.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-16T00:25:28Z",
+      "side": 1,
+      "message": "Ditto",
+      "range": {
+        "startLine": 439,
+        "startChar": 34,
+        "endLine": 439,
+        "endChar": 35
+      },
+      "revId": "2e41a00b93ba5b332a03485cfbdbfda0aa313e18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

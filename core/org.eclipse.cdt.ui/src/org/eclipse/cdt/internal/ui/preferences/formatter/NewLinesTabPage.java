@@ -25,6 +25,8 @@ public class NewLinesTabPage extends FormatterTabPage {
 	    "class Point {" + //$NON-NLS-1$
 	    "public:" + //$NON-NLS-1$
 	    "Point(double x, double y) : x(x), y(y) {" + //$NON-NLS-1$
+	    "label: for (int i = 0; i < 10; i++)" + //$NON-NLS-1$
+	    "goto label;" + //$NON-NLS-1$
 	    "}\n\n" + //$NON-NLS-1$
 	    "private:" + //$NON-NLS-1$
 	    "double x;" + //$NON-NLS-1$
@@ -44,6 +46,7 @@ public class NewLinesTabPage extends FormatterTabPage {
 	protected void doCreatePreferences(Composite composite, int numColumns) {
 		final Group newlinesGroup= createGroup(numColumns, composite, FormatterMessages.NewLinesTabPage_newlines_group_title);
 		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_group_option_before_colon_in_constructor_initializer_list, DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST, DO_NOT_INSERT_INSERT);
+		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_group_option_after_label, DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL, DO_NOT_INSERT_INSERT);		
 //		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_group_option_empty_class_body, DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_TYPE_DECLARATION, DO_NOT_INSERT_INSERT);
 //		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_group_option_empty_anonymous_class_body, DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_ANONYMOUS_TYPE_DECLARATION, DO_NOT_INSERT_INSERT);
 //		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_group_option_empty_method_body, DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_METHOD_BODY, DO_NOT_INSERT_INSERT);

@@ -170,6 +170,7 @@ org.eclipse.jdt.core.formatter.indent_body_declarations_compare_to_enum_declarat
 org.eclipse.jdt.core.formatter.indent_body_declarations_compare_to_type_header=true
 org.eclipse.jdt.core.formatter.indent_breaks_compare_to_cases=true
 org.eclipse.jdt.core.formatter.indent_empty_lines=false
+org.eclipse.jdt.core.formatter.indent_label_definitions=true
 org.eclipse.jdt.core.formatter.indent_statements_compare_to_block=true
 org.eclipse.jdt.core.formatter.indent_statements_compare_to_body=true
 org.eclipse.jdt.core.formatter.indent_switchstatements_compare_to_cases=true
@@ -189,6 +190,7 @@ org.eclipse.jdt.core.formatter.insert_new_line_before_while_in_do_statement=do n
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_annotation_declaration=insert
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_anonymous_type_declaration=insert
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_block=insert
+org.eclipse.jdt.core.formatter.insert_new_line_after_label=do not insert
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_enum_constant=insert
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_enum_declaration=insert
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_method_body=insert

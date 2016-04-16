@@ -3032,4 +3032,114 @@ public class CodeFormatterTest extends BaseUITestCase {
 		String expected = before;
 		assertFormatterResult(before, expected);
 	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//foo:
+	//	for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelIdentAndNewLineDontIndentJumpInsertLine() throws Exception {
+		CharSequence[] contents= getContentsForTest(2);
+		String before= contents[0].toString();
+		String expectedNoIdentNewLine= contents[1].toString();
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_JUMP_TARGETS,DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL,CCorePlugin.INSERT);
+		assertFormatterResult(before, expectedNoIdentNewLine);
+	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo:
+	//	for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelIdentAndNewLineIndentInsertLine() throws Exception {
+		CharSequence[] contents= getContentsForTest(2);
+		String before= contents[0].toString();
+		String expectedIdentNewLine= contents[1].toString();
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_JUMP_TARGETS,DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL,CCorePlugin.INSERT);
+		assertFormatterResult(before, expectedIdentNewLine);
+	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelIdentAndNewLineDontIndentDontInsertLine() throws Exception {
+		CharSequence[] contents= getContentsForTest(2);
+		String before= contents[0].toString();
+		String expectedNoIdentNoNewline= contents[1].toString();
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_JUMP_TARGETS,DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL,CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult(before, expectedNoIdentNoNewline);
+	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelIdentAndNewLineIndentDontInsertLine() throws Exception {
+		CharSequence[] contents= getContentsForTest(2);
+		String before= contents[0].toString();
+		String expectedNoIdentNoNewline= contents[1].toString();
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_JUMP_TARGETS,DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL,CCorePlugin.DO_NOT_INSERT);
+	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//foo:
+	//	for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//foo:
+	//	for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelDontForceNoNewline() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_JUMP_TARGETS,DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL,CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
 }

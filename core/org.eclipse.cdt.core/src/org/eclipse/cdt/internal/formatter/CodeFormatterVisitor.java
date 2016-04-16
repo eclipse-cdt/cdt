@@ -3539,12 +3539,24 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTLabelStatement node) {
-		// TLETODO [formatter] label indentation
+		int indentationLevel = scribe.indentationLevel;
+		if (!preferences.ident_label_definitions) {
+			scribe.indentationLevel = 0;
+		}
 		node.getName().accept(this);
 		scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_labeled_statement);
 		if (preferences.insert_space_after_colon_in_labeled_statement) {
 			scribe.space();
 		}
+		if (preferences.insert_new_line_after_label) {
+			scribe.startNewLine();
+		}
+		scribe.indentationLevel = indentationLevel;
+		// If new line is not needed skip formatting (no new line does not mean force no new line) 
+		// Example for this behavior is GNU style that allows both
+		if (!preferences.insert_new_line_after_label) {
+			skipToNode(node.getNestedStatement());	
+		}		
 		node.getNestedStatement().accept(this);
 		return PROCESS_SKIP;
 	}

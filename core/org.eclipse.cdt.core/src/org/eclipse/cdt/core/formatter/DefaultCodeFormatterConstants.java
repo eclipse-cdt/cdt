@@ -673,7 +673,19 @@ public class DefaultCodeFormatterConstants {
 	 * @see #TRUE
 	 * @see #FALSE
 	 */
-	public static final String FORMATTER_INDENT_EMPTY_LINES = CCorePlugin.PLUGIN_ID + ".formatter.indent_empty_lines"; //$NON-NLS-1$	
+	public static final String FORMATTER_INDENT_EMPTY_LINES = CCorePlugin.PLUGIN_ID + ".formatter.indent_empty_lines"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to indent label jump targets
+	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_label_definitions"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           TRUE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 * @since 6.0
+	 */
+	public static final String FORMATTER_INDENT_LABEL_JUMP_TARGETS = CCorePlugin.PLUGIN_ID + ".formatter.indent_label_definitions";  //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to indent inside line comments at column 0
@@ -851,7 +863,19 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
-	public static final String FORMATTER_INSERT_NEW_LINE_IN_EMPTY_BLOCK = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_in_empty_block"; //$NON-NLS-1$
+	public static final String FORMATTER_INSERT_NEW_LINE_IN_EMPTY_BLOCK = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_in_empty_block"; //$NON-NLS-1$	
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a new line after label id in labeled statement 
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_after_label"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.0
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_LABEL = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_after_label"; //$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a new line in an empty enum declaration

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_8cd87399",
+        "filename": "build/org.eclipse.cdt.make.core.tests/.settings/org.eclipse.jdt.core.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "Hi Sergey, I use preferences in order to peform the configuration, on whether label definitions will be \"indent\" with spaces or not. We need the preference in order to be compatible with other standards (for example posix allows to do both with indentation or without). Moreover in order to be backward compatible we need this behaviour to be default off.\nHow do you propose to solve it without introducing preferences ?",
+      "parentUuid": "e7dfcf21_dbe79ace",
+      "range": {
+        "startLine": 154,
+        "startChar": 56,
+        "endLine": 154,
+        "endChar": 60
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_9b7c3266",
         "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
         "patchSetId": 1
@@ -140,6 +164,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_cc051b89",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 682,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "label_juml_target is the (target of the goto)\n\ncode:\ngoto blabla;\ncode .... \nblabla:\n    printf(\"This was the label jump target\\n\")",
+      "parentUuid": "e7dfcf21_dbfdda2f",
+      "range": {
+        "startLine": 682,
+        "startChar": 39,
+        "endLine": 682,
+        "endChar": 43
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_1b42e211",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
         "patchSetId": 1
@@ -174,6 +222,30 @@
       "writtenOn": "2016-04-05T18:34:15Z",
       "side": 1,
       "message": "No new APIs can be introduced on cdt_8_8 branch at this point.",
+      "range": {
+        "startLine": 691,
+        "startChar": 28,
+        "endLine": 691,
+        "endChar": 63
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ec0817a1",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "How can we solve this without introiducing new API`s ? and keep backwards compatability ? I needed this in ordet to use autoformatter .. i can rebase onto latest version so that the fix would be only applied to latest..",
+      "parentUuid": "e7dfcf21_bbce4e28",
       "range": {
         "startLine": 691,
         "startChar": 28,
@@ -255,6 +327,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_ea1a90f8",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "API change is needed in order to fix the issue, rebasing on top of master, so that new changes will only go to latest",
+      "parentUuid": "e7dfcf21_bb200e59",
+      "range": {
+        "startLine": 126,
+        "startChar": 16,
+        "endLine": 126,
+        "endChar": 39
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_db087ae6",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
         "patchSetId": 1
@@ -266,6 +362,30 @@
       "writtenOn": "2016-04-05T18:34:15Z",
       "side": 1,
       "message": "Ditto.",
+      "range": {
+        "startLine": 144,
+        "startChar": 16,
+        "endLine": 144,
+        "endChar": 64
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_0a26dc41",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "API change is needed in order to fix the issue, rebasing on top of master, so that new changes will only go to latest",
+      "parentUuid": "e7dfcf21_db087ae6",
       "range": {
         "startLine": 144,
         "startChar": 16,
@@ -295,6 +415,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_4a0c64cc",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_3b55de96",
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_dbacfa26",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
         "patchSetId": 1
@@ -306,6 +444,30 @@
       "writtenOn": "2016-04-05T18:34:15Z",
       "side": 1,
       "message": "Split into 4 separate test cases.",
+      "range": {
+        "startLine": 3073,
+        "startChar": 13,
+        "endLine": 3073,
+        "endChar": 37
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6a0f60c0",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3073,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_dbacfa26",
       "range": {
         "startLine": 3073,
         "startChar": 13,
@@ -341,6 +503,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_8a12ece1",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3097,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_db615a7c",
+      "range": {
+        "startLine": 3097,
+        "startChar": 0,
+        "endLine": 3097,
+        "endChar": 1
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_bbc48ed9",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
         "patchSetId": 1
@@ -352,6 +538,30 @@
       "writtenOn": "2016-04-05T18:34:15Z",
       "side": 1,
       "message": "Remove lines 3107-3108 and replace by assertFormatterResult();",
+      "range": {
+        "startLine": 3111,
+        "startChar": 2,
+        "endLine": 3111,
+        "endChar": 23
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ca1f94e9",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3111,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_bbc48ed9",
       "range": {
         "startLine": 3111,
         "startChar": 2,
@@ -387,6 +597,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_0a8b3ca7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/IndentationTabPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_3bb07e71",
+      "range": {
+        "startLine": 74,
+        "startChar": 30,
+        "endLine": 74,
+        "endChar": 31
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5ba0ea22",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/NewLinesTabPage.java",
         "patchSetId": 1
@@ -398,6 +632,30 @@
       "writtenOn": "2016-04-05T18:34:15Z",
       "side": 1,
       "message": "x -\u003e 10",
+      "range": {
+        "startLine": 28,
+        "startChar": 33,
+        "endLine": 28,
+        "endChar": 34
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ea8ff0b1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/NewLinesTabPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 44287
+      },
+      "writtenOn": "2016-04-16T09:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_5ba0ea22",
       "range": {
         "startLine": 28,
         "startChar": 33,

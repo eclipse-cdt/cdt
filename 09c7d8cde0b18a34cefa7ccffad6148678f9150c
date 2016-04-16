@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_4567f5c4",
+        "filename": "build/org.eclipse.cdt.make.core.tests/.settings/org.eclipse.jdt.core.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-16T16:16:21Z",
+      "side": 1,
+      "message": "This is a Java preference, not a C/C++ one.",
+      "parentUuid": "e7dfcf21_8cd87399",
+      "range": {
+        "startLine": 154,
+        "startChar": 56,
+        "endLine": 154,
+        "endChar": 60
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_9b7c3266",
         "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
         "patchSetId": 1
@@ -188,6 +212,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_a54fd93d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 682,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-16T16:16:21Z",
+      "side": 1,
+      "message": "Clarification has to be made in a comment. Please don\u0027t use \"blabla\" as an example.",
+      "parentUuid": "e7dfcf21_cc051b89",
+      "range": {
+        "startLine": 682,
+        "startChar": 39,
+        "endLine": 682,
+        "endChar": 43
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_1b42e211",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
         "patchSetId": 1
@@ -246,6 +294,30 @@
       "side": 1,
       "message": "How can we solve this without introiducing new API`s ? and keep backwards compatability ? I needed this in ordet to use autoformatter .. i can rebase onto latest version so that the fix would be only applied to latest..",
       "parentUuid": "e7dfcf21_bbce4e28",
+      "range": {
+        "startLine": 691,
+        "startChar": 28,
+        "endLine": 691,
+        "endChar": 63
+      },
+      "revId": "09c7d8cde0b18a34cefa7ccffad6148678f9150c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_855c9dfa",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-16T16:16:21Z",
+      "side": 1,
+      "message": "This change should be applied to the master branch. It\u0027s too late for cdt_8_8.",
+      "parentUuid": "e7dfcf21_ec0817a1",
       "range": {
         "startLine": 691,
         "startChar": 28,

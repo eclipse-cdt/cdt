@@ -61,12 +61,12 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private static final String label1 = Messages.BuildStepsTab_0;
 	private static final String label2 = Messages.BuildStepsTab_1;
 	private static final String PATH_SEPERATOR = ";";	//$NON-NLS-1$
-	private static final String rcbsToolId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs");	//$NON-NLS-1$
-	private static final String rcbsToolName = new String("Resource Custom Build Step");	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype");	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeName = new String("Resource Custom Build Step Input Type");	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
+	private static final String rcbsToolId = "org.eclipse.cdt.managedbuilder.ui.rcbs";	//$NON-NLS-1$
+	private static final String rcbsToolName = "Resource Custom Build Step";	//$NON-NLS-1$
+	private static final String rcbsToolInputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype";	//$NON-NLS-1$
+	private static final String rcbsToolInputTypeName = "Resource Custom Build Step Input Type";	//$NON-NLS-1$
+	private static final String rcbsToolOutputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype";	//$NON-NLS-1$
+	private static final String rcbsToolOutputTypeName = "Resource Custom Build Step Output Type";	//$NON-NLS-1$
 
 	private enum FIELD {PRECMD, PREANN, PSTCMD, PSTANN}
 	private Set<String> set1 = new TreeSet<String>();

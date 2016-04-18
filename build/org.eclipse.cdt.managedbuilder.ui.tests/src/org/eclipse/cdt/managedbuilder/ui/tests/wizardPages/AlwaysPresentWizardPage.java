@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2016 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 	@Override
 	public String getName()
 	{
-		return new String("Always Present Page");
+		return "Always Present Page";
 	}
 
 
@@ -77,7 +77,7 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 	@Override
 	public String getDescription()
 	{
-		return new String("This page is for testing, please ignore it.");
+		return "This page is for testing, please ignore it.";
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 	@Override
 	public String getTitle()
 	{
-		return new String("Test Page");
+		return "Test Page";
 	}
 
 	@Override

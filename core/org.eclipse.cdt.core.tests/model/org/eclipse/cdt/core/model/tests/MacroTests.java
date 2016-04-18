@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,7 +127,7 @@ public class MacroTests extends IntegratedCModelTest {
 
 		}
 		if (!missing.empty()) {
-			String output=new String("Could not get elements: ");
+			String output="Could not get elements: ";
 			while (!missing.empty())
 				output+=missing.pop() + " ";
 			assertTrue(output, false);

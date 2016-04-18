@@ -454,7 +454,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			    return builder.getArguments();
 			}
 		}
-		return new String("-k"); //$NON-NLS-1$
+		return "-k"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -469,7 +469,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			    return builder.getCommand();
 			}
 		}
-		return new String("make"); //$NON-NLS-1$
+		return "make"; //$NON-NLS-1$
 	}
 
 	/*

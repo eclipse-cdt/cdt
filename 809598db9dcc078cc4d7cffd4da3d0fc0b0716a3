@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_78881776",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 470,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-18T22:34:58Z",
+      "side": 1,
+      "message": "The getToolCommand seems to be written in a different style to the others in this file; it uses parent !\u003d null while the others use parent \u003d\u003d null.  Should this be changed for consistency to use the \u003d\u003d null approach instead?",
+      "revId": "809598db9dcc078cc4d7cffd4da3d0fc0b0716a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,12 +63,12 @@ public class Test30_2_CommandLineGenerator implements
 		info.commandOutputPrefix = new String(outputPrefix);
 		info.commandOutput = new String(outputName);
 		info.commandLinePattern = new String(commandLinePattern);
-		info.commandInputs = new String();
+		info.commandInputs = ""; // $NON-NLS-1$
 		for (int i = 0; i < inputResources.length; i++) {
 			if (i > 0) info.commandInputs += " ";
 			info.commandInputs += inputResources[i];
 		}
-		info.commandFlags = new String();
+		info.commandFlags = ""; // $NON-NLS-1$
 		IOption opt = tool.getOptionBySuperClassId("test30_2.tar-list.filename");
 		String optVal = "";
 		try {

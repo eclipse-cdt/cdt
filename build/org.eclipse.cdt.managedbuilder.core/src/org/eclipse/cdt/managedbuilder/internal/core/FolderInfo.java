@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		toolChain.setUnusedChildren(parTc.getUnusedChildren());
 
 		ITool tools[] = parTc.getTools();
-		String subId = new String();
+		String subId = ""; // $NON-NLS-1$
 		for (ITool tool : tools) {
 			ITool extTool = ManagedBuildManager.getExtensionTool(tool);
 			if(extTool == null)

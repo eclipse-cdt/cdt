@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.core.resources.IResource;
  */
 public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerator {
 
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	public final String WHITESPACE = " ";	//$NON-NLS-1$
 
@@ -80,7 +80,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 
 		// Work out the build-relative path for the output files
 		IContainer resourceLocation = resource.getParent();
-		String relativePath = new String();
+		String relativePath = ""; // $NON-NLS-1$
 		if (resourceLocation != null) {
 			relativePath += resourceLocation.getProjectRelativePath().toString();
 		}

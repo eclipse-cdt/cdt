@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Symbian Software Limited and others.
+ * Copyright (c) 2005, 2016 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class UIStringListWidget extends InputUIElement {
 	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> retMap = new HashMap<String, String>();
-		String itemString = new String();
+		String itemString = ""; // $NON-NLS-1$
 		for (int i = 0; i < itemsList.size(); i++) {
 			itemString = itemString + itemsList.get(i) + "|"; //$NON-NLS-1$
 		}

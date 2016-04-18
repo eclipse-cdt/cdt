@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -439,7 +439,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 
 		if (buildTargetExt == null) {
-			buildTargetExt = new String();
+			buildTargetExt = ""; // $NON-NLS-1$
 		}
 		// Cache the build tools
 		config = info.getDefaultConfiguration();
@@ -651,7 +651,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.INFO,
-					new String(),
+					"", // $NON-NLS-1$
 					null);
 			status.add(new Status (
 					IStatus.INFO,
@@ -753,7 +753,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus (
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.WARNING,
-					new String(),
+					"", // $NON-NLS-1$
 					null);
 			// Add a new status for each of the bad folders
 			// TODO: fix error message
@@ -770,7 +770,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.OK,
-					new String(),
+					"", // $NON-NLS-1$
 					null);
 		}
 
@@ -906,7 +906,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.INFO,
-					new String(),
+					"", // $NON-NLS-1$
 					null);
 			status.add(new Status (
 					IStatus.INFO,
@@ -965,7 +965,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus (
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.WARNING,
-					new String(),
+					"", // $NON-NLS-1$
 					null);
 			// Add a new status for each of the bad folders
 			// TODO: fix error message
@@ -981,7 +981,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.OK,
-					new String(),
+					"", // $NON-NLS-1$
 					null);
 		}
 		return status;
@@ -2822,7 +2822,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		if (addlDeps != null && addlDeps.length > 0) {
-			calculatedDependencies = new String();
+			calculatedDependencies = ""; // $NON-NLS-1$
 			for (IPath addlDep : addlDeps) {
 				calculatedDependencies += WHITESPACE + escapeWhitespaces(addlDep.toString());
 			}
@@ -3651,7 +3651,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			try {
 				secondToken = deps.get(1);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				secondToken = new String();
+				secondToken = ""; // $NON-NLS-1$
 			}
 			if (secondToken.startsWith("'")) { //$NON-NLS-1$
 				// This is the Win32 implementation of echo (MinGW without MSYS)
@@ -3665,7 +3665,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			try {
 				thirdToken = deps.get(2);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				thirdToken = new String();
+				thirdToken = ""; // $NON-NLS-1$
 			}
 			int lastIndex = thirdToken.lastIndexOf("'"); //$NON-NLS-1$
 			if (lastIndex != -1) {
@@ -3689,7 +3689,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				} while (fourthToken.length() == 0);
 
 			} catch (ArrayIndexOutOfBoundsException e) {
-				fourthToken = new String();
+				fourthToken = ""; // $NON-NLS-1$
 			}
 			outBuffer.append(fourthToken + WHITESPACE);
 
@@ -4514,7 +4514,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * the name component in a <code>String</code>
 	 */
 	private String getFileName(IResource file) {
-		String answer = new String();
+		String answer = ""; // $NON-NLS-1$
 		String lastSegment = file.getName();
 		int extensionSeparator = lastSegment.lastIndexOf(DOT);
 		if (extensionSeparator != -1) {
@@ -4676,7 +4676,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 
 		if (buildTargetExt == null) {
-			buildTargetExt = new String();
+			buildTargetExt = ""; // $NON-NLS-1$
 		}
 		// Cache the build tools
 		config = cfg;

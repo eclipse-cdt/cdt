@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class ManagedBuildCommandLineGenerator implements
 		//  Concatenate the tool name and the passed in command name
 		info.commandName = new String(tool.getName() + commandName);
 		//  Put out the flags backwards
-		String myflags = new String();
+		String myflags = ""; // $NON-NLS-1$
 		for (int i = flags.length - 1; i >= 0; i--) {
 			if (i < flags.length - 1) myflags += " ";
 			myflags += flags[i];
@@ -41,7 +41,7 @@ public class ManagedBuildCommandLineGenerator implements
 		info.commandFlags = myflags;
 		//  Alphabetize the inputs and add foo.cpp
 		String[] inputs = new String[inputResources.length + 1];
-		String myinputs = new String();
+		String myinputs = ""; // $NON-NLS-1$
 		for (int i=0; i<inputResources.length; i++) {
 			inputs[i] = inputResources[i];
 		}

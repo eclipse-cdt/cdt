@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Software Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Software Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	@Override
 	public String getBuildArtifactExtension() {
-		String ext = new String();
+		String ext = ""; // $NON-NLS-1$
 		IConfiguration config = getDefaultConfiguration();
 		if (config != null) {
 			ext = config.getArtifactExtension();
@@ -171,7 +171,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Override
 	public String getBuildArtifactName() {
 		// Get the default configuration and use its value
-		String name = new String();
+		String name = ""; // $NON-NLS-1$
 		IConfiguration config = getDefaultConfiguration();
 		if (config != null) {
 			name = config.getArtifactName();
@@ -185,7 +185,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Override
 	public String getCleanCommand() {
 		// Get from the model
-		String command = new String();
+		String command = ""; // $NON-NLS-1$
 		IConfiguration config = getDefaultConfiguration();
 		if (config != null) {
 			command = config.getCleanCommand();
@@ -200,7 +200,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public String getConfigurationName() {
 		// Return the human-readable name of the default configuration
 		IConfiguration config = getDefaultConfiguration();
-		return config == null ? new String() : config.getName();
+		return config == null ? "" : config.getName(); // $NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -361,7 +361,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Override
 	public String getToolFlagsForConfiguration(String extension, IPath inputLocation, IPath outputLocation){
 		// Treat null extensions as an empty string
-		String ext = extension == null ? new String() : extension;
+		String ext = extension == null ? "" : extension; // $NON-NLS-1$
 
 		// Get all the tools for the current config
 		ITool[] tools = getFilteredTools();
@@ -480,7 +480,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Override
 	public String getPrebuildStep() {
 		// Get the default configuration and use its value
-		String name = new String();
+		String name = ""; // $NON-NLS-1$
 		IConfiguration config = getDefaultConfiguration();
 		if (config != null) {
 			name = config.getPrebuildStep();
@@ -496,7 +496,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Override
 	public String getPostbuildStep() {
 		// Get the default configuration and use its value
-		String name = new String();
+		String name = ""; // $NON-NLS-1$
 		IConfiguration config = getDefaultConfiguration();
 		if (config != null) {
 			name = config.getPostbuildStep();
@@ -512,7 +512,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Override
 	public String getPreannouncebuildStep() {
 		// Get the default configuration and use its value
-		String name = new String();
+		String name = ""; // $NON-NLS-1$
 		IConfiguration config = getDefaultConfiguration();
 		if (config != null) {
 			name = config.getPreannouncebuildStep();
@@ -528,7 +528,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Override
 	public String getPostannouncebuildStep() {
 		// Get the default configuration and use its value
-		String name = new String();
+		String name = ""; // $NON-NLS-1$
 		IConfiguration config = getDefaultConfiguration();
 		if (config != null) {
 			name = config.getPostannouncebuildStep();
@@ -593,7 +593,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Override
 	public String getToolForConfiguration(String extension) {
 		// Treat a null argument as an empty string
-		String ext = extension == null ? new String() : extension;
+		String ext = extension == null ? "" : extension; // $NON-NLS-1$
 		// Get all the tools for the current config
 		ITool[] tools = getFilteredTools();
 		for (int index = 0; index < tools.length; index++) {
@@ -1291,7 +1291,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 			String[] tokens = val.split("="); //$NON-NLS-1$
 			String key = tokens[0].trim();
-			String value = (tokens.length > 1) ? tokens[1].trim() : new String();
+			String value = (tokens.length > 1) ? tokens[1].trim() : ""; // $NON-NLS-1$
 			// Make sure the current entries do not contain a duplicate
 			boolean add = true;
 			Iterator<IPathEntry> entryIter = entries.listIterator();

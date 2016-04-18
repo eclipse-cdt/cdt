@@ -108,7 +108,7 @@ public class CCommandDSC {
     
 	@Override
 	public String toString() {
-		String commandAsString = new String();
+		String commandAsString = ""; // $NON-NLS-1$
 		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = i.next();
 			String value = optionPair.getValue();
@@ -128,7 +128,7 @@ public class CCommandDSC {
 	 * @return the command line to run the scanner discovery.
 	 */
 	public String getSCDRunnableCommand(boolean quoteIncludePaths, boolean quoteDefines) {
-		String commandAsString = new String();
+		String commandAsString = ""; // $NON-NLS-1$
 		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = i.next();
             if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND.toString())) {
@@ -167,7 +167,7 @@ public class CCommandDSC {
 	 * @return the compiler command
 	 */
 	public String getCompilerName() {
-		String compiler = new String();
+		String compiler = ""; // $NON-NLS-1$
 		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = i.next();
             if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND.toString())) {

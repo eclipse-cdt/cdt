@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.IPath;
 public class DefaultGCCDependencyCalculator3Commands implements
 	IManagedDependencyCommands {
 
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
 
 	//  Member variables set by the constructor
 	IPath source;

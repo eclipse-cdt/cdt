@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,11 +39,11 @@ public class CheckStringExpression implements IBooleanExpression {
 	public CheckStringExpression(IManagedConfigElement element){
 		fString = element.getAttribute(STRING);
 		if(fString == null)
-			fString = new String();
+			fString = ""; // $NON-NLS-1$
 
 		fValue = element.getAttribute(VALUE);
 		if(fValue == null)
-			fValue = new String();
+			fValue = ""; // $NON-NLS-1$
 
 		fIsRegex = OptionEnablementExpression.getBooleanValue(element.getAttribute(IS_REGEX));
 	}

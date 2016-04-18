@@ -695,9 +695,9 @@ public class Dwarf {
 
 					ByteBuffer data = dwarfSections.get(DWARF_DEBUG_STR);
 					if (data == null) {
-						obj = new String();
+						obj = ""; // $NON-NLS-1$
 					} else if (offset < 0 || offset > data.capacity()) {
-						obj = new String();
+						obj = ""; // $NON-NLS-1$
 					} else {
 						StringBuffer sb = new StringBuffer();
 						data.position((int) offset);
@@ -723,9 +723,9 @@ public class Dwarf {
 
 			    	ByteBuffer data = dwarfAltSections.get(DWARF_DEBUG_STR);
 			    	if (data == null) {
-			    		obj = new String();
+			    		obj = ""; // $NON-NLS-1$
 			    	} else if (offset < 0 || offset > data.capacity()) {
-			    		obj = new String();
+			    		obj = ""; // $NON-NLS-1$
 			    	} else {
 			    		StringBuffer sb = new StringBuffer();
 			    		data.position((int) offset);

@@ -51,8 +51,6 @@ import org.eclipse.core.runtime.Path;
 
 public class AdditionalInput implements IAdditionalInput {
 
-	private static final String EMPTY_STRING = new String();
-
 	private static final String BUILD_VARIABLE_STATIC_LIB = "ARCHIVES"; //$NON-NLS-1$
 	private static final String BUILD_VARIABLE_SHARED_LIB = "LIBRARIES"; //$NON-NLS-1$
 	
@@ -220,7 +218,7 @@ public class AdditionalInput implements IAdditionalInput {
 					str = ADDITIONAL_INPUT_DEPENDENCY;
 					break;
 				default:
-					str = EMPTY_STRING;
+					str = ""; // $NON-NLS-1$
 					break;
 			}
 			element.setAttribute(IAdditionalInput.KIND, str);

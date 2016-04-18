@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 TimeSys Corporation and others.
+ * Copyright (c) 2004, 2016 TimeSys Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class CFileTypesPreferenceBlock {
 						} else if (assoc.isPredefined()) {
 							return PreferencesMessages.CFileTypesPreferencePage_preDefined; 
 						}
-						return new String();
+						return ""; // $NON-NLS-1$
 				}
 			}
 			return element.toString();

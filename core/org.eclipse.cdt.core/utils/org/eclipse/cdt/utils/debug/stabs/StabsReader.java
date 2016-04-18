@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Nokia and others.
+ * Copyright (c) 2006, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,7 +177,7 @@ public class StabsReader implements ISymbolReader {
 				if (stroff > 0) {
 					field = makeString(stroff);
 				} else {
-					field = new String();
+					field = ""; // $NON-NLS-1$
 				}
 				// Check for continuation and if any go to the next stab
 				// until we find a string that is not terminated with a

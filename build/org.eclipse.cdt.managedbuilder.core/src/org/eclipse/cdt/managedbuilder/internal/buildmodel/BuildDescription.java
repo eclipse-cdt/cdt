@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2242,7 +2242,7 @@ public class BuildDescription implements IBuildDescription {
 		if(!type.isInput()){
 			String var = type.getLinkId();
 			if(var == null)
-				var = new String();
+				var = ""; // $NON-NLS-1$
 
 			Set<BuildIOType> set = fVarToAddlInSetMap.get(var);
 			if(set != null){

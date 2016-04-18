@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -625,7 +625,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		}
 		directories = dirs.toArray(new String[0]);
 		if (pattern == null) {
-			pattern = new String();
+			pattern = ""; // $NON-NLS-1$
 		}
 		return new VPath(this, pattern, directories);
 	}

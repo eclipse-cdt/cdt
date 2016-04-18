@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -621,7 +621,7 @@ public class CommonBuilder extends ACBuilder {
 						status = new MultiStatus(
 								ManagedBuilderCorePlugin.getUniqueIdentifier(),
 								IStatus.ERROR,
-								new String(),
+								"", // $NON-NLS-1$
 								null);
 					}
 
@@ -638,7 +638,7 @@ public class CommonBuilder extends ACBuilder {
 						status = new MultiStatus(
 								ManagedBuilderCorePlugin.getUniqueIdentifier(),
 								IStatus.ERROR,
-								new String(),
+								"", // $NON-NLS-1$
 								null);
 					}
 
@@ -657,7 +657,7 @@ public class CommonBuilder extends ACBuilder {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.OK,
-					new String(),
+					"", // $NON-NLS-1$
 					null);
 		}
 
@@ -814,7 +814,7 @@ public class CommonBuilder extends ACBuilder {
 		if (buildType == FULL_BUILD || buildType == INCREMENTAL_BUILD) {
 			consoleHeader[0] = ManagedMakeMessages.getResourceString("ManagedMakeBuider.type.incremental"); //$NON-NLS-1$
 		} else {
-			consoleHeader[0] = new String();
+			consoleHeader[0] = ""; // $NON-NLS-1$
 			outputError(projName, "The given build type is not supported in this context");	//$NON-NLS-1$
 		}
 		consoleHeader[1] = configName;
@@ -1015,7 +1015,7 @@ public class CommonBuilder extends ACBuilder {
 //		return new MultiStatus(
 //				ManagedBuilderCorePlugin.getUniqueIdentifier(),
 //				severity,
-//				new String(),
+//				"", // $NON-NLS-1$
 //				null);
 //	}
 

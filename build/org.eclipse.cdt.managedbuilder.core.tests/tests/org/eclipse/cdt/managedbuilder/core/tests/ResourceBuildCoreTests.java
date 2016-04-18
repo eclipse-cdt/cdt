@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,7 +167,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		// Get the project build properties.
 		ITool tools[] = defaultConfig.getFilteredTools();
 		Tool projTool = null;
-		String projBuildProps = new String();
+		String projBuildProps = ""; // $NON-NLS-1$
 		for (int i = 0; i < tools.length; i++) {
 			if( tools[i].buildsFileType(extString) ) {
 				// Get the build properties of a project in default configuration

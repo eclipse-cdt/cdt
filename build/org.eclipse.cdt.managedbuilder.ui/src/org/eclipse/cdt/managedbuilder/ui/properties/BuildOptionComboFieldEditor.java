@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,7 +132,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 			public void widgetSelected(SelectionEvent evt) {
 				String oldValue = selected;
 				int index = optionSelector.getSelectionIndex();
-				selected = index == -1 ? new String() : optionSelector.getItem(index);
+				selected = index == -1 ? "" : optionSelector.getItem(index); // $NON-NLS-1$
 				setPresentsDefaultValue(false);
 				fireValueChanged(VALUE, oldValue, selected);					
 			}
@@ -171,7 +171,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	protected void doStore() {
 		// Save the selected item in the store
 		int index = optionSelector.getSelectionIndex();
-		selected = index == -1 ? new String() : optionSelector.getItem(index);
+		selected = index == -1 ? "" : optionSelector.getItem(index); // $NON-NLS-1$
 		getPreferenceStore().setValue(getPreferenceName(), selected);
 	}
 	

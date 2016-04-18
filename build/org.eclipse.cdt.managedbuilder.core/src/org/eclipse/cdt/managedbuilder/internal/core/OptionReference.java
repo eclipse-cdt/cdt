@@ -382,7 +382,7 @@ public class OptionReference implements IOption {
 				return name;
 			} catch (BuildException e) {}
 		}
-		return new String();
+		return ""; // $NON-NLS-1$
 	}
 
 	@Override
@@ -396,7 +396,7 @@ public class OptionReference implements IOption {
 				return name;
 			} catch (BuildException e) {}
 		}
-		return new String();
+		return ""; // $NON-NLS-1$
 	}
 
 	@Override
@@ -410,7 +410,7 @@ public class OptionReference implements IOption {
 				return id;
 			} catch (BuildException e) {}
 		}
-		return new String();
+		return ""; // $NON-NLS-1$
 	}
 
 	@Override
@@ -424,7 +424,7 @@ public class OptionReference implements IOption {
 				return id;
 			} catch (BuildException e) {}
 		}
-		return new String();
+		return ""; // $NON-NLS-1$
 	}
 
 	@Override

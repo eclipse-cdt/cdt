@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,8 +62,8 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	protected NewConfigurationDialog(Shell parentShell) {
 		super(parentShell);
 		setShellStyle(getShellStyle()|SWT.RESIZE);
-		newName = new String();
-		newDescription = new String();
+		newName = ""; // $NON-NLS-1$
+		newDescription = ""; // $NON-NLS-1$
 	}
 
 	@Override
@@ -85,9 +85,9 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
-			String description = new String();
-			String nameAndDescription = new String();
-			String baseConfigNameAndDescription = new String();
+			String description = ""; // $NON-NLS-1$
+			String nameAndDescription = ""; // $NON-NLS-1$
+			String baseConfigNameAndDescription = ""; // $NON-NLS-1$
 
 			newName = configName.getText().trim();
 			newDescription = configDescription.getText().trim();

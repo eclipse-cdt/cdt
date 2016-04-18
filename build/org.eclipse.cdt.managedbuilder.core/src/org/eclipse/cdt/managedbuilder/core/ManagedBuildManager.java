@@ -1914,7 +1914,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 //			throw new CoreException(new Status(IStatus.ERROR,
 //					ManagedBuilderCorePlugin.PLUGIN_ID,
 //					IStatus.ERROR,
-//					new String(),
+//					"", // $NON-NLS-1$
 //					null));
 //		}
 //

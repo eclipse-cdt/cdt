@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,7 +179,7 @@ public class ToolReference implements IToolReference {
 		outputFlag = tool.getOutputFlag();
 		outputPrefix = tool.getOutputPrefix();
 		String[] extensions = tool.getOutputsAttribute();
-		outputExtensions = new String();
+		outputExtensions = ""; // $NON-NLS-1$
 		if (extensions != null) {
 			for (int index = 0; index < extensions.length; ++index) {
 				if (extensions[index] == null) continue;
@@ -346,7 +346,7 @@ public class ToolReference implements IToolReference {
 	public String getId() {
 		if (parent == null) {
 			// bad reference
-			return new String();
+			return ""; // $NON-NLS-1$
 		}
 		return parent.getId();
 	}
@@ -358,7 +358,7 @@ public class ToolReference implements IToolReference {
 	public String getBaseId() {
 		if (parent == null) {
 			// bad reference
-			return new String();
+			return ""; // $NON-NLS-1$
 		}
 		return parent.getBaseId();
 	}
@@ -383,7 +383,7 @@ public class ToolReference implements IToolReference {
 	public String getName() {
 		if (parent == null) {
 			// bad reference
-			return new String();
+			return ""; // $NON-NLS-1$
 		}
 		return parent.getName();
 	}
@@ -467,7 +467,7 @@ public class ToolReference implements IToolReference {
 			if (parent != null) {
 				return parent.getToolCommand();
 			}
-			return new String();	// bad reference
+			return ""; // bad reference // $NON-NLS-1$
 		}
 		return command;
 	}
@@ -672,7 +672,7 @@ public class ToolReference implements IToolReference {
 	public String getOutputExtension(String inputExtension) {
 		if (parent == null) {
 			// bad reference
-			return new String();
+			return ""; // $NON-NLS-1$
 		}
 		return parent.getOutputExtension(inputExtension);
 	}
@@ -687,7 +687,7 @@ public class ToolReference implements IToolReference {
 				return parent.getOutputFlag();
 			} else {
 				// We never should be here
-				return new String();
+				return ""; // $NON-NLS-1$
 			}
 		}
 		return outputFlag;
@@ -702,7 +702,7 @@ public class ToolReference implements IToolReference {
 			if (parent != null) {
 				return parent.getOutputPrefix();
 			}
-			return new String();	// bad reference
+			return "";	// bad reference // $NON-NLS-1$
 		}
 		return outputPrefix;
 	}
@@ -864,7 +864,7 @@ public class ToolReference implements IToolReference {
 	 */
 	@Override
 	public String getCommandLinePattern() {
-		if( parent == null ) return new String();
+		if( parent == null ) return ""; // $NON-NLS-1$
 		return parent.getCommandLinePattern();
 	}
 
@@ -917,7 +917,7 @@ public class ToolReference implements IToolReference {
 	 */
 	@Override
 	public String toString() {
-		String answer = new String();
+		String answer = ""; // $NON-NLS-1$
 		if (parent != null) {
 			answer += "Reference to " + parent.getName();	//$NON-NLS-1$
 		}
@@ -1281,7 +1281,7 @@ public class ToolReference implements IToolReference {
 			if (parent != null) {
 				return parent.getConvertToId();
 			} else {
-				return new String();
+				return ""; // $NON-NLS-1$
 			}
 		}
 		return convertToId;
@@ -1310,7 +1310,7 @@ public class ToolReference implements IToolReference {
 			if (parent != null) {
 				return parent.getVersionsSupported();
 			} else {
-				return new String();
+				return ""; // $NON-NLS-1$
 			}
 		}
 		return versionsSupported;

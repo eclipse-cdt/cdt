@@ -43,7 +43,7 @@ import org.osgi.framework.Version;
 
 public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
 
 	//property name for holding the rebuild state
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
@@ -151,7 +151,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 		// Add the resource specific tools to this resource.
 		ITool tools[] = folderInfo.getFilteredTools();
-		String subId = new String();
+		String subId = ""; // $NON-NLS-1$
 		for (int i = 0; i < tools.length; i++) {
 			if( tools[i].buildsFileType(extString) ) {
 				baseTool = tools[i];

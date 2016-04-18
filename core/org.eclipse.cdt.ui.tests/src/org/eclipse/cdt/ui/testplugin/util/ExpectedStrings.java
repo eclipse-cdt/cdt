@@ -40,7 +40,7 @@ public class ExpectedStrings {
 		int x;
 		expStrings=new String[values.length];
 		for (x=0;x<values.length;x++) {
-			expStrings[x]=new String(values[x]);
+			expStrings[x]=values[x];
 		}
 		foundStrings=new boolean[values.length];
 		for (x=0;x<values.length;x++) {
@@ -62,7 +62,7 @@ public class ExpectedStrings {
 		 * and extra string
 		 */
 
-		 extraStrings.push(new String(current));
+		 extraStrings.push(current);
 		 extra=true;
 		 return(1);
 	}

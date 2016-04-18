@@ -43,8 +43,6 @@ import org.osgi.framework.Version;
 
 public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
-	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
-
 	//property name for holding the rebuild state
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
 
@@ -139,7 +137,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			setManagedBuildRevision(folderInfo.getParent().getManagedBuildRevision());
 
 		setDirty(false);
-		toolsToInvoke = EMPTY_STRING;
+		toolsToInvoke = ""; // $NON-NLS-1$
 		rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 
 
@@ -187,7 +185,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 		//  Copy the remaining attributes
 		if (cloneConfig.toolsToInvoke != null) {
-			toolsToInvoke = new String(cloneConfig.toolsToInvoke);
+			toolsToInvoke = cloneConfig.toolsToInvoke;
 		}
 		if (cloneConfig.rcbsApplicability != null) {
 			rcbsApplicability = cloneConfig.rcbsApplicability;
@@ -554,10 +552,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * An empty string implies treat as if no resource configuration, i.e., use project level tool.
 		 * This getter routine returns an ITool[] to consumers (i.e., the makefile generator).
 		 */
-		String t_ToolsToInvoke = EMPTY_STRING;
+		String t_ToolsToInvoke = ""; // $NON-NLS-1$
 		ITool[] resConfigTools;
 		ITool[] tools;
-		String rcbsToolId = EMPTY_STRING;
+		String rcbsToolId = ""; // $NON-NLS-1$
 		int len;
 		int j;
 		int rcbsToolIdx=-1;
@@ -573,7 +571,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * If no tools are currently defined, return a zero lengh array of ITool.
 		 */
 		if (resConfigTools.length == 0) {
-			toolsToInvoke = EMPTY_STRING;
+			toolsToInvoke = ""; // $NON-NLS-1$
 			tools = new ITool[0];
 			return tools;
 		}
@@ -588,7 +586,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				break;
 			}
 		}
-		if (!rcbsToolId.equals(EMPTY_STRING)){
+		if (!rcbsToolId.equals("")){ // $NON-NLS-1$
 			/*
 			 * Here if an rcbs tool is defined.
 			 * Apply the tools according to the current rcbsApplicability setting.
@@ -634,7 +632,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				 */
 				if(resConfigTools.length == 1){
 					tools = new ITool[0];
-					toolsToInvoke = EMPTY_STRING;
+					toolsToInvoke = ""; // $NON-NLS-1$
 					break;
 				}
 				j = 0;

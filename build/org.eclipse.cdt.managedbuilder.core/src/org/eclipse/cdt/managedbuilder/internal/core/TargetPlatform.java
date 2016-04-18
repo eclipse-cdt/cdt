@@ -138,7 +138,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		superClass = targetPlatform.isExtensionTargetPlatform ? targetPlatform : targetPlatform.superClass;
 		if (superClass != null) {
 //			if (targetPlatform.superClassId != null) {
-				superClassId = superClass.getId();// new String(targetPlatform.superClassId);
+				superClassId = superClass.getId();// targetPlatform.superClassId;
 //			}
 		}
 		setId(Id);
@@ -150,10 +150,10 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 		//  Copy the remaining attributes
 		if (targetPlatform.unusedChildren != null) {
-			unusedChildren = new String(targetPlatform.unusedChildren);
+			unusedChildren = targetPlatform.unusedChildren;
 		}
 		if (targetPlatform.errorParserIds != null) {
-			errorParserIds = new String(targetPlatform.errorParserIds);
+			errorParserIds = targetPlatform.errorParserIds;
 		}
 		if (targetPlatform.isAbstract != null) {
 			isAbstract = targetPlatform.isAbstract;

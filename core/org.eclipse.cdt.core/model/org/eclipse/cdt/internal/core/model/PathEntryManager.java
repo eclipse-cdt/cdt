@@ -159,7 +159,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 		@Override
 		public String getDescription() {
-			return new String("Lock container"); //$NON-NLS-1$
+			return "Lock container"; //$NON-NLS-1$
 		}
 
 		@Override

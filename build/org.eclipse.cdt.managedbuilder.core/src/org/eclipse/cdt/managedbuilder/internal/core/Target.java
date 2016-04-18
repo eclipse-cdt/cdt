@@ -382,9 +382,9 @@ public class Target extends BuildObject implements ITarget {
 			} else {
 				// User forgot to specify it. Guess based on OS.
 				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					return new String("del"); //$NON-NLS-1$
+					return "del"; //$NON-NLS-1$
 				} else {
-					return new String("rm"); //$NON-NLS-1$
+					return "rm"; //$NON-NLS-1$
 				}
 			}
 		} else {
@@ -512,7 +512,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getMakeArguments();
 			} else {
 				// No parent and no user setting
-				return new String(""); //$NON-NLS-1$
+				return ""; //$NON-NLS-1$
 			}
 		}
 		return makeArguments;
@@ -530,7 +530,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getMakeCommand();
 			} else {
 				// The user has forgotten to specify a command in the plugin manifest
-				return new String("make"); //$NON-NLS-1$
+				return "make"; //$NON-NLS-1$
 			}
 		} else {
 			return makeCommand;
@@ -547,7 +547,7 @@ public class Target extends BuildObject implements ITarget {
 			if (parent != null) {
 				return parent.getName();
 			} else {
-				return new String(""); //$NON-NLS-1$
+				return ""; //$NON-NLS-1$
 			}
 		} else {
 			return name;

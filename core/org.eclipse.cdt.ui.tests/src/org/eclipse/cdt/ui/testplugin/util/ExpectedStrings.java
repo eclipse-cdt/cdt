@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Cor6oration and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class ExpectedStrings {
 	}
 	public String getMissingString() {
 		int x;
-		String missing = new String("Missing elements: ");
+		String missing = "Missing elements: ";
 		for (x=0;x<expStrings.length;x++) {
 			if (foundStrings[x]==false)
 				missing+=expStrings[x];
@@ -96,7 +96,7 @@ public class ExpectedStrings {
 		return(missing);
 	}
 	public String getExtraString() {
-		String extra= new String("Extra elements: ");
+		String extra= "Extra elements: ";
 		while (!extraStrings.empty()) {
 			extra+=extraStrings.pop();
 			extra+=" ";

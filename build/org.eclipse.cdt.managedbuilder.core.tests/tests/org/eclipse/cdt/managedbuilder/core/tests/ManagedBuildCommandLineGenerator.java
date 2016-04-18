@@ -66,11 +66,11 @@ public class ManagedBuildCommandLineGenerator implements
 		// Config artifact name
 		info.commandOutput = new String(((IToolChain)tool.getParent()).getParent().getArtifactName());
 		// -Oh
-		info.commandOutputFlag = new String("-0h");
+		info.commandOutputFlag = "-0h";
 		// ""
-		info.commandOutputPrefix = new String("");
+		info.commandOutputPrefix = "";
 		// "This is a test command line"
-		info.commandLine = new String("This is a test command line");
+		info.commandLine = "This is a test command line";
 		return info;
 	}
 

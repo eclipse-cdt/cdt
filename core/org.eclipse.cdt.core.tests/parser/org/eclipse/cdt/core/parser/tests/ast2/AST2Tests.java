@@ -315,29 +315,29 @@ public class AST2Tests extends AST2TestBase {
 
 			// // test clearBindings
 			// assertNotNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "f".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) body_f.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "z".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) body_f.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "y".toCharArray()));
 			// //$NON-NLS-1$
 			// CVisitor.clearBindings(tu);
 			// assertNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "f".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) body_f.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "z".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) body_f.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "y".toCharArray()));
 			// //$NON-NLS-1$
 
 			tu = validateCopy(tu);
@@ -883,29 +883,29 @@ public class AST2Tests extends AST2TestBase {
 			assertEquals(decls[0], declaration2.getDeclarators()[0].getName());
 
 			// assertNotNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_TAG, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "f".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) compound.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) compound.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "i".toCharArray()));
 			// //$NON-NLS-1$
 			// CVisitor.clearBindings(tu);
 			// assertNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_TAG, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "f".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) compound.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) compound.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "i".toCharArray()));
 			// //$NON-NLS-1$
 
 			tu = validateCopy(tu);

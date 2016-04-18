@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_80264bbd",
+        "filename": "build/org.eclipse.cdt.make.core.tests/.settings/org.eclipse.jdt.core.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-18T03:48:27Z",
+      "side": 1,
+      "message": "This change is irrelevant since it is a JDT preference, not a CDT one.",
+      "revId": "7332ceee9f65dad1525e5c23d44e4f4e410de077",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

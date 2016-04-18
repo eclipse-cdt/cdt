@@ -793,7 +793,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 */
 	@Override
 	public String getMakefileName() {
-		return new String(MAKEFILE_NAME);
+		return MAKEFILE_NAME;
 	}
 
 	/* (non-Javadoc)

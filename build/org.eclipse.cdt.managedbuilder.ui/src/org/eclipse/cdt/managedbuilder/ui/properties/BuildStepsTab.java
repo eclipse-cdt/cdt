@@ -75,10 +75,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private Set<String> set4 = new TreeSet<String>();
 
 	private static final String[] rcbsApplicabilityRules = {
-		new String(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override),
-//		new String(ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_before")),
-//		new String(ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_after")),
-		new String(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable),
+		Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override,
+//		ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_before"),
+//		ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_after"),
+		Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable,
 	};
 
 

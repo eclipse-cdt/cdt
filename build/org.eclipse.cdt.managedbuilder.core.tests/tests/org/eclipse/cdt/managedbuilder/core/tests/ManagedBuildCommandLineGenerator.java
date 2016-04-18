@@ -31,7 +31,7 @@ public class ManagedBuildCommandLineGenerator implements
 			String commandLinePattern) {
 		ManagedBuildCommandLineInfo info = new ManagedBuildCommandLineInfo();
 		//  Concatenate the tool name and the passed in command name
-		info.commandName = new String(tool.getName() + commandName);
+		info.commandName = tool.getName() + commandName;
 		//  Put out the flags backwards
 		String myflags = ""; // $NON-NLS-1$
 		for (int i = flags.length - 1; i >= 0; i--) {
@@ -62,9 +62,9 @@ public class ManagedBuildCommandLineGenerator implements
 		}
 		info.commandInputs = myinputs;
 		// Don't change the command line pattern
-		info.commandLinePattern = new String(commandLinePattern);
+		info.commandLinePattern = commandLinePattern;
 		// Config artifact name
-		info.commandOutput = new String(((IToolChain)tool.getParent()).getParent().getArtifactName());
+		info.commandOutput = ((IToolChain)tool.getParent()).getParent().getArtifactName();
 		// -Oh
 		info.commandOutputFlag = "-0h";
 		// ""

@@ -16,6 +16,24 @@
       "revId": "809598db9dcc078cc4d7cffd4da3d0fc0b0716a3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5bdef552",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 470,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-18T22:38:44Z",
+      "side": 1,
+      "message": "Makes sense to change it for consistency, but preferably in a separate change.",
+      "parentUuid": "e7dfcf21_78881776",
+      "revId": "809598db9dcc078cc4d7cffd4da3d0fc0b0716a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

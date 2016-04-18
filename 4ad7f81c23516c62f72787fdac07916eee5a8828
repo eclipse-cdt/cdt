@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_9b0f9d6d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-18T22:48:13Z",
+      "side": 1,
+      "message": "Let me know if you want this under the original bug or whether a new bug should be created.",
+      "revId": "4ad7f81c23516c62f72787fdac07916eee5a8828",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

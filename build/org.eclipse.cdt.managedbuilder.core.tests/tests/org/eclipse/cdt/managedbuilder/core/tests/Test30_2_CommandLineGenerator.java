@@ -58,11 +58,11 @@ public class Test30_2_CommandLineGenerator implements
 			String commandLinePattern) {
 		ManagedBuildCommandLineInfo info = new ManagedBuildCommandLineInfo();
 		//  We are only going to change the "flags" to remove the "test30_2.tar-list.filename" option
-		info.commandName = new String(commandName);
-		info.commandOutputFlag = new String(outputFlag);
-		info.commandOutputPrefix = new String(outputPrefix);
-		info.commandOutput = new String(outputName);
-		info.commandLinePattern = new String(commandLinePattern);
+		info.commandName = commandName;
+		info.commandOutputFlag = outputFlag;
+		info.commandOutputPrefix = outputPrefix;
+		info.commandOutput = outputName;
+		info.commandLinePattern = commandLinePattern;
 		info.commandInputs = ""; // $NON-NLS-1$
 		for (int i = 0; i < inputResources.length; i++) {
 			if (i > 0) info.commandInputs += " ";

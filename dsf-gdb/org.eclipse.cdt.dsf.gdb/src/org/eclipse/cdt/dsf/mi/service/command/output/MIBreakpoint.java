@@ -128,18 +128,18 @@ public class MIBreakpoint  {
 
     public MIBreakpoint(MIBreakpoint other) {
         number   = other.number;
-        type     = new String(other.type);
-        disp     = new String(other.disp);
+        type     = other.type;
+        disp     = other.disp;
         enabled  = other.enabled;
-        address  = new String(other.address);
-        func     = new String(other.func);
-        fullName = new String(other.fullName);
-        file     = new String(other.file);
+        address  = other.address;
+        func     = other.func;
+        fullName = other.fullName;
+        file     = other.file;
         line     = other.line;
-        cond     = new String(other.cond);
+        cond     = other.cond;
         times    = other.times;
-        exp      = new String(other.exp);
-        threadId = new String(other.threadId);
+        exp      = other.exp;
+        threadId = other.threadId;
         ignore   = other.ignore;
         commands = other.commands;
         passcount= other.passcount;

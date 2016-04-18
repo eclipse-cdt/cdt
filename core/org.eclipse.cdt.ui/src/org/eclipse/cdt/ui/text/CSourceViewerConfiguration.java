@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -605,7 +605,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			if (i < tabWidth)
 				indentPrefixes[i+1]= spaces + '\t';
 			else
-				indentPrefixes[i+1]= new String(spaces);
+				indentPrefixes[i+1]= spaces;
 		}
 		
 		indentPrefixes[tabWidth + 1]= ""; //$NON-NLS-1$

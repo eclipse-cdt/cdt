@@ -176,7 +176,7 @@
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20151221205849/repository/"/>
           <repository
-              url="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
+              url="http://download.eclipse.org/technology/swtbot/snapshots/"/>
           <repository
               url="http://download.eclipse.org/tm/updates/4.0/"/>
           <repository

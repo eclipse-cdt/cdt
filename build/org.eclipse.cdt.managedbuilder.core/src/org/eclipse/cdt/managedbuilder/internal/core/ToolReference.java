@@ -464,10 +464,11 @@ public class ToolReference implements IToolReference {
 	public String getToolCommand() {
 		if (command == null) {
 			// see if the parent has one
-			if (parent != null) {
-				return parent.getToolCommand();
+			if (parent == null) {
+				// bad reference
+				return ""; // $NON-NLS-1$
 			}
-			return ""; // bad reference // $NON-NLS-1$
+			return parent.getToolCommand();
 		}
 		return command;
 	}

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_38692f18",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/testplugin/util/ExpectedStrings.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-18T22:29:58Z",
+      "side": 1,
+      "message": "Oops, this is a bug and needs fixing",
+      "revId": "78fc7b2896fceaa31cb1ac399c8810960317c955",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_785f376d",
+        "filename": "core/org.eclipse.cdt.ui.tests/src/org/eclipse/cdt/ui/testplugin/util/ExpectedStrings.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-18T22:29:58Z",
+      "side": 1,
+      "message": "Similar bug to last time, will fix",
+      "revId": "78fc7b2896fceaa31cb1ac399c8810960317c955",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9862432f",
+        "filename": "core/org.eclipse.cdt.ui/templateengine/org/eclipse/cdt/ui/templateengine/uitree/IPatternMatchingTable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-18T22:29:58Z",
+      "side": 1,
+      "message": "Same again",
+      "revId": "78fc7b2896fceaa31cb1ac399c8810960317c955",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

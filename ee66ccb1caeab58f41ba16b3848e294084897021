@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_8c712154",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/text/hover/AutoconfTextHover.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-19T17:35:38Z",
+      "side": 1,
+      "message": "Another anti-pattern.",
+      "range": {
+        "startLine": 317,
+        "startChar": 22,
+        "endLine": 317,
+        "endChar": 42
+      },
+      "revId": "ee66ccb1caeab58f41ba16b3848e294084897021",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

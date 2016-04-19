@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_6c33f5ab",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-19T17:25:03Z",
+      "side": 1,
+      "message": "For consistency with the prevailing style fields should be declared before the constructor.",
+      "range": {
+        "startLine": 229,
+        "startChar": 2,
+        "endLine": 229,
+        "endChar": 8
+      },
+      "revId": "033e4186580a24f0225f491439b6d8d387e17544",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_cc2b2932",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-19T17:25:03Z",
+      "side": 1,
+      "message": "Continuation line should hove double indent.",
+      "range": {
+        "startLine": 239,
+        "startChar": 4,
+        "endLine": 239,
+        "endChar": 6
+      },
+      "revId": "033e4186580a24f0225f491439b6d8d387e17544",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8c368199",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-19T17:25:03Z",
+      "side": 1,
+      "message": "Please add a blank line between methods.",
+      "range": {
+        "startLine": 241,
+        "startChar": 3,
+        "endLine": 241,
+        "endChar": 11
+      },
+      "revId": "033e4186580a24f0225f491439b6d8d387e17544",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_cc0409d1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-19T17:25:03Z",
+      "side": 1,
+      "message": "Bit xoring is not the best way to combine hash codes. A better approach is scope.hashCode() * \u003csome prime number, e.g. 29\u003e + name.hashCode()",
+      "range": {
+        "startLine": 243,
+        "startChar": 27,
+        "endLine": 243,
+        "endChar": 28
+      },
+      "revId": "033e4186580a24f0225f491439b6d8d387e17544",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_0c227154",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/SemanticHighlightingTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-19T17:25:03Z",
+      "side": 1,
+      "message": "The example would be more realistic if definition of _Index_tuple was provided.",
+      "range": {
+        "startLine": 557,
+        "startChar": 13,
+        "endLine": 557,
+        "endChar": 25
+      },
+      "revId": "033e4186580a24f0225f491439b6d8d387e17544",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

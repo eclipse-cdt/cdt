@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_9bb31d02",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ResourceConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-19T00:49:36Z",
+      "side": 1,
+      "message": "Replacing .equals(\"\") with .isEmpty() would be a nice cleanup too.",
+      "range": {
+        "startLine": 589,
+        "startChar": 18,
+        "endLine": 589,
+        "endChar": 28
+      },
+      "revId": "470de4e66b9da836c56b4d3da9bf8c5ceb3387df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

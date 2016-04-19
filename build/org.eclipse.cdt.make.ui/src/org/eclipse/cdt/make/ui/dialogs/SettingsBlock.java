@@ -178,7 +178,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 			StringBuffer cmd = new StringBuffer(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "")); //$NON-NLS-1$
 			if (!fBuildInfo.isDefaultBuildCmd()) {
 				String args = fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$
-				if (args != null && !args.equals("")) { //$NON-NLS-1$
+				if (args != null && !args.isEmpty()) {
 					cmd.append(" "); //$NON-NLS-1$
 					cmd.append(args);
 				}
@@ -545,7 +545,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 			StringBuffer cmd = new StringBuffer(info.getBuildCommand().toOSString());
 			if (!info.isDefaultBuildCmd()) {
 				String args = info.getBuildArguments();
-				if (args != null && !args.equals("")) { //$NON-NLS-1$
+				if (args != null && !args.isEmpty()) {
 					cmd.append(" "); //$NON-NLS-1$
 					cmd.append(args);
 				}

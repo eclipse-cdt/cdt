@@ -170,7 +170,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(LaunchUIMessages.getString("WorkingDirectoryBlock.7")); //$NON-NLS-1$
 		String currentWorkingDir = fWorkingDirText.getText();
-		if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
+		if (!currentWorkingDir.trim().isEmpty()) {
 			File path = new File(currentWorkingDir);
 			if (path.exists()) {
 				dialog.setFilterPath(currentWorkingDir);

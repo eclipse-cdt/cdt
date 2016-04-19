@@ -134,7 +134,7 @@ public class LaunchUtils {
 		if (programName != null ) {
 			IPath exePath = new Path(programName);
 			IProject project = null;
-			if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
+			if (projectName != null && !projectName.isEmpty()) {
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 				if (project == null || project.getLocation() == null)
 				{

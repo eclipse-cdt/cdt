@@ -79,7 +79,7 @@ public class SetMBSStringListOptionValues extends ProcessRunner {
 	private boolean setOptionValue(IProject projectHandle, String id, String[] value, String path) throws BuildException, ProcessFailureException {
 		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject().getConfigurations();
 
-		boolean resource = !(path == null || path.equals("") || path.equals("/")); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean resource = !(path == null || path.isEmpty() || path.equals("/")); //$NON-NLS-1$
 		boolean modified = false;
 
 		for (IConfiguration config : projectConfigs) {

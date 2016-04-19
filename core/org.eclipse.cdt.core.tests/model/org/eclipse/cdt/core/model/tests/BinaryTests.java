@@ -307,7 +307,7 @@ public class BinaryTests extends TestCase {
         IBinary myBinary;
         String name;
         myBinary=CProjectHelper.findBinary(testProject, "test_g");
-        assertTrue(myBinary.getSoname().equals(""));
+        assertTrue(myBinary.getSoname().isEmpty());
         
         myBinary=CProjectHelper.findBinary(testProject, "libtestlib_g.so");
         name=myBinary.getSoname();

@@ -75,7 +75,7 @@ public class ConditionalProcessGroup {
 		this.id = "Condition " + id; //$NON-NLS-1$
 		conditionString = conditionElement.getAttribute(ProcessHelper.CONDITION);
 		if (conditionString != null) {
-			if (conditionString.trim().equals("")) { //$NON-NLS-1$
+			if (conditionString.trim().isEmpty()) {
 				conditionString = null;
 			} else {
 				int op = conditionString.indexOf(ProcessHelper.EQUALS);

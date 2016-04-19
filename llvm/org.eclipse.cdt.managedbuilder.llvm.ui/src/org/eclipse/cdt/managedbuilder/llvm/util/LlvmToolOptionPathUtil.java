@@ -833,7 +833,7 @@ public class LlvmToolOptionPathUtil {
 	public static String arrayToString(String[] array) {
 		StringBuffer sB = new StringBuffer();
 		//if array isn't empty and doesn't contain an empty String 
-		if (array.length>0 /*&& !array[0].equals("")*/) {
+		if (array.length>0 /*&& !array[0].isEmpty()*/) {
 			for (String i : array) {
 				sB.append(i);
 				sB.append(System.getProperty("path.separator")); //$NON-NLS-1$

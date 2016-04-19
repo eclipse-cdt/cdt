@@ -314,7 +314,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 								NamedNodeMap parms = v.getAttributes();
 								Node parmNode = parms.item(0);
 								String parm = parmNode.getNodeValue();
-								if (prototype.toString().equals(""))
+								if (prototype.toString().isEmpty())
 									prototype.append(parm);
 								else
 									prototype.append(", " + parm);

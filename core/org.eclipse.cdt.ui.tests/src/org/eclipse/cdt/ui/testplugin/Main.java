@@ -169,13 +169,13 @@ protected Object basicRun(String[] args) throws Exception {
  * @param prop the initial comma-separated string
  */
 private String[] getArrayFromList(String prop) {
-	if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
+	if (prop == null || prop.trim().isEmpty())
 		return new String[0];
 	Vector list = new Vector();
 	StringTokenizer tokens = new StringTokenizer(prop, ","); //$NON-NLS-1$
 	while (tokens.hasMoreTokens()) {
 		String token = tokens.nextToken().trim();
-		if (!token.equals("")) //$NON-NLS-1$
+		if (!token.isEmpty())
 			list.addElement(token);
 	}
 	return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);

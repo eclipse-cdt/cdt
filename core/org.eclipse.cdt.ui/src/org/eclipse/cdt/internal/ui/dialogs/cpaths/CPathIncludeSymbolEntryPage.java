@@ -910,7 +910,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		String newItem = null;
 		if (dialog.open() == Window.OK) {
 			newItem = dialog.getValue();
-			if (newItem != null && !newItem.equals("")) { //$NON-NLS-1$
+			if (newItem != null && !newItem.isEmpty()) {
 				if (existing == null) {
 					CPElementGroup group = getSelectedGroup();
 					CPElement newPath = new CPElement(fCurrCProject, IPathEntry.CDT_INCLUDE, group.getResource().getFullPath(),

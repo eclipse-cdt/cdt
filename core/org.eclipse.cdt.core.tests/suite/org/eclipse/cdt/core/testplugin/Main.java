@@ -178,13 +178,13 @@ public class Main {
 	 * @param prop the initial comma-separated string
 	 */
 	private String[] getArrayFromList(String prop) {
-		if (prop == null || prop.trim().equals(""))
+		if (prop == null || prop.trim().isEmpty())
 			return new String[0];
 		List<String> list = new ArrayList<>();
 		StringTokenizer tokens = new StringTokenizer(prop, ",");
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken().trim();
-			if (!token.equals(""))
+			if (!token.isEmpty())
 				list.add(token);
 		}
 		return list.toArray(new String[list.size()]);

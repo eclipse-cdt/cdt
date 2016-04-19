@@ -548,7 +548,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (tstr.equals("void")) {
 			Kind kind = Kind.eVoid;
 			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
-		} else if (tstr.equals("")) {
+		} else if (tstr.isEmpty()) {
 			Kind kind = Kind.eUnspecified;
 			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
 		} else if (tstr.equals("char")) {

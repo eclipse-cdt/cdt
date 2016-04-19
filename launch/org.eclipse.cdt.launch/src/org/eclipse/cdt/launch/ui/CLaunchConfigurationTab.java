@@ -65,7 +65,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			}
 		} catch (CoreException e) {
 		}
-		if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
+		if (projectName != null && !projectName.isEmpty()) {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
 			if (cProject != null && cProject.exists()) {
@@ -106,7 +106,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				}
 			}
 			if (obj != null) {
-				if (programName == null || programName.equals("")) { //$NON-NLS-1$
+				if (programName == null || programName.isEmpty()) {
 					return (ICElement) obj;
 				}
 				ICElement ce = (ICElement) obj;

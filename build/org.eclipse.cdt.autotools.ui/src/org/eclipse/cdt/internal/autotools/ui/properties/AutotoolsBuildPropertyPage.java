@@ -119,7 +119,7 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		});
 		
 		fCleanMakeTarget.addModifyListener(e -> {
-			if (fCleanMakeTarget.getText().equals("")) { // $NON-NLS-1$
+			if (fCleanMakeTarget.getText().isEmpty()) {
 				// FIXME: should probably issue warning here, but how?
 			}
 		});

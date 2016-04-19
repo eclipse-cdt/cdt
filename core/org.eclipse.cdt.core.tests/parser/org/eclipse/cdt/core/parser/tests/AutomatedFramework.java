@@ -120,7 +120,7 @@ public abstract class AutomatedFramework extends TestCase {
 			suite.addTest( newTest( "propertiesFailed") ); //$NON-NLS-1$
 		}
 		
-		if( outputFile != null && !outputFile.equals("") ){ //$NON-NLS-1$
+		if( outputFile != null && !outputFile.isEmpty() ){
 			try{
 				
 				File output = new File( outputFile );

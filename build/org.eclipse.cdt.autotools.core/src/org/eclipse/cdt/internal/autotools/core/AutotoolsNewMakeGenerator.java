@@ -410,7 +410,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					if (target == null)
 						target = AutotoolsPropertyConstants.CLEAN_MAKE_TARGET_DEFAULT;
 					String args = builder.getBuildArguments();
-					if (args != null && !(args = args.trim()).equals("")) { //$NON-NLS-1$
+					if (args != null && !(args = args.trim()).isEmpty()) {
 						String[] newArgs = makeArray(args);
 						makeargs = new String[newArgs.length + 1];
 						System.arraycopy(newArgs, 0, makeargs, 0, newArgs.length);
@@ -460,7 +460,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 							if (target == null)
 								target = AutotoolsPropertyConstants.CLEAN_MAKE_TARGET_DEFAULT;
 							String args = builder.getBuildArguments();
-							if (args != null && !(args = args.trim()).equals("")) { //$NON-NLS-1$
+							if (args != null && !(args = args.trim()).isEmpty()) {
 								String[] newArgs = makeArray(args);
 								makeargs = new String[newArgs.length + 1];
 								System.arraycopy(newArgs, 0, makeargs, 0, newArgs.length);

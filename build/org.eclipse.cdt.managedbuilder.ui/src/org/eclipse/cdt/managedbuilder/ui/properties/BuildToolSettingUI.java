@@ -314,7 +314,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 										optionValueExist = true;
 									}
 								}
-								if (!enumeration.equals("")) //$NON-NLS-1$
+								if (!enumeration.isEmpty())
 											setOption(opt, enumeration);
 								break;
 							case IOption.TREE :
@@ -328,7 +328,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 										optionValueExist = true;
 									}
 								}
-								if (!selectedID.equals("")) //$NON-NLS-1$
+								if (!selectedID.isEmpty())
 											setOption(opt, selectedID);
 								break;
 							case IOption.STRING_LIST :

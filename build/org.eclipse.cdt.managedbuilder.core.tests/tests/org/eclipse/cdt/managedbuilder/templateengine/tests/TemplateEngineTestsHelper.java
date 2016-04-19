@@ -131,7 +131,7 @@ public class TemplateEngineTestsHelper {
 			IProjectType type = allProjectTypes[index];
 			if (!type.isAbstract() && !type.isTestProjectType()) {
 				
-				if (!type.getConvertToId().equals("")) //$NON-NLS-1$
+				if (!type.getConvertToId().isEmpty())
 					continue;
 				
 				if (type.isSupported()) {

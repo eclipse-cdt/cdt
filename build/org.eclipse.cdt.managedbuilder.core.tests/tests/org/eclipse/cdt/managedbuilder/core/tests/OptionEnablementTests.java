@@ -423,11 +423,11 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.empty");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisString.getStringValue().equals(""),
+		assertEquals(thisString.getStringValue().isEmpty(),
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals(""),
+		assertEquals(thisString.getStringValue().isEmpty(),
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals(""),
+		assertEquals(thisString.getStringValue().isEmpty(),
 				option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
 
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.test a b c");

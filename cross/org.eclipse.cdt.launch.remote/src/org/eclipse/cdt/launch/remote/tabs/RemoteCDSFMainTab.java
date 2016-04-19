@@ -146,7 +146,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 			int currentSelection = connectionCombo.getSelectionIndex();
 			String connection_name = currentSelection >= 0 ? connectionCombo
 					.getItem(currentSelection) : ""; //$NON-NLS-1$
-			if (connection_name.equals("")) { //$NON-NLS-1$
+			if (connection_name.isEmpty()) {
 				setErrorMessage(CONNECTION_TEXT_ERROR);
 				retVal = false;
 			}

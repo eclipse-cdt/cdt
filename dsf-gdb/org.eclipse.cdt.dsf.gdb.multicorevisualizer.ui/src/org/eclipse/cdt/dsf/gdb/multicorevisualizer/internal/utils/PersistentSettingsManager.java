@@ -491,6 +491,6 @@ public class PersistentSettingsManager {
 	/** Returns the key to be used to save parameter, taking into account the 
 	 * instance id, if applicable */
 	private String getStorageKey(boolean perInstance) {
-		return (perInstance ?  m_instance : "") + (!m_category.equals("") ? "." + m_category : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return (perInstance ?  m_instance : "") + (!m_category.isEmpty() ? "." + m_category : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

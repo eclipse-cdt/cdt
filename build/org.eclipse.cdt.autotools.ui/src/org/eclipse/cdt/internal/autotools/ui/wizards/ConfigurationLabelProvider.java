@@ -29,7 +29,7 @@ public class ConfigurationLabelProvider	extends LabelProvider implements ITableL
 		if (obj instanceof IConfiguration) {
 			IConfiguration tmpConfig = (IConfiguration) obj;
 			
-			if( (tmpConfig.getDescription() == null)|| (tmpConfig.getDescription().equals("")) )	//$NON-NLS-1$
+			if( (tmpConfig.getDescription() == null)|| (tmpConfig.getDescription().isEmpty()) )
 				return ((IConfiguration) obj).getName();
 			else
 				return ( tmpConfig.getName() + " ( " + tmpConfig.getDescription() + " )");	//$NON-NLS-1$	//$NON-NLS-2$

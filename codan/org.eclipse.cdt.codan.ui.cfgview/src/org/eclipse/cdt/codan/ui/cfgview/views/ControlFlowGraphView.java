@@ -355,7 +355,7 @@ public class ControlFlowGraphView extends ViewPart {
 		}
 
 		protected boolean open(String filename) throws PartInitException, CModelException {
-			if (filename.equals(""))
+			if (filename.isEmpty())
 				return false;
 			IResource r = ParserUtil.getResourceForFilename(filename);
 			if (r != null) {

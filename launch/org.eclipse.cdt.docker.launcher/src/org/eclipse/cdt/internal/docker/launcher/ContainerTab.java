@@ -414,7 +414,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			connections = DockerConnectionManager.getInstance()
 					.getConnections();
 			if (connections.length > 0) {
-				if (!connectionUri.equals("")) { //$NON-NLS-1$
+				if (!connectionUri.isEmpty()) {
 					String[] connectionNames = new String[connections.length];
 					for (int i = 0; i < connections.length; ++i) {
 						connectionNames[i] = connections[i].getName();

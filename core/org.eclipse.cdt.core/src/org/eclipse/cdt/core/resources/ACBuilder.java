@@ -240,7 +240,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			}
 			names = names + name;
 		}
-		if (names.equals("")) {
+		if (names.isEmpty()) {
 			return strIds;
 		}
 		return names;

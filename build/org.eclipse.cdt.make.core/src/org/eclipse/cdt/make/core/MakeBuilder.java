@@ -262,7 +262,7 @@ public class MakeBuilder extends ACBuilder {
 			}
 		} else {
 			String argsStr = info.getBuildArguments();
-			if (argsStr != null && !argsStr.equals("")) { //$NON-NLS-1$
+			if (argsStr != null && !argsStr.isEmpty()) {
 				String[] newArgs = makeArray(argsStr);
 				args = new String[targets.length + newArgs.length];
 				System.arraycopy(newArgs, 0, args, 0, newArgs.length);

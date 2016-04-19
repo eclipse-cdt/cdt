@@ -138,9 +138,9 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 
 	protected void initDebuggerTypes(String selection) {
 		if (fAttachMode) {
-			setInitializeDefault(selection.equals("") ? true : false); //$NON-NLS-1$
+			setInitializeDefault(selection.isEmpty());
 
-			if (selection.equals("")) { //$NON-NLS-1$
+			if (selection.isEmpty()) {
 				selection = LOCAL_DEBUGGER_ID;
 			}
 

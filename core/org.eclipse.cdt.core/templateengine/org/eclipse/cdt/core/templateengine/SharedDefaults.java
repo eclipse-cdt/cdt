@@ -135,7 +135,7 @@ public class SharedDefaults extends HashMap<String, String> {
 			Element xmlElement = sharedElementList.get(i);
 			key = xmlElement.getAttribute(TemplateEngineHelper.ID);
 			value = xmlElement.getAttribute(TemplateEngineHelper.VALUE);
-			if (key != null && !key.trim().equals("")) { //$NON-NLS-1$
+			if (key != null && !key.trim().isEmpty()) {
 				sharedDefaultsMap.put(key, value);
 			}
 		}

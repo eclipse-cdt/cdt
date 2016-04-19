@@ -420,7 +420,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		if (newText.equals(newText.trim()) == false) {
 			errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_nameMustNotBeEmpty; 
 		}
-		if (newText.equals("")) { //$NON-NLS-1$
+		if (newText.isEmpty()) {
 			if (fFirstCheck) {
 				setPageComplete(false);
 				fFirstCheck= false;

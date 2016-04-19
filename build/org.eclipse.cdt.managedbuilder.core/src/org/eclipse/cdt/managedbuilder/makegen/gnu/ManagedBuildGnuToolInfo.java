@@ -1013,7 +1013,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		if (outExtensionName != null) {
 		    OptDotExt = DOT + outExtensionName;
 		} else
-			if (!tool.getOutputExtension(srcExtensionName).equals("")) //$NON-NLS-1$
+			if (!tool.getOutputExtension(srcExtensionName).isEmpty())
 				OptDotExt = DOT + tool.getOutputExtension(srcExtensionName);
 
 		// create rule of the form

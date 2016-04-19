@@ -432,7 +432,7 @@ public class FileListControl {
 			int i = getSelectionIndex();
 			// insert items at the correct location
 			for (String item : pasteBuffer)
-				if (!item.trim().equals("")) //$NON-NLS-1$
+				if (!item.trim().isEmpty())
 					add(item.trim(), ++i);
 			checkNotificationNeeded();
 		}

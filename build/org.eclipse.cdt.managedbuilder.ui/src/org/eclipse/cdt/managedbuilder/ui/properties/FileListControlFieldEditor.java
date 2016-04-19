@@ -89,7 +89,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		this(name, labelText, parent, type);
 		// can't use setToolTip(tooltip) as label not created yet
 		getLabelControl(parent).setToolTipText(tooltip);
-		if (!contextId.equals("")) PlatformUI.getWorkbench().getHelpSystem().setHelp(list.getListControl(), contextId);	 //$NON-NLS-1$
+		if (!contextId.isEmpty()) PlatformUI.getWorkbench().getHelpSystem().setHelp(list.getListControl(), contextId);
 	}
 
 	/**
@@ -299,7 +299,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * @return
 	 */
 	private String createList(String[] items) {
-		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
+		StringBuffer path = new StringBuffer();
 
 		for (int i = 0; i < items.length; i++) {
 			path.append(items[i]);

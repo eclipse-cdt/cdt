@@ -586,7 +586,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				break;
 			}
 		}
-		if (!rcbsToolId.equals("")){ // $NON-NLS-1$
+		if (!rcbsToolId.isEmpty()){
 			/*
 			 * Here if an rcbs tool is defined.
 			 * Apply the tools according to the current rcbsApplicability setting.

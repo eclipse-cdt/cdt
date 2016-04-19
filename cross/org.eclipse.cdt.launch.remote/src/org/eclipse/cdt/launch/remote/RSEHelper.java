@@ -249,7 +249,7 @@ public class RSEHelper {
 
 		String remoteCommand = realRemoteCommand + CMD_DELIMITER + EXIT_CMD;
 
-		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
+		if (!prelaunchCmd.trim().isEmpty())
 			remoteCommand = prelaunchCmd + CMD_DELIMITER + remoteCommand;
 
 		IShellService shellService;
@@ -299,7 +299,7 @@ public class RSEHelper {
 
 		String remoteCommand = realRemoteCommand + CMD_DELIMITER + EXIT_CMD;
 
-		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
+		if (!prelaunchCmd.trim().isEmpty())
 			remoteCommand = prelaunchCmd + CMD_DELIMITER + remoteCommand;
 
 		IShellService shellService = null;

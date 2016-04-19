@@ -242,7 +242,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							}
 						});
 						// Check and see if we failed above and if so, quit
-						if (info.getHostPath().equals("")) { //$NON-NLS-1$
+						if (info.getHostPath().isEmpty()) {
 							monitor.done();
 							// throw internal exception which will be caught below
 							throw new StartupException(errorStatus.getMessage());
@@ -342,7 +342,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							}
 						});
 						// Check and see if we failed above and if so, quit
-						if (info.getHostPath().equals("")) { //$NON-NLS-1$
+						if (info.getHostPath().isEmpty()) {
 							monitor.done();
 							// throw internal exception which will be caught below
 							throw new StartupException(errorStatus.getMessage());
@@ -405,7 +405,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						}
 					});
 					// Check and see if we failed above and if so, quit
-					if (info.getHostPath().equals("")) { //$NON-NLS-1$
+					if (info.getHostPath().isEmpty()) {
 						monitor.done();
 						// throw internal exception which will be caught below
 						throw new StartupException(errorStatus.getMessage());

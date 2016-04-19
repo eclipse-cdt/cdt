@@ -66,7 +66,7 @@ public class NewAutotoolsProject extends ProcessRunner {
 				turnOffAutoBuild(workspace);
 
 				IPath locationPath = null;
-				if (location != null && !location.trim().equals("")) { //$NON-NLS-1$
+				if (location != null && !location.trim().isEmpty()) {
 					locationPath = Path.fromPortableString(location);
 				}
 

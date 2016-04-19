@@ -22,6 +22,30 @@
       "revId": "ee66ccb1caeab58f41ba16b3848e294084897021",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_67e4ee55",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/text/hover/AutoconfTextHover.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-19T21:13:29Z",
+      "side": 1,
+      "message": "The problem is that prototype in this case is a StringBuffer, which doesn\u0027t have an isEmpty() method. And since any object may have a toString method there isn\u0027t an easy transformation that you can do without investigating each step. For example, in this case it could be replaced with prototype.length() \u003d\u003d 0 but only by inspection of the target type.\n\nThat said I can only see two occurrences of .toString().isEmpty() -- here, and in GnuMakefileGenerator.java. In the latter case it\u0027s an IPath and the result of the string is being reused in the guard.",
+      "parentUuid": "e7dfcf21_8c712154",
+      "range": {
+        "startLine": 317,
+        "startChar": 22,
+        "endLine": 317,
+        "endChar": 42
+      },
+      "revId": "ee66ccb1caeab58f41ba16b3848e294084897021",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

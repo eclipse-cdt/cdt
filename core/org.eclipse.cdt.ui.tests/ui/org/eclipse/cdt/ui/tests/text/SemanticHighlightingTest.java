@@ -546,4 +546,21 @@ public class SemanticHighlightingTest extends TestCase {
     public void testOverloadedOperatorInMacroExpansion_371839() throws Exception {
     	makeAssertions();
     }
+    
+    //	template<unsigned... _Indexes>                   //$templateParameter
+    //	struct _Index_tuple {                            //$class
+    //		typedef _Index_tuple<_Indexes..., sizeof...(_Indexes)> __next;  //$class,templateParameter,templateParameter,typedef
+    //	};
+	//	template<unsigned _Num>                          //$templateParameter
+	//	struct _Build_index_tuple {                      //$class
+	//		typedef typename _Build_index_tuple<_Num - 1>::__type::__next __type;  //$class,templateParameter,class,class,typedef
+	//	};
+	//
+	//	template<>
+	//	struct _Build_index_tuple<0> {                   //$class
+	//		typedef _Index_tuple<> __type;               //$class,typedef
+	//	};
+    public void testRecursion_491834() throws Exception {
+    	makeAssertions();
+    }
 }

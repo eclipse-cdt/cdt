@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	 */
 	@Override
 	public ICdtVariable getMacro(String macroName, int contextType, Object contextData) {
-		if(macroName == null || "".equals(macroName))  //$NON-NLS-1$
+		if(macroName == null || macroName.isEmpty())
 			return null;
 		
 		StorableCdtVariables macros = getStorableMacros(contextType,contextData);
@@ -138,7 +138,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 					String value, 
 					int contextType,
 					Object contextData){
-		if(macroName == null || "".equals(macroName))  //$NON-NLS-1$
+		if(macroName == null || macroName.isEmpty())
 			return null;
 		StorableCdtVariables macros = getStorableMacros(contextType, contextData);
 		if(macros == null)
@@ -168,7 +168,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 				String value[], 
 				int contextType,
 				Object contextData){
-		if(macroName == null || "".equals(macroName))  //$NON-NLS-1$
+		if(macroName == null || macroName.isEmpty())
 			return null;
 		StorableCdtVariables macros = getStorableMacros(contextType, contextData);
 		if(macros == null)
@@ -197,7 +197,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		if(copy == null)
 			return null;
 		String macroName = copy.getName();
-		if(macroName == null || "".equals(macroName))  //$NON-NLS-1$
+		if(macroName == null || macroName.isEmpty())
 			return null;
 		StorableCdtVariables macros = getStorableMacros(contextType, contextData);
 		if(macros == null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,7 +109,7 @@ public class CygPath {
 			reader = new BufferedReader(new InputStreamReader(cygPath.getInputStream()));
 			String newPath = reader.readLine();
 			IPath ipath;
-			if (path != null && !path.equals("")) { //$NON-NLS-1$
+			if (path != null && !path.isEmpty()) {
 				ipath = new Path(newPath);
 			} else {
 				ipath = new Path(path);

@@ -1894,7 +1894,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 					String versionsSupported = toolChainElement.getVersionsSupported();
 
 					if ((versionsSupported != null)
-							&& (!versionsSupported.equals(""))) { //$NON-NLS-1$
+							&& (!versionsSupported.isEmpty())) {
 						String[] tmpVersions = versionsSupported.split(","); //$NON-NLS-1$
 
 						for (int j = 0; j < tmpVersions.length; j++) {
@@ -1927,7 +1927,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			// If 'getSuperClass()' is not null, look for 'convertToId' attribute in plugin
 			// manifest file for this toolchain.
 			String convertToId = getSuperClass().getConvertToId();
-			if ((convertToId == null) || (convertToId.equals(""))) { //$NON-NLS-1$
+			if ((convertToId == null) || (convertToId.isEmpty())) {
 				// It means there is no 'convertToId' attribute available and
 				// the version is still actively
 				// supported by the tool integrator. So do nothing, just return

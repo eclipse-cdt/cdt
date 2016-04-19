@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Red Hat, Inc.
+ * Copyright (c) 2006, 2016 Red Hat, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,7 +314,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 								NamedNodeMap parms = v.getAttributes();
 								Node parmNode = parms.item(0);
 								String parm = parmNode.getNodeValue();
-								if (prototype.toString().equals(""))
+								if (prototype.toString().isEmpty())
 									prototype.append(parm);
 								else
 									prototype.append(", " + parm);

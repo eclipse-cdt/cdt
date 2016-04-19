@@ -481,7 +481,7 @@ public class NewCfgDialog implements INewCfgDialog {
 	private String getNameAndDescription(IConfiguration cfg) {
 		String name = cfg.getName();
 		if (name == null) name = NULL;
-		if ( (cfg.getDescription() == null) || cfg.getDescription().equals(""))	//$NON-NLS-1$
+		if ( (cfg.getDescription() == null) || cfg.getDescription().isEmpty())
 			return name;
 		else
 			return name + "( " + cfg.getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$

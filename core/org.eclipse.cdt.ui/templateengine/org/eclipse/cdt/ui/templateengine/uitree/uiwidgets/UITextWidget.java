@@ -221,7 +221,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 			return;
 
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
-		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && textValue.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && textValue.isEmpty()) { //$NON-NLS-1$
 			return;
 		}
 
@@ -264,7 +264,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
 
 		if (((mandatory != null) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)))
-				&& ((textValue == null) || (textValue.equals("")) || //$NON-NLS-1$
+				&& ((textValue == null) || (textValue.isEmpty()) ||
 				(textValue.trim().length() < 1))) {
 
 			retVal = false;

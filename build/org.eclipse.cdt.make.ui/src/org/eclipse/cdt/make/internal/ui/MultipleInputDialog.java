@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,7 +148,7 @@ public class MultipleInputDialog extends Dialog {
 			validators.add(new Validator() {
 				@Override
 				public boolean validate() {
-					return !text.getText().equals(""); //$NON-NLS-1$
+					return !text.getText().isEmpty();
 				}
 			});
 			text.addModifyListener(new ModifyListener() {
@@ -191,7 +191,7 @@ public class MultipleInputDialog extends Dialog {
 			validators.add(new Validator() {
 				@Override
 				public boolean validate() {
-					return !text.getText().equals(""); //$NON-NLS-1$
+					return !text.getText().isEmpty();
 				}
 			});
 
@@ -210,7 +210,7 @@ public class MultipleInputDialog extends Dialog {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setMessage(MakeUIPlugin.getResourceString("MultipleInputDialog.1")); //$NON-NLS-1$
 				String currentWorkingDir = text.getText();
-				if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
+				if (!currentWorkingDir.trim().isEmpty()) {
 					File path = new File(currentWorkingDir);
 					if (path.exists()) {
 						dialog.setFilterPath(currentWorkingDir);
@@ -258,7 +258,7 @@ public class MultipleInputDialog extends Dialog {
 			validators.add(new Validator() {
 				@Override
 				public boolean validate() {
-					return !text.getText().equals(""); //$NON-NLS-1$
+					return !text.getText().isEmpty();
 				}
 			});
 

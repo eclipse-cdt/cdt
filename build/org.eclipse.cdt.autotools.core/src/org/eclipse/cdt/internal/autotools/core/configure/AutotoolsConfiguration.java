@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Red Hat Inc.
+ * Copyright (c) 2009, 2016 Red Hat Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -302,12 +302,12 @@ public class AutotoolsConfiguration implements IAConfiguration {
 				for (int j = 0; j < childOptions.length; ++j) {
 					IConfigureOption childOption = getOption(childOptions[j].getName());
 					String parameter = childOption.getParameter();
-					if (!parameter.equals(""))
+					if (!parameter.isEmpty())
 						buf.append(" " + parameter);
 				}
 			} else {
 				String parameter = option.getParameter();
-				if (!parameter.equals(""))
+				if (!parameter.isEmpty())
 					buf.append(" " + parameter);
 			}
 		}

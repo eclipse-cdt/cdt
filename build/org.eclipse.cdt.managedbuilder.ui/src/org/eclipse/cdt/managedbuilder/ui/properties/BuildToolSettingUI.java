@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,7 +314,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 										optionValueExist = true;
 									}
 								}
-								if (!enumeration.equals("")) //$NON-NLS-1$
+								if (!enumeration.isEmpty())
 											setOption(opt, enumeration);
 								break;
 							case IOption.TREE :
@@ -328,7 +328,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 										optionValueExist = true;
 									}
 								}
-								if (!selectedID.equals("")) //$NON-NLS-1$
+								if (!selectedID.isEmpty())
 											setOption(opt, selectedID);
 								break;
 							case IOption.STRING_LIST :

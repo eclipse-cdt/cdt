@@ -31,7 +31,6 @@ import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey
 public class SaveActionsPreferencePage extends AbstractPreferencePage {
 	private Button fRadioEditedLines;
 	private Button fRadioAllLines;
-
 	public SaveActionsPreferencePage() {
 		super();
 	}
@@ -48,6 +47,8 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 				PreferenceConstants.ENSURE_NEWLINE_AT_EOF));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.FORMAT_SOURCE_CODE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.ALIGN_ALL_CONST));
 
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -98,6 +99,9 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 
 		label = PreferencesMessages.SaveActionsPreferencePage_formatSourceCode;
 		addCheckBox(composite, label, PreferenceConstants.FORMAT_SOURCE_CODE, 0);
+		
+		label = PreferencesMessages.SaveActionsPreferencePage_alignConst;
+		addCheckBox(composite, label, PreferenceConstants.ALIGN_ALL_CONST, 0);
 
 		return composite;
 	}

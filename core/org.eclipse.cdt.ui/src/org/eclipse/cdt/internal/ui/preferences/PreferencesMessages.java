@@ -187,6 +187,7 @@ public final class PreferencesMessages extends NLS {
 	public static String SaveActionsPreferencePage_inAllLines;
 	public static String SaveActionsPreferencePage_ensureNewline;
 	public static String SaveActionsPreferencePage_formatSourceCode;
+	public static String SaveActionsPreferencePage_alignConst;
 
 	public static String SmartTypingConfigurationBlock_autoclose_title;
 	public static String SmartTypingConfigurationBlock_autoindent_newlines;
@@ -214,6 +215,9 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeStyleBlock_function_output_parameter_style;
 	public static String CodeStyleBlock_pass_by_reference;
 	public static String CodeStyleBlock_pass_by_pointer;
+	public static String CodeStyleBlock_const_keyword_placement;
+	public static String CodeStyleBlock_const_left;
+	public static String CodeStyleBlock_const_right;
 
 	public static String TodoTaskPreferencePage_title;
 	public static String TodoTaskPreferencePage_description;

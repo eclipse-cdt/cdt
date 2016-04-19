@@ -1869,6 +1869,16 @@ public class PreferenceConstants {
 	 */
 	public static final String FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER = "function_pass_output_parameters_by_pointer"; //$NON-NLS-1$
 
+	/** 
+	 * A named preference that control wheter the const keyword is placed left or right of the type.
+	 * <p>
+	 * Value is of type {@code Boolean}. The {@code true} value means that the const keyword
+	 * is placed right of the type. The default is to place it on the left.
+	 *
+	 * @since 5.12
+	 */
+	public static final String PLACE_CONST_RIGHT_OF_TYPE = "place_const_right_of_type"; //$NON-NLS-1$
+	
 	/**
 	 * Whether composite types should be forward declared if possible.
 	 *
@@ -2105,6 +2115,13 @@ public class PreferenceConstants {
 	public static final String INCLUDE_STYLE_MATCHING_PATTERN = "includeStyle.matchingPattern"; //$NON-NLS-1$
 
 	/**
+	 * Preference key for whether to 'align' the const keyword to a specific position related to the type name.
+	 *
+	 * @since 5.12
+	 */
+	public static final String ALIGN_ALL_CONST = "alignConst"; //$NON-NLS-1$
+	
+	/**
 	 * Returns the CDT-UI preference store.
 	 *
 	 * @return the CDT-UI preference store
@@ -2206,6 +2223,7 @@ public class PreferenceConstants {
 		store.setDefault(REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, true);
 		store.setDefault(ENSURE_NEWLINE_AT_EOF, true);
 		store.setDefault(PreferenceConstants.FORMAT_SOURCE_CODE, false);
+		store.setDefault(ALIGN_ALL_CONST, false);
 
 		// Formatter profile
 		store.setDefault(FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);
@@ -2321,6 +2339,7 @@ public class PreferenceConstants {
 		store.setDefault(CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, false);
 		store.setDefault(FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT, false);
 		store.setDefault(FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, false);
+		store.setDefault(PLACE_CONST_RIGHT_OF_TYPE, false);
 
 		// Colors that are set by the current theme
 		CUIPreferenceInitializer.setThemeBasedPreferences(store, false);

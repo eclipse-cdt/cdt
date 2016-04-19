@@ -1937,6 +1937,13 @@
                id="org.eclipse.cdt.ui.actions.Indent">
          </action>
          <action
+         	   definitionId="org.eclipse.cdt.ui.edit.text.c.align.const"
+               label="%AlignConst.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
+               id="org.eclipse.cdt.ui.actions.AlignConst">
+         </action>
+         <action
                definitionId="org.eclipse.ui.edit.text.shiftLeft"
                disabledIcon="icons/dlcl16/shift_l_edit.gif"
                icon="icons/elcl16/shift_l_edit.gif"
@@ -2361,6 +2368,11 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.indent"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+      		sequence="M1+M2+A"
+      		contextId="org.eclipse.cdt.ui.cEditorScope"
+      		commandId="org.eclipse.cdt.ui.edit.text.c.align.const"
+      		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             sequence="M2+M3+Z"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -3177,6 +3189,12 @@
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.cdt.ui.edit.text.c.select.last">
       </command>
+      <command
+			categoryId="org.eclipse.cdt.ui.category.source"
+			description="%ActionDefinition.alignConst.description"
+			id="org.eclipse.cdt.ui.edit.text.c.align.const"
+			name="%ActionDefinition.alignConst.name">
+	  </command>
    </extension>
    <extension
          id="pdomSearchPage"

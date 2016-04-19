@@ -41,10 +41,7 @@ import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.formatter.FormattingContext;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IFormattingContext;
@@ -56,10 +53,7 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.text.edits.DeleteEdit;
-import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoManager;
@@ -92,6 +86,8 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
+import org.eclipse.cdt.internal.ui.saveactions.CSaveActionsProvider;
+import org.eclipse.cdt.internal.ui.saveactions.ISaveAction;
 import org.eclipse.cdt.internal.ui.text.CFormattingStrategy;
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
 import org.eclipse.cdt.internal.ui.text.spelling.CoreSpellingProblem;
@@ -875,6 +871,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			boolean overwrite) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 
+		monitor.beginTask("", 100); //$NON-NLS-1$
+
 		try {
 			IDocument document= info.fTextFileBuffer.getDocument();
 			IResource resource= info.fCopy.getResource();
@@ -986,11 +984,12 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 */
 	private void performSaveActions(ICProject project, ITextFileBuffer buffer, IProgressMonitor monitor)
 			throws CoreException {
-		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldStyleFormatCode()) {
-			IRegion[] changedRegions= needsChangedRegions() ?
-					EditorUtility.calculateChangedLineRegions(buffer, monitor) :
-				    null;
-			IDocument document = buffer.getDocument();
+		IRegion[] changedRegions = CSaveActionsProvider.needsChangedRegions()
+				? EditorUtility.calculateChangedLineRegions(buffer, monitor) : null;
+		IDocument document = buffer.getDocument();
+		List<ISaveAction> actionList = CSaveActionsProvider.getActiveSaveActions(document, changedRegions);
+
+		if (!actionList.isEmpty() || shouldStyleFormatCode()) {
 			formatCode(project, document);
 			TextEdit edit = createSaveActionEdit(document, changedRegions);
 			if (edit != null) {
@@ -1019,103 +1018,23 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				PreferenceConstants.FORMAT_SOURCE_CODE);
 	}
 
-	private static boolean shouldAddNewlineAtEof() {
-		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.ENSURE_NEWLINE_AT_EOF);
-	}
-
-	private static boolean shouldRemoveTrailingWhitespace() {
-		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
-	}
-
-	private static boolean isLimitedRemoveTrailingWhitespace() {
-		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES);
-	}
-
-	private static boolean needsChangedRegions() {
-		return shouldRemoveTrailingWhitespace() && isLimitedRemoveTrailingWhitespace();
-	}
-
 	/**
 	 * Creates a text edit for the save actions.
 	 * @return a text edit, or <code>null</code> if the save actions leave the file intact.
 	 */
 	private TextEdit createSaveActionEdit(IDocument document, IRegion[] changedRegions) {
 		TextEdit rootEdit = null;
-		TextEdit lastWhitespaceEdit = null;
 		try {
-			if (shouldRemoveTrailingWhitespace()) {
-				if (!isLimitedRemoveTrailingWhitespace()) {
-					// Pretend that the whole document changed.
-					changedRegions = new IRegion[] { new Region(0, document.getLength()) };
-				}
-				// Remove trailing whitespace from changed lines.
-				for (IRegion region : changedRegions) {
-					int firstLine = document.getLineOfOffset(region.getOffset());
-					int lastLine = document.getLineOfOffset(region.getOffset() + region.getLength());
-					for (int line = firstLine; line <= lastLine; line++) {
-						IRegion lineRegion = document.getLineInformation(line);
-						if (lineRegion.getLength() == 0) {
-							continue;
-						}
-						int lineStart = lineRegion.getOffset();
-						int lineEnd = lineStart + lineRegion.getLength();
-
-						// Find the rightmost none-whitespace character
-						int charPos = lineEnd - 1;
-						while (charPos >= lineStart && Character.isWhitespace(document.getChar(charPos)))
-							charPos--;
-
-						charPos++;
-						if (charPos < lineEnd) {
-							// check partition - don't remove whitespace inside strings
-							ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, charPos, false);
-							if (!ICPartitions.C_STRING.equals(partition.getType())) {
-								lastWhitespaceEdit= new DeleteEdit(charPos, lineEnd - charPos);
-								if (rootEdit == null) {
-									rootEdit = new MultiTextEdit();
-								}
-								rootEdit.addChild(lastWhitespaceEdit);
-							}
-						}
-					}
-				}
-			}
-			if (shouldAddNewlineAtEof()) {
-				// Add newline at the end of the file.
-				int endOffset = document.getLength();
-				IRegion lastLineRegion = document.getLineInformationOfOffset(endOffset);
-				// Insert newline at the end of the document if the last line is not empty and
-				// will not become empty after removal of trailing whitespace.
-				if (lastLineRegion.getLength() != 0 &&
-						(lastWhitespaceEdit == null ||
-						lastWhitespaceEdit.getOffset() != lastLineRegion.getOffset() ||
-						lastWhitespaceEdit.getLength() != lastLineRegion.getLength())) {
-					TextEdit edit = new InsertEdit(endOffset, TextUtilities.getDefaultLineDelimiter(document));
-					if (rootEdit == null) {
-						rootEdit = edit;
-					} else {
-						rootEdit.addChild(edit);
-					}
-				}
+			List<ISaveAction> saveActions = CSaveActionsProvider.getActiveSaveActions(document,
+					changedRegions);
+			for (ISaveAction saveAction : saveActions) {
+				rootEdit = saveAction.perform(rootEdit);
 			}
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);
 		}
 		return rootEdit;
 	}
-
-//	private static boolean isWhitespaceRegion(IDocument document, IRegion region) throws BadLocationException {
-//		int end = region.getOffset() + region.getLength();
-//		for (int i = region.getOffset(); i < end; i++) {
-//			if (!Character.isWhitespace(document.getChar(i))) {
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
 
 	/**
 	 * Returns the preference whether handling temporary problems is enabled.

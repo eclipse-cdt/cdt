@@ -13,9 +13,9 @@
 
 package org.eclipse.cdt.ui.tests.text;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
+
+import junit.framework.TestSuite;
 
 public class TextTestSuite extends TestSuite {
 
@@ -40,6 +40,7 @@ public class TextTestSuite extends TestSuite {
 		addTest(BracketInserterTest.suite());
 		addTest(IndentActionTest.suite());
 		addTest(FormatActionTest.suite());
+		addTest(AlignConstActionTest.suite());
 		addTest(ShiftActionTest.suite());
 		addTest(CodeFormatterTest.suite());
 		addTest(CIndenterTest.suite());

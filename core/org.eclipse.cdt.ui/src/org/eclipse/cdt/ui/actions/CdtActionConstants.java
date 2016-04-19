@@ -116,8 +116,14 @@ public class CdtActionConstants {
 	public static final String INDENT= "org.eclipse.cdt.ui.actions.Indent"; //$NON-NLS-1$
 	
 	/**
-	 * Source menu: name of standard Shift Right action
-	 * (value <code>"org.eclipse.cdt.ui.actions.ShiftRight"</code>).
+	 * Source menu: name of standard Align Const global action (value
+	 * <code>"org.eclipse.cdt.ui.actions.AlignConst"</code>).
+	 */
+	public static final String ALIGN_CONST = "org.eclipse.cdt.ui.actions.AlignConst"; //$NON-NLS-1$
+
+	/**
+	 * Source menu: name of standard Shift Right action (value
+	 * <code>"org.eclipse.cdt.ui.actions.ShiftRight"</code>).
 	 */
 	public static final String SHIFT_RIGHT= "org.eclipse.cdt.ui.actions.ShiftRight"; //$NON-NLS-1$
 	

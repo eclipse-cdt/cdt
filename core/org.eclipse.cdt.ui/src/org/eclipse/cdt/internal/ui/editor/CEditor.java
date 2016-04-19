@@ -205,6 +205,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.AlignConstAction;
 import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
@@ -2273,7 +2274,14 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		setAction("Indent", action); //$NON-NLS-1$
 		markAsStateDependentAction("Indent", true); //$NON-NLS-1$
 		markAsSelectionDependentAction("Indent", true); //$NON-NLS-1$
-//		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, ICHelpContextIds.INDENT_ACTION);
+		//PlatformUI.getWorkbench().getHelpSystem().setHelp(action,ICHelpContextIds.INDENT_ACTION);
+
+		action = new AlignConstAction(bundle, "AlignConst.", this, false); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.ALIGN_CONST);
+		setAction("AlignConst", action); //$NON-NLS-1$
+		markAsStateDependentAction("AlignConst", true); //$NON-NLS-1$
+		markAsSelectionDependentAction("AlignConst", true); //$NON-NLS-1$
+		//PlatformUI.getWorkbench().getHelpSystem().setHelp(action,ICHelpContextIds.INDENT_ACTION);
 
 		action = new IndentAction(bundle, "Indent.", this, true); //$NON-NLS-1$
 		setAction("IndentOnTab", action); //$NON-NLS-1$

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import java.util.EnumSet;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
@@ -37,9 +39,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 
 /**
  * Generates source code of declaration specifier nodes. The actual string operations are delegated
@@ -56,12 +62,22 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	protected void writeDelcSpec(IASTDeclSpecifier declSpec) {
-		// Write general DelcSpec Keywords
-		writeDeclSpec(declSpec);
+		IPreferencesService preferences = Platform.getPreferencesService();
+		IASTTranslationUnit ast = declSpec.getTranslationUnit();
+		ITranslationUnit tu = ast == null ? null : ast.getOriginatingTranslationUnit();
+		IProject project = tu == null ? null : tu.getCProject().getProject();
+		final boolean constRight = preferences.getBoolean("org.eclipse.cdt.ui", //$NON-NLS-1$
+				"place_const_right_of_type", //$NON-NLS-1$
+				false, CCorePreferenceConstants.getPreferenceScopes(project));
+		writeDeclSpec(declSpec,!constRight);
 		if (declSpec instanceof ICPPASTDeclSpecifier) {
 			writeCPPDeclSpec((ICPPASTDeclSpecifier) declSpec);
 		} else if (declSpec instanceof ICASTDeclSpecifier) {
 			writeCDeclSpec((ICASTDeclSpecifier) declSpec);
+		}
+		if(constRight && declSpec.isConst()) {
+			scribe.printSpace();
+			scribe.printStringSpace(Keywords.CONST);
 		}
 	}
 
@@ -342,7 +358,7 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 	}
 
-	private void writeDeclSpec(IASTDeclSpecifier declSpec) {
+	private void writeDeclSpec(IASTDeclSpecifier declSpec, Boolean constEnabled) {
 		if (declSpec.isInline()) {
 			scribe.printStringSpace(Keywords.INLINE);
 		}
@@ -363,7 +379,7 @@ public class DeclSpecWriter extends NodeWriter {
 			scribe.printStringSpace(Keywords.REGISTER);
 			break;
 		}
-		if (declSpec.isConst()) {
+		if (declSpec.isConst() && constEnabled) {
 			scribe.printStringSpace(Keywords.CONST);
 		}
 		if (declSpec.isVolatile()) {

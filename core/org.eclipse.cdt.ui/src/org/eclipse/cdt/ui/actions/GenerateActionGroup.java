@@ -306,7 +306,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //
 		fFormatAll= new FormatAllAction(site);
 		fFormatAll.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
-//
+
 //		fCleanUp= new CleanUpAction(site);
 //		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
 

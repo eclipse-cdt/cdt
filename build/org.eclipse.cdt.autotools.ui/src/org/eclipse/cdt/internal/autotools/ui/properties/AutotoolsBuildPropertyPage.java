@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Red Hat Inc.
+ * Copyright (c) 2007, 2016 Red Hat Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		});
 		
 		fCleanMakeTarget.addModifyListener(e -> {
-			if (fCleanMakeTarget.getText().equals("")) { // $NON-NLS-1$
+			if (fCleanMakeTarget.getText().isEmpty()) {
 				// FIXME: should probably issue warning here, but how?
 			}
 		});

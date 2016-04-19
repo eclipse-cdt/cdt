@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Ericsson and others.
+ * Copyright (c) 2015, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -491,6 +491,6 @@ public class PersistentSettingsManager {
 	/** Returns the key to be used to save parameter, taking into account the 
 	 * instance id, if applicable */
 	private String getStorageKey(boolean perInstance) {
-		return (perInstance ?  m_instance : "") + (!m_category.equals("") ? "." + m_category : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return (perInstance ?  m_instance : "") + (!m_category.isEmpty() ? "." + m_category : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

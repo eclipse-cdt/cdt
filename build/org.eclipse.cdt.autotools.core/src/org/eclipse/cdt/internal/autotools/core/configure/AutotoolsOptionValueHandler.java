@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Red Hat Inc..
+ * Copyright (c) 2007, 2016 Red Hat Inc..
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler
 			ICConfigurationDescription cfgd = ManagedBuildManager.getDescriptionForConfiguration(configuration);
 			if (option.getName().equals("Name") && cfgd != null) {
 				String cfgId = cfgd.getId();
-				if (!value.equals("") && !value.equals(cfgId)) {
+				if (!value.isEmpty() && !value.equals(cfgId)) {
 					// we have a cloned configuration and we know that the
 					// clonee's name is the value of the option
 					IProject project = (IProject)configuration.getManagedProject().getOwner();

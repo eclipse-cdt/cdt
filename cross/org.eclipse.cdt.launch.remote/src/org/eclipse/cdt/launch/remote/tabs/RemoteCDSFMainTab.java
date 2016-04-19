@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2016 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 			int currentSelection = connectionCombo.getSelectionIndex();
 			String connection_name = currentSelection >= 0 ? connectionCombo
 					.getItem(currentSelection) : ""; //$NON-NLS-1$
-			if (connection_name.equals("")) { //$NON-NLS-1$
+			if (connection_name.isEmpty()) {
 				setErrorMessage(CONNECTION_TEXT_ERROR);
 				retVal = false;
 			}

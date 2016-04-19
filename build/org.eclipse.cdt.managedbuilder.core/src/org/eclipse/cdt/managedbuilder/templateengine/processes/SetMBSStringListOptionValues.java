@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2016 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ public class SetMBSStringListOptionValues extends ProcessRunner {
 	private boolean setOptionValue(IProject projectHandle, String id, String[] value, String path) throws BuildException, ProcessFailureException {
 		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject().getConfigurations();
 
-		boolean resource = !(path == null || path.equals("") || path.equals("/")); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean resource = !(path == null || path.isEmpty() || path.equals("/")); //$NON-NLS-1$
 		boolean modified = false;
 
 		for (IConfiguration config : projectConfigs) {

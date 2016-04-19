@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -450,7 +450,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			// a description, that only happens for -list-thread-groups --available
 			// We must check this because with GDB 7.2, there will be no pid field as a result
 			// of -list-thread-groups, if no process is actually running yet.
-			if (pid.equals("") && !desc.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (pid.isEmpty() && !desc.isEmpty()) {
 				pid = id;
 			}
 			fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec, threads, exitCode);

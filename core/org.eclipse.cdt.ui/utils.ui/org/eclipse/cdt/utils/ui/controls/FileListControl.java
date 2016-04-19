@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 BitMethods Inc and others.
+ * Copyright (c) 2004, 2016 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -432,7 +432,7 @@ public class FileListControl {
 			int i = getSelectionIndex();
 			// insert items at the correct location
 			for (String item : pasteBuffer)
-				if (!item.trim().equals("")) //$NON-NLS-1$
+				if (!item.trim().isEmpty())
 					add(item.trim(), ++i);
 			checkNotificationNeeded();
 		}

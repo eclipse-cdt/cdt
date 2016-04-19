@@ -477,7 +477,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 		String wsname = memento.getString(TAG_WORKINGSET);
 
-		if (wsname != null && wsname.equals("") == false) { //$NON-NLS-1$
+		if (wsname != null && !wsname.isEmpty()) {
 			IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
 			IWorkingSet workingSet = wsmanager.getWorkingSet(wsname);
 			if (workingSet != null) {

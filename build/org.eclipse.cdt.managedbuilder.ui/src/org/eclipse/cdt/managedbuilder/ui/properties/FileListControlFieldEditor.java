@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 BitMethods Inc and others.
+ * Copyright (c) 2004, 2016 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,7 +89,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		this(name, labelText, parent, type);
 		// can't use setToolTip(tooltip) as label not created yet
 		getLabelControl(parent).setToolTipText(tooltip);
-		if (!contextId.equals("")) PlatformUI.getWorkbench().getHelpSystem().setHelp(list.getListControl(), contextId);	 //$NON-NLS-1$
+		if (!contextId.isEmpty()) PlatformUI.getWorkbench().getHelpSystem().setHelp(list.getListControl(), contextId);
 	}
 
 	/**
@@ -299,7 +299,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * @return
 	 */
 	private String createList(String[] items) {
-		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
+		StringBuffer path = new StringBuffer();
 
 		for (int i = 0; i < items.length; i++) {
 			path.append(items[i]);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -423,11 +423,11 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.empty");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisString.getStringValue().equals(""),
+		assertEquals(thisString.getStringValue().isEmpty(),
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals(""),
+		assertEquals(thisString.getStringValue().isEmpty(),
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals(""),
+		assertEquals(thisString.getStringValue().isEmpty(),
 				option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
 
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.test a b c");

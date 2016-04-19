@@ -122,7 +122,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 				for (int i = 0; i < definedCfgds.length; i++) {
 					description = definedCfgds[i].getDescription();
 
-					if( (description == null) || (description.equals("")) ){	//$NON-NLS-1$
+					if( (description == null) || (description.isEmpty()) ){
 						nameAndDescription = definedCfgds[i].getName();
 					} else {
 						nameAndDescription = definedCfgds[i].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
@@ -138,7 +138,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 				for (int i = 0; i < defaultCfgds.length; i++) {
 					description = defaultCfgds[i].getDescription();
 
-					if( (description == null) || (description.equals("")) ) {	//$NON-NLS-1$
+					if( (description == null) || (description.isEmpty()) ) {
 						nameAndDescription = defaultCfgds[i].getName();
 					} else {
 						nameAndDescription = defaultCfgds[i].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
@@ -330,7 +330,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		if(defaultCfgds.length != 0){
 			String namesAndDescriptions[] = new String[defaultCfgds.length];
 			for (int i = 0; i < defaultCfgds.length; ++i) {
-				if ( (defaultCfgds[i].getDescription() == null) || defaultCfgds[i].getDescription().equals(""))	//$NON-NLS-1$
+				if ( (defaultCfgds[i].getDescription() == null) || defaultCfgds[i].getDescription().isEmpty())
 					namesAndDescriptions[i] = defaultCfgds[i].getName();
 				else
 					namesAndDescriptions[i] = defaultCfgds[i].getName() + "( " + defaultCfgds[i].getDescription() + " )";	//$NON-NLS-1$	//$NON-NLS-2$
@@ -362,7 +362,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 	private String [] getDefinedConfigNamesAndDescriptions() {
 		String [] namesAndDescriptions = new String[definedCfgds.length];
 		for (int i = 0; i < definedCfgds.length; ++i) {
-			if ( (definedCfgds[i].getDescription() == null) || definedCfgds[i].getDescription().equals(""))	//$NON-NLS-1$
+			if ( (definedCfgds[i].getDescription() == null) || definedCfgds[i].getDescription().isEmpty())
 				namesAndDescriptions[i] = definedCfgds[i].getName();
 			else
 				namesAndDescriptions[i] = definedCfgds[i].getName() + "( " + definedCfgds[i].getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$

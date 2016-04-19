@@ -185,7 +185,7 @@ public class BTreeTests extends BaseTestCase {
 
 	public void assertBTreeInvariantsHold(String msg) throws CoreException {
 		String errorReport = btree.getInvariantsErrorReport();
-		if (!errorReport.equals("")) {
+		if (!errorReport.isEmpty()) {
 			fail("Invariants do not hold: " + errorReport);
 		}
 	}

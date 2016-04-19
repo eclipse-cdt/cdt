@@ -605,7 +605,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	public boolean checkForMigrationSupport() {
 
 		String convertToId = getConvertToId();
-		if ((convertToId == null) || (convertToId.equals(""))) { //$NON-NLS-1$
+		if ((convertToId == null) || (convertToId.isEmpty())) {
 				// It means there is no 'convertToId' attribute available and
 				// the project type is still actively
 				// supported by the tool integrator. So do nothing, just return

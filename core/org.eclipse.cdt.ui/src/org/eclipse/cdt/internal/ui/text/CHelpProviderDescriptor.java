@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2012 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class CHelpProviderDescriptor {
 	
 	private Element getDescriptorElement(Element parentElement){
 		String id = getConfigurationElement().getAttribute(ATTRIBUTE_ID);
-		if(id == null || "".equals(id)) //$NON-NLS-1$
+		if(id == null || id.isEmpty())
 			return null;
 
 		NodeList nodes = parentElement.getElementsByTagName(ELEMENT_PROVIDER);
@@ -88,7 +88,7 @@ public class CHelpProviderDescriptor {
 	
 	private static ICHelpProvider getCHelpProvider(IConfigurationElement element){
 		String id = element.getAttribute(ATTRIBUTE_ID);
-		if(id == null || "".equals(id)) //$NON-NLS-1$
+		if(id == null || id.isEmpty())
 			return null;
 
 		Map<String, ICHelpProvider> providersMap = getProvidersMap();
@@ -168,7 +168,7 @@ public class CHelpProviderDescriptor {
 	
 	public void serialize(Document doc, Element parentElement){
 		String id = getConfigurationElement().getAttribute(ATTRIBUTE_ID);
-		if(id == null || "".equals(id)) //$NON-NLS-1$
+		if(id == null || id.isEmpty())
 			return;
 
 		CHelpBookDescriptor bookDescriptors[] = getCHelpBookDescriptors();

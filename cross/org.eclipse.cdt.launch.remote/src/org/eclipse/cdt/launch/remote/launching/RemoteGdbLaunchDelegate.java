@@ -95,7 +95,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 							IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
 							""); //$NON-NLS-1$
 
-			if (arguments != null && !arguments.equals("")) //$NON-NLS-1$
+			if (arguments != null && !arguments.isEmpty())
 				commandArguments += " " + arguments; //$NON-NLS-1$
 			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_9);
 			

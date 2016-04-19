@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013 Nokia Siemens Networks Oyj, Finland.
+ * Copyright (c) 2010-2016 Nokia Siemens Networks Oyj, Finland.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -833,7 +833,7 @@ public class LlvmToolOptionPathUtil {
 	public static String arrayToString(String[] array) {
 		StringBuffer sB = new StringBuffer();
 		//if array isn't empty and doesn't contain an empty String 
-		if (array.length>0 /*&& !array[0].equals("")*/) {
+		if (array.length>0 /*&& !array[0].isEmpty()*/) {
 			for (String i : array) {
 				sB.append(i);
 				sB.append(System.getProperty("path.separator")); //$NON-NLS-1$

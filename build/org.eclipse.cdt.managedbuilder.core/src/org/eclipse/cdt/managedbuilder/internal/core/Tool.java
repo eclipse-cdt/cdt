@@ -3231,7 +3231,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 							.getVersionsSupported();
 
 					if ((versionsSupported != null)
-							&& (!versionsSupported.equals(""))) { //$NON-NLS-1$
+							&& (!versionsSupported.isEmpty())) {
 						String[] tmpVersions = versionsSupported.split(","); //$NON-NLS-1$
 
 						for (String tmpVersion : tmpVersions) {
@@ -3269,7 +3269,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			// attribute in plugin
 			// manifest file for this tool.
 			String convertToId = getSuperClass().getConvertToId();
-			if ((convertToId == null) || (convertToId.equals(""))) { //$NON-NLS-1$
+			if ((convertToId == null) || (convertToId.isEmpty())) {
 				// It means there is no 'convertToId' attribute available and
 				// the version is still actively
 				// supported by the tool integrator. So do nothing, just return

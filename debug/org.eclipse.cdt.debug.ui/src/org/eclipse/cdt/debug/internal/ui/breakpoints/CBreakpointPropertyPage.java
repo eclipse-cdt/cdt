@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -630,7 +630,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
     			}
 			} 
 			String filename = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
-			if (filename != null && !"".equals(filename)) { //$NON-NLS-1$
+			if (filename != null && !filename.isEmpty()) {
 				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.sourceHandle_label" ), filename ) ); //$NON-NLS-1$
 			}
 			createWatchExpressionEditor(getFieldEditorParent());

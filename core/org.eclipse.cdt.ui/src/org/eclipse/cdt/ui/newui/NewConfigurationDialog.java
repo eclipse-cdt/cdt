@@ -96,7 +96,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 			for (int i = 0; i < cfgds.length; i++) {
 				description = cfgds[i].getDescription();
 
-				if( (description == null) || (description.equals("")) ){	//$NON-NLS-1$
+				if( (description == null) || (description.isEmpty()) ){
 					nameAndDescription = cfgds[i].getName();
 				} else {
 					nameAndDescription = cfgds[i].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
@@ -250,7 +250,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	private String [] getDefinedConfigNamesAndDescriptions() {
 		String [] namesAndDescriptions = new String[cfgds.length];
 		for (int i = 0; i < cfgds.length; ++i) {
-			if ( (cfgds[i].getDescription() == null) || cfgds[i].getDescription().equals(""))	//$NON-NLS-1$
+			if ( (cfgds[i].getDescription() == null) || cfgds[i].getDescription().isEmpty())
 				namesAndDescriptions[i] = cfgds[i].getName();
 			else
 				namesAndDescriptions[i] = cfgds[i].getName() + "( " + cfgds[i].getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$

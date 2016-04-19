@@ -1421,7 +1421,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		List<IMIContainerDMContext> containerDmcs = new ArrayList<IMIContainerDMContext>(groups.length);
 		for (IThreadGroupInfo group : groups) {
 			if (group.getPid() == null || 
-					group.getPid().equals("") || group.getPid().equals("0")) { //$NON-NLS-1$ //$NON-NLS-2$
+					group.getPid().isEmpty() || group.getPid().equals("0")) { //$NON-NLS-1$
 				continue;
 			}
 			String groupId = group.getGroupId();

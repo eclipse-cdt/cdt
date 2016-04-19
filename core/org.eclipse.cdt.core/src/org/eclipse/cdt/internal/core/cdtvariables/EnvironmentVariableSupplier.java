@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 	}
 	
 	private static boolean isTextList(String str, String delimiter) {
-		if (delimiter == null || "".equals(delimiter)) //$NON-NLS-1$
+		if (delimiter == null || delimiter.isEmpty())
 			return false;
 		
 		// Regex: ([^:]+:)+[^:]*
@@ -127,7 +127,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 	@Override
 	public ICdtVariable getMacro(String macroName, int contextType,
 			Object contextData) {
-		if(macroName == null || "".equals(macroName))	//$NON-NLS-1$
+		if(macroName == null || macroName.isEmpty())
 		return null;
 
 		IEnvironmentVariable var = null;

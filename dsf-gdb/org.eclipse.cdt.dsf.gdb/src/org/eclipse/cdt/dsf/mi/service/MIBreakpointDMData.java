@@ -222,7 +222,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		Integer lineNumber = fBreakpoint.getLine();
 		String  function   = fBreakpoint.getFunction();
 
-		if (!fileName.equals("")) { //$NON-NLS-1$
+		if (!fileName.isEmpty()) {
 			if (lineNumber != -1) {
 				location = fileName + ":" + lineNumber; //$NON-NLS-1$
 			} else {

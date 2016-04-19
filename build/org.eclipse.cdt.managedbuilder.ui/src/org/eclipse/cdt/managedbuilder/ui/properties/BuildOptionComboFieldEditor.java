@@ -60,7 +60,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	public BuildOptionComboFieldEditor(String name, String label, String tooltip, String contextId, String [] opts, String sel, Composite parent) {
 		this(name, label, opts, sel, parent);
 		setToolTip(tooltip);
-		if (!contextId.equals("")) PlatformUI.getWorkbench().getHelpSystem().setHelp(optionSelector, contextId);	 //$NON-NLS-1$
+		if (!contextId.isEmpty()) PlatformUI.getWorkbench().getHelpSystem().setHelp(optionSelector, contextId);
 	}
 
 	/**

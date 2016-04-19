@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009, 2015 MontaVista Software, Inc. and others.
+ * Copyright (c) 2009, 2016 MontaVista Software, Inc. and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -249,7 +249,7 @@ public class RSEHelper {
 
 		String remoteCommand = realRemoteCommand + CMD_DELIMITER + EXIT_CMD;
 
-		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
+		if (!prelaunchCmd.trim().isEmpty())
 			remoteCommand = prelaunchCmd + CMD_DELIMITER + remoteCommand;
 
 		IShellService shellService;
@@ -299,7 +299,7 @@ public class RSEHelper {
 
 		String remoteCommand = realRemoteCommand + CMD_DELIMITER + EXIT_CMD;
 
-		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
+		if (!prelaunchCmd.trim().isEmpty())
 			remoteCommand = prelaunchCmd + CMD_DELIMITER + remoteCommand;
 
 		IShellService shellService = null;

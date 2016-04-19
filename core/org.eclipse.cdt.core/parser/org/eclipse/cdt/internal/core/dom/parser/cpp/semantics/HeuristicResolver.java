@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -33,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -212,6 +216,36 @@ public class HeuristicResolver {
 	}
 	
 	/**
+	 * Represents a lookup of a name in a primary template scope.
+	 * The set of such lookups during a heuristic resolution operation is
+	 * tracked, to avoid infinite recursion.
+	 */
+	private static class HeuristicLookup {
+		public IScope scope;
+		public char[] name;
+
+		public HeuristicLookup(IScope scope, char[] name) {
+			this.scope = scope;
+			this.name = name;
+		}
+		
+		@Override
+		public boolean equals(Object other) {
+			if (!(other instanceof HeuristicLookup)) {
+				return false;
+			}
+			HeuristicLookup otherLookup = (HeuristicLookup) other;
+			return scope == otherLookup.scope
+					&& CharArrayUtils.equals(name, otherLookup.name);
+		}
+		
+		@Override
+		public int hashCode() {
+			return scope.hashCode() * (29 + name.hashCode());
+		}
+	}
+	
+	/**
 	 * Helper function for resolveUnknownType() and resolveUnknownBinding().
 	 * Heuristically resolves the given unknown type and performs name lookup inside it.
 	 * 
@@ -223,11 +257,12 @@ public class HeuristicResolver {
 	 * @param isPointerDeref true if 'ownerType' is a pointer type
 	 * @param name the name to be looked up
 	 * @param templateArgs template arguments following the name, if any
+	 * @param lookupSet the set of lookups performed so far; lookups during this call are added to this
 	 * @param point point of instantiation for name lookups
 	 * @return results of the name lookup
 	 */
 	private static IBinding[] lookInside(IType ownerType, boolean isPointerDeref, char[] name, 
-			ICPPTemplateArgument[] templateArgs, IASTNode point) {
+			ICPPTemplateArgument[] templateArgs, Set<HeuristicLookup> lookupSet, IASTNode point) {
 		// If this is a pointer dereference, the pointer type might be outside of the dependent type.
 		ownerType = SemanticUtil.getSimplifiedType(ownerType);
 		if (isPointerDeref && ownerType instanceof IPointerType) {
@@ -252,7 +287,8 @@ public class HeuristicResolver {
 					lookupType = specializationContext.getSpecializedBinding();
 					break;
 				}
-				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) lookupType, point);
+				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) lookupType, lookupSet, 
+						point);
 				resolvedType = SemanticUtil.getNestedType(resolvedType, SemanticUtil.TDEF | SemanticUtil.REF);
 				if (resolvedType == lookupType || !(resolvedType instanceof ICPPUnknownType)) {
 					lookupType = resolvedType;
@@ -281,18 +317,21 @@ public class HeuristicResolver {
 			lookupScope = ((ICPPEnumeration) lookupType).asScope();
 		}
 		if (lookupScope != null) {
-			LookupData lookup = new LookupData(name, templateArgs, point);
-			lookup.fHeuristicBaseLookup = true;
-			try {
-				CPPSemantics.lookup(lookup, lookupScope);
-				IBinding[] foundBindings = lookup.getFoundBindings();
-				if (foundBindings.length > 0) {
-					if (specializationContext != null) {
-						foundBindings = specializeBindings(foundBindings, specializationContext, point);
+			HeuristicLookup entry = new HeuristicLookup(lookupScope, name);
+			if (lookupSet.add(entry)) {
+				LookupData lookup = new LookupData(name, templateArgs, point);
+				lookup.fHeuristicBaseLookup = true;
+				try {
+					CPPSemantics.lookup(lookup, lookupScope);
+					IBinding[] foundBindings = lookup.getFoundBindings();
+					if (foundBindings.length > 0) {
+						if (specializationContext != null) {
+							foundBindings = specializeBindings(foundBindings, specializationContext, point);
+						}
+						return foundBindings;
 					}
-					return foundBindings;
+				} catch (DOMException e) {
 				}
-			} catch (DOMException e) {
 			}
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
@@ -340,7 +379,8 @@ public class HeuristicResolver {
 	 */
 	private static IType resolveUnknownType(ICPPUnknownType type, IASTNode point, int unwrapOptions) {
 		while (true) {
-			IType resolvedType = resolveUnknownTypeOnce(type, point);
+			Set<HeuristicLookup> lookupSet = new HashSet<>();
+			IType resolvedType = resolveUnknownTypeOnce(type, lookupSet, point);
 			resolvedType = SemanticUtil.getNestedType(resolvedType, unwrapOptions);
 			if (resolvedType != type && resolvedType instanceof ICPPUnknownType) {
 				type = (ICPPUnknownType) resolvedType;
@@ -353,7 +393,8 @@ public class HeuristicResolver {
 	/**
 	 * Helper function for {@link #resolveUnknownType} which does one round of resolution.
 	 */
-	private static IType resolveUnknownTypeOnce(ICPPUnknownType type, IASTNode point) {
+	private static IType resolveUnknownTypeOnce(ICPPUnknownType type, Set<HeuristicLookup> lookupSet, 
+			IASTNode point) {
 		// Guard against infinite recursion.
 		int resolutionDepth = fResolutionDepth.get();
 		if (resolutionDepth > RESOLUTION_DEPTH_LIMIT) {
@@ -387,7 +428,7 @@ public class HeuristicResolver {
 					if (fieldOwner != null) {
 						IType fieldOwnerType = fieldOwner.getType(point);
 						IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(), 
-								id.getTemplateArgs(), point);
+								id.getTemplateArgs(), lookupSet, point);
 						if (candidates.length == 1) {
 							return typeForBinding(candidates[0]);
 						}
@@ -410,7 +451,8 @@ public class HeuristicResolver {
 			} else if (type instanceof ICPPUnknownMemberClass) {
 				ICPPUnknownMemberClass member = (ICPPUnknownMemberClass) type;
 				IType ownerType = member.getOwnerType();
-				IBinding[] candidates = lookInside(ownerType, false, member.getNameCharArray(), null, point);
+				IBinding[] candidates = lookInside(ownerType, false, member.getNameCharArray(), null, 
+						lookupSet, point);
 				if (candidates.length == 1) { 
 					if (candidates[0] instanceof IType) {
 						IType result = (IType) candidates[0];
@@ -452,8 +494,9 @@ public class HeuristicResolver {
 		if (binding instanceof ICPPDeferredClassInstance) {
 			return new IBinding[] { ((ICPPDeferredClassInstance) binding).getClassTemplate() };
 		} else if (binding instanceof ICPPUnknownMember) {
+			Set<HeuristicLookup> lookupSet = new HashSet<>();
 			return lookInside(((ICPPUnknownMember) binding).getOwnerType(), false,
-					binding.getNameCharArray(), null, point);
+					binding.getNameCharArray(), null, lookupSet, point);
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}

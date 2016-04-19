@@ -25,7 +25,7 @@ public abstract class FMProjectGenerator extends FMGenerator {
 
 	private IProject project;
 
-	protected abstract void initProjectDescription(IProjectDescription description);
+	protected abstract void initProjectDescription(IProjectDescription description) throws CoreException;
 
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;

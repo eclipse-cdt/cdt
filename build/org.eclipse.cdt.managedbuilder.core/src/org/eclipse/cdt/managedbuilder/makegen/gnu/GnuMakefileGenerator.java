@@ -1249,9 +1249,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// Add includes for each subdir in child-subdir-first order (required for makefile rule matching to work).
 		List<String> subDirList = new ArrayList<String>();
 		for (IContainer subDir : getSubdirList()) {
-			IPath projectRelativePath = subDir.getProjectRelativePath();
-			if(!projectRelativePath.toString().isEmpty())
-				subDirList.add(0, projectRelativePath.toString());
+			String projectRelativePath = subDir.getProjectRelativePath().toString();
+			if(!projectRelativePath.isEmpty())
+				subDirList.add(0, projectRelativePath);
 		}
 		Collections.sort(subDirList, Collections.reverseOrder());
 		for (String dir : subDirList) {

@@ -608,7 +608,7 @@ public class Conversions {
 		ICPPConstructor[] filteredConstructors = constructors;
 		if (expandedArgs.length == 1) {
 			filteredConstructors= new ICPPConstructor[constructors.length];
-			int j=0;
+			int j= 0;
 			for (ICPPConstructor ctor : constructors) {
 				if (ctor.getRequiredArgumentCount() < 2) {
 					IType[] ptypes= ctor.getType().getParameterTypes();
@@ -633,6 +633,11 @@ public class Conversions {
 		} else {
 			c= Cost.NO_CONVERSION;
 		}
+		// This cost came from listInitializationSequence() with an std::initializer_list
+		// type as the list initialization target. From the point of view of the caller,
+		// however, the target is the class type, not std::initializer_list, so update it
+		// accordingly.
+		c.setListInitializationTarget(t);
 		return c;
 	}
 

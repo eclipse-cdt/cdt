@@ -8882,7 +8882,23 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testListInitialization_458679() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}
-	
+
+	//	namespace std {	template<typename T> class initializer_list; }
+	//
+	//	struct A {
+	//	  A(const char* s);
+	//	};
+	//
+	//	void waldo(A p);
+	//	void waldo(std::initializer_list<A> p);
+	//
+	//	void test() {
+	//	  waldo({""});
+	//	}
+	public void testListInitialization_491842() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}

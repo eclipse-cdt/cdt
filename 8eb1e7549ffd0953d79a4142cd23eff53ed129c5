@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_b08d6490",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_48274cbb",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -30,6 +47,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Please add javadoc to know what these imply",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_33495e86",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_13f542bc",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, the intention was a short for \u0027Information item that applies to..\"",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_a9b8cf11",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -64,6 +115,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "To avoid confusion how about calling this getAllAddressInfoItems?",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f320d6d0",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +155,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_536d0af4",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_28904054",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -98,6 +183,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "You can add javadoc here to say:\n\"This method will be called for each registered listener, when ... (I\u0027m not sure of the rest)\"\nAnd please javadoc the parameters",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9326b2bd",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +223,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_33915e23",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_283e80e7",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -132,6 +251,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Remove \"a\" from \"the a listener\"",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_538c2a0d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +291,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f36536c0",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_88623407",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -166,6 +319,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "\"receives\" with an \u0027s\u0027",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_935cf2fa",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +359,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f34c564a",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/model/IMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5a8d4b08",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -200,6 +387,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "I think we should be able to write tests about this feature.\nCan we do this in a follow-up review, so as not to delay this feature?",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3bce895d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "I agree, the class needs a constructor with the session which we can provide from the testing",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +427,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_5bd195f6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_66235459",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -234,6 +455,24 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "You will need a dispose() method to unregister the service event listerner.\nThe GdbSessionAdapters class will call this method automatically when it cleans up",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b541bdbf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_66235459",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +496,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_9bd79dea",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_069450c4",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -268,6 +524,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Make sure service is not null",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bbc1b928",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Service is now removed",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +564,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_dbbcc5b3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_e649240a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -302,6 +592,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "I think you need a request.done() here",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1bc38d2d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Thanks ! I should have noticed these 3 if statements missing the closing of the async request",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -325,6 +632,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_3bf5a979",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_863ce07f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -336,6 +660,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "I think you need a request.done() here",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5bf8b570",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -359,6 +700,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_7bebb19e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Service has been removed",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_26494c37",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
         "patchSetId": 4
@@ -370,6 +728,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "You will need to synchronize access to fListeners since you access it on the DSF executor\nhere but on an another thread in the methods above.",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1bb54db2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Nice catch!",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -393,6 +768,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_67a6ae97",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/memory/GdbMemoryBlockAddressInfoRetrieval.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Very nice catch, we had it for registers but nothing for this very implementation on variables and expressions",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_9a8b53fb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/ServicesLaunchSequence.java",
         "patchSetId": 4
@@ -404,6 +796,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "If you agree to remove the service we can revert this file",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_73c4c60b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/ServicesLaunchSequence.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, agreed and reverted",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -427,6 +836,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_32dea68b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemoryAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, The service is now removed. The original thinking came from our early discussions :-)",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_69ca4793",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemoryAddressInfo.java",
         "patchSetId": 4
@@ -438,6 +864,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "How about calling the service GDBMemoryAddressInfoRetriever or Retrieval?",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_52e17244",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemoryAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Class removed",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -461,6 +904,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_72e4ae55",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemoryAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Class removed",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_680b2863",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemoryAddressInfo.java",
         "patchSetId": 4
@@ -472,6 +932,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "You need to override shutdown() to call unregister()",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_92e77a58",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemoryAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "class removed",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -495,6 +972,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_b2d1d676",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemoryAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "It\u0027s good to avoid leaks ! Thanks !",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5ab62bc0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
         "patchSetId": 4
@@ -506,6 +1000,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "If you agree to remove the service we can revert this file",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d2cca2e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Service removed and file reverted",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -529,6 +1040,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f2d7de65",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMemoryAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Service removed",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_2d713285",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMemoryAddressInfo.java",
         "patchSetId": 4
@@ -540,6 +1068,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Please rename to IGdbMemoryAddressInfoRetriever or Retrieval.\nI suggest using the GDB prefix so that, if we want to move this\nto DSF, then we can use the plain name for DSF.",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_12d36a7b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMemoryAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "The interface has been removed",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -563,6 +1108,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_320ce6cb",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Removed",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_3af4ff46",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
         "patchSetId": 4
@@ -574,6 +1136,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "getCellHeight() is being called above and it calls refreshHeight().\nDo we need to call it again here?",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1221aa27",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 858,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Removed, not needed any longer",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -597,6 +1176,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_72290e0d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 887,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, I don\u0027t see a reliable pattern to cache it, so I have removed the variable",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5a3f0b8c",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
         "patchSetId": 4
@@ -608,6 +1204,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Never used",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_922cda1e",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 900,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, removed",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -631,6 +1244,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_b24636d6",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 907,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5af1cb54",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
         "patchSetId": 4
@@ -642,6 +1272,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Remove unecessary \u003d\u003d true",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d24102bf",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/AbstractPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 910,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -665,6 +1312,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_478a92f8",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_f5f8e8b7",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
         "patchSetId": 4
@@ -676,6 +1340,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Can you rename \u0027startAddress\u0027",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_87801ad5",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 534,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -699,6 +1380,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_a79a7640",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_3aeebf2b",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
         "patchSetId": 4
@@ -710,6 +1408,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "\u0027itemLengths\u0027 instead of \u0027itemLenghts\u0027",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_078c0a0c",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -733,6 +1448,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_324f8612",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, Suggestion accepted and now using a bubble sort",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_950a445e",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
         "patchSetId": 4
@@ -744,6 +1476,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Diamond operator",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_72458eec",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -767,6 +1516,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_b29476c6",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 827,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Removed, this is a left over from an early implementation, the check for zero or any other filter is actually done by the info providers",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_afe0c104",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -778,6 +1544,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "What do you think about making the changes to this class into a subclass?\nI think that would isolate this feature nicely into something like RenderingWithAddressInfo class.\nLooking at the changes, I think that would be easy to do.",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9b1cfd70",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "I see some advantages, so I have extracted the subclass.\nThere are more methods that need a default implementation in the Rendering class as they are needed but the DataPane\ne.g. hasVisibleRangeInfo\nhasAddressInfo\ngetVisibleValueToAddressInfoItems\nbuildAddressInfoString",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -801,6 +1584,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_1610c505",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, true we may not needed it for the time being, I have now replaced the Set with a single instance variable",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_b544a0f2",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -812,6 +1612,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "\u0027.\u0027 after context.",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b333aeaa",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -835,6 +1652,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_b36e4e75",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_0f36150c",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -846,6 +1680,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Can we call this fMapStartAddrToInfoItems?",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_33823ea2",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -869,6 +1720,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_53542a9a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, updated to use diamond and moved to declaration as suggested",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_e7c67b8f",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -880,6 +1748,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "So after our investigation together, we confirmed that\nwe should register with the secondary id as well.  The secondary id\nis used for pin\u0026clone.  Without it, pin\u0026clone won\u0027t work for this feature.\nYou can generate the id in the same way as the MemoryBrowswer.java class\ngenerates it before making the above call.  It looks like you\u0027ll have to\ndo the same weird logic using isBug145635Patched() but I\u0027m not sure.",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fed17d75",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done,\n The isBug145635Patched should not be used any more i.e. the marker class does no longer exists\n I have used DebugUITools.addPartDebugContextListener(site, this) which resolves the secondary id.",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -903,6 +1788,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_5ec5119f",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_26430cc8",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -914,6 +1816,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "I think it would be less error-prone to use an ArrayList to add all the elements and only convert\nto an array at the end.  The list of elements will be of size 2 or 3, so we don\u0027t need to care\nabout being efficient.",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fbcc24e1",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -937,6 +1856,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_1bd8f096",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_68a5e888",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -948,6 +1884,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "The entire logic below can be moved up inside the above block.\nThen you don\u0027t need to use addrInfoTmp at all",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9bb6c042",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -971,6 +1924,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_36da2108",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, fAddressInfoRetrievals is no longer a Set but an instance of IMemoryBlockAddressInfoRetrieval initialized to Null",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_f52f083f",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -982,6 +1952,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Should be removing iRetriever not iterator.\nHowever, you must use iterator.remove() to modify this safely as you iterate through it.",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_56a08d7a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "No longer applicable",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1005,6 +1992,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_db3125f1",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "This is done on the base class, I simply removed some trailing spaces",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_55399c55",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -1016,6 +2020,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Must call \n        contextService.removeDebugContextListener(this, site.getId());\ninstead, since that is what you used to register.",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_56c40d0b",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1395,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, although now using         DebugUITools.removePartDebugContextListener(site, this);",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1039,6 +2060,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f6d279c7",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2144,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_6f679917",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -1050,6 +2088,24 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "I almost get this but not quite.  After \u0027however\u0027... What happens if you consider items using double height?",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f537c560",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2547,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done, I re-phrased it, hopefully it\u0027s clearer now",
+      "parentUuid": "e7dfcf21_6f679917",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1073,6 +2129,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_d609fde8",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2553,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_cf06ed5b",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 4
@@ -1084,6 +2157,23 @@
       "writtenOn": "2016-04-06T20:43:48Z",
       "side": 1,
       "message": "Please rename to \u0027hasExtraInfo\u0027\t\nIf you create a subclass of Rendering, you\u0027ll need to keep this method here\nbut override it in the subclass, since it is needed in AbstractPane",
+      "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f660b9af",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2646,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-04-20T20:24:15Z",
+      "side": 1,
+      "message": "Done",
       "revId": "8eb1e7549ffd0953d79a4142cd23eff53ed129c5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -938,6 +938,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
 				&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
 				&& option.getValueType() != IOption.UNDEF_MACRO_FILES
+				&& !option.isForScannerDiscovery()
 					)) {
 				return;
 			}

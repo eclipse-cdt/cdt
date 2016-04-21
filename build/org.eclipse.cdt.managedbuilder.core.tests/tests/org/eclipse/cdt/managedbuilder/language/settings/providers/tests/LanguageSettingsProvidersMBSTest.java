@@ -102,8 +102,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 				ILanguageSettingsProvider provider = providers.get(3);
 				String id = provider.getId();
 				assertEquals(GCC_SPECS_DETECTOR_ID, id);
-				assertEquals(true, LanguageSettingsManager.isPreferShared(id));
-				assertEquals(true, LanguageSettingsManager.isWorkspaceProvider(provider));
+				assertEquals(false, LanguageSettingsManager.isPreferShared(id));
+				assertEquals(false, LanguageSettingsManager.isWorkspaceProvider(provider));
 			}
 			assertEquals(4, providers.size());
 		}
@@ -134,15 +134,15 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertTrue(defaultIds.length > 0);
 		}
 
-		// no settings file in project area
+		// settings file in project area
 		IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
-		assertEquals(false, xmlStorageFile.exists());
-		assertEquals(false, xmlStorageFile.getParent().exists()); // .settings folder
+		assertEquals(true, xmlStorageFile.exists());
+		assertEquals(true, xmlStorageFile.getParent().exists()); // .settings folder
 
-		// no settings file in workspace area
+		// settings file in workspace area
 		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests.getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
-		assertEquals(false, xmlStorageFilePrjWsp.exists());
+		assertEquals(true, xmlStorageFilePrjWsp.exists());
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 		fLineTracker= lineTracker;
 	}
 
-	private int insertTabString(StringBuffer buffer, int offsetInLine) {
+	private int insertTabString(StringBuilder buffer, int offsetInLine) {
 
 		if (fTabRatio == 0)
 			return 0;
@@ -60,7 +60,7 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 		int index= text.indexOf('\t');
 		if (index > -1) {
 
-			StringBuffer buffer= new StringBuffer();
+			StringBuilder buffer= new StringBuilder();
 
 			fLineTracker.set(command.text);
 			int lines= fLineTracker.getNumberOfLines();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -633,7 +633,7 @@ public class CElementDelta implements ICElementDelta {
 	 * @see #toString()
 	 */
 	public String toDebugString(int depth) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i= 0; i < depth; i++) {
 			buffer.append('\t');
 		}

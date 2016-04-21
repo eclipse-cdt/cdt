@@ -89,7 +89,7 @@ public class Dwarf {
 		byte offsetSize;
 		@Override
 		public String toString() {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("Length: " + length).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			sb.append("Version: " + version).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			sb.append("Abbreviation: " + abbreviationOffset).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -125,7 +125,7 @@ public class Dwarf {
 		}
 		@Override
 		public String toString() {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("name: " + Long.toHexString(name)); //$NON-NLS-1$
 			sb.append(" value: " + Long.toHexString(form)); //$NON-NLS-1$
 			return sb.toString();
@@ -141,7 +141,7 @@ public class Dwarf {
 		}
 		@Override
 		public String toString() {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(attribute.toString()).append(' ');
 			if (value != null) {
 				Class<? extends Object> clazz = value.getClass();
@@ -670,7 +670,7 @@ public class Dwarf {
 			case DwarfConstants.DW_FORM_string :
 				{
 					int c;
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					while ((c = in.get()) != -1) {
 						if (c == 0) {
 							break;
@@ -699,7 +699,7 @@ public class Dwarf {
 					} else if (offset < 0 || offset > data.capacity()) {
 						obj = ""; // $NON-NLS-1$
 					} else {
-						StringBuffer sb = new StringBuffer();
+						StringBuilder sb = new StringBuilder();
 						data.position((int) offset);
 						while (data.hasRemaining()) {
 							byte c = data.get();
@@ -727,7 +727,7 @@ public class Dwarf {
 			    	} else if (offset < 0 || offset > data.capacity()) {
 			    		obj = ""; // $NON-NLS-1$
 			    	} else {
-			    		StringBuffer sb = new StringBuffer();
+			    		StringBuilder sb = new StringBuilder();
 			    		data.position((int) offset);
 			    		while (data.hasRemaining()) {
 			    			byte c = data.get();
@@ -914,7 +914,7 @@ public class Dwarf {
 	{
 		String str;
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while (data.hasRemaining()) {
 			byte c = data.get();
 			if (c == 0) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,7 +201,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 */
 	@Deprecated
 	protected static IMacro createFunctionStyleMacro(String name, String value, String[] arguments) {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append(name);
 		buf.append('(');
 		for (int i = 0; i < arguments.length; i++) {

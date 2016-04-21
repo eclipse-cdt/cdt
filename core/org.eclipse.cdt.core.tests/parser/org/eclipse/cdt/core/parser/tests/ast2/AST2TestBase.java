@@ -315,7 +315,7 @@ public class AST2TestBase extends BaseTestCase {
     }
 
     protected IASTExpression getExpressionFromStatementInCode(String code, ParserLanguage language) throws ParserException {
-        StringBuffer buffer = new StringBuffer("void f() { "); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder("void f() { "); //$NON-NLS-1$
         buffer.append("int x, y;\n"); //$NON-NLS-1$
         buffer.append(code);
         buffer.append(";\n}"); //$NON-NLS-1$

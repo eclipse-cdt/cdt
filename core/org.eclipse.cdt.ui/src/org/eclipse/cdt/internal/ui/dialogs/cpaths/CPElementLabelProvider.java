@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				if (group.getResource().getType() == IResource.PROJECT) {
 					return group.getResource().getName();
 				}
-				StringBuffer label = new StringBuffer(group.getResource().getProjectRelativePath().toString());
+				StringBuilder label = new StringBuilder(group.getResource().getProjectRelativePath().toString());
 				if (!group.getResource().exists()) {
 					label.append(fCreateLabel);
 				}
@@ -130,7 +130,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	public String getCPElementAttributeText(CPElementAttribute attrib) {
 		String notAvailable = CPathEntryMessages.CPElementLabelProvider_none; 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		String key = attrib.getKey();
 		if (key.equals(CPElement.SOURCEATTACHMENT)) {
 			buf.append(CPathEntryMessages.CPElementLabelProvider_source_attachment_label); 
@@ -171,7 +171,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		switch (cpentry.getEntryKind()) {
 			case IPathEntry.CDT_LIBRARY : {
 				IPath libPath = (IPath)cpentry.getAttribute(CPElement.LIBRARY);
-				StringBuffer str = new StringBuffer();
+				StringBuilder str = new StringBuilder();
 				addBaseString(libPath, cpentry, str);
 				addExport(cpentry, str);
 				addParentInfo(cpentry, str);
@@ -181,7 +181,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				return path.lastSegment();
 			case IPathEntry.CDT_INCLUDE : {
 				IPath incPath = ((IPath)cpentry.getAttribute(CPElement.INCLUDE));
-				StringBuffer str = new StringBuffer();
+				StringBuilder str = new StringBuilder();
 				addBaseString(incPath, cpentry, str);
 				addExport(cpentry, str);
 				addParentInfo(cpentry, str);
@@ -189,14 +189,14 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 			}
             case IPathEntry.CDT_INCLUDE_FILE : {
                 IPath incFilePath = ((IPath)cpentry.getAttribute(CPElement.INCLUDE_FILE));
-                StringBuffer str = new StringBuffer();
+                StringBuilder str = new StringBuilder();
                 addBaseString(incFilePath, cpentry, str);
                 addExport(cpentry, str);
                 addParentInfo(cpentry, str);
                 return str.toString();
             }
 			case IPathEntry.CDT_MACRO : {
-				StringBuffer str = new StringBuffer((String)cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
+				StringBuilder str = new StringBuilder((String)cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
 						+ (String)cpentry.getAttribute(CPElement.MACRO_VALUE));
 				addBaseString(null, cpentry, str);
 				addExport(cpentry, str);
@@ -205,14 +205,14 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 			}
             case IPathEntry.CDT_MACRO_FILE : {
                 IPath macroFilePath = ((IPath)cpentry.getAttribute(CPElement.MACROS_FILE));
-                StringBuffer str = new StringBuffer();
+                StringBuilder str = new StringBuilder();
                 addBaseString(macroFilePath, cpentry, str);
                 addExport(cpentry, str);
                 addParentInfo(cpentry, str);
                 return str.toString();
             }
 			case IPathEntry.CDT_CONTAINER : {
-				StringBuffer str = new StringBuffer(path.toString());
+				StringBuilder str = new StringBuilder(path.toString());
 				try {
 					IPathEntryContainer container = CoreModel.getPathEntryContainer(cpentry.getPath(), cpentry.getCProject());
 					if (container != null) {
@@ -226,7 +226,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 			}
 			case IPathEntry.CDT_SOURCE :
 			case IPathEntry.CDT_OUTPUT : {
-				StringBuffer buf = new StringBuffer(path.makeRelative().toString());
+				StringBuilder buf = new StringBuilder(path.makeRelative().toString());
 				IResource resource = cpentry.getResource();
 				if (resource != null && !resource.exists()) {
 					buf.append(' ');
@@ -247,7 +247,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	 * @param cpentry
 	 * @param str
 	 */
-	private void addParentInfo(CPElement cpentry, StringBuffer str) {
+	private void addParentInfo(CPElement cpentry, StringBuilder str) {
 		if (bShowParentInfo) {
 			CPElement parent = cpentry.getParentContainer();
 			if (parent != null) {
@@ -265,14 +265,14 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		}
 	}
 
-	private void addExport(CPElement cpentry, StringBuffer str) {
+	private void addExport(CPElement cpentry, StringBuilder str) {
 		if (bShowExported && cpentry.isExported()) {
 			str.append(' ');
 			str.append(CPathEntryMessages.CPElementLabelProvider_export_label); 
 		}
 	}
 
-	private void addBaseString(IPath endPath, CPElement cpentry, StringBuffer str) {
+	private void addBaseString(IPath endPath, CPElement cpentry, StringBuilder str) {
 		IPath baseRef = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
 		if (!baseRef.isEmpty()) {
 			if (baseRef.isAbsolute()) {

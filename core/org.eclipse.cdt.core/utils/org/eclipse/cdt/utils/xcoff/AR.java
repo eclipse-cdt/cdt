@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,7 +182,7 @@ public class AR {
 		 *    <code>offset</code> not in string table bounds.
 		 */
 //		private String nameFromStringTable(long offset) throws IOException {
-//			StringBuffer name = new StringBuffer(0);
+//			StringBuilder name = new StringBuilder(0);
 //			long pos = file.getFilePointer();
 //
 //			try {

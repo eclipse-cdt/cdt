@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,8 +51,8 @@ public class AddBuildTargetAction extends Action {
 		Shell shell = fOutliner.getControl().getShell();
 		ITargetRule[] rules = getTargetRules(fOutliner.getSelection());
 		if (file != null && rules.length > 0 && shell != null) {
-			StringBuffer sbBuildName = new StringBuffer();
-			StringBuffer sbMakefileTarget = new StringBuffer();
+			StringBuilder sbBuildName = new StringBuilder();
+			StringBuilder sbMakefileTarget = new StringBuilder();
 			for (ITargetRule rule : rules) {
 				String name = rule.getTarget().toString().trim();
 				if (sbBuildName.length() == 0) {

@@ -613,7 +613,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (array.length == 0)
 			return ""; //$NON-NLS-1$
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(array[0]);
 		for (int i = 1; i < array.length; i++){
 			buf.append(separator).append(array[i]);

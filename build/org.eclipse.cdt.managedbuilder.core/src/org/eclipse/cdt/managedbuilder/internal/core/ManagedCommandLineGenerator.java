@@ -115,7 +115,7 @@ public class ManagedCommandLineGenerator implements
 
 	private String stringArrayToString( String[] array ) {
 		if( array == null || array.length <= 0 ) return ""; // $NON-NLS-1$
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for( int i = 0; i < array.length; i++ )
 			sb.append( array[i] + WHITESPACE );
 		return sb.toString().trim();

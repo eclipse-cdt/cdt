@@ -262,7 +262,7 @@ public class BuildStep implements IBuildStep {
 				IBuildResource[] generated = fBuildDescription.getResources(true);
 
 				if(generated.length != 0){
-					StringBuffer buf = new StringBuffer();
+					StringBuilder buf = new StringBuilder();
 					for(int i = 0; i < generated.length; i++){
 						buf.append(' ');
 
@@ -383,7 +383,7 @@ public class BuildStep implements IBuildStep {
 		char prev = 0;
 //		int start = 0;
 		List<String> list = new ArrayList<String>();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for(int i = 0; i < arr.length; i++){
 			char ch = arr[i];
 			switch(ch){
@@ -523,7 +523,7 @@ public class BuildStep implements IBuildStep {
 		if(list == null || list.length == 0)
 			return ""; // $NON-NLS-1$
 
-		StringBuffer buf = new StringBuffer(list[0]);
+		StringBuilder buf = new StringBuilder(list[0]);
 
 		for(int i = 1; i < list.length; i++){
 			buf.append(delimiter).append(list[i]);

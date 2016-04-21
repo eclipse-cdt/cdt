@@ -791,7 +791,7 @@ public class CommonBuilder extends ACBuilder {
 			return msgs.get(0);
 		}
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(msgs.get(0));
 		for(int i = 1; i < size; i++){
 			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -807,7 +807,7 @@ public class CommonBuilder extends ACBuilder {
 	 * @param configName
 	 */
 	private String createNoSourceMessage(int buildType, IStatus status, CfgBuildInfo bInfo) throws CoreException {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		String[] consoleHeader = new String[3];
 		String configName = bInfo.getConfiguration().getName();
 		String projName = bInfo.getProject().getName();
@@ -897,7 +897,7 @@ public class CommonBuilder extends ACBuilder {
 					}
 				}
 			} else if (result.getCode() == IStatus.ERROR){
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append(ManagedMakeMessages.getString("CommonBuilder.23")).append(NEWLINE); //$NON-NLS-1$
 				String message = result.getMessage();
 				if(message != null && message.length() != 0){

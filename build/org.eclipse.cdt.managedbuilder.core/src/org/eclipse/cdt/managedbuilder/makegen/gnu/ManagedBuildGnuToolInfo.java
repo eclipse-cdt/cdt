@@ -1018,12 +1018,10 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 
 		// create rule of the form
 		// OBJS = $(macroName1: ../%.input1=%.output1) ... $(macroNameN: ../%.inputN=%.outputN)
-		StringBuffer objectsBuffer = new StringBuffer();
-		objectsBuffer.append(IManagedBuilderMakefileGenerator.WHITESPACE + "$(" + macroName + 					//$NON-NLS-1$
+		 return IManagedBuilderMakefileGenerator.WHITESPACE + "$(" + macroName + 					//$NON-NLS-1$
 			IManagedBuilderMakefileGenerator.COLON + IManagedBuilderMakefileGenerator.ROOT +
 			IManagedBuilderMakefileGenerator.SEPARATOR + IManagedBuilderMakefileGenerator.WILDCARD +
-				DOT + srcExtensionName + "=" + wildcard + OptDotExt + ")" );	//$NON-NLS-1$ //$NON-NLS-2$
-        return objectsBuffer.toString();
+				DOT + srcExtensionName + "=" + wildcard + OptDotExt + ")";	//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

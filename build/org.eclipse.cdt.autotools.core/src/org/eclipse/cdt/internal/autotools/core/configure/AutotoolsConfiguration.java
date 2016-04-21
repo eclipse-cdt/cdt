@@ -293,7 +293,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	
 	@Override
 	public String getToolParameters(String name) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		Option[] options = getChildOptions(name);
 		for (int i = 0; i < options.length; ++i) {
 			IConfigureOption option = getOption(options[i].getName());

@@ -66,7 +66,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 		 * 	<tool_command> -P -MM -MG <tool_flags> $< >> $(@:%.<out_ext>=%.d)
 		 *
 		 */
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		// Get what we need to create the dependency generation command
 		IConfiguration config = info.getDefaultConfiguration();

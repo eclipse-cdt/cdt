@@ -160,7 +160,7 @@ public class PE {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("DOS STUB VALUES").append(NL); //$NON-NLS-1$
 			buffer.append("e_lfanew = ").append(e_lfanew).append(NL); //$NON-NLS-1$
 			buffer.append(new String(dos_message)).append(NL);
@@ -268,7 +268,7 @@ public class PE {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("NT OPTIONAL HEADER VALUES").append(NL); //$NON-NLS-1$
 			buffer.append("ImageBase = ").append(ImageBase).append(NL); //$NON-NLS-1$
 			buffer.append("SexctionAlignement = ").append(SectionAlignment).append(NL); //$NON-NLS-1$
@@ -306,7 +306,7 @@ public class PE {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("rva = ").append(rva).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("size = ").append(size).append(NL); //$NON-NLS-1$
 			return buffer.toString();
@@ -339,7 +339,7 @@ public class PE {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("rva = ").append(rva); //$NON-NLS-1$
 			buffer.append(" timestamp = ").append(timestamp); //$NON-NLS-1$
 			buffer.append(" forwarder = ").append(forwarder); //$NON-NLS-1$
@@ -699,7 +699,7 @@ public class PE {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (exeHeader != null) {
 			buffer.append(exeHeader);
 		}

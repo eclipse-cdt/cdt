@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -205,7 +205,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
         }
 
     	private void writeInclusionPreference(ModelElement changed, boolean isInDefaultCategory) {
-    		StringBuffer buf= new StringBuffer();
+    		StringBuilder buf= new StringBuilder();
     		for (Object element : fElements) {
     			ModelElement item= (ModelElement) element;
     			boolean included= changed == item ? isInDefaultCategory : item.isInDefaultCategory();
@@ -219,7 +219,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
     	}
     	
     	private void writeOrderPreference(ModelElement changed, boolean isSeparate) {
-    		StringBuffer buf= new StringBuffer();
+    		StringBuilder buf= new StringBuilder();
     		int i= 0;
     		for (Iterator<ModelElement> it= fElements.iterator(); it.hasNext(); i++) {
     			ModelElement item= it.next();

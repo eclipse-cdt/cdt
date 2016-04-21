@@ -910,7 +910,7 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
                     CPathEntryMessages.IncludeSymbolEntryPage_addSymbol_message, "",  //$NON-NLS-1$
                     null);
         } else {
-            StringBuffer initialValue = new StringBuffer();
+            StringBuilder initialValue = new StringBuilder();
             initialValue.append((String)existing.getAttribute(CPElement.MACRO_NAME));
             initialValue.append('=');
             initialValue.append((String)existing.getAttribute(CPElement.MACRO_VALUE));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,8 +276,8 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	
 	private void updateModel(DialogField field) {
 		if (field == fTodoTasksList) {
-			StringBuffer tags = new StringBuffer();
-			StringBuffer prios = new StringBuffer();
+			StringBuilder tags = new StringBuilder();
+			StringBuilder prios = new StringBuilder();
 			List<TodoTask> list = fTodoTasksList.getElements();
 			for (int i = 0; i < list.size(); i++) {
 				if (i > 0) {

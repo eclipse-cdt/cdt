@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Tomasz Wesolowski and others
+ * Copyright (c) 2011, 2016 Tomasz Wesolowski and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class SegmentMatcher {
 			singleSegment = true;
 		} else {
 
-			StringBuffer regexpBuffer = new StringBuffer("^"); //$NON-NLS-1$
+			StringBuilder regexpBuffer = new StringBuilder("^"); //$NON-NLS-1$
 			int i = 0;
 			int lengthOfFirstSegment = 0;
 			char currentChar;

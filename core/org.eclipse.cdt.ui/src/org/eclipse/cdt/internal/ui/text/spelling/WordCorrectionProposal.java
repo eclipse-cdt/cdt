@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 		fContext= context;
 		fRelevance= relevance;
 
-		final StringBuffer buffer= new StringBuffer(80);
+		final StringBuilder buffer= new StringBuilder(80);
 
 		buffer.append("...<br>"); //$NON-NLS-1$
 		buffer.append(getHtmlRepresentation(arguments[1]));
@@ -161,7 +161,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	 */
 	public static String getHtmlRepresentation(final String string) {
 		final int length= string.length();
-		final StringBuffer buffer= new StringBuffer(string);
+		final StringBuilder buffer= new StringBuilder(string);
 
 		for (int offset= length - 1; offset >= 0; offset--) {
 			for (int index= 0; index < IHtmlTagConstants.HTML_ENTITY_CHARACTERS.length; index++) {

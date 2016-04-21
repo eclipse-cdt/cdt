@@ -321,7 +321,7 @@ public class ElfHelper {
 
 				String full_usage = new String(sections[i].loadSectionData());
 				String usage = getSubUsage(full_usage, file.getName());
-				StringBuffer buffer = new StringBuffer(usage);
+				StringBuilder buffer = new StringBuilder(usage);
 
 				for (int j = 0; j < buffer.length(); j++) {
 					if (buffer.charAt(j) == '%') {

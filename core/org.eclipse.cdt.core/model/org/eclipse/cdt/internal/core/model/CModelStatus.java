@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,7 +169,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	public String getMessage() {
 		Throwable exception = getException();
 		if (isMultiStatus()) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			IStatus[] children = getChildren();
 			if (children != null && children.length > 0) {
 				for (int i = 0; i < children.length; ++i) {
@@ -205,7 +205,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 				return CoreModelMessages.getFormattedString("status.invalidDestination", getFirstElementName()); //$NON-NLS-1$
 
 			case INVALID_ELEMENT_TYPES:
-				StringBuffer buff = new StringBuffer(CoreModelMessages.getFormattedString("operation.notSupported")); //$NON-NLS-1$
+				StringBuilder buff = new StringBuilder(CoreModelMessages.getFormattedString("operation.notSupported")); //$NON-NLS-1$
 				for (int i = 0; i < fElements.length; i++) {
 					if (i > 0) {
 						buff.append(", "); //$NON-NLS-1$
@@ -243,7 +243,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 				return CoreModelMessages.getFormattedString("status.IOException"); //$NON-NLS-1$
 
 			case NAME_COLLISION:
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				if (fElements != null && fElements.length > 0) {
 					ICElement element = fElements[0];
 					sb.append(element.getElementName()).append(' ');
@@ -413,7 +413,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 		if (this == VERIFIED_OK) {
 			return "CModelStatus[OK]"; //$NON-NLS-1$
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("C Model Status ["); //$NON-NLS-1$
 		buffer.append(getMessage());
 		buffer.append("]"); //$NON-NLS-1$

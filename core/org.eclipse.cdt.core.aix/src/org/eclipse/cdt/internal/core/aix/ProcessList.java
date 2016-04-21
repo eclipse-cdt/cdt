@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class ProcessList implements IProcessList {
 			processInfo = new ProcessInfo[pidFiles.length];
 			for (int i = 0; i < pidFiles.length; i++) {
 				File cmdLine = new File(pidFiles[i], "cmdline"); //$NON-NLS-1$
-				StringBuffer line = new StringBuffer();
+				StringBuilder line = new StringBuilder();
 				FileReader reader = null;
 				try {
 					reader = new FileReader(cmdLine);

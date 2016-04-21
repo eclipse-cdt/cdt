@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,7 @@ public class CopyElementsOperation extends MultiOperation {
 				ISourceReference source = (ISourceReference)element;
 				ISourceRange range = source.getSourceRange();
 				String contents = source.getSource();
-				StringBuffer sb = new StringBuffer(contents);
+				StringBuilder sb = new StringBuilder(contents);
 				// Copy the extra spaces and newLines like it is part of
 				// the element.  Note: the DeleteElementAction is doing the same.
 				IBuffer buffer = getSourceTranslationUnit(element).getBuffer();

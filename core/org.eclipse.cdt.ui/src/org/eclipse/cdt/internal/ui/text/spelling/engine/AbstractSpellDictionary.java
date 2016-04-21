@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		int distance= 0;
 		String hash= null;
 
-		final StringBuffer buffer= new StringBuffer(BUFFER_CAPACITY);
+		final StringBuilder buffer= new StringBuilder(BUFFER_CAPACITY);
 		final HashSet<RankedWordProposal> result= new HashSet<RankedWordProposal>(BUCKET_CAPACITY * hashs.size());
 
 		for (int index= 0; index < hashs.size(); index++) {
@@ -170,7 +170,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		int distance= 0;
 		int minimum= Integer.MAX_VALUE;
 
-		StringBuffer buffer= new StringBuffer(BUFFER_CAPACITY);
+		StringBuilder buffer= new StringBuilder(BUFFER_CAPACITY);
 
 		final Object candidates= getCandidates(fHashProvider.getHash(word));
 		if (candidates == null)

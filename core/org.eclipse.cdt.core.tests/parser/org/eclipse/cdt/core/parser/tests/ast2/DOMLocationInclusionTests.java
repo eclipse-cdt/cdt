@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
 	}
 
 	public void testBug97967() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#ifndef _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("#define _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("typedef void (*vfp)();\n"); //$NON-NLS-1$
@@ -85,7 +85,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
 
     public void testBug101875() throws Exception {
         for (int i = 0; i < 4; ++i) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             buffer.append("#ifndef _BLAH_H_\n"); //$NON-NLS-1$
             buffer.append("#endif"); //$NON-NLS-1$
             if (i > 1)
@@ -93,7 +93,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
             if ((i % 2) == 1)
                 buffer.append("\n"); //$NON-NLS-1$
             importFile("blah.h", buffer.toString()); //$NON-NLS-1$
-            buffer = new StringBuffer();
+            buffer = new StringBuilder();
             buffer.append("#include \"blah.h\"\n"); //$NON-NLS-1$
             buffer.append("/**\n"); //$NON-NLS-1$
             buffer.append(" * A type used by test functions.\n"); //$NON-NLS-1$
@@ -391,7 +391,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
 
     public void testBug90851() throws Exception {
         IFile imacro_file = importFile("macro.h", "#define BEAST 666\n"); //$NON-NLS-1$ //$NON-NLS-2$
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#ifndef _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("#define _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("typedef void (*vfp)();\n"); //$NON-NLS-1$
@@ -426,7 +426,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
     }
 
     public void testIProblemLocation() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#include <not_found.h>\n"); //$NON-NLS-1$
         buffer.append("int x,y,z;"); //$NON-NLS-1$
         String code = buffer.toString();
@@ -454,7 +454,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
 
     public void testBug97603() throws Exception {
         IFile imacro_file = importFile("macro.h", "#define JEDEN 1\n#define DVA 2\n#define TRI 3\n"); //$NON-NLS-1$ //$NON-NLS-2$
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#ifndef _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("#define _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("typedef void (*vfp)();\n"); //$NON-NLS-1$
@@ -495,7 +495,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
     public void testBug97603_2() throws Exception {
         IFile imacro_file1= importFile("macro1.h", "#define JEDEN 1\n");
         IFile imacro_file2= importFile("macro2.h", "#define DVA 2\n#define TRI 3\n");
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#ifndef _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("#define _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("typedef void (*vfp)();\n"); //$NON-NLS-1$
@@ -535,7 +535,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
     
     public void testSystemInclude() throws Exception {
         IFile incsh= importFile("incs.h", "");
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#include <incs.h>\n"); 
         buffer.append("#include <../AST2BasedProjectMofo/incs.h>\n"); 
         buffer.append("#define TARG <incs.h>\n");

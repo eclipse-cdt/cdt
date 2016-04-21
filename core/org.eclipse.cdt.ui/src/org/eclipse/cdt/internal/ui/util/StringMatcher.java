@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -241,7 +241,7 @@ public class StringMatcher {
 		Vector<String> temp= new Vector<String>();
 
 		int pos= 0;
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		while (pos < fLength) {
 			char c= fPattern.charAt(pos++);
 			switch (c) {

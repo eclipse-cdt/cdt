@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,7 +151,7 @@ public class SOM {
 		
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("FILE HEADER VALUES").append(NL); //$NON-NLS-1$
 
 			buffer.append("system_id               = ").append(system_id).append(NL); //$NON-NLS-1$
@@ -338,7 +338,7 @@ public class SOM {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("SYMBOL TABLE ENTRY").append(NL); //$NON-NLS-1$
 			buffer.append("symbol_name  = "); //$NON-NLS-1$
 			try {
@@ -502,7 +502,7 @@ public class SOM {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		try {
 			FileHeader header = null;
 			header = getFileHeader();

@@ -154,7 +154,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 						String debugName = ""; //$NON-NLS-1$
 						if (data.hasRemaining()) {
 							int c;
-							StringBuffer sb = new StringBuffer();
+							StringBuilder sb = new StringBuilder();
 							while ((c = data.get()) != -1) {
 								if (c == 0) {
 									break;
@@ -1049,7 +1049,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		if (macros == null)
 			return ""; //$NON-NLS-1$
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (String option: macros) {
 			sb.append(option);
 			sb.append(" "); //$NON-NLS-1$

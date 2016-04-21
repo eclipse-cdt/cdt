@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,7 +128,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	@Override
 	public String toString() {
 	    if( node == null ) return BLANK_STRING; 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		List<Class<?>> search= new LinkedList<Class<?>>();
 		boolean done= false;
 		boolean needComma= false;
@@ -472,12 +472,12 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		}
 		
 		private boolean alreadyEncountered(Method method, IPropertyDescriptor[] desc) {
-			StringBuffer name = null;
+			StringBuilder name = null;
 			for (IPropertyDescriptor element : desc) {
 				if (element == null) // reached the end of the array
 					break;
 				
-				name = new StringBuffer();
+				name = new StringBuilder();
 				name.append(method.getName());
 				name.append(EMPTY_PARAMETER);
 				if (name.toString().equals(element.getDisplayName()))
@@ -545,7 +545,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		private String getValueString(Object obj) {
 			if (obj == null) return NULL_STRING;
 			
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			
 			if (obj.getClass().isPrimitive()) {
 				buffer.append(trimObjectToString(obj.toString()));
@@ -635,7 +635,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		private String getValueString(Object[] objs) {
 			if (objs.length==0) return trimObjectToString(objs.getClass().getName()).replaceAll(SEMI, BLANK_STRING) + NO_ELEMENT_STRING;
 			
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(L_BRACKET_STRING);
 			for(int i=0; i<objs.length; i++) {
 				buffer.append(getValueString(objs[i]));

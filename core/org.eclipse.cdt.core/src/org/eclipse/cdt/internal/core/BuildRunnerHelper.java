@@ -485,7 +485,7 @@ public class BuildRunnerHelper implements Closeable {
 	 * Compose command line that presumably will be run by launcher.
 	 */
 	private static String guessCommandLine(String command, String[] args) {
-		StringBuffer buf = new StringBuffer(command + ' ');
+		StringBuilder buf = new StringBuilder(command + ' ');
 		if (args != null) {
 			for (String arg : args) {
 				buf.append(arg);

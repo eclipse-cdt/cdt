@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 QNX Software Systems and others.
+ * Copyright (c) 2008, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -260,7 +260,7 @@ public class ErrorParserManagerTest extends TestCase {
 		String id = addErrorParserExtension("test2", TestParser2.class);
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, new String[] { id });
 		
-		StringBuffer buf = new StringBuffer("errorT: ");
+		StringBuilder buf = new StringBuilder("errorT: ");
 		for (int i = 0; i < 100; i++) {
 			buf.append("la la la la la "+i+" ");
 		}
@@ -296,7 +296,7 @@ public class ErrorParserManagerTest extends TestCase {
 		String id = addErrorParserExtension("test3", TestParser3.class);
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, new String[] { id });
 		
-		StringBuffer buf = new StringBuffer("errorT: ");
+		StringBuilder buf = new StringBuilder("errorT: ");
 		for (int i = 0; i < 100; i++) {
 			buf.append("la la la la la "+i+" ");
 		}
@@ -325,7 +325,7 @@ public class ErrorParserManagerTest extends TestCase {
 		String id = addErrorParserExtension("test4", TestParser4.class);
 		epManager = new ErrorParserManager(null, markerGenerator, new String[] { id });
 		
-		StringBuffer buf = new StringBuffer("errorT: ");
+		StringBuilder buf = new StringBuilder("errorT: ");
 		output(buf.toString()+"\n");
 		end();
 		assertEquals(1, errorList.size());

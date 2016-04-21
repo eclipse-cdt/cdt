@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,7 +121,7 @@ abstract public class StringAsserts {
 				assertEqualString(list1.get(0), list2.get(0));
 			}
 			
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			for (int i= 0; i < n1; i++) {
 				String s1= list1.get(i);
 				if (s1 != null) {
@@ -131,7 +131,7 @@ abstract public class StringAsserts {
 			}
 			String actual= buf.toString();
 			
-			buf= new StringBuffer();
+			buf= new StringBuilder();
 			for (int i= 0; i < n2; i++) {
 				String s2= list2.get(i);
 				if (s2 != null) {
@@ -164,7 +164,7 @@ abstract public class StringAsserts {
 				assertEqualString(list1.get(0), list2.get(0));
 			}
 			
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			for (int i= 0; i < n1; i++) {
 				String s1= list1.get(i);
 				if (s1 != null) {
@@ -174,7 +174,7 @@ abstract public class StringAsserts {
 			}
 			String actual= buf.toString();
 			
-			buf= new StringBuffer();
+			buf= new StringBuilder();
 			for (int i= 0; i < n2; i++) {
 				String s2= list2.get(i);
 				if (s2 != null) {

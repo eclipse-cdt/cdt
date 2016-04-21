@@ -360,7 +360,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	private void emitNoSourceMessage(int buildType, IStatus status, String configName) throws CoreException {
 		try {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			IConsole console = CCorePlugin.getDefault().getConsole();
 			console.start(getProject());
 			ConsoleOutputStream consoleOutStream = console.getOutputStream();
@@ -614,7 +614,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.deleting.output", buildDir.getName());	//$NON-NLS-1$
 			monitor.subTask(status);
 			workspace.delete(new IResource[]{buildDir}, true, monitor);
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			// write to the console
 			IConsole console = CCorePlugin.getDefault().getConsole();
 			console.start(getProject());
@@ -627,7 +627,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
-			buf = new StringBuffer();
+			buf = new StringBuilder();
 			// Report a successful clean
 			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());
 			buf.append(successMsg).append(NEWLINE);
@@ -920,7 +920,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
 
 			// Get a build console for the project
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			IConsole console = CCorePlugin.getDefault().getConsole();
 			console.start(project);
 			ConsoleOutputStream consoleOutStream = console.getOutputStream();
@@ -1048,7 +1048,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							isuptodate = true;
 							// Report that the build was up to date, and thus nothing needs to be built
 							String uptodateMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, project.getName());
-							buf = new StringBuffer();
+							buf = new StringBuilder();
 							buf.append(NEWLINE);
 							buf.append(uptodateMsg).append(NEWLINE);
 							// Write message on the console
@@ -1129,7 +1129,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				}
 
 				// Report either the success or failure of our mission
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 				if (errMsg != null && errMsg.length() > 0) {
 					buf.append(errMsg).append(NEWLINE);
 				} else {
@@ -1231,7 +1231,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				builder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr, null);
 
 			// Get a build console for the project
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			console = CCorePlugin.getDefault().getConsole();
 			console.start(currentProject);
 			consoleOutStream = console.getOutputStream();
@@ -1280,7 +1280,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				long t2 = System.currentTimeMillis();
 
 				// Report either the success or failure of our mission
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 
 				switch(status){
 				case IBuildModelBuilder.STATUS_OK:
@@ -1335,7 +1335,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
 				addBuilderMarkers(epm);
 			} else {
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName())).append(NEWLINE);
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
@@ -1343,7 +1343,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 		} catch (Exception e) {
 			if(consoleOutStream != null){
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				String errorDesc = ManagedMakeMessages.getResourceString(BUILD_ERROR);
 				buf.append(errorDesc).append(NEWLINE);
 				buf.append("(").append(e.getLocalizedMessage()).append(")").append(NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$

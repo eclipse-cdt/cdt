@@ -175,7 +175,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 			}
 		});
 		if (fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, null) != null) {
-			StringBuffer cmd = new StringBuffer(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "")); //$NON-NLS-1$
+			StringBuilder cmd = new StringBuilder(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "")); //$NON-NLS-1$
 			if (!fBuildInfo.isDefaultBuildCmd()) {
 				String args = fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$
 				if (args != null && !args.isEmpty()) {
@@ -542,7 +542,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		else
 			stopOnErrorButton.setSelection(false);
 		if (info.getBuildCommand() != null) {
-			StringBuffer cmd = new StringBuffer(info.getBuildCommand().toOSString());
+			StringBuilder cmd = new StringBuilder(info.getBuildCommand().toOSString());
 			if (!info.isDefaultBuildCmd()) {
 				String args = info.getBuildArguments();
 				if (args != null && !args.isEmpty()) {

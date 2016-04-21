@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -316,7 +316,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		if (path.segmentCount() != 0 && "..".equals(path.segment(0))) { //$NON-NLS-1$
 			projPath = path.removeFirstSegments(1).toString();
 		} else {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(getBuildDitName()).append('/').append(info.getUnresolvedPath());
 			projPath = buf.toString();
 		}
@@ -332,7 +332,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		if (path.segmentCount() != 0 && getBuildDitName().equals(path.segment(0))) {
 			projPath = path.removeFirstSegments(1).toString();
 		} else {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append("../").append(info.getUnresolvedPath()); //$NON-NLS-1$
 			projPath = buf.toString();
 		}
@@ -476,7 +476,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		String result;
 		boolean checkQuote = true;
 		if (entry.getKind() == ICSettingEntry.MACRO && entry.getValue().length() > 0) {
-			result = new StringBuffer(entry.getName()).append('=').append(entry.getValue()).toString();
+			result = new StringBuilder(entry.getName()).append('=').append(entry.getValue()).toString();
 		} else if (entry instanceof ICLanguageSettingPathEntry) {
 			IOptionPathConverter converter = fLangData.getTool().getOptionPathConverter();
 			if (converter instanceof IReverseOptionPathConverter) {

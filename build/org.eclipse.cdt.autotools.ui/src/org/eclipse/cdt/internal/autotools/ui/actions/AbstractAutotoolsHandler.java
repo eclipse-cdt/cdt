@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Red Hat Inc..
+ * Copyright (c) 2009, 2016 Red Hat Inc..
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,7 +128,7 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 			String currentWord = st.nextToken().trim();
 
 			if (currentWord.startsWith("'")) { //$NON-NLS-1$
-				StringBuffer tmpTarget = new StringBuffer();
+				StringBuilder tmpTarget = new StringBuilder();
 				while (!currentWord.endsWith("'")) { //$NON-NLS-1$
 					tmpTarget.append(currentWord + " "); //$NON-NLS-1$
 					if (!st.hasMoreTokens()) {
@@ -144,7 +144,7 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 			}
 
 			if (currentWord.startsWith("\"")) { //$NON-NLS-1$
-				StringBuffer tmpTarget = new StringBuffer();
+				StringBuilder tmpTarget = new StringBuilder();
 				while (!currentWord.endsWith("\"")) { //$NON-NLS-1$
 					tmpTarget.append(currentWord + " "); //$NON-NLS-1$
 					if (!st.hasMoreTokens()) {
@@ -286,7 +286,7 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 							IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 							IConfiguration cfg = info.getDefaultConfiguration();
 
-							StringBuffer buf = new StringBuffer();
+							StringBuilder buf = new StringBuilder();
 							String[] consoleHeader = new String[3];
 
 							consoleHeader[0] = actionName;
@@ -338,7 +338,7 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 							// some Linux shells such as dash. Using sh -c will
 							// work on all Linux
 							// POSIX-compliant shells.
-							StringBuffer command1 = new StringBuffer(strippedCommand);
+							StringBuilder command1 = new StringBuilder(strippedCommand);
 							for (String arg : argumentList) {
 								command1.append(" " + arg);
 							}

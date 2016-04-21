@@ -479,7 +479,7 @@ public class ToolReference implements IToolReference {
 	@Override
 	public String getToolFlags() throws BuildException {
 		// Get all of the options
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		IOption[] opts = getOptions();
 		for (int index = 0; index < opts.length; index++) {
 			IOption option = opts[index];

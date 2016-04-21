@@ -872,7 +872,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				"MakeGenerator.make.message", msgs)); //$NON-NLS-1$
 
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		// Launch command - main invocation
 		if (consoleStart)
@@ -968,7 +968,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 
 				// Report either the success or failure of our mission
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 				if (errMsg != null && errMsg.length() > 0) {
 					String errorDesc = AutotoolsPlugin.getResourceString("MakeGenerator.generation.error"); //$NON-NLS-1$
 					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
@@ -1172,7 +1172,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				"MakeGenerator.make.message", msgs)); //$NON-NLS-1$
 
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		// Launch command - main invocation
 		if (consoleStart)
@@ -1302,7 +1302,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 
 				// Report either the success or failure of our mission
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 				if (errMsg != null && errMsg.length() > 0) {
 					String errorDesc = AutotoolsPlugin.getResourceString("MakeGenerator.generation.error"); //$NON-NLS-1$
 					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$

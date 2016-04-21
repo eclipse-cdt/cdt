@@ -2289,7 +2289,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		String name = getName();
 		String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 		if(version != null && version.length() != 0){
-			return new StringBuffer().append(name).append(" (").append(version).append("").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+			return new StringBuilder().append(name).append(" (").append(version).append("").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return name;
 	}
@@ -2500,7 +2500,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		} else if(ids.length == 0){
 			errorParserIds = EMPTY_STRING;
 		} else {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
 				buf.append(";").append(ids[i]); //$NON-NLS-1$
@@ -2517,7 +2517,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		} else {
 			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 			if(version != null){
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append(name);
 				buf.append(" (v").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				name = buf.toString();

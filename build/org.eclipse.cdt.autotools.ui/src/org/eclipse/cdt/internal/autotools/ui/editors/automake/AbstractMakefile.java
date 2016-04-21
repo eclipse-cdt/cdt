@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -202,8 +202,8 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		int len = line.length();
 		boolean foundDollar = false;
 		boolean inMacro = false;
-		StringBuffer buffer = new StringBuffer();
-		StringBuffer macroName = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
+		StringBuilder macroName = new StringBuilder();
 		for (int i = 0; i < len; i++) {
 			char c = line.charAt(i);
 			switch(c) {

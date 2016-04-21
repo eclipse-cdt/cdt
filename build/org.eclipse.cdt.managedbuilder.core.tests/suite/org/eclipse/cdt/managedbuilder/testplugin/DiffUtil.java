@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class DiffUtil {
 	}
 	
 	private static String createCommand(String location1, String location2){
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(DIFF_CMD).append(" '").append(location1).append("' '").append(location2).append("'");
 		return buf.toString(); 
 	}
@@ -43,7 +43,7 @@ public class DiffUtil {
 		BufferedReader br;
 		br = new BufferedReader(new InputStreamReader(in));
 		String line;
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		try {
 			while ((line = br.readLine()) != null) {
 				buf.append("\n");

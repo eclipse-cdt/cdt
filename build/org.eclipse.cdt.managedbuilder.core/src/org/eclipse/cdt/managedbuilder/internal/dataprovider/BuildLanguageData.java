@@ -77,10 +77,10 @@ public class BuildLanguageData extends CLanguageData {
 //				typeId = extType.getId();
 //			else
 //				typeId = inType.getId();
-			fId = inType.getId();//new StringBuffer(fTool.getId()).append(".").append(typeId).toString();
+			fId = inType.getId();//new StringBuilder(fTool.getId()).append(".").append(typeId).toString();
 		} else {
 			fInputType = null;
-			fId = new StringBuffer(fTool.getId()).append(".").append("languagedata").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+			fId = new StringBuilder(fTool.getId()).append(".").append("languagedata").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 //		fDiscoveredInfo = new ProfileInfoProvider(this);
@@ -139,7 +139,7 @@ public class BuildLanguageData extends CLanguageData {
 		String optValue = entry.getName();
 		if(entry.getKind() == ICLanguageSettingEntry.MACRO){
 			String macroValue = entry.getValue();
-			StringBuffer buf = new StringBuffer(optValue).append('=').append(macroValue);
+			StringBuilder buf = new StringBuilder(optValue).append('=').append(macroValue);
 			optValue = buf.toString();
 		}
 		return optValue;

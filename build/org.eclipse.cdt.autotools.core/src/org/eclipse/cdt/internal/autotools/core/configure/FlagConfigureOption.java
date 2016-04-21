@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Red Hat Inc.
+ * Copyright (c) 2011, 2016 Red Hat Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,14 +37,14 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 	
 	@Override
 	public String getParameter() {
-		StringBuffer parms = new StringBuffer();
+		StringBuilder parms = new StringBuilder();
 		// Multiple flags are designated by putting multiple flags together using "|" as delimiter
 		String[] flagNames = getValue().split("\\|"); //$NON-NLS-1$
 		String flagSeparator = "";
 		for (String flagName : flagNames) {
 			parms.append(flagSeparator);
 			flagSeparator = " "; //$NON-NLS-1$
-			StringBuffer parm = new StringBuffer(flagName+"=\""); //$NON-NLS-1$
+			StringBuilder parm = new StringBuilder(flagName+"=\""); //$NON-NLS-1$
 			boolean haveParm = false;
 			if (isParmSet()) {
 				String separator = "";

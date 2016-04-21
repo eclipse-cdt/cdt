@@ -1692,7 +1692,7 @@ abstract class CopyAction extends Action
             if(rows * columns * bytesPerColumn < lengthToRead.intValue())
                 rows++;
             
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
 
             for(int row = 0; row < rows; row++)
             {

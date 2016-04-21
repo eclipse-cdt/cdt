@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1551,7 +1551,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     public String getAddressString(BigInteger address)
     {
-        StringBuffer addressString = new StringBuffer(address.toString(16)
+        StringBuilder addressString = new StringBuilder(address.toString(16)
             .toUpperCase());
         for(int chars = getAddressBytes() * 2 - addressString.length(); chars > 0; chars--)
         {
@@ -2138,7 +2138,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        StringBuffer errorText = new StringBuffer();
+        StringBuilder errorText = new StringBuilder();
         for(int i = getRadixCharacterCount(radix, bytes.length); i > 0; i--)
             errorText.append(getPaddingCharacter());
 
@@ -2220,7 +2220,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         // if any bytes are not readable, return ?'s
         if(!readable)
         {
-            StringBuffer errorText = new StringBuffer();
+            StringBuilder errorText = new StringBuilder();
             for(int i = memoryBytes.length; i > 0; i--)
                 errorText.append(getPaddingCharacter());
             return errorText.toString();
@@ -2272,7 +2272,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         try
     	{
         	// convert bytes to string using desired character set
-    		StringBuffer buf = new StringBuffer(new String(bytes, this.getCharacterSet(textMode)));
+    		StringBuilder buf = new StringBuilder(new String(bytes, this.getCharacterSet(textMode)));
     		
     		// pad string to (byte count - string length) with spaces
     		for(int i = 0; i < memoryBytes.length - buf.length(); i++)
@@ -2282,7 +2282,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	catch(Exception e)
     	{
     		// return ?s the length of byte count
-    		StringBuffer buf = new StringBuffer();
+    		StringBuilder buf = new StringBuilder();
     		for(int i = 0; i < memoryBytes.length - buf.length(); i++)
     			buf.append(getPaddingCharacter());
     		return buf.toString();

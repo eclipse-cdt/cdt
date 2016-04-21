@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Ericsson and others.
+ * Copyright (c) 2009, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@ public class TracingConsole extends IOConsole {
         		type = config.getType().getName();
         	} catch (CoreException e) {
         	}
-        	StringBuffer buffer = new StringBuffer();
+        	StringBuilder buffer = new StringBuilder();
         	buffer.append(config.getName());
         	if (type != null) {
         		buffer.append(" ["); //$NON-NLS-1$

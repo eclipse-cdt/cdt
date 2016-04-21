@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public class ArduinoPlatform {
 			try (BufferedReader reader = new BufferedReader(
 					new FileReader(getInstallPath().resolve("platform.txt").toFile()))) { //$NON-NLS-1$
 				// There are regex's here and need to preserve the \'s
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 					buffer.append(line.replace("\\", "\\\\")); //$NON-NLS-1$ //$NON-NLS-2$
 					buffer.append('\n');

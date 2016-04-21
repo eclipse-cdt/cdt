@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -428,7 +428,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private String pad(int characterCount, String value)
 	{
-		StringBuffer sb = new StringBuffer(value);
+		StringBuilder sb = new StringBuilder(value);
 		for(int i = 0; i < characterCount - value.length(); i++)
 			sb.insert(0, "0"); //$NON-NLS-1$
 		return sb.toString();
@@ -1340,7 +1340,7 @@ public class FindReplaceDialog extends SelectionDialog
 		{
 			if(fBytes == null)
 				return ""; //$NON-NLS-1$
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			for(int i = 0; i < fBytes.length; i++)
 				buf.append(BigInteger.valueOf(fBytes[i]).toString(16) + " "); //$NON-NLS-1$
 			return buf.toString();

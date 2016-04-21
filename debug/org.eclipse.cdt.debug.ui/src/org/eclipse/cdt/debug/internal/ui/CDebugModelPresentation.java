@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -414,7 +414,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 
 	private String getBaseText( Object element ) {
 		boolean showQualified = isShowQualifiedNames();
-		StringBuffer label = new StringBuffer();
+		StringBuilder label = new StringBuilder();
 		try {
 			if ( element instanceof ICModule ) {
 				label.append( getModuleText( (ICModule)element, showQualified ) );
@@ -486,7 +486,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	protected String getModuleText( ICModule module, boolean qualified ) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		IPath path = module.getImageName();
 		if ( !path.isEmpty() ) {
 			sb.append( path.lastSegment() );
@@ -580,7 +580,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	protected String getSignalText( ICSignal signal ) {
-		StringBuffer sb = new StringBuffer( CDebugUIMessages.getString( "CDTDebugModelPresentation.12" ) ); //$NON-NLS-1$
+		StringBuilder sb = new StringBuilder( CDebugUIMessages.getString( "CDTDebugModelPresentation.12" ) ); //$NON-NLS-1$
 		try {
 			String name = signal.getName();
 			sb.append( " \'" ).append( name ).append( '\'' ); //$NON-NLS-1$
@@ -591,7 +591,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	protected String getWatchExpressionText( IWatchExpression expression ) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append( '"' ).append( expression.getExpressionText() ).append( '"' );
 		if ( expression.isPending() ) {
 			result.append( " = " ).append( "..." ); //$NON-NLS-1$//$NON-NLS-2$
@@ -633,7 +633,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	protected String getStackFrameText( IStackFrame f, boolean qualified ) throws DebugException {
 		if ( f instanceof ICStackFrame ) {
 			ICStackFrame frame = (ICStackFrame)f;
-			StringBuffer label = new StringBuffer();
+			StringBuilder label = new StringBuilder();
 			label.append( frame.getLevel() );
 			label.append( ' ' );
 			String function = frame.getFunction();

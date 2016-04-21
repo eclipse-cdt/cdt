@@ -195,7 +195,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						if (i < args.length)
 							executable = findExecutable(args[i]);
 						++i;
-						StringBuffer argBuffer = new StringBuffer();
+						StringBuilder argBuffer = new StringBuilder();
 						// Remaining values are arguments to the executable
 						if (i < args.length)
 							argBuffer.append(args[i++]);

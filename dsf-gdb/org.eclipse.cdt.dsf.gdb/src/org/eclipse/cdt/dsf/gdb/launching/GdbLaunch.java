@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -684,7 +684,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		// Turn it into an envp format
 		List<String> strings = new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
-			StringBuffer buffer = new StringBuffer(entry.getKey());
+			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -439,7 +439,7 @@ public class SRecordImporter implements IMemoryImporter {
                          * represented by the pairs of characters making up the records length, address,
                          * and the code/data fields.
 						 */
-						StringBuffer buf = new StringBuffer(line.substring(2));
+						StringBuilder buf = new StringBuilder(line.substring(2));
 						byte checksum = 0;
 						
 						for(int i = 0; i < buf.length(); i+=2)

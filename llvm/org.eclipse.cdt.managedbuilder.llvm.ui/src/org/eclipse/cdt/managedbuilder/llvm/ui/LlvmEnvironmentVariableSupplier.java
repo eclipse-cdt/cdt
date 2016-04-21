@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Nokia Siemens Networks Oyj, Finland.
+ * Copyright (c) 2010, 2016 Nokia Siemens Networks Oyj, Finland.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -381,7 +381,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 		if (oldPath!=null) {
 			//if the oldPath isn't empty
 			if (!oldPath.trim().isEmpty()) {
-				StringBuffer sB = new StringBuffer();
+				StringBuilder sB = new StringBuilder();
 				// append old path
 				sB.append(oldPath);
 				// append a path separator

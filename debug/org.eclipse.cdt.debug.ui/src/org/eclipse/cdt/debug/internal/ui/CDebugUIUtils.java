@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class CDebugUIUtils {
 	 * Moved from CDebugModelPresentation because it is also used by CVariableLabelProvider.
 	 */
 	static public String getValueText( IValue value ) {
-		StringBuffer label = new StringBuffer();
+		StringBuilder label = new StringBuilder();
 		if ( value instanceof ICDebugElementStatus && !((ICDebugElementStatus)value).isOK() ) {
 			label.append(  MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.4" ), (Object[]) new String[] { ((ICDebugElementStatus)value).getMessage() } ) ); //$NON-NLS-1$
 		}
@@ -159,7 +159,7 @@ public class CDebugUIUtils {
 	 * Moved from CDebugModelPresentation because it is also used by CVariableLabelProvider.
 	 */
 	public static String getVariableTypeName( ICType type ) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if ( type != null ) {
 			String typeName = type.getName();
 			if ( typeName != null )
@@ -221,7 +221,7 @@ public class CDebugUIUtils {
 	public static String decorateText( Object element, String text ) {
 		if ( text == null )
 			return null;
-		StringBuffer baseText = new StringBuffer( text );
+		StringBuilder baseText = new StringBuilder( text );
 		if ( element instanceof ICDebugElementStatus && !((ICDebugElementStatus)element).isOK() ) {
 			baseText.append( MessageFormat.format( " <{0}>", new Object[] { ((ICDebugElementStatus)element).getMessage() } ) ); //$NON-NLS-1$
 		}

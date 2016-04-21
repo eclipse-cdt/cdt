@@ -91,7 +91,7 @@ public void updateMemorySpaces(String[] ids) {
    * preferences store
    */
   private void setMemorySpaceIds(String[] memorySpaces) {
-    StringBuffer csv = new StringBuffer();
+    StringBuilder csv = new StringBuilder();
     for (int i = 0; i < memorySpaces.length; i++) {
       csv.append(memorySpaces[i]);
       if (i < memorySpaces.length - 1) {

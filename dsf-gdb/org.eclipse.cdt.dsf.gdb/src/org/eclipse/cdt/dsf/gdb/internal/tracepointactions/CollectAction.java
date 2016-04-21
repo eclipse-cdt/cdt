@@ -159,7 +159,7 @@ public class CollectAction extends AbstractTracepointAction {
 	public String getSummary() {
 		// Return the exact format that will be sent to GDB.
 		
-		StringBuffer collectCmd = new StringBuffer("collect ");  //$NON-NLS-1$
+		StringBuilder collectCmd = new StringBuilder("collect ");  //$NON-NLS-1$
 		if (fCharPtrAsStrings) {
 			collectCmd.append("/s"); //$NON-NLS-1$
 			if (fCharPtrAsStringsLimit != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,7 +154,7 @@ public class WinEnvironmentVariableSupplier
 		}
 		
 		// INCLUDE
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		IPath includePaths[] = getIncludePath();
 		for (IPath path : includePaths) {
 			buff.append(path.toOSString()).append(';');
@@ -162,7 +162,7 @@ public class WinEnvironmentVariableSupplier
 		addvar(new WindowsBuildEnvironmentVariable("INCLUDE", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND));
 
 		// LIB
-		buff = new StringBuffer();
+		buff = new StringBuilder();
 		if (vcDir != null)
 			buff.append(vcDir).append("Lib;");
 		if (sdkDir != null) {
@@ -173,7 +173,7 @@ public class WinEnvironmentVariableSupplier
 		addvar(new WindowsBuildEnvironmentVariable("LIB", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND));
 		
 		// PATH
-		buff = new StringBuffer();
+		buff = new StringBuilder();
 		if (vcDir != null) {
 			buff.append(vcDir).append("..\\Common7\\IDE;");
 			buff.append(vcDir).append("..\\Common7\\Tools;");

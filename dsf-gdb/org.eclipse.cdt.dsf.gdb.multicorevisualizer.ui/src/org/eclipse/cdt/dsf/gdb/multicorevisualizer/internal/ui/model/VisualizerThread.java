@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Tilera Corporation and others.
+ * Copyright (c) 2012, 2016 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public class VisualizerThread
 	/** Returns string representation. */
 	@Override
 	public String toString() {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append(m_core).append(",Proc:").append(m_pid) //$NON-NLS-1$
 		      .append(",Thread:(").append(m_tid).append(",").append(m_gdbtid).append(")");  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		return output.toString();

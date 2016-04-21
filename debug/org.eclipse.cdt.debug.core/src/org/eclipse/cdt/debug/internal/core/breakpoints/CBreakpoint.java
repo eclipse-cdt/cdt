@@ -225,7 +225,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint2, I
 	}
 
 	protected String getConditionText() throws CoreException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		int ignoreCount = getIgnoreCount();
 		if ( ignoreCount > 0 ) {
 			sb.append( MessageFormat.format( BreakpointMessages.getString( "CBreakpoint.1" ), new Object[] { ignoreCount } ) ); //$NON-NLS-1$

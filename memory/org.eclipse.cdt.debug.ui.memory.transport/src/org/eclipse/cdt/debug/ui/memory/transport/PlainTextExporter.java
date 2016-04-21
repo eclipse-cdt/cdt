@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -516,7 +516,7 @@ public class PlainTextExporter implements IMemoryExporter {
 						
 						monitor.subTask(String.format(Messages.getString("Exporter.Progress"), length.toString(10), transferAddress.toString(16))); //$NON-NLS-1$
 						
-						StringBuffer buf = new StringBuffer();
+						StringBuilder buf = new StringBuilder();
 						
 						for(int i = 0; i < length.divide(dataCellSize).intValue(); i++)
 						{

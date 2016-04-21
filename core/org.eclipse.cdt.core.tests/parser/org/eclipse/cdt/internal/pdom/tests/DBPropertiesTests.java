@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2016 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public class DBPropertiesTests extends BaseTestCase {
 	public void testLong() throws Exception {
 		DBProperties ps = new DBProperties(db);
 		
-		StringBuffer largeValue = new StringBuffer();
+		StringBuilder largeValue = new StringBuilder();
 		for (int i= 0; i < Database.CHUNK_SIZE * 2; i += 64) {
 			largeValue.append("********");
 			ps.setProperty("key", largeValue.toString());

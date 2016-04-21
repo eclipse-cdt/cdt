@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik 
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -22,8 +22,8 @@ import org.eclipse.jface.text.TextSelection;
 public class TestSourceFile {
 	private static final String REPLACEMENT = ""; //$NON-NLS-1$
 	private String name;
-	private StringBuffer source = new StringBuffer();
-	private StringBuffer expectedSource = new StringBuffer();
+	private StringBuilder source = new StringBuilder();
+	private StringBuilder expectedSource = new StringBuilder();
 	private String separator = System.getProperty("line.separator"); //$NON-NLS-1$
 	private int selectionStart = -1;
 	private int selectionEnd = -1;

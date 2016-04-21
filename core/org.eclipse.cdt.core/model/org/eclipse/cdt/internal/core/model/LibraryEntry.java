@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,7 +192,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
 		if (libraryPath != null && !libraryPath.isEmpty()) {
 			sb.append(" librarypath:").append(libraryPath.toString()); //$NON-NLS-1$

@@ -116,7 +116,7 @@ public class CygPath {
 			}
 			if (ipath.isAbsolute() && !ipath.toFile().exists() && ipath.segment(0).length() == 1) {
 				// look like it could be /c/... path
-				StringBuffer drive = new StringBuffer(ipath.segment(0));
+				StringBuilder drive = new StringBuilder(ipath.segment(0));
 				drive.append(':');
 				ipath = ipath.removeFirstSegments(1);
 				ipath = ipath.makeAbsolute();

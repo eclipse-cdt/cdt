@@ -210,7 +210,7 @@ public class EnvVarOperationProcessor {
 	 */
 	static public String convertToString(List<String> list, String delimiter){
 		Iterator<String> iter = list.iterator();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		while(iter.hasNext()){
 			buffer.append(iter.next());

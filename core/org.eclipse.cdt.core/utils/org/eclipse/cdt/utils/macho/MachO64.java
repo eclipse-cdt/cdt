@@ -1347,7 +1347,7 @@ public class MachO64 {
 //	}
 	
 	private String getCStr() throws IOException {
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		while(true ) {
 			byte tmp = efile.readByte();
 			if (tmp == 0)
@@ -1360,7 +1360,7 @@ public class MachO64 {
 	private String getLCStr(int len) throws IOException {
 		if (len == 0)
 			return EMPTY_STRING;
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		for (; len > 0; len--) {
 			byte tmp = efile.readByte();
 			if (tmp == 0)

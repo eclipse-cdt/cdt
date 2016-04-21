@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
+ *  Copyright (c) 2004, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -208,7 +208,7 @@ public class WeakHashSet<T> {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("{"); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder("{"); //$NON-NLS-1$
 		for (int i = 0, length = this.values.length; i < length; i++) {
 			HashableWeakReference<T> value = this.values[i];
 			if (value != null) {

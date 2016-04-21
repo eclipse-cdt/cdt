@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,7 +276,7 @@ public final class IndentManipulation {
 				return code;
 			}
 			
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			
 			for (int i= 0; i < nLines; i++) {
 				IRegion region= tracker.getLineInformation(i);

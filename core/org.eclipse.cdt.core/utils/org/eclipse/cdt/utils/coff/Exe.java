@@ -89,7 +89,7 @@ public class Exe {
 
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 
 			buffer.append("EXE HEADER VALUES").append(NL); //$NON-NLS-1$
 			buffer.append("signature "); //$NON-NLS-1$
@@ -156,7 +156,7 @@ public class Exe {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(rfile).append(NL);
 		buffer.append(ehdr);
 		return buffer.toString();

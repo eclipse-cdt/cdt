@@ -141,7 +141,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
 				break;
 			}
 		}
-    	StringBuffer buf= new StringBuffer(label.length() + 10);
+    	StringBuilder buf= new StringBuilder(label.length() + 10);
     	buf.append("{init "); //$NON-NLS-1$
     	buf.append(content, 0, i);
     	buf.append("}()"); //$NON-NLS-1$

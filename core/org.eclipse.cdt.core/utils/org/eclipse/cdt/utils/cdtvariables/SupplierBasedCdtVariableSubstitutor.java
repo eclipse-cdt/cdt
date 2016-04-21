@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 				else if(values.length == 1)
 					result = values[0];
 				else if((delimiter = getDelimiter()) != null){
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					for(int i = 0; i < values.length; i++){
 						buffer.append(values[i]);
 						if(i < values.length-1)

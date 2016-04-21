@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -969,7 +969,7 @@ public void createPartControl(Composite parent) {
 		}
 		if (node instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) node;
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(getNodeSignature(decl.getDeclSpecifier()));
 			IASTDeclarator[] declarators = decl.getDeclarators();
 			for (int i = 0; i < declarators.length; ++i) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -190,7 +190,7 @@ public class Buffer implements IBuffer {
 				int gapLength = this.gapEnd - this.gapStart;
 				return new String(this.contents, offset + gapLength, length);
 			}
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(this.contents, offset, this.gapStart - offset);
 			buf.append(this.contents, this.gapEnd, offset + length - this.gapStart);
 			return buf.toString();
@@ -450,7 +450,7 @@ public class Buffer implements IBuffer {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("Owner: " + ((CElement)this.owner).toString()); //$NON-NLS-1$
 		buffer.append("\nHas unsaved changes: " + this.hasUnsavedChanges()); //$NON-NLS-1$
 		buffer.append("\nIs readonly: " + this.isReadOnly()); //$NON-NLS-1$

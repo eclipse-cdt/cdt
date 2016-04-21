@@ -59,7 +59,7 @@ public class StabsReader implements ISymbolReader {
 	}
 
 	private String makeString(long offset) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (; offset < stabstrData.length; offset++) {
 			byte b = stabstrData[(int) offset];
 			if (b == 0) {
@@ -120,7 +120,7 @@ public class StabsReader implements ISymbolReader {
 			char driveLetter = path.charAt(10);
 			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
 
-			StringBuffer buf = new StringBuffer(path);
+			StringBuilder buf = new StringBuilder(path);
 			buf.delete(0, 11);
 			buf.insert(0, driveLetter);
 			buf.insert(1, ':');
@@ -133,7 +133,7 @@ public class StabsReader implements ISymbolReader {
 			char driveLetter = path.charAt(2);
 			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
 
-			StringBuffer buf = new StringBuffer(path);
+			StringBuilder buf = new StringBuilder(path);
 			buf.delete(0, 3);
 			buf.insert(0, driveLetter);
 			buf.insert(1, ':');

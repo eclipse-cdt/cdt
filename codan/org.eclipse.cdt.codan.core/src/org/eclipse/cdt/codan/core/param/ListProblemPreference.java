@@ -21,11 +21,11 @@ import java.util.Iterator;
  *
  * @noextend This class is not intended to be extended by clients.
  */
-public class ListProblemPreference extends AbstractProblemPreference implements IProblemPreferenceCompositeValue,
-		IProblemPreferenceCompositeDescriptor {
+public class ListProblemPreference extends AbstractProblemPreference
+		implements IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
 	/**
 	 * Constant that represent a key for "shared" child preference (descriptor)
-	 * of all elements
+	 * of all elements.
 	 */
 	public static final String COMMON_DESCRIPTOR_KEY = "#"; //$NON-NLS-1$
 	protected ArrayList<Object> list = new ArrayList<Object>();
@@ -48,7 +48,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	}
 
 	/**
-	 * Set child descriptor (all elements have the same). Value and key
+	 * Sets child descriptor (all elements have the same). Value and key
 	 * of it would be ignored and reset.
 	 *
 	 * @param desc
@@ -80,7 +80,6 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	}
 
 	/**
-	 *
 	 * @return descriptor of the child elements
 	 */
 	public IProblemPreference getChildDescriptor() {
@@ -106,8 +105,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	 * Get read only problem preference for element equal to key's int value.
 	 * If key is null or # return generic descriptor with null value.
 	 *
-	 * @throws NumberFormatException
-	 *         if key is not number
+	 * @throws NumberFormatException if key is not number
 	 */
 	@Override
 	public IProblemPreference getChildDescriptor(String key) throws NumberFormatException {
@@ -126,7 +124,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	}
 
 	/**
-	 * Return array of clones values of child preferences.
+	 * Returns array of clones values of child preferences.
 	 */
 	@Override
 	public IProblemPreference[] getChildDescriptors() {
@@ -219,7 +217,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 
 	@Override
 	public void importValue(String str) {
-		if (str.length()==0) return;
+		if (str.isEmpty()) return;
 		StreamTokenizer tokenizer = getImportTokenizer(str);
 		try {
 			importValue(tokenizer);
@@ -239,10 +237,11 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 			if (token != '(')
 				throw new IllegalArgumentException(chara);
 			token = tokenizer.nextToken();
-			if (token != ')')
+			if (token != ')') {
 				tokenizer.pushBack();
-			else
+			} else {
 				return;
+			}
 			while (true) {
 				String ik = String.valueOf(index);
 				IProblemPreference desc = getChildDescriptor(ik);
@@ -263,15 +262,15 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	}
 
 	/**
-	 * If info key is '#' resets common descriptor to null, otherwise removes
-	 * value
+	 * If info key is '#' resets common descriptor to null, otherwise removes value.
 	 */
 	@Override
 	public void removeChildDescriptor(IProblemPreference info) {
-		if (info.getKey().equals(COMMON_DESCRIPTOR_KEY))
+		if (info.getKey().equals(COMMON_DESCRIPTOR_KEY)) {
 			setChildDescriptor(null);
-		else
+		} else {
 			removeChildValue(info.getKey());
+		}
 	}
 
 	/**

@@ -1008,7 +1008,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	 * Calculate the source macro for the given extension
 	 */
 	protected String calculateSourceMacro(GnuMakefileGenerator makeGen, String srcExtensionName, String outExtensionName, String wildcard) {
-		StringBuffer macroName = makeGen.getSourceMacroName(srcExtensionName);
+		StringBuilder macroName = makeGen.getSourceMacroName(srcExtensionName);
 		String OptDotExt = ""; //$NON-NLS-1$
 		if (outExtensionName != null) {
 		    OptDotExt = DOT + outExtensionName;
@@ -1018,7 +1018,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 
 		// create rule of the form
 		// OBJS = $(macroName1: ../%.input1=%.output1) ... $(macroNameN: ../%.inputN=%.outputN)
-		StringBuffer objectsBuffer = new StringBuffer();
+		StringBuilder objectsBuffer = new StringBuilder();
 		objectsBuffer.append(IManagedBuilderMakefileGenerator.WHITESPACE + "$(" + macroName + 					//$NON-NLS-1$
 			IManagedBuilderMakefileGenerator.COLON + IManagedBuilderMakefileGenerator.ROOT +
 			IManagedBuilderMakefileGenerator.SEPARATOR + IManagedBuilderMakefileGenerator.WILDCARD +

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2007, 2011 QNX Software Systems and others.
+ * Copyright (c) 2007, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,7 +98,7 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 	private static final String END = "}}"; //$NON-NLS-1$
 	
 	private String replaceMacros(String fileContents, Map<String, String> valueStore) {
-		StringBuffer buffer = new StringBuffer(fileContents);
+		StringBuilder buffer = new StringBuilder(fileContents);
 		for (String key : valueStore.keySet()) {
 			String pattern = START + key +END;
 			if (fileContents.indexOf(pattern)==-1)

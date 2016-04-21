@@ -264,7 +264,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		// boolean,string and enumerated
 		List<String> optionsList = new ArrayList<String>();
 		// additional options buffer
-		StringBuffer addnOptions = new StringBuffer();
+		StringBuilder addnOptions = new StringBuilder();
 		// split all build options string
 		Vector<String> optionsArr = getOptionVector(alloptions);
 		for (String optionValue : optionsArr) {
@@ -374,7 +374,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 				Object key = iterator.next();
 				String val = stringOptionsMap.get(key);
 				if (alloptions.indexOf(val) == -1) {
-					StringBuffer buf = new StringBuffer();
+					StringBuilder buf = new StringBuilder();
 					String[] vals = val.split(WHITESPACE);
 					for (int t = 0; t < vals.length; t++) {
 						if (alloptions.indexOf(vals[t]) != -1)

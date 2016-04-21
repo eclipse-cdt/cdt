@@ -340,7 +340,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setErrorParsers(String[] parsers) throws CoreException {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			for (int i = 0; i < parsers.length; i++) {
 				buf.append(parsers[i]).append(';');
 			}
@@ -377,7 +377,7 @@ public class BuildInfoFactory {
 		protected Map<String, String> decodeMap(String value) {
 			Map<String, String> map = new HashMap<>();
 			if (value != null) {
-				StringBuffer envStr = new StringBuffer(value);
+				StringBuilder envStr = new StringBuilder(value);
 				String escapeChars = "|\\"; //$NON-NLS-1$
 				char escapeChar = '\\';
 				try {
@@ -397,7 +397,7 @@ public class BuildInfoFactory {
 							}
 							ndx++;
 						}
-						StringBuffer line = new StringBuffer(envStr.substring(0, ndx));
+						StringBuilder line = new StringBuilder(envStr.substring(0, ndx));
 						int lndx = 0;
 						while (lndx < line.length()) {
 							if (line.charAt(lndx) == '=') {
@@ -420,7 +420,7 @@ public class BuildInfoFactory {
 		}
 
 		protected String encodeMap(Map<String, String> values) {
-			StringBuffer str = new StringBuffer();
+			StringBuilder str = new StringBuilder();
 			for (Entry<String, String> entry : values.entrySet()) {
 				str.append(escapeChars(entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
 				str.append("="); //$NON-NLS-1$
@@ -431,7 +431,7 @@ public class BuildInfoFactory {
 		}
 
 		protected String escapeChars(String string, String escapeChars, char escapeChar) {
-			StringBuffer str = new StringBuffer(string);
+			StringBuilder str = new StringBuilder(string);
 			for (int i = 0; i < str.length(); i++) {
 				if (escapeChars.indexOf(str.charAt(i)) != -1) {
 					str.insert(i, escapeChar);

@@ -83,7 +83,7 @@ public class Test30_2_CommandLineGenerator implements
 		//  Generate the command line
 		int start =  0;
 		int stop = 0;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while( (start = commandLinePattern.indexOf( VAR_FIRST_CHAR, start )) >= 0 ) {
 			if( commandLinePattern.charAt( start + 1 ) != VAR_SECOND_CHAR  ) {
 				sb.append(VAR_FIRST_CHAR);

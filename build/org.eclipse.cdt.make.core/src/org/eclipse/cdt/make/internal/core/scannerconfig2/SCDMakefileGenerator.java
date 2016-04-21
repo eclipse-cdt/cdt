@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                     resource.getProject(), ScannerInfoTypes.UNDISCOVERED_COMPILER_COMMAND);
             if (commands != null && commands.size() > 0) {
         
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 buffer.append("# This is a generated file. Please do not edit."); //$NON-NLS-1$
                 buffer.append(DENDL);
                 buffer.append(".PHONY: all"); //$NON-NLS-1$

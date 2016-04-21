@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		}
 	}
 	
-	private void append(StringBuffer buffer, String string, TextPresentation presentation) {
+	private void append(StringBuilder buffer, String string, TextPresentation presentation) {
 		
 		int length= string.length();
 		buffer.append(string);
@@ -97,7 +97,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		GC gc= new GC(display);
 		try {
 			
-			StringBuffer buffer= new StringBuffer();
+			StringBuilder buffer= new StringBuilder();
 			int maxNumberOfLines= Math.round((float)maxHeight / gc.getFontMetrics().getHeight());
 			
 			fCounter= 0;
@@ -157,7 +157,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		}
 	}
 	
-	private String trim(StringBuffer buffer, TextPresentation presentation) {
+	private String trim(StringBuilder buffer, TextPresentation presentation) {
 		
 		int length= buffer.length();
 				

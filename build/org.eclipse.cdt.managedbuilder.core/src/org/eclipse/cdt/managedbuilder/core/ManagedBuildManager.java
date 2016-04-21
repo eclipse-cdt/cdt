@@ -3714,7 +3714,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			}
 			if(prefix.segmentCount() > 0){
 				int diff = container.segmentCount() - prefix.segmentCount();
-				StringBuffer buff = new StringBuffer();
+				StringBuilder buff = new StringBuilder();
 				while(diff-- > 0)
 					buff.append("../");	//$NON-NLS-1$
 				path = new Path(buff.toString()).append(contents.removeFirstSegments(prefix.segmentCount()));
@@ -3931,7 +3931,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	public static String fullPathToLocation(String path){
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		return buf.append("${").append("workspace_loc:").append(path).append("}").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 

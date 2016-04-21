@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Nokia Corporation.
+ * Copyright (c) 2008, 2016 Nokia Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class AutoconfTokenizer {
 		}
 
 		startOffset = offset;
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		
 		// check EOL
 		if (ch == '\r' || ch == '\n') {
@@ -251,7 +251,7 @@ public class AutoconfTokenizer {
 	}
 
 	private Token parseWord(char ch) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		
 		buffer.append(ch);
 		offset++;
@@ -306,7 +306,7 @@ public class AutoconfTokenizer {
 	private Token parseQuote() {
 		// read text, honoring nested quotes, but don't put the outermost quotes in the token  
 		
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		
 		int quoteLevel = 1;
 		// keep reading until the close quote
@@ -338,7 +338,7 @@ public class AutoconfTokenizer {
 		startOffset = offset;
 		offset++;
 		
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		
 		char ch = 0;
 		while (offset < chars.length) {

@@ -285,7 +285,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		// Prepare to find the common path between the core file and the workspace
 		IPath commonPath = new Path(workspaceLocation);
 		
-		StringBuffer backwards = new StringBuffer("/");
+		StringBuilder backwards = new StringBuilder("/");
 		// While the commonPath is not the prefix of the core file path
 		// remove one more segment of the potential commonPath
 		while (!commonPath.isPrefixOf(corePath)) {

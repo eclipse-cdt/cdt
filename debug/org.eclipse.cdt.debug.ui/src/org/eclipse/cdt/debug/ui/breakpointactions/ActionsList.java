@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Nokia and others.
+ * Copyright (c) 2007, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,7 +128,7 @@ public class ActionsList extends Composite {
 	}
 
 	public String getActionNames() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		TableItem[] currentItems = table.getItems();
 		for (int i = 0; i < currentItems.length; i++) {
 			if (i > 0)

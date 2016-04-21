@@ -481,7 +481,7 @@ public class ViewerUpdatesListener
     }
     
     private String toString(int flags) {
-        StringBuffer buf = new StringBuffer("Viewer Update Listener");
+        StringBuilder buf = new StringBuilder("Viewer Update Listener");
 
         if (fFailOnRedundantUpdates) {
             buf.append("\n\t");
@@ -603,7 +603,7 @@ public class ViewerUpdatesListener
         if (set.isEmpty()) {
             return "(EMPTY)";
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Iterator<TreePath> itr = set.iterator(); itr.hasNext(); ) {
             buf.append("\n\t\t");
             buf.append(toStringTreePath(itr.next()));
@@ -615,7 +615,7 @@ public class ViewerUpdatesListener
         if (set.isEmpty()) {
             return "(EMPTY)";
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Iterator<IViewerUpdate> itr = set.iterator(); itr.hasNext(); ) {
             buf.append("\n\t\t");
             buf.append(toStringTreePath((itr.next()).getElementPath()));
@@ -627,7 +627,7 @@ public class ViewerUpdatesListener
         if (map.isEmpty()) {
             return "(EMPTY)";
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Iterator<TreePath> itr = map.keySet().iterator(); itr.hasNext(); ) {
             buf.append("\n\t\t");
             TreePath path = itr.next();
@@ -643,7 +643,7 @@ public class ViewerUpdatesListener
         if (path.getSegmentCount() == 0) {
             return "/";
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < path.getSegmentCount(); i++) {
             buf.append("/");
             buf.append(path.getSegment(i));

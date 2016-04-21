@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Nokia and others.
+ * Copyright (c) 2008, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -453,7 +453,7 @@ public class ExecutablesView extends ViewPart {
 								IStatus result = ExecutablesManager.getExecutablesManager().removeExecutables(selectedExesArray, monitor);					
 								if (result.getSeverity() != IStatus.OK)
 								{
-									StringBuffer message = new StringBuffer(result.getMessage());
+									StringBuilder message = new StringBuilder(result.getMessage());
 									if (result.isMultiStatus()) {
 										IStatus[] children = result.getChildren();
 										for (int i = 0; i < children.length && i < 6; i++) {

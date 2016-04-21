@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Wind River Systems and others.
+ * Copyright (c) 2008, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -414,7 +414,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                                             String formattedResult = "";
                                             if (HEX_FORMAT.equals(formatId)) {
                                                 formattedResult = Integer.toHexString(intResult);
-                                                StringBuffer prefix = new StringBuffer("0x");
+                                                StringBuilder prefix = new StringBuilder("0x");
                                                 for (int i = 0; i < 8 - formattedResult.length(); i++) {
                                                     prefix.append('0');
                                                 }
@@ -422,7 +422,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                                                 formattedResult = prefix.toString();
                                             } else if (OCTAL_FORMAT.equals(formatId)) {
                                                 formattedResult = Integer.toOctalString(intResult);
-                                                StringBuffer prefix = new StringBuffer("0c");
+                                                StringBuilder prefix = new StringBuilder("0c");
                                                 for (int i = 0; i < 16 - formattedResult.length(); i++) {
                                                     prefix.append('0');
                                                 }
@@ -430,7 +430,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                                                 formattedResult = prefix.toString();
                                             } else if (BINARY_FORMAT.equals(formatId)) {
                                                 formattedResult = Integer.toBinaryString(intResult);
-                                                StringBuffer prefix = new StringBuffer("0b");
+                                                StringBuilder prefix = new StringBuilder("0b");
                                                 for (int i = 0; i < 32 - formattedResult.length(); i++) {
                                                     prefix.append('0');
                                                 }

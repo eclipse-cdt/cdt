@@ -61,7 +61,7 @@ public class MIFrame {
 
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("level=\"" + level + "\"");  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append(",addr=\"" + addr + "\"");  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append(",func=\"" + func + "\"");  //$NON-NLS-1$//$NON-NLS-2$

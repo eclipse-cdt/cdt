@@ -540,7 +540,7 @@ public class LaunchUtils {
 		// Turn it into an envp format
 		List<String> strings= new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
-			StringBuffer buffer= new StringBuffer(entry.getKey());
+			StringBuilder buffer= new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}

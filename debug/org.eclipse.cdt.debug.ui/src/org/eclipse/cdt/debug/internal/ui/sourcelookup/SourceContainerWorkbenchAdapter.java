@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	}
 
 	public String getQualifiedName(IPath path) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String[] segments = path.segments();
 		if (segments.length > 0) {
 			buffer.append(path.lastSegment());

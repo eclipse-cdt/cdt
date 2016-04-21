@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 QNX Software Systems
+ * Copyright (c) 2009, 2016 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,7 +139,7 @@ public class MapProblemPreference extends AbstractProblemPreference
 	@Override
 	public String exportValue() {
 		synchronized (hash) {
-			StringBuffer buf = new StringBuffer("{"); //$NON-NLS-1$
+			StringBuilder buf = new StringBuilder("{"); //$NON-NLS-1$
 			for (Iterator<String> iterator = hash.keySet().iterator(); iterator.hasNext();) {
 				String key = iterator.next();
 				IProblemPreference d = hash.get(key);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Wind River Systems and others.
+ * Copyright (c) 2010, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public class GDBTypeParser {
 	}
 
 	public static String unParse (GDBType gdbParentType) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		GDBType gdbType = gdbParentType;
 		// Fetch the datatype.
 		while (gdbType != null) {
@@ -135,15 +135,15 @@ public class GDBTypeParser {
 
 	}
 
-	private static void handleReference(GDBType gdbType, StringBuffer sb) {
+	private static void handleReference(GDBType gdbType, StringBuilder sb) {
 		handleReferenceOrPointer(gdbType, sb, '&');
 	}
 
-	private static void handlePointer(GDBType gdbType, StringBuffer sb) {
+	private static void handlePointer(GDBType gdbType, StringBuilder sb) {
 		handleReferenceOrPointer(gdbType, sb, '*');
 	}
 
-	private static void handleReferenceOrPointer(GDBType gdbType, StringBuffer sb, char prefix) {
+	private static void handleReferenceOrPointer(GDBType gdbType, StringBuilder sb, char prefix) {
 		switch (getChildType(gdbType)) {
 		case GDBType.POINTER:
 		case GDBType.REFERENCE:
@@ -235,7 +235,7 @@ public class GDBTypeParser {
 
 		@Override
 		public String verbose() {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			switch (getType()) {
 				case FUNCTION :
 					sb.append(" function returning " + (hasChild() ? child.verbose() : ""));  //$NON-NLS-1$//$NON-NLS-2$
@@ -363,7 +363,7 @@ public class GDBTypeParser {
 			}
 			tokenType = BRACKETS;
 		} else if (isCIdentifierStart(c)) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append((char) c);
 			while (isCIdentifierPart((c = getch())) && c != EOF) {
                 sb.append((char) c);

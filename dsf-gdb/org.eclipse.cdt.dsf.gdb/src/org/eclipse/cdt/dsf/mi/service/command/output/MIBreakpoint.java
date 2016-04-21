@@ -602,7 +602,7 @@ public class MIBreakpoint  {
 
     void parseCommands(MITuple tuple) {
     	MIValue[] values = tuple.getMIValues();
-    	StringBuffer cmds = new StringBuffer();
+    	StringBuilder cmds = new StringBuilder();
     	for (int i = 0; i < values.length; i++) {
     		MIValue value = values[i];
     		if (value != null && value instanceof MIConst) {

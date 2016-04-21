@@ -31,6 +31,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
@@ -97,6 +98,8 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private boolean displayFixedTip = CDTPrefUtil.getBool(CDTPrefUtil.KEY_TIPBOX);
 		private int[] defaultWeights = new int[] {4, 1};
 		private int[] hideTipBoxWeights = new int[] {1, 0};
+
+		private boolean isIndexerAffected;
 
 		@Override
 		public void createControls(Composite par)  {
@@ -562,6 +565,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 */
 		protected void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res){
 			try {
+				if (op1.isForScannerDiscovery()
+						&& ((Option)op1).isDirty())
+						isIndexerAffected = true;
 				switch (op1.getValueType()) {
 					case IOption.BOOLEAN :
 						boolean boolVal = op1.getBooleanValue();
@@ -577,14 +583,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					case IOption.STRING :
 						ManagedBuildManager.setOption(res, dst, op2, op1.getStringValue());
 						break;
-					case IOption.STRING_LIST :
 					case IOption.INCLUDE_PATH :
 					case IOption.PREPROCESSOR_SYMBOLS :
-					case IOption.LIBRARIES :
-					case IOption.OBJECTS :
 					case IOption.INCLUDE_FILES:
-					case IOption.LIBRARY_PATHS:
-					case IOption.LIBRARY_FILES:
 					case IOption.MACRO_FILES:
 					case IOption.UNDEF_INCLUDE_PATH:
 					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
@@ -592,9 +593,20 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:
+						if (((Option)op1).isDirty())
+							isIndexerAffected = true;
 						@SuppressWarnings("unchecked")
 						String[] data = ((List<String>)op1.getValue()).toArray(new String[0]);
 						ManagedBuildManager.setOption(res, dst, op2, data);
+						break;
+					case IOption.LIBRARIES :
+					case IOption.LIBRARY_PATHS:
+					case IOption.LIBRARY_FILES:
+					case IOption.STRING_LIST :
+					case IOption.OBJECTS :
+						@SuppressWarnings("unchecked")
+						String[] data2 = ((List<String>)op1.getValue()).toArray(new String[0]);
+						ManagedBuildManager.setOption(res, dst, op2, data2);
 						break;
 					default :
 						break;
@@ -724,10 +736,60 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		handleOptionSelection();
 	}
 
+    @Override
+    protected void performOK() {
+    	// We need to override performOK so we can determine if any option
+    	// was chosen that affects the indexer and the user directly chooses
+    	// to press OK instead of Apply.
+    	if (isIndexerAffected)
+    		return;  // don't bother if flag is already set by a previous apply
+    	ICResourceDescription res = getResDesc();
+    	IResourceInfo info = getResCfg(res);
+		ITool[] t1;
+		if (info instanceof IFolderInfo){
+			t1 = ((IFolderInfo)info).getFilteredTools();
+		} else if (info instanceof IFileInfo) {
+			t1 = ((IFileInfo)info).getToolsToInvoke();
+		} else return;
+		isIndexerAffected = false;
+		for (ITool t : t1) {
+			IOption op1[] = t.getOptions();
+			for (IOption op : op1) {
+				if (((Option)op).isDirty()) {
+					if (op.isForScannerDiscovery())
+						isIndexerAffected = true;
+					else {
+						try {
+							switch (op.getValueType()) {
+							case IOption.INCLUDE_PATH :
+							case IOption.PREPROCESSOR_SYMBOLS :
+							case IOption.LIBRARIES :
+							case IOption.INCLUDE_FILES:
+							case IOption.MACRO_FILES:
+							case IOption.UNDEF_INCLUDE_PATH:
+							case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+							case IOption.UNDEF_INCLUDE_FILES:
+							case IOption.UNDEF_LIBRARY_PATHS:
+							case IOption.UNDEF_LIBRARY_FILES:
+							case IOption.UNDEF_MACRO_FILES:
+								isIndexerAffected = true;
+								break;
+							}
+						} catch (BuildException e) {
+							// Do nothing
+						}
+					}
+				}
+			}
+		}
+		super.performOK();
+    }
+    
 	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		IResourceInfo ri1 = getResCfg(src);
 		IResourceInfo ri2 = getResCfg(dst);
+		isIndexerAffected = false;
 		copyHoldsOptions(ri1.getParent().getToolChain(), ri2.getParent().getToolChain(), ri2);
 		ITool[] t1, t2;
 		if (ri1 instanceof IFolderInfo){
@@ -748,6 +810,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		updateData(getResDesc());
 	}
 
+	@Override
+	protected boolean isIndexerAffected() {
+		return isIndexerAffected;
+	}
+	
 	/**
 	 * Computes the correspondence of tools in the copy-from set (<tt>t1</tt>) and the
 	 * copy-to set (<tt>t2</tt>) in an apply operation.  The resulting pairs are in the order

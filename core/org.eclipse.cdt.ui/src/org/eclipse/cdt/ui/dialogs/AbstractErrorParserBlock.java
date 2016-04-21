@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,7 +180,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	@Deprecated
 	protected void saveErrorParsers(Preferences prefs, String[] parserIDs) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < parserIDs.length; i++) {
 			buf.append(parserIDs[i]).append(';');
 		}

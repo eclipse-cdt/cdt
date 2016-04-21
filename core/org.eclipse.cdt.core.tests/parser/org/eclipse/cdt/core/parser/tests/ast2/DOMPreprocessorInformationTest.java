@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik 
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -36,7 +36,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testPragma() throws Exception {
 		String msg = "GCC poison printf sprintf fprintf";
-		StringBuffer buffer = new StringBuffer( "#pragma " + msg + "\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#pragma " + msg + "\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(1, st.length);
@@ -47,7 +47,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testElIf() throws Exception {
 		String cond = "2 == 2";
-		StringBuffer buffer = new StringBuffer( "#if 1 == 2\n#elif " + cond + "\n#else\n#endif\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#if 1 == 2\n#elif " + cond + "\n#else\n#endif\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(4, st.length);
@@ -58,7 +58,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testIf() throws Exception {
 		String cond = "2 == 2";
-		StringBuffer buffer = new StringBuffer( "#if " + cond + "\n#endif\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#if " + cond + "\n#endif\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(2, st.length);
@@ -69,7 +69,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testIfDef() throws Exception{
 		String cond = "SYMBOL";
-		StringBuffer buffer = new StringBuffer( "#ifdef " + cond + "\n#endif\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#ifdef " + cond + "\n#endif\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(2, st.length);
@@ -80,7 +80,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testIfnDef() throws Exception{
 		String cond = "SYMBOL";
-		StringBuffer buffer = new StringBuffer( "#ifndef " + cond + "\n#endif\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#ifndef " + cond + "\n#endif\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(2, st.length);
@@ -91,7 +91,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testError() throws Exception{
 		String msg = "Message";
-		StringBuffer buffer = new StringBuffer( "#error " + msg + "\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#error " + msg + "\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, false, false ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(1, st.length);
@@ -102,7 +102,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testPragmaWithSpaces() throws Exception {
 		String msg = "GCC poison printf sprintf fprintf";
-		StringBuffer buffer = new StringBuffer( "#  pragma  " + msg + " \n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#  pragma  " + msg + " \n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(1, st.length);
@@ -113,7 +113,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testElIfWithSpaces() throws Exception {
 		String cond = "2 == 2";
-		StringBuffer buffer = new StringBuffer( "#if 1 == 2\n#  elif  " + cond + " \n#else\n#endif\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#if 1 == 2\n#  elif  " + cond + " \n#else\n#endif\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(4, st.length);
@@ -124,7 +124,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testIfWithSpaces() throws Exception {
 		String cond = "2 == 2";
-		StringBuffer buffer = new StringBuffer( "#  if  " + cond + " \n#endif\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#  if  " + cond + " \n#endif\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(2, st.length);
@@ -135,7 +135,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testIfDefWithSpaces() throws Exception{
 		String cond = "SYMBOL";
-		StringBuffer buffer = new StringBuffer( "#  ifdef  " + cond + " \n#endif\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#  ifdef  " + cond + " \n#endif\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(2, st.length);
@@ -146,7 +146,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testIfnDefWithSpaces() throws Exception{
 		String cond = "SYMBOL";
-		StringBuffer buffer = new StringBuffer( "#  ifndef  " + cond + "\t\n#endif\n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#  ifndef  " + cond + "\t\n#endif\n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(2, st.length);
@@ -157,7 +157,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testErrorWithSpaces() throws Exception{
 		String msg = "Message";
-		StringBuffer buffer = new StringBuffer( "#  error \t" + msg + " \n" );  //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder( "#  error \t" + msg + " \n" );  //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, false, false ); 
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(1, st.length);
@@ -167,7 +167,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	}
 	
 	public void testMacroExpansion() throws Exception {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("#define add(a, b) (a) + (b) \n");
 		sb.append("int x = add(foo, bar); \n");
 		String code = sb.toString();

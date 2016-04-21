@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems Ltd and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 	}
 
 	protected String makeStringFromArray(String[] pieces, String sep) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < pieces.length; i++) {
 			if (i != 0) {
 				buf.append(sep);

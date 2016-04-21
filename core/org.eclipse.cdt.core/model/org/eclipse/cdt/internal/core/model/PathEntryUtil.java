@@ -354,7 +354,7 @@ public class PathEntryUtil {
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
-				StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+				StringBuilder errMesg = new StringBuilder(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
 				cmodelStatus[i] = new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 			}
 			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
@@ -365,7 +365,7 @@ public class PathEntryUtil {
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
-				StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+				StringBuilder errMesg = new StringBuilder(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
 				cmodelStatus[i] = new CModelStatus(ICModelStatusConstants.NAME_COLLISION, errMesg.toString());
 			}
 			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
@@ -392,15 +392,15 @@ public class PathEntryUtil {
 								&& !CoreModelUtil.isExcluded(entryPath.append("*"), exclusionPatterns)) { //$NON-NLS-1$
 
 							if (CoreModelUtil.isExcluded(entryPath, exclusionPatterns)) {
-								StringBuffer errMesg = new StringBuffer(
+								StringBuilder errMesg = new StringBuilder(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 							} else if (otherKind == IPathEntry.CDT_SOURCE) {
-								StringBuffer errMesg = new StringBuffer(
+								StringBuilder errMesg = new StringBuilder(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 							} else {
-								StringBuffer errMesg = new StringBuffer(
+								StringBuilder errMesg = new StringBuilder(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString()); 
 							}

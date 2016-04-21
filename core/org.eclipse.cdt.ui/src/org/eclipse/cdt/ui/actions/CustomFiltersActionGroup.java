@@ -555,7 +555,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 			store.setValue(id, isEnabled);
 		}
 
-		StringBuffer buf= new StringBuffer(fLRUFilterIdsStack.size() * 20);
+		StringBuilder buf= new StringBuilder(fLRUFilterIdsStack.size() * 20);
 		Iterator<String> iterIds= fLRUFilterIdsStack.iterator();
 		while (iterIds.hasNext()) {
 			buf.append(iterIds.next());

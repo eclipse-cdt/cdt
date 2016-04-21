@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ public class TraceUtil {
 	public static void outputTrace(IParserLogService log, String preface, IProblem problem,
 			String first, String second, String third) {
 		if (log.isTracing()) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if (preface != null) buffer.append(preface);
 			if (problem != null) buffer.append(problem.getMessageWithLocation());
 			if (first != null) buffer.append(first);
@@ -33,7 +33,7 @@ public class TraceUtil {
 
 	public static void outputTrace(IParserLogService log, String preface, IProblem problem) {
 		if (log.isTracing()) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if (preface != null) buffer.append(preface);
 			if (problem != null) buffer.append(problem.getMessageWithLocation());
 			log.traceLog(buffer.toString());
@@ -43,7 +43,7 @@ public class TraceUtil {
 	public static void outputTrace(IParserLogService log, String preface, IProblem problem,
 			char[] first, String second, String third) {
 		if (log.isTracing()) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if (preface != null) buffer.append(preface);
 			if (problem != null) buffer.append(problem.getMessageWithLocation());
 			if (first != null) buffer.append(first);
@@ -73,7 +73,7 @@ public class TraceUtil {
 
 	public static void outputTrace(IParserLogService logService, String preface, String data) {
 		if (logService.isTracing()) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if (preface != null) buffer.append(preface);
 			if (data != null) buffer.append(data);
 			logService.traceLog(buffer.toString());

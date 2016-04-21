@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class TypeNumber {
 			if (c == -1) {
 				return;
 			} else if (ch == '(') {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				while ((c = reader.read()) != -1) {
 					ch = (char)c;
 					if (ch == ')') {
@@ -83,7 +83,7 @@ public class TypeNumber {
 					}
 				}
 			} else if (Character.isDigit(ch)) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(ch);
 				reader.mark(1);
 				while ((c = reader.read()) != -1) {

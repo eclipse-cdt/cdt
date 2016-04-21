@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2002, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ import org.eclipse.jface.text.ITextStore;
 
 public class ConsoleOutputTextStore implements ITextStore {
 
-	private StringBuffer fBuffer;
+	private StringBuilder fBuffer;
 
 	public ConsoleOutputTextStore(int bufferSize) {
-		fBuffer = new StringBuffer(bufferSize);
+		fBuffer = new StringBuilder(bufferSize);
 	}
 
 	/**
@@ -60,11 +60,11 @@ public class ConsoleOutputTextStore implements ITextStore {
 	 */
 	@Override
 	public void set(String text) {
-		fBuffer = new StringBuffer(text);
+		fBuffer = new StringBuilder(text);
 	}
 
 	/**
-	 * @see StringBuffer#ensureCapacity(int)
+	 * @see StringBuilder#ensureCapacity(int)
 	 */
 	public void setMinimalBufferSize(int bufferSize) {
 		fBuffer.ensureCapacity(bufferSize);

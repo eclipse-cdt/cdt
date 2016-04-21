@@ -486,7 +486,7 @@ public class Binary extends Openable implements IBinary {
 		if (buffer.getCharacters() == null){
 			IBinaryObject bin = getBinaryObject();
 			if (bin != null) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				try {
 					BufferedReader stream = new BufferedReader(new InputStreamReader(bin.getContents()));
 					char[] buf = new char[512];

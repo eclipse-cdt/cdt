@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -409,7 +409,7 @@ public class IndexBugsTests extends BaseTestCase {
     public void test150906() throws Exception {
     	String fileName= "bug150906.c";
     	String varName= "arrayDataSize";
-    	StringBuffer content= new StringBuffer();
+    	StringBuilder content= new StringBuilder();
     	content.append("unsigned char arrayData[] = {\n");
     	for (int i= 0; i < 1024 * 250 - 1; i++) {
     		content.append("0x00,");

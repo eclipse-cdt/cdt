@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1620,7 +1620,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
     }
 
 	public void testBug64181() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("namespace Foo { // ** (A) **\n");
 		buffer.append("int bar;\n");
 		buffer.append("}\n");
@@ -1649,7 +1649,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 	}
 
 	public void testBug80823() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("class MyEggImpl {}; // line A\n");
 		buffer.append("#define MyChicken MyEggImpl\n");
 		buffer.append("MyChicken c; // line C\n");
@@ -1669,7 +1669,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 	}
 
     public void testBug86993() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#define _BEGIN_STD_C extern \"C\" {\n");
         buffer.append("#define _END_STD_C  }\n");
         buffer.append("_BEGIN_STD_C\n");

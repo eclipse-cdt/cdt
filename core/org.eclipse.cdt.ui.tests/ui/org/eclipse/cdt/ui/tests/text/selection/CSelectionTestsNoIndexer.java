@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -241,7 +241,7 @@ public class CSelectionTestsNoIndexer extends BaseSelectionTests {
     }
     
     public void testBasicDefinition() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("extern int MyInt;       // def is in another file  \n"); //$NON-NLS-1$
         buffer.append("extern const int MyConst;   // def is in another file    \n"); //$NON-NLS-1$
         buffer.append("void MyFunc(int);       // often used in header files\n"); //$NON-NLS-1$
@@ -330,7 +330,7 @@ public class CSelectionTestsNoIndexer extends BaseSelectionTests {
 	extern struct X anotherX; // declares anotherX
 	*/
 	public void testCPPSpecDeclsDefs() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
         buffer.append("int a; // defines a\n"); //$NON-NLS-1$
         buffer.append("extern const int c = 1; // defines c\n"); //$NON-NLS-1$
         buffer.append("int f(int x) { return x+a; } // defines f and defines x\n"); //$NON-NLS-1$
@@ -519,7 +519,7 @@ public class CSelectionTestsNoIndexer extends BaseSelectionTests {
   	}
 	
 	public void testNoDefinitions() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("extern int a1; // declares a\n"); //$NON-NLS-1$
 		buffer.append("extern const int c1; // declares c\n"); //$NON-NLS-1$
 		buffer.append("int f1(int); // declares f\n"); //$NON-NLS-1$
@@ -566,7 +566,7 @@ public class CSelectionTestsNoIndexer extends BaseSelectionTests {
 	}
 	
     public void testBug103697() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("int x;\n"); //$NON-NLS-1$
         buffer.append("int foo() {\n"); //$NON-NLS-1$
         buffer.append(" return x;\n"); //$NON-NLS-1$
@@ -584,7 +584,7 @@ public class CSelectionTestsNoIndexer extends BaseSelectionTests {
     }
     
     public void testBug76043() throws Exception {
-    	StringBuffer buffer = new StringBuffer();
+    	StringBuilder buffer = new StringBuilder();
     	buffer.append("int x;\n"); //$NON-NLS-1$
     	buffer.append("int foo() {\n"); //$NON-NLS-1$
     	buffer.append(" return x;\n"); //$NON-NLS-1$
@@ -604,7 +604,7 @@ public class CSelectionTestsNoIndexer extends BaseSelectionTests {
     }
     
     public void testBug78354() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("typedef int TestTypeOne;\n"); //$NON-NLS-1$
         buffer.append("typedef int TestTypeTwo;\n"); //$NON-NLS-1$
         buffer.append("int main()\n"); //$NON-NLS-1$

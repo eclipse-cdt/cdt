@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -435,7 +435,7 @@ public class LRUCache<K, T> implements Cloneable {
 	 * is for debugging purposes only.
 	 */
 	protected String toStringContents() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		int length = fEntryTable.size();
 		Object[] unsortedKeys = new Object[length];
 		String[] unsortedToStrings = new String[length];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems
+ * Copyright (c) 2005, 2016 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public class ProposalFilterPreferencesUtil {
 	 * @return The list of filter names
 	 */
 	public static String getProposalFilternamesAsString() {
-		StringBuffer filterNames = new StringBuffer("0;"); //$NON-NLS-1$
+		StringBuilder filterNames = new StringBuilder("0;"); //$NON-NLS-1$
 		filterNames.append(PreferencesMessages.ProposalFilterPreferencesUtil_defaultFilterName);
 		String[] names = getProposalFilterNames();
 		for (String name : names) {
@@ -145,7 +145,7 @@ public class ProposalFilterPreferencesUtil {
 	 * @return A string representation of the Combo state
 	 */
 	public static String comboStateAsString(Combo combo) {
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 		int selectionIndex = combo.getSelectionIndex();
 		text.append(selectionIndex);
 		String[] entries = combo.getItems();

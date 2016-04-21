@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QnX Software Systems and others.
+ * Copyright (c) 2005, 2016 QnX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class FunctionTemplateDeclaration extends FunctionDeclaration implements 
 
 	@Override
 	public String getTemplateSignature() throws CModelException {
-		StringBuffer sig = new StringBuffer(fTemplate.getTemplateSignature());
+		StringBuilder sig = new StringBuilder(fTemplate.getTemplateSignature());
 		sig.append(this.getParameterClause());
 		if(isConst())
 			sig.append(" const"); //$NON-NLS-1$

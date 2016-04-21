@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -451,7 +451,7 @@ public class CDataSerializer {
 		
 		int kinds = data.getSupportedEntryKinds();
 		int[] allKinds = KindBasedStore.getLanguageEntryKinds();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		boolean found = false;
 		for(int i = 0; i < allKinds.length; i++){
 			if((allKinds[i] & kinds) != 0){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
 
 	public void testObjectStyleMacroExpansionSimpleDeclarator() throws Exception
     {
-        StringBuffer buffer = new StringBuffer( "#define ABC D\n" ); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define ABC D\n" ); //$NON-NLS-1$
         buffer.append( "int ABC;"); //$NON-NLS-1$
         String code = buffer.toString();
         for (ParserLanguage language : languages) {
@@ -74,7 +74,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     public void testObjectMacroExpansionModestDeclarator() throws Exception
     {
-        StringBuffer buffer = new StringBuffer( "#define ABC * D\n" ); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define ABC * D\n" ); //$NON-NLS-1$
         buffer.append( "int ABC;"); //$NON-NLS-1$
         String code = buffer.toString();
         for (ParserLanguage language : languages) {
@@ -121,7 +121,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     public void testObjectMacroExpansionPartialDeclSpec() throws Exception
     {
-        StringBuffer buffer = new StringBuffer( "#define XYZ const\n"); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define XYZ const\n"); //$NON-NLS-1$
         buffer.append( "XYZ int var;"); //$NON-NLS-1$
         String code = buffer.toString();
         for (ParserLanguage language : languages) {
@@ -148,7 +148,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     public void testObjectMacroExpansionNested() throws Exception
     {
-        StringBuffer buffer = new StringBuffer( "#define XYZ const\n"); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define XYZ const\n"); //$NON-NLS-1$
         buffer.append( "#define PO *\n"); //$NON-NLS-1$
         buffer.append( "#define C_PO PO XYZ\n"); //$NON-NLS-1$
         buffer.append( "int C_PO var;"); //$NON-NLS-1$
@@ -180,7 +180,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
 
     public void testObjectMacroExpansionComplex() throws Exception
     {
-        StringBuffer buffer = new StringBuffer( "#define XYZ const\n"); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define XYZ const\n"); //$NON-NLS-1$
         buffer.append( "#define PO *\n"); //$NON-NLS-1$
         buffer.append( "#define C_PO PO XYZ\n"); //$NON-NLS-1$
         buffer.append( "#define IT int\n"); //$NON-NLS-1$
@@ -232,7 +232,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     public void testStdioBug() throws ParserException
     {
-        StringBuffer buffer = new StringBuffer( "#define    _PTR        void *\n"); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define    _PTR        void *\n"); //$NON-NLS-1$
         buffer.append( "#define __cdecl __attribute__ ((__cdecl__))\n" ); //$NON-NLS-1$
         buffer.append( "#define _EXFUN(name, proto)     __cdecl name proto\n"); //$NON-NLS-1$
         buffer.append( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t));\n"); //$NON-NLS-1$
@@ -274,7 +274,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     public void testMacroBindings() throws Exception
     {
-        StringBuffer buffer = new StringBuffer( "#define ABC def\n"); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define ABC def\n"); //$NON-NLS-1$
         buffer.append( "int ABC;\n"); //$NON-NLS-1$
         buffer.append( "#undef ABC\n"); //$NON-NLS-1$
         buffer.append( "#define ABC ghi\n"); //$NON-NLS-1$
@@ -311,7 +311,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     
     public void testBug90978() throws Exception {
-        StringBuffer buffer = new StringBuffer( "#define MACRO mm\n"); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define MACRO mm\n"); //$NON-NLS-1$
         buffer.append( "int MACRO;\n"); //$NON-NLS-1$
         String code = buffer.toString();
         for (ParserLanguage language : languages) {
@@ -332,7 +332,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     }
     
     public void testBug94933() throws Exception {
-        StringBuffer buffer = new StringBuffer( "#define API extern\n" ); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define API extern\n" ); //$NON-NLS-1$
         buffer.append( "#define MYAPI API\n"); //$NON-NLS-1$
         buffer.append( "MYAPI void func() {}" ); //$NON-NLS-1$
         String code = buffer.toString();
@@ -345,7 +345,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
 
     public void testFunctionMacroExpansionWithNameSubstitution_Bug173637() throws Exception
     {
-        StringBuffer buffer = new StringBuffer( "#define PLUS5(x) (x+5)\n"); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#define PLUS5(x) (x+5)\n"); //$NON-NLS-1$
         buffer.append( "#define FUNCTION PLUS5 \n"); //$NON-NLS-1$
         buffer.append( "int var= FUNCTION(1);"); //$NON-NLS-1$
         String code = buffer.toString();
@@ -394,7 +394,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     
     public void testBug186257() throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("typedef char STR; \n"); //$NON-NLS-1$
         sb.append("#define Nullstr Null(STR*) \n"); //$NON-NLS-1$
         sb.append("#define Null(x) ((x)NULL) \n"); //$NON-NLS-1$
@@ -412,7 +412,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     
     public void testArgumentExpansion() throws Exception {
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	sb.append("#define ADD(a,b, c) (a) + (b) + (c) \n"); //$NON-NLS-1$
     	sb.append("#define ONEYONENOE 111111   \n"); //$NON-NLS-1$
     	sb.append("#define TWO 2 \n"); //$NON-NLS-1$
@@ -431,7 +431,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     
     public void testArgumentCapture() throws Exception {
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	sb.append("#define add(x,y) x + y \n"); //$NON-NLS-1$
     	sb.append("#define add2 add(x,   \n"); //$NON-NLS-1$
     	sb.append("int x = add2 z); \n"); //$NON-NLS-1$
@@ -448,7 +448,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     
     
     public void testFunctionMacroNotCalled() throws Exception {
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	sb.append("#define FUNCTION(x) x \n"); //$NON-NLS-1$
     	sb.append("#define YO FUNCTION \n"); //$NON-NLS-1$
     	sb.append("int x = YO; \n"); //$NON-NLS-1$
@@ -464,7 +464,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
     }
     
     public void testBuildFunctionMacroName() throws Exception {
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	sb.append("#define FUN1(x) x \n"); //$NON-NLS-1$
     	sb.append("#define FUN1(x) x \n"); //$NON-NLS-1$
     	sb.append("#define MAKEFUN(num) FUN ## num \n"); //$NON-NLS-1$

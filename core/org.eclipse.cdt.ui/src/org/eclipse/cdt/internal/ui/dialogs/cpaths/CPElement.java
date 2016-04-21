@@ -225,6 +225,10 @@ public class CPElement {
 		}
 	}
 
+	/**
+	 * @deprecated Use {@link #appendEncodedPath(IPath, StringBuilder)}
+	 */
+	@Deprecated
 	public static StringBuffer appendEncodePath(IPath path, StringBuffer buf) {
 		if (path != null) {
 			String str = path.toString();
@@ -235,6 +239,10 @@ public class CPElement {
 		return buf.append(';');
 	}
 
+	/**
+	 * @deprecated Use {@link #appendEncodedSettings(StringBuilder)}
+	 */
+	@Deprecated
 	public StringBuffer appendEncodedSettings(StringBuffer buf) {
 		buf.append(fEntryKind).append(';');
 		appendEncodePath(fPath, buf).append(';');
@@ -297,6 +305,86 @@ public class CPElement {
 				appendEncodePath(sourceAttach, buf);
 				IPath library = (IPath)getAttribute(LIBRARY);
 				appendEncodePath(library, buf);
+				break;
+			default:
+				break;
+		}
+		buf.setLength(buf.length() - 1);
+		return buf;
+	}
+
+	public static StringBuilder appendEncodedPath(IPath path, StringBuilder buf) {
+		if (path != null) {
+			String str = path.toString();
+			buf.append('[').append(str.length()).append(']').append(str);
+		} else {
+			buf.append('[').append(']');
+		}
+		return buf.append(';');
+	}
+
+	public StringBuilder appendEncodedSettings(StringBuilder buf) {
+		buf.append(fEntryKind).append(';');
+		appendEncodedPath(fPath, buf).append(';');
+		buf.append(Boolean.valueOf(fIsExported)).append(';');
+		switch (fEntryKind) {
+			case IPathEntry.CDT_OUTPUT:
+			case IPathEntry.CDT_SOURCE:
+			case IPathEntry.CDT_INCLUDE:
+            case IPathEntry.CDT_INCLUDE_FILE:
+			case IPathEntry.CDT_MACRO:
+            case IPathEntry.CDT_MACRO_FILE:
+				IPath[] exclusion = (IPath[])getAttribute(EXCLUSION);
+				buf.append('[').append(exclusion.length).append(']');
+				for (IPath element : exclusion) {
+					appendEncodedPath(element, buf);
+				}
+				switch (fEntryKind) {
+					case IPathEntry.CDT_INCLUDE:
+						IPath baseRef = (IPath)getAttribute(BASE_REF);
+						appendEncodedPath(baseRef, buf);
+						IPath base = (IPath)getAttribute(BASE);
+						appendEncodedPath(base, buf);
+						IPath include = (IPath)getAttribute(INCLUDE);
+						appendEncodedPath(include, buf);
+						break;
+                    case IPathEntry.CDT_INCLUDE_FILE:
+                        baseRef = (IPath)getAttribute(BASE_REF);
+                        appendEncodedPath(baseRef, buf);
+                        base = (IPath)getAttribute(BASE);
+                        appendEncodedPath(base, buf);
+                        IPath includeFile = (IPath)getAttribute(INCLUDE_FILE);
+                        appendEncodedPath(includeFile, buf);
+                        break;
+					case IPathEntry.CDT_MACRO:
+						baseRef = (IPath)getAttribute(BASE_REF);
+						appendEncodedPath(baseRef, buf);
+						base = (IPath)getAttribute(BASE);
+						appendEncodedPath(base, buf);
+						String symbol = (String)getAttribute(MACRO_NAME);
+						buf.append(symbol).append(';');
+						break;
+                    case IPathEntry.CDT_MACRO_FILE:
+                        baseRef = (IPath)getAttribute(BASE_REF);
+                        appendEncodedPath(baseRef, buf);
+                        base = (IPath)getAttribute(BASE);
+                        appendEncodedPath(base, buf);
+                        IPath macrosFile = (IPath)getAttribute(MACROS_FILE);
+                        appendEncodedPath(macrosFile, buf);
+                        break;
+					default:
+						break;
+				}
+				break;
+			case IPathEntry.CDT_LIBRARY:
+				IPath baseRef = (IPath)getAttribute(BASE_REF);
+				appendEncodedPath(baseRef, buf);
+				IPath base = (IPath)getAttribute(BASE);
+				appendEncodedPath(base, buf);
+				IPath sourceAttach = (IPath)getAttribute(SOURCEATTACHMENT);
+				appendEncodedPath(sourceAttach, buf);
+				IPath library = (IPath)getAttribute(LIBRARY);
+				appendEncodedPath(library, buf);
 				break;
 			default:
 				break;

@@ -206,7 +206,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 
 	@Override
 	public String exportValue() {
-		StringBuffer buf = new StringBuffer("("); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("("); //$NON-NLS-1$
 		for (Iterator<Object> iterator = list.iterator(); iterator.hasNext();) {
 			IProblemPreference d = (IProblemPreference) childDescriptor.clone();
 			d.setValue(iterator.next());

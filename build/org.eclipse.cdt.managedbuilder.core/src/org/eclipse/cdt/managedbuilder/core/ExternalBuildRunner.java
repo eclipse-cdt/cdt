@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems and others.
+ * Copyright (c) 2010, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -225,7 +225,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 		// Convert into env strings
 		List<String> strings= new ArrayList<String>(env.size());
 		for (Entry<String, String> entry : env.entrySet()) {
-			StringBuffer buffer= new StringBuffer(entry.getKey());
+			StringBuilder buffer= new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}

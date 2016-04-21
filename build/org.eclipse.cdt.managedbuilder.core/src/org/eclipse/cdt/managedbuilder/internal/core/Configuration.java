@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2290,7 +2290,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		} else if(ids.length == 0){
 			errorParserIds = EMPTY_STRING;
 		} else {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
 				buf.append(";").append(ids[i]); //$NON-NLS-1$

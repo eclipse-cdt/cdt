@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class DbgUtil {
 	}
 
 	public static String dumpType(IBuildIOType type){
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		buf.append("dumping type: ");	//$NON-NLS-1$
 		buf.append(type.isInput() ? "INPUT" : "OUTPUT");	//$NON-NLS-1$	//$NON-NLS-2$
@@ -66,7 +66,7 @@ public class DbgUtil {
 	}
 	
 	public static String ioTypeResources(IBuildIOType type){
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		
 		IBuildResource rcs[] = type.getResources();
 
@@ -81,7 +81,7 @@ public class DbgUtil {
 	}
 	
 	public static String dumpStep(IBuildStep step, boolean inputs) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		
 		buf.append("dumping step ").append(stepName(step)).append(inputs ? " inputs" : " outputs");	//$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$
 		
@@ -107,7 +107,7 @@ public class DbgUtil {
 	}
 
 	public static String dumpResource(IBuildResource rc, boolean producer){
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		
 		buf.append("dumping resource ").append(resourceName(rc)).append(producer ? " producer:" : " deps:");	//$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$
 		

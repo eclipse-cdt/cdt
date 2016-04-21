@@ -300,7 +300,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		if(items == null)
 			return ""; // $NON-NLS-1$
 
-		StringBuffer path = new StringBuffer(EMPTY_STR);
+		StringBuilder path = new StringBuilder(EMPTY_STR);
 
 		for (int i = 0; i < items.length; i++) {
 			path.append(items[i]);

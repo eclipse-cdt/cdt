@@ -287,7 +287,7 @@ public class MakeTargetDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (useBuilderCommandCheckBox.getSelection() == true) {
-					StringBuffer cmd = new StringBuffer(builderCommand.toString());
+					StringBuilder cmd = new StringBuilder(builderCommand.toString());
 					if (builderArguments != null && !builderArguments.isEmpty()) {
 						cmd.append(" "); //$NON-NLS-1$
 						cmd.append(builderArguments);
@@ -398,7 +398,7 @@ public class MakeTargetDialog extends Dialog {
 		}
 		targetNameText.selectAll();
 		if (targetBuildCommand != null) {
-			StringBuffer cmd = new StringBuffer(targetBuildCommand.toOSString());
+			StringBuilder cmd = new StringBuilder(targetBuildCommand.toOSString());
 			if (targetBuildArguments != null && !targetBuildArguments.isEmpty()) {
 				cmd.append(" "); //$NON-NLS-1$
 				cmd.append(targetBuildArguments);
@@ -433,7 +433,7 @@ public class MakeTargetDialog extends Dialog {
 			return true;
 		}
 		if (!isUsingBuilderCommand) {
-			StringBuffer cmd = new StringBuffer(targetBuildCommand.toOSString()).append(targetBuildArguments);
+			StringBuilder cmd = new StringBuilder(targetBuildCommand.toOSString()).append(targetBuildArguments);
 			if (!getBuildLine().equals(cmd.toString())) {
 				return true;
 			}

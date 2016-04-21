@@ -288,7 +288,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	}
 
 	private static String getIndexedInfoFromDocument(String name, Document document) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		if (document != null && name != null) {
 			Element elem = document.getElementById(name);
@@ -300,7 +300,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 					Node n = nl.item(i);
 					String nodeName = n.getNodeName();
 					if (nodeName.equals("prototype")) { //$NON-NLS-1$
-						StringBuffer prototype = new StringBuffer();
+						StringBuilder prototype = new StringBuilder();
 						++prototypeCount;
 						if (prototypeCount == 1) {
 							buffer.append(" (");
@@ -364,7 +364,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 					Node n2 = macroAttrs.getNamedItem("id"); //$NON-NLS-1$
 					if (n2 != null) {
 						String name = n2.getNodeValue();
-						StringBuffer parms = new StringBuffer();
+						StringBuilder parms = new StringBuilder();
 						NodeList macroChildren = macro.getChildNodes();
 						for (int j = 0; j < macroChildren.getLength(); ++j) {
 							Node x = macroChildren.item(j);
@@ -540,7 +540,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 				try {
 					styleSheetURL= FileLocator.toFileURL(styleSheetURL);
 					try (BufferedReader reader= new BufferedReader(new InputStreamReader(styleSheetURL.openStream()))) {
-						StringBuffer buffer= new StringBuffer(200);
+						StringBuilder buffer= new StringBuilder(200);
 						String line= reader.readLine();
 						while (line != null) {
 							buffer.append(line);

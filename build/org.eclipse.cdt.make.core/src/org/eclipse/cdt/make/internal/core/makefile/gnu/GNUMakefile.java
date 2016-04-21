@@ -234,7 +234,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 				// We still in a define.
 				if (!defines.empty()) {
 					VariableDefinition def = defines.peek();
-					StringBuffer sb = def.getValue();
+					StringBuilder sb = def.getValue();
 					if (sb.length() > 0) {
 						sb.append('\n');
 					}
@@ -711,7 +711,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		String targetName = ""; //$NON-NLS-1$
 
 		String name;
-		StringBuffer value = new StringBuffer();
+		StringBuilder value = new StringBuilder();
 
 		// Check for Target: Variable-assignment
 		isTargetVariable = GNUMakefileUtil.isTargetVariable(line);

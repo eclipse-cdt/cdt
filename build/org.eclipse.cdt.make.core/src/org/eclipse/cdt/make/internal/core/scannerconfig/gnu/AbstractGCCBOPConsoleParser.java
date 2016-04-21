@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,7 +186,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 	protected String[][] tokenize(String line, boolean escapeInsideDoubleQuotes) {
 		ArrayList<String[]> commands= new ArrayList<String[]>();
 		ArrayList<String> tokens= new ArrayList<String>();
-		StringBuffer token= new StringBuffer();
+		StringBuilder token= new StringBuilder();
 
 		final char[] input= line.toCharArray();
 		boolean nextEscaped= false;
@@ -283,14 +283,14 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 		return commands.toArray(new String[commands.size()][]);
 	}
 
-	private void endCommand(StringBuffer token, ArrayList<String> tokens, ArrayList<String[]> commands) {
+	private void endCommand(StringBuilder token, ArrayList<String> tokens, ArrayList<String[]> commands) {
 		endToken(token, tokens);
 		if (!tokens.isEmpty()) {
 			commands.add(tokens.toArray(new String[tokens.size()]));
 			tokens.clear();
 		}
 	}
-	private void endToken(StringBuffer token, ArrayList<String> tokens) {
+	private void endToken(StringBuilder token, ArrayList<String> tokens) {
 		if (token.length() > 0) {
 			tokens.add(token.toString());
 			token.setLength(0);

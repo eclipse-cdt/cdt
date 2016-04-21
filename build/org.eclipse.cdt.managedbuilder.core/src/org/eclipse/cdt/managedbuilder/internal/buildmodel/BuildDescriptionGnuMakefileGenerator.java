@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,7 +122,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 	}
 
 	protected String createVarRef(String var){
-		return new StringBuffer().append(VARREF_PREFIX).append(var).append(VARREF_SUFFIX).toString();
+		return new StringBuilder().append(VARREF_PREFIX).append(var).append(VARREF_SUFFIX).toString();
 	}
 
 	protected void write(Writer writer, IBuildStep step) throws CoreException, IOException {
@@ -162,7 +162,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 	}
 
 	protected String toString(IBuildCommand cmd){
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(cmd.getCommand());
 		String argsString = CDataUtil.arrayToString(cmd.getArgs(), SPACE);
 		if(argsString != null && argsString.length() != 0){
@@ -181,7 +181,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 	}
 
 	protected String toString(IBuildResource[] rcs){
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for(int i = 0; i < rcs.length; i++){
 			if(i != 0)
 				buf.append(SPACE);
@@ -208,7 +208,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 	private String removeDotDotSlashes(String str){
 		int index = str.indexOf(DOT_DOT_SLASH, 0);
 		if(index != -1){
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			int start = 0;
 			for(; index != -1; index = str.indexOf(DOT_DOT_SLASH, start)){
 				buf.append(str.substring(start, index));
@@ -223,7 +223,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 	private String removeDotDotBackslashes(String str){
 		int index = str.indexOf(DOT_DOT_BACKSLASH, 0);
 		if(index != -1){
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			int start = 0;
 			for(; index != -1; index = str.indexOf(DOT_DOT_BACKSLASH, start)){
 				buf.append(str.substring(start, index));

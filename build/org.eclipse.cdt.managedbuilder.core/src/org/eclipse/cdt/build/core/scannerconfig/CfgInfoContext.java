@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public final class CfgInfoContext{
 	public InfoContext toInfoContext(){
 		if(fContext == null){
 			IProject project = fCfg.isPreference() ? null : fCfg.getOwner().getProject();
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(fCfg.getId());
 			if(fRcInfo != null){
 				buf.append(DELIMITER);

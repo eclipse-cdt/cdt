@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,7 +245,7 @@ public class ToolChainModificationTests extends TestCase {
 
 		s1.removeAll(s2);
 		s2.removeAll(s1c);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("checking c1..\n");
 		boolean fail = checkEmpty(s1, buf);
 		buf.append("checking c2..\n");
@@ -255,7 +255,7 @@ public class ToolChainModificationTests extends TestCase {
 			fail(buf.toString());
 	}
 	
-	private boolean checkEmpty(Collection<? extends IBuildObject> c, StringBuffer buf){
+	private boolean checkEmpty(Collection<? extends IBuildObject> c, StringBuilder buf){
 		if(c.size() != 0){
 			buf.append("non-empty dump:\n");
 			for (IBuildObject bo : c) 

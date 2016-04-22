@@ -200,7 +200,7 @@ public class DsfExecutable {
 //            traceBuilder.append(' ');
 //            
 //            final String refstr = LoggingUtils.toString(this, false);
-//            traceBuilder.append("DSF executable was never executed: " + refstr); //$NON-NLS-1$
+//            traceBuilder.append("DSF executable was never executed: ").append(refstr); //$NON-NLS-1$
 //            final String tostr = LoggingUtils.trimTrailingNewlines(this.toString());
 //            if (!tostr.equals(refstr)) {
 //            	traceBuilder.append(" ["); //$NON-NLS-1$

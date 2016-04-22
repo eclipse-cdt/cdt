@@ -996,7 +996,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (browseFilterExtensions != null) {
 			StringBuilder sb = new StringBuilder();
 			for(String ext : browseFilterExtensions) {
-				sb.append(ext + ',');
+				sb.append(ext).append(',');
 			}
 			element.setAttribute(BROWSE_FILTER_EXTENSIONS, sb.toString());
 		}

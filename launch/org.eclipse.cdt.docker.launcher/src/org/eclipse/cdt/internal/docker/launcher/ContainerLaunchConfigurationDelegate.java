@@ -183,7 +183,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 
 				StringBuilder b = new StringBuilder();
 
-				b.append(gdbserverCommand + " " + commandArguments); //$NON-NLS-1$
+				b.append(gdbserverCommand).append(' ').append(commandArguments); //$NON-NLS-1$
 
 				String arguments = getProgramArguments(configuration);
 				if (arguments.trim().length() > 0) {

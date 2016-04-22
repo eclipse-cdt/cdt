@@ -335,7 +335,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                     @Override
                                     protected void handleSuccess() {
                                         StringBuilder finalResult = new StringBuilder();
-                                        finalResult.append(NAME).append(getData().get(IElementPropertiesProvider.PROP_NAME)).append(CRLF);
+                                        	finalResult.append(NAME).append(getData().get(IElementPropertiesProvider.PROP_NAME)).append(CRLF);
 
                                         if (formats != null) {
                                         	for (int i = 0; i < formats.length; i++) {
@@ -363,7 +363,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                         		String childMessage = statuses[i].getMessage().trim();
                                         		// Avoid root message duplication
                                         		if (!childMessage.equals(rootMessage)) {
-                                            		finalResult.append(CRLF + CRLF + (i+1) + PARENTHESES + childMessage);	
+                                        			finalResult.append(CRLF).append(CRLF).append(i + 1).append(PARENTHESES).append(childMessage);
                                         		}
                                         	}
                                     	}

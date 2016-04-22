@@ -361,7 +361,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			// If the parsed string does not match with any previous option
 			// values then consider this option as a additional build option
 			if (!optionValueExist) {
-				addnOptions.append(optionValue + ITool.WHITE_SPACE);
+				addnOptions.append(optionValue).append(ITool.WHITE_SPACE);
 			}
 		}
 		// check whether some of the "STRING" option value or "OBJECTS" type
@@ -378,7 +378,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 					String[] vals = val.split(WHITESPACE);
 					for (int t = 0; t < vals.length; t++) {
 						if (alloptions.indexOf(vals[t]) != -1)
-							buf.append(vals[t] + ITool.WHITE_SPACE);
+							buf.append(vals[t]).append(ITool.WHITE_SPACE);
 					}
 					setOption(((IOption) key),
 							buf.toString().trim());

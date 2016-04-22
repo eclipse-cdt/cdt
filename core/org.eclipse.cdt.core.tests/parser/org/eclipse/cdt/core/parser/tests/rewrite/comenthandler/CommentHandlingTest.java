@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik 
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -145,7 +145,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 		StringBuilder output = new StringBuilder();
 		for (IASTNode actNode : keyTree) {
 			List<IASTComment> comments = map.get(actNode);
-			output.append(getSignature(actNode) + " = "); //$NON-NLS-1$
+			output.append(getSignature(actNode)).append(" = "); //$NON-NLS-1$
 			boolean first = true;
 			for (IASTComment actComment : comments) {
 				if (!first) {

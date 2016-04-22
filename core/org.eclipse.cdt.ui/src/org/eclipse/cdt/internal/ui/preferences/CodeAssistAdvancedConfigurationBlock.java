@@ -210,7 +210,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
     			ModelElement item= (ModelElement) element;
     			boolean included= changed == item ? isInDefaultCategory : item.isInDefaultCategory();
     			if (!included)
-    				buf.append(item.getId() + SEPARATOR);
+    				buf.append(item.getId()).append(SEPARATOR);
     		}
     		
     		String newValue= buf.toString();
@@ -225,7 +225,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
     			ModelElement item= it.next();
     			boolean separate= changed == item ? isSeparate : item.isSeparateCommand();
     			int rank= separate ? i : i + LIMIT;
-    			buf.append(item.getId() + COLON + rank + SEPARATOR);
+    			buf.append(item.getId()).append(COLON).append(rank).append(SEPARATOR);
     		}
     		
     		String newValue= buf.toString();

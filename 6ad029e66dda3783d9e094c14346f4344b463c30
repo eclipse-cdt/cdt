@@ -1,0 +1,525 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_3e8829ff",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "This import seems unnecessary.",
+      "range": {
+        "startLine": 97,
+        "startChar": 49,
+        "endLine": 97,
+        "endChar": 50
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5eca5518",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/constexprevaluation/TestBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "It\u0027s better to assertInstance(value, CStringValue.class) first. This way, if the value is of the wrong kind, the test fails with an assertion failure rather than an exception.",
+      "range": {
+        "startLine": 90,
+        "startChar": 28,
+        "endLine": 90,
+        "endChar": 40
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7ecf1127",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/constexprevaluation/TestBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "Likewise here.",
+      "range": {
+        "startLine": 96,
+        "startChar": 43,
+        "endLine": 96,
+        "endChar": 61
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1ec0cdf6",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/constexprevaluation/TestBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "This could probably have a more descriptive name, like getLastDeclarationInitializer().",
+      "range": {
+        "startLine": 106,
+        "startChar": 36,
+        "endLine": 106,
+        "endChar": 44
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1ee7eda5",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexBindingResolutionTestBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "I think \"shouldRequireHeaderFile\" would be a more descriptive name.",
+      "range": {
+        "startLine": 544,
+        "startChar": 53,
+        "endLine": 544,
+        "endChar": 83
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_def4a54a",
+        "filename": "core/org.eclipse.cdt.core/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "This API filter will not be necessary after addressing my comment about IValue.numericalValue().",
+      "range": {
+        "startLine": 7,
+        "startChar": 41,
+        "endLine": 7,
+        "endChar": 55
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fef16157",
+        "filename": "core/org.eclipse.cdt.core/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "This API filter should not be necessary either after addressing my comment about ICPPASTInitializerClause inheriting from ICPPEvaluationOwner.",
+      "range": {
+        "startLine": 15,
+        "startChar": 41,
+        "endLine": 15,
+        "endChar": 54
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7e21d15b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTBreakStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "ICPPExecutionOwner is not public API, so we shouldn\u0027t have an interface that is public API (like IASTBreakStatement) implement it.\n\nThe usual way to do this is as follows:\n\n  - Make the implementation classes, e.g. CPPASTBreakStatement\n    (which are not public API), implement ICPPExecutionOwner.\n  - At call sites, if you have an IASTBreakStatement, and need\n    to call an ICPPExecutionOwner method on it, cast it to\n    ICPPExecutionOwner.\n\nThis applies to all public interfaces that are made to extend ICPPExecutionOwner in this patch.",
+      "range": {
+        "startLine": 21,
+        "startChar": 59,
+        "endLine": 21,
+        "endChar": 77
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_feeb2118",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "This is a breaking change to a public API. We prefer not to make these without an intermediate deprecation step, to avoid breaking clients (e.g. plugins) that might be using this API.\n\nUsually the way we deal with this is:\n\n  - Add a new method with a different name (e.g. numberValue)\n    that returns Number.\n\n  - Keep numericalValue() returning Long. For values for\n    which numberValue() would return a Number that\u0027s not a\n    Long, numericalValue() can return null.\n\n  - Deprecate numericalValue(). Eventually, it can be\n    removed in a future release.",
+      "range": {
+        "startLine": 30,
+        "startChar": 1,
+        "endLine": 30,
+        "endChar": 7
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7ebb912c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "For each new method added to this interface, please add a comment describing what it does.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_dec905c0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "Since ICPPEvaluation and ITypeMarshalBuffer are not public API types, but IValue is, all IValue methods whose signature mentions these types need to be marked as @noreference (like IValue.getEvaluation() is).",
+      "range": {
+        "startLine": 43,
+        "startChar": 1,
+        "endLine": 43,
+        "endChar": 15
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9ebf7d17",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "We may want to introduce some terminology (e.g. \"subEvaluation\"), and use it in the name of this method (e.g. getSubEvaluation()).",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bebc3923",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "The convention in Java is to name this method equals(), and make it take Object as a parameter. (It then usually returns false if the parameter is not of type IValue).\n\nThe resulting signature is the same as that of Object.equals(), so it doesn\u0027t need to be redeclared here.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5e1c1529",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitializerClause.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "Stray characters added.",
+      "range": {
+        "startLine": 18,
+        "startChar": 62,
+        "endLine": 18,
+        "endChar": 72
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9e05bdce",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitializerClause.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "As with ICPPExecutionOwner, we cannot make a public API extend ICPPEvaluationOwner. The same workaround can be applied.",
+      "range": {
+        "startLine": 22,
+        "startChar": 73,
+        "endLine": 22,
+        "endChar": 92
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5eb6d545",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CStringValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "As this is an expensive operation, we should probably cache its result.",
+      "range": {
+        "startLine": 54,
+        "startChar": 9,
+        "endLine": 54,
+        "endChar": 20
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3eb1094d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CStringValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "There is similar code in CPPASTLiteralExpression.computeStringLiteralSize(). We may want to consider sharing code between the two. (This can be done as a follow-up.)",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9ea69d0b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "What happens if the value of the array bound is dependent?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_be6ef922",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "\"elementType\" would be a better name",
+      "range": {
+        "startLine": 104,
+        "startChar": 8,
+        "endLine": 104,
+        "endChar": 17
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1e7e0dd8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "\"type\" would be a better name, because it doesn\u0027t have to be an array type.",
+      "range": {
+        "startLine": 114,
+        "startChar": 38,
+        "endLine": 114,
+        "endChar": 47
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9e585d84",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "This line doesn\u0027t make sense to me. \"fieldPos\" was computed by calling CPPASTFieldReference.getFieldPosition() on the base field, so it\u0027s a field position in base class\u0027 hierarchy. However, values[] expects an index in classType\u0027s hierarchy. How can this work with multiple inheritance?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3e9829cd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CASTBreakStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "After changing the statement interface classes (e.g. IASTBreakStatement) to not implement ICPPExecutionOwner (and just having the implementation classes implement it) like I suggested, these overrides in the C implementations will become unnecessary (because we can just have the C++ implementations implement them).",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fec6c1ac",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecAliasDeclaration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "What is the purpose of this execution? It doesn\u0027t seem to do anything.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1e936db3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecAliasDeclaration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "This field isn\u0027t used for any purpose, either.",
+      "range": {
+        "startLine": 20,
+        "startChar": 27,
+        "endLine": 20,
+        "endChar": 42
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1e128d16",
+        "filename": "debug/org.eclipse.cdt.debug.core/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-04-22T06:16:26Z",
+      "side": 1,
+      "message": "This filter isn\u0027t related to the changes in this bug at all, and shouldn\u0027t be present.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

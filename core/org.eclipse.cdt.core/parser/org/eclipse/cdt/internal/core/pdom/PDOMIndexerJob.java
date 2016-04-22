@@ -54,6 +54,7 @@ public class PDOMIndexerJob extends Job {
 			}
 			return Status.OK_STATUS;
 		}
+
 		@Override
 		protected void canceling() {
 			// Speed up cancellation by notifying the waiting thread.

@@ -262,9 +262,10 @@ public class ErrorParserManagerTest extends TestCase {
 		
 		StringBuilder buf = new StringBuilder("errorT: ");
 		for (int i = 0; i < 100; i++) {
-			buf.append("la la la la la "+i+" ");
+			buf.append("la la la la la ").append(i).append(' ');
 		}
-		output(buf.toString()+"\n");
+		buf.append('\n');
+		output(buf.toString());
 		end();
 		assertEquals(1, errorList.size());
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
@@ -298,9 +299,10 @@ public class ErrorParserManagerTest extends TestCase {
 		
 		StringBuilder buf = new StringBuilder("errorT: ");
 		for (int i = 0; i < 100; i++) {
-			buf.append("la la la la la "+i+" ");
+			buf.append("la la la la la ").append(i).append(' ');
 		}
-		output(buf.toString()+"\n");
+		buf.append('\n');
+		output(buf.toString());
 		end();
 		assertEquals(1, errorList.size());
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);

@@ -109,7 +109,7 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
     			break;
     		}
 			if (topFrame != null) {
-				str.append("[" + type + "] " + topFrame + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				str.append('[').append(type).append("] ").append(topFrame).append('\n'); //$NON-NLS-1$
 			}
 			else {
 				str.append("<unknown>\n"); //$NON-NLS-1$

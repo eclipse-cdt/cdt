@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class PartitionTokenScannerTest extends TestCase {
 			if (offsetIndex > line.length())
 				offsetIndex= line.length();
 
-			buffer.append("line = " + document.getLineOfOffset(offset) + ": [");
+			buffer.append("line = ").append(document.getLineOfOffset(offset)).append(": [");
 			buffer.append(line.substring(0, offsetIndex));
 			buffer.append("<POS>");
 			buffer.append(line.substring(offsetIndex));

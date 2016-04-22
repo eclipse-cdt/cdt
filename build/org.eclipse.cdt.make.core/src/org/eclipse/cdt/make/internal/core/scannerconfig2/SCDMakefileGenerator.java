@@ -77,7 +77,9 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                 buffer.append(DENDL);
                 buffer.append("COMMANDS := "); //$NON-NLS-1$
                 for (CCommandDSC cmd : commands) {
-                    buffer.append("\t\\"+ENDL+"\t    scd_cmd_"); //$NON-NLS-1$ //$NON-NLS-2$
+                    buffer.append("\t\\"); //$NON-NLS-1$
+                    buffer.append(ENDL);
+                    buffer.append("\t    scd_cmd_"); //$NON-NLS-1$
                     buffer.append(cmd.getCommandId());
                 }
                 buffer.append(DENDL);
@@ -88,7 +90,9 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                     buffer.append(cmd.getCommandId());
                     buffer.append(':');
                     buffer.append(ENDL);
-                    buffer.append("\t@echo begin generating scanner info for $@"+ENDL+"\t"); //$NON-NLS-1$ //$NON-NLS-2$
+                    buffer.append("\t@echo begin generating scanner info for $@"); //$NON-NLS-1$
+                    buffer.append(ENDL);
+                    buffer.append('\t');
                     buffer.append(cmd.getSCDRunnableCommand(true, true)); // quote includes and defines
                     for (String arg : prepareArguments(buildInfo.isUseDefaultProviderCommand(providerId))) { 
                     	buffer.append(' ');

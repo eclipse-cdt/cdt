@@ -41,25 +41,21 @@ public class AutoconfPartitioner extends FastPartitioner {
 	
 	public void printPartitions(ITypedRegion[] partitions)
 	{
-		StringBuilder buffer = new StringBuilder();
-
 		for (int i = 0; i < partitions.length; i++)
 		{
 			try
 			{
-				buffer.append("Partition type: " + partitions[i].getType() //$NON-NLS-1$
+				System.out.print("Partition type: " + partitions[i].getType() //$NON-NLS-1$
 						+ ", offset: " + partitions[i].getOffset() //$NON-NLS-1$
-						+ ", length: " + partitions[i].getLength()); //$NON-NLS-1$
-				buffer.append("\n"); //$NON-NLS-1$
-				buffer.append("Text:\n"); //$NON-NLS-1$
-				buffer.append(super.fDocument.get(partitions[i].getOffset(), partitions[i].getLength()));
-				buffer.append("\n---------------------------\n\n\n"); //$NON-NLS-1$
+						+ ", length: " + partitions[i].getLength() //$NON-NLS-1$
+						+"\nText:\n" //$NON-NLS-1$
+						+ super.fDocument.get(partitions[i].getOffset(), partitions[i].getLength())
+						+ "\n---------------------------\n\n\n"); //$NON-NLS-1$
 			}
 			catch (BadLocationException e)
 			{
 				e.printStackTrace();
 			}
 		}
-		System.out.print(buffer);
 	}
 }

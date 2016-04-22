@@ -208,8 +208,8 @@ public class BaseTestCase extends TestCase {
 			}
 
 			if (statusLog.size() != fExpectedLoggedNonOK) {
-				StringBuilder msg= new StringBuilder("Expected number (" + fExpectedLoggedNonOK + ") of ");
-				msg.append("Non-OK status objects in log differs from actual (" + statusLog.size() + ").\n");
+				StringBuilder msg= new StringBuilder("Expected number (").append(fExpectedLoggedNonOK).append(") of ");
+				msg.append("Non-OK status objects in log differs from actual (").append(statusLog.size()).append(").\n");
 				Throwable cause= null;
 				if (!statusLog.isEmpty()) {
 					synchronized (statusLog) {
@@ -217,7 +217,7 @@ public class BaseTestCase extends TestCase {
 							IStatus[] ss= {status};
 							ss= status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss;
 							for (IStatus s : ss) {
-								msg.append("\t" + s.getMessage() + " ");
+								msg.append('\t').append(s.getMessage()).append(' ');
 
 								Throwable t= s.getException();
 								cause= cause != null ? cause : t;

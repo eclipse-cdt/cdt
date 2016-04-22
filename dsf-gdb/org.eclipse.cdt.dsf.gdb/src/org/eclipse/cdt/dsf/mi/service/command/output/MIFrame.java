@@ -62,19 +62,19 @@ public class MIFrame {
     @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder();
-        buffer.append("level=\"" + level + "\"");  //$NON-NLS-1$//$NON-NLS-2$
-        buffer.append(",addr=\"" + addr + "\"");  //$NON-NLS-1$//$NON-NLS-2$
-        buffer.append(",func=\"" + func + "\"");  //$NON-NLS-1$//$NON-NLS-2$
-        buffer.append(",file=\"" + file + "\"");  //$NON-NLS-1$//$NON-NLS-2$
-        buffer.append(",fullname=\"" + fullname + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+        buffer.append("level=\"").append(level).append('\"');  //$NON-NLS-1$
+        buffer.append(",addr=\"").append(addr).append('\"');  //$NON-NLS-1$
+        buffer.append(",func=\"").append(func).append('\"');  //$NON-NLS-1$
+        buffer.append(",file=\"").append(file).append('\"');  //$NON-NLS-1$
+        buffer.append(",fullname=\"").append(fullname).append('\"');  //$NON-NLS-1$
         buffer.append(",line=\"").append(line).append('"'); //$NON-NLS-1$
         buffer.append(",args=["); //$NON-NLS-1$
         for (int i = 0; i < args.length; i++) {
             if (i != 0) {
                 buffer.append(',');
             }
-            buffer.append("{name=\"" + args[i].getName() + "\"");//$NON-NLS-1$//$NON-NLS-2$
-            buffer.append(",value=\"" + args[i].getValue() + "\"}");//$NON-NLS-1$//$NON-NLS-2$
+            buffer.append("{name=\"").append(args[i].getName()).append('\"');//$NON-NLS-1$
+            buffer.append(",value=\"").append(args[i].getValue()).append("\"}");//$NON-NLS-1$//$NON-NLS-2$
         }
         buffer.append(']');
         return buffer.toString();

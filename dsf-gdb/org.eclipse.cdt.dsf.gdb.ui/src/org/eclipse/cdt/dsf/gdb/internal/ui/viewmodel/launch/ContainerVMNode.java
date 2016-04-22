@@ -368,7 +368,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
         	if (cores != null) {
         		StringBuilder str = new StringBuilder();
         		for (String core : cores) {
-        			str.append(core + ","); //$NON-NLS-1$
+        			str.append(core).append(',');
         		}
         		if (str.length() > 0) {
         			coresStr = str.substring(0, str.length() - 1);

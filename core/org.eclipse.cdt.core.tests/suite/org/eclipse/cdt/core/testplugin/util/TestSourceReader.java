@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,7 +154,7 @@ public class TestSourceReader {
 			    for (String line = br.readLine(); line != null; line = br.readLine()) {
 			    	line = line.replaceFirst("^\\s*", ""); // Replace leading whitespace, preserve trailing
 			    	if (line.startsWith("//")) {
-			    		content.append(line.substring(2) + "\n");
+			    		content.append(line.substring(2)).append('\n');
 			    	} else {
 			    		if (!line.startsWith("@") && content.length() > 0) {
 			    			contents.add(content);

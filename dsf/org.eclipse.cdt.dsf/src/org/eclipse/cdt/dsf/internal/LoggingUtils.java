@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Freescale Semiconductor, Inc. and others.
+ * Copyright (c) 2009, 2016 Freescale Semiconductor, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class LoggingUtils {
 	public static String toString(String[] strings) {
 		StringBuilder str = new StringBuilder("{"); //$NON-NLS-1$
 		for (String s : strings) {
-			str.append(s + ", "); //$NON-NLS-1$
+			str.append(s).append(", "); //$NON-NLS-1$
 		}
 		if (strings.length > 0) {
 			str.delete(str.length()-2, Integer.MAX_VALUE); // remove the trailing comma and space

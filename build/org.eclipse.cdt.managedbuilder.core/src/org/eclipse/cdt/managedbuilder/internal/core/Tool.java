@@ -2707,7 +2707,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 							if(list != null){
 								for (String temp : list) {
 									if(temp.length() > 0 && !temp.equals(EMPTY_QUOTED_STRING))
-										sb.append( evaluateCommand( listCmd, temp ) + WHITE_SPACE );
+										sb.append( evaluateCommand( listCmd, temp ) ).append( WHITE_SPACE );
 								}
 							}
 						}

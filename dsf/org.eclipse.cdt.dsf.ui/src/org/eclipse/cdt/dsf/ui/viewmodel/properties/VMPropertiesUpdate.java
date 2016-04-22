@@ -137,7 +137,7 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
         // trace our result
         if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
         	StringBuilder str = new StringBuilder();
-        	str.append(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " + LoggingUtils.toString(getElement())); //$NON-NLS-1$ //$NON-NLS-2$
+        	str.append(DsfPlugin.getDebugTime()).append(' ').append(LoggingUtils.toString(this)).append(" marked done; element = ").append(LoggingUtils.toString(getElement())); //$NON-NLS-1$
         	if (fValues != null) {
 	            Iterator<String> keyIter = fValues.keySet().iterator();
 	            while (keyIter.hasNext()) {
@@ -146,7 +146,7 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
 	            	if (val instanceof String[]) {
 	            		val = LoggingUtils.toString((String[])val);
 	            	}
-	                str.append("   " + prop + "=" + val + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+	                str.append("   ").append(prop).append("=").append(val).append('\n'); //$NON-NLS-1$ //$NON-NLS-2$
 	            }
 	            str.deleteCharAt(str.length()-1); // remove trailing linefeed
         	}

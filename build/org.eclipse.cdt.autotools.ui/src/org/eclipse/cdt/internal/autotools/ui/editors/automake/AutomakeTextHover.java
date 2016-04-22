@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Red Hat Inc..
+ * Copyright (c) 2006, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 					StringBuilder toReturn = new StringBuilder();
 					toReturn.append(preReqs[0]);
 					for (int i = 1; i < preReqs.length; i++) {
-						toReturn.append(" " + preReqs[i]);
+						toReturn.append(' ').append(preReqs[i]);
 					}
 					return toReturn.toString();
 				}

@@ -238,16 +238,16 @@ public class GDBTypeParser {
 			StringBuilder sb = new StringBuilder();
 			switch (getType()) {
 				case FUNCTION :
-					sb.append(" function returning " + (hasChild() ? child.verbose() : ""));  //$NON-NLS-1$//$NON-NLS-2$
+					sb.append(" function returning ").append(hasChild() ? child.verbose() : "");  //$NON-NLS-1$//$NON-NLS-2$
 					break;
 				case ARRAY :
-					sb.append(" array[" + dimension + "]" + " of " + (hasChild() ? child.verbose() : ""));  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					sb.append(" array[").append(dimension).append("] of ").append(hasChild() ? child.verbose() : "");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 					break;
 				case REFERENCE :
-					sb.append(" reference to " + (hasChild() ? child.verbose() : ""));  //$NON-NLS-1$//$NON-NLS-2$
+					sb.append(" reference to ").append(hasChild() ? child.verbose() : "");  //$NON-NLS-1$//$NON-NLS-2$
 					break;
 				case POINTER :
-					sb.append(" pointer to " + (hasChild() ? child.verbose() : ""));  //$NON-NLS-1$//$NON-NLS-2$
+					sb.append(" pointer to ").append(hasChild() ? child.verbose() : "");  //$NON-NLS-1$//$NON-NLS-2$
 					break;
 			}
 			return sb.toString();

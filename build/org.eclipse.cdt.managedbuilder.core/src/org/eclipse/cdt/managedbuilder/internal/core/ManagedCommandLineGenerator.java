@@ -114,10 +114,13 @@ public class ManagedCommandLineGenerator implements
 	}
 
 	private String stringArrayToString( String[] array ) {
-		if( array == null || array.length <= 0 ) return ""; // $NON-NLS-1$
+		if( array == null || array.length <= 0 ) return ""; //$NON-NLS-1$
 		StringBuilder sb = new StringBuilder();
-		for( int i = 0; i < array.length; i++ )
-			sb.append( array[i] + WHITESPACE );
+		for( int i = 0; i < array.length; i++ ) {
+			if(i > 0) // we add whitespace after each but not first so .trim() is a no-op
+				sb.append(WHITESPACE);
+			sb.append(array[i]);
+		}
 		return sb.toString().trim();
 	}
 

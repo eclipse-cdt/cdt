@@ -645,10 +645,10 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				break;
 			}
 
-			result.append(Messages.ToolChainEditTab_15 +
-					(i+1) + Messages.ToolChainEditTab_16 +
-					SPACE + t + SPACE + o + SPACE + n +
-					Messages.ToolChainEditTab_17);
+			result.append(Messages.ToolChainEditTab_15)
+					.append(i+1).append(Messages.ToolChainEditTab_16)
+					.append(SPACE).append(t).append(SPACE).append(o).append(SPACE).append(n)
+					.append(Messages.ToolChainEditTab_17);
 		}
 		String s = result.toString();
 		if (s.trim().length() == 0)

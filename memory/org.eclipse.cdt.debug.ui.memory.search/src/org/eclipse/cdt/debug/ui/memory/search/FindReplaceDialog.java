@@ -1342,7 +1342,7 @@ public class FindReplaceDialog extends SelectionDialog
 				return ""; //$NON-NLS-1$
 			StringBuilder buf = new StringBuilder();
 			for(int i = 0; i < fBytes.length; i++)
-				buf.append(BigInteger.valueOf(fBytes[i]).toString(16) + " "); //$NON-NLS-1$
+				buf.append(BigInteger.valueOf(fBytes[i]).toString(16)).append(' ');
 			return buf.toString();
 		}
 		

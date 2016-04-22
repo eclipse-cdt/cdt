@@ -451,10 +451,10 @@ public class Buffer implements IBuffer {
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("Owner: " + ((CElement)this.owner).toString()); //$NON-NLS-1$
-		buffer.append("\nHas unsaved changes: " + this.hasUnsavedChanges()); //$NON-NLS-1$
-		buffer.append("\nIs readonly: " + this.isReadOnly()); //$NON-NLS-1$
-		buffer.append("\nIs closed: " + this.isClosed()); //$NON-NLS-1$
+		buffer.append("Owner: ").append(((CElement)this.owner).toString()); //$NON-NLS-1$
+		buffer.append("\nHas unsaved changes: ").append(this.hasUnsavedChanges()); //$NON-NLS-1$
+		buffer.append("\nIs readonly: ").append(this.isReadOnly()); //$NON-NLS-1$
+		buffer.append("\nIs closed: ").append(this.isClosed()); //$NON-NLS-1$
 		buffer.append("\nContents:\n"); //$NON-NLS-1$
 		char[] contents = this.getCharacters();
 		if (contents == null) {

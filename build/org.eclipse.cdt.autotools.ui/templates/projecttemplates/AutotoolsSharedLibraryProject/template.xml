@@ -86,11 +86,6 @@
 				<simple name="replaceable" value="true"/>
 			</element>
 			<element>
-				<simple name="source" value="ChangeLog"/>
-				<simple name="target" value="ChangeLog"/>
-				<simple name="replaceable" value="true"/>
-			</element>
-			<element>
 				<simple name="source" value="COPYING"/>
 				<simple name="target" value="COPYING"/>
 				<simple name="replaceable" value="true"/>

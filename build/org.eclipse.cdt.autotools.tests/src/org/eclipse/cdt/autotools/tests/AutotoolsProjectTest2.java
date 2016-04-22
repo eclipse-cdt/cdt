@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Red Hat Inc. and others.
+ * Copyright (c) 2008, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,9 +54,7 @@ public class AutotoolsProjectTest2 {
 		Path p = new Path("zip/project2.zip");
 		ProjectTools.addSourceContainerWithImport(testProject, "src", p);
 		assertTrue(testProject.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID));
-		org.eclipse.core.runtime.Path x = new org.eclipse.core.runtime.Path("src/ChangeLog");
-		assertTrue(testProject.exists(x));
-		x = new org.eclipse.core.runtime.Path("src/configure");
+		org.eclipse.core.runtime.Path x = new org.eclipse.core.runtime.Path("src/configure");
 		ProjectTools.setConfigDir(testProject, "src");
 		ProjectTools.markExecutable(testProject, "src/autogen.sh");
 		x = new org.eclipse.core.runtime.Path("src/configure");

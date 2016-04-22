@@ -102,7 +102,7 @@ public class Test30_2_CommandLineGenerator implements
 				else if( varName.compareToIgnoreCase( OUTPUT_PREFIX_PRM_NAME ) == 0 ) sb.append( info.commandOutputPrefix.trim() );
 				else if( varName.compareToIgnoreCase( OUTPUT_PRM_NAME ) == 0 ) sb.append( info.commandOutput.trim() );
 				else if( varName.compareToIgnoreCase( INPUTS_PRM_NAME ) == 0 ) sb.append( info.commandInputs );
-				else sb.append( VAR_FIRST_CHAR + VAR_SECOND_CHAR + varName + VAR_FINAL_CHAR );
+				else sb.append(VAR_FIRST_CHAR).append(VAR_SECOND_CHAR).append(varName).append(VAR_FINAL_CHAR);
 			} catch( Exception ex ) {
 				// 	do nothing for a while
 			}

@@ -87,10 +87,10 @@ public class DbgUtil {
 		
 		IBuildIOType types[] = inputs ? step.getInputIOTypes() : step.getOutputIOTypes();
 		
-		buf.append("\n");	//$NON-NLS-1$
+		buf.append('\n');
 		
 		for(int i = 0; i < types.length; i++){
-			buf.append("ioType " + i + ":");	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append("ioType ").append(i).append(':'); //$NON-NLS-1$
 			buf.append(ioTypeResources(types[i]));
 		}
 		

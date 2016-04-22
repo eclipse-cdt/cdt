@@ -39,7 +39,7 @@ public class MIRegisterValue {
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("number=\"").append(number).append('"'); //$NON-NLS-1$
-        buffer.append(',').append("value=\"" + value + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+        buffer.append(',').append("value=\"").append(value).append('\"'); //$NON-NLS-1$
         return buffer.toString();
     }
 

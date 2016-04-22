@@ -363,7 +363,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                         		String childMessage = statuses[i].getMessage().trim();
                                         		// Avoid root message duplication
                                         		if (!childMessage.equals(rootMessage)) {
-                                            		finalResult.append(CRLF + CRLF + (i+1) + PARENTHESES + childMessage);	
+								finalResult.append(CRLF).append(CRLF).append(i+1).append(PARENTHESES).append(childMessage);
                                         		}
                                         	}
                                     	}

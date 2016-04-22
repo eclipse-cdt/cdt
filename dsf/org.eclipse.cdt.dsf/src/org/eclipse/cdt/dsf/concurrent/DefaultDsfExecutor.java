@@ -259,7 +259,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 final String refstr = LoggingUtils.toString(executable, false);
                 String tostr = LoggingUtils.trimTrailingNewlines(executable.toString());
                 traceBuilder.append("\n\t\t"); //$NON-NLS-1$
-                traceBuilder.append("instance = " + refstr); //$NON-NLS-1$
+                traceBuilder.append("instance = ").append(refstr); //$NON-NLS-1$
                 if (!tostr.equals(refstr)) {
                 	traceBuilder.append(" ["); //$NON-NLS-1$
                 	traceBuilder.append(tostr);

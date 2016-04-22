@@ -240,7 +240,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
 					StringBuilder name = new StringBuilder();
-					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be")); //$NON-NLS-1$ //$NON-NLS-2$
+					name.append(bin.getCPU()).append(bin.isLittleEndian() ? "le" : "be"); //$NON-NLS-1$ //$NON-NLS-2$
 					name.append(" - "); //$NON-NLS-1$
 					name.append(bin.getPath().toString());
 					return name.toString();

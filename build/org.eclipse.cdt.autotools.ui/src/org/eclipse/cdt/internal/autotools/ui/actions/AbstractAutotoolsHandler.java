@@ -130,7 +130,7 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 			if (currentWord.startsWith("'")) { //$NON-NLS-1$
 				StringBuilder tmpTarget = new StringBuilder();
 				while (!currentWord.endsWith("'")) { //$NON-NLS-1$
-					tmpTarget.append(currentWord + " "); //$NON-NLS-1$
+					tmpTarget.append(currentWord).append(' ');
 					if (!st.hasMoreTokens()) {
 						// quote not closed properly, so return null
 						return null;
@@ -146,7 +146,7 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 			if (currentWord.startsWith("\"")) { //$NON-NLS-1$
 				StringBuilder tmpTarget = new StringBuilder();
 				while (!currentWord.endsWith("\"")) { //$NON-NLS-1$
-					tmpTarget.append(currentWord + " "); //$NON-NLS-1$
+					tmpTarget.append(currentWord).append(' ');
 					if (!st.hasMoreTokens()) {
 						// double quote not closed properly, so return null
 						return null;
@@ -340,7 +340,7 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 							// POSIX-compliant shells.
 							StringBuilder command1 = new StringBuilder(strippedCommand);
 							for (String arg : argumentList) {
-								command1.append(" " + arg);
+								command1.append(' ').append(arg);
 							}
 							newArgumentList = new String[] { "-c", command1.toString() };
 

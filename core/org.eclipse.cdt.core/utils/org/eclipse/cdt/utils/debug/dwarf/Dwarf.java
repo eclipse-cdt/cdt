@@ -90,11 +90,11 @@ public class Dwarf {
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Length: " + length).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append("Version: " + version).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append("Abbreviation: " + abbreviationOffset).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append("Address size: " + addressSize).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append("Offset size: " + offsetSize).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("Length: ").append(length).append('\n'); //$NON-NLS-1$
+			sb.append("Version: ").append(version).append('\n'); //$NON-NLS-1$
+			sb.append("Abbreviation: ").append(abbreviationOffset).append('\n'); //$NON-NLS-1$
+			sb.append("Address size: ").append(addressSize).append('\n'); //$NON-NLS-1$
+			sb.append("Offset size: ").append(offsetSize).append('\n'); //$NON-NLS-1$
 			return sb.toString();
 		}
 	}
@@ -126,8 +126,8 @@ public class Dwarf {
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("name: " + Long.toHexString(name)); //$NON-NLS-1$
-			sb.append(" value: " + Long.toHexString(form)); //$NON-NLS-1$
+			sb.append("name: ").append(Long.toHexString(name)); //$NON-NLS-1$
+			sb.append(" value: ").append(Long.toHexString(form)); //$NON-NLS-1$
 			return sb.toString();
 		}
 	}

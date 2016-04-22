@@ -463,10 +463,10 @@ public class ManagedBuildTestHelper {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("File ").append(testFileLocation.lastSegment()).append(" does not match its benchmark.\n ");
 				buffer.append("expected:\n ");
-				buffer.append("\"").append(benchmarkBuffer).append("\"");
+				buffer.append('"').append(benchmarkBuffer).append('"');
 				buffer.append("\n\n ");
 				buffer.append("but was:\n ");
-				buffer.append("\"").append(testBuffer).append("\"");
+				buffer.append('"').append(testBuffer).append('"');
 				buffer.append("\n\n ");
 
 				buffer.append(">>>>>>>>>>>>>>>start diff: \n");
@@ -787,10 +787,10 @@ public class ManagedBuildTestHelper {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("File ").append(tFile.getName()).append(" does not match its benchmark.\n ");
 			buffer.append("expected:\n ");
-			buffer.append("\"").append(benchmarkBuffer).append("\"");
+			buffer.append('"').append(benchmarkBuffer).append('"');
 			buffer.append("\n\n ");
 			buffer.append("but was:\n ");
-			buffer.append("\"").append(testBuffer).append("\"");
+			buffer.append('"').append(testBuffer).append('"');
 			buffer.append("\n\n ");
 
 			buffer.append(">>>>>>>>>>>>>>>start diff: \n");

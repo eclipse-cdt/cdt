@@ -671,13 +671,13 @@ public class CElementDelta implements ICElementDelta {
 		if ((changeFlags & ICElementDelta.F_MOVED_FROM) != 0) {
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
-			//buffer.append("MOVED_FROM(" + ((CElement)getMovedFromElement()).toStringWithAncestors() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			//buffer.append("MOVED_FROM(").append(((CElement)getMovedFromElement()).toStringWithAncestors().append(')'); //$NON-NLS-1$
 			prev = true;
 		}
 		if ((changeFlags & ICElementDelta.F_MOVED_TO) != 0) {
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
-			//buffer.append("MOVED_TO(" + ((CElement)getMovedToElement()).toStringWithAncestors() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			//buffer.append("MOVED_TO(").append(((CElement)getMovedToElement()).toStringWithAncestors()).append(')'); //$NON-NLS-1$
 			prev = true;
 		}
 		if ((changeFlags & ICElementDelta.F_MODIFIERS) != 0) {

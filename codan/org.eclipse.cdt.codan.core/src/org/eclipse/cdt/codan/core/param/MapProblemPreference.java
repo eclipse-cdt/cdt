@@ -148,7 +148,7 @@ public class MapProblemPreference extends AbstractProblemPreference
 						continue;
 					}
 				}
-				buf.append(key + "=>" + d.exportValue()); //$NON-NLS-1$
+				buf.append(key).append("=>").append(d.exportValue()); //$NON-NLS-1$
 				if (iterator.hasNext())
 					buf.append(","); //$NON-NLS-1$
 			}

@@ -254,7 +254,7 @@ public class VisualizerThread
 
 			// Add the address
 			if (dmData.getAddress() != null) {
-				label.append("- 0x" + dmData.getAddress().toString(16)); //$NON-NLS-1$
+				label.append("- 0x").append(dmData.getAddress().toString(16)); //$NON-NLS-1$
 			}
 			this.m_locInfo = label.toString();
 		}

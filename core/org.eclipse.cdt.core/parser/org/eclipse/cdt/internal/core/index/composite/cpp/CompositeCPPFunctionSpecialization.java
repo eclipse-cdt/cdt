@@ -43,7 +43,7 @@ public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction imp
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
+		result.append(getName()).append(' ').append(ASTTypeUtil.getParameterTypeString(getType()));
 		return result.toString();
 	}
 

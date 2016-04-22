@@ -510,21 +510,21 @@ public class ToolReference implements IToolReference {
 							boolCmd = option.getCommandFalse();
 						}
 						if (boolCmd != null && boolCmd.length() > 0) {
-							buf.append(boolCmd + WHITE_SPACE);
+							buf.append(boolCmd).append(WHITE_SPACE);
 						}
 						break;
 
 					case IOption.ENUMERATED :
 						String enumVal = option.getEnumCommand(option.getSelectedEnum());
 						if (enumVal.length() > 0) {
-							buf.append(enumVal + WHITE_SPACE);
+							buf.append(enumVal).append(WHITE_SPACE);
 						}
 						break;
 
 					case IOption.TREE :
 						String treeVal = option.getCommand(option.getStringValue());
 						if (treeVal.length() > 0) {
-							buf.append(treeVal + WHITE_SPACE);
+							buf.append(treeVal).append(WHITE_SPACE);
 						}
 						break;
 
@@ -533,7 +533,7 @@ public class ToolReference implements IToolReference {
 						String val = option.getStringValue();
 						if (val.length() > 0) {
 							if (strCmd != null) buf.append(strCmd);
-							buf.append(val + WHITE_SPACE);
+							buf.append(val).append(WHITE_SPACE);
 						}
 						break;
 
@@ -543,7 +543,7 @@ public class ToolReference implements IToolReference {
 						for (int j = 0; j < list.length; j++) {
 							String temp = list[j];
 							if (cmd != null) buf.append(cmd);
-							buf.append(temp + WHITE_SPACE);
+							buf.append(temp).append(WHITE_SPACE);
 						}
 						break;
 
@@ -552,7 +552,7 @@ public class ToolReference implements IToolReference {
 						String[] paths = option.getIncludePaths();
 						for (int j = 0; j < paths.length; j++) {
 							String temp = paths[j];
-							buf.append(incCmd + temp + WHITE_SPACE);
+							buf.append(incCmd).append(temp).append(WHITE_SPACE);
 						}
 						break;
 
@@ -561,7 +561,7 @@ public class ToolReference implements IToolReference {
 						String[] symbols = option.getDefinedSymbols();
 						for (int j = 0; j < symbols.length; j++) {
 							String temp = symbols[j];
-							buf.append(defCmd + temp + WHITE_SPACE);
+							buf.append(defCmd).append(temp).append(WHITE_SPACE);
 						}
 						break;
 

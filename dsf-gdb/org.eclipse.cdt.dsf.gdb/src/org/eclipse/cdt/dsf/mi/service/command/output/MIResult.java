@@ -45,7 +45,7 @@ public class MIResult {
             if (!v.isEmpty() && (v.charAt(0) == '[' || v.charAt(0) =='{')) {
                 buffer.append(v); 
             } else {
-                buffer.append("\"" + value.toString() + "\"");  //$NON-NLS-1$ //$NON-NLS-2$
+                buffer.append('\"').append(v).append('\"');
             }
         }
         return buffer.toString();

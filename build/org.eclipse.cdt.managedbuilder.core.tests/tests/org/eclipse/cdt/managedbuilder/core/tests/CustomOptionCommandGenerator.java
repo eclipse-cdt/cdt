@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Texas Instruments and others.
+ * Copyright (c) 2011, 2016 Texas Instruments and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,11 +34,14 @@ public class CustomOptionCommandGenerator implements IOptionCommandGenerator
 				if(list != null) {
 					StringBuilder sb = new StringBuilder();
 
+					sb.append(option.getCommand()).append('\"');
+
 					for(String entry : list) {
-						sb.append(entry + ';');
+						sb.append(entry).append(';');
 					}
 
-					return option.getCommand() + '\"' + sb.toString() + '\"';
+					sb.append('\"');
+					return sb.toString();
 				}
 			}
 			catch(Exception x) {

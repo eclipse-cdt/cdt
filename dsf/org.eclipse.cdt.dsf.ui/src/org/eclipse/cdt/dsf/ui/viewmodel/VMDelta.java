@@ -284,10 +284,10 @@ public class VMDelta extends ModelDelta {
 		for (int i = 0; i < depth; i++) {
 			indent += '\t';
 		}
-        buf.append(indent + "\tElement: "); //$NON-NLS-1$
+        buf.append(indent).append("\tElement: "); //$NON-NLS-1$
         buf.append(delta.getElement());
         buf.append('\n');
-        buf.append(indent + "\t\tFlags: "); //$NON-NLS-1$
+        buf.append(indent).append("\t\tFlags: "); //$NON-NLS-1$
         int flags = delta.getFlags();
         if (flags == 0) {
             buf.append("NO_CHANGE"); //$NON-NLS-1$
@@ -327,7 +327,7 @@ public class VMDelta extends ModelDelta {
             }
         }
         buf.append('\n');
-        buf.append(indent + "\t\tIndex: "); //$NON-NLS-1$
+        buf.append(indent).append("\t\tIndex: "); //$NON-NLS-1$
         buf.append(delta.fIndex);
         buf.append(" Child Count: "); //$NON-NLS-1$
         buf.append(delta.fChildCount);

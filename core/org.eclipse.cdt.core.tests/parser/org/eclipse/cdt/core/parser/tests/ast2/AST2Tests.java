@@ -3847,9 +3847,9 @@ public class AST2Tests extends AST2TestBase {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define M0 1\n");
 		for (int i = 1; i < depth; i++) {
-			buffer.append("#define M" + i + " (M" + (i-1) + "+1)\n");
+			buffer.append("#define M").append(i).append(" (M").append(i-1).append("+1)\n");
 		}
-		buffer.append("int a= M" + (depth-1) + ";\n");
+		buffer.append("int a= M").append(depth-1).append(";\n");
 		long time= System.currentTimeMillis();
 		parse(buffer.toString(), CPP);
 		parse(buffer.toString(), C);

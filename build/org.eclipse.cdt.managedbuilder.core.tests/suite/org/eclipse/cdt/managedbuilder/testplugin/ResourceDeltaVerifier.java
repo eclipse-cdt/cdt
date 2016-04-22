@@ -538,7 +538,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			checkChildren(delta);
 		} catch (Exception e) {
 			e.printStackTrace();
-			fMessage.append("Exception during event notification:" + e.getMessage());
+			fMessage.append("Exception during event notification:");
+			fMessage.append(e.getMessage());
 			fIsDeltaValid = false;
 		}
 	}

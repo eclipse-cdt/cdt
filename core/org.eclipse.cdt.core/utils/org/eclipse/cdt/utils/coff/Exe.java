@@ -93,7 +93,7 @@ public class Exe {
 
 			buffer.append("EXE HEADER VALUES").append(NL); //$NON-NLS-1$
 			buffer.append("signature "); //$NON-NLS-1$
-			buffer.append((char)e_signature[0] + " " + (char)e_signature[1]); //$NON-NLS-1$
+			buffer.append((char)e_signature[0]).append(' ').append((char)e_signature[1]);
 			buffer.append(NL);
 
 			buffer.append("lastsize: 0x"); //$NON-NLS-1$

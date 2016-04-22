@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1781,7 +1781,7 @@ public class Scribe {
 	@Override
 	public String toString() {
 		StringBuilder buffer= new StringBuilder();
-		buffer.append("(page width = " + pageWidth + ") - (tabChar = "); //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("(page width = ").append(pageWidth).append(") - (tabChar = "); //$NON-NLS-1$//$NON-NLS-2$
 		switch (tabChar) {
 		case DefaultCodeFormatterOptions.TAB:
 			buffer.append("TAB"); //$NON-NLS-1$
@@ -1793,11 +1793,11 @@ public class Scribe {
 			buffer.append("MIXED"); //$NON-NLS-1$
 		}
 		buffer
-			.append(") - (tabSize = " + tabLength + ")") //$NON-NLS-1$//$NON-NLS-2$
+			.append(") - (tabSize = ").append(tabLength).append(')') //$NON-NLS-1$/
 			.append(lineSeparator)
-			.append("(line = " + line + ") - (column = " + column + ") - (identationLevel = " + indentationLevel + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
+			.append("(line = ").append(line).append(") - (column = ").append(column).append(") - (identationLevel = ").append(indentationLevel).append(')') //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$
 			.append(lineSeparator)
-			.append("(needSpace = " + needSpace + ") - (lastNumberOfNewLines = " + lastNumberOfNewLines + ") - (checkLineWrapping = " + checkLineWrapping + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
+			.append("(needSpace = ").append(needSpace).append(") - (lastNumberOfNewLines = ").append(lastNumberOfNewLines).append(") - (checkLineWrapping = ").append(checkLineWrapping).append(')') //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$
 			.append(lineSeparator).append(
 					"==================================================================================") //$NON-NLS-1$
 			.append(lineSeparator);

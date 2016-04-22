@@ -1057,7 +1057,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		//  Write every macro to the file
 		for (Entry<String, List<String>> entry : outputMacros.entrySet()) {
-			macroBuffer.append(entry.getKey() + " :=");	//$NON-NLS-1$
+			macroBuffer.append(entry.getKey()).append(" :="); //$NON-NLS-1$
 			valueList = entry.getValue();
 			for (String path : valueList) {
 				// These macros will also be used within commands.
@@ -1152,16 +1152,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// Add the macros to the makefile
 		for (Entry<String, List<IPath>> entry : buildSrcVars.entrySet()) {
 			String macroName = entry.getKey();
-			buffer.append(macroName + WHITESPACE + ":=" + WHITESPACE + NEWLINE);	//$NON-NLS-1$
+			buffer.append(macroName).append(WHITESPACE).append(":=").append(WHITESPACE).append(NEWLINE); //$NON-NLS-1$
 		}
 		Set<Entry<String, List<IPath>>> set = buildOutVars.entrySet();
 		for (Entry<String, List<IPath>> entry : set) {
 			String macroName = entry.getKey();
-			buffer.append(macroName + WHITESPACE + ":=" + WHITESPACE + NEWLINE);	//$NON-NLS-1$
+			buffer.append(macroName).append(WHITESPACE).append(":=").append(WHITESPACE).append(NEWLINE); //$NON-NLS-1$
 		}
 
 		// Add a list of subdirectories to the makefile
-		buffer.append(NEWLINE + addSubdirectories());
+		buffer.append(NEWLINE).append(addSubdirectories());
 
 		// Save the file
 		save(buffer, fileHandle);
@@ -1217,11 +1217,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		StringBuffer buffer = new StringBuffer();
 
 		// Add the ROOT macro
-		//buffer.append("ROOT := .." + NEWLINE); //$NON-NLS-1$
+		//buffer.append("ROOT := ..").append(NEWLINE); //$NON-NLS-1$
 		//buffer.append(NEWLINE);
 
 		// include makefile.init supplementary makefile
-		buffer.append("-include " + ROOT + SEPARATOR + MAKEFILE_INIT + NEWLINE); //$NON-NLS-1$
+		buffer.append("-include ").append(ROOT).append(SEPARATOR).append(MAKEFILE_INIT).append(NEWLINE); //$NON-NLS-1$
 		buffer.append(NEWLINE);
 
 		// Get the clean command from the build model
@@ -1238,13 +1238,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		} catch (BuildMacroException e) {
 		}
 
-		buffer.append(cleanCommand + NEWLINE);
+		buffer.append(cleanCommand).append(NEWLINE);
 
 		buffer.append(NEWLINE);
 
 		// Now add the source providers
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(SRC_LISTS) + NEWLINE);
-		buffer.append("-include sources.mk" + NEWLINE); //$NON-NLS-1$
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(SRC_LISTS)).append(NEWLINE);
+		buffer.append("-include sources.mk").append(NEWLINE); //$NON-NLS-1$
 
 		// Add includes for each subdir in child-subdir-first order (required for makefile rule matching to work).
 		List<String> subDirList = new ArrayList<String>();
@@ -1255,33 +1255,33 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 		Collections.sort(subDirList, Collections.reverseOrder());
 		for (String dir : subDirList) {
-			buffer.append("-include " + escapeWhitespaces(dir) + SEPARATOR + "subdir.mk"+ NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append("-include ").append(escapeWhitespaces(dir)).append(SEPARATOR).append("subdir.mk").append(NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		buffer.append("-include subdir.mk" + NEWLINE); //$NON-NLS-1$
+		buffer.append("-include subdir.mk").append(NEWLINE); //$NON-NLS-1$
 
-		buffer.append("-include objects.mk" + NEWLINE + NEWLINE); //$NON-NLS-1$
+		buffer.append("-include objects.mk").append(NEWLINE).append(NEWLINE); //$NON-NLS-1$
 
 		// Include generated dependency makefiles if non-empty AND a "clean" has not been requested
 		if (!buildDepVars.isEmpty()) {
-			buffer.append("ifneq ($(MAKECMDGOALS),clean)" + NEWLINE); //$NON-NLS-1$
+			buffer.append("ifneq ($(MAKECMDGOALS),clean)").append(NEWLINE); //$NON-NLS-1$
 
 			for (Entry<String, GnuDependencyGroupInfo> entry : buildDepVars.entrySet()) {
 				String depsMacro = entry.getKey();
 				GnuDependencyGroupInfo info = entry.getValue();
-				buffer.append("ifneq ($(strip $(" + depsMacro + ")),)" + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("ifneq ($(strip $(").append(depsMacro).append(")),)").append(NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 				if (info.conditionallyInclude) {
-					buffer.append("-include $(" + depsMacro + ")" + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append("-include $(").append(depsMacro).append(')').append(NEWLINE); //$NON-NLS-1$
 				} else {
-					buffer.append("include $(" + depsMacro + ")" + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append("include $(").append(depsMacro).append(')').append(NEWLINE); //$NON-NLS-1$
 				}
-				buffer.append("endif" + NEWLINE); //$NON-NLS-1$
+				buffer.append("endif").append(NEWLINE); //$NON-NLS-1$
 			}
 
-			buffer.append("endif" + NEWLINE + NEWLINE); //$NON-NLS-1$
+			buffer.append("endif").append(NEWLINE).append(NEWLINE); //$NON-NLS-1$
 		}
 
 		// Include makefile.defs supplemental makefile
-		buffer.append("-include " + ROOT + SEPARATOR + MAKEFILE_DEFS + NEWLINE); //$NON-NLS-1$
+		buffer.append("-include ").append(ROOT).append(SEPARATOR).append(MAKEFILE_DEFS).append(NEWLINE); //$NON-NLS-1$
 
 
 		return (buffer.append(NEWLINE));
@@ -1359,10 +1359,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if (prebuildStep.length() > 0) {
 
 			// Add the comment for the "All" target
-			buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(ALL_TARGET) + NEWLINE);
+			buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(ALL_TARGET)).append(NEWLINE);
 
-			buffer.append(defaultTarget + WHITESPACE);
-			buffer.append(PREBUILD + WHITESPACE);
+			buffer.append(defaultTarget).append(WHITESPACE);
+			buffer.append(PREBUILD).append(WHITESPACE);
 
 			// Reset defaultTarget for now and for subsequent use, below
 			defaultTarget = MAINBUILD;
@@ -1371,14 +1371,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			// Update the defaultTarget, main-build, by adding a colon, which is
 			// needed below
 			defaultTarget = defaultTarget.concat(COLON);
-			buffer.append(NEWLINE + NEWLINE);
+			buffer.append(NEWLINE).append(NEWLINE);
 
 			// Add the comment for the "main-build" target
-			buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MAINBUILD_TARGET) + NEWLINE);
+			buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(MAINBUILD_TARGET)).append(NEWLINE);
 		}
 		else
 			// Add the comment for the "All" target
-			buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(ALL_TARGET) + NEWLINE);
+			buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(ALL_TARGET)).append(NEWLINE);
 
 		// Write out the all target first in case someone just runs make
 		// all: <target_name> or mainbuild: <target_name>
@@ -1387,19 +1387,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if (targetTool != null) {
 			outputPrefix = targetTool.getOutputPrefix();
 		}
-		buffer.append(defaultTarget + WHITESPACE + outputPrefix
-				+ ensurePathIsGNUMakeTargetRuleCompatibleSyntax(buildTargetName));
+		buffer.append(defaultTarget).append(WHITESPACE).append(outputPrefix)
+				.append(ensurePathIsGNUMakeTargetRuleCompatibleSyntax(buildTargetName));
 		if (buildTargetExt.length() > 0) {
-			buffer.append(DOT + buildTargetExt);
+			buffer.append(DOT).append(buildTargetExt);
 		}
 
 		// Add the Secondary Outputs to the all target, if any
 		IOutputType[] secondaryOutputs = config.getToolChain().getSecondaryOutputs();
 		if (secondaryOutputs.length > 0) {
-			buffer.append(WHITESPACE + SECONDARY_OUTPUTS);
+			buffer.append(WHITESPACE).append(SECONDARY_OUTPUTS);
 		}
 
-		buffer.append(NEWLINE + NEWLINE);
+		buffer.append(NEWLINE).append(NEWLINE);
 
 		/*
 		 * The build target may depend on other projects in the workspace. These
@@ -1419,7 +1419,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 //					if (!dep.exists()) continue;
 					if (addDeps) {
-						buffer.append("dependents:" + NEWLINE); //$NON-NLS-1$
+						buffer.append("dependents:").append(NEWLINE); //$NON-NLS-1$
 						addDeps = false;
 					}
 					String buildDir = depCfg.getOwner().getLocation().toString();
@@ -1468,7 +1468,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 						dependency = escapeWhitespaces(dependency);
 						managedProjectOutputs.add(dependency);
 					//}
-					buffer.append(TAB + "-cd" + WHITESPACE + escapeWhitespaces(buildDir) + WHITESPACE + LOGICAL_AND + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append(TAB).append("-cd").append(WHITESPACE).append(escapeWhitespaces(buildDir)) //$NON-NLS-1$
+						.append(WHITESPACE).append(LOGICAL_AND).append(WHITESPACE).append("$(MAKE) ").append(depTargets).append(NEWLINE); //$NON-NLS-1$
 				}
 //			}
 			buffer.append(NEWLINE);
@@ -1480,51 +1481,51 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Add the prebuild step target, if specified
 		if (prebuildStep.length() > 0) {
-			buffer.append(PREBUILD + COLON + NEWLINE);
+			buffer.append(PREBUILD).append(COLON).append(NEWLINE);
 			if (preannouncebuildStep.length() > 0) {
-				buffer.append(TAB + DASH + AT + escapedEcho(preannouncebuildStep));
+				buffer.append(TAB).append(DASH).append(AT).append(escapedEcho(preannouncebuildStep));
 			}
-			buffer.append(TAB + DASH + prebuildStep + NEWLINE);
-			buffer.append(TAB + DASH + AT + ECHO_BLANK_LINE + NEWLINE);
+			buffer.append(TAB).append(DASH).append(prebuildStep).append(NEWLINE);
+			buffer.append(TAB).append(DASH).append(AT).append(ECHO_BLANK_LINE).append(NEWLINE);
 		}
 
 		// Add the postbuild step, if specified
 		if (postbuildStep.length() > 0) {
-			buffer.append(POSTBUILD + COLON + NEWLINE);
+			buffer.append(POSTBUILD).append(COLON).append(NEWLINE);
 			if (postannouncebuildStep.length() > 0) {
-				buffer.append(TAB + DASH + AT + escapedEcho(postannouncebuildStep));
+				buffer.append(TAB).append(DASH).append(AT).append(escapedEcho(postannouncebuildStep));
 			}
-			buffer.append(TAB + DASH + postbuildStep + NEWLINE);
-			buffer.append(TAB + DASH + AT + ECHO_BLANK_LINE + NEWLINE);
+			buffer.append(TAB).append(DASH).append(postbuildStep).append(NEWLINE);
+			buffer.append(TAB).append(DASH).append(AT).append(ECHO_BLANK_LINE).append(NEWLINE);
 		}
 
 		// Add the Secondary Outputs target, if needed
 		if (secondaryOutputs.length > 0) {
-			buffer.append(SECONDARY_OUTPUTS + COLON);
+			buffer.append(SECONDARY_OUTPUTS).append(COLON);
 			Vector<String> outs2 = calculateSecondaryOutputs(secondaryOutputs);
 			for (int i=0; i<outs2.size(); i++) {
-				buffer.append(WHITESPACE + "$(" + outs2.get(i) + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append(WHITESPACE).append("$(").append(outs2.get(i)).append(')'); //$NON-NLS-1$
 			}
-			buffer.append(NEWLINE + NEWLINE);
+			buffer.append(NEWLINE).append(NEWLINE);
 		}
 
 		// Add all the needed dummy and phony targets
-		buffer.append(".PHONY: all clean dependents" + NEWLINE); //$NON-NLS-1$
+		buffer.append(".PHONY: all clean dependents").append(NEWLINE); //$NON-NLS-1$
 		buffer.append(".SECONDARY:"); //$NON-NLS-1$
 		if (prebuildStep.length() > 0) {
-			buffer.append(WHITESPACE + MAINBUILD + WHITESPACE + PREBUILD);
+			buffer.append(WHITESPACE).append(MAINBUILD).append(WHITESPACE).append(PREBUILD);
 		}
 		if (postbuildStep.length() > 0) {
-			buffer.append(WHITESPACE + POSTBUILD);
+			buffer.append(WHITESPACE).append(POSTBUILD);
 		}
 		buffer.append(NEWLINE);
 		for (String output : managedProjectOutputs) {
-			buffer.append(output + COLON + NEWLINE);
+			buffer.append(output).append(COLON).append(NEWLINE);
 		}
 		buffer.append(NEWLINE);
 
 		// Include makefile.targets supplemental makefile
-		buffer.append("-include " + ROOT + SEPARATOR + MAKEFILE_TARGETS + NEWLINE); //$NON-NLS-1$
+		buffer.append("-include ").append(ROOT).append(SEPARATOR).append(MAKEFILE_TARGETS).append(NEWLINE); //$NON-NLS-1$
 
 		return buffer;
  	}
@@ -1543,7 +1544,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			List<String> outputVarsAdditionsList, Vector<String> managedProjectOutputs, boolean postbuildStep) {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(BUILD_TOP) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(BUILD_TOP)).append(NEWLINE);
 
 		ToolInfoHolder h = (ToolInfoHolder)toolInfos.getValue();
 		ITool[] buildTools = h.buildTools;
@@ -1564,7 +1565,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				}
 			}
 		} else {
-			buffer.append(TAB + AT + escapedEcho(MESSAGE_NO_TARGET_TOOL + WHITESPACE + OUT_MACRO));
+			buffer.append(TAB).append(AT).append(escapedEcho(MESSAGE_NO_TARGET_TOOL + WHITESPACE + OUT_MACRO));
 		}
 
 		//  Generate the rules for all Tools that specify InputType.multipleOfType, and any Tools that
@@ -1585,14 +1586,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		// Add the comment
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(BUILD_TARGETS) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(BUILD_TARGETS)).append(NEWLINE);
 
 		// Always add a clean target
-		buffer.append("clean:" + NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB + "-$(RM)" + WHITESPACE); //$NON-NLS-1$
+		buffer.append("clean:").append(NEWLINE); //$NON-NLS-1$
+		buffer.append(TAB).append("-$(RM)").append(WHITESPACE); //$NON-NLS-1$
 		for (Entry<String, List<IPath>> entry : buildOutVars.entrySet()) {
 			String macroName = entry.getKey();
-			buffer.append("$(" + macroName + ")");	//$NON-NLS-1$	//$NON-NLS-2$
+			buffer.append("$(").append(macroName).append(')'); //$NON-NLS-1$
 		}
 		String outputPrefix = EMPTY_STRING;
 		if (targetTool != null) {
@@ -1603,12 +1604,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			completeBuildTargetName = completeBuildTargetName + DOT + buildTargetExt;
 		}
 		if (completeBuildTargetName.contains(" ")) { //$NON-NLS-1$
-			buffer.append(WHITESPACE + "\"" + completeBuildTargetName + "\"");  //$NON-NLS-1$	//$NON-NLS-2$
+			buffer.append(WHITESPACE).append('\"').append(completeBuildTargetName).append('\"');
 		} else {
-			buffer.append(WHITESPACE + completeBuildTargetName);
+			buffer.append(WHITESPACE).append(completeBuildTargetName);
 		}
 		buffer.append(NEWLINE);
-		buffer.append(TAB + DASH + AT + ECHO_BLANK_LINE + NEWLINE);
+		buffer.append(TAB).append(DASH).append(AT).append(ECHO_BLANK_LINE).append(NEWLINE);
 
 		return buffer;
 	}
@@ -1687,11 +1688,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 		else {
 			getRuleList().add(buildRule);
-			buffer.append(buildRule + NEWLINE);
+			buffer.append(buildRule).append(NEWLINE);
 			if (bTargetTool) {
-				buffer.append(TAB + AT + escapedEcho(MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO));
+				buffer.append(TAB).append(AT).append(escapedEcho(MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO));
 			}
-			buffer.append(TAB + AT + escapedEcho(tool.getAnnouncement()));
+			buffer.append(TAB).append(AT).append(escapedEcho(tool.getAnnouncement()));
 
 			// Get the command line for this tool invocation
 			String[] flags;
@@ -1750,23 +1751,23 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
             }
 
 
-			//buffer.append(TAB + AT + escapedEcho(buildCmd));
-			//buffer.append(TAB + AT + buildCmd);
-			buffer.append(TAB + buildCmd);
+			//buffer.append(TAB).append(AT).append(escapedEcho(buildCmd));
+			//buffer.append(TAB).append(AT).append(buildCmd);
+			buffer.append(TAB).append(buildCmd);
 
 			// TODO
 			// NOTE WELL:  Dependency file generation is not handled for this type of Tool
 
 			// Echo finished message
 			buffer.append(NEWLINE);
-			buffer.append(TAB + AT + escapedEcho((bTargetTool ? MESSAGE_FINISH_BUILD : MESSAGE_FINISH_FILE) + WHITESPACE + OUT_MACRO));
-			buffer.append(TAB + AT + ECHO_BLANK_LINE);
+			buffer.append(TAB).append(AT).append(escapedEcho((bTargetTool ? MESSAGE_FINISH_BUILD : MESSAGE_FINISH_FILE) + WHITESPACE + OUT_MACRO));
+			buffer.append(TAB).append(AT).append(ECHO_BLANK_LINE);
 
 			// If there is a post build step, then add a recursive invocation of MAKE to invoke it after the main build
 		    // Note that $(MAKE) will instantiate in the recusive invocation to the make command that was used to invoke
 		    // the makefile originally
 		    if (bEmitPostBuildStepCall) {
-		        buffer.append(TAB + MAKE + WHITESPACE + NO_PRINT_DIR + WHITESPACE + POSTBUILD + NEWLINE + NEWLINE);
+		        buffer.append(TAB).append(MAKE).append(WHITESPACE).append(NO_PRINT_DIR).append(WHITESPACE).append(POSTBUILD).append(NEWLINE).append(NEWLINE);
 		    }
 		    else {
 				// Just emit a blank line
@@ -1935,19 +1936,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private StringBuffer addSubdirectories() {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MOD_LIST) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(MOD_LIST)).append(NEWLINE);
 
-		buffer.append("SUBDIRS := " + LINEBREAK); //$NON-NLS-1$
+		buffer.append("SUBDIRS := ").append(LINEBREAK); //$NON-NLS-1$
 
 		// Get all the module names
 		for (IResource container : getSubdirList()) {
 			updateMonitor(ManagedMakeMessages.getFormattedString("MakefileGenerator.message.adding.source.folder", container.getFullPath().toString()));	//$NON-NLS-1$
 			// Check the special case where the module is the project root
 			if (container.getFullPath() == project.getFullPath()) {
-				buffer.append(DOT + WHITESPACE + LINEBREAK);
+				buffer.append(DOT).append(WHITESPACE).append(LINEBREAK);
 			} else {
 				IPath path = container.getProjectRelativePath();
-				buffer.append(escapeWhitespaces(path.toString()) +  WHITESPACE + LINEBREAK);
+				buffer.append(escapeWhitespaces(path.toString())).append(WHITESPACE).append(LINEBREAK);
 			}
 		}
 
@@ -2024,7 +2025,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Write out the macro addition entries to the buffer
 		buffer.append(writeAdditionMacros(buildVarToRuleStringMap));
-		return buffer.append(ruleBuffer + NEWLINE);
+		return buffer.append(ruleBuffer).append(NEWLINE);
 	}
 
 	/* (non-Javadoc
@@ -2596,9 +2597,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			getRuleList().add(buildRule);
 
 			// Echo starting message
-			buffer.append(buildRule + NEWLINE);
-			buffer.append(TAB + AT + escapedEcho(MESSAGE_START_FILE + WHITESPACE + IN_MACRO));
-			buffer.append(TAB + AT + escapedEcho(tool.getAnnouncement()));
+			buffer.append(buildRule).append(NEWLINE);
+			buffer.append(TAB).append(AT).append(escapedEcho(MESSAGE_START_FILE + WHITESPACE + IN_MACRO));
+			buffer.append(TAB).append(AT).append(escapedEcho(tool.getAnnouncement()));
 
 			// If the tool specifies a dependency calculator of TYPE_BUILD_COMMANDS, ask whether
 			// there are any pre-tool commands.
@@ -2629,7 +2630,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 														outputLocation, null, tool));
 							}
 							if (resolvedCommand != null)
-								buffer.append(resolvedCommand + NEWLINE);
+								buffer.append(resolvedCommand).append(NEWLINE);
 						} catch (BuildMacroException e) {
 						}
 					}
@@ -2704,7 +2705,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				StringBuffer buildFlags = new StringBuffer();
 				for (String flag : flags) {
 					if( flag != null ) {
-						buildFlags.append( flag + WHITESPACE );
+						buildFlags.append(flag).append(WHITESPACE);
 					}
 				}
 				buildCmd = cmd + WHITESPACE + buildFlags.toString().trim() + WHITESPACE + outflag + WHITESPACE +
@@ -2742,9 +2743,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			} catch (BuildMacroException e) {
 			}
 
-			//buffer.append(TAB + AT + escapedEcho(buildCmd));
-			//buffer.append(TAB + AT + buildCmd);
-			buffer.append(TAB + buildCmd);
+			//buffer.append(TAB).append(AT).append(escapedEcho(buildCmd));
+			//buffer.append(TAB).append(AT).append(buildCmd);
+			buffer.append(TAB).append(buildCmd);
 
 			// Determine if there are any dependencies to calculate
 			if (doDepGen) {
@@ -2763,7 +2764,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					for (String depCmd : depCmds) {
 		                // Resolve any macros in the dep command after it has been generated.
 		                // Note:  do not trim the result because it will strip out necessary tab characters.
-						buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
+						buffer.append(WHITESPACE).append(LOGICAL_AND).append(WHITESPACE).append(LINEBREAK);
 		                try {
 							if (!needExplicitRuleForFile) {
 								depCmd = ManagedBuildManager.getBuildMacroProvider()
@@ -2799,8 +2800,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 			// Echo finished message
 			buffer.append(NEWLINE);
-			buffer.append(TAB + AT + escapedEcho(MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO));
-			buffer.append(TAB + AT + ECHO_BLANK_LINE + NEWLINE);
+			buffer.append(TAB).append(AT).append(escapedEcho(MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO));
+			buffer.append(TAB).append(AT).append(ECHO_BLANK_LINE).append(NEWLINE);
 		}
 
 		// Determine if there are calculated dependencies
@@ -2888,8 +2889,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				if (!getDepRuleList().contains(depLine)) {
 					getDepRuleList().add(depLine);
 					addedDepLines = true;
-					buffer.append(depLine + NEWLINE);
-					buffer.append(TAB + AT + escapedEcho(MESSAGE_START_DEPENDENCY + WHITESPACE + OUT_MACRO));
+					buffer.append(depLine).append(NEWLINE);
+					buffer.append(TAB).append(AT).append(escapedEcho(MESSAGE_START_DEPENDENCY + WHITESPACE + OUT_MACRO));
 					for (String preBuildCommand : preBuildCommands) {
 						depLine = preBuildCommand;
 						// Resolve macros
@@ -2920,13 +2921,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 						} catch (BuildMacroException e) {
 						}
-						//buffer.append(TAB + AT + escapedEcho(depLine));
-						//buffer.append(TAB + AT + depLine + NEWLINE);
-						buffer.append(TAB + depLine + NEWLINE);
+						//buffer.append(TAB).append(AT).append(escapedEcho(depLine));
+						//buffer.append(TAB).append(AT).append(depLine).append(NEWLINE);
+						buffer.append(TAB).append(depLine).append(NEWLINE);
 					}
 				}
 				if (addedDepLines) {
-					buffer.append(TAB + AT + ECHO_BLANK_LINE + NEWLINE);
+					buffer.append(TAB).append(AT).append(ECHO_BLANK_LINE).append(NEWLINE);
 				}
 			}
 		}
@@ -3488,7 +3489,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// practically nil so it doesn't seem worth the hassle of generating a truly
 		// unique name.
 		if(extensionName.equals(extensionName.toUpperCase())) {
-			macroName.append(extensionName.toUpperCase() + "_UPPER");	//$NON-NLS-1$
+			macroName.append(extensionName.toUpperCase()).append("_UPPER"); //$NON-NLS-1$
 		} else {
 			// lower case... no need for "UPPER_"
 			macroName.append(extensionName.toUpperCase());
@@ -3510,7 +3511,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// practically nil so it doesn't seem worth the hassle of generating a truly
 		// unique name.
 		if(extensionName.equals(extensionName.toUpperCase())) {
-			macroName.append(extensionName.toUpperCase() + "_UPPER");	//$NON-NLS-1$
+			macroName.append(extensionName.toUpperCase()).append("_UPPER"); //$NON-NLS-1$
 		} else {
 			// lower case... no need for "UPPER_"
 			macroName.append(extensionName.toUpperCase());
@@ -3655,9 +3656,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			}
 			if (secondToken.startsWith("'")) { //$NON-NLS-1$
 				// This is the Win32 implementation of echo (MinGW without MSYS)
-				outBuffer.append(secondToken.substring(1) + WHITESPACE);
+				outBuffer.append(secondToken.substring(1)).append(WHITESPACE);
 			} else {
-				outBuffer.append(secondToken + WHITESPACE);
+				outBuffer.append(secondToken).append(WHITESPACE);
 			}
 
 			// The relative path to the build goal comes next
@@ -3691,15 +3692,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			} catch (ArrayIndexOutOfBoundsException e) {
 				fourthToken = ""; // $NON-NLS-1$
 			}
-			outBuffer.append(fourthToken + WHITESPACE);
+			outBuffer.append(fourthToken).append(WHITESPACE);
 
 			// Followed by the actual dependencies
 			try {
 				for (String nextElement : deps) {
 					if (nextElement.endsWith("\\")) { //$NON-NLS-1$
-						outBuffer.append(nextElement + NEWLINE + WHITESPACE);
+						outBuffer.append(nextElement).append(NEWLINE).append(WHITESPACE);
 					} else {
-						outBuffer.append(nextElement + WHITESPACE);
+						outBuffer.append(nextElement).append(WHITESPACE);
 					}
 				}
 			} catch (IndexOutOfBoundsException e) {
@@ -3728,7 +3729,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				 * The formatting here is
 				 * <dummy_target>:
 				 */
-				outBuffer.append(dummy + COLON + NEWLINE + NEWLINE);
+				outBuffer.append(dummy).append(COLON).append(NEWLINE).append(NEWLINE);
 			}
 		}
 
@@ -3761,7 +3762,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	static protected StringBuffer addDefaultHeader() {
 		StringBuffer buffer = new StringBuffer();
 		outputCommentLine(buffer);
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(HEADER) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(HEADER)).append(NEWLINE);
 		outputCommentLine(buffer);
 		buffer.append(NEWLINE);
 		return buffer;
@@ -3812,9 +3813,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	protected void addMacroAdditionPrefix(LinkedHashMap<String, String> map, String macroName, String relativePath, boolean addPrefix) {
 		// there is no entry in the map, so create a buffer for this macro
 		StringBuffer tempBuffer = new StringBuffer();
-		tempBuffer.append(macroName + WHITESPACE + MACRO_ADDITION_PREFIX_SUFFIX);
+		tempBuffer.append(macroName).append(WHITESPACE).append(MACRO_ADDITION_PREFIX_SUFFIX);
 		if (addPrefix) {
-			tempBuffer.append(MACRO_ADDITION_ADDPREFIX_HEADER + relativePath + MACRO_ADDITION_ADDPREFIX_SUFFIX);
+			tempBuffer.append(MACRO_ADDITION_ADDPREFIX_HEADER).append(relativePath).append(MACRO_ADDITION_ADDPREFIX_SUFFIX);
 		}
 
 		// have to store the buffer in String form as StringBuffer is not a sublcass of Object
@@ -3833,7 +3834,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// escape whitespace in the filename
 		filename = escapeWhitespaces(filename);
 
-		buffer.append(filename + WHITESPACE + LINEBREAK);
+		buffer.append(filename).append(WHITESPACE).append(LINEBREAK);
 		// re-insert string in the map
 		map.put(macroName, buffer.toString());
 	}
@@ -3885,7 +3886,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				// Bug 417288, ilg@livius.net & freidin.alex@gmail.com
 				filename = ensurePathIsGNUMakeTargetRuleCompatibleSyntax(filename);
 				
-				buffer.append(filename + WHITESPACE + LINEBREAK);
+				buffer.append(filename).append(WHITESPACE).append(LINEBREAK);
 			}
 		}
 		// re-insert string in the map
@@ -3898,7 +3899,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	protected StringBuffer writeAdditionMacros(LinkedHashMap<String, String> map) {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MOD_VARS) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(MOD_VARS)).append(NEWLINE);
 
 		for (String macroString : map.values()) {
 			// Check if we added any files to the rule
@@ -3930,7 +3931,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	protected StringBuffer writeTopAdditionMacros(List<String> varList, HashMap<String, String> varMap) {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MOD_VARS) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(MOD_VARS)).append(NEWLINE);
 
 		for (int i=0; i<varList.size(); i++) {
 			String addition = varMap.get(varList.get(i));

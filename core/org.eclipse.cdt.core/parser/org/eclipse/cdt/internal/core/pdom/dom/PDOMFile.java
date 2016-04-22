@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1016,7 +1016,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			buf.append(", includes: "); //$NON-NLS-1$
 			buf.append(getIncludes().length);
 		} catch (CoreException e) {
-			buf.append(" (incomplete due to " + e.getClass().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			buf.append(" (incomplete due to ").append(e.getClass().getName()).append(')'); //$NON-NLS-1$
 		}
 		return buf.toString();
 	}

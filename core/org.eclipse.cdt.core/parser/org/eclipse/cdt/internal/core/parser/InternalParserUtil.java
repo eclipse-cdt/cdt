@@ -156,6 +156,8 @@ public class InternalParserUtil extends ParserFactory {
 			long fileReadTime = System.currentTimeMillis();
 			IFileStore store = EFS.getStore(file.getLocationURI());
 			IFileInfo fileInfo = store.fetchInfo();
+			if (!fileInfo.exists())
+				return null;
 			input= file.getContents(true);
 			if (input instanceof FileInputStream) {
 				try {

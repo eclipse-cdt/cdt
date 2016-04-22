@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Red Hat, Inc.
+ * Copyright (c) 2006, 2016 Red Hat, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -294,7 +294,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 			Element elem = document.getElementById(name);
 			if (null != elem) {
 				int prototypeCount = 0;
-				buffer.append("<B>Macro:</B> " + name);
+				buffer.append("<B>Macro:</B> ").append(name);
 				NodeList nl = elem.getChildNodes();
 				for (int i = 0; i < nl.getLength(); ++i) {
 					Node n = nl.item(i);
@@ -304,8 +304,11 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 						++prototypeCount;
 						if (prototypeCount == 1) {
 							buffer.append(" (");
-						} else
-							buffer.append("    <B>or</B> " + name + " (<I>"); //$NON-NLS-2$
+						} else {
+							buffer.append("    <B>or</B> "); //$NON-NLS-2$
+							buffer.append(name);
+							buffer.append(" (<I>"); //$NON-NLS-2$
+						}
 						NodeList varList = n.getChildNodes();
 						for (int j = 0; j < varList.getLength(); ++j) {
 							Node v = varList.item(j);
@@ -317,10 +320,10 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 								if (prototype.length() == 0)
 									prototype.append(parm);
 								else
-									prototype.append(", " + parm);
+									prototype.append(", ").append(parm);
 							}
 						}
-						buffer.append(prototype.toString() + "</I>)<br>"); //$NON-NLS-1$
+						buffer.append(prototype).append("</I>)<br>"); //$NON-NLS-1$
 					}
 					if (nodeName.equals("synopsis")) {  //$NON-NLS-1$
 						Node textNode = n.getLastChild();

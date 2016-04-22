@@ -303,12 +303,12 @@ public class AutotoolsConfiguration implements IAConfiguration {
 					IConfigureOption childOption = getOption(childOptions[j].getName());
 					String parameter = childOption.getParameter();
 					if (!parameter.isEmpty())
-						buf.append(" " + parameter);
+						buf.append(' ').append(parameter);
 				}
 			} else {
 				String parameter = option.getParameter();
 				if (!parameter.isEmpty())
-					buf.append(" " + parameter);
+					buf.append(' ').append(parameter);
 			}
 		}
 		return buf.toString();

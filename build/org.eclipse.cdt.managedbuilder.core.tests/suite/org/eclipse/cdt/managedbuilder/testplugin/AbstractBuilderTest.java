@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Broadcom Corporation and others.
+ * Copyright (c) 2011, 2016 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -236,7 +236,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 			int i = 0;
 			// line number
 			if (attrs[i] != null)
-				sb.append(" line " + attrs[i]);
+				sb.append(" line ").append(attrs[i]); //$NON-NLS-1$
 			// severity
 			if (attrs[++i] != null) {
 				switch ((Integer)attrs[i++]) {
@@ -254,7 +254,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 			// append the rest of the string fields
 			do  {
 				if (attrs[i] != null)
-					sb.append(" " + attrs[i]);
+					sb.append(' ').append(attrs[i]);
 			} while (++i < attrs.length);
 			// Finally print the string
 			System.err.println(sb.toString());

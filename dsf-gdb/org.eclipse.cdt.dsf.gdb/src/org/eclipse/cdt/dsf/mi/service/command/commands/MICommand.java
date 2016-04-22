@@ -150,15 +150,15 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 
         // Add the --thread option
         if (supportsThreadAndFrameOptions() && threadId != null && !threadId.trim().isEmpty()) {
-        	command.append(" --thread " + threadId); //$NON-NLS-1$
+        	command.append(" --thread ").append(threadId); //$NON-NLS-1$
 
         	// Add the --frame option, but only if we are using the --thread option
         	if (frameId >= 0) {
-        		command.append(" --frame " + frameId); //$NON-NLS-1$
+        		command.append(" --frame ").append(frameId); //$NON-NLS-1$
         	}
         } else if (supportsThreadGroupOption() && groupId != null && !groupId.trim().isEmpty()) {
         	// The --thread-group option is only allowed if we are not using the --thread option
-        	command.append(" --thread-group " + groupId); //$NON-NLS-1$
+        	command.append(" --thread-group ").append(groupId); //$NON-NLS-1$
         }
 
         String opt = optionsToString();

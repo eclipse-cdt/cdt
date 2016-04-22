@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -559,7 +559,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
  
         // Add the address
         if (dmData.getAddress() != null) {
-            label.append("- 0x" + dmData.getAddress().toString(16)); //$NON-NLS-1$
+            label.append("- 0x").append(dmData.getAddress().toString(16)); //$NON-NLS-1$
         }
             
         // Set the label to the result listener

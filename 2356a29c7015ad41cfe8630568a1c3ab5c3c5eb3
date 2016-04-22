@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_de7bc5df",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/model/DisassemblyDocument.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 911,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-22T06:05:23Z",
+      "side": 1,
+      "message": "Wow! This code doesn\u0027t make any sense.",
+      "range": {
+        "startLine": 911,
+        "startChar": 18,
+        "endLine": 911,
+        "endChar": 81
+      },
+      "revId": "2356a29c7015ad41cfe8630568a1c3ab5c3c5eb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

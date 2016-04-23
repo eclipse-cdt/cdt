@@ -387,7 +387,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 						IStatus.OK,
 						ManagedBuilderCorePlugin.getUniqueIdentifier(),
 						IStatus.OK,
-						"", // $NON-NLS-1$
+						"", //$NON-NLS-1$
 						null);
 			}
 		};

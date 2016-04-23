@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Red Hat Inc..
+ * Copyright (c) 2007, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,8 +68,8 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler
 						// ignore
 					}
 					if (autoName == null || autoName.equals(AutotoolsPropertyConstants.TRUE)) {
-						autoNameTemplate = "${workspace_loc:/" + project.getName() + // $NON-NLS-1$ 
-							"}/build-" + fixName(configuration.getName()); // $NON-NLS-1$
+						autoNameTemplate = "${workspace_loc:/" + project.getName() + //$NON-NLS-1$ 
+							"}/build-" + fixName(configuration.getName()); //$NON-NLS-1$
 						IBuilder cfgBuilder = configuration.getEditableBuilder();
 						cfgBuilder.setBuildPath(autoNameTemplate);
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Red Hat Inc..
+ * Copyright (c) 2010, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,7 +112,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		Document d = db.parse(f);
 		Element e = d.getDocumentElement();
 		// Get the stored configuration data
-		NodeList cfgs = e.getElementsByTagName("configuration"); // $NON-NLS-1$
+		NodeList cfgs = e.getElementsByTagName("configuration"); //$NON-NLS-1$
 		assertTrue(cfgs.getLength() > 0);
 		Node n = cfgs.item(0);
 		NodeList l = n.getChildNodes();
@@ -120,10 +120,10 @@ public class SetConfigurationParameter extends AbstractTest {
 		boolean foundUser = false;
 		for (int y = 0; y < l.getLength(); ++y) {
 			Node child = l.item(y);
-			if (child.getNodeName().equals("option")) { // $NON-NLS-1$
+			if (child.getNodeName().equals("option")) { //$NON-NLS-1$
 				NamedNodeMap optionAttrs = child.getAttributes();
-				Node idNode = optionAttrs.getNamedItem("id"); // $NON-NLS-1$
-				Node valueNode = optionAttrs.getNamedItem("value"); // $NON-NLS-1$
+				Node idNode = optionAttrs.getNamedItem("id"); //$NON-NLS-1$
+				Node valueNode = optionAttrs.getNamedItem("value"); //$NON-NLS-1$
 				assertNotNull(idNode);
 				assertNotNull(valueNode);
 				String id = idNode.getNodeValue();
@@ -331,7 +331,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		Document d = db.parse(f);
 		Element e = d.getDocumentElement();
 		// Get the stored configuration data
-		NodeList cfgs = e.getElementsByTagName("configuration"); // $NON-NLS-1$
+		NodeList cfgs = e.getElementsByTagName("configuration"); //$NON-NLS-1$
 		assertEquals(3, cfgs.getLength());
 		int foundUser = 0;
 		for (int x = 0; x < cfgs.getLength(); ++x) {
@@ -341,10 +341,10 @@ public class SetConfigurationParameter extends AbstractTest {
 			// --enable-jeff
 			for (int y = 0; y < l.getLength(); ++y) {
 				Node child = l.item(y);
-				if (child.getNodeName().equals("option")) { // $NON-NLS-1$
+				if (child.getNodeName().equals("option")) { //$NON-NLS-1$
 					NamedNodeMap optionAttrs = child.getAttributes();
-					Node idNode = optionAttrs.getNamedItem("id"); // $NON-NLS-1$
-					Node valueNode = optionAttrs.getNamedItem("value"); // $NON-NLS-1$
+					Node idNode = optionAttrs.getNamedItem("id"); //$NON-NLS-1$
+					Node valueNode = optionAttrs.getNamedItem("value"); //$NON-NLS-1$
 					assertNotNull(idNode);
 					assertNotNull(valueNode);
 					String id = idNode.getNodeValue();

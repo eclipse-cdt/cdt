@@ -439,7 +439,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 
 		if (buildTargetExt == null) {
-			buildTargetExt = ""; // $NON-NLS-1$
+			buildTargetExt = ""; //$NON-NLS-1$
 		}
 		// Cache the build tools
 		config = info.getDefaultConfiguration();
@@ -651,7 +651,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.INFO,
-					"", // $NON-NLS-1$
+					"", //$NON-NLS-1$
 					null);
 			status.add(new Status (
 					IStatus.INFO,
@@ -753,7 +753,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus (
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.WARNING,
-					"", // $NON-NLS-1$
+					"", //$NON-NLS-1$
 					null);
 			// Add a new status for each of the bad folders
 			// TODO: fix error message
@@ -770,7 +770,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.OK,
-					"", // $NON-NLS-1$
+					"", //$NON-NLS-1$
 					null);
 		}
 
@@ -906,7 +906,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.INFO,
-					"", // $NON-NLS-1$
+					"", //$NON-NLS-1$
 					null);
 			status.add(new Status (
 					IStatus.INFO,
@@ -965,7 +965,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus (
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.WARNING,
-					"", // $NON-NLS-1$
+					"", //$NON-NLS-1$
 					null);
 			// Add a new status for each of the bad folders
 			// TODO: fix error message
@@ -981,7 +981,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.OK,
-					"", // $NON-NLS-1$
+					"", //$NON-NLS-1$
 					null);
 		}
 		return status;
@@ -2823,7 +2823,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		if (addlDeps != null && addlDeps.length > 0) {
-			calculatedDependencies = ""; // $NON-NLS-1$
+			calculatedDependencies = ""; //$NON-NLS-1$
 			for (IPath addlDep : addlDeps) {
 				calculatedDependencies += WHITESPACE + escapeWhitespaces(addlDep.toString());
 			}
@@ -3652,7 +3652,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			try {
 				secondToken = deps.get(1);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				secondToken = ""; // $NON-NLS-1$
+				secondToken = ""; //$NON-NLS-1$
 			}
 			if (secondToken.startsWith("'")) { //$NON-NLS-1$
 				// This is the Win32 implementation of echo (MinGW without MSYS)
@@ -3666,7 +3666,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			try {
 				thirdToken = deps.get(2);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				thirdToken = ""; // $NON-NLS-1$
+				thirdToken = ""; //$NON-NLS-1$
 			}
 			int lastIndex = thirdToken.lastIndexOf("'"); //$NON-NLS-1$
 			if (lastIndex != -1) {
@@ -3690,7 +3690,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				} while (fourthToken.length() == 0);
 
 			} catch (ArrayIndexOutOfBoundsException e) {
-				fourthToken = ""; // $NON-NLS-1$
+				fourthToken = ""; //$NON-NLS-1$
 			}
 			outBuffer.append(fourthToken).append(WHITESPACE);
 
@@ -4515,7 +4515,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * the name component in a <code>String</code>
 	 */
 	private String getFileName(IResource file) {
-		String answer = ""; // $NON-NLS-1$
+		String answer = ""; //$NON-NLS-1$
 		String lastSegment = file.getName();
 		int extensionSeparator = lastSegment.lastIndexOf(DOT);
 		if (extensionSeparator != -1) {
@@ -4677,7 +4677,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 
 		if (buildTargetExt == null) {
-			buildTargetExt = ""; // $NON-NLS-1$
+			buildTargetExt = ""; //$NON-NLS-1$
 		}
 		// Cache the build tools
 		config = cfg;

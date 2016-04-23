@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.IPath;
 public class DefaultGCCDependencyCalculator3Commands implements
 	IManagedDependencyCommands {
 
-	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//  Member variables set by the constructor
 	IPath source;

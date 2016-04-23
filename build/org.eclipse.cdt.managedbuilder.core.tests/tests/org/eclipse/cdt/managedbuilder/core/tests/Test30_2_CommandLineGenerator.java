@@ -63,12 +63,12 @@ public class Test30_2_CommandLineGenerator implements
 		info.commandOutputPrefix = outputPrefix;
 		info.commandOutput = outputName;
 		info.commandLinePattern = commandLinePattern;
-		info.commandInputs = ""; // $NON-NLS-1$
+		info.commandInputs = ""; //$NON-NLS-1$
 		for (int i = 0; i < inputResources.length; i++) {
 			if (i > 0) info.commandInputs += " ";
 			info.commandInputs += inputResources[i];
 		}
-		info.commandFlags = ""; // $NON-NLS-1$
+		info.commandFlags = ""; //$NON-NLS-1$
 		IOption opt = tool.getOptionBySuperClassId("test30_2.tar-list.filename");
 		String optVal = "";
 		try {

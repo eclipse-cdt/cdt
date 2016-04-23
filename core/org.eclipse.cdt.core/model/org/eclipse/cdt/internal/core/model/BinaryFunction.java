@@ -46,7 +46,7 @@ public class BinaryFunction extends BinaryElement implements IBinaryFunction {
 	@Override
 	public String getParameterInitializer(int pos) {
 		// TODO Auto-generated method stub
-		return ""; // $NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +64,7 @@ public class BinaryFunction extends BinaryElement implements IBinaryFunction {
 	@Override
 	public String getReturnType() {
 		// TODO Auto-generated method stub
-		return ""; // $NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

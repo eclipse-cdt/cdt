@@ -255,7 +255,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	}
 
 	public String get() {
-		String result = ""; // $NON-NLS-1$
+		String result = ""; //$NON-NLS-1$
 		Object[] entries = fElements.entrySet().toArray();
 		for (int i = 0; i < entries.length; ++i)
 			result += entries[i].toString() + '\n';
@@ -366,7 +366,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	}
 
 	protected void newEntry() {
-		EntryDialog dialog = new EntryDialog("", "", false); // $NON-NLS-1$ // $NON-NLS-2$
+		EntryDialog dialog = new EntryDialog("", "", false); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() == Window.OK) {
 			fElements.setProperty(dialog.getName(), dialog.getValue());
 			fVariableList.refresh();

@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_ed6b7191",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/AutoconfPartitioner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "The StringBuilder was being used to concatenate something and then print it out afterwards. However this would occur for each partition; so for a resulting partition string of X, Y and Z bytes, the resulting buffer would be X+Y+Z long, followed by printing it out.\n\nIf we instead print out each partition separately, with three (implicit) StringBuilder instances, we can have a single X, Y and Z sized StringBuffer. This means it\u0027s more likely to fit in the young generation and not be promoted. We can use the implicit StringBuilder generated from String concatenation as part of a System.out.println argument instead.",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ed429111",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/text/hover/AutoconfTextHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "Although I could have used an .append().append() format here, the line was pretty long as it was - and given that the first half of the if block had {} on it, I figured the second would benefit to have them as well.",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_add329cd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/core/tests/CustomOptionCommandGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "This comes from the option.getCommand() at the front of the return statement, prior to running the sb.toString. Instead, prepend it to the front of the StringBuilder.",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2de719a6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/core/tests/Test30_2_CommandLineGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "Technically this is less performant, because in the former case things like VAR_FIRST_CHAR are constants and thus can be compile time concatenated, as opposed to here where they are (in effect) two separate method calls. The alternative would be to find .append(CONST).append(OTHERCONST) and then replace those with the (equivalent) literal value. Frankly I\u0027m not sure I think there\u0027s a benefit to having a VAR_FIRST_CHAR constant anyway and would recommend manual in-lining to e.g. \"${\" in this case.\n\nOr to put it another way, I\u0027d recommend changing this line to: \n\nsb.append(\"${\").append(varName).append(\u0027}\u0027)",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_4dec6588",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "The +WHITESPACE.trim() is effectively a no-op that requires copying the string again. So potentially avoid this by not adding the whitespace at the end. The .trim is still necessary since the last array value might end in whitespace of course but there\u0027s no reason to want to do that.",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_adfa4935",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/DefaultGCCDependencyCalculator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "This is another place where excessive constants don\u0027t help. For example:\n\n.append(ECHO).append(WHITESPACE).append(\"-n\").append(WHITESPACE)\n\ncan be replaced with\n\n.append(\"echo -n \")\n\nIn effect this is what happens at the moment in the Java compiler; but with the suggested fix this doesn\u0027t happen because I don\u0027t think .append(CONST).append(CONST) are squashed by javac.",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_cdf7954c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/DefaultGCCDependencyCalculator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "c.f. \n\nsb.append(buildCmd).append(\" \u003e\u003e \").append(depRule)",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_edf4514a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1224,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "I think this would be a constant if we left it as is (although it would show up in an anti-pattern report)",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2d12b916",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/composite/cpp/CompositeCPPFunctionSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "Since we\u0027re using a single character here we can use the \u0027 \u0027 instead of the \" \" form - and thus we don\u0027t need the NON-NLS tag.",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6d1cc129",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/CStringAutoIndentStrategy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2016-04-23T16:00:06Z",
+      "side": 1,
+      "message": "This NON-NLS is superfluous here; if we revisit it can be removed.\n\nUsing \u0027\"\u0027 and \u0027\\\"\u0027 appear to be equivalent; any preferences as to which is better?",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

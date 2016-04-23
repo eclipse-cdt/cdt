@@ -98,7 +98,7 @@ public class StringField {
 		if (index < array.length) {
 			typeInformation = new String(array, index, array.length - index);
 		} else {
-			typeInformation = ""; // $NON-NLS-1$
+			typeInformation = ""; //$NON-NLS-1$
 		}
 	}
 }

@@ -369,7 +369,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			if (buildType == FULL_BUILD || buildType == INCREMENTAL_BUILD) {
 				consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
 			} else {
-				consoleHeader[0] = ""; // $NON-NLS-1$
+				consoleHeader[0] = ""; //$NON-NLS-1$
 				outputError(getProject().getName(), "The given build type is not supported in this context");	//$NON-NLS-1$
 			}
 			consoleHeader[1] = configName;

@@ -464,7 +464,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 					.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
 			if (image == null)
 				return false;
-			int index = image.lastIndexOf(':'); // $NON-NLS-1$
+			int index = image.lastIndexOf(':'); //$NON-NLS-1$
 			if (index <= 0)
 				return false;
 			if (connection.hasImage(image.substring(0, index),

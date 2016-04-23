@@ -115,7 +115,7 @@ public class MIDataDisassemble extends MICommand<MIDataDisassembleInfo> {
         if (parameters != null && parameters.length > 0) {
             return "-- " + parameters[0]; //$NON-NLS-1$
         }
-        return ""; // $NON-NLS-1$
+        return ""; //$NON-NLS-1$
     }
 
     @Override

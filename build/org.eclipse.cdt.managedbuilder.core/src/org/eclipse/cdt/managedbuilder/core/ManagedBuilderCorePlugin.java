@@ -131,7 +131,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 //							IStatus.OK,
 //							ManagedBuilderCorePlugin.getUniqueIdentifier(),
 //							IStatus.OK,
-//							"", // $NON-NLS-1$
+//							"", //$NON-NLS-1$
 //							null);
 //				}
 //			};

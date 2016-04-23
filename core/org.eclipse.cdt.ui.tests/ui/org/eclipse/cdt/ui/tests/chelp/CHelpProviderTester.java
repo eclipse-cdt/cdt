@@ -217,7 +217,7 @@ public class CHelpProviderTester{
 	private String getValueByKey(String key){
 		String val = fProperties.getProperty(key);
 		if(val == null)
-			val = ""; // $NON-NLS-1$
+			val = ""; //$NON-NLS-1$
 		return val;
 	}
 	

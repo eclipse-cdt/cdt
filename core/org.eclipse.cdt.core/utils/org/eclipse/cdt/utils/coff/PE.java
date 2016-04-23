@@ -885,7 +885,7 @@ public class PE {
 			}
 		}
 		
-		return ""; // $NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

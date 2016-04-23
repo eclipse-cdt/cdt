@@ -72,7 +72,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	public UITextWidget(UIAttributes uiAttribute) {
 		super(uiAttribute);
-		this.textValue = ""; // $NON-NLS-1$
+		this.textValue = ""; //$NON-NLS-1$
 	}
 
 	/**

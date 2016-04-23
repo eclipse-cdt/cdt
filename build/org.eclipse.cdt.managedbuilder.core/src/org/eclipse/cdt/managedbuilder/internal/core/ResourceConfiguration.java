@@ -137,7 +137,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			setManagedBuildRevision(folderInfo.getParent().getManagedBuildRevision());
 
 		setDirty(false);
-		toolsToInvoke = ""; // $NON-NLS-1$
+		toolsToInvoke = ""; //$NON-NLS-1$
 		rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 
 
@@ -149,7 +149,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 		// Add the resource specific tools to this resource.
 		ITool tools[] = folderInfo.getFilteredTools();
-		String subId = ""; // $NON-NLS-1$
+		String subId = ""; //$NON-NLS-1$
 		for (int i = 0; i < tools.length; i++) {
 			if( tools[i].buildsFileType(extString) ) {
 				baseTool = tools[i];
@@ -552,10 +552,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * An empty string implies treat as if no resource configuration, i.e., use project level tool.
 		 * This getter routine returns an ITool[] to consumers (i.e., the makefile generator).
 		 */
-		String t_ToolsToInvoke = ""; // $NON-NLS-1$
+		String t_ToolsToInvoke = ""; //$NON-NLS-1$
 		ITool[] resConfigTools;
 		ITool[] tools;
-		String rcbsToolId = ""; // $NON-NLS-1$
+		String rcbsToolId = ""; //$NON-NLS-1$
 		int len;
 		int j;
 		int rcbsToolIdx=-1;
@@ -571,7 +571,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * If no tools are currently defined, return a zero lengh array of ITool.
 		 */
 		if (resConfigTools.length == 0) {
-			toolsToInvoke = ""; // $NON-NLS-1$
+			toolsToInvoke = ""; //$NON-NLS-1$
 			tools = new ITool[0];
 			return tools;
 		}
@@ -632,7 +632,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				 */
 				if(resConfigTools.length == 1){
 					tools = new ITool[0];
-					toolsToInvoke = ""; // $NON-NLS-1$
+					toolsToInvoke = ""; //$NON-NLS-1$
 					break;
 				}
 				j = 0;

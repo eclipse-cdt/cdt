@@ -69,7 +69,7 @@ public class UIStringListWidget extends InputUIElement {
 	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> retMap = new HashMap<String, String>();
-		String itemString = ""; // $NON-NLS-1$
+		String itemString = ""; //$NON-NLS-1$
 		for (int i = 0; i < itemsList.size(); i++) {
 			itemString = itemString + itemsList.get(i) + "|"; //$NON-NLS-1$
 		}

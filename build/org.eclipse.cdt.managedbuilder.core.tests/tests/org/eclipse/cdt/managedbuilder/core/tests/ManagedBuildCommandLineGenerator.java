@@ -33,7 +33,7 @@ public class ManagedBuildCommandLineGenerator implements
 		//  Concatenate the tool name and the passed in command name
 		info.commandName = tool.getName() + commandName;
 		//  Put out the flags backwards
-		String myflags = ""; // $NON-NLS-1$
+		String myflags = ""; //$NON-NLS-1$
 		for (int i = flags.length - 1; i >= 0; i--) {
 			if (i < flags.length - 1) myflags += " ";
 			myflags += flags[i];
@@ -41,7 +41,7 @@ public class ManagedBuildCommandLineGenerator implements
 		info.commandFlags = myflags;
 		//  Alphabetize the inputs and add foo.cpp
 		String[] inputs = new String[inputResources.length + 1];
-		String myinputs = ""; // $NON-NLS-1$
+		String myinputs = ""; //$NON-NLS-1$
 		for (int i=0; i<inputResources.length; i++) {
 			inputs[i] = inputResources[i];
 		}

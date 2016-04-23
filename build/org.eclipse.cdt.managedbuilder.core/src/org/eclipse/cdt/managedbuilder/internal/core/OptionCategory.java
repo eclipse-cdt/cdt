@@ -42,7 +42,7 @@ import org.osgi.framework.Version;
  */
 public class OptionCategory extends BuildObject implements IOptionCategory {
 
-	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final IOptionCategory[] emtpyCategories = new IOptionCategory[0];
 
 	//  Parent and children

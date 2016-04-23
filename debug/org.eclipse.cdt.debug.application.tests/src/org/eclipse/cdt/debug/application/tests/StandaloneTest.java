@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Red Hat, Inc.
+ * Copyright (c) 2015, 2016 Red Hat, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public abstract class StandaloneTest {
 
 		bot = new SWTBot();
 		Utilities.getDefault().buildProject(projectName);
-		final IPath executablePath = Utilities.getDefault().getProjectPath(projectName).append("a.out"); // $NON-NLS-1$
+		final IPath executablePath = Utilities.getDefault().getProjectPath(projectName).append("a.out"); //$NON-NLS-1$
 		bot.waitUntil(new WaitForFileCondition(executablePath));
 
 		bot.waitUntil(Conditions.shellIsActive(DEBUG_NEW_EXECUTABLE_TITLE));

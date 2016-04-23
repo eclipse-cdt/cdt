@@ -2242,7 +2242,7 @@ public class BuildDescription implements IBuildDescription {
 		if(!type.isInput()){
 			String var = type.getLinkId();
 			if(var == null)
-				var = ""; // $NON-NLS-1$
+				var = ""; //$NON-NLS-1$
 
 			Set<BuildIOType> set = fVarToAddlInSetMap.get(var);
 			if(set != null){

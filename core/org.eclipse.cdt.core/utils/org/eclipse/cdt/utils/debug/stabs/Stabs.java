@@ -188,7 +188,7 @@ public class Stabs {
 			if (stroff > 0) {
 				field = makeString(stroff);
 			} else {
-				field = ""; // $NON-NLS-1$
+				field = ""; //$NON-NLS-1$
 			}
 			// Check for continuation and if any go to the next stab
 			// until we find a string that is not terminated with a

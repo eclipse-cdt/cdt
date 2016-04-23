@@ -64,7 +64,7 @@ public class RenameConfigurationDialog extends Dialog {
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 		newName = renameConfig.getName();
 		newDescription = renameConfig.getDescription();
-		if(newDescription == null) newDescription = ""; // $NON-NLS-1$
+		if(newDescription == null) newDescription = ""; //$NON-NLS-1$
 		originalName = renameConfig.getName();
 	}
 

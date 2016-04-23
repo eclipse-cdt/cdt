@@ -521,7 +521,7 @@ public class BuildStep implements IBuildStep {
 
 	private String listToString(String[] list, String delimiter){
 		if(list == null || list.length == 0)
-			return ""; // $NON-NLS-1$
+			return ""; //$NON-NLS-1$
 
 		StringBuilder buf = new StringBuilder(list[0]);
 

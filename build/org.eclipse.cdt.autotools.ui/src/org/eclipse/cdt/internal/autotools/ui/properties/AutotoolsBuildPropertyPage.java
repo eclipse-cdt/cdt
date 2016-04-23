@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Red Hat Inc.
+ * Copyright (c) 2007, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,14 +30,14 @@ import org.eclipse.swt.widgets.Text;
 
 public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 
-	private String TRUE = "true"; // $NON-NLS-1$
-	private String FALSE = "false"; // $NON-NLS-1$
-	private String CLEAN_DELETE_LABEL = "CleanDelete.label"; // $NON-NLS-1$
-	private String CLEAN_MAKE_LABEL = "CleanMake.label"; // $NON-NLS-1$
-	private String CLEAN_MAKETARGET_LABEL = "CleanMakeTarget.label"; // $NON-NLS-1$
-	private String CLEAN_MAKETARGET_TOOLTIP = "CleanMakeTarget.tooltip"; // $NON-NLS-1$
-	private String AUTO_BUILDNAME_LABEL = "AutoBuildName.label"; // $NON-NLS-1$
-	private String AUTO_BUILDNAME_TOOLTIP = "AutoBuildName.tooltip"; // $NON-NLS-1$
+	private String TRUE = "true"; //$NON-NLS-1$
+	private String FALSE = "false"; //$NON-NLS-1$
+	private String CLEAN_DELETE_LABEL = "CleanDelete.label"; //$NON-NLS-1$
+	private String CLEAN_MAKE_LABEL = "CleanMake.label"; //$NON-NLS-1$
+	private String CLEAN_MAKETARGET_LABEL = "CleanMakeTarget.label"; //$NON-NLS-1$
+	private String CLEAN_MAKETARGET_TOOLTIP = "CleanMakeTarget.tooltip"; //$NON-NLS-1$
+	private String AUTO_BUILDNAME_LABEL = "AutoBuildName.label"; //$NON-NLS-1$
+	private String AUTO_BUILDNAME_TOOLTIP = "AutoBuildName.tooltip"; //$NON-NLS-1$
 	
 	protected Button fCleanDelete;
 	protected Button fCleanMake;

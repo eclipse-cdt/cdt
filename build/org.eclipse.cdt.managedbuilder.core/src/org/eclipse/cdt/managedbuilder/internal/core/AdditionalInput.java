@@ -218,7 +218,7 @@ public class AdditionalInput implements IAdditionalInput {
 					str = ADDITIONAL_INPUT_DEPENDENCY;
 					break;
 				default:
-					str = ""; // $NON-NLS-1$
+					str = ""; //$NON-NLS-1$
 					break;
 			}
 			element.setAttribute(IAdditionalInput.KIND, str);

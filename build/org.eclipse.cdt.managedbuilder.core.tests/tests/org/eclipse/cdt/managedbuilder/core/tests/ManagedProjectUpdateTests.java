@@ -165,7 +165,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 								IStatus.OK,
 								"org.eclipse.cdt.managedbuilder.core.tests",
 								IStatus.OK,
-								"", // $NON-NLS-1$
+								"", //$NON-NLS-1$
 								null);
 					}
 				};

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Red Hat Inc.
+ * Copyright (c) 2009, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,9 +73,9 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		new Option(AutotoolsOptionConstants.TOOL_CONFIGURE, IConfigureOption.TOOL),
 		new Option(AutotoolsOptionConstants.CATEGORY_GENERAL, IConfigureOption.CATEGORY),
 		new Option(AutotoolsOptionConstants.OPT_CONFIGDIR, IConfigureOption.INTERNAL),
-		new Option(AutotoolsOptionConstants.OPT_CACHE_FILE, "cache_file", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_CACHE_FILE, "cache_file", IConfigureOption.STRING), //$NON-NLS-1$
 		new Option(AutotoolsOptionConstants.OPT_HELP, IConfigureOption.BIN),
-		new Option(AutotoolsOptionConstants.OPT_NO_CREATE, "no_create", IConfigureOption.BIN), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_NO_CREATE, "no_create", IConfigureOption.BIN), //$NON-NLS-1$
 		new Option(AutotoolsOptionConstants.OPT_QUIET, IConfigureOption.BIN),
 		new Option(AutotoolsOptionConstants.OPT_VERSION, IConfigureOption.BIN),
 		new Option(AutotoolsOptionConstants.CATEGORY_PLATFORM, IConfigureOption.CATEGORY),
@@ -84,7 +84,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		new Option(AutotoolsOptionConstants.OPT_TARGET, IConfigureOption.STRING),
 		new Option(AutotoolsOptionConstants.CATEGORY_DIRECTORIES, IConfigureOption.CATEGORY),
 		new Option(AutotoolsOptionConstants.OPT_PREFIX, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_EXEC_PREFIX, "exec_prefix", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_EXEC_PREFIX, "exec_prefix", IConfigureOption.STRING), //$NON-NLS-1$
 		new Option(AutotoolsOptionConstants.OPT_LIBDIR, IConfigureOption.STRING),
 		new Option(AutotoolsOptionConstants.OPT_BINDIR, IConfigureOption.STRING),
 		new Option(AutotoolsOptionConstants.OPT_SBINDIR, IConfigureOption.STRING),
@@ -99,19 +99,19 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		new Option(AutotoolsOptionConstants.OPT_LIBEXECDIR, IConfigureOption.STRING),
 		new Option(AutotoolsOptionConstants.OPT_OLDINCLUDEDIR, IConfigureOption.STRING),
 		new Option(AutotoolsOptionConstants.CATEGORY_FILENAMES, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_PROGRAM_PREFIX, "program_prefix", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_PROGRAM_SUFFIX, "program_suffix", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_PROGRAM_TRANSFORM_NAME, "program_transform_name", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_PROGRAM_PREFIX, "program_prefix", IConfigureOption.STRING), //$NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_PROGRAM_SUFFIX, "program_suffix", IConfigureOption.STRING), //$NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_PROGRAM_TRANSFORM_NAME, "program_transform_name", IConfigureOption.STRING), //$NON-NLS-1$
 		new Option(AutotoolsOptionConstants.CATEGORY_ENVVAR, IConfigureOption.CATEGORY),
 		new Option(AutotoolsOptionConstants.OPT_ENVVAR, IConfigureOption.ENVVAR),
 		new Option(AutotoolsOptionConstants.CATEGORY_FEATURES, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_ENABLE_MAINTAINER_MODE, "enable_maintainer_mode", IConfigureOption.BIN), // $NON-NLS-1$
-		new Option(AutotoolsOptionConstants.FLAG_CFLAGS, "cflags", AutotoolsOptionConstants.FLAG_CFLAGS_FLAGS, IConfigureOption.FLAG), // $NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$
-		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
-		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
+		new Option(AutotoolsOptionConstants.OPT_ENABLE_MAINTAINER_MODE, "enable_maintainer_mode", IConfigureOption.BIN), //$NON-NLS-1$
+		new Option(AutotoolsOptionConstants.FLAG_CFLAGS, "cflags", AutotoolsOptionConstants.FLAG_CFLAGS_FLAGS, IConfigureOption.FLAG), //$NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
+		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$ 
+		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$ 
 		new Option(AutotoolsOptionConstants.OPT_USER, IConfigureOption.MULTIARG),
-		new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), //$NON-NLS-1$
 		new Option(AutotoolsOptionConstants.CATEGORY_OPTIONS, IConfigureOption.CATEGORY),
 		new Option(AutotoolsOptionConstants.OPT_AUTOGENOPTS, IConfigureOption.MULTIARG),
 	};

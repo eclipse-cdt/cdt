@@ -56,7 +56,7 @@ public class AutotoolsUIPluginImages {
 	public static final String IMG_OBJS_WHILE= NAME_PREFIX + "while_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ACMACRO= NAME_PREFIX + "acmacro_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_AMMACRO= NAME_PREFIX + "ammacro_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_ACMACRO_ARG = NAME_PREFIX + "acmacro_arg_obj.gif"; // $NON-NLS-1$
+	public static final String IMG_OBJS_ACMACRO_ARG = NAME_PREFIX + "acmacro_arg_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_BUILD_CONFIG = NAME_PREFIX + "build_configs.gif"; //$NON-NLS-1$
 	public static final String IMG_CFG_CATEGORY = NAME_PREFIX + "config_category.gif"; //$NON-NLS-1$
 	public static final String IMG_CFG_TOOL = NAME_PREFIX + "config_tool.gif"; //$NON-NLS-1$

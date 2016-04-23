@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Red Hat Inc.and others.
+ * Copyright (c) 2009, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -777,7 +777,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	protected IPath getConfigurePath(List<String> envVars, List<String> cmdParms) {
 		IPath configPath;
 		IConfigureOption configOption = toolsCfg.getOption(CONFIGURE_TOOL_ID);
-		String command = "configure"; // $NON-NLS-1$
+		String command = "configure"; //$NON-NLS-1$
 		if (configOption != null)
 			command = stripEnvVars(configOption.getValue().trim(), envVars);
 			
@@ -809,7 +809,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	protected IPath getAutogenPath(List<String> envVars, List<String> cmdParms) {
 		IPath autogenPath;
 		IConfigureOption autogenOption = toolsCfg.getOption(AUTOGEN_TOOL_ID);
-		String command = "autogen.sh"; // $NON-NLS-1$
+		String command = "autogen.sh"; //$NON-NLS-1$
 		if (autogenOption != null)
 			command = stripEnvVars(autogenOption.getValue().trim(), envVars);
 
@@ -1219,14 +1219,14 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					// For Windows/Mac, check for PWD environment variable being passed.
 					// Remove it for now as it is causing errors in configuration.
 					// Fix for bug #343879
-					if (!removePWD || !variables[i].getName().equals("PWD")) { // $NON-NLS-1$
+					if (!removePWD || !variables[i].getName().equals("PWD")) { //$NON-NLS-1$
 						String value = variables[i].getValue();
 						// The following is a work-around for bug #407580.  Configure doesn't recognize
 						// a directory with a trailing separator at the end is equivalent to the same
 						// directory without that trailing separator.  This problem can cause
 						// configure to try and link a file to itself (e.g. projects with a GnuMakefile) and
 						// obliterate the contents.  Thus, we remove the trailing separator to be safe.
-						if (variables[i].getName().equals("PWD")) { // $NON-NLS-1$
+						if (variables[i].getName().equals("PWD")) { //$NON-NLS-1$
 							if (value.charAt(value.length()-1) == IPath.SEPARATOR)
 								value = value.substring(0, value.length() - 1);	
 						}

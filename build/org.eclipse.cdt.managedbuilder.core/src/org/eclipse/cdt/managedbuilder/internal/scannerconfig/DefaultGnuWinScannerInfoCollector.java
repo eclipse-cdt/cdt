@@ -60,7 +60,7 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
 //    			// See if it has an equals
 //    			String[] macroTokens = ((String)symbolIter.next()).split(EQUALS);
 //    			String macro = macroTokens[0].trim();
-//    			String value = (macroTokens.length > 1) ? macroTokens[1].trim() : ""; // $NON-NLS-1$
+//    			String value = (macroTokens.length > 1) ? macroTokens[1].trim() : ""; //$NON-NLS-1$
 //    			getDefinedSymbols().put(macro, value);
 //    		}
     		super.contributeToScannerConfig(resource, scannerInfo);

@@ -88,8 +88,8 @@ public class NewBuildConfigurationDialog extends Dialog {
 		des = prjd;
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 
-		newName = ""; // $NON-NLS-1$
-		newDescription = ""; // $NON-NLS-1$
+		newName = ""; //$NON-NLS-1$
+		newDescription = ""; //$NON-NLS-1$
 
 		parentConfig = null;
 		// The default behaviour is to clone the settings
@@ -110,9 +110,9 @@ public class NewBuildConfigurationDialog extends Dialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
-			String description = ""; // $NON-NLS-1$
-			String nameAndDescription = ""; // $NON-NLS-1$
-			String baseConfigNameAndDescription = ""; // $NON-NLS-1$
+			String description = ""; //$NON-NLS-1$
+			String nameAndDescription = ""; //$NON-NLS-1$
+			String baseConfigNameAndDescription = ""; //$NON-NLS-1$
 
 			newName = configName.getText().trim();
 			newDescription = configDescription.getText().trim();

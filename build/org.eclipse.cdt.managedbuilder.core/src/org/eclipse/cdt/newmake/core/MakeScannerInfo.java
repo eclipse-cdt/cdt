@@ -92,8 +92,8 @@ public class MakeScannerInfo implements IScannerInfo {
 			if (symbol.length() == 0) {
 				continue;
 			}
-			String key = ""; // $NON-NLS-1$
-			String value = ""; // $NON-NLS-1$
+			String key = ""; //$NON-NLS-1$
+			String value = ""; //$NON-NLS-1$
 			int index = symbol.indexOf("="); //$NON-NLS-1$
 			if (index != -1) {
 				key = symbol.substring(0, index).trim();

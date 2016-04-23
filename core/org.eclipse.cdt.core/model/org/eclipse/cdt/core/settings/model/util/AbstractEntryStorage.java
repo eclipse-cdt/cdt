@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.settings.model.util.SettingsSet.SettingLevel;
 public abstract class AbstractEntryStorage {
 	private int fKind;
 	
-	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	public AbstractEntryStorage(int kind){
 		fKind = kind;

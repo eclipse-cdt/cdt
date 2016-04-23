@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Target extends BuildObject implements ITarget {
-	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private String artifactName;
 	private String binaryParserId;
 	private String cleanCommand;

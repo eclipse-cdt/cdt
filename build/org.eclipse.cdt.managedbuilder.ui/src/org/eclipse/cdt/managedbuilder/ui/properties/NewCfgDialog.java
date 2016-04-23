@@ -413,8 +413,8 @@ public class NewCfgDialog implements INewCfgDialog {
 	/**
 	 */
 	public NewCfgDialog() {
-		newName = ""; // $NON-NLS-1$
-		newDescription = ""; // $NON-NLS-1$
+		newName = ""; //$NON-NLS-1$
+		newDescription = ""; //$NON-NLS-1$
 	}
 
 	@Override

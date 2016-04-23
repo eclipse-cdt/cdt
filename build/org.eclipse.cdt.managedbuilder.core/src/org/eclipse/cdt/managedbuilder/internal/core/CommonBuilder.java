@@ -621,7 +621,7 @@ public class CommonBuilder extends ACBuilder {
 						status = new MultiStatus(
 								ManagedBuilderCorePlugin.getUniqueIdentifier(),
 								IStatus.ERROR,
-								"", // $NON-NLS-1$
+								"", //$NON-NLS-1$
 								null);
 					}
 
@@ -638,7 +638,7 @@ public class CommonBuilder extends ACBuilder {
 						status = new MultiStatus(
 								ManagedBuilderCorePlugin.getUniqueIdentifier(),
 								IStatus.ERROR,
-								"", // $NON-NLS-1$
+								"", //$NON-NLS-1$
 								null);
 					}
 
@@ -657,7 +657,7 @@ public class CommonBuilder extends ACBuilder {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.OK,
-					"", // $NON-NLS-1$
+					"", //$NON-NLS-1$
 					null);
 		}
 
@@ -814,7 +814,7 @@ public class CommonBuilder extends ACBuilder {
 		if (buildType == FULL_BUILD || buildType == INCREMENTAL_BUILD) {
 			consoleHeader[0] = ManagedMakeMessages.getResourceString("ManagedMakeBuider.type.incremental"); //$NON-NLS-1$
 		} else {
-			consoleHeader[0] = ""; // $NON-NLS-1$
+			consoleHeader[0] = ""; //$NON-NLS-1$
 			outputError(projName, "The given build type is not supported in this context");	//$NON-NLS-1$
 		}
 		consoleHeader[1] = configName;
@@ -1015,7 +1015,7 @@ public class CommonBuilder extends ACBuilder {
 //		return new MultiStatus(
 //				ManagedBuilderCorePlugin.getUniqueIdentifier(),
 //				severity,
-//				"", // $NON-NLS-1$
+//				"", //$NON-NLS-1$
 //				null);
 //	}
 

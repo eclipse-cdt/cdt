@@ -141,7 +141,7 @@ public class CFileTypesPreferenceBlock {
 						} else if (assoc.isPredefined()) {
 							return PreferencesMessages.CFileTypesPreferencePage_preDefined; 
 						}
-						return ""; // $NON-NLS-1$
+						return ""; //$NON-NLS-1$
 				}
 			}
 			return element.toString();

@@ -39,11 +39,11 @@ public class CheckStringExpression implements IBooleanExpression {
 	public CheckStringExpression(IManagedConfigElement element){
 		fString = element.getAttribute(STRING);
 		if(fString == null)
-			fString = ""; // $NON-NLS-1$
+			fString = ""; //$NON-NLS-1$
 
 		fValue = element.getAttribute(VALUE);
 		if(fValue == null)
-			fValue = ""; // $NON-NLS-1$
+			fValue = ""; //$NON-NLS-1$
 
 		fIsRegex = OptionEnablementExpression.getBooleanValue(element.getAttribute(IS_REGEX));
 	}

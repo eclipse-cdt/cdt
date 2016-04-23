@@ -44,7 +44,7 @@ public class CSearchUtil {
 	
 	public static String toString(IWorkingSet[] workingSets) {
 		if (workingSets != null && workingSets.length > 0) {
-			String string = ""; // $NON-NLS-1$
+			String string = ""; //$NON-NLS-1$
 			for (int i = 0; i < workingSets.length; i++) {
 				if (i > 0)
 					string += ", ";  //$NON-NLS-1$

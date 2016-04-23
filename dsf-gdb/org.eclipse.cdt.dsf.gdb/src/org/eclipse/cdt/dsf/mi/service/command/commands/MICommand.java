@@ -33,7 +33,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 
     List<Adjustable> fOptions = new ArrayList<>();
     List<Adjustable> fParameters = new ArrayList<>();
-    String fOperation = ""; // $NON-NLS-1$
+    String fOperation = ""; //$NON-NLS-1$
     IDMContext fCtx;
 
     /*

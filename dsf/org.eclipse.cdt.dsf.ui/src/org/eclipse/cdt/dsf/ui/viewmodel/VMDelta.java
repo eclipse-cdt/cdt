@@ -280,7 +280,7 @@ public class VMDelta extends ModelDelta {
 	}
 	
 	private void appendDetail(StringBuilder buf, VMDelta delta, int depth) {
-		String indent = ""; // $NON-NLS-1$
+		String indent = ""; //$NON-NLS-1$
 		for (int i = 0; i < depth; i++) {
 			indent += '\t';
 		}

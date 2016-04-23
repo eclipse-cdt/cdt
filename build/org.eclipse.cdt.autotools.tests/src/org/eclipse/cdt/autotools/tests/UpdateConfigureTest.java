@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Red Hat Inc. and others.
+ * Copyright (c) 2008, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -533,16 +533,16 @@ public class UpdateConfigureTest {
 			Document d = db.parse(dirFile);
 			Element e = d.getDocumentElement();
 			// Get the stored configuration data
-			NodeList cfgs = e.getElementsByTagName("configuration"); // $NON-NLS-1$
+			NodeList cfgs = e.getElementsByTagName("configuration"); //$NON-NLS-1$
 			for (int x = 0; x < cfgs.getLength(); ++x) {
 				Node n = cfgs.item(x);
 				NodeList l = n.getChildNodes();
 				for (int y = 0; y < l.getLength(); ++y) {
 					Node child = l.item(y);
-					if (child.getNodeName().equals("option")) { // $NON-NLS-1$
+					if (child.getNodeName().equals("option")) { //$NON-NLS-1$
 						NamedNodeMap optionAttrs = child.getAttributes();
-						Node id = optionAttrs.getNamedItem("id"); // $NON-NLS-1$
-						Node value = optionAttrs.getNamedItem("value"); // $NON-NLS-1$
+						Node id = optionAttrs.getNamedItem("id"); //$NON-NLS-1$
+						Node value = optionAttrs.getNamedItem("value"); //$NON-NLS-1$
 						// Verify the bindir option is updated
 						if (id.equals(AutotoolsOptionConstants.OPT_BINDIR))
 							assertEquals(value, "/usr/bin"); //$NON-NLS-1$

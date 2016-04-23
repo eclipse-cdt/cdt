@@ -167,7 +167,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		// Get the project build properties.
 		ITool tools[] = defaultConfig.getFilteredTools();
 		Tool projTool = null;
-		String projBuildProps = ""; // $NON-NLS-1$
+		String projBuildProps = ""; //$NON-NLS-1$
 		for (int i = 0; i < tools.length; i++) {
 			if( tools[i].buildsFileType(extString) ) {
 				// Get the build properties of a project in default configuration

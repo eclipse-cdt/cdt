@@ -523,7 +523,7 @@ public final class IndentUtil {
 			if (computed != null)
 				indent= computed.toString();
 			else
-				indent= ""; // $NON-NLS-1$
+				indent= ""; //$NON-NLS-1$
 		}
 		return indent;
 	}

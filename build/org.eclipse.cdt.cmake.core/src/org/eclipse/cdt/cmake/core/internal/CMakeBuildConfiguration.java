@@ -63,7 +63,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			// TODO need to figure out which builder to call. Hardcoding to make
 			// for now.
 			List<String> command = Arrays.asList("make");
-			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile()); // $NON-NLS-1$
+			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile()); //$NON-NLS-1$
 			Process process = processBuilder.start();
 			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 			

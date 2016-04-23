@@ -625,7 +625,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		}
 		directories = dirs.toArray(new String[0]);
 		if (pattern == null) {
-			pattern = ""; // $NON-NLS-1$
+			pattern = ""; //$NON-NLS-1$
 		}
 		return new VPath(this, pattern, directories);
 	}

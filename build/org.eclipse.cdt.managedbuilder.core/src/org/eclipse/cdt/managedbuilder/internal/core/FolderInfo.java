@@ -86,7 +86,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		toolChain.setUnusedChildren(parTc.getUnusedChildren());
 
 		ITool tools[] = parTc.getTools();
-		String subId = ""; // $NON-NLS-1$
+		String subId = ""; //$NON-NLS-1$
 		for (ITool tool : tools) {
 			ITool extTool = ManagedBuildManager.getExtensionTool(tool);
 			if(extTool == null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
  */ 
 public class OptionalMessageDialog extends MessageDialog {
 	// String constants for widgets
-	private static final String CHECKBOX_TEXT= MakeUIMessages.getResourceString("OptionalMessageDialog_dontShowAgain"); // $NON-NLS-1$  
+	private static final String CHECKBOX_TEXT= MakeUIMessages.getResourceString("OptionalMessageDialog_dontShowAgain"); //$NON-NLS-1$  
 
 	// Dialog store id constants
 	private static final String STORE_ID= "OptionalMessageDialog.hide."; //$NON-NLS-1$

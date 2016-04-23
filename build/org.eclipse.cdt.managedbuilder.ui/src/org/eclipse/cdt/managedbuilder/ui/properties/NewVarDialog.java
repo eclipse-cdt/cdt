@@ -55,7 +55,7 @@ import com.ibm.icu.text.Collator;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class NewVarDialog extends Dialog {
-	private static final String EMPTY_STRING = ""; // $NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	// The title of the dialog.
 	private String fTitle;

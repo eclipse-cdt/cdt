@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBM Corporation.
+ * Copyright (c) 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,12 @@ public class VariableConfigureOption extends AbstractConfigurationOption {
 
 	public VariableConfigureOption(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
-		this.value = ""; // $NON-NLS-1$
+		this.value = ""; //$NON-NLS-1$
 	}
 
 	public VariableConfigureOption(String name, String transformedName, AutotoolsConfiguration autotoolsConfiguration) {
 		super(name, transformedName, autotoolsConfiguration);
-		this.value = ""; // $NON-NLS-1$
+		this.value = ""; //$NON-NLS-1$
 	}
 
 	public VariableConfigureOption(String name, AutotoolsConfiguration cfg, String value) {

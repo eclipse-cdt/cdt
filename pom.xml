@@ -517,7 +517,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.4.201502262128</version>
+				<version>0.7.6.201602180812</version>
 				<executions>
 					<execution>
 						<id>pre-test</id>
@@ -594,7 +594,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>findbugs-maven-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.0.3</version>
 					<configuration>
 						<xmlOutput>true</xmlOutput>
 						<excludeFilterFile>releng/findbugs-exclude.xml</excludeFilterFile>
@@ -611,7 +611,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.4</version>
+					<version>3.6</version>
 					<configuration>
 						<sourceEncoding>utf-8</sourceEncoding>
 						<minimumTokens>100</minimumTokens>

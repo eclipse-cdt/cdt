@@ -52,7 +52,6 @@ import freemarker.template.TemplateException;
 public abstract class FMGenerator implements TemplateLoader {
 
 	private final Configuration templateConfig;
-	private Bundle bundle;
 	private String manifestPath;
 	private TemplateManifest manifest;
 	private List<IFile> filesToOpen = new ArrayList<>();
@@ -62,10 +61,8 @@ public abstract class FMGenerator implements TemplateLoader {
 		templateConfig.setTemplateLoader(this);
 	}
 
-	public void setBundle(Bundle bundle) {
-		this.bundle = bundle;
-	}
-
+	public abstract Bundle getSourceBundle();
+	
 	public void setTemplateManifestPath(String manifestPath) {
 		this.manifestPath = manifestPath;
 	}
@@ -79,9 +76,14 @@ public abstract class FMGenerator implements TemplateLoader {
 	}
 
 	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
+		// If no manifest, just return
+		if (manifestPath == null) {
+			return;
+		}
+
+		// load manifest file
 		manifest = null;
 		try {
-			// load manifest file
 			StringWriter writer = new StringWriter();
 			loadFile(manifestPath, model, writer); // $NON-NLS-1$
 			JAXBContext xmlContext = JAXBContext.newInstance(getManifestClass());
@@ -103,7 +105,7 @@ public abstract class FMGenerator implements TemplateLoader {
 					generateFile(fileTemplate.getSrc(), model, file, monitor);
 				} else {
 					try {
-						URL url = FileLocator.find(bundle, new Path(fileTemplate.getSrc()), null);
+						URL url = FileLocator.find(getSourceBundle(), new Path(fileTemplate.getSrc()), null);
 						try (InputStream in = url.openStream()) {
 							createParent(file, monitor);
 							if (file.exists()) {
@@ -185,7 +187,7 @@ public abstract class FMGenerator implements TemplateLoader {
 
 	@Override
 	public Object findTemplateSource(String name) throws IOException {
-		return FileLocator.find(bundle, new Path(name), null);
+		return FileLocator.find(getSourceBundle(), new Path(name), null);
 	}
 
 	@Override

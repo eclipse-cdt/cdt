@@ -169,6 +169,47 @@
       "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8d2e6d15",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/CStringAutoIndentStrategy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-24T04:03:19Z",
+      "side": 1,
+      "message": "\u0027\"\u0027 is fine",
+      "parentUuid": "e7dfcf21_6d1cc129",
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ad4249c2",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/NumberFormatDetailPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-04-24T04:03:19Z",
+      "side": 1,
+      "message": "Indentation is off.",
+      "range": {
+        "startLine": 366,
+        "startChar": 8,
+        "endLine": 366,
+        "endChar": 19
+      },
+      "revId": "ef20a5f041a4182f4e3b202258849875d1f68a22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

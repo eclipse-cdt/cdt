@@ -7,10 +7,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
+import java.util.Map;
+
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This is the root interface for "new style" CDT build configurations. Adapting
@@ -41,4 +47,8 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	IEnvironmentVariable[] getVariables();
 
+	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor) throws CoreException;
+
+	void clean(IConsole console, IProgressMonitor monitor) throws CoreException;
+	
 }

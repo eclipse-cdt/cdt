@@ -56,12 +56,24 @@ class MultiBuildConsoleAdapter implements IConsole {
 			two.write(b, off, len);
 	    }
 
+	    @Override
+	    public synchronized void write(String msg) throws IOException {
+	    	one.write(msg);
+	    	two.write(msg);
+	    }
+	    
 		@Override
 		public void write(String s, ProblemMarkerInfo marker) throws IOException {
 			one.write(s, marker);
 			two.write(s, marker);
 		}
 
+		@Override
+		public void flush() throws IOException {
+			one.flush();
+			two.flush();
+		}
+		
 		@Override
 		public void close() throws IOException {
 			one.flush();

@@ -54,6 +54,6 @@ public interface ICBuildConfigurationManager {
 	 */
 	ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig);
 
-	ICBuildConfiguration getDefaultBuildConfiguration(IProject project);
+	ICBuildConfiguration getDefaultBuildConfiguration(IProject project) throws CoreException;
 
 }

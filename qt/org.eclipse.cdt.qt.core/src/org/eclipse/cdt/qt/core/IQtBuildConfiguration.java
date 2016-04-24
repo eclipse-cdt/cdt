@@ -10,16 +10,17 @@ package org.eclipse.cdt.qt.core;
 import java.nio.file.Path;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.core.runtime.CoreException;
 
 public interface IQtBuildConfiguration extends ICBuildConfiguration {
 
-	Path getBuildDirectory();
-
+	Path getBuildDirectory() throws CoreException;
+	
 	Path getQmakeCommand();
 
 	String getQmakeConfig();
 
-	Path getProgramPath();
+	Path getProgramPath() throws CoreException;
 
 	String getLaunchMode();
 

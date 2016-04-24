@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
+import java.net.URI;
 import java.nio.file.Path;
-import java.util.List;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
@@ -47,11 +47,13 @@ public interface IToolChain extends IAdaptable {
 
 	IEnvironmentVariable[] getVariables();
 
-	IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, Path command, List<String> args,
-			List<String> includePaths, IResource resource, Path buildDirectory);
+	IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, Path command, String[] args,
+			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI);
 
 	String[] getErrorParserIds();
 
 	Path getCommandPath(String command);
 
+	IResource[] getResourcesFromCommand(String[] command, URI buildDirectoryURI);
+	
 }

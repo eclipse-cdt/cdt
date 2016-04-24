@@ -869,5 +869,17 @@
          </adapter>
       </factory>
    </extension>
+   <extension
+         id="cBuilder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            callOnEmptyDelta="true"
+            isConfigurable="true"
+            supportsConfigurations="true">
+         <run
+               class="org.eclipse.cdt.core.build.CBuilder">
+         </run>
+      </builder>
+   </extension>
 
 </plugin>

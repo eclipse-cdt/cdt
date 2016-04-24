@@ -11,9 +11,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,7 @@ import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -47,6 +51,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	private final IToolChainType type;
 	private final String name;
+	private final String command;
 	private String version;
 	private String target;
 	private Path path;
@@ -55,6 +60,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	public GCCToolChain(IToolChainType type, Path path, String command) {
 		this.type = type;
+		this.command = command;
 		getVersion(path.resolve(command).toString());
 		this.name = command + '-' + version;
 		this.path = path;
@@ -64,9 +70,10 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		envVars = new IEnvironmentVariable[] { pathVar };
 	}
 
-	protected GCCToolChain(IToolChainType type, String name) {
+	protected GCCToolChain(IToolChainType type, String name, String command) {
 		this.type = type;
 		this.name = name;
+		this.command = command;
 		// TODO need to pull the other info out of preferences
 	}
 
@@ -119,6 +126,10 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		}
 	}
 
+	public String getTarget() {
+		return target;
+	}
+	
 	protected void addDiscoveryOptions(List<String> command) {
 		command.add("-E"); //$NON-NLS-1$
 		command.add("-P"); //$NON-NLS-1$
@@ -127,9 +138,11 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	}
 
 	@Override
-	public IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, Path command, List<String> args,
-			List<String> includePaths, IResource resource, Path buildDirectory) {
+	public IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, Path command, String[] args,
+			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI) {
 		try {
+			Path buildDirectory = Paths.get(buildDirectoryURI);
+			
 			List<String> commandLine = new ArrayList<>();
 			if (command.isAbsolute()) {
 				commandLine.add(command.toString());
@@ -137,12 +150,14 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				commandLine.add(path.resolve(command).toString());
 			}
 
-			for (String includePath : includePaths) {
-				commandLine.add("-I" + includePath); //$NON-NLS-1$
+			if (baseScannerInfo != null && baseScannerInfo.getIncludePaths() != null) {
+				for (String includePath : baseScannerInfo.getIncludePaths()) {
+					commandLine.add("-I" + includePath); //$NON-NLS-1$
+				}
 			}
 
 			addDiscoveryOptions(commandLine);
-			commandLine.addAll(args);
+			commandLine.addAll(Arrays.asList(args));
 
 			// Change output to stdout
 			for (int i = 0; i < commandLine.size() - 1; ++i) {
@@ -259,5 +274,42 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	public Path getCommandPath(String command) {
 		return path.resolve(command);
 	}
-	
+
+	@Override
+	public IResource[] getResourcesFromCommand(String[] cmd, URI buildDirectoryURI) {
+		// Make sure this is our command
+		boolean found = false;
+		for (String arg : cmd) {
+			if (arg.startsWith("-")) { //$NON-NLS-1$
+				break;
+			}
+			Path cmdPath = Paths.get(arg);
+			if (cmdPath.getFileName().toString().equals(command)) {
+				found = true;
+				break;
+			}
+		}
+		
+		if (!found) {
+			// not our command
+			return null;
+		}
+		
+		// Start at the back looking for arguments
+		List<IResource> resources = new ArrayList<>();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for (int i = cmd.length - 1; i >= 0; --i) {
+			String arg = cmd[i];
+			if (arg.startsWith("-")) { //$NON-NLS-1$
+				// ran into an option, we're done.
+				break;
+			}
+			for (IFile resource : root.findFilesForLocationURI(buildDirectoryURI.resolve(arg))) {
+				resources.add(resource);
+			}
+		}
+		
+		return resources.toArray(new IResource[resources.size()]);
+	}
+
 }

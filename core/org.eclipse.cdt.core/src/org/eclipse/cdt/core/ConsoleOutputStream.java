@@ -40,7 +40,7 @@ public class ConsoleOutputStream extends OutputStream {
 		ascii[0] = (byte) c;
 		fBuffer.append(new String(ascii));
 	}
-	    
+
     @Override
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
         fBuffer.append(new String(b, off, len));

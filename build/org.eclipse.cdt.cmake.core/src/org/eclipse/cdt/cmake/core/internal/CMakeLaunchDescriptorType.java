@@ -24,7 +24,7 @@ public class CMakeLaunchDescriptorType implements ILaunchDescriptorType {
 	public ILaunchDescriptor getDescriptor(Object launchObject) throws CoreException {
 		if (launchObject instanceof IProject) {
 			IProject project = (IProject) launchObject;
-			if (CMakeNature.hasNature(project)) {
+			if (project.hasNature(CMakeNature.ID)) {
 				CMakeLaunchDescriptor desc = descriptors.get(project);
 				if (desc == null) {
 					desc = new CMakeLaunchDescriptor(this, project);

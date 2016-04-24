@@ -17,9 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
@@ -78,11 +76,6 @@ public class HelloWorldWizard extends BasicNewResourceWizard {
 			throw new RuntimeException(e);
 		}
 		return true;
-	}
-
-	@Override
-	public void init(IWorkbench theWorkbench, IStructuredSelection currentSelection) {
-		super.init(theWorkbench, currentSelection);
 	}
 
 }

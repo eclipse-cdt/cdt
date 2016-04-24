@@ -140,16 +140,18 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 
 	@Override
 	public ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) {
+		initProviders();
 		synchronized (configs) {
 			ICBuildConfiguration config = configs.get(buildConfig);
 			if (config == null) {
 				String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
 				if (segments.length == 2) {
 					String providerId = segments[0];
+					String configName = segments[1];
 
 					Provider provider = getProviderDelegate(providerId);
 					if (provider != null && provider.supports(buildConfig.getProject())) {
-						config = provider.getProvider().getCBuildConfiguration(buildConfig);
+						config = provider.getProvider().getCBuildConfiguration(buildConfig, configName);
 						configs.put(buildConfig, config);
 					}
 				}
@@ -159,7 +161,7 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	}
 
 	@Override
-	public ICBuildConfiguration getDefaultBuildConfiguration(IProject project) {
+	public ICBuildConfiguration getDefaultBuildConfiguration(IProject project) throws CoreException {
 		initProviders();
 		for (Provider provider : providers.values()) {
 			if (provider.supports(project)) {

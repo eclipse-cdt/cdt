@@ -17,35 +17,31 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.QtNature;
-import org.eclipse.cdt.internal.qt.core.build.QtBuilder;
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.tools.templates.freemarker.FMProjectGenerator;
 import org.eclipse.tools.templates.freemarker.SourceRoot;
+import org.osgi.framework.Bundle;
 
 public class QtProjectGenerator extends FMProjectGenerator {
 
 	@Override
 	protected void initProjectDescription(IProjectDescription description) {
-		// Natures
 		description
 				.setNatureIds(new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, QtNature.ID });
-
-		// Builders
-		ICommand command = description.newCommand();
-		command.setBuilderName(QtBuilder.ID);
-		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
-		description.setBuildSpec(new ICommand[] { command });
+		QtNature.setupBuilder(description);
 	}
 
 	@Override
+	public Bundle getSourceBundle() {
+		return Activator.getDefault().getBundle();
+	}
+	
+	@Override
 	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
-		setBundle(Activator.getDefault().getBundle());
 		super.generate(model, monitor);
 
 		// Create the sourcefolders

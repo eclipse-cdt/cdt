@@ -59,7 +59,11 @@ public class BuildOutputStream extends ConsoleOutputStream implements IErrorMark
 	@Override
 	public void write(String s, ProblemMarkerInfo marker) throws IOException {
 		fPartitioner.appendToDocument(s, fStream, marker);
-
 	}
 
+	@Override
+	public synchronized void write(String msg) throws IOException {
+		fPartitioner.appendToDocument(msg, fStream, null);
+	}
+	
 }

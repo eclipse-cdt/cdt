@@ -69,16 +69,6 @@
       </launchConfigurationType>
    </extension>
    <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.core.resources.IBuildConfiguration"
-            class="org.eclipse.cdt.cmake.core.internal.CMakeBuildConfigurationFactory">
-         <adapter
-               type="org.eclipse.cdt.cmake.core.internal.CMakeBuildConfiguration">
-         </adapter>
-      </factory>
-   </extension>
-   <extension
          point="org.eclipse.cdt.core.ScannerInfoProvider2">
       <provider
             builder="org.eclipse.cdt.cmake.core.cmakeBuilder"

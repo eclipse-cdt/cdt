@@ -10,18 +10,15 @@ package org.eclipse.cdt.cmake.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.cmake.core.internal.CMakeBuilder;
 import org.eclipse.cdt.cmake.core.internal.CMakeTemplateGenerator;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -58,11 +55,6 @@ public class CMakeProjectGenerator {
 		newIds[newIds.length - 2] = CCProjectNature.CC_NATURE_ID;
 		newIds[newIds.length - 1] = CMakeNature.ID;
 		projDesc.setNatureIds(newIds);
-
-		ICommand command = projDesc.newCommand();
-		command.setBuilderName(CMakeBuilder.ID);
-		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
-		projDesc.setBuildSpec(new ICommand[] { command });
 
 		project.setDescription(projDesc, monitor);
 

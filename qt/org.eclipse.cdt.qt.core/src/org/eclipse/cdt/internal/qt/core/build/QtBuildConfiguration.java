@@ -19,12 +19,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.IQtInstall;
@@ -34,7 +40,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -47,8 +56,8 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 	private final String launchMode;
 	private Map<String, String> properties;
 
-	public QtBuildConfiguration(IBuildConfiguration config) {
-		super(config);
+	public QtBuildConfiguration(IBuildConfiguration config, String name) {
+		super(config, name);
 
 		Preferences settings = getSettings();
 		String installName = settings.get(QTINSTALL_NAME, ""); //$NON-NLS-1$
@@ -62,9 +71,10 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 		launchMode = settings.get(LAUNCH_MODE, ""); //$NON-NLS-1$
 	}
 
-	QtBuildConfiguration(IBuildConfiguration config, IToolChain toolChain, IQtInstall qtInstall, String launchMode)
+	QtBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, IQtInstall qtInstall,
+			String launchMode)
 			throws CoreException {
-		super(config, toolChain);
+		super(config, name, toolChain);
 		this.qtInstall = qtInstall;
 		this.launchMode = launchMode;
 
@@ -122,7 +132,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 	}
 
 	@Override
-	public Path getProgramPath() {
+	public Path getProgramPath() throws CoreException {
 		String projectName = getProject().getName();
 		switch (Platform.getOS()) {
 		case Platform.OS_MACOSX:
@@ -158,8 +168,10 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 			cmd.add(getProjectFile().toString());
 
 			try {
-				ProcessBuilder procBuilder = new ProcessBuilder(cmd).directory(getProjectFile().getParent().toFile());
-				Process proc = procBuilder.start();
+				ProcessBuilder processBuilder = new ProcessBuilder(cmd)
+						.directory(getProjectFile().getParent().toFile());
+				setBuildEnvironment(processBuilder.environment());
+				Process proc = processBuilder.start();
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
 					properties = new HashMap<>();
 					for (String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -226,21 +238,128 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 		for (int i = 0; i < includePaths.length; ++i) {
 			Path path = Paths.get(includePaths[i]);
 			if (!path.isAbsolute()) {
-				includePaths[i] = getBuildDirectory().resolve(path).toString();
+				try {
+					includePaths[i] = getBuildDirectory().resolve(path).toString();
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
 			}
 		}
 
-		Path dir = Paths.get(project.getLocationURI());
-		return getToolChain().getScannerInfo(getBuildConfiguration(), command, args, Arrays.asList(includePaths),
-				resource, dir);
+		IExtendedScannerInfo baseScannerInfo = new ExtendedScannerInfo(null, includePaths);
+		try {
+			return getToolChain().getScannerInfo(getBuildConfiguration(), command,
+					args.toArray(new String[args.size()]), baseScannerInfo, resource,
+					getBuildContainer().getLocationURI());
+		} catch (CoreException e) {
+			Activator.log(e);
+			return null;
+		}
 	}
 
 	@Override
-	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {
+	public IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
+			throws CoreException {
+		IProject project = getProject();
+		try {
+			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+
+			ConsoleOutputStream errStream = console.getErrorStream();
+			ConsoleOutputStream outStream = console.getOutputStream();
+
+			Path makeCommand = getMakeCommand();
+			if (makeCommand == null) {
+				errStream.write("'make' not found.\n");
+				return null;
+			}
+
+			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
+					getToolChain().getErrorParserIds())) {
+				Path buildDir = getBuildDirectory();
+				if (!buildDir.resolve("Makefile").toFile().exists()) { //$NON-NLS-1$
+					// Need to run qmake
+					List<String> command = new ArrayList<>();
+					command.add(getQmakeCommand().toString());
+
+					String config = getQmakeConfig();
+					if (config != null) {
+						command.add(config);
+					}
+
+					IFile projectFile = project.getFile(project.getName() + ".pro"); //$NON-NLS-1$
+					command.add(projectFile.getLocation().toOSString());
+
+					ProcessBuilder processBuilder = new ProcessBuilder(command)
+							.directory(getBuildDirectory().toFile());
+					setBuildEnvironment(processBuilder.environment());
+					Process process = processBuilder.start();
+
+					StringBuffer msg = new StringBuffer();
+					for (String arg : command) {
+						msg.append(arg).append(' ');
+					}
+					msg.append('\n');
+					outStream.write(msg.toString());
+
+					// TODO qmake error parser
+					watchProcess(process, new IConsoleParser[0], console);
+				}
+
+				// run make
+				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString()).directory(buildDir.toFile());
+				setBuildEnvironment(processBuilder.environment());
+				Process process = processBuilder.start();
+				outStream.write(makeCommand.toString() + '\n');
+				watchProcess(process, new IConsoleParser[] { epm }, console);
+			}
+
+			getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			return new IProject[] { project };
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Building " + project.getName(), e)); //$NON-NLS-1$
+		}
 	}
 
 	@Override
-	public void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
+	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
+		IProject project = getProject();
+		try {
+			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+
+			ConsoleOutputStream errStream = console.getErrorStream();
+			ConsoleOutputStream outStream = console.getOutputStream();
+
+			Path makeCommand = getMakeCommand();
+			if (makeCommand == null) {
+				errStream.write("'make' not found.\n");
+				return;
+			}
+
+			Path buildDir = getBuildDirectory();
+
+			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
+					getToolChain().getErrorParserIds())) {
+				// run make
+				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString(), "clean") //$NON-NLS-1$
+						.directory(buildDir.toFile());
+				setBuildEnvironment(processBuilder.environment());
+				Process process = processBuilder.start();
+				outStream.write(makeCommand.toString() + "clean\n"); //$NON-NLS-1$
+				watchProcess(process, new IConsoleParser[] { epm }, console);
+			}
+
+			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Cleaning " + project.getName(), e)); //$NON-NLS-1$
+		}
+	}
+
+	public Path getMakeCommand() {
+		Path makeCommand = findCommand("make"); //$NON-NLS-1$
+		if (makeCommand == null) {
+			makeCommand = findCommand("mingw32-make"); //$NON-NLS-1$
+		}
+		return makeCommand;
 	}
 
 }

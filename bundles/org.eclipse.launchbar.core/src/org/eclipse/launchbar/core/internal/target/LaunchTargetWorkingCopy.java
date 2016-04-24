@@ -13,6 +13,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -20,6 +21,7 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 
 	private final LaunchTarget original;
 	private final Map<String, String> changes = new HashMap<>();
+	private String newId;
 
 	public LaunchTargetWorkingCopy(LaunchTarget original) {
 		this.original = original;
@@ -37,7 +39,12 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 
 	@Override
 	public String getId() {
-		return original.getId();
+		return newId != null ? newId : original.getId();
+	}
+
+	@Override
+	public void setId(String id) {
+		newId = id;
 	}
 
 	@Override
@@ -62,14 +69,29 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 	@Override
 	public ILaunchTarget save() {
 		try {
-			for (Map.Entry<String, String> entry : changes.entrySet()) {
-				original.attributes.put(entry.getKey(), entry.getValue());
+			LaunchTarget target;
+			if (newId == null) {
+				target = original;
+			} else {
+				// make a new one and remove the old one
+				ILaunchTargetManager manager = Activator.getLaunchTargetManager();
+				target = (LaunchTarget) manager.addLaunchTarget(original.getTypeId(), newId);
+				for (String key : original.attributes.keys()) {
+					target.attributes.put(key, original.getAttribute(key, "")); //$NON-NLS-1$
+				}
+				manager.removeLaunchTarget(original);
 			}
-			original.attributes.flush();
+			
+			// set the changed attributes
+			for (Map.Entry<String, String> entry : changes.entrySet()) {
+				target.attributes.put(entry.getKey(), entry.getValue());
+			}
+			target.attributes.flush();
+			return target;
 		} catch (BackingStoreException e) {
 			Activator.log(e);
+			return original;
 		}
-		return original;
 	}
 
 }

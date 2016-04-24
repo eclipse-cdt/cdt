@@ -65,8 +65,8 @@ public interface ILaunchTarget extends IAdaptable {
 	String getAttribute(String key, String defValue);
 
 	/**
-	 * Create a working copy of this launch target to allow setting of attributes. Note that when
-	 * saving the attributes this target is updated. A new one is not created.
+	 * Create a working copy of this launch target to allow setting of attributes. It also allows
+	 * changing the id, which results in a new launch target when saved.
 	 * 
 	 * @return launch target working copy
 	 */

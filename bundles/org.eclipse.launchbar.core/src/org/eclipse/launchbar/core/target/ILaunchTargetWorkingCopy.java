@@ -20,6 +20,14 @@ public interface ILaunchTargetWorkingCopy extends ILaunchTarget {
 	ILaunchTarget getOriginal();
 
 	/**
+	 * Gives the target a new ID. The save method will return a new target with the given name.e
+	 * 
+	 * @param id
+	 *            new target ID
+	 */
+	void setId(String id);
+
+	/**
 	 * Set an attribute.
 	 * 
 	 * @param key
@@ -30,9 +38,9 @@ public interface ILaunchTargetWorkingCopy extends ILaunchTarget {
 	void setAttribute(String key, String value);
 
 	/**
-	 * Save the changed attributes to the original working copy.
+	 * Save the changes to the original working copy.
 	 * 
-	 * @return original launch target
+	 * @return original launch target unless the id was changed in which case returns a new target
 	 */
 	ILaunchTarget save();
 

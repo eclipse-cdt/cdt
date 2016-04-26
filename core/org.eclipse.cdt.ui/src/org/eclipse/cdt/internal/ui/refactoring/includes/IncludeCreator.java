@@ -322,7 +322,7 @@ public class IncludeCreator {
 		// Put the new includes into styledIncludes.
 		for (IncludeInfo includeInfo : includes) {
 			IPath header = fContext.resolveInclude(includeInfo);
-			if (!fContext.wasIncludedPreviously(header)) {
+			if (header != null && !fContext.wasIncludedPreviously(header)) {
 				IncludeGroupStyle style = fContext.getIncludeStyle(includeInfo);
 				StyledInclude prototype = new StyledInclude(header, includeInfo, style);
 				styledIncludes.add(prototype);

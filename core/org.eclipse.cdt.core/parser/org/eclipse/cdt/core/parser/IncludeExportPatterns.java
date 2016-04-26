@@ -16,7 +16,7 @@ import java.util.regex.PatternSyntaxException;
 /**
  * Container for include export patterns, for example "IWYU pragma: export",
  * "IWYU pragma: begin_exports" and "IWYU pragma: end_exports".
- * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+ * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
  *
  * @since 5.5
  */

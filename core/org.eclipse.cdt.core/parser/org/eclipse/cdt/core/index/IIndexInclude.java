@@ -116,7 +116,7 @@ public interface IIndexInclude {
 
 	/**
 	 * Returns {@code true} if the included file is exported by the including header.
-	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
 	 * @since 5.5
 	 */
 	boolean isIncludedFileExported() throws CoreException;

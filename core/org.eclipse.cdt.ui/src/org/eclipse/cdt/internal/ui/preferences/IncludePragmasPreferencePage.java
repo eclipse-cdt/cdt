@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /*
  * The preference page for configuring include-related pragmas.
- * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+ * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
  */
 public class IncludePragmasPreferencePage extends ConfigurationBlockPropertyAndPreferencePage {
 	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.IncludePragmasPreferencePage"; //$NON-NLS-1$

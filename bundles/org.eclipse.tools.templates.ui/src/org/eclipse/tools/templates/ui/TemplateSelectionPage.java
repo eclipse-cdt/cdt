@@ -30,6 +30,7 @@ import org.eclipse.tools.templates.ui.internal.Template;
 import org.eclipse.tools.templates.ui.internal.TemplateExtension;
 import org.eclipse.tools.templates.ui.internal.TemplateTable;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 public class TemplateSelectionPage extends WizardPage {
 
@@ -99,6 +100,8 @@ public class TemplateSelectionPage extends WizardPage {
 		if (template != null) {
 			try {
 				IWorkbenchWizard nextWizard = template.getWizard();
+				BasicNewResourceWizard oldWizard = (BasicNewResourceWizard) getWizard();
+				nextWizard.init(oldWizard.getWorkbench(), oldWizard.getSelection());
 				nextWizard.addPages();
 				return nextWizard.getPages()[0];
 			} catch (CoreException e) {

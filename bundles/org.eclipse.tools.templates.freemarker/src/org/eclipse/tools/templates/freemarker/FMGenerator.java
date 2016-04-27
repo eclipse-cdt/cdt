@@ -41,7 +41,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.tools.templates.core.IGenerator;
 import org.eclipse.tools.templates.freemarker.internal.Activator;
+import org.eclipse.tools.templates.freemarker.internal.Messages;
 import org.osgi.framework.Bundle;
 
 import freemarker.cache.TemplateLoader;
@@ -49,32 +51,30 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public abstract class FMGenerator implements TemplateLoader {
+public abstract class FMGenerator implements IGenerator, TemplateLoader {
 
 	private final Configuration templateConfig;
-	private String manifestPath;
+	private final String manifestPath;
 	private TemplateManifest manifest;
 	private List<IFile> filesToOpen = new ArrayList<>();
 
-	protected FMGenerator() {
+	protected FMGenerator(String manifestPath) {
 		templateConfig = new Configuration(Configuration.VERSION_2_3_22);
 		templateConfig.setTemplateLoader(this);
-	}
-
-	public abstract Bundle getSourceBundle();
-	
-	public void setTemplateManifestPath(String manifestPath) {
 		this.manifestPath = manifestPath;
 	}
 
-	public TemplateManifest getManifest() {
-		return manifest;
-	}
-
+	protected abstract Bundle getSourceBundle();
+	
 	protected Class<? extends TemplateManifest> getManifestClass() {
 		return TemplateManifest.class;
 	}
 
+	protected TemplateManifest getManifest() {
+		return manifest;
+	}
+
+	@Override
 	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
 		// If no manifest, just return
 		if (manifestPath == null) {
@@ -90,7 +90,7 @@ public abstract class FMGenerator implements TemplateLoader {
 			Unmarshaller unmarshaller = xmlContext.createUnmarshaller();
 			manifest = (TemplateManifest) unmarshaller.unmarshal(new StringReader(writer.toString()));
 		} catch (JAXBException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading template manifest", e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), Messages.FMGenerator_0, e));
 		}
 
 		// generate files
@@ -116,7 +116,7 @@ public abstract class FMGenerator implements TemplateLoader {
 						}
 					} catch (IOException e) {
 						throw new CoreException(new Status(IStatus.ERROR, Activator.getId(),
-								"Reading file " + fileTemplate.getSrc(), e));
+								String.format(Messages.FMGenerator_1, fileTemplate.getSrc()), e));
 					}
 				}
 
@@ -138,17 +138,17 @@ public abstract class FMGenerator implements TemplateLoader {
 		}
 	}
 
-	public void loadFile(String templateFile, Object model, Writer out) throws CoreException {
+	protected void loadFile(String templateFile, Map<String, Object> model, Writer out) throws CoreException {
 		try {
 			Template template = templateConfig.getTemplate(templateFile);
 			template.process(model, out);
 		} catch (IOException | TemplateException e) {
 			throw new CoreException(
-					new Status(IStatus.ERROR, Activator.getId(), "Processing template " + templateFile, e));
+					new Status(IStatus.ERROR, Activator.getId(), String.format(Messages.FMGenerator_2, templateFile), e));
 		}
 	}
 
-	public void generateFile(String templateFile, final Object model, final IFile outputFile, IProgressMonitor monitor)
+	public void generateFile(String templateFile, Map<String, Object> model, final IFile outputFile, IProgressMonitor monitor)
 			throws CoreException {
 		try (StringWriter writer = new StringWriter()) {
 			loadFile(templateFile, model, writer);
@@ -162,11 +162,11 @@ public abstract class FMGenerator implements TemplateLoader {
 				}
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Generating file " + templateFile, e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), String.format(Messages.FMGenerator_3, templateFile), e));
 		}
 	}
 
-	public static void createParent(IResource child, IProgressMonitor monitor) throws CoreException {
+	protected static void createParent(IResource child, IProgressMonitor monitor) throws CoreException {
 		if (child == null)
 			return;
 
@@ -180,9 +180,10 @@ public abstract class FMGenerator implements TemplateLoader {
 		parent.create(true, true, monitor);
 	}
 
+	@Override
 	public IFile[] getFilesToOpen() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO
+		return new IFile[0];
 	}
 
 	@Override

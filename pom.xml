@@ -60,6 +60,7 @@
 	</repositories>
 
 	<modules>
+		<module>bundles/org.eclipse.tools.templates.core</module>
 		<module>bundles/org.eclipse.tools.templates.freemarker</module>
 		<module>bundles/org.eclipse.tools.templates.ui</module>
 

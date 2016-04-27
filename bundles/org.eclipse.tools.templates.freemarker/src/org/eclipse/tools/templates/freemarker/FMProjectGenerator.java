@@ -24,6 +24,10 @@ public abstract class FMProjectGenerator extends FMGenerator {
 	private IProject[] referencedProjects;
 
 	private IProject project;
+	
+	public FMProjectGenerator(String manifestPath) {
+		super(manifestPath);
+	}
 
 	protected abstract void initProjectDescription(IProjectDescription description) throws CoreException;
 

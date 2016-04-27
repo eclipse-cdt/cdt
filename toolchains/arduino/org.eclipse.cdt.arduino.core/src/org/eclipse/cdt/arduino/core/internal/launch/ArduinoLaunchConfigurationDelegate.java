@@ -15,7 +15,9 @@ import java.io.IOException;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfigurationProvider;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
+import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +36,9 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationTarge
 	public static final String TYPE_ID = "org.eclipse.cdt.arduino.core.launchConfigurationType"; //$NON-NLS-1$
 	public static final String CONNECTION_NAME = Activator.getId() + ".connectionName"; //$NON-NLS-1$
 
+	private static final ICBuildConfigurationManager buildConfigManager = Activator
+			.getService(ICBuildConfigurationManager.class);
+
 	@Override
 	public ITargetedLaunch getLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target)
 			throws CoreException {
@@ -49,7 +54,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationTarge
 
 			// 1. make sure proper build config is set active
 			IProject project = configuration.getMappedResources()[0].getProject();
-			ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project, arduinoTarget,
+			ArduinoBuildConfiguration arduinoConfig = getArduinoConfiguration(project, mode, arduinoTarget,
 					monitor);
 			arduinoConfig.setActive(monitor);
 		}
@@ -81,7 +86,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationTarge
 			IProject project = (IProject) configuration.getMappedResources()[0];
 
 			// The build config
-			ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project, arduinoTarget,
+			ArduinoBuildConfiguration arduinoConfig = getArduinoConfiguration(project, mode, arduinoTarget,
 					monitor);
 			String[] uploadCmd = arduinoConfig.getUploadCommand(arduinoTarget.getPortName());
 
@@ -94,8 +99,9 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationTarge
 			((ArduinoLaunch) launch).start();
 
 			// Run the process and capture the results in the console
-			ProcessBuilder processBuilder = new ProcessBuilder(uploadCmd).directory(arduinoConfig.getBuildDirectory());
-			arduinoConfig.setEnvironment(processBuilder.environment());
+			ProcessBuilder processBuilder = new ProcessBuilder(uploadCmd)
+					.directory(arduinoConfig.getBuildDirectory().toFile());
+			arduinoConfig.setBuildEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 			DebugPlugin.newProcess(launch, process, cmdStr.toString());
 		} catch (IOException e) {
@@ -104,4 +110,15 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationTarge
 
 	}
 
+	public ArduinoBuildConfiguration getArduinoConfiguration(IProject project, String launchMode,
+			ArduinoRemoteConnection arduinoTarget,
+			IProgressMonitor monitor) throws CoreException {
+		ArduinoBuildConfigurationProvider provider = (ArduinoBuildConfigurationProvider) buildConfigManager
+				.getProvider(ArduinoBuildConfigurationProvider.ID);
+		ArduinoBuildConfiguration config = provider.getConfiguration(project, arduinoTarget, launchMode, monitor);
+		if (config == null) {
+			config = provider.createConfiguration(project, arduinoTarget, launchMode, monitor);
+		}
+		return config;
+	}
 }

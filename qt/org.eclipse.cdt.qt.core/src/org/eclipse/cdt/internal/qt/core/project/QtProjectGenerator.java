@@ -28,6 +28,10 @@ import org.osgi.framework.Bundle;
 
 public class QtProjectGenerator extends FMProjectGenerator {
 
+	public QtProjectGenerator(String manifestPath) {
+		super(manifestPath);
+	}
+
 	@Override
 	protected void initProjectDescription(IProjectDescription description) {
 		description
@@ -39,7 +43,7 @@ public class QtProjectGenerator extends FMProjectGenerator {
 	public Bundle getSourceBundle() {
 		return Activator.getDefault().getBundle();
 	}
-	
+
 	@Override
 	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
 		super.generate(model, monitor);

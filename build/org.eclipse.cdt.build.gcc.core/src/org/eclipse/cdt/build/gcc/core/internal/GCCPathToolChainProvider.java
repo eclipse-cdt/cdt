@@ -11,98 +11,53 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.build.gcc.core.GCCToolChain;
-import org.eclipse.cdt.build.gcc.core.GCCToolChainType;
-import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.build.IToolChainProvider;
-import org.eclipse.cdt.core.build.IToolChainType;
 
 /**
  * Finds gcc and clang on the path.
  */
 public class GCCPathToolChainProvider implements IToolChainProvider {
 
-	private static Pattern gccPattern = Pattern.compile("(.*-)?(gcc|g\\+\\+|clang|clang\\+\\+)(-[0-9].*)?"); //$NON-NLS-1$
+	private static final String ID = "org.eclipse.cdt.build.gcc.core.gccPathProvider"; //$NON-NLS-1$
+
+	private static final Pattern gccPattern = Pattern.compile("(.*-)?(gcc|g\\+\\+|clang|clang\\+\\+)"); //$NON-NLS-1$
 
 	@Override
-	public Collection<IToolChain> getToolChains() {
-		IToolChainManager manager = Activator.getService(IToolChainManager.class);
-		IToolChainType type = null;
-
-		List<IToolChain> toolChains = new ArrayList<>();
-
-		String path = null;
-		for (Entry<String, String> entry : System.getenv().entrySet()) {
-			if (entry.getKey().equalsIgnoreCase("PATH")) { //$NON-NLS-1$
-				path = entry.getValue();
-				break;
-			}
-		}
-
-		if (path != null) {
-			Map<String, List<String>> installs = new HashMap<>();
-
-			for (String dirStr : path.split(File.pathSeparator)) {
-				File dir = new File(dirStr);
-				if (dir.isDirectory()) {
-					for (String file : dir.list()) {
-						Matcher matcher = gccPattern.matcher(file);
-						if (matcher.matches()) {
-							String prefix = matcher.group(1);
-							String suffix = matcher.group(3);
-							String command = dirStr + File.separatorChar + file;
-							String version = getVersion(command);
-							if (version != null) {
-								List<String> commands = installs.get(version);
-								if (commands == null) {
-									commands = new ArrayList<>();
-									installs.put(version, commands);
-								}
-								commands.add(command);
-							}
-						}
-					}
-				}
-			}
-
-			for (Entry<String, List<String>> entry : installs.entrySet()) {
-				String version = entry.getKey();
-				String searchStr;
-				if (version.contains("LLVM")) {
-					searchStr = "clang++";
-				} else {
-					searchStr = "g++";
-				}
-
-				for (String command : entry.getValue()) {
-					if (command.contains(searchStr)) {
-						if (type == null) {
-							type = manager.getToolChainType(GCCToolChainType.ID);
-						}
-						Path commandPath = Paths.get(command);
-						toolChains.add(
-								new GCCToolChain(type, commandPath.getParent(), commandPath.getFileName().toString()));
-						break;
-					}
-				}
-			}
-		}
-
-		return toolChains;
+	public String getId() {
+		return ID;
 	}
+	
+	@Override
+	public void init(IToolChainManager manager) {
+		Set<String> versions = new HashSet<>();
 
+		String path = System.getenv("PATH"); //$NON-NLS-1$
+		for (String dirStr : path.split(File.pathSeparator)) {
+			File dir = new File(dirStr);
+			if (dir.isDirectory()) {
+				for (String file : dir.list()) {
+					Matcher matcher = gccPattern.matcher(file);
+					if (matcher.matches()) {
+						String prefix = matcher.group(1);
+						String command = dirStr + File.separatorChar + file;
+						String version = getVersion(command);
+						if (version != null && !versions.contains(version)) {
+							versions.add(version);
+							manager.addToolChain(new GCCToolChain(this, version, dir.toPath(), prefix));
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	private static Pattern versionPattern = Pattern.compile(".*(gcc|LLVM) version .*"); //$NON-NLS-1$
 	private static Pattern targetPattern = Pattern.compile("Target: (.*)"); //$NON-NLS-1$
 

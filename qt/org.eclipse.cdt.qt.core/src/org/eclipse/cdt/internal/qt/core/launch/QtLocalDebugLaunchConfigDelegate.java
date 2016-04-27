@@ -8,6 +8,7 @@
 package org.eclipse.cdt.internal.qt.core.launch;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.build.IToolChain;
@@ -64,7 +65,7 @@ public class QtLocalDebugLaunchConfigDelegate extends QtLaunchConfigurationDeleg
 		IQtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
 		IToolChain toolChain = qtBuildConfig.getToolChain();
-		gdbLaunch.setGDBPath(toolChain.getCommandPath("gdb").toString()); //$NON-NLS-1$
+		gdbLaunch.setGDBPath(toolChain.getCommandPath(Paths.get("gdb")).toString()); //$NON-NLS-1$
 		String gdbVersion = gdbLaunch.getGDBVersion();
 
 		Path exeFile = qtBuildConfig.getProgramPath();

@@ -192,7 +192,8 @@
     <extension
           point="org.eclipse.cdt.core.toolChainProvider">
        <provider
-             class="org.eclipse.cdt.qt.core.QtMinGWToolChainProvider">
+             class="org.eclipse.cdt.qt.core.QtMinGWToolChainProvider"
+             id="org.eclipse.cdt.qt.core.qtMinGWProvider">
        </provider>
     </extension>
     <extension

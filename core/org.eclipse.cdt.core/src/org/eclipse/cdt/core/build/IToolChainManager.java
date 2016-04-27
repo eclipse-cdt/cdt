@@ -10,6 +10,8 @@ package org.eclipse.cdt.core.build;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * The global toolchain manager. Accessed as an OSGi service.
  *
@@ -17,9 +19,11 @@ import java.util.Map;
  */
 public interface IToolChainManager {
 
-	IToolChainType getToolChainType(String id);
-
-	IToolChain getToolChain(String typeId, String name);
+	IToolChainProvider getProvider(String providerId) throws CoreException;
+	
+	IToolChain getToolChain(String providerId, String name) throws CoreException;
+	
+	Collection<IToolChain> getToolChains(String providerId) throws CoreException;
 
 	/**
 	 * Returns the list of toolchains that have the given properties.
@@ -28,6 +32,10 @@ public interface IToolChainManager {
 	 *            properties of the toolchains
 	 * @return the qualified toolchains
 	 */
-	Collection<IToolChain> getToolChainsMatching(Map<String, String> properties);
+	Collection<IToolChain> getToolChainsMatching(Map<String, String> properties) throws CoreException;
+
+	void addToolChain(IToolChain toolChain);
+	
+	void removeToolChain(IToolChain toolChain);
 
 }

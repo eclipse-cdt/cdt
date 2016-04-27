@@ -35,6 +35,8 @@ public interface ICBuildConfigurationManager {
 	IBuildConfiguration createBuildConfiguration(ICBuildConfigurationProvider provider, IProject project,
 			String configName, IProgressMonitor monitor) throws CoreException;
 
+	IBuildConfiguration getBuildConfiguration(ICBuildConfigurationProvider provider, IProject project, String configName) throws CoreException;
+
 	/**
 	 * Called by providers to add new build configurations as they are created.
 	 * 
@@ -52,8 +54,8 @@ public interface ICBuildConfigurationManager {
 	 * @param buildConfig
 	 * @return the matching CDT build configuration
 	 */
-	ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig);
-
+	ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) throws CoreException;
+	
 	ICBuildConfiguration getDefaultBuildConfiguration(IProject project) throws CoreException;
 
 }

@@ -74,7 +74,8 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 	QtBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, IQtInstall qtInstall,
 			String launchMode)
 			throws CoreException {
-		super(config, name, toolChain);
+		super(config, name);
+		setToolChain(toolChain);
 		this.qtInstall = qtInstall;
 		this.launchMode = launchMode;
 

@@ -60,7 +60,7 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 			properties.put(IToolChain.ATTR_ARCH, arch);
 		}
 	}
-	
+
 	protected IQtBuildConfiguration getQtBuildConfiguration(ILaunchConfiguration configuration, String mode,
 			ILaunchTarget target, IProgressMonitor monitor) throws CoreException {
 		// Find the Qt build config
@@ -72,10 +72,13 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 		// Find the toolchains that support this target
 		Map<String, String> properties = new HashMap<>();
 		populateToolChainProperties(target, properties);
-		
+
 		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
 		for (IToolChain toolChain : toolChainManager.getToolChainsMatching(properties)) {
-			IQtBuildConfiguration qtConfig = provider.createConfiguration(project, toolChain, mode, monitor);
+			IQtBuildConfiguration qtConfig = provider.getConfiguration(project, toolChain, mode, monitor);
+			if (qtConfig == null) {
+				qtConfig = provider.createConfiguration(project, toolChain, mode, monitor);
+			}
 			if (qtConfig != null) {
 				return qtConfig;
 			}

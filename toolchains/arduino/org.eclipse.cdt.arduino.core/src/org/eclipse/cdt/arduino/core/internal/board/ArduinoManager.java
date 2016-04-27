@@ -45,7 +45,7 @@ import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
-import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
@@ -76,6 +76,7 @@ public class ArduinoManager {
 
 	public void loadIndices() {
 		new Job(Messages.ArduinoBoardManager_0) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				synchronized (ArduinoManager.this) {
 					String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
@@ -207,7 +208,7 @@ public class ArduinoManager {
 	private static final String LIBRARIES = "libraries"; //$NON-NLS-1$
 
 	private IEclipsePreferences getSettings(IProject project) {
-		return (IEclipsePreferences) new ProjectScope(project).getNode(Activator.getId());
+		return new ProjectScope(project).getNode(Activator.getId());
 	}
 
 	public Collection<ArduinoLibrary> getLibraries(IProject project) throws CoreException {
@@ -218,8 +219,8 @@ public class ArduinoManager {
 		Set<String> libraryNames = new Gson().fromJson(librarySetting, stringSet);
 		LibraryIndex index = Activator.getService(ArduinoManager.class).getLibraryIndex();
 
-		ArduinoPlatform platform = project.getActiveBuildConfig().getAdapter(ArduinoBuildConfiguration.class).getBoard()
-				.getPlatform();
+		ICBuildConfiguration cconfig = project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class);
+		ArduinoPlatform platform = cconfig.getAdapter(ArduinoBuildConfiguration.class).getBoard().getPlatform();
 		List<ArduinoLibrary> libraries = new ArrayList<>(libraryNames.size());
 		for (String name : libraryNames) {
 			ArduinoLibrary lib = index.getLibrary(name);
@@ -247,6 +248,7 @@ public class ArduinoManager {
 		}
 
 		new Job(Messages.ArduinoManager_0) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				MultiStatus mstatus = new MultiStatus(Activator.getId(), 0, Messages.ArduinoManager_1, null);
 				for (ArduinoLibrary library : libraries) {
@@ -254,16 +256,6 @@ public class ArduinoManager {
 					if (!status.isOK()) {
 						mstatus.add(status);
 					}
-				}
-
-				// Clear the scanner info caches to pick up new includes
-				try {
-					for (IBuildConfiguration config : project.getBuildConfigs()) {
-						ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
-						arduinoConfig.clearScannerInfoCache();
-					}
-				} catch (CoreException e) {
-					mstatus.add(e.getStatus());
 				}
 				return mstatus;
 			}

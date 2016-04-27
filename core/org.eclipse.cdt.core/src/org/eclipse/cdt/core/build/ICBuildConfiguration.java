@@ -34,18 +34,18 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * 
 	 * @return resources build configuration
 	 */
-	IBuildConfiguration getBuildConfiguration();
+	IBuildConfiguration getBuildConfiguration() throws CoreException;
 
 	/**
 	 * Build Configurations are configurations for a given toolchain.
 	 * 
 	 * @return the toolchain for this build configuration
 	 */
-	IToolChain getToolChain();
+	IToolChain getToolChain() throws CoreException;
 
-	IEnvironmentVariable getVariable(String name);
+	IEnvironmentVariable getVariable(String name) throws CoreException;
 
-	IEnvironmentVariable[] getVariables();
+	IEnvironmentVariable[] getVariables() throws CoreException;
 
 	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor) throws CoreException;
 

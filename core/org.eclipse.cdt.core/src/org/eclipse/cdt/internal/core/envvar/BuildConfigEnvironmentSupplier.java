@@ -7,9 +7,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.envvar;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.runtime.CoreException;
 
 public class BuildConfigEnvironmentSupplier implements ICoreEnvironmentVariableSupplier {
 
@@ -19,7 +21,12 @@ public class BuildConfigEnvironmentSupplier implements ICoreEnvironmentVariableS
 			ICBuildConfiguration cconfig = ((IBuildConfiguration) context)
 					.getAdapter(ICBuildConfiguration.class);
 			if (cconfig != null) {
-				return cconfig.getVariable(name);
+				try {
+					return cconfig.getVariable(name);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+					return null;
+				}
 			}
 		}
 		return null;
@@ -31,7 +38,12 @@ public class BuildConfigEnvironmentSupplier implements ICoreEnvironmentVariableS
 			ICBuildConfiguration cconfig = ((IBuildConfiguration) context)
 					.getAdapter(ICBuildConfiguration.class);
 			if (cconfig != null) {
-				return cconfig.getVariables();
+				try {
+					return cconfig.getVariables();
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+					return null;
+				}
 			}
 		}
 		return null;

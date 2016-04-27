@@ -7,55 +7,28 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.project;
 
-import org.eclipse.cdt.arduino.core.internal.ArduinoProjectGenerator;
-import org.eclipse.cdt.arduino.ui.internal.Activator;
-import org.eclipse.cdt.arduino.ui.internal.Messages;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.tools.templates.ui.TemplateSelectionPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewArduinoProjectWizard extends BasicNewProjectResourceWizard {
 
+	private static final String ARDUINO_TAG_ID = "org.eclipse.cdt.arduino.ui.tag"; //$NON-NLS-1$
+
+	private TemplateSelectionPage templateSelectionPage;
+
+	public NewArduinoProjectWizard() {
+		setForcePreviousAndNextButtons(true);
+	}
+	
 	@Override
 	public void addPages() {
-		super.addPages();
+		templateSelectionPage = new TemplateSelectionPage("templateSelection", ARDUINO_TAG_ID); //$NON-NLS-1$
+		templateSelectionPage.setTitle("Template for New Arduino Project");
+		this.addPage(templateSelectionPage);
 	}
 
 	@Override
 	public boolean performFinish() {
-		if (!super.performFinish())
-			return false;
-
-		new Job(Messages.NewArduinoProjectWizard_0) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					final ArduinoProjectGenerator generator = new ArduinoProjectGenerator(getNewProject());
-					generator.generate(monitor);
-					getWorkbench().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								IWorkbenchPage activePage = getWorkbench().getActiveWorkbenchWindow().getActivePage();
-								IDE.openEditor(activePage, generator.getSourceFile());
-							} catch (PartInitException e) {
-								Activator.getDefault().getLog().log(e.getStatus());
-							}
-						}
-					});
-					return Status.OK_STATUS;
-				} catch (CoreException e) {
-					return e.getStatus();
-				}
-			}
-		}.schedule();
-
 		return true;
 	}
 

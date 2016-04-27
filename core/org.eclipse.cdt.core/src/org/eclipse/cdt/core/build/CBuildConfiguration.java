@@ -30,6 +30,9 @@ import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IOutputEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
@@ -67,37 +70,11 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	private final String name;
 	private final IBuildConfiguration config;
-	private final IToolChain toolChain;
+	private IToolChain toolChain;
 
 	protected CBuildConfiguration(IBuildConfiguration config, String name) {
 		this.config = config;
 		this.name = name;
-
-		// Load toolchain from prefs
-		Preferences settings = getSettings();
-		String typeId = settings.get(TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
-		String id = settings.get(TOOLCHAIN_NAME, ""); //$NON-NLS-1$
-		IToolChainManager toolChainManager = CCorePlugin.getService(IToolChainManager.class);
-		toolChain = !id.isEmpty() ? toolChainManager.getToolChain(typeId, id) : null;
-
-		if (toolChain == null) {
-			CCorePlugin.log(String.format("Toolchain missing for config: %s", config.getName()));
-		}
-	}
-
-	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		this.config = config;
-		this.name = name;
-
-		this.toolChain = toolChain;
-		Preferences settings = getSettings();
-		settings.put(TOOLCHAIN_TYPE, toolChain.getType().getId());
-		settings.put(TOOLCHAIN_NAME, toolChain.getName());
-		try {
-			settings.flush();
-		} catch (BackingStoreException e) {
-			CCorePlugin.log(e);
-		}
 	}
 
 	@Override
@@ -124,7 +101,16 @@ public abstract class CBuildConfiguration extends PlatformObject
 		IFolder buildFolder = buildRootFolder.getFolder(name);
 		if (!buildFolder.exists()) {
 			buildFolder.create(true, true, new NullProgressMonitor());
+			buildFolder.setDerived(true, null);
+			ICProject cproject = CoreModel.getDefault().create(getProject());
+			IOutputEntry output = CoreModel.newOutputEntry(buildFolder.getFullPath());
+			IPathEntry[] oldEntries = cproject.getRawPathEntries();
+			IPathEntry[] newEntries = new IPathEntry[oldEntries.length + 1];
+			System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
+			newEntries[oldEntries.length] = output;
+			cproject.setRawPathEntries(newEntries, null);
 		}
+		
 		return buildFolder;
 	}
 
@@ -136,7 +122,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 		return Paths.get(getBuildDirectoryURI());
 	}
 
-	protected void setBuildEnvironment(Map<String, String> env) {
+	public void setBuildEnvironment(Map<String, String> env) {
 		CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(env, config, true);
 	}
 
@@ -158,8 +144,33 @@ public abstract class CBuildConfiguration extends PlatformObject
 	}
 
 	@Override
-	public IToolChain getToolChain() {
+	public IToolChain getToolChain() throws CoreException {
+		if (toolChain == null) {
+			Preferences settings = getSettings();
+			String typeId = settings.get(TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
+			String id = settings.get(TOOLCHAIN_NAME, ""); //$NON-NLS-1$
+			IToolChainManager toolChainManager = CCorePlugin.getService(IToolChainManager.class);
+			toolChain = toolChainManager.getToolChain(typeId, id);
+
+			if (toolChain == null) {
+				CCorePlugin.log(String.format("Toolchain missing for config: %s", config.getName()));
+			}
+		}
+
 		return toolChain;
+	}
+
+	protected void setToolChain(IToolChain toolChain) {
+		this.toolChain = toolChain;
+
+		Preferences settings = getSettings();
+		settings.put(TOOLCHAIN_TYPE, toolChain.getProvider().getId());
+		settings.put(TOOLCHAIN_NAME, toolChain.getName());
+		try {
+			settings.flush();
+		} catch (BackingStoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	@Override
@@ -358,8 +369,29 @@ public abstract class CBuildConfiguration extends PlatformObject
 		// TODO smarter line parsing to deal with quoted arguments
 		String[] command = line.split("\\s+"); //$NON-NLS-1$
 
+		// Make sure it's a compile command
+		boolean found = false;
+		String[] compileCommands = toolChain.getCompileCommands();
+		for (String arg : command) {
+			if (arg.startsWith("-")) { //$NON-NLS-1$
+				// option found, missed our command
+				break;
+			}
+			
+			for (String cc : compileCommands) {
+				if (arg.equals(cc)) {
+					found = true;
+					break;
+				}
+			}
+		}
+		
+		if (!found) {
+			return false;
+		}
+
 		try {
-			IResource[] resources = getToolChain().getResourcesFromCommand(command, getBuildDirectoryURI());
+			IResource[] resources = toolChain.getResourcesFromCommand(command, getBuildDirectoryURI());
 			if (resources != null) {
 				for (IResource resource : resources) {
 					initScannerInfo();

@@ -91,7 +91,7 @@ size:
 <#list project_srcs as file>
 <#assign cpp = file?matches("(.*)\\.cpp")>
 <#if cpp>
-${build_path}/project/${cpp?groups[1]}.cpp.o: ../${file} ${build_path}/project/${cpp?groups[1]}.cpp.d
+${build_path}/project/${cpp?groups[1]}.cpp.o: ../../${file} ${build_path}/project/${cpp?groups[1]}.cpp.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_cpp_o_pattern}
 

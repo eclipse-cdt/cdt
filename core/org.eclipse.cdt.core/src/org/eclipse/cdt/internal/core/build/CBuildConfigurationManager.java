@@ -139,7 +139,7 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	}
 
 	@Override
-	public ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) {
+	public ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) throws CoreException {
 		initProviders();
 		synchronized (configs) {
 			ICBuildConfiguration config = configs.get(buildConfig);
@@ -158,6 +158,13 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 			}
 			return config;
 		}
+	}
+
+	@Override
+	public IBuildConfiguration getBuildConfiguration(ICBuildConfigurationProvider provider, IProject project,
+			String configName) throws CoreException {
+		String name = provider.getId() + '/' + configName;
+		return project.getBuildConfig(name);
 	}
 
 	@Override

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
-import java.util.Collection;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A provider of toolchains. Registered with the toolChainProvider extension
@@ -17,6 +17,34 @@ import java.util.Collection;
  */
 public interface IToolChainProvider {
 
-	Collection<IToolChain> getToolChains();
+	/**
+	 * Returns the id for this provider.
+	 * 
+	 * @return id
+	 */
+	String getId();
+
+	/**
+	 * Initialize the list of toolchains.
+	 * 
+	 * @param manager handle on manager to add or remove them
+	 */
+	default void init(IToolChainManager manager) throws CoreException {
+		// By default, toolchains are created on demand
+	}
+
+	/**
+	 * Called by the manager to dynamically create the named toolchain.
+	 * 
+	 * @param name
+	 *            the name of the toolchain
+	 * @param properties
+	 *            the persisted settings for the toolchain
+	 * @return the toolchain initialized with the settings.
+	 */
+	default IToolChain getToolChain(String name) throws CoreException {
+		// By default, assumes all toolchains were added at init time.
+		return null;
+	}
 
 }

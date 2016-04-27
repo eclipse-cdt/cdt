@@ -28,6 +28,10 @@ import org.osgi.framework.Bundle;
 
 public class QtProjectGenerator extends FMProjectGenerator {
 
+	public QtProjectGenerator(String manifestPath) {
+		super(manifestPath);
+	}
+	
 	@Override
 	protected void initProjectDescription(IProjectDescription description) {
 		description

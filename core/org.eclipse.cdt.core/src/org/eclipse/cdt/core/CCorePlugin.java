@@ -439,7 +439,7 @@ public class CCorePlugin extends Plugin {
 	 * @see #setOptions
 	 */
 	public static HashMap<String, String> getDefaultOptions() {
-		HashMap<String, String> defaultOptions = new HashMap<String, String>(10);
+		HashMap<String, String> defaultOptions = new HashMap<>(10);
 
 		// see #initializeDefaultPluginPreferences() for changing default
 		// settings
@@ -502,7 +502,7 @@ public class CCorePlugin extends Plugin {
 	 * @see CCorePlugin#getDefaultOptions
 	 */
 	public static HashMap<String, String> getOptions() {
-		HashMap<String, String> options = new HashMap<String, String>(10);
+		HashMap<String, String> options = new HashMap<>(10);
 
 		// see #initializeDefaultPluginPreferences() for changing default
 		// settings
@@ -728,7 +728,7 @@ public class CCorePlugin extends Plugin {
 				ICDescriptor cdesc = getCProjectDescription(project, false);
 				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
 				if (cextensions.length > 0) {
-					ArrayList<IBinaryParser> list = new ArrayList<IBinaryParser>(cextensions.length);
+					ArrayList<IBinaryParser> list = new ArrayList<>(cextensions.length);
 					for (ICExtensionReference ref : cextensions) {
 						IBinaryParser parser = null;
 						try {
@@ -1538,11 +1538,15 @@ public class CCorePlugin extends Plugin {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static void log(Throwable e) {
-		String msg = e.getMessage();
-		if (msg == null) {
-			log("Error", e); //$NON-NLS-1$
+		if (e instanceof CoreException) {
+			log(((CoreException) e).getStatus());
 		} else {
-			log("Error: " + msg, e); //$NON-NLS-1$
+			String msg = e.getMessage();
+			if (msg == null) {
+				log("Error", e); //$NON-NLS-1$
+			} else {
+				log("Error: " + msg, e); //$NON-NLS-1$
+			}
 		}
 	}
 

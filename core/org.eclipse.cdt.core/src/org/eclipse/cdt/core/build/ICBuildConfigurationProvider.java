@@ -31,7 +31,7 @@ public interface ICBuildConfigurationProvider {
 	 * @param config
 	 * @return CDT build configuration for the Platform build configuration
 	 */
-	ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name);
+	ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException;
 
 	/**
 	 * Returns a default C build configuration for a given project if any.

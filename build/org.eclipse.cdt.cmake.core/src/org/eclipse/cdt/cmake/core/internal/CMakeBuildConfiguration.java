@@ -35,7 +35,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	}
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		super(config, name, toolChain);
+		super(config, name);
+		setToolChain(toolChain);
 	}
 
 	@Override

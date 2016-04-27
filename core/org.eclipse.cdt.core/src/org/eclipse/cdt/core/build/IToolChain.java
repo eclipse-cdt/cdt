@@ -28,7 +28,7 @@ public interface IToolChain extends IAdaptable {
 	static final String ATTR_OS = "os"; //$NON-NLS-1$
 	static final String ATTR_ARCH = "arch"; //$NON-NLS-1$
 
-	IToolChainType getType();
+	IToolChainProvider getProvider();
 
 	String getName();
 
@@ -52,8 +52,10 @@ public interface IToolChain extends IAdaptable {
 
 	String[] getErrorParserIds();
 
-	Path getCommandPath(String command);
+	Path getCommandPath(Path command);
+
+	String[] getCompileCommands();
 
 	IResource[] getResourcesFromCommand(String[] command, URI buildDirectoryURI);
-	
+
 }

@@ -1,73 +1,54 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuilder;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.build.CBuilder;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.tools.templates.freemarker.FMProjectGenerator;
+import org.osgi.framework.Bundle;
 
-public class ArduinoProjectGenerator {
+public class ArduinoProjectGenerator extends FMProjectGenerator {
 
-	private final IProject project;
-	private IFile sourceFile;
-
-	public ArduinoProjectGenerator(IProject project) {
-		this.project = project;
+	public ArduinoProjectGenerator(String manifestFile) {
+		super(manifestFile);
+	}
+	
+	@Override
+	protected void initProjectDescription(IProjectDescription description) {
+		description
+				.setNatureIds(new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, ArduinoProjectNature.ID });
+		ICommand command = description.newCommand();
+		CBuilder.setupBuilder(command);
+		description.setBuildSpec(new ICommand[] { command });
 	}
 
-	public void generate(IProgressMonitor monitor) throws CoreException {
-		// Generate files
-		ArduinoTemplateGenerator templateGen = new ArduinoTemplateGenerator();
-		Map<String, Object> fmModel = new HashMap<>();
-		fmModel.put("projectName", project.getName()); //$NON-NLS-1$
-
-		sourceFile = project.getFile(project.getName() + ".cpp"); //$NON-NLS-1$
-		templateGen.generateFile(fmModel, "arduino.cpp", sourceFile, monitor); //$NON-NLS-1$
-
-		// Add natures to project: C, C++, Arduino
-		IProjectDescription projDesc = project.getDescription();
-		String[] oldIds = projDesc.getNatureIds();
-		String[] newIds = new String[oldIds.length + 3];
-		System.arraycopy(oldIds, 0, newIds, 0, oldIds.length);
-		newIds[newIds.length - 3] = CProjectNature.C_NATURE_ID;
-		newIds[newIds.length - 2] = CCProjectNature.CC_NATURE_ID;
-		newIds[newIds.length - 1] = ArduinoProjectNature.ID;
-		projDesc.setNatureIds(newIds);
-
-		// Add Arduino Builder
-		ICommand command = projDesc.newCommand();
-		command.setBuilderName(ArduinoBuilder.ID);
-		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
-		projDesc.setBuildSpec(new ICommand[] { command });
-
-		project.setDescription(projDesc, monitor);
-
-		IPathEntry[] entries = new IPathEntry[] { CoreModel.newSourceEntry(project.getFullPath()) };
-		CoreModel.getDefault().create(project).setRawPathEntries(entries, monitor);
+	@Override
+	public Bundle getSourceBundle() {
+		return Activator.getPlugin().getBundle();
 	}
-
-	public IFile getSourceFile() {
-		return sourceFile;
+	
+	@Override
+	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
+		super.generate(model, monitor);
+		IProject project = getProject();
+		CoreModel.getDefault().create(project).setRawPathEntries(new IPathEntry[] {
+				CoreModel.newSourceEntry(project.getFullPath())
+		}, monitor);
 	}
 
 }

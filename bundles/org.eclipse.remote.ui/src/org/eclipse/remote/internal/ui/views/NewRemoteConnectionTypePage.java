@@ -19,6 +19,8 @@ import org.eclipse.remote.internal.ui.RemoteUIPlugin;
 import org.eclipse.remote.ui.IRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -82,6 +84,14 @@ public class NewRemoteConnectionTypePage extends WizardPage {
 			setPageComplete(true);
 		}
 
+		table.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+				getContainer().showPage(getNextPage());
+			}
+		});
+
 		setControl(comp);
 	}
 
@@ -92,10 +102,10 @@ public class NewRemoteConnectionTypePage extends WizardPage {
 
 	@Override
 	public IWizardPage getNextPage() {
-		nextWizard = (IRemoteUIConnectionWizard)table.getSelection()[0].getData();
+		nextWizard = (IRemoteUIConnectionWizard) table.getSelection()[0].getData();
 		if (nextWizard != null) {
 			nextWizard.addPages();
-			IWizardPage [] pages = nextWizard.getPages();
+			IWizardPage[] pages = nextWizard.getPages();
 			if (pages.length > 0) {
 				return pages[0];
 			}

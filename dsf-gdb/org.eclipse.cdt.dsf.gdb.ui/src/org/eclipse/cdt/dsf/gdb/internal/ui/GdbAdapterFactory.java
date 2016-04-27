@@ -40,6 +40,13 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
  * for the launch object.  But it also manages the creation and destruction
  * of the session-based adapters which are returned by the
  * IDMContext.getAdapter() methods.
+ * 
+ * When extending the GdbAdapterFactory, it is important to register all the
+ * types declaratively (in the plugin.xml) that the factory can adapt the
+ * extended launch to.
+ * 
+ * See the plugin.xml that references GdbAdapterFactory for the current list,
+ * and it should match {@link #getAdapterList()}.
  */
 @ThreadSafe
 public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
@@ -126,6 +133,9 @@ public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
         return adapterSet.getLaunchAdapter(adapterType);
     }
 
+    /**
+     * This list must match the list in the plugin.xml. See class comment.
+     */
     @Override
     public Class<?>[] getAdapterList() {
         return new Class<?>[] {

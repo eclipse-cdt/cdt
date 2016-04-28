@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_75a63cca",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/CDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-04-28T03:37:27Z",
+      "side": 1,
+      "message": "Thanks",
+      "parentUuid": "e7dfcf21_efe43bce",
+      "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_8ffd777c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-04-27T10:46:13Z",
       "side": 1,
       "message": "The new call on this line is unreachable.",
+      "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c064ac3f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-04-28T03:37:27Z",
+      "side": 1,
+      "message": "Done. Removed the unnecessary null check and added assert to ensure that info is not null.",
+      "parentUuid": "e7dfcf21_8ffd777c",
       "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_20539065",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-04-28T03:37:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_ef0b5b2f",
+      "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_cf1e9f68",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2016-04-27T10:46:13Z",
       "side": 1,
       "message": "That is a nice touch.",
+      "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7bb54d18",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-04-28T03:37:27Z",
+      "side": 1,
+      "message": "I can\u0027t take any credit for this, just copied the code from CDebuggerTab :)",
+      "parentUuid": "e7dfcf21_cf1e9f68",
       "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_9bba1908",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-04-28T03:37:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_6f9cab4b",
+      "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_afd4f3e8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
         "patchSetId": 1
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_bbd6f535",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-04-28T03:37:27Z",
+      "side": 1,
+      "message": "Good catch! Fixed.",
+      "parentUuid": "e7dfcf21_afd4f3e8",
+      "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_af87931d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableInfo.java",
         "patchSetId": 1
@@ -115,6 +223,24 @@
       "writtenOn": "2016-04-27T10:46:13Z",
       "side": 1,
       "message": "This method is never called.",
+      "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7b2e2dca",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-04-28T03:37:27Z",
+      "side": 1,
+      "message": "Removed. We don\u0027t really need it.",
+      "parentUuid": "e7dfcf21_af87931d",
       "revId": "5091c67c1e55bace37164428e19fb17b1e63b530",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

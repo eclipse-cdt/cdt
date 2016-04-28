@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class NewSerialPortConnectionWizardPage extends WizardPage {
 	
-	SerialPortConnectionBlock block;
+	protected SerialPortConnectionBlock block;
 
 	public NewSerialPortConnectionWizardPage() {
 		super(NewSerialPortConnectionWizardPage.class.getName());

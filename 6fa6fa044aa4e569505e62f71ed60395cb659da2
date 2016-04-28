@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_b692875b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolSettingsTab.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-04-28T21:26:52Z",
+      "side": 1,
+      "message": "While I was testing the patch, this was never being set to true. I have a simple C project with the Linux GCC toolchain. I tried adding an include path in the Tool Settings page and also changing the dialect. Then I noticed ToolSettingsTab.performApply wasn\u0027t being called which is what is supposed to set the flag in the end. The whole time, I was pressing OK, not Apply! But OK should apply then close the dialog. So perhaps the setting of this flag needs to be done in another spot too. Not sure where yet.",
+      "range": {
+        "startLine": 766,
+        "startChar": 9,
+        "endLine": 766,
+        "endChar": 26
+      },
+      "revId": "6fa6fa044aa4e569505e62f71ed60395cb659da2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

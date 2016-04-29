@@ -445,6 +445,7 @@
                </targetPlatform>
                <builder
                      id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.builder"
+                     name="%Makefile.builder.name"
                      isAbstract="false"
                      isVariableCaseSensitive="false"
                      name="%Makefile.builder.name">

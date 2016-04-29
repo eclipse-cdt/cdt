@@ -20,7 +20,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.rse" version="0.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.remote" version="0.0.0"/>
    </requires>
 
    <plugin

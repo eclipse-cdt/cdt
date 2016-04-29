@@ -54,16 +54,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.cdt.core.solaris.source"
-         os="solaris"
-         arch="sparc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.cdt.core.win32.source"
          os="win32"
          download-size="0"

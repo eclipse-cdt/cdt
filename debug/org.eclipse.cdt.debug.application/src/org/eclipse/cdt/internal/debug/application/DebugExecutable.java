@@ -296,10 +296,15 @@ public class DebugExecutable {
 			wc.setAttribute(
 					ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 					(String) null);
-			if (arguments != null)
-				wc.setAttribute(
-						ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-						arguments);
+
+			if (arguments != null) {
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
+			}
+
+			// Use the PWD as the working directory for the application being launched
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
+					System.getProperty("user.dir")); //$NON-NLS-1$
+
 			if (save) {
 				config = wc.doSave();
 			} else {

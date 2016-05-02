@@ -131,7 +131,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		return fServiceFactory;
 	}
 
-	public void initialize() {
+	public void initialize() throws DebugException {
 		/*
 		 * Registering the launch as an adapter. This ensures that this launch
 		 * will be associated with all DMContexts from this session. We do this
@@ -156,11 +156,11 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		try {
 			fExecutor.submit(initRunnable).get();
 		} catch (InterruptedException e) {
-			new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
-					"Error initializing launch", e); //$NON-NLS-1$
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Error initializing launch", e)); //$NON-NLS-1$
 		} catch (ExecutionException e) {
-			new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
-					"Error initializing launch", e); //$NON-NLS-1$
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Error initializing launch", e)); //$NON-NLS-1$
 		}
 	}
 

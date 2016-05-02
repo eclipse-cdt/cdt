@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_fc694570",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Please add a brief description here along with bug number.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_7c461529",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Not sure exact cause, but the current layout does not handle narrow windows well. I think a horizontal scrollbar at a minimum is needed.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_dc64899a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "For this TODO, look how other places are using findFilesByName, if they are all in the UI thread then probably not too much to worry about.\n\nAdding in a thread adds significant complication here, so I am wary of doing it if we don\u0027t need to.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bcdb3de3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Should this be CSourceNotFoundEditor_12?",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9c276166",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "This code appears to assume that the IFile is in a project that is \"physically\" located in the workspace. Use .getLocation() on an IFile to get the file system location. Test this with a project that is not in the workspace on the file system.\n\n2 other tests that need to be done for this piece of code:\n1- Linked resources http://goo.gl/pozpqi\n2- IFiles that have no location - are virtual in some way, getLocation can return null in that case\n\nAlso, there are too many types being changed here. I recommend doing the manipulations with IPath, AFAICT you never need to make a File at all.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_dc12c915",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Good idea to setFilterPath, but I don\u0027t think using the Platform location is the best start... Not sure what is that is accessible? Perhaps the binary file location is a good default.\n\nAnother option is to save the last selected path. But not sure if that is a better option really.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1c1d1125",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Don\u0027t call the locateFileFromResource is dialog.open returns null.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bc0dfdf3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Make precondition of this function that res !\u003d null (throw NullPointerException(\"\u003cappropriate message here\u003e\") if you need an early check.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5c2dd947",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "and remove this null check here, or at least move the missingFileParts into the if.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1ce27192",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Same comment about description.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9c43e115",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Same comment about description.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_fcc5c507",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "the language here does not read cleanly to me, how about \"Locate file on the file system\", or alternatively, pull the \"locate file\" part to the guidance (CSourceNotFoundEditor_9) and simply have \"File System\" here.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_5cd4f9b5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Same general comment as CSourceNotFoundEditor_1",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_9cde81d4",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "s/Chose/Choose/",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_dce729a3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-02T20:06:54Z",
+      "side": 1,
+      "message": "Useful intention, not referenced anywhere though.",
+      "revId": "fb341d119a8cf6167cd9e7c96eaa926a23df65f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

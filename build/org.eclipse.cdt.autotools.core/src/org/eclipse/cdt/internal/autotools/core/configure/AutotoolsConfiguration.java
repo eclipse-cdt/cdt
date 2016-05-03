@@ -18,6 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 
 public class AutotoolsConfiguration implements IAConfiguration {
@@ -25,6 +33,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	public static class Option {
 		private String name;
 		private String transformedName;
+		private String superClassId;
 		private int type;
 		private String defaultValue;
 		
@@ -45,6 +54,14 @@ public class AutotoolsConfiguration implements IAConfiguration {
 			this.defaultValue = defaultValue;
 		}
 		
+		public Option(String name, String transformedName, String defaultValue, String superClassId, int type) {
+			this.name = name;
+			this.transformedName = transformedName;
+			this.type = type;
+			this.defaultValue = defaultValue;
+			this.superClassId = superClassId;
+		}
+
 		public String getName() {
 			return name;
 		}
@@ -57,6 +74,10 @@ public class AutotoolsConfiguration implements IAConfiguration {
 			return defaultValue;
 		}
 		
+		public String getSuperClassId() {
+			return superClassId;
+		}
+
 		public String getDescription() {
 			return ConfigureMessages.getConfigureDescription(transformedName);
 		}
@@ -121,15 +142,21 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	private String id;
 	private boolean isDirty;
 	private boolean isParmsDirty;
+	private IProject project;
 	private Map<String, IConfigureOption> configOptions;
 	private ArrayList<String> configParms = new ArrayList<>();
 
 	public AutotoolsConfiguration(String name) {
-		this(name, true);
+		this(null, name, true);
+	}
+
+	public AutotoolsConfiguration(IProject project, String name) {
+		this(project, name, true);
 	}
 		
-	private AutotoolsConfiguration(String name, boolean initialize) {
+	private AutotoolsConfiguration(IProject project, String name, boolean initialize) {
 		this.id = name;
+		this.project = project;
 		configOptions = new HashMap<>();
 		if (initialize)
 			initConfigOptions();
@@ -140,6 +167,15 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		// Put configure options in hash map.  Ignore categories.
 		ArrayList<Option> tools = new ArrayList<>();
 		FlagConfigureOption lastFlag = null;
+		IConfiguration configuration = null;
+		IBuildObjectProperties buildProperties = null;
+		if (project != null) {
+			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(project)
+					.getConfigurationById(id);
+
+			configuration = ManagedBuildManager.getConfigurationForDescription(cfgd);
+			buildProperties = configuration.getBuildProperties();
+		}
 		for (int i = 0; i < configOpts.length; ++i) {
 			Option opt = configOpts[i];
 			String defaultValue = opt.getDefaultValue();
@@ -165,6 +201,23 @@ public class AutotoolsConfiguration implements IAConfiguration {
 				break;
 			case IConfigureOption.MULTIARG:
 				MultiArgConfigureOption m = new MultiArgConfigureOption(opt.name, opt.transformedName, this);
+				if (buildProperties != null) {
+					// Check to see if we have a Debug configuration in which
+					// case, default the compiler flags
+					// appropriately (for C or C/C++).
+					if (opt.name.equals("user")) { //$NON-NLS-1$
+						if (buildProperties.containsValue("org.eclipse.cdt.build.core.buildType", //$NON-NLS-1$
+								"org.eclipse.linuxtools.cdt.autotools.core.buildType.debug")) { //$NON-NLS-1$
+							defaultValue = "CFLAGS='-g -O0'"; //$NON-NLS-1$
+							try {
+							if (project.hasNature(CCProjectNature.CC_NATURE_ID))
+								defaultValue += " CXXFLAGS='-g -O0'"; //$NON-NLS-1$
+							} catch (CoreException e) {
+								// do nothing
+							}
+						}
+					}
+				}
 				if (defaultValue != null)
 					m.setValue(defaultValue);
 				configOptions.put(opt.name, m);
@@ -251,12 +304,12 @@ public class AutotoolsConfiguration implements IAConfiguration {
 
 	@Override
 	public IAConfiguration copy() {
-		return copy(id);
+		return copy(this.id);
 	}
 	
 	@Override
 	public IAConfiguration copy(String newId) {
-		AutotoolsConfiguration cfg = new AutotoolsConfiguration(newId, false);
+		AutotoolsConfiguration cfg = new AutotoolsConfiguration(project, newId, false);
 		Collection<IConfigureOption> oldValues = configOptions.values();
 		for (Iterator<IConfigureOption> i = oldValues.iterator(); i.hasNext();) {
 			IConfigureOption opt = i.next();

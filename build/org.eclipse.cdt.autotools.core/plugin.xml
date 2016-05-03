@@ -11,6 +11,10 @@
               	id="org.eclipse.linuxtools.cdt.autotools.core.buildType.default" 
               	name="%BuildProperty.value.name.default"/>
            <propertyValue 
+              	property="org.eclipse.cdt.build.core.buildType" 
+              	id="org.eclipse.linuxtools.cdt.autotools.core.buildType.debug" 
+              	name="%BuildProperty.value.name.debug"/>
+           <propertyValue 
             	property="org.eclipse.cdt.build.core.buildArtefactType" 
             	id="org.eclipse.linuxtools.cdt.autotools.core.buildArtefactType.autotools" 
             	name="%BuildProperty.type.name.autotools"/>
@@ -332,7 +336,17 @@
                name="%Option.configure.user"
                resourceFilter="all"
                tip="%Option.configure.user.tip"
-               valueType="string"/>
+               valueType="string">
+               <enablement
+              		type="CONTAINER_ATTRIBUTE" 
+              		attribute="defaultValue" 
+              		value="CFLAGS=-g -O0"
+              		extensionAdjustment="false">
+			  		<checkBuildProperty 
+			  			property="org.eclipse.cdt.build.core.buildType"
+			  			value="org.eclipse.linuxtools.cdt.autotools.core.buildType.debug"/>
+               </enablement>
+         </option>
          <outputType
                id="org.eclipse.linuxtools.cdt.autotools.core.outputType.configure"
                name="%Configure.outputType"
@@ -388,7 +402,7 @@
             id="org.eclipse.linuxtools.cdt.autotools.core.projectType"
             isAbstract="false">
          <configuration
-               buildProperties="org.eclipse.linuxtools.cdt.autotools.core.buildType.default"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.linuxtools.cdt.autotools.core.buildType.default"
                cleanCommand="rm -rf"
                errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
                id="org.eclipse.linuxtools.cdt.autotools.core.configuration.build"
@@ -432,6 +446,65 @@
                <builder
                      id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.builder"
                      isAbstract="false"
+                     isVariableCaseSensitive="false"
+                     name="%Makefile.builder.name">
+               </builder>
+               <supportedProperties>
+                  <property
+                        id="org.eclipse.cdt.build.core.buildArtefactType">
+                     <value
+                           id="org.eclipse.linuxtools.cdt.autotools.core.buildArtefactType.autotools">
+                     </value>
+                  </property>
+               </supportedProperties>
+            </toolChain>
+         </configuration>
+          <configuration
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.linuxtools.cdt.autotools.core.buildType.debug"
+               cleanCommand="rm -rf"
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+               id="org.eclipse.linuxtools.cdt.autotools.core.configuration.build.debug"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain}"
+               name="%Configuration.debug.name">
+            <toolChain
+                  archList="all"
+                  configurationEnvironmentSupplier="org.eclipse.cdt.internal.autotools.core.AutotoolsEnvironmentVariableSupplier"
+                  id="org.eclipse.linuxtools.cdt.autotools.core.toolChain.debug"
+                  languageSettingsProviders="org.eclipse.cdt.autotools.core.LibtoolGCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
+                  name="%Autotools.gnu.toolchain.name"
+                  supportsManagedBuild="false"
+                  targetTool="org.eclipse.linuxtools.cdt.autotools.core.tool.configure">
+               <tool
+                     id="org.eclipse.linuxtools.cdt.autotools.core.gnu.toolchain.tool.configure.debug"
+                     isAbstract="false"
+                     natureFilter="both"
+                     superClass="org.eclipse.linuxtools.cdt.autotools.core.tool.configure"/>
+               <tool
+                     id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.autogen.debug"
+                     isAbstract="false"
+                     natureFilter="both"
+                     superClass="org.eclipse.linuxtools.cdt.autotools.core.tool.autogen">
+               </tool>
+               <tool
+                     id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.gcc.debug"
+                     isAbstract="false"
+                     superClass="cdt.managedbuild.tool.gnu.c.compiler">
+               </tool>
+               <tool
+                     id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.gpp.debug"
+                     isAbstract="false"
+                     superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+               </tool>
+               <targetPlatform
+                     id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.targetPlatform.debug"
+                     isAbstract="false"
+                     name="%Autotools.targetplatform.name"
+                     superClass="org.eclipse.linuxtools.cdt.autotools.core.targetPlatform">
+               </targetPlatform>
+               <builder
+                     id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.builder.debug"
+                     superClass="org.eclipse.linuxtools.cdt.autotools.core.toolchain.builder"
+                     isAbstract="false"
                      isVariableCaseSensitive="false">
                </builder>
                <supportedProperties>
@@ -439,6 +512,12 @@
                         id="org.eclipse.cdt.build.core.buildArtefactType">
                      <value
                            id="org.eclipse.linuxtools.cdt.autotools.core.buildArtefactType.autotools">
+                     </value>
+                  </property>
+                  <property
+                        id="org.eclipse.cdt.build.core.buildType">
+                     <value
+                           id="org.eclipse.linuxtools.cdt.autotools.core.buildType.debug">
                      </value>
                   </property>
                </supportedProperties>

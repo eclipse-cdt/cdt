@@ -100,6 +100,10 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		return new AutotoolsConfiguration(id);
 	}
 	
+	public synchronized IAConfiguration createDefaultConfiguration(IProject project, String id) {
+		return new AutotoolsConfiguration(project, id);
+	}
+
 	public synchronized IAConfiguration findCfg(IProject p, String id) {
 		Map<String, IAConfiguration> cfgs = getConfigurations(p);
 		return cfgs.get(id);
@@ -112,7 +116,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	public synchronized IAConfiguration getConfiguration(IProject p, String cfgId, boolean persist) {
 		IAConfiguration cfg = findCfg(p, cfgId);
 		if (cfg == null) {
-			cfg = createDefaultConfiguration(cfgId);
+			cfg = createDefaultConfiguration(p, cfgId);
 			if (persist) {
 				addConfiguration(p, cfg);
 			}
@@ -223,7 +227,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 							else
 								continue; // have to punt, this doesn't map to real cfg
 						}
-						IAConfiguration cfg = new AutotoolsConfiguration(cfgId);
+						IAConfiguration cfg = new AutotoolsConfiguration(project, cfgId);
 						NodeList l = n.getChildNodes();
 						for (int y = 0; y < l.getLength(); ++y) {
 							Node child = l.item(y);
@@ -304,7 +308,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		if (savedList != null)
 			oldCfg = savedList.get(oldId);
 		if (oldCfg != null) {
-			IAConfiguration newCfg = oldCfg.copy(cfgd.getId());
+			IAConfiguration newCfg = oldCfg.copy(newId);
 			tmpList.put(cfgd.getId(), newCfg);
 			// Check to see if the new configuration is already stored as part of the project description.
 			// If yes, it should already be saved.  This can occur if the configuration was added as part of
@@ -394,7 +398,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 						String id = cfgd.getId();
 						IAConfiguration cfg = cfgs.get(id);
 						if (cfg == null) {
-							cfg = createDefaultConfiguration(id);
+							cfg = createDefaultConfiguration(project, id);
 						}
 						p.println("<configuration id=\"" + cfg.getId() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 						for (int j = 0; j < optionList.length; ++j) {
@@ -626,7 +630,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 
 		// Get set of configuration options and convert to set of IAutotoolOptions
 		Map<String, IConfigureOption> cfgOptions = cfg.getOptions();
-		IAConfiguration dummyCfg = createDefaultConfiguration(createDummyId());
+		IAConfiguration dummyCfg = createDefaultConfiguration(project, createDummyId());
 		for (Iterator<Entry<String, IConfigureOption>> i = cfgOptions.entrySet().iterator(); i.hasNext();) {
 			Map.Entry<String, IConfigureOption> entry = i.next();
 			String name = entry.getKey();

@@ -25,8 +25,8 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class SerialPortConnectionPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
 
-	private SerialPortConnectionBlock block;
-	private IRemoteConnectionWorkingCopy workingCopy;
+	protected SerialPortConnectionBlock block;
+	protected IRemoteConnectionWorkingCopy workingCopy;
 	
 	public SerialPortConnectionPropertyPage() {
 		super();

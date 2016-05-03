@@ -77,5 +77,15 @@
             class="org.eclipse.remote.internal.core.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.remote.core.RemoteConnectionPropertyTester"
+            id="org.eclipse.remote.core.remoteConnectionTester"
+            namespace="org.eclipse.remote.core"
+            properties="isConnectionType"
+            type="org.eclipse.remote.core.IRemoteConnection">
+      </propertyTester>
+   </extension>
 
 </plugin>

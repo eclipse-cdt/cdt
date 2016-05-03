@@ -15,7 +15,7 @@ import org.eclipse.remote.core.IRemoteConnection;
 
 public interface ISerialPortService extends IRemoteConnection.Service {
 
-	static final String TYPE_ID = "org.eclipse.remote.serial.core.connectionType"; //$NON-NLS-1$
+	static final String CONNECTION_TYPE_ID = "org.eclipse.remote.serial.core.connectionType"; //$NON-NLS-1$
 	static final String PORT_NAME_ATTR = "serial.portName"; //$NON-NLS-1$
 	static final String BAUD_RATE_ATTR = "serial.baudRate"; //$NON-NLS-1$
 	static final String BYTE_SIZE_ATTR = "serial.byteSize"; //$NON-NLS-1$

@@ -10,16 +10,6 @@
       </connectionTypeService>
    </extension>
       <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.eclipse.remote.serial.internal.ui.SerialPortConnectionPropertyTester"
-            id="remoteTester"
-            namespace="org.eclipse.remote.serial.ui"
-            properties="isSerialRemote"
-            type="org.eclipse.remote.core.IRemoteConnection">
-      </propertyTester>
-   </extension>
-      <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="org.eclipse.remote.serial.ui.SerialPortConnectionPropertyPage"
@@ -29,9 +19,8 @@
          <enabledWhen>
              <adapt type="org.eclipse.remote.core.IRemoteConnection">
                 <test
-                      forcePluginActivation="false"
-                      property="org.eclipse.remote.serial.ui.isSerialRemote">
-                </test>
+                      property="org.eclipse.remote.core.isConnectionType"
+                      value="org.eclipse.remote.serial.core.connectionType"/>
              </adapt>
           </enabledWhen>
       </page>

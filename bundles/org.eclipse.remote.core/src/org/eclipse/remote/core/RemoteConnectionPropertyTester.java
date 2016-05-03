@@ -8,22 +8,25 @@
  * Contributors:
  * QNX Software Systems - initial contribution
  *******************************************************************************/
-package org.eclipse.remote.serial.internal.ui;
+package org.eclipse.remote.core;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.serial.core.ISerialPortService;
 
-public class SerialPortConnectionPropertyTester extends PropertyTester {
+/**
+ * @since 2.1
+ */
+public class RemoteConnectionPropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (receiver instanceof IRemoteConnection) {
-			IRemoteConnection remote = (IRemoteConnection) receiver;
-			return remote.hasService(ISerialPortService.class);
-		} else {
-			return false;
+			if (property.equals("isConnectionType")) {
+				IRemoteConnection connection = (IRemoteConnection) receiver;
+				if (connection.getConnectionType().getId().equals(expectedValue)) {
+					return true;
+				}
+			}
 		}
+		return false;
 	}
-
 }

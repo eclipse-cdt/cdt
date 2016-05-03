@@ -332,7 +332,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		Element e = d.getDocumentElement();
 		// Get the stored configuration data
 		NodeList cfgs = e.getElementsByTagName("configuration"); //$NON-NLS-1$
-		assertEquals(3, cfgs.getLength());
+		assertEquals(4, cfgs.getLength());
 		int foundUser = 0;
 		for (int x = 0; x < cfgs.getLength(); ++x) {
 			Node n = cfgs.item(x);

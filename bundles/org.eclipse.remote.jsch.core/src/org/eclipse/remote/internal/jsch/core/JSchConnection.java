@@ -253,9 +253,9 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	private final IRemoteConnection fRemoteConnection;
 	private final IJSchService fJSchService;
 
-	private final Map<String, String> fEnv = new HashMap<String, String>();
-	private final Map<String, String> fProperties = new HashMap<String, String>();
-	private final List<Session> fSessions = new ArrayList<Session>();
+	private final Map<String, String> fEnv = new HashMap<>();
+	private final Map<String, String> fProperties = new HashMap<>();
+	private final List<Session> fSessions = new ArrayList<>();
 
 	private ChannelSftp fSftpCommandChannel;
 	private boolean isFullySetup; // including sftp channel and environment
@@ -895,6 +895,12 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 				}
 			}
 			encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			break;
+
+		case "qnx": //$NON-NLS-1$
+			osArch = executeCommand("uname -p", subMon.newChild(10)); //$NON-NLS-1$
+			osVersion = executeCommand("uname -r", subMon.newChild(10)); //$NON-NLS-1$
+			encoding = "UTF-8"; //$NON-NLS-1$
 			break;
 
 		default:

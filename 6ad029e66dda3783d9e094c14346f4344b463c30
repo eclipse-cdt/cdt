@@ -369,6 +369,46 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_738b9ba7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "The comment above IValue.getEvaluation() says \"Returns the evaluation object if this value is dependent, or null otherwise\". Is this still accurate, even for CompositeValue? As far as I can tell, a CompositeValue can be non-dependent, but still have an evaluation.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_bb28b5ba",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "It would be helpful if each of these create() overloads had a comment describing what it does.",
+      "range": {
+        "startLine": 102,
+        "startChar": 22,
+        "endLine": 102,
+        "endChar": 28
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_9ea69d0b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
         "patchSetId": 1
@@ -432,6 +472,23 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_d3df0f85",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "No one seems to use \u0027record\u0027 - why have it at all?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_9e585d84",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
         "patchSetId": 1
@@ -449,6 +506,74 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f3e40b58",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "Similar problem here with multiple inheritance.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f3fb2beb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we put the value into the activation record as well? The initializers of fields declared later can reference fields declared earlier.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_eeba6008",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "This function is unused and can be removed.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6ece50a9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/CompositeValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "Seems like this condition should be negated.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_3e9829cd",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CASTBreakStatement.java",
         "patchSetId": 1
@@ -460,6 +585,40 @@
       "writtenOn": "2016-04-22T06:16:26Z",
       "side": 1,
       "message": "After changing the statement interface classes (e.g. IASTBreakStatement) to not implement ICPPExecutionOwner (and just having the implementation classes implement it) like I suggested, these overrides in the C implementations will become unnecessary (because we can just have the C++ implementations implement them).",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_93502758",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "Can we use CompositeValue.create(classType) here?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_33ce73da",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "Few comments here:\n\n - Please write a Javadoc for this function that describes \n   what it does.\n\n - Please try to limit lines to 120 characters in length.\n\n - I don\u0027t understand why this function needs to perform\n   instantiation. If the variable is the field of a class\n   specialization, then the field and its properties (like\n   its initial value) should already be instantiated.",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -500,6 +659,23 @@
         "endLine": 20,
         "endChar": 42
       },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f3b6cb43",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecDeclarator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-04T08:01:24Z",
+      "side": 1,
+      "message": "It looks like this considers default member initializers only, not constructors. Is that the intention?\n\nThe call site in createInitialValue(), which returns the result of createDefaultInitializedCompositeValue() if there is no initializer evaluation, makes me think we do want to consider constructors here.",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

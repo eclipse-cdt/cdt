@@ -100,7 +100,12 @@ public class ArduinoManager {
 			File packageFile = packagePath.toFile();
 			if (download) {
 				Files.createDirectories(ArduinoPreferences.getArduinoHome());
-				Files.copy(packageUrl.openStream(), packagePath, StandardCopyOption.REPLACE_EXISTING);
+				try {
+					Files.copy(packageUrl.openStream(), packagePath, StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException e) {
+					// make sure we add the package anyway if it exists
+					Activator.log(e);
+				}
 			}
 			if (packageFile.exists()) {
 				try (Reader reader = new FileReader(packageFile)) {

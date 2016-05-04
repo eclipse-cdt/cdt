@@ -24,7 +24,6 @@ public class Messages extends NLS {
 	public static String NewArduinoTargetWizardPage_3;
 	public static String NewArduinoTargetWizardPage_4;
 	public static String NewArduinoTargetWizardPage_5;
-	public static String ArduinoBoardsPreferencePage_desc;
 	public static String LibrariesPropertyPage_0;
 	public static String LibrariesPropertyPage_1;
 	public static String LibrariesPropertyPage_desc;

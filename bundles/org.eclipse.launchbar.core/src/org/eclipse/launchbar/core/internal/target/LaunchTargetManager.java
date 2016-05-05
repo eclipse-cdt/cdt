@@ -214,7 +214,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 		String typeId = target.getTypeId();
 		Map<String, ILaunchTarget> type = targets.get(typeId);
 		if (type != null) {
-			type.remove(target);
+			type.remove(target.getId());
 			if (type.isEmpty()) {
 				targets.remove(target.getTypeId());
 			}

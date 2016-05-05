@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_5f4bfd01",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/InternalCoreModelUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-05T10:40:04Z",
+      "side": 1,
+      "message": "This test checks the name and resouce filters, as opposed to equalsByName which only checks the name. Therefore if the source folder being removed has filters, it will be not-equal and therefore not removed from the map.\n\nNow what is interesting about this is if you do delete a source folder with filters, it does correctly deleted. After a little bit of searching I found that there is a second implementation of this code that you have written here:\n\norg.eclipse.cdt.internal.core.settings.model.ResourceChangeHandler.RcMoveHandler.checkRemove(IPath, ICSourceEntry[])\n\nResourceChangeHandler has as its class doc:\n\nThis resource change handler notices external changes to the cdt projects and associated project storage metadata files, as well as changes to source folders.",
+      "revId": "b1ab30306b8736c352d3574ba45b70cd19ee7e58",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

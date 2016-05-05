@@ -872,9 +872,7 @@ public class FileListControl {
 			delDir = MessageDialog.openQuestion(list.getShell(), title, quest);
 		}
 		if (delDir){
-			int i;
-			while ((i = list.getSelectionIndex()) != -1)
-				list.remove(i);
+			list.remove(list.getSelectionIndices());
 			checkNotificationNeeded();
 		}
 		selectionChanged();

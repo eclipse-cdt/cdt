@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     James Blackburn (Broadcom Corporation)
+ *     John Dallaway - Eliminate path entry removal job (bug 410529)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -1440,16 +1441,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return false;
 		}
 		if (kind == ICElementDelta.ADDED || kind == ICElementDelta.REMOVED) {
-			// If the element path maps to the some IPathEntry we need to remove
-			// that entry
-			// but I'm not sure of the side effects so lets just do this for the
-			// ISourceEntry type
-			if (element instanceof ISourceRoot) {
-				ISourceRoot sourceRoot = (ISourceRoot) element;
-				if (kind == ICElementDelta.REMOVED) {
-					updatePathEntryFromDeleteSource(sourceRoot);
-				}
-			}
 			return true; // add/remove we validate all paths
 		}
 		if (type == ICElement.C_MODEL || type == ICElement.C_CCONTAINER || type == ICElement.C_PROJECT) {
@@ -1463,50 +1454,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return result;
 		}
 		return false;
-	}
-
-	/**
-	 * The source root been deleted update the path entries
-	 * 
-	 * @param sourceRoot
-	 * @throws CModelException
-	 */
-	void updatePathEntryFromDeleteSource(final ISourceRoot sourceRoot) throws CModelException {
-		final ICProject cproject = sourceRoot.getCProject();
-		IPathEntry[] rawEntries = getRawPathEntries(cproject);
-		boolean change = false;
-		ArrayList<IPathEntry> list = new ArrayList<>(rawEntries.length);
-		for (IPathEntry rawEntrie : rawEntries) {
-			if (rawEntrie.getEntryKind() == IPathEntry.CDT_SOURCE) {
-				if (sourceRoot.getPath().equals(rawEntrie.getPath())) {
-					change = true;
-				} else {
-					list.add(rawEntrie);
-				}
-			} else {
-				list.add(rawEntrie);
-			}
-		}
-		if (change) {
-			IPathEntry[] newEntries = new IPathEntry[list.size()];
-			list.toArray(newEntries);
-			final IPathEntry[] finalEntries = newEntries;
-			Job updatePathEntry = new WorkspaceJob("PathEntry Update source roots") { //$NON-NLS-1$
-				@Override
-				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					// If the path which triggered this change exists when we
-					// run this job then
-					// nothing to do.
-					if (sourceRoot.getResource() == null || !sourceRoot.getResource().exists())
-						setRawPathEntries(cproject, finalEntries, monitor);
-					return Status.OK_STATUS;
-				}
-			};
-			IProject project = cproject.getProject();
-			ISchedulingRule rule = project.getWorkspace().getRoot();
-			updatePathEntry.setRule(rule);
-			updatePathEntry.schedule();
-		}
 	}
 
 	public ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {

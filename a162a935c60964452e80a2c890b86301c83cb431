@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_57012177",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolSettingsTab.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-05-06T15:26:36Z",
+      "side": 1,
+      "message": "I meant, there\u0027s an early return right above.",
+      "parentUuid": "e7dfcf21_97cba9c7",
+      "range": {
+        "startLine": 779,
+        "startChar": 2,
+        "endLine": 779,
+        "endChar": 19
+      },
+      "revId": "a162a935c60964452e80a2c890b86301c83cb431",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_17bcf954",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolSettingsTab.java",
         "patchSetId": 6

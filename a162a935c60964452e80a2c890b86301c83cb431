@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_97cba9c7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolSettingsTab.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2016-05-06T15:24:39Z",
+      "side": 1,
+      "message": "No.  User could have performed an apply which set it to true, then the reindexing job was already performed and the configuration updated.  If user hits ok, we don\u0027t want to reindex again unless an appropriate option has changed.",
+      "parentUuid": "e7dfcf21_f764ed99",
+      "range": {
+        "startLine": 779,
+        "startChar": 2,
+        "endLine": 779,
+        "endChar": 19
+      },
+      "revId": "a162a935c60964452e80a2c890b86301c83cb431",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_17bcf954",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolSettingsTab.java",
         "patchSetId": 6
@@ -36,6 +60,30 @@
       "writtenOn": "2016-05-06T14:35:33Z",
       "side": 1,
       "message": "Libraries do not affect the indexer. Looks like a copy/paste artifact!",
+      "range": {
+        "startLine": 791,
+        "startChar": 7,
+        "endLine": 791,
+        "endChar": 29
+      },
+      "revId": "a162a935c60964452e80a2c890b86301c83cb431",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b7d8a599",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolSettingsTab.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2016-05-06T15:24:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_17bcf954",
       "range": {
         "startLine": 791,
         "startChar": 7,

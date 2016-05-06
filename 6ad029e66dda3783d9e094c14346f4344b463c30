@@ -807,6 +807,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_77fb7d3b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ISerializableExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-05-06T13:42:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_3f2471e5",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5f293dbc",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
         "patchSetId": 1
@@ -818,6 +836,24 @@
       "writtenOn": "2016-05-05T07:34:58Z",
       "side": 1,
       "message": "No one uses this - there is no reason to add it.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d7dc5106",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-05-06T13:42:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_5f293dbc",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -841,6 +877,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f755cdce",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-05-06T13:42:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_bf17a177",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_1f5a5556",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
         "patchSetId": 1
@@ -852,6 +906,24 @@
       "writtenOn": "2016-05-05T07:34:58Z",
       "side": 1,
       "message": "Why is there not an entry for EvalPointer? I understand that it inherits from EvalReference, but it is OK to get an EvalReference back after writing an EvalPointer to the index?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d7db71e2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-05-06T13:42:41Z",
+      "side": 1,
+      "message": "You are right, but the problem is that EvalReference has a reference to the ActivationRecord that stores the value the reference refers to. Thus, there\u0027s no obvious way to marshal it. At the moment EvalReference.marshal() doesn\u0027t do anything useful. Do you know a solution?",
+      "parentUuid": "e7dfcf21_1f5a5556",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -904,6 +976,24 @@
       "writtenOn": "2016-05-05T07:34:58Z",
       "side": 1,
       "message": "Why was the TYPICAL optimization removed?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_973009ee",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/IntegralValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-05-06T13:42:41Z",
+      "side": 1,
+      "message": "I don\u0027t know how this happened. I put it back.",
+      "parentUuid": "e7dfcf21_df462d75",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1082,6 +1172,24 @@
       "writtenOn": "2016-05-05T07:34:58Z",
       "side": 1,
       "message": "An empty marshal() implementation will corrupt the index if we ever actually serialize an ExecIncomplete (because when deserializing, unmarshalExecution() will interpret the next two bytes in the buffer, which will be written by the next thing we serialize, as identifying an execution type, and then try to read the corresponding execution.)\n\nWe should either throw an UnsupportedOperationException from this function, or introduce ITypeMarshalBuffer.EXEC_INCOMPLETE and write that.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_571f6164",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecIncomplete.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-05-06T13:42:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_3f5f1147",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

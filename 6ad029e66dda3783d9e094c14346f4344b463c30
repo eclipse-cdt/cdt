@@ -1035,6 +1035,57 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_c582daa1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ValueFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "Update comment to reflect the fact that the function now returns IValue.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_054cc21b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ValueFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "There was an optimization here, where, if the operator was op_equals or op_notequals, and the operand AST nodes compared equal() (the AST nodes themselves, without evaluation), the answer was determined based on that (1 for op_equals, 0 for op_notequals). Why was this removed?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e57fd61a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ValueFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "There was an optimization here, where, if the operator was op_equals or op_notequals, and the operand AST nodes compared equal() (the AST nodes themselves, without evaluation, idn",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_3e9829cd",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CASTBreakStatement.java",
         "patchSetId": 1
@@ -1070,6 +1121,148 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_a55ceec6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTFieldReference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "the function?",
+      "range": {
+        "startLine": 296,
+        "startChar": 52,
+        "endLine": 296,
+        "endChar": 64
+      },
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c559fad5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTFieldReference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "As field positions are 0-based, 0 is a valid position. Since this is (I assume) an error condition, it should return -1 (the way e.g. CPPFieldProblem.getFieldPosition() does).",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_45c16ac8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "Any reason not to use the existing method getUserDefinedLiteralOperator()?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_65c666e3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "EvalID.create() expects an expression that\u0027s hooked up to the AST.\n\nWe could do this instead:\n\n  - Refactor EvalID.create(IASTIdExpression) to be\n    EvalID.create(IASTName, IASTExpression). We can\n    keep a wrapper EvalID.create(IASTIdExpression expr)\n    which forwards to create(expr.getName(), expr).\n\n  - Here, call EvalID.create(name, this).\n\nAlternatively, since we have an IBinding, we can just create an EvalBinding.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8591b2d7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "C++ also supports processing raw literals via a \"literal operator template\", that is, a function of the form \n\n  template \u003cchar...\u003e LiteralType operator \"\" ();\n\nwhich then gets the characters of the literal as template arguments.\n\nWe can leave support for this for a follow-up, but please mention it in a TODO comment.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_c58bbaa5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTRangeBasedForStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "What is the purpose of weeding out unknown bindings at this stage? The unknown bindings can instantiate to non-unknown bindings in ICPPExecution.instantiate().",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_e588b6ab",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTReturnStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "Why not ICPPEvaluationOwner?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2551beb0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "Please add Javadoc to this function. Among other things, it should mention that if the variable has no initializer, null is returned (as opposed to EvalFixed.INCOMPLETE - this is important for some call sites).",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_93502758",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 1
@@ -1081,6 +1274,40 @@
       "writtenOn": "2016-05-04T08:01:24Z",
       "side": 1,
       "message": "Can we use CompositeValue.create(classType) here?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_855ff2ba",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalMemberAccess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "I\u0027m not a big fan of the fact that this is an optional field - some constructors initialize it and some don\u0027t.\n\nIt if has to be this way, could you document under what circumstances an EvalMemberAccess has an fOwnerEval?\n\nAlso, please have the constructor that doesn\u0027t take an fOwnerEval delegate to the one that does (passing \u0027null\u0027 for it), not the other way around.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_4546cafb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalMemberAccess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "fOwnerEval is lost here - is that intended?",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1190,6 +1417,40 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "e7dfcf21_3f5f1147",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_a58eaeb6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecNull.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "Is there any point in having this execution type? Can we just return null from CPPASTNullStatement.getExecution(), the way we do from CPPASTDeclarationStatement.getExecution() for declarations that are not execution owners?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_654bc602",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/composite/cpp/CPPCompositesFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-08T00:17:38Z",
+      "side": 1,
+      "message": "Should fOwnerEval be propagated?",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

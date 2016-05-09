@@ -23,7 +23,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 	private boolean isle;
     private long    ptr_offset;
     int val[] = new int[4];
-		
+
 	public ERandomAccessFile(String file, String mode) throws IOException {
 		super(file, mode);
 	}
@@ -36,7 +36,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 	{
 		isle = le;
 	}
-	
+
 	public final short readShortE() throws IOException {
 		val[0] = read();
 		val[1] = read();
@@ -47,7 +47,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 		}
 		return (short)((val[0] << 8) + val[1]);
 	}
-	
+
 	public final long readIntE() throws IOException
 	{
 		val[0] = read();
@@ -56,10 +56,14 @@ public class ERandomAccessFile extends RandomAccessFile {
 		val[3] = read();
 		if ((val[0] | val[1] | val[2] | val[3]) < 0)
 		    throw new EOFException();
+		long value;
 		if ( isle ) {
-			return ((val[3] << 24) + (val[2] << 16) + (val[1] << 8) + val[0]);
+			value= ((val[3] << 24) + (val[2] << 16) + (val[1] << 8) + val[0]) ;
+		} else{
+			value= ((val[0] << 24) + (val[1] << 16) + (val[2] << 8) + val[3]);
 		}
-		return ((val[0] << 24) + (val[1] << 16) + (val[2] << 8) + val[3]);
+		return value & 0x00000000ffffffffL;
+
 	}
 
 	public final long readLongE() throws IOException
@@ -67,8 +71,8 @@ public class ERandomAccessFile extends RandomAccessFile {
 		byte [] bytes = new byte[8];
 		long result = 0;
 		super.readFully(bytes);
-		int shift = 0;		
-		if ( isle ) 
+		int shift = 0;
+		if ( isle )
 			for(int i=7; i >= 0; i-- )
 			{
 				shift = i*8;
@@ -82,7 +86,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 			}
 		return result;
 	}
-	
+
 	public final void readFullyE(byte [] bytes) throws IOException
 	{
 		super.readFully(bytes);
@@ -92,7 +96,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 			{
 				tmp = bytes[i];
 				bytes[i] = bytes[bytes.length - i -1];
-				bytes[bytes.length - i -1] = tmp; 
+				bytes[bytes.length - i -1] = tmp;
 			}
 	}
 

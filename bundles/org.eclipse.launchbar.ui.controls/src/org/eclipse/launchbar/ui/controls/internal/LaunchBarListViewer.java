@@ -8,7 +8,7 @@
  * Contributors:
  *     Alena Laskavaia
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.controls;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,8 +26,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.ui.internal.Activator;
-import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;

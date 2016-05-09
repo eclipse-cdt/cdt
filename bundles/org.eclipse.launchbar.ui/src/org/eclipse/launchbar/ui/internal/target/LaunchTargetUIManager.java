@@ -66,7 +66,7 @@ public class LaunchTargetUIManager implements ILaunchTargetUIManager {
 					@Override
 					public String getText(Object element) {
 						if (element instanceof ILaunchTarget) {
-							return ((ILaunchTarget) element).getName();
+							return ((ILaunchTarget) element).getId();
 						}
 						return super.getText(element);
 					}

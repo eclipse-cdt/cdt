@@ -8,7 +8,7 @@
  * Contributors:
  *     Alena Laskavaia
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.commands;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import java.util.List;
 
@@ -21,7 +21,6 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.launchbar.ui.internal.controls.LaunchBarControl;
 
 public class OpenLaunchSelector extends AbstractHandler {
 	@Override

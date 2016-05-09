@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 
 public class LaunchActiveCommandHandler extends AbstractHandler {
@@ -26,7 +26,7 @@ public class LaunchActiveCommandHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
-			LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
+			ILaunchBarManager launchBarManager = Activator.getService(ILaunchBarManager.class);
 			StopActiveCommandHandler.stopActiveLaunches(launchBarManager);
 			ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
 			if (config == null)

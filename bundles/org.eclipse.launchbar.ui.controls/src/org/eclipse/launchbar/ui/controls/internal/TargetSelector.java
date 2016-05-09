@@ -8,10 +8,10 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.controls;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import java.util.Comparator;
-import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -26,17 +26,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.SameShellProvider;
-import org.eclipse.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetListener;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.TargetStatus;
 import org.eclipse.launchbar.core.target.TargetStatus.Code;
-import org.eclipse.launchbar.ui.internal.Activator;
-import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
-import org.eclipse.launchbar.ui.internal.Messages;
-import org.eclipse.launchbar.ui.internal.target.NewLaunchTargetWizardAction;
 import org.eclipse.launchbar.ui.target.ILaunchTargetUIManager;
+import org.eclipse.launchbar.ui.target.NewLaunchTargetWizardAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -55,7 +52,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 public class TargetSelector extends CSelector implements ILaunchTargetListener {
 
-	private final LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
+	private final ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
 	private final ILaunchTargetUIManager targetUIManager = Activator.getService(ILaunchTargetUIManager.class);
 	private final ILaunchTargetManager targetManager = Activator.getService(ILaunchTargetManager.class);
 
@@ -77,12 +74,12 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				LaunchBarManager manager = uiManager.getManager();
-				List<ILaunchTarget> targets = manager.getLaunchTargets(manager.getActiveLaunchDescriptor());
-				if (!targets.isEmpty()) {
-					return targets.toArray();
+				try {
+					return manager.getLaunchTargets(manager.getActiveLaunchDescriptor());
+				} catch (CoreException e) {
+					Activator.log(e);
+					return noTargets;
 				}
-				return noTargets;
 			}
 		});
 
@@ -92,7 +89,7 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 				if (element instanceof ILaunchTarget) {
 					ILaunchTarget target = (ILaunchTarget) element;
 					ILabelProvider provider = targetUIManager.getLabelProvider(target);
-					return provider != null ? provider.getText(target) : target.getName();
+					return provider != null ? provider.getText(target) : target.getId();
 				}
 				return super.getText(element);
 			}
@@ -225,6 +222,7 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 				createButton.setBackground(highlightColor);
 				createLabel.setBackground(highlightColor);
 			}
+
 			@Override
 			public void mouseExit(MouseEvent e) {
 				Color backgroundColor = getBackground();
@@ -242,7 +240,7 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 		if (selection instanceof ILaunchTarget) {
 			ILaunchTarget target = (ILaunchTarget) selection;
 			try {
-				uiManager.getManager().setActiveLaunchTarget(target);
+				manager.setActiveLaunchTarget(target);
 			} catch (CoreException e) {
 				Activator.log(e);
 			}
@@ -289,8 +287,12 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 
 	@Override
 	public void launchTargetStatusChanged(ILaunchTarget target) {
-		if (target.equals(uiManager.getManager().getActiveLaunchTarget())) {
-			refresh();
+		try {
+			if (target.equals(manager.getActiveLaunchTarget())) {
+				refresh();
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
 		}
 	}
 

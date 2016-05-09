@@ -19,8 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -30,7 +29,6 @@ import org.eclipse.swt.widgets.TableItem;
 public class NewLaunchConfigModePage extends WizardPage {
 
 	private Table table;
-	ILaunchGroup selectedGroup;
 
 	public NewLaunchConfigModePage() {
 		super(Messages.NewLaunchConfigModePage_0);
@@ -85,22 +83,7 @@ public class NewLaunchConfigModePage extends WizardPage {
 			if (!hasDebug) {
 				table.select(0);
 			}
-			selectedGroup = (ILaunchGroup) table.getSelection()[0].getData();
 		}
-
-		table.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectedGroup = (ILaunchGroup) table.getSelection()[0].getData();
-				((NewLaunchConfigWizard) getWizard()).typePage.populateItems();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-				getContainer().showPage(getNextPage());
-			}
-		});
 
 		setControl(comp);
 	}
@@ -116,6 +99,15 @@ public class NewLaunchConfigModePage extends WizardPage {
 			item.setImage(imageDesc.createImage());
 		}
 		item.setData(group);
+	}
+
+	
+	public ILaunchGroup getSelectedGroup() {
+		return (ILaunchGroup) table.getSelection()[0].getData();
+	}
+
+	public void addGroupSelectionListener(SelectionListener listener) {
+		table.addSelectionListener(listener);
 	}
 
 }

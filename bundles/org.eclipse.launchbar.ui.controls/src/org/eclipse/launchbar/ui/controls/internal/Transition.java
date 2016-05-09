@@ -8,7 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.controls;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;

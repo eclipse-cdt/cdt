@@ -4,15 +4,6 @@
    <extension-point id="launchBarUIContributions" name="launchBar UI Contributions" schema="schema/launchBarUIContributions.exsd"/>
    <extension-point id="launchTargetTypeUI" name="Launch Target Type UI" schema="schema/launchTargetTypeUI.exsd"/>
    <extension
-         id="launchBarInjector"
-         point="org.eclipse.e4.workbench.model">
-      <processor
-            apply="always"
-            beforefragment="false"
-            class="org.eclipse.launchbar.ui.internal.LaunchBarInjector">
-      </processor>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             id="org.eclipse.launchbar.ui.category.launchBar"
@@ -42,33 +33,12 @@
             id="org.eclipse.launchbar.ui.command.configureActiveLaunch"
             name="Edit Active Launch Configuration">
       </command>
-      <command
-            categoryId="org.eclipse.launchbar.ui.category.launchBar"
-            defaultHandler="org.eclipse.launchbar.ui.internal.commands.OpenLaunchSelector"
-            id="org.eclipse.launchbar.ui.command.openLaunchSelector"
-            name="Open Launch Bar Config Selector">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.eclipse.launchbar.ui.internal.LaunchBarPreferenceInitializer">
-      </initializer>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="org.eclipse.debug.ui.LaunchingPreferencePage"
-            class="org.eclipse.launchbar.ui.internal.LaunchBarPreferencePage"
-            id="org.eclipse.launchbar.ui.prefPage"
-            name="Launch Bar">
-      </page>
    </extension>
    <extension
          point="org.eclipse.launchbar.ui.launchBarUIContributions">
       <descriptorUI
             descriptorTypeId="org.eclipse.launchbar.core.descriptor.default"
-            labelProvider="org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider">
+            labelProvider="org.eclipse.launchbar.ui.DefaultDescriptorLabelProvider">
       </descriptorUI>
    </extension>
    

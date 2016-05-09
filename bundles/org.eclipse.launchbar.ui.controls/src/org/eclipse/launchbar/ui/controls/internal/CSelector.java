@@ -8,7 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.controls;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import java.util.Comparator;
 
@@ -23,8 +23,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.launchbar.ui.internal.Activator;
-import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;

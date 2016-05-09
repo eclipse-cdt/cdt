@@ -8,7 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.controls;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,9 +25,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.launchbar.core.internal.LaunchBarManager;
-import org.eclipse.launchbar.ui.internal.Activator;
-import org.eclipse.launchbar.ui.internal.Messages;
+import org.eclipse.launchbar.core.ILaunchBarManager;
+import org.eclipse.launchbar.ui.ILaunchBarUIConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -36,10 +35,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-@SuppressWarnings("restriction")
 public class ModeSelector extends CSelector {
 	private static final String[] noModes = new String[] { "---" }; //$NON-NLS-1$
-	private final LaunchBarManager manager = Activator.getDefault().getLaunchBarUIManager().getManager();
+	private final ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
 	private Map<String, Image> modeButtonImages = new HashMap<>();
 
 	public ModeSelector(Composite parent, int style) {
@@ -61,7 +59,7 @@ public class ModeSelector extends CSelector {
 					if (modes.length > 0)
 						return modes;
 				} catch (CoreException e) {
-					Activator.log(e.getStatus());
+					Activator.log(e);
 				}
 				return noModes;
 			}
@@ -175,7 +173,7 @@ public class ModeSelector extends CSelector {
 			try {
 				manager.setActiveLaunchMode(mode);
 			} catch (CoreException e) {
-				Activator.log(e.getStatus());
+				Activator.log(e);
 			} catch (Exception e) {
 				// manager can throw illegal state exception hopefully we never
 				// get it
@@ -200,7 +198,7 @@ public class ModeSelector extends CSelector {
 	}
 
 	private ToolItem findLaunchButton() {
-		String commandId = Activator.CMD_LAUNCH;
+		String commandId = ILaunchBarUIConstants.CMD_LAUNCH;
 		for (Control control : getParent().getChildren()) {
 			if (control instanceof ToolBar) {
 				for (ToolItem toolItem : ((ToolBar) control).getItems()) {
@@ -229,7 +227,7 @@ public class ModeSelector extends CSelector {
 			String id = group.getIdentifier();
 			Image image = modeButtonImages.get(id);
 			if (image == null) {
-				Image bgImage = Activator.getDefault().getImage(Activator.IMG_BUTTON_BACKGROUND);
+				Image bgImage = Activator.getDefault().getImageRegistry().get(Activator.IMG_BUTTON_BACKGROUND);
 				Image modeImage = getLabelProvider().getImage(mode);
 				ImageDescriptor imageDesc = new LaunchBarButtonImageDescriptor(modeImage, bgImage);
 				image = imageDesc.createImage();
@@ -244,7 +242,7 @@ public class ModeSelector extends CSelector {
 		try {
 			group = getLaunchGroup(mode.getIdentifier());
 		} catch (CoreException e) {
-			Activator.log(e.getStatus());
+			Activator.log(e);
 		}
 		if (group == null) {
 			group = getDefaultLaunchGroup(mode.getIdentifier());

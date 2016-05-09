@@ -5,24 +5,16 @@ Bundle-SymbolicName: org.eclipse.launchbar.ui;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: org.eclipse.launchbar.ui.internal.Activator
 Bundle-Vendor: Eclipse CDT
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.e4.ui.workbench,
- org.eclipse.e4.ui.model.workbench,
- org.eclipse.e4.core.di,
- org.eclipse.e4.core.services,
- org.eclipse.osgi.services,
- org.eclipse.launchbar.core,
- org.eclipse.debug.ui,
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
  org.eclipse.ui.ide,
- org.eclipse.e4.core.contexts,
- org.eclipse.ui.workbench
+ org.eclipse.debug.ui,
+ org.eclipse.launchbar.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: org.eclipse.launchbar.ui,
  org.eclipse.launchbar.ui.internal;x-internal:=true,
  org.eclipse.launchbar.ui.internal.commands;x-internal:=true,
- org.eclipse.launchbar.ui.internal.controls;x-internal:=true,
- org.eclipse.launchbar.ui.internal.dialogs;x-internal:=true
-Import-Package: javax.inject
+ org.eclipse.launchbar.ui.internal.dialogs;x-internal:=true,
+ org.eclipse.launchbar.ui.target

@@ -34,7 +34,7 @@ import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
-import org.eclipse.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ILaunchConfigurationTargetedDelegate;
 import org.eclipse.launchbar.ui.internal.Activator;
@@ -56,7 +56,7 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
-			LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
+			ILaunchBarManager launchBarManager = Activator.getService(ILaunchBarManager.class);
 			ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
 			ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
 			ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
@@ -67,6 +67,7 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 					return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
 				}
 
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					final Collection<IProject> projects = getProjects(config);
 					if (BuildAction.isSaveAllSet()) {

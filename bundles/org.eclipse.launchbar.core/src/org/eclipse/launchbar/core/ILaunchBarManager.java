@@ -11,7 +11,11 @@
 package org.eclipse.launchbar.core;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * Interface to the Launch Bar Manager.
@@ -21,8 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
-	 * A launch object has been added. Create a matching launch descriptor if
-	 * available.
+	 * A launch object has been added. Create a matching launch descriptor if available.
 	 *
 	 * @param element
 	 *            launch object
@@ -32,8 +35,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 	ILaunchDescriptor launchObjectAdded(Object launchObject) throws CoreException;
 
 	/**
-	 * A launch object has been removed. Remove the associated launch descriptor
-	 * if there is one.
+	 * A launch object has been removed. Remove the associated launch descriptor if there is one.
 	 *
 	 * @param element
 	 *            launch object
@@ -49,16 +51,52 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 	 */
 	void launchObjectChanged(Object launchObject) throws CoreException;
 
-
 	/**
-	 * Add a linstener that can react to launch bar changes
+	 * Add a listener that can react to launch bar changes
+	 * 
 	 * @param listener
 	 */
-	public void addListener(ILaunchBarListener listener);
+	void addListener(ILaunchBarListener listener);
 
 	/**
-	 * Remove a linstener
+	 * Remove a listener
+	 * 
 	 * @param listener
 	 */
-	public void removeListener(ILaunchBarListener listener);
+	void removeListener(ILaunchBarListener listener);
+
+	/**
+	 * Return the type id for the given launch descriptor type. This is defined in the extension
+	 * point that defines the type.
+	 * 
+	 * @param descType
+	 *            descriptor type
+	 * @return the type id for the descriptor type
+	 */
+	String getDescriptorTypeId(ILaunchDescriptorType descType) throws CoreException;
+
+	ILaunchDescriptor getActiveLaunchDescriptor() throws CoreException;
+	
+	ILaunchMode getActiveLaunchMode() throws CoreException;
+
+	ILaunchTarget getActiveLaunchTarget() throws CoreException;
+	
+	ILaunchConfiguration getActiveLaunchConfiguration() throws CoreException;
+
+	ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor desc, ILaunchTarget target) throws CoreException;
+	
+	ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor desc, ILaunchTarget target) throws CoreException;
+	
+	ILaunchDescriptor[] getLaunchDescriptors() throws CoreException;
+	
+	void setActiveLaunchDescriptor(ILaunchDescriptor desc) throws CoreException;
+
+	ILaunchMode[] getLaunchModes() throws CoreException;
+	
+	void setActiveLaunchMode(ILaunchMode mode) throws CoreException;
+
+	ILaunchTarget[] getLaunchTargets(ILaunchDescriptor desc) throws CoreException;
+	
+	void setActiveLaunchTarget(ILaunchTarget target) throws CoreException;
+	
 }

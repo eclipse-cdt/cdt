@@ -24,6 +24,8 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDi
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.dialogs.IPageChangingListener;
+import org.eclipse.jface.dialogs.PageChangingEvent;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.ui.internal.Activator;
@@ -34,11 +36,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")
-public class NewLaunchConfigEditPage extends WizardPage {
+public class NewLaunchConfigEditPage extends WizardPage implements IPageChangingListener {
 	private ILaunchConfigurationWorkingCopy workingCopy;
 	private LaunchConfigurationDialogExt launchConfigurationDialog = new LaunchConfigurationDialogExt();
 	private LaunchConfigurationTabGroupViewerExt tabViewer;
-	private ILaunchConfigurationType type;
+
+	private ILaunchGroup launchGroup;
+	private ILaunchConfigurationType launchConfigType;
 
 	public NewLaunchConfigEditPage() {
 		super(Messages.NewLaunchConfigEditPage_0);
@@ -55,12 +59,19 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(launchConfigurationDialog);
 		tabViewer = new LaunchConfigurationTabGroupViewerExt(comp, launchConfigurationDialog);
 		launchConfigurationDialog.setTabViewer(tabViewer);
-		changeLaunchConfigType(type);
 		GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		data.heightHint = 500;
 		tabViewer.getControl().setLayoutData(data);
 		parent.layout(true, true);
 		validateFields();
+	}
+
+	public void setLaunchGroup(ILaunchGroup launchGroup) {
+		this.launchGroup = launchGroup;
+	}
+
+	public void setLaunchConfigType(ILaunchConfigurationType type) {
+		this.launchConfigType = type;
 	}
 
 	/**
@@ -70,26 +81,26 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		return workingCopy;
 	}
 
-	void changeLaunchConfigType(ILaunchConfigurationType type) {
-		if (type == null)
+	@Override
+	public void handlePageChanging(PageChangingEvent event) {
+		if (launchConfigType == null) {
 			return;
-		try {
-			this.type = type;
-			LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(launchConfigurationDialog);
-			if (tabViewer != null) {
+		}
+		LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(launchConfigurationDialog);
+		if (tabViewer != null) {
+			try {
 				String name = launchConfigurationDialog.generateName("launchConfiguration"); //$NON-NLS-1$
-				workingCopy = type.newInstance(null, name);
+				workingCopy = launchConfigType.newInstance(null, name);
 				launchConfigurationDialog.doSetDefaults(workingCopy);
 				tabViewer.setInput(workingCopy);
-				setTitle(String.format(Messages.NewLaunchConfigEditPage_7, type.getName()));
+				setTitle(String.format(Messages.NewLaunchConfigEditPage_7, launchConfigType.getName()));
+			} catch (CoreException e) {
+				Activator.log(e);
 			}
-		} catch (CoreException e) {
-			Activator.log(e);
-			return;
 		}
 	}
 
-	boolean performFinish() {
+	public boolean performFinish() {
 		if (workingCopy == null)
 			return false;
 		workingCopy.rename(tabViewer.getWorkingCopy().getName());
@@ -137,11 +148,6 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		@Override
 		public LaunchGroupExtension getLaunchGroup() {
 			return NewLaunchConfigEditPage.this.getLaunchGroup();
-		}
-
-		@Override
-		public String getMode() {
-			return NewLaunchConfigEditPage.this.getMode();
 		}
 
 		@Override
@@ -193,24 +199,15 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		}
 	};
 
-	public String getMode() {
-		return ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup.getMode();
-	}
-
 	public LaunchGroupExtension getLaunchGroup() {
-		try {
-			if (workingCopy == null)
-				return null;
-			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-					.getLaunchGroup(workingCopy.getType(), getMode());
-			if (group == null) {
-				return null;
-			}
-			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-					.getLaunchGroup(group.getIdentifier());
-			return groupExt;
-		} catch (CoreException e) {
+		if (workingCopy == null)
+			return null;
+		if (launchGroup == null) {
 			return null;
 		}
+		LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
+				.getLaunchGroup(launchGroup.getIdentifier());
+		return groupExt;
 	}
+
 }

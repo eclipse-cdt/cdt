@@ -10,20 +10,23 @@
  *     Torkild U. Resheim - add preference to control target selector
  *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.controls;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.launchbar.core.ILaunchBarListener;
+import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
-import org.eclipse.launchbar.ui.internal.Activator;
-import org.eclipse.launchbar.ui.internal.Messages;
+import org.eclipse.launchbar.ui.ILaunchBarUIConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -32,16 +35,20 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 
 public class LaunchBarControl implements ILaunchBarListener {
 	public static final String ID = "org.eclipse.launchbar"; //$NON-NLS-1$
 	public static final String CLASS_URI = "bundleclass://" + Activator.PLUGIN_ID + "/" //$NON-NLS-1$ //$NON-NLS-2$
 			+ LaunchBarControl.class.getName();
 
-	private LaunchBarManager manager = Activator.getDefault().getLaunchBarUIManager().getManager();
+	private ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
 
 	private ConfigSelector configSelector;
 	private ModeSelector modeSelector;
@@ -70,11 +77,14 @@ public class LaunchBarControl implements ILaunchBarListener {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		boolean buildEnabled = store.getBoolean(Activator.PREF_ENABLE_BUILDBUTTON);
 		if (buildEnabled) {
-			createButton(toolBar, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
+			createButton(toolBar, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build,
+					ILaunchBarUIConstants.CMD_BUILD);
 		}
 
-		createButton(toolBar, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch, Activator.CMD_LAUNCH);
-		createButton(toolBar, Activator.IMG_BUTTON_STOP, Messages.LaunchBarControl_Stop, Activator.CMD_STOP);
+		createButton(toolBar, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch,
+				ILaunchBarUIConstants.CMD_LAUNCH);
+		createButton(toolBar, Activator.IMG_BUTTON_STOP, Messages.LaunchBarControl_Stop,
+				ILaunchBarUIConstants.CMD_STOP);
 
 		modeSelector = new ModeSelector(container, SWT.NONE);
 		modeSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
@@ -83,7 +93,6 @@ public class LaunchBarControl implements ILaunchBarListener {
 		configSelector = new ConfigSelector(container, SWT.NONE);
 		configSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		configSelector.setInput(manager);
-
 
 		boolean enabled = store.getBoolean(Activator.PREF_ENABLE_TARGETSELECTOR);
 		if (enabled) {
@@ -100,12 +109,16 @@ public class LaunchBarControl implements ILaunchBarListener {
 	}
 
 	protected void syncSelectors() {
-		if (configSelector != null)
-			configSelector.setSelection(manager.getActiveLaunchDescriptor());
-		if (modeSelector != null)
-			modeSelector.setSelection(manager.getActiveLaunchMode());
-		if (targetSelector != null)
-			targetSelector.setSelection(manager.getActiveLaunchTarget());
+		try {
+			if (configSelector != null)
+				configSelector.setSelection(manager.getActiveLaunchDescriptor());
+			if (modeSelector != null)
+				modeSelector.setSelection(manager.getActiveLaunchMode());
+			if (targetSelector != null)
+				targetSelector.setSelection(manager.getActiveLaunchTarget());
+		} catch (CoreException e) {
+			Activator.log(e);
+		}
 	}
 
 	@PreDestroy
@@ -113,21 +126,32 @@ public class LaunchBarControl implements ILaunchBarListener {
 		manager.removeListener(this);
 	}
 
-	private ToolItem createButton(Composite parent, String imageName, String toolTipText, final String command) {
+	private ToolItem createButton(Composite parent, String imageName, String toolTipText, final String commandId) {
 		ToolItem button = new ToolItem((ToolBar) parent, SWT.FLAT);
 
-		Image bgImage = Activator.getDefault().getImage(Activator.IMG_BUTTON_BACKGROUND);
-		Image fgImage = Activator.getDefault().getImage(imageName);
+		Image bgImage = Activator.getDefault().getImageRegistry().get(Activator.IMG_BUTTON_BACKGROUND);
+		Image fgImage = Activator.getDefault().getImageRegistry().get(imageName);
 
 		ImageDescriptor imageDesc = new LaunchBarButtonImageDescriptor(fgImage, bgImage);
 		Image image = imageDesc.createImage();
 		button.setImage(image);
 		button.setToolTipText(toolTipText);
-		button.setData("command", command); //$NON-NLS-1$
+		button.setData("command", commandId); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
-				Activator.runCommand(command);
+				final ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
+				Command command = commandService.getCommand(commandId);
+				final Event trigger = new Event();
+				final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+				ExecutionEvent executionEvent = handlerService.createExecutionEvent(command, trigger);
+					try {
+						command.executeWithChecks(executionEvent);
+					} catch (OperationCanceledException ex) {
+						// abort
+					} catch (Exception ex) {
+						Activator.log(ex);
+					}
 			};
 		});
 		button.addDisposeListener(new DisposeListener() {
@@ -170,4 +194,5 @@ public class LaunchBarControl implements ILaunchBarListener {
 	public ConfigSelector getConfigSelector() {
 		return configSelector;
 	}
+	
 }

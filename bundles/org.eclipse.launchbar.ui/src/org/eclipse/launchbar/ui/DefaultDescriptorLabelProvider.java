@@ -8,7 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal;
+package org.eclipse.launchbar.ui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class DefaultDescriptorLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ILaunchDescriptor) {
-			ILaunchConfiguration config = (ILaunchConfiguration) ((ILaunchDescriptor) element).getAdapter(ILaunchConfiguration.class);
+			ILaunchConfiguration config = ((ILaunchDescriptor) element).getAdapter(ILaunchConfiguration.class);
 			if (config != null) {
 				try {
 					ILaunchConfigurationType type = config.getType();

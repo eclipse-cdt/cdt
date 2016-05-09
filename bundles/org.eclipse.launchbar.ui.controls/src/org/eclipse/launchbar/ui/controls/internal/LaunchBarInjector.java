@@ -10,7 +10,7 @@
  *     Torkild U. Resheim - add preference to control target selector
  *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import javax.inject.Inject;
 
@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.launchbar.ui.internal.controls.LaunchBarControl;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -100,19 +99,25 @@ public class LaunchBarInjector {
 
 	private void injectLaunchBar(MTrimBar trimBar, boolean enabled) {
 		// are we enabled or not
+		// and fix up the class URI for 2.0
 
 		// Search for control in trimbar
-		MTrimElement launchBarElement = null;
+		MToolControl launchBarElement = null;
 		for (MTrimElement trimElement : trimBar.getChildren()) {
 			if (LaunchBarControl.ID.equals(trimElement.getElementId())) {
-				launchBarElement = trimElement;
+				launchBarElement = (MToolControl) trimElement;
 				break;
 			}
 		}
 
 		if (launchBarElement != null) {
+			// Fix up class name
+			if (!LaunchBarControl.CLASS_URI.equals(launchBarElement.getContributionURI())) {
+				launchBarElement.setContributionURI(LaunchBarControl.CLASS_URI);
+			}
+			
+			// remove it if we're disabled
 			if (!enabled) {
-				// remove it if we're disabled
 				trimBar.getChildren().remove(launchBarElement);
 				// This seems to be a bug in the platform but for now, dispose of the widget
 				Widget widget = (Widget)launchBarElement.getWidget();

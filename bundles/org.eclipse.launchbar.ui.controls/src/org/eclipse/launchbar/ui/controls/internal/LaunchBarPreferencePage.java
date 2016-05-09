@@ -10,7 +10,7 @@
  *     Torkild U. Resheim - add preference to control target selector
  *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;

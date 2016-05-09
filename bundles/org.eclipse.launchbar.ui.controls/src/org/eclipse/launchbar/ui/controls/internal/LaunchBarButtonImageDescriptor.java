@@ -9,7 +9,7 @@
  *     Doug Schaefer - initial API and implementation
  *     Elena Laskavaia - moved to a separate class
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.controls;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.swt.graphics.Image;

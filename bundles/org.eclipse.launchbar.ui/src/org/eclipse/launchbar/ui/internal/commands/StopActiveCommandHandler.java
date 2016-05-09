@@ -24,7 +24,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
 
@@ -38,10 +38,10 @@ public class StopActiveCommandHandler extends AbstractHandler {
 
 	public void stop() {
 		stopBuild();
-		stopActiveLaunches(Activator.getDefault().getLaunchBarUIManager().getManager());
+		stopActiveLaunches(Activator.getService(ILaunchBarManager.class));
 	}
 
-	static void stopActiveLaunches(LaunchBarManager launchBarManager) {
+	static void stopActiveLaunches(ILaunchBarManager launchBarManager) {
 		final ILaunch[] activeLaunches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		if (activeLaunches != null && activeLaunches.length > 0) {
 			new Job(Messages.StopActiveCommandHandler_0) {

@@ -31,7 +31,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.resources.Project;
@@ -355,9 +354,9 @@ public class LaunchBarManager2Test {
 	public void testGetLaunchTargets() throws CoreException {
 		manager.launchObjectAdded(launchObject);
 		manager.setActiveLaunchDescriptor(descriptor);
-		List<ILaunchTarget> launchTargets = manager.getLaunchTargets(descriptor);
-		assertEquals(1, launchTargets.size());
-		assertEquals(otherTarget, launchTargets.get(0));
+		ILaunchTarget[] launchTargets = manager.getLaunchTargets(descriptor);
+		assertEquals(1, launchTargets.length);
+		assertEquals(otherTarget, launchTargets[0]);
 	}
 
 	@Test
@@ -369,8 +368,8 @@ public class LaunchBarManager2Test {
 		init();
 		manager.launchObjectAdded(launchObject);
 		ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
-		List<ILaunchTarget> launchTargets = manager.getLaunchTargets(desc);
-		assertEquals(1, launchTargets.size());
+		ILaunchTarget[] launchTargets = manager.getLaunchTargets(desc);
+		assertEquals(1, launchTargets.length);
 	}
 
 	@Test
@@ -382,8 +381,8 @@ public class LaunchBarManager2Test {
 		init();
 		manager.launchObjectAdded(launchObject);
 		ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
-		List<ILaunchTarget> launchTargets = manager.getLaunchTargets(desc);
-		assertEquals(1, launchTargets.size());
+		ILaunchTarget[] launchTargets = manager.getLaunchTargets(desc);
+		assertEquals(1, launchTargets.length);
 	}
 
 	@Test

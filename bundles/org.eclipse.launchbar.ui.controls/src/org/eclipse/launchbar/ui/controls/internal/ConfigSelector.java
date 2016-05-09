@@ -8,7 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.launchbar.ui.internal.controls;
+package org.eclipse.launchbar.ui.controls.internal;
 
 import java.util.Comparator;
 
@@ -25,13 +25,11 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.ui.internal.Activator;
-import org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider;
-import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
-import org.eclipse.launchbar.ui.internal.Messages;
-import org.eclipse.launchbar.ui.internal.commands.ConfigureActiveLaunchHandler;
-import org.eclipse.launchbar.ui.internal.dialogs.NewLaunchConfigWizard;
+import org.eclipse.launchbar.ui.DefaultDescriptorLabelProvider;
+import org.eclipse.launchbar.ui.ILaunchBarUIManager;
+import org.eclipse.launchbar.ui.NewLaunchConfigWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -45,7 +43,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class ConfigSelector extends CSelector {
-	private LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
+	private ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
+	private ILaunchBarUIManager uiManager = Activator.getService(ILaunchBarUIManager.class);
 	private DefaultDescriptorLabelProvider defaultProvider;
 
 	private static final String[] noConfigs = new String[] { Messages.ConfigSelector_0 };
@@ -60,16 +59,21 @@ public class ConfigSelector extends CSelector {
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
+
 			@Override
 			public void dispose() {
 			}
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				ILaunchDescriptor[] descs = uiManager.getManager().getLaunchDescriptors();
-				if (descs.length == 0)
+				try {
+					ILaunchDescriptor[] descs = manager.getLaunchDescriptors();
+					if (descs.length == 0)
+						return noConfigs;
+					return descs;
+				} catch (CoreException e) {
 					return noConfigs;
-				return descs;
+				}
 			}
 		});
 
@@ -78,7 +82,7 @@ public class ConfigSelector extends CSelector {
 			public Image getImage(Object element) {
 				if (element instanceof ILaunchDescriptor) {
 					try {
-						ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
+						ILaunchDescriptor configDesc = (ILaunchDescriptor) element;
 						ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
 						if (labelProvider != null) {
 							Image img = labelProvider.getImage(element);
@@ -86,18 +90,19 @@ public class ConfigSelector extends CSelector {
 								return img;
 						}
 					} catch (CoreException e) {
-						Activator.log(e.getStatus());
+						Activator.log(e);
 					}
 				}
 				return defaultProvider.getImage(element);
 			}
+
 			@Override
 			public String getText(Object element) {
 				if (element instanceof String) {
-					return (String)element;
+					return (String) element;
 				} else if (element instanceof ILaunchDescriptor) {
 					try {
-						ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
+						ILaunchDescriptor configDesc = (ILaunchDescriptor) element;
 						ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
 						if (labelProvider != null) {
 							String text = labelProvider.getText(element);
@@ -105,7 +110,7 @@ public class ConfigSelector extends CSelector {
 								return text;
 						}
 					} catch (CoreException e) {
-						Activator.log(e.getStatus());
+						Activator.log(e);
 					}
 				}
 				return defaultProvider.getText(element);
@@ -136,9 +141,9 @@ public class ConfigSelector extends CSelector {
 		if (selected instanceof ILaunchDescriptor) {
 			ILaunchDescriptor configDesc = (ILaunchDescriptor) selected;
 			try {
-				uiManager.getManager().setActiveLaunchDescriptor(configDesc);
+				manager.setActiveLaunchDescriptor(configDesc);
 			} catch (CoreException e) {
-				Activator.log(e.getStatus());
+				Activator.log(e);
 			}
 		}
 	}
@@ -150,7 +155,7 @@ public class ConfigSelector extends CSelector {
 
 	@Override
 	public void handleEdit(Object element) {
-		ConfigureActiveLaunchHandler.openConfigurationEditor((ILaunchDescriptor) element);
+		uiManager.openConfigurationEditor((ILaunchDescriptor) element);
 	}
 
 	@Override
@@ -169,7 +174,6 @@ public class ConfigSelector extends CSelector {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(createLabel);
 		createLabel.setBackground(getBackground());
 		createLabel.setText(Messages.ConfigSelector_2);
-
 
 		MouseListener mouseListener = new MouseAdapter() {
 			@Override
@@ -202,6 +206,7 @@ public class ConfigSelector extends CSelector {
 				createButton.setBackground(highlightColor);
 				createLabel.setBackground(highlightColor);
 			}
+
 			@Override
 			public void mouseExit(MouseEvent e) {
 				Color backgroundColor = getBackground();

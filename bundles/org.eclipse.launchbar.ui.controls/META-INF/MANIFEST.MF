@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Launch Bar UI Controls
+Bundle-SymbolicName: org.eclipse.launchbar.ui.controls;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.launchbar.ui.controls.internal.Activator
+Bundle-Vendor: Eclipse CDT
+Require-Bundle: org.eclipse.osgi.services;bundle-version="3.5.0",
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.e4.core.di.annotations;bundle-version="1.5.0",
+ org.eclipse.e4.core.contexts;bundle-version="1.5.0",
+ org.eclipse.e4.core.services;bundle-version="2.0.0",
+ org.eclipse.e4.ui.model.workbench;bundle-version="1.2.0",
+ org.eclipse.e4.ui.workbench;bundle-version="1.4.0",
+ org.eclipse.debug.ui;bundle-version="3.11.200",
+ org.eclipse.launchbar.core;bundle-version="2.0.0",
+ org.eclipse.launchbar.ui;bundle-version="2.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin
+Export-Package: org.eclipse.launchbar.ui.controls.internal;x-internal:=true

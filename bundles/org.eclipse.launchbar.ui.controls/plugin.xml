@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="launchBarInjector"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            apply="always"
+            beforefragment="false"
+            class="org.eclipse.launchbar.ui.controls.internal.LaunchBarInjector">
+      </processor>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.launchbar.ui.controls.internal.LaunchBarPreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.debug.ui.LaunchingPreferencePage"
+            class="org.eclipse.launchbar.ui.controls.internal.LaunchBarPreferencePage"
+            id="org.eclipse.launchbar.ui.prefPage"
+            name="Launch Bar">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.launchbar.ui.category.launchBar"
+            defaultHandler="org.eclipse.launchbar.ui.controls.internal.OpenLaunchSelector"
+            id="org.eclipse.launchbar.ui.command.openLaunchSelector"
+            name="Open Launch Bar Config Selector">
+      </command>
+   </extension>
+
+</plugin>

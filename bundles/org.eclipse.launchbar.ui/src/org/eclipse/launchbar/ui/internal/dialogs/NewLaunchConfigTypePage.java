@@ -15,12 +15,12 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -51,13 +51,11 @@ public class NewLaunchConfigTypePage extends WizardPage {
 				getContainer().showPage(getNextPage());
 			}
 		});
-		populateItems();
 
 		setControl(comp);
 	}
 
-	void populateItems() {
-		ILaunchGroup group = ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup;
+	public void setLaunchGroup(ILaunchGroup group) {
 		if (group == null)
 			return;
 
@@ -84,21 +82,12 @@ public class NewLaunchConfigTypePage extends WizardPage {
 		setPageComplete(haveItems);
 	}
 
-	@Override
-	public boolean canFlipToNextPage() {
-		return isPageComplete();
+	public void addTypeSelectionListener(SelectionListener listener) {
+		table.addSelectionListener(listener);
 	}
-
-	@Override
-	public IWizardPage getNextPage() {
-		ILaunchConfigurationType type = (ILaunchConfigurationType) table.getSelection()[0].getData();
-		NewLaunchConfigWizard wiz = (NewLaunchConfigWizard) getWizard();
-		NewLaunchConfigEditPage editPage = wiz.editPage;
-		// lazy page creation
-		if (wiz.getPage(editPage.getName()) == null) {
-			wiz.addPage(editPage);
-		}
-		editPage.changeLaunchConfigType(type);
-		return editPage;
+	
+	public ILaunchConfigurationType getSelectedType() {
+		return (ILaunchConfigurationType) table.getSelection()[0].getData();
 	}
+	
 }

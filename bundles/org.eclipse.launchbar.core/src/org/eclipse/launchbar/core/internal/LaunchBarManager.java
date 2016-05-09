@@ -11,7 +11,6 @@
 package org.eclipse.launchbar.core.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -290,19 +289,20 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		if (i < 0) {
 			return null;
 		}
-		return new Pair<String, String>(key.substring(0, i), key.substring(i + 1));
+		return new Pair<>(key.substring(0, i), key.substring(i + 1));
 	}
 
+	@Override
 	public String getDescriptorTypeId(ILaunchDescriptorType type) {
 		return descriptorTypeInfo.get(type).getId();
 	}
 
 	private Pair<String, String> getDescriptorId(ILaunchDescriptor descriptor) {
-		return new Pair<String, String>(getDescriptorTypeId(descriptor.getType()), descriptor.getName());
+		return new Pair<>(getDescriptorTypeId(descriptor.getType()), descriptor.getName());
 	}
 
 	private Pair<String, String> getTargetId(ILaunchTarget target) {
-		return new Pair<String, String>(target.getTypeId(), target.getName());
+		return new Pair<>(target.getTypeId(), target.getId());
 	}
 
 	private void addDescriptor(Object launchObject, ILaunchDescriptor descriptor) throws CoreException {
@@ -311,6 +311,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		setActiveLaunchDescriptor(descriptor);
 	}
 
+	@Override
 	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		if (descriptor == null)
@@ -408,6 +409,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		return descs[descs.length - 1];
 	}
 
+	@Override
 	public ILaunchDescriptor[] getLaunchDescriptors() {
 		// return descriptor in usage order (most used first). UI can sort them
 		// later as it wishes
@@ -416,6 +418,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		return values.toArray(new ILaunchDescriptor[values.size()]);
 	}
 
+	@Override
 	public ILaunchDescriptor getActiveLaunchDescriptor() {
 		return activeLaunchDesc;
 	}
@@ -453,6 +456,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		}
 	}
 
+	@Override
 	public void setActiveLaunchDescriptor(ILaunchDescriptor descriptor) throws CoreException {
 		Activator.trace("set active descriptor " + descriptor); //$NON-NLS-1$
 		if (activeLaunchDesc == descriptor) {
@@ -614,6 +618,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		}
 	}
 
+	@Override
 	public ILaunchMode[] getLaunchModes() throws CoreException {
 		ILaunchConfigurationType configType = getLaunchConfigurationType(activeLaunchDesc, activeLaunchTarget);
 		if (configType == null)
@@ -628,6 +633,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		return modeList.toArray(new ILaunchMode[modeList.size()]);
 	}
 
+	@Override
 	public ILaunchMode getActiveLaunchMode() {
 		return activeLaunchMode;
 	}
@@ -647,6 +653,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		}
 	}
 
+	@Override
 	public void setActiveLaunchMode(ILaunchMode mode) throws CoreException {
 		if (activeLaunchMode == mode) {
 			// we have to modify listeners here because same mode does not mean
@@ -681,16 +688,17 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		}
 	}
 
-	public List<ILaunchTarget> getLaunchTargets(ILaunchDescriptor descriptor) {
+	@Override
+	public ILaunchTarget[] getLaunchTargets(ILaunchDescriptor descriptor) {
 		if (descriptor == null)
-			return Arrays.asList(launchTargetManager.getLaunchTargets());
+			return launchTargetManager.getLaunchTargets();
 		List<ILaunchTarget> targets = new ArrayList<>();
 		for (ILaunchTarget target : launchTargetManager.getLaunchTargets()) {
 			if (supportsTarget(descriptor, target)) {
 				targets.add(target);
 			}
 		}
-		return targets;
+		return targets.toArray(new ILaunchTarget[targets.size()]);
 	}
 
 	boolean supportsTarget(ILaunchDescriptor descriptor, ILaunchTarget target) {
@@ -709,6 +717,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		return false;
 	}
 
+	@Override
 	public ILaunchTarget getActiveLaunchTarget() {
 		return activeLaunchTarget;
 	}
@@ -728,6 +737,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		}
 	}
 
+	@Override
 	public void setActiveLaunchTarget(ILaunchTarget target) throws CoreException {
 		if (target == null)
 			target = ILaunchTarget.NULL_TARGET;
@@ -763,12 +773,13 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	private ILaunchTarget getDefaultLaunchTarget(ILaunchDescriptor descriptor) {
-		List<ILaunchTarget> targets = getLaunchTargets(descriptor);
+		ILaunchTarget[] targets = getLaunchTargets(descriptor);
 		// chances are that better target is most recently added, rather then
 		// the oldest
-		return targets.isEmpty() ? ILaunchTarget.NULL_TARGET : targets.get(targets.size() - 1);
+		return targets.length == 0 ? ILaunchTarget.NULL_TARGET : targets[targets.length - 1];
 	}
 
+	@Override
 	public ILaunchConfiguration getActiveLaunchConfiguration() throws CoreException {
 		ILaunchConfiguration configuration = getLaunchConfiguration(activeLaunchDesc, activeLaunchTarget);
 		// This is the only concrete time we have the mapping from launch
@@ -780,6 +791,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		return configuration;
 	}
 
+	@Override
 	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		if (descriptor == null) {

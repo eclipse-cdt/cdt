@@ -25,6 +25,16 @@ public class CBuilder extends IncrementalProjectBuilder {
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 	}
 	
+	protected ICBuildConfiguration getCBuildConfig() throws CoreException {
+		ICBuildConfiguration config = getBuildConfig().getAdapter(ICBuildConfiguration.class);
+		if (config != null) {
+			return config;
+		}
+		
+		ICBuildConfigurationManager manager = CCorePlugin.getService(ICBuildConfigurationManager.class);
+		return manager.getDefaultBuildConfiguration(getProject());
+	}
+	
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
 			throws CoreException {
@@ -36,7 +46,7 @@ public class CBuilder extends IncrementalProjectBuilder {
 			console.start(project);
 
 			// Get the build configuration
-			ICBuildConfiguration config = getBuildConfig().getAdapter(ICBuildConfiguration.class);
+			ICBuildConfiguration config = getCBuildConfig();
 			if (config == null) {
 				console.getErrorStream().write("Build not configured correctly\n");
 				return null;
@@ -59,7 +69,7 @@ public class CBuilder extends IncrementalProjectBuilder {
 			console.start(project);
 
 			// Get the build configuration
-			ICBuildConfiguration config = getBuildConfig().getAdapter(ICBuildConfiguration.class);
+			ICBuildConfiguration config = getCBuildConfig();
 			if (config == null) {
 				console.getErrorStream().write("Build not configured correctly\n");
 				return;

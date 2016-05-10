@@ -46,8 +46,6 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.core.build.IToolChainManager;
-import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
@@ -118,18 +116,11 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		this.launchMode = name.substring(i + 1);
 	}
 
-	ArduinoBuildConfiguration(IBuildConfiguration config, String name, ArduinoBoard board, String launchMode)
+	ArduinoBuildConfiguration(IBuildConfiguration config, String name, ArduinoBoard board, String launchMode, IToolChain toolChain)
 			throws CoreException {
-		super(config, name);
+		super(config, name, toolChain);
 		this.board = board;
 		this.launchMode = launchMode;
-
-		// Create the toolChain
-		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
-		IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
-		IToolChain toolChain = new ArduinoToolChain(provider, this);
-		toolChainManager.addToolChain(toolChain);
-		setToolChain(toolChain);
 
 		// Store the board identifer
 		ArduinoPlatform platform = board.getPlatform();
@@ -148,8 +139,8 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 	}
 
 	ArduinoBuildConfiguration(IBuildConfiguration config, String name, ArduinoRemoteConnection target,
-			String launchMode) throws CoreException {
-		this(config, name, target.getBoard(), launchMode);
+			String launchMode, IToolChain toolChain) throws CoreException {
+		this(config, name, target.getBoard(), launchMode, toolChain);
 
 		// Store the menu settings
 		HierarchicalProperties menus = board.getMenus();

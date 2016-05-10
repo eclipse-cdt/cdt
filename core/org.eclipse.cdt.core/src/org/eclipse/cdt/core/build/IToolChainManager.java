@@ -21,9 +21,11 @@ public interface IToolChainManager {
 
 	IToolChainProvider getProvider(String providerId) throws CoreException;
 	
-	IToolChain getToolChain(String providerId, String name) throws CoreException;
+	IToolChain getToolChain(String providerId, String id, String version) throws CoreException;
 	
 	Collection<IToolChain> getToolChains(String providerId) throws CoreException;
+
+	Collection<IToolChain> getToolChains(String providerId, String id) throws CoreException;
 
 	/**
 	 * Returns the list of toolchains that have the given properties.

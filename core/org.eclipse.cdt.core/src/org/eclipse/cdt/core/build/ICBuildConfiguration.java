@@ -42,6 +42,8 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * @return the toolchain for this build configuration
 	 */
 	IToolChain getToolChain() throws CoreException;
+	
+	String getBinaryParserId() throws CoreException;
 
 	IEnvironmentVariable getVariable(String name) throws CoreException;
 
@@ -50,5 +52,5 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor) throws CoreException;
 
 	void clean(IConsole console, IProgressMonitor monitor) throws CoreException;
-	
+
 }

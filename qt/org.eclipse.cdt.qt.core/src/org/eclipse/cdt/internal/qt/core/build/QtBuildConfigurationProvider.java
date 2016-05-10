@@ -50,9 +50,10 @@ public class QtBuildConfigurationProvider implements ICBuildConfigurationProvide
 
 			return new QtBuildConfiguration(config, name);
 		} catch (CoreException e) {
+			// Failed to create the build config. Return null so it gets recreated.
 			Activator.log(e);
+			return null;
 		}
-		return null;
 	}
 
 	@Override

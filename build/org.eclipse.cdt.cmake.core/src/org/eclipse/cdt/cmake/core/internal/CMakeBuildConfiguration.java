@@ -30,13 +30,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CMakeBuildConfiguration extends CBuildConfiguration {
 
-	public CMakeBuildConfiguration(IBuildConfiguration config, String name) {
+	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
 	}
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		super(config, name);
-		setToolChain(toolChain);
+		super(config, name, toolChain);
 	}
 
 	@Override
@@ -54,7 +53,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				// TODO assuming cmake is in the path here, probably need a
 				// preference in case it isn't.
 				List<String> command = Arrays.asList("cmake", //$NON-NLS-1$
-						"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", new File(project.getLocationURI()).getAbsolutePath());
+						"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", new File(project.getLocationURI()).getAbsolutePath()); //$NON-NLS-1$
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
@@ -63,8 +62,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			// TODO need to figure out which builder to call. Hardcoding to make
 			// for now.
-			List<String> command = Arrays.asList("make");
-			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile()); //$NON-NLS-1$
+			List<String> command = Arrays.asList("make"); //$NON-NLS-1$
+			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 			Process process = processBuilder.start();
 			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 			
@@ -74,7 +73,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			return new IProject[] { project };
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus("Building " + project.getName(), e));
+			throw new CoreException(Activator.errorStatus(String.format("Building %s", project.getName()), e));
 		}
 	}
 	

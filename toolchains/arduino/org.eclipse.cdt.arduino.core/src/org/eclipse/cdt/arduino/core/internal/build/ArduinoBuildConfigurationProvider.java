@@ -16,6 +16,9 @@ import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -65,8 +68,15 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 			String configName = ArduinoBuildConfiguration.generateName(board, launchMode);
 			IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
 					null);
+
+			// Create the toolChain
+			IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
+			IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
+			IToolChain toolChain = new ArduinoToolChain(provider, config);
+			toolChainManager.addToolChain(toolChain);
+
 			ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, board,
-					launchMode);
+					launchMode, toolChain);
 			arduinoConfig.setActive(null);
 			configManager.addBuildConfiguration(config, arduinoConfig);
 			return arduinoConfig;
@@ -98,7 +108,12 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 		String configName = ArduinoBuildConfiguration.generateName(board, launchMode);
 		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
 				monitor);
-		ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, target, launchMode);
+		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
+		IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
+		IToolChain toolChain = new ArduinoToolChain(provider, config);
+		toolChainManager.addToolChain(toolChain);
+		ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, target, launchMode, toolChain);
+		configManager.addBuildConfiguration(config, arduinoConfig);
 		return arduinoConfig;
 	}
 

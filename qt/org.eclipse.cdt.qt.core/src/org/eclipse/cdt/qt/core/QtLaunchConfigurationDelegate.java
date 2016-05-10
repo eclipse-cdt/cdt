@@ -53,11 +53,11 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 	protected void populateToolChainProperties(ILaunchTarget target, Map<String, String> properties) {
 		String os = target.getAttribute(ILaunchTarget.ATTR_OS, null);
 		if (os != null) {
-			properties.put(IToolChain.ATTR_OS, os);
+			properties.put(IToolChain.ATTR_OS, os.toLowerCase());
 		}
 		String arch = target.getAttribute(ILaunchTarget.ATTR_ARCH, null);
 		if (arch != null) {
-			properties.put(IToolChain.ATTR_ARCH, arch);
+			properties.put(IToolChain.ATTR_ARCH, arch.toLowerCase());
 		}
 	}
 

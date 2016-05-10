@@ -9,7 +9,6 @@ package org.eclipse.cdt.internal.core.build;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class ToolChainManager implements IToolChainManager {
 
 	private Map<String, IConfigurationElement> providerElements;
 	private Map<String, IToolChainProvider> providers;
-	private Map<String, Map<String, IToolChain>> toolChains;
+	private Map<List<String>, IToolChain> toolChains;
 
 	private void init() {
 		if (providerElements == null) {
@@ -60,24 +59,22 @@ public class ToolChainManager implements IToolChainManager {
 		}
 	}
 
+	private List<String> getId(IToolChain toolChain) {
+		List<String> id = new ArrayList<>(3);
+		id.add(toolChain.getProvider().getId());
+		id.add(toolChain.getId());
+		id.add(toolChain.getVersion());
+		return id;
+	}
+
 	@Override
 	public void addToolChain(IToolChain toolChain) {
-		String providerId = toolChain.getProvider().getId();
-		Map<String, IToolChain> provider = toolChains.get(providerId);
-		if (provider == null) {
-			provider = new HashMap<>();
-			toolChains.put(providerId, provider);
-		}
-		provider.put(toolChain.getName(), toolChain);
+		toolChains.put(getId(toolChain), toolChain);
 	}
 
 	@Override
 	public void removeToolChain(IToolChain toolChain) {
-		String providerId = toolChain.getProvider().getId();
-		Map<String, IToolChain> provider = toolChains.get(providerId);
-		if (provider != null) {
-			provider.remove(toolChain.getName());
-		}
+		toolChains.remove(getId(toolChain));
 	}
 
 	@Override
@@ -95,26 +92,24 @@ public class ToolChainManager implements IToolChainManager {
 	}
 
 	@Override
-	public IToolChain getToolChain(String providerId, String name) throws CoreException {
+	public IToolChain getToolChain(String providerId, String id, String version) throws CoreException {
 		init();
-		Map<String, IToolChain> provider = toolChains.get(providerId);
-		if (provider != null) {
-			IToolChain toolChain = provider.get(name);
-			if (toolChain != null) {
-				return toolChain;
-			}
+		List<String> tid = new ArrayList<>(3);
+		tid.add(providerId);
+		tid.add(id);
+		tid.add(version);
+
+		IToolChain toolChain = toolChains.get(tid);
+		if (toolChain != null) {
+			return toolChain;
 		}
 
 		// Try the provider
 		IToolChainProvider realProvider = providers.get(providerId);
 		if (realProvider != null) {
-			IToolChain toolChain = realProvider.getToolChain(name);
+			toolChain = realProvider.getToolChain(id, version);
 			if (toolChain != null) {
-				if (provider == null) {
-					provider = new HashMap<>();
-					toolChains.put(providerId, provider);
-				}
-				provider.put(name, toolChain);
+				toolChains.put(getId(toolChain), toolChain);
 				return toolChain;
 			}
 		}
@@ -126,14 +121,15 @@ public class ToolChainManager implements IToolChainManager {
 	public Collection<IToolChain> getToolChainsMatching(Map<String, String> properties) {
 		init();
 		List<IToolChain> tcs = new ArrayList<>();
-		for (Map<String, IToolChain> types : toolChains.values()) {
-			tcLoop: for (IToolChain toolChain : types.values()) {
-				for (Map.Entry<String, String> property : properties.entrySet()) {
-					if (!property.getValue().equals(toolChain.getProperty(property.getKey()))) {
-						// doesn't match, move on to next toolchain
-						continue tcLoop;
-					}
+		for (IToolChain toolChain : toolChains.values()) {
+			boolean matches = true;
+			for (Map.Entry<String, String> property : properties.entrySet()) {
+				if (!property.getValue().equals(toolChain.getProperty(property.getKey()))) {
+					matches = false;
+					break;
 				}
+			}
+			if (matches) {
 				tcs.add(toolChain);
 			}
 		}
@@ -143,12 +139,25 @@ public class ToolChainManager implements IToolChainManager {
 	@Override
 	public Collection<IToolChain> getToolChains(String providerId) {
 		init();
-		Map<String, IToolChain> provider = toolChains.get(providerId);
-		if (provider != null) {
-			return Collections.unmodifiableCollection(provider.values());
-		} else {
-			return Collections.emptyList();
+		List<IToolChain> tcs = new ArrayList<>();
+		for (IToolChain toolChain : toolChains.values()) {
+			if (toolChain.getProvider().getId().equals(providerId)) {
+				tcs.add(toolChain);
+			}
 		}
+		return tcs;
+	}
+
+	@Override
+	public Collection<IToolChain> getToolChains(String providerId, String id) throws CoreException {
+		init();
+		List<IToolChain> tcs = new ArrayList<>();
+		for (IToolChain toolChain : toolChains.values()) {
+			if (toolChain.getProvider().getId().equals(providerId) && toolChain.getId().equals(id)) {
+				tcs.add(toolChain);
+			}
+		}
+		return tcs;
 	}
 
 }

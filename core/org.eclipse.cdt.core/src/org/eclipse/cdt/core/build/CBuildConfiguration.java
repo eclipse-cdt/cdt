@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,9 +48,11 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
@@ -66,15 +69,53 @@ public abstract class CBuildConfiguration extends PlatformObject
 		implements ICBuildConfiguration, IMarkerGenerator, IConsoleParser {
 
 	private static final String TOOLCHAIN_TYPE = "cdt.toolChain.type"; //$NON-NLS-1$
-	private static final String TOOLCHAIN_NAME = "cdt.toolChain.name"; //$NON-NLS-1$
+	private static final String TOOLCHAIN_ID = "cdt.toolChain.id"; //$NON-NLS-1$
+	private static final String TOOLCHAIN_VERSION = "cdt.toolChain.version"; //$NON-NLS-1$
 
 	private final String name;
 	private final IBuildConfiguration config;
-	private IToolChain toolChain;
+	private final IToolChain toolChain;
 
-	protected CBuildConfiguration(IBuildConfiguration config, String name) {
+	protected CBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		this.config = config;
 		this.name = name;
+
+		Preferences settings = getSettings();
+		String typeId = settings.get(TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
+		String id = settings.get(TOOLCHAIN_ID, ""); //$NON-NLS-1$
+		String version = settings.get(TOOLCHAIN_VERSION, ""); //$NON-NLS-1$
+		IToolChainManager toolChainManager = CCorePlugin.getService(IToolChainManager.class);
+		IToolChain tc = toolChainManager.getToolChain(typeId, id, version);
+
+		if (tc == null) {
+			// check for other versions
+			Collection<IToolChain> tcs = toolChainManager.getToolChains(typeId, id);
+			if (!tcs.isEmpty()) {
+				// TODO grab the newest version
+				tc = tcs.iterator().next();
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
+						String.format("Toolchain missing for config: %s", config.getName())));
+			}
+		}
+
+		toolChain = tc;
+	}
+
+	public CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
+		this.config = config;
+		this.name = name;
+		this.toolChain = toolChain;
+
+		Preferences settings = getSettings();
+		settings.put(TOOLCHAIN_TYPE, toolChain.getProvider().getId());
+		settings.put(TOOLCHAIN_ID, toolChain.getId());
+		settings.put(TOOLCHAIN_VERSION, toolChain.getVersion());
+		try {
+			settings.flush();
+		} catch (BackingStoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	@Override
@@ -88,6 +129,11 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	public IProject getProject() {
 		return config.getProject();
+	}
+
+	@Override
+	public String getBinaryParserId() throws CoreException {
+		return toolChain != null ? toolChain.getBinaryParserId() : CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID;
 	}
 
 	public IContainer getBuildContainer() throws CoreException {
@@ -145,32 +191,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	@Override
 	public IToolChain getToolChain() throws CoreException {
-		if (toolChain == null) {
-			Preferences settings = getSettings();
-			String typeId = settings.get(TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
-			String id = settings.get(TOOLCHAIN_NAME, ""); //$NON-NLS-1$
-			IToolChainManager toolChainManager = CCorePlugin.getService(IToolChainManager.class);
-			toolChain = toolChainManager.getToolChain(typeId, id);
-
-			if (toolChain == null) {
-				CCorePlugin.log(String.format("Toolchain missing for config: %s", config.getName()));
-			}
-		}
-
 		return toolChain;
-	}
-
-	protected void setToolChain(IToolChain toolChain) {
-		this.toolChain = toolChain;
-
-		Preferences settings = getSettings();
-		settings.put(TOOLCHAIN_TYPE, toolChain.getProvider().getId());
-		settings.put(TOOLCHAIN_NAME, toolChain.getName());
-		try {
-			settings.flush();
-		} catch (BackingStoreException e) {
-			CCorePlugin.log(e);
-		}
 	}
 
 	@Override

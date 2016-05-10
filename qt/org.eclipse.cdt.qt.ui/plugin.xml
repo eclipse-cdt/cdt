@@ -150,4 +150,12 @@
              labelProvider="org.eclipse.cdt.internal.qt.ui.launch.QtLaunchDescriptorLabelProvider">
        </descriptorUI>
     </extension>
+    <extension
+          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+       <launchConfigurationTypeImage
+             configTypeID="org.eclipse.cdt.qt.core.launchConfigurationType"
+             icon="icons/qt16.png"
+             id="org.eclipse.cdt.qt.core.launchConfigurationType.image">
+       </launchConfigurationTypeImage>
+    </extension>
 </plugin>

@@ -56,7 +56,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 	private final String launchMode;
 	private Map<String, String> properties;
 
-	public QtBuildConfiguration(IBuildConfiguration config, String name) {
+	public QtBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
 
 		Preferences settings = getSettings();
@@ -74,8 +74,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 	QtBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, IQtInstall qtInstall,
 			String launchMode)
 			throws CoreException {
-		super(config, name);
-		setToolChain(toolChain);
+		super(config, name, toolChain);
 		this.qtInstall = qtInstall;
 		this.launchMode = launchMode;
 
@@ -206,7 +205,6 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
-		IProject project = resource.getProject();
 		IQtInstall qtInstall = getQtInstall();
 
 		String cxx = getProperty("QMAKE_CXX"); //$NON-NLS-1$

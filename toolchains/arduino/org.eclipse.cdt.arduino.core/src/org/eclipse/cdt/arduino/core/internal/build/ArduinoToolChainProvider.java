@@ -14,8 +14,8 @@ public class ArduinoToolChainProvider implements IToolChainProvider {
 	}
 
 	@Override
-	public IToolChain getToolChain(String name) throws CoreException {
-		return new ArduinoToolChain(this, name);
+	public IToolChain getToolChain(String id, String version) throws CoreException {
+		return new ArduinoToolChain(this, id, version);
 	}
 
 }

@@ -44,7 +44,7 @@ public class QtMinGWToolChainProvider implements IToolChainProvider {
 					try {
 						Files.walk(Paths.get(installLocation).resolve("Tools"), 1) //$NON-NLS-1$
 								.filter((path) -> Files.exists(path.resolve(gcc)))
-								.map((path) -> new GCCToolChain(this, "qt.mingw", path.resolve("bin"))) //$NON-NLS-1$ //$NON-NLS-2$
+								.map((path) -> new GCCToolChain(this, "qt.mingw", "", path.resolve("bin"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								.forEach(toolChain -> manager.addToolChain(toolChain));
 					} catch (IOException e) {
 						Activator.log(e);

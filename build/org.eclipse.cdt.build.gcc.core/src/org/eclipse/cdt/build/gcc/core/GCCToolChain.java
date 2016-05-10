@@ -47,6 +47,8 @@ import org.eclipse.core.runtime.PlatformObject;
 public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	private final IToolChainProvider provider;
+	private final String id;
+	private final String version;
 	private final String name;
 	private final Path path;
 	private final String prefix;
@@ -55,17 +57,19 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	protected String[] compileCommands;
 
-	public GCCToolChain(IToolChainProvider provider, String name) {
-		this(provider, name, null, null);
+	public GCCToolChain(IToolChainProvider provider, String id, String version) {
+		this(provider, id, version, null, null);
 	}
 
-	public GCCToolChain(IToolChainProvider provider, String name, Path path) {
-		this(provider, name, path, null);
+	public GCCToolChain(IToolChainProvider provider, String id, String version, Path path) {
+		this(provider, id, version, path, null);
 	}
 
-	public GCCToolChain(IToolChainProvider provider, String name, Path path, String prefix) {
+	public GCCToolChain(IToolChainProvider provider, String id, String version, Path path, String prefix) {
 		this.provider = provider;
-		this.name = name;
+		this.id = id;
+		this.version = version;
+		this.name = id + " - " + version; //$NON-NLS-1$
 		this.path = path;
 		this.prefix = prefix;
 
@@ -85,6 +89,16 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	}
 
 	@Override
+	public String getId() {
+		return id;
+	}
+	
+	@Override
+	public String getVersion() {
+		return version;
+	}
+	
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -99,6 +113,20 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			return Platform.getOSArch();
 		}
 		return null;
+	}
+	
+	@Override
+	public String getBinaryParserId() {
+		// Assume local builds
+		// TODO be smarter and use the id which should be the target
+		switch (Platform.getOS()) {
+		case Platform.OS_WIN32:
+			return CCorePlugin.PLUGIN_ID + ".PE"; //$NON-NLS-1$
+		case Platform.OS_MACOSX:
+			return CCorePlugin.PLUGIN_ID + ".MachO64"; //$NON-NLS-1$
+		default:
+			return CCorePlugin.PLUGIN_ID + ".ELF"; //$NON-NLS-1$
+		}
 	}
 
 	protected void addDiscoveryOptions(List<String> command) {

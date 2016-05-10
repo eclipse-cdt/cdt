@@ -30,6 +30,10 @@ public interface IToolChain extends IAdaptable {
 
 	IToolChainProvider getProvider();
 
+	String getId();
+	
+	String getVersion();
+
 	String getName();
 
 	/**
@@ -58,4 +62,6 @@ public interface IToolChain extends IAdaptable {
 
 	IResource[] getResourcesFromCommand(String[] command, URI buildDirectoryURI);
 
+	String getBinaryParserId();
+	
 }

@@ -781,6 +781,33 @@ public class CCorePlugin extends Plugin {
 		return parser;
 	}
 
+	/**
+	 * Returns the binary parser with the given id.
+	 *
+	 * @param id id of binary parser
+	 * @return binary parser
+	 * @throws CoreException
+	 * @since 6.0
+	 */
+	public IBinaryParser getBinaryParser(String id) throws CoreException {
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint(CCorePlugin.PLUGIN_ID, BINARY_PARSER_SIMPLE_ID);
+		IExtension extension = extensionPoint.getExtension(id);
+		if (extension != null) {
+			IConfigurationElement element[] = extension.getConfigurationElements();
+			for (IConfigurationElement element2 : element) {
+				if (element2.getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+					return (IBinaryParser) element2.createExecutableExtension("run"); //$NON-NLS-1$
+				}
+			}
+		} else {
+			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					CCorePlugin.getResourceString("CCorePlugin.exception.noBinaryFormat"), null); //$NON-NLS-1$
+			throw new CoreException(s);
+		}
+		return null;
+	}
+	
 	public CoreModel getCoreModel() {
 		return fCoreModel;
 	}

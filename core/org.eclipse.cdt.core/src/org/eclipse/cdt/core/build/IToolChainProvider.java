@@ -34,15 +34,17 @@ public interface IToolChainProvider {
 	}
 
 	/**
-	 * Called by the manager to dynamically create the named toolchain.
+	 * Called by the manager to dynamically create the toolchain.
 	 * 
 	 * @param name
 	 *            the name of the toolchain
+	 * @param version
+	 *            the version of the toolchain
 	 * @param properties
 	 *            the persisted settings for the toolchain
 	 * @return the toolchain initialized with the settings.
 	 */
-	default IToolChain getToolChain(String name) throws CoreException {
+	default IToolChain getToolChain(String id, String version) throws CoreException {
 		// By default, assumes all toolchains were added at init time.
 		return null;
 	}

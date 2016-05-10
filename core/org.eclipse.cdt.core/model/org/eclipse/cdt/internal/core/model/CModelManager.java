@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeListener;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
@@ -68,6 +70,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -604,22 +607,51 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	public BinaryParserConfig[] getBinaryParser(IProject project) {
 		BinaryParserConfig[] parsers = binaryParsersMap.get(project);
 		if (parsers == null) {
-			ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(project, false);
-			if (desc != null) {
-				ICConfigurationDescription cfgDesc = desc.getDefaultSettingConfiguration();
-				if (cfgDesc != null) {
-					ICConfigExtensionReference[] refs = cfgDesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-					if (refs.length > 0) {
-						ArrayList<BinaryParserConfig> list = new ArrayList<>(refs.length);
-						for (ICConfigExtensionReference ref : refs) {
-							BinaryParserConfig config = new BinaryParserConfig(ref);
-							list.add(config);
+			try {
+				// Check for new style build configs first
+				Set<String> parserIds = new HashSet<>();
+				for (IBuildConfiguration config : project.getBuildConfigs()) {
+					if (!IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(config.getName())) {
+						ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
+						if (cconfig != null) {
+							parserIds.add(cconfig.getBinaryParserId());
 						}
-						parsers = new BinaryParserConfig[list.size()];
-						list.toArray(parsers);
-					} else {
-						// no parser configured
-						parsers = new BinaryParserConfig[0];
+					}
+				}
+				if (!parserIds.isEmpty()) {
+					String[] ids = parserIds.toArray(new String[parserIds.size()]);
+					parsers = new BinaryParserConfig[parserIds.size()];
+					for (int i = 0; i < parsers.length; ++i) {
+						String id = ids[i];
+						IBinaryParser parser = CCorePlugin.getDefault().getBinaryParser(id);
+						if (parser != null) {
+							parsers[i] = new BinaryParserConfig(parser, id);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				parsers = null;
+			}
+
+			if (parsers == null) {
+				ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(project, false);
+				if (desc != null) {
+					ICConfigurationDescription cfgDesc = desc.getDefaultSettingConfiguration();
+					if (cfgDesc != null) {
+						ICConfigExtensionReference[] refs = cfgDesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+						if (refs.length > 0) {
+							ArrayList<BinaryParserConfig> list = new ArrayList<>(refs.length);
+							for (ICConfigExtensionReference ref : refs) {
+								BinaryParserConfig config = new BinaryParserConfig(ref);
+								list.add(config);
+							}
+							parsers = new BinaryParserConfig[list.size()];
+							list.toArray(parsers);
+						} else {
+							// no parser configured
+							parsers = new BinaryParserConfig[0];
+						}
 					}
 				}
 			}

@@ -28,15 +28,17 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 	private static final String ID = "org.eclipse.cdt.build.gcc.core.gccPathProvider"; //$NON-NLS-1$
 
 	private static final Pattern gccPattern = Pattern.compile("(.*-)?(gcc|g\\+\\+|clang|clang\\+\\+)"); //$NON-NLS-1$
+	private static final Pattern versionPattern = Pattern.compile(".*(gcc|LLVM) version .*"); //$NON-NLS-1$
+	private static final Pattern targetPattern = Pattern.compile("Target: (.*)"); //$NON-NLS-1$
 
 	@Override
 	public String getId() {
 		return ID;
 	}
-	
+
 	@Override
 	public void init(IToolChainManager manager) {
-		Set<String> versions = new HashSet<>();
+		Set<String> names = new HashSet<>();
 
 		String path = System.getenv("PATH"); //$NON-NLS-1$
 		for (String dirStr : path.split(File.pathSeparator)) {
@@ -47,51 +49,39 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 					if (matcher.matches()) {
 						String prefix = matcher.group(1);
 						String command = dirStr + File.separatorChar + file;
-						String version = getVersion(command);
-						if (version != null && !versions.contains(version)) {
-							versions.add(version);
-							manager.addToolChain(new GCCToolChain(this, version, dir.toPath(), prefix));
+						try {
+							Process proc = new ProcessBuilder(new String[] { command, "-v" }).redirectErrorStream(true) //$NON-NLS-1$
+									.start();
+							String version = null;
+							String target = null;
+							try (BufferedReader reader = new BufferedReader(
+									new InputStreamReader(proc.getInputStream()))) {
+								for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+									Matcher versionMatcher = versionPattern.matcher(line);
+									if (versionMatcher.matches()) {
+										version = line.trim();
+										continue;
+									}
+									Matcher targetMatcher = targetPattern.matcher(line);
+									if (targetMatcher.matches()) {
+										target = targetMatcher.group(1);
+										continue;
+									}
+								}
+							}
+							if (target != null && version != null) {
+								String name = target + " - " + version; //$NON-NLS-1$
+								if (!names.contains(name)) {
+									names.add(name);
+									manager.addToolChain(new GCCToolChain(this, target, version, dir.toPath(), prefix));
+								}
+							}
+						} catch (IOException e) {
+							Activator.log(e);
 						}
 					}
 				}
 			}
-		}
-	}
-	
-	private static Pattern versionPattern = Pattern.compile(".*(gcc|LLVM) version .*"); //$NON-NLS-1$
-	private static Pattern targetPattern = Pattern.compile("Target: (.*)"); //$NON-NLS-1$
-
-	private String getVersion(String command) {
-		try {
-			Process proc = new ProcessBuilder(new String[] { command, "-v" }).redirectErrorStream(true) //$NON-NLS-1$
-					.start();
-			String version = null;
-			String target = null;
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-					Matcher versionMatcher = versionPattern.matcher(line);
-					if (versionMatcher.matches()) {
-						version = line.trim();
-						continue;
-					}
-					Matcher targetMatcher = targetPattern.matcher(line);
-					if (targetMatcher.matches()) {
-						target = targetMatcher.group(1);
-						continue;
-					}
-				}
-			}
-			if (version != null) {
-				if (target != null) {
-					return version + " " + target; //$NON-NLS-1$
-				} else {
-					return version;
-				}
-			} else {
-				return null;
-			}
-		} catch (IOException e) {
-			return null;
 		}
 	}
 

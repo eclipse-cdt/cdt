@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -153,6 +154,9 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 					if (provider != null && provider.supports(buildConfig.getProject())) {
 						config = provider.getProvider().getCBuildConfiguration(buildConfig, configName);
 						configs.put(buildConfig, config);
+
+						// Also make sure we reset the binary parser cache for the new config
+						CModelManager.getDefault().resetBinaryParser(buildConfig.getProject());
 					}
 				}
 			}

@@ -26,18 +26,18 @@ public interface ILaunchTarget extends IAdaptable {
 	/**
 	 * The null target, which is the default when no other target is available.
 	 */
-	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ILaunchTarget NULL_TARGET = LaunchTarget.NULL_TARGET;
 
 	/**
 	 * The id for the target. It is unique for each type.
-	 * 
+	 *
 	 * @return id for the target.
 	 */
 	String getId();
 
 	/**
 	 * The user consumable name of the target.
-	 * 
+	 *
 	 * @deprecated this will be the same as the id
 	 * @return name of the target
 	 */
@@ -55,7 +55,7 @@ public interface ILaunchTarget extends IAdaptable {
 
 	/**
 	 * Return a string attribute of this target
-	 * 
+	 *
 	 * @param key
 	 *            key
 	 * @param defValue
@@ -67,7 +67,7 @@ public interface ILaunchTarget extends IAdaptable {
 	/**
 	 * Create a working copy of this launch target to allow setting of attributes. It also allows
 	 * changing the id, which results in a new launch target when saved.
-	 * 
+	 *
 	 * @return launch target working copy
 	 */
 	ILaunchTargetWorkingCopy getWorkingCopy();

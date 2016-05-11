@@ -13,7 +13,12 @@ import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
 import org.osgi.service.prefs.Preferences;
 
 public class LaunchTarget extends PlatformObject implements ILaunchTarget {
-
+	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---") {
+		@Override
+		public ILaunchTargetWorkingCopy getWorkingCopy() {
+			throw new UnsupportedOperationException("getWorkingCopy is not supported for NULL_TARGET");
+		};
+	};
 	private final String typeId;
 	private final String id;
 	final Preferences attributes;
@@ -22,13 +27,15 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 	 * This should only be used to create the null target. There are no attributes supported on the
 	 * null target.
 	 */
-	public LaunchTarget(String typeId, String id) {
+	private LaunchTarget(String typeId, String id) {
 		this.typeId = typeId;
 		this.id = id;
 		this.attributes = null;
 	}
 
 	public LaunchTarget(String typeId, String id, Preferences attributes) {
+		if (typeId == null || id == null || attributes == null)
+			throw new NullPointerException();
 		this.typeId = typeId;
 		this.id = id;
 		this.attributes = attributes;
@@ -62,8 +69,8 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((typeId == null) ? 0 : typeId.hashCode());
+		result = prime * result + id.hashCode();
+		result = prime * result + typeId.hashCode();
 		return result;
 	}
 
@@ -76,17 +83,10 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 		if (getClass() != obj.getClass())
 			return false;
 		LaunchTarget other = (LaunchTarget) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
+		if (!id.equals(other.id))
 			return false;
-		if (typeId == null) {
-			if (other.typeId != null)
-				return false;
-		} else if (!typeId.equals(other.typeId))
+		if (!typeId.equals(other.typeId))
 			return false;
 		return true;
 	}
-
 }

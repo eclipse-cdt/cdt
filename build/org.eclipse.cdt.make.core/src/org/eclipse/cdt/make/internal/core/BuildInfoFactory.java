@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -505,9 +506,12 @@ public class BuildInfoFactory {
 			ICProjectDescription cProjectDescription = CoreModel.getDefault().getProjectDescription(project, false);
 			if(cProjectDescription != null) {
 				ICConfigurationDescription cConfigDescription = cProjectDescription.getActiveConfiguration();
-				CBuildData buildData = cConfigDescription.getConfigurationData().getBuildData();
-				if(buildData != null) {
-					builder = buildData.getBuildSpecCommand();
+				CConfigurationData configurationData = cConfigDescription.getConfigurationData();
+				if (configurationData != null) {
+					CBuildData buildData = configurationData.getBuildData();
+					if (buildData != null) {
+						builder = buildData.getBuildSpecCommand();
+					}
 				}
 			}
 

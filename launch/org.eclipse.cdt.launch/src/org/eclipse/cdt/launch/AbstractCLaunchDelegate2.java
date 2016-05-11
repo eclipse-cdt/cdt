@@ -55,15 +55,15 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.launchbar.core.target.launch.LaunchConfigurationTargetedDelegate;
 import org.eclipse.osgi.util.NLS;
 
 /**
  * AbstractCLaunchDelegate2 is used by most DSF based debuggers. It replaces AbstractCLaunchDelegate
  * which is the launch delegate used by most CDI based debuggers.
- * 
+ *
  * While it is technically possible to merge the two, AbstractCLaunchDelegate has been left
  * unmodified because it is commonly used by CDT clients and contains lots of obscure code
  * created long ago to handle issues whose relevance is unclear today.
@@ -71,12 +71,12 @@ import org.eclipse.osgi.util.NLS;
  * @since 6.1
  *
  */
-public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelegate {
+public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationTargetedDelegate {
 
 	private boolean workspaceBuildBeforeLaunch;
 	/** Flag set to true if build before launch failed, or was cancelled. */
 	private boolean buildFailed;
-	
+
 	/**
 	 * Flag specified at construction time to indicate if a project-less
 	 * launch is supported for this type of launch delegate.
@@ -95,7 +95,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	/**
 	 * Recursively creates a set of projects referenced by the current project
-	 * 
+	 *
 	 * @param proj
 	 *            The current project
 	 * @param referencedProjSet
@@ -126,7 +126,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * project will, under the covers, cause its CDT-referenced projects to be
 	 * built as well (a function of CDT build). So, any files in such projects
 	 * should be saved before launch.
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)
 	 */
@@ -171,7 +171,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	/**
 	 * Searches for compile errors in the specified project
-	 * Used in finalLaunchCheck() 
+	 * Used in finalLaunchCheck()
 	 * @param proj
 	 *            The project to search
 	 * @return true if compile errors exist, otherwise false
@@ -193,7 +193,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	/**
 	 * Throws a core exception with an error status object built from the given
 	 * message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message
 	 *            the status message
 	 * @param exception
@@ -217,12 +217,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
 	 * Builds the project referenced in the launch configuration
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration being launched
 	 * @param mode
@@ -246,15 +246,15 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			if (cProject != null) {
 				project = cProject.getProject();
 			}
-			
+
 			if (project == null) {
 				return false;
 			}
-			
+
 			// check the build before launch setting and honor it
 			int buildBeforeLaunchValue = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
 					ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
-	
+
 			// we shouldn't be getting called if the workspace setting is disabled, so assume we need to
 			// build unless the user explicitly disabled it in the main tab of the launch.
 			if (buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED) {
@@ -292,7 +292,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 					buildConfigID = null;	// use active configuration
 				}
 			}
-	
+
 			buildProject(project, buildConfigID, submon.newChild(1));
 			return false;
 		}
@@ -308,7 +308,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * LaunchConfigurationDelegate#buildProjects(IProject[], IProgressMonitor).
 	 * It builds only one project and it builds a particular CDT build
 	 * configuration of it. It was added to address bug 309126 and 312709
-	 * 
+	 *
 	 * @param project
 	 *            the project to build
 	 * @param buildConfigID
@@ -333,20 +333,20 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				try {
 					// Number of times we'll end up calling IProject.build()
 					final int buildCount = (buildConfigID == null) ? 1 : project.getDescription().getBuildSpec().length;
-					if (buildCount == 0) {	
+					if (buildCount == 0) {
 						return; // the case for an imported-executable project; see bugzilla 315396
 					}
 					final int subtaskTicks = TOTAL_TICKS / buildCount;
-					
+
 					if (buildConfigID != null) {
 						// Build a specific configuration
-						
+
 						// To pass args, we have to specify the builder name.
 						// There can be multiple so this can require multiple
 						// builds. Note that this happens under the covers in
 						// the 'else' (args-less) case below
 						Map<String,String> cfgIdArgs = AbstractCLaunchDelegate2.cfgIdsToMap(new String[] {buildConfigID}, new HashMap<String,String>());
-						cfgIdArgs.put(CONTENTS, CONTENTS_CONFIGURATION_IDS);						
+						cfgIdArgs.put(CONTENTS, CONTENTS_CONFIGURATION_IDS);
 						ICommand[] commands = project.getDescription().getBuildSpec();
 						assert buildCount == commands.length;
 						for (ICommand command : commands) {
@@ -357,7 +357,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 							else {
 								args.putAll(cfgIdArgs);
 							}
-							
+
 							if (localmonitor.isCanceled()) {
 								throw new OperationCanceledException();
 							}
@@ -384,10 +384,10 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	/** TODO: Temporarily duplicated from BuilderFactory. Remove when 313927 is addressed */
 	static final String CONFIGURATION_IDS = "org.eclipse.cdt.make.core.configurationIds"; //$NON-NLS-1$
-	
+
 	/** TODO: Temporarily duplicated from BuilderFactory. Remove when 313927 is addressed */
 	static final String CONTENTS = "org.eclipse.cdt.make.core.contents"; //$NON-NLS-1$
-	
+
 	/** TODO: Temporarily duplicated from BuilderFactory. Remove when 313927 is addressed */
 	static final String CONTENTS_CONFIGURATION_IDS = "org.eclipse.cdt.make.core.configurationIds"; //$NON-NLS-1$
 
@@ -429,24 +429,24 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 */
 	private static final IStatus uiPromptStatus = new Status(IStatus.ERROR, "org.eclipse.debug.ui", 200, IInternalDebugCoreConstants.EMPTY_STRING, null); //$NON-NLS-1$
 
-	/** Status object used to fish out our BuildErrPrompter */ 
+	/** Status object used to fish out our BuildErrPrompter */
 	private static final IStatus promptStatusMainProj = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), BuildErrPrompter.STATUS_CODE_ERR_IN_MAIN_PROJ, IInternalDebugCoreConstants.EMPTY_STRING, null);
-	
+
 	/** Status object used to fish out our BuildErrPrompter */
 	private static final IStatus promptStatusReferencedProjs = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), BuildErrPrompter.STATUS_CODE_ERR_IN_REFERENCED_PROJS, IInternalDebugCoreConstants.EMPTY_STRING, null);
-	
+
 	private Object[] createPrompterArgs(ILaunchConfiguration launchConfig) throws CoreException {
-		
+
 		IProject project = CDebugUtils.getCProject(launchConfig).getProject();
-		
+
 		Object[] args = new Object[3];
-		
+
 		// The launch configuration
 		args[0] = launchConfig;
-		
+
 		// The name of the project
 		args[1] = project.getName();
-		
+
 		// The name of the build configuration. Empty string if the
 		// setting is "Active" or the selected configuration is the
 		// active one, otherwise the name of the configuration.
@@ -460,34 +460,34 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				if ((cfgDesc != null) && (cfgDesc != cfgDescActive)) {
 					args[2] = cfgDesc.getName();
 				}
-				
+
 				// Note that we use the active build configuration if the ID in
 				// the launch config is no longer valid. This is consistent with
 				// the logic in buildForLaunch()
 			}
 		}
-		
+
 		return args;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#finalLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		try {
-			SubMonitor localMonitor = SubMonitor.convert(monitor, LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10); 
-			
+			SubMonitor localMonitor = SubMonitor.convert(monitor, LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10);
+
 			if (!workspaceBuildBeforeLaunch) {
 				// buildForLaunch was not called which means that the workspace pref is disabled.  see if the user enabled the
 				// launch specific setting in the main tab.  if so, we do call buildBeforeLaunch here.
 				if (ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED == configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
 						ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING)) {
-					
-					localMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild); 
+
+					localMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild);
 					if (buildForLaunch(configuration, mode, localMonitor.newChild(7))) {
-						localMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild); 
-						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localMonitor.newChild(3));				
+						localMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild);
+						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localMonitor.newChild(3));
 					}
 				}
 			}
@@ -504,14 +504,14 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				localMonitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6);
 				if (buildFailed || existsProblems(project)) {
 					// There's a build error in the main project
-					
-					// Put up the error dialog. 
+
+					// Put up the error dialog.
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(uiPromptStatus);
 					if (prompter != null) {
 						continueLaunch = ((Boolean) prompter.handleStatus(promptStatusMainProj, createPrompterArgs(configuration))).booleanValue();
 					}
 					else {
-						assert false;					
+						assert false;
 					}
 				}
 				else {
@@ -524,16 +524,16 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 						if (proj.equals(project)) {
 							continue;
 						}
-						
+
 						if (existsProblems(proj)) {
-							// Put up the error dialog. 
+							// Put up the error dialog.
 							IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(uiPromptStatus);
 							prompter = DebugPlugin.getDefault().getStatusHandler(uiPromptStatus);
 							if (prompter != null) {
 								continueLaunch = ((Boolean) prompter.handleStatus(promptStatusReferencedProjs, createPrompterArgs(configuration))).booleanValue();
 							}
 							else {
-								assert false;					
+								assert false;
 							}
 
 							// The error message says "one or more" and doesn't mention names.
@@ -542,12 +542,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 					}
 				}
 			}
-			
+
 			// Note that we do not call our super implementation (platform).
 			// That's because it'll just re-do everything we've done here in a
 			// non-customized way. However, we need to keep an eye out for any
 			// future additions to the platform's logic.
-			
+
 			return continueLaunch;
 		} finally {
 			workspaceBuildBeforeLaunch = false;	// reset for future run
@@ -560,7 +560,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = CDebugUtils.getProjectName(config);
 		if (name == null && requireCProject) {
-			abort(LaunchMessages.AbstractCLaunchDelegate_C_Project_not_specified, null, 
+			abort(LaunchMessages.AbstractCLaunchDelegate_C_Project_not_specified, null,
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
 		ICProject cproject = CDebugUtils.getCProject(config);
@@ -573,7 +573,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				abort(NLS.bind(LaunchMessages.AbstractCLaunchDelegate_Project_NAME_is_closed, name), null,
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			}
-			abort(LaunchMessages.AbstractCLaunchDelegate_Not_a_C_CPP_project, null, 
+			abort(LaunchMessages.AbstractCLaunchDelegate_Not_a_C_CPP_project, null,
 					ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 		}
 		return cproject;
@@ -583,12 +583,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * Expands and returns the working directory attribute of the given launch
 	 * configuration. Returns <code>null</code> if a working directory is not
 	 * specified.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return an absolute path to a directory, or <code>null</code> if unspecified
 	 * @throws CoreException if unable to retrieve the associated launch
 	 * configuration attribute or if unable to resolve any variables
-	 * 
+	 *
 	 * @since 7.3
 	 */
 	protected IPath getWorkingDirectoryPath(ILaunchConfiguration config) throws CoreException {
@@ -601,12 +601,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Verifies the working directory specified by the given launch
 	 * configuration exists, and returns that working directory, or
 	 * <code>null</code> if none is specified.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the working directory specified by the given launch
@@ -627,7 +627,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			IProject p = cp.getProject();
 			return p.getLocation().toFile();
 		}
-		
+
 		if (path.isAbsolute()) {
 			File dir = new File(path.toOSString());
 			if (dir.isDirectory()) {
@@ -647,12 +647,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 								 ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 		return null;
 	}
-	
+
 	/**
 	 * Verify that the program name of the configuration can be found as a file.
 	 * This method supports a program name without a corresponding project,
 	 * as long as the program name is specified with an absolute path.
-	 * 
+	 *
 	 * @return Absolute path of the program location
 	 * @since 7.3
 	 */
@@ -664,26 +664,26 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		}
         programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
 
-		IPath programPath = new Path(programName);    			 
+		IPath programPath = new Path(programName);
 		if (programPath.isEmpty()) {
 			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist, null,
 				  ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
-		
+
 		if (!programPath.isAbsolute() && cproject != null) {
 			// Find the specified program within the specified project
    			IFile wsProgramPath = cproject.getProject().getFile(programPath);
    			programPath = wsProgramPath.getLocation();
 		}
-		
+
 		if (!programPath.toFile().exists()) {
 			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist,
 				  new FileNotFoundException(
-						  NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found, 
+						  NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found,
 						                                    programPath.toOSString())),
 				  ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
-		
+
 		return programPath;
 	}
 

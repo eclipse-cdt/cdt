@@ -1,0 +1,514 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7dfcf21_d0d8cc1d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPDeferredFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "If you split out getConstructorChainExecution() into an ICPPComputableConstructor interface as I suggest below, then this override will not be necessary.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d07c4c5e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFieldSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Now that we have a CPPVariableSpecialization, this should be refactored to inherit from it.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_90f5647b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFieldTemplatePartialSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Better: \n\n  return ((ICPPFieldTemplate) getPrimaryTemplate()).getFieldPosition();",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f0e5c8c8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 770,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "As with function body executions, we probably shouldn\u0027t compute constructor chain executions if the function is not constexpr.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_10e154ba",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "In Java 7, you can write \"new ArrayList\u003c\u003e()\" here.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_30e010b5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 783,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "And \"new Pair\u003c\u003e(fieldMember, memberEval)\" here.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b0a7c091",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 788,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "What if the constructor call uses the {} syntax? Then the initializer would be an ICPPASTInitializerList.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d0aa8c59",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Doesn\u0027t the execution need to be instantiated, the way the return expression\u0027s evaluation is in getReturnExpression()?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f0b068c7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Likewise here?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_10acf472",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPImplicitConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Instead of overriding this method, pass the correct value in for the \"isConstexpr\" parameter when constructing the CPPImplicitConstructor.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_908724ef",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateParameterMap.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Few comments about this:\n\n  - Please add a comment saying what is being mapped\n    (looks like function parameters).\n\n  - Since the objects being mapped are function parameters,\n    I don\u0027t think this belongs in the template parameter map.\n    InstantiationContext would be a better place.\n\n  - Since this is only used in a fairly specific situation,\n    you may want to implement an optimization where the\n    HashMap object is only created the first time you\n    call putBinding().",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_3092d028",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "If \"nestedType instanceof ICPPClassType\", initialValue isn\u0027t used at all; let\u0027s avoid computing it in that case.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_508d9c08",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Please avoid calling findImplicitlyCalledConstructor() twice (once in hasImplicitlyCalledCtor(), and once here). It\u0027s an expensive operation.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_706ff8a5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "I notice that in some other places where we create an EvalConstructor, we use the one-argument form of EvalConstructor.extractArguments(). Is there a reason for the difference?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_90ce445b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPComputableFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "It may be worth introducing an ICPPComputableConstructor interface inheriting from ICPPComputableFunction, and declaring this method in ICPPComputableConstructor. (And then, for example, only CPPConstructor would implement ICPPComputableConstructor, not CPPFunction).",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b0e26090",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ActivationRecord.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Please add a comment describing the purpose of the class. (It\u0027s described pretty well in the comment above ICPPEvaluation.computeForFunctionCall(), but a reader may not know to look there.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_500cbcf5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Why can\u0027t this be handled as a case in createSpecalization()?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_703a9884",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 973,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "What if the value changes while the type remains the same?\n\nFor example:\n\n  template \u003cint N\u003e\n  void foo()\n  {\n    int var \u003d N;\n  }\n\nHere, the type of the variable specialization is the same as the type of the original variable, but the initial value is different.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_903d647c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 978,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "What if the variable is a variable template? Do we not need a CPPVariableTemplateSpecialization class now? (Compare the corresponding code for fields in createSpecialization()).",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b0342095",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "What about local classes? (We can handle those in a follow-up, but please add a TODO comment about it.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_d037ec95",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1086,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "(Enumerations can be local to a function, too.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f02dc849",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1125,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "This declaration was split across two lines on purpose, to respect the 110-character width limit. Please preserve it, here and elsewhere.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_1029543b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1278,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "We can probably remove the code that does the same thing before the getUltimateTypeUptoPointers() call - shouldn\u0027t need to check twice.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_704c581d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "As mentioned elsewhere, please do not invent AST nodes to call EvalID.create(). Use EvalBinding instead.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b0c180cb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "We should cache the overload evaluation, similar to how the overload itself is cached.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_b01340e7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Throughout this function, propagate context.getPoint() into calls like this instead of passing \"null\"",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_70b7f872",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 461,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "context.getPoint() should be propagated into here instead of passing null",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_90bac458",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Same here",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_50559c95",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Is EvalCompositeAccess only used for arrays? If so, can we rename it to EvalArrayAccess so it\u0027s clearer? (If not, we need an extra check here.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_f0aa2808",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T07:29:21Z",
+      "side": 1,
+      "message": "Please explain, in a comment, what this function does, and what the two components of the pair signify. It\u0027s not at all obvious to a reader. (I still haven\u0027t figured it out, and I\u0027ve been looking at this code for a while.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

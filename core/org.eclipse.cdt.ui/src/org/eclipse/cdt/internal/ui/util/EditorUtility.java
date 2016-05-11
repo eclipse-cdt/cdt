@@ -45,12 +45,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
@@ -107,7 +106,6 @@ import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.text.LineComparator;
 
 public class EditorUtility {
-
 	/**
 	 * The ID of the default text editor
 	 */
@@ -140,8 +138,8 @@ public class EditorUtility {
 	}
 
 	/**
-	 * Opens an editor for an element such as <code>ICElement</code>,
-	 * <code>IFile</code>, or <code>IStorage</code>.
+	 * Opens an editor for an element such as {@code ICElement},
+	 * {@code IFile}, or {@code IStorage}.
 	 * The editor is activated by default.
 	 * @return the IEditorPart or null if wrong element type or opening failed
 	 */
@@ -202,14 +200,14 @@ public class EditorUtility {
 			if (!file.isLinked(IResource.CHECK_ANCESTORS)) {
 				File tempFile = file.getRawLocation().toFile();
 
-				if (tempFile != null){
+				if (tempFile != null) {
 					String canonicalPath = null;
 					try {
 						canonicalPath = tempFile.getCanonicalPath();
 					} catch (IOException e) {
 					}
 
-					if (canonicalPath != null){
+					if (canonicalPath != null) {
 						IPath path = new Path(canonicalPath);
 						file = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
 					}
@@ -257,7 +255,7 @@ public class EditorUtility {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
 		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
-		errorMsg.setMessage(MessageFormat.format(desc, new Object[]{project.getName()}));
+		errorMsg.setMessage(MessageFormat.format(desc, new Object[] { project.getName() }));
 		errorMsg.open();
 	}
 
@@ -295,7 +293,7 @@ public class EditorUtility {
 			if (element instanceof IBinary) {
 				IResource resource= element.getResource();
 				if (resource instanceof IFile) {
-					return new FileEditorInput((IFile)resource);
+					return new FileEditorInput((IFile) resource);
 				}
 			}
 
@@ -327,7 +325,7 @@ public class EditorUtility {
 	 * the editor input.
 	 *
 	 * @param location  a file system location
-	 * @param element  an element related to the target file, may be <code>null</code>
+	 * @param element  an element related to the target file, may be {@code null}
 	 * @throws PartInitException
 	 */
 	public static IEditorPart openInEditor(IPath location, ICElement element) throws PartInitException {
@@ -346,14 +344,14 @@ public class EditorUtility {
 
 	/**
 	 * Utility method to get an editor input for the given file system location.
-	 * If the location denotes a workspace file, a <code>FileEditorInput</code>
-	 * is returned, otherwise, the input is an <code>IURIEditorInput</code>
+	 * If the location denotes a workspace file, a {@code FileEditorInput}
+	 * is returned, otherwise, the input is an {@code IURIEditorInput}
 	 * assuming the location points to an existing file in the file system.
-	 * The <code>ICElement</code> is used to determine the associated project
-	 * in case the location can not be resolved to a workspace <code>IFile</code>.
+	 * The {@code ICElement} is used to determine the associated project
+	 * in case the location can not be resolved to a workspace {@code IFile}.
 	 *
 	 * @param locationURI  a valid file system location
-	 * @param context  an element related to the target file, may be <code>null</code>
+	 * @param context  an element related to the target file, may be {@code null}
 	 * @return an editor input
 	 */
 	public static IEditorInput getEditorInputForLocation(URI locationURI, ICElement context) {
@@ -374,7 +372,7 @@ public class EditorUtility {
 						// TODO FIXME
 						// include entries don't handle URIs yet, so fake it out for now
 						IPath path = URIUtil.toPath(locationURI);
-						if(path == null)
+						if (path == null)
 							path = new Path(locationURI.getPath());
 
 						if (includeReferences[j].isOnIncludeEntry(path)) {
@@ -406,7 +404,7 @@ public class EditorUtility {
 						return null;
 					}
 
-					if(fileStore != null)
+					if (fileStore != null)
 						return new ExternalEditorInput(unit);
 				}
 				// no translation unit - still try to get a sensible marker resource
@@ -472,8 +470,8 @@ public class EditorUtility {
 	 * a resource with the same project of the context element are preferred.
 	 *
 	 * @param location  a valid file system location
-	 * @param context  an element related to the target file, may be <code>null</code>
-	 * @return an <code>IFile</code> or <code>null</code>
+	 * @param context  an element related to the target file, may be {@code null}
+	 * @return an {@code IFile} or {@code null}
 	 */
 	public static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
 		IProject project= null;
@@ -509,8 +507,8 @@ public class EditorUtility {
 	 * a resource with the same project of the context element are preferred.
 	 *
 	 * @param locationURI  a valid Eclipse file system URI
-	 * @param context  an element related to the target file, may be <code>null</code>
-	 * @return an <code>IFile</code> or <code>null</code>
+	 * @param context  an element related to the target file, may be {@code null}
+	 * @return an {@code IFile} or {@code null}
 	 */
 	public static IFile getWorkspaceFileAtLocation(URI locationURI, ICElement context) {
 		IProject project= null;
@@ -571,7 +569,7 @@ public class EditorUtility {
 	 * the workspace-wide content-type definitions.
 	 *
 	 * @param name  the file name
-	 * @return a valid editor id, never <code>null</code>
+	 * @return a valid editor id, never {@code null}
 	 */
 	public static String getEditorID(String name) {
 		try {
@@ -593,8 +591,8 @@ public class EditorUtility {
 	 * the workspace-wide content-type definitions.
 	 *
 	 * @param input  the editor input
-	 * @param inputObject  the input object (used to create the editor input) or <code>null</code>
-	 * @return a valid editor id, never <code>null</code>
+	 * @param inputObject  the input object (used to create the editor input) or {@code null}
+	 * @return a valid editor id, never {@code null}
 	 */
 	public static String getEditorID(IEditorInput input, Object inputObject) {
 		ICElement cElement= null;
@@ -667,7 +665,7 @@ public class EditorUtility {
 	 * Maps the localized modifier name to a code in the same
 	 * manner as #findModifier.
 	 *
-	 * @return the SWT modifier bit, or <code>0</code> if no match was found
+	 * @return the SWT modifier bit, or {@code 0} if no match was found
 	 */
 	public static int findLocalizedModifier(String token) {
 		if (token == null)
@@ -739,7 +737,7 @@ public class EditorUtility {
 	}
 
 	/**
-	 * Returns the C project for a given editor input or <code>null</code> if no corresponding
+	 * Returns the C project for a given editor input or {@code null} if no corresponding
 	 * C project exists.
 	 *
 	 * @param input the editor input
@@ -773,15 +771,15 @@ public class EditorUtility {
 	/**
 	 * Returns an array of all editors that have an unsaved content. If the identical content is
 	 * presented in more than one editor, only one of those editor parts is part of the result.
-	 * @param skipNonResourceEditors if <code>true</code>, editors whose inputs do not adapt to {@link IResource}
+	 * @param skipNonResourceEditors if {@code true}, editors whose inputs do not adapt to {@link IResource}
 	 * are not saved
 	 *
 	 * @return an array of dirty editor parts
 	 * @since 5.3
 	 */
 	public static IEditorPart[] getDirtyEditors(boolean skipNonResourceEditors) {
-		Set<IEditorInput> inputs= new HashSet<IEditorInput>();
-		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
+		Set<IEditorInput> inputs= new HashSet<>();
+		List<IEditorPart> result= new ArrayList<>();
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
@@ -819,13 +817,13 @@ public class EditorUtility {
 	 * Returns the editors to save before performing global C-related
 	 * operations.
 	 *
-	 * @param saveUnknownEditors <code>true</code> iff editors with unknown buffer management should also be saved
+	 * @param saveUnknownEditors {@code true} iff editors with unknown buffer management should also be saved
 	 * @return the editors to save
 	 * @since 5.3
 	 */
 	public static IEditorPart[] getDirtyEditorsToSave(boolean saveUnknownEditors) {
-		Set<IEditorInput> inputs= new HashSet<IEditorInput>();
-		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
+		Set<IEditorInput> inputs= new HashSet<>();
+		List<IEditorPart> result= new ArrayList<>();
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
@@ -854,7 +852,7 @@ public class EditorUtility {
 		 * (Leaving them dirty would cause problems, since the file buffer could have been
 		 * modified but the C model is not reconciled.)
 		 *
-		 * If <code>saveUnknownEditors</code> is <code>true</code>, save all editors
+		 * If {@code saveUnknownEditors} is {@code true}, save all editors
 		 * whose implementation is probably not based on file buffers.
 		 */
 		IResource resource= input.getAdapter(IResource.class);
@@ -899,9 +897,6 @@ public class EditorUtility {
 
 		try {
 			SafeRunner.run(new ISafeRunnable() {
-				/*
-				 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-				 */
 				@Override
 				public void handleException(Throwable exception) {
 					CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
@@ -913,16 +908,14 @@ public class EditorUtility {
 					result[0]= null;
 				}
 
-				/*
-				 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-				 */
 				@Override
 				public void run() throws Exception {
-					monitor.beginTask(Messages.EditorUtility_calculatingChangedRegions_message, 20);
+					SubMonitor progress =
+							SubMonitor.convert(monitor, Messages.EditorUtility_calculatingChangedRegions_message, 4);
 					IFileStore fileStore= buffer.getFileStore();
 
 					ITextFileBufferManager fileBufferManager= FileBuffers.createTextFileBufferManager();
-					fileBufferManager.connectFileStore(fileStore, getSubProgressMonitor(monitor, 15));
+					fileBufferManager.connectFileStore(fileStore, progress.split(3));
 					try {
 						IDocument currentDocument= buffer.getDocument();
 						IDocument oldDocument=
@@ -930,14 +923,13 @@ public class EditorUtility {
 
 						result[0]= getChangedLineRegions(oldDocument, currentDocument);
 					} finally {
-						fileBufferManager.disconnectFileStore(fileStore, getSubProgressMonitor(monitor, 5));
-						monitor.done();
+						fileBufferManager.disconnectFileStore(fileStore, progress.split(1));
 					}
 				}
 
 				/**
-				 * Return regions of all lines which differ comparing <code>oldDocument</code>s content
-				 * with <code>currentDocument</code>s content. Successive lines are merged into one region.
+				 * Return regions of all lines which differ comparing {@code oldDocument}s content
+				 * with {@code currentDocument}s content. Successive lines are merged into one region.
 				 *
 				 * @param oldDocument a document containing the old content
 				 * @param currentDocument a document containing the current content
@@ -961,7 +953,7 @@ public class EditorUtility {
 					// 2. Successive changed lines are merged into on RangeDifference
 					//     forAll r1,r2 element differences: r1.rightStart() < r2.rightStart() -> r1.rightEnd() < r2.rightStart
 
-					List<IRegion> regions= new ArrayList<IRegion>();
+					List<IRegion> regions= new ArrayList<>();
 					final int numberOfLines= currentDocument.getNumberOfLines();
 					for (RangeDifference curr : differences) {
 						if (curr.kind() == RangeDifference.CHANGE) {
@@ -1002,39 +994,23 @@ public class EditorUtility {
 	}
 
 	/**
-	 * Creates and returns a new sub-progress monitor for
-	 * the given parent monitor.
-	 *
-	 * @param monitor the parent progress monitor
-	 * @param ticks the number of work ticks allocated from the parent monitor
-	 * @return the new sub-progress monitor
-	 */
-	private static IProgressMonitor getSubProgressMonitor(IProgressMonitor monitor, int ticks) {
-		if (monitor != null)
-			return new SubProgressMonitor(monitor, ticks, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-
-		return new NullProgressMonitor();
-	}
-
-
-	/**
 	 * Returns the project contains the resource, which is currently open in the active editor.
 	 * If the active part is no ITextEditor or if the editorInput is no FileEditorInput,
-	 * <code>null</code> is returned.
+	 * {@code null} is returned.
 	 *
 	 * @return the project which the selected editor input belongs to or null
 	 */
 	public static IProject getProjectForActiveEditor() {
 		IProject project = null;
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window != null) {
+		if (window != null) {
 			IWorkbenchPage activePage = window.getActivePage();
-			if(activePage != null) {
+			if (activePage != null) {
 				ITextEditor activeEditor = getTextEditor(activePage.getActiveEditor());
 				if (activeEditor != null) {
 					IEditorInput editorInput = activeEditor.getEditorInput();
 					IFile file = ResourceUtil.getFile(editorInput);
-					if(file != null) {
+					if (file != null) {
 						project = file.getProject();
 					}
 				}
@@ -1050,6 +1026,6 @@ public class EditorUtility {
 	 * @param editor The editor to be converted or null if there is nothing to convert.
 	 */
 	public static ITextEditor getTextEditor(IEditorPart editor) {
-		return editor == null ? null : (ITextEditor) editor.getAdapter(ITextEditor.class);
+		return editor == null ? null : editor.getAdapter(ITextEditor.class);
 	}
 }

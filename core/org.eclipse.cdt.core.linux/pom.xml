@@ -59,6 +59,166 @@
 					</plugins>
 				</build>	
 		</profile>
+		<profile>
+			<id>build-native.linux.x86</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>linux.x86</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./library">
+											<arg value="ARCH=x86" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native.linux.x86_64</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>linux.x86_64</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./library">
+											<arg value="ARCH=x86_64" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native.linux.ppc</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>linux.ppc</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./library">
+											<arg value="ARCH=ppc" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native.linux.ppc64</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>linux.ppc64</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./library">
+											<arg value="ARCH=ppc64" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native.linux.ppc64le</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>linux.ppc64le</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./library">
+											<arg value="ARCH=ppc64le" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
   <build>

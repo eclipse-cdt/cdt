@@ -930,6 +930,24 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_f03308f8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ITypeMarshalBuffer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-11T01:21:11Z",
+      "side": 1,
+      "message": "I don\u0027t think I understand EvalReference well enough to know whether this would work, but here\u0027s an idea:\n\n  - in marshal(), store referredBinding and \n    owningRecord.getVariable(referredBinding) (which is\n    an evaluation)\n\n  - in unmarshal(), read the binding and the\n    evaluation, and create an ActivationRecord\n    with the only entry mapping the binding to\n    the evaluation\n\nDo you think this would work?",
+      "parentUuid": "e7dfcf21_d7db71e2",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_5f64dd14",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/IntegralValue.java",
         "patchSetId": 1

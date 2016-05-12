@@ -36,9 +36,11 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
 				if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
 					String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
-					Path gccPath = Paths.get(installLocation + "\\mingw64\\bin\\gcc.exe"); //$NON-NLS-1$
+					Path msysPath = Paths.get(installLocation);
+					Path gccPath = msysPath.resolve("mingw64\\bin\\gcc.exe"); //$NON-NLS-1$
 					if (Files.exists(gccPath)) {
-						manager.addToolChain(new GCCToolChain(this, "msys2.x86_64", "", gccPath.getParent())); //$NON-NLS-1$ //$NON-NLS-2$
+						manager.addToolChain(new GCCToolChain(this, "x86_64-w64-mingw32", "msys2.x86_64", new Path[] { //$NON-NLS-1$ //$NON-NLS-2$
+								gccPath.getParent(), msysPath.resolve("bin"), msysPath.resolve("usr\\bin") })); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}

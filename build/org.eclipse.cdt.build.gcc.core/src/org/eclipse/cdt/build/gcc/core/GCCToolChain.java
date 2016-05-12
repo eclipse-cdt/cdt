@@ -41,8 +41,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * The GCC toolchain. This is the base class for all GCC toolchains. It represents GCC as found on
- * the user's PATH. It can be overriden to change environment variable settings.
+ * The GCC toolchain. This is the base class for all GCC toolchains. It
+ * represents GCC as found on the user's PATH. It can be overriden to change
+ * environment variable settings.
  */
 public class GCCToolChain extends PlatformObject implements IToolChain {
 
@@ -50,7 +51,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	private final String id;
 	private final String version;
 	private final String name;
-	private final Path path;
+	private final Path[] path;
 	private final String prefix;
 	private final IEnvironmentVariable pathVar;
 	private final IEnvironmentVariable[] envVars;
@@ -61,11 +62,11 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		this(provider, id, version, null, null);
 	}
 
-	public GCCToolChain(IToolChainProvider provider, String id, String version, Path path) {
+	public GCCToolChain(IToolChainProvider provider, String id, String version, Path[] path) {
 		this(provider, id, version, path, null);
 	}
 
-	public GCCToolChain(IToolChainProvider provider, String id, String version, Path path, String prefix) {
+	public GCCToolChain(IToolChainProvider provider, String id, String version, Path[] path, String prefix) {
 		this.provider = provider;
 		this.id = id;
 		this.version = version;
@@ -74,7 +75,14 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		this.prefix = prefix;
 
 		if (path != null) {
-			pathVar = new EnvironmentVariable("PATH", path.toString(), IEnvironmentVariable.ENVVAR_PREPEND, //$NON-NLS-1$
+			StringBuilder pathString = new StringBuilder();
+			for (int i = 0; i < path.length; ++i) {
+				pathString.append(path[i].toString());
+				if (i < path.length - 1) {
+					pathString.append(File.pathSeparator);
+				}
+			}
+			pathVar = new EnvironmentVariable("PATH", pathString.toString(), IEnvironmentVariable.ENVVAR_PREPEND, //$NON-NLS-1$
 					File.pathSeparator);
 			envVars = new IEnvironmentVariable[] { pathVar };
 		} else {
@@ -92,12 +100,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	public String getId() {
 		return id;
 	}
-	
+
 	@Override
 	public String getVersion() {
 		return version;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -114,7 +122,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String getBinaryParserId() {
 		// Assume local builds
@@ -282,7 +290,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		}
 
 		if (path != null) {
-			return path.resolve(command);
+			for (Path p : path) {
+				Path c = p.resolve(command);
+				if (Files.isExecutable(c)) {
+					return c;
+				}
+			}
 		}
 
 		// Look for it in the path environment var

@@ -16,6 +16,7 @@ package org.eclipse.cdt.managedbuilder.llvm.ui;
 import java.io.File;
 import java.util.HashMap;
 
+import org.eclipse.cdt.internal.core.MinGW;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
@@ -302,13 +303,30 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	}
 	
 	/**
+	 * @return location of $MINGW_HOME/bin folder on the file-system.
+	 * @deprecated. Deprecated as of CDT 8.2. Note that MinGW root path in general may depend on configuration.
+	 *
+	 * If you use this do not cache results to ensure user preferences are accounted for.
+	 * Please rely on internal caching.
+	 */
+	@Deprecated
+	private static IPath getBinDir() {
+		IPath binDir = null;
+		String minGWHome = MinGW.getMinGWHome();
+		if (minGWHome != null) {
+			binDir = new Path(minGWHome).append("bin"); //$NON-NLS-1$
+		}
+		return binDir;
+	}
+
+	/**
 	 * Returns stdc++ library path located in MinGW installation.
 	 * 
 	 * @return stdc++ library path for MinGW
 	 */
 	public static String getMinGWStdLib() {
 		// get mingw bin path
-		IPath mingwBinPath = MingwEnvironmentVariableSupplier.getBinDir();
+		IPath mingwBinPath = getBinDir();
 		if (mingwBinPath != null) {
 			StringBuilder sB = new StringBuilder(mingwBinPath.toOSString());
 			// drop bin

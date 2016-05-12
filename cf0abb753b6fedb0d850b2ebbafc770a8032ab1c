@@ -495,6 +495,227 @@
     },
     {
       "key": {
+        "uuid": "e7dfcf21_ac3f64e1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompositeAccess.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Please add a comment describing what sorts of \"composites\" this is used for.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2c4b5481",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompositeAccess.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "This is too easily confused with getValue(IASTNode). Can we call it \"getTargetEvaluation()\" instead?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ec396cfc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompositeAccess.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Was this meant to be isValueDependent()?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_4c4a607c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompositeAccess.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Probably better to use parent.getTemplateDefinition().",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6c455c68",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompoundStatementExpression.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Now that we can represent statement executions, this evaluation should store the executions of the statements that come before the last one in the statement-expression. Feel free to leave this for later and just add a TODO comment about it.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2c7d148e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Please make this static, so it doesn\u0027t take up space in every EvalConstructor instance. (Even better would be to remove it altogether, but I can\u0027t think right now of how to replace it use.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_6c771cac",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "This can be type-dependent if \"type\" is dependent, or if \"arguments\" are type-dependent. Compare EvalTypeId.isTypeDependent().",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_8cf9c890",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Similarly, compare EvalTypeId.isValueDependent().",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_acfcc47e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Why not \"type\"?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ec06cc28",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "I guess the idea here is that you need to call computeForFunctionCall() on this before you can get its value? This might be problematic, but I\u0027m not sure; we can try it.\n\nAlso, EvalFixed.INCOMPLETE.getValue() can be expressed more directly as IntegralValue.ERROR.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_0c0db844",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "This should probably be implemented. Use EvalTypeId as guidance.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_2c08b432",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Likewise.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7dfcf21_ec1dec6c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-05-12T06:50:52Z",
+      "side": 1,
+      "message": "Shouldn\u0027t the \"impliedObjectType\" parameter of the EvalFunctionSet constructor be \"newType\" rather than \"null\"?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_f0aa2808",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUtil.java",
         "patchSetId": 3

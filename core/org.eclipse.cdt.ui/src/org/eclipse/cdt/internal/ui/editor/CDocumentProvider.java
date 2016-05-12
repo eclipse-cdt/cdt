@@ -14,8 +14,10 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
@@ -33,22 +35,14 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
-import org.eclipse.jface.text.DocumentRewriteSession;
-import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentExtension3;
-import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.formatter.FormattingContext;
-import org.eclipse.jface.text.formatter.FormattingContextProperties;
-import org.eclipse.jface.text.formatter.IFormattingContext;
-import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -76,7 +70,10 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 
+import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
@@ -92,7 +89,6 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
-import org.eclipse.cdt.internal.ui.text.CFormattingStrategy;
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
 import org.eclipse.cdt.internal.ui.text.spelling.CoreSpellingProblem;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -109,7 +105,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	/**
-	 * Annotation representing an <code>IProblem</code>.
+	 * Annotation representing an {@code IProblem}.
 	 */
 	static protected class ProblemAnnotation extends Annotation implements ICAnnotation {
 		private static final String INDEXER_ANNOTATION_TYPE= "org.eclipse.cdt.ui.indexmarker"; //$NON-NLS-1$
@@ -308,7 +304,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 	/**
 	 * Annotation model dealing with c marker annotations and temporary problems.
-	 * Also acts as a problem requestor for its translation unit. Initially inactive.
+	 * Also acts as a problem requester for its translation unit. Initially inactive.
 	 * Must be explicitly activated.
 	 */
 	protected static class TranslationUnitAnnotationModel extends ResourceMarkerAnnotationModel
@@ -418,7 +414,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/**
 		 * Sets up the infrastructure necessary for problem reporting.
 		 *
-		 * @param insideReportingSequence <code>true</code> if this method
+		 * @param insideReportingSequence {@code true} if this method
 		 *     call is issued from inside a reporting sequence
 		 */
 		private void internalBeginReporting(boolean insideReportingSequence) {
@@ -831,7 +827,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/**
 	 * Tries to synthesize an ITranslationUnit out of thin air.
 	 * @param location  the file system location of the file in question
-	 * @return a translation unit or <code>null</code>
+	 * @return a translation unit or {@code null}
 	 */
 	private ITranslationUnit createTranslationUnit(IPath location) {
 		if (location == null) {
@@ -847,7 +843,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/**
 	 * Tries to synthesize an ITranslationUnit out of thin air.
 	 * @param uri  the URI of the file in question
-	 * @return a translation unit or <code>null</code>
+	 * @return a translation unit or {@code null}
 	 */
 	private ITranslationUnit createTranslationUnit(URI uri) {
 		if (uri == null) {
@@ -887,13 +883,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 			try {
 				CoreException saveActionException= null;
-				ICProject cproject = null;
 				try {
-					// Project needed to obtain formatting preferences.
-					if (resource != null) {
-						cproject = CoreModel.getDefault().create(resource.getProject());
-					}
-					performSaveActions(cproject, info.fTextFileBuffer, progress.split(20));
+					performSaveActions(info.fCopy, info.fTextFileBuffer, progress.split(20));
 				} catch (CoreException e) {
 					saveActionException = e;
 				}
@@ -941,42 +932,34 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
-	private void formatCode(ICProject project, IDocument document) {
-		DocumentRewriteSession fRewriteSession = null;
+	private TextEdit formatCode(ITranslationUnit tu, IDocument document, IRegion[] changedRegions,
+			IProgressMonitor monitor) {
+		TextEdit rootEdit = null;
 
-		if (shouldStyleFormatCode() && project != null) {
-			final IFormattingContext context = new FormattingContext();
-			try {
-				context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, project.getOptions(true));
-				context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.valueOf(true));
-
-				final MultiPassContentFormatter formatter= new MultiPassContentFormatter(ICPartitions.C_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE);
-				formatter.setMasterStrategy(new CFormattingStrategy());
-
-				try {
-					// Begin a single editing event
-					if (document instanceof IDocumentExtension4) {
-						IDocumentExtension4 extension= (IDocumentExtension4) document;
-						fRewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
-					} else if (document instanceof IDocumentExtension) {
-						IDocumentExtension extension= (IDocumentExtension) document;
-						extension.startSequentialRewrite(false);
+		if (shouldFormatCode() && tu != null) {
+			if (!isLimitedFormatCode()) {
+				// Pretend that the whole document changed.
+				changedRegions = new IRegion[] { new Region(0, document.getLength()) };
+			}
+			ICProject cProject = tu.getCProject();
+	        Map<String, Object> options = new HashMap<String, Object>(cProject.getOptions(true));
+	        options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
+			CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
+			String code = document.get();
+			TextEdit[] formatEdits = formatter.format(CodeFormatter.K_TRANSLATION_UNIT, code, changedRegions,
+					TextUtilities.getDefaultLineDelimiter(document));
+			
+			for (TextEdit edit : formatEdits) {
+				if (edit != null) {
+					if (rootEdit == null) {
+						rootEdit = new MultiTextEdit();
 					}
-					formatter.format(document, context);
-				} finally {
-					if (fRewriteSession != null) {
-						IDocumentExtension4 extension= (IDocumentExtension4) document;
-						extension.stopRewriteSession(fRewriteSession);
-					} else {
-						IDocumentExtension extension= (IDocumentExtension) document;
-						extension.stopSequentialRewrite();
-					}
+					rootEdit.addChild(edit);
 				}
-			} finally {
-			    context.dispose();
 			}
 		}
+
+		return rootEdit;
 	}
 
 	/**
@@ -984,39 +967,58 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * if the last line of the file was changed.
 	 * @throws BadLocationException
 	 */
-	private void performSaveActions(ICProject project, ITextFileBuffer buffer, IProgressMonitor monitor)
+	private void performSaveActions(ITranslationUnit tu, ITextFileBuffer buffer, IProgressMonitor monitor)
 			throws CoreException {
-		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldStyleFormatCode()) {
+		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldFormatCode()) {
+			SubMonitor progress = SubMonitor.convert(monitor, 2);
+			IDocumentUndoManager undoManager= null;
 			IRegion[] changedRegions= needsChangedRegions() ?
-					EditorUtility.calculateChangedLineRegions(buffer, monitor) :
-				    null;
+					EditorUtility.calculateChangedLineRegions(buffer, progress.split(1)) : null;
 			IDocument document = buffer.getDocument();
-			formatCode(project, document);
-			TextEdit edit = createSaveActionEdit(document, changedRegions);
-			if (edit != null) {
-				try {
-					IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
-					manager.beginCompoundChange();
+			try {
+				TextEdit edit = formatCode(tu, document, changedRegions, progress.split(1));
+				if (edit != null) {
+					undoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+					undoManager.beginCompoundChange();
 					edit.apply(document);
-					manager.endCompoundChange();
-				} catch (MalformedTreeException e) {
-					String message= e.getMessage();
-					if (message == null)
-						message= "MalformedTreeException"; //$NON-NLS-1$
-					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, message, e));
-				} catch (BadLocationException e) {
-					String message= e.getMessage();
-					if (message == null)
-						message= "BadLocationException"; //$NON-NLS-1$
-					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, message, e));
 				}
+				if (shouldFormatCode() && !isLimitedFormatCode()) {
+					// The whole file has been formatted.
+					changedRegions = new IRegion[] { new Region(0, document.getLength()) };
+				}
+
+				edit = createTrailingWhitespaceEdit(document, changedRegions);
+				if (edit != null) {
+					if (undoManager == null) {
+						undoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+						undoManager.beginCompoundChange();
+					}
+					edit.apply(document);
+				}
+			} catch (MalformedTreeException e) {
+				String message= e.getMessage();
+				if (message == null)
+					message= "MalformedTreeException"; //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, message, e));
+			} catch (BadLocationException e) {
+				String message= e.getMessage();
+				if (message == null)
+					message= "BadLocationException"; //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, message, e));
+			} finally {
+				if (undoManager != null)
+					undoManager.endCompoundChange();
 			}
 		}
 	}
 
-	private static boolean shouldStyleFormatCode() {
+	private static boolean shouldFormatCode() {
+		return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.FORMAT_SOURCE_CODE);
+	}
+
+	private static boolean isLimitedFormatCode() {
 		return PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.FORMAT_SOURCE_CODE);
+				PreferenceConstants.FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES);
 	}
 
 	private static boolean shouldAddNewlineAtEof() {
@@ -1035,14 +1037,15 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	private static boolean needsChangedRegions() {
-		return shouldRemoveTrailingWhitespace() && isLimitedRemoveTrailingWhitespace();
+		return shouldRemoveTrailingWhitespace() && isLimitedRemoveTrailingWhitespace()
+				|| shouldFormatCode() && isLimitedFormatCode();
 	}
 
 	/**
 	 * Creates a text edit for the save actions.
-	 * @return a text edit, or <code>null</code> if the save actions leave the file intact.
+	 * @return a text edit, or {@code null} if the save actions leave the file intact.
 	 */
-	private TextEdit createSaveActionEdit(IDocument document, IRegion[] changedRegions) {
+	private TextEdit createTrailingWhitespaceEdit(IDocument document, IRegion[] changedRegions) {
 		TextEdit rootEdit = null;
 		TextEdit lastWhitespaceEdit = null;
 		try {

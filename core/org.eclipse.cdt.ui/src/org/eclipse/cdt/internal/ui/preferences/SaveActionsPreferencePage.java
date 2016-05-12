@@ -11,15 +11,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import static org.eclipse.cdt.ui.PreferenceConstants.ENSURE_NEWLINE_AT_EOF;
+import static org.eclipse.cdt.ui.PreferenceConstants.FORMAT_SOURCE_CODE;
+import static org.eclipse.cdt.ui.PreferenceConstants.FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES;
+import static org.eclipse.cdt.ui.PreferenceConstants.REMOVE_TRAILING_WHITESPACE;
+import static org.eclipse.cdt.ui.PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES;
+
 import java.util.ArrayList;
 
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -29,8 +35,10 @@ import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey
  * The page for configuring actions performed when a C/C++ file is saved.
  */
 public class SaveActionsPreferencePage extends AbstractPreferencePage {
-	private Button fRadioEditedLines;
-	private Button fRadioAllLines;
+	private Button fRadioFormatEditedLines;
+	private Button fRadioFormatAllLines;
+	private Button fRadioTrailingWhitespaceEditedLines;
+	private Button fRadioTrailingWhitespaceAllLines;
 
 	public SaveActionsPreferencePage() {
 		super();
@@ -41,13 +49,15 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE));
+				FORMAT_SOURCE_CODE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES));
+				FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				PreferenceConstants.ENSURE_NEWLINE_AT_EOF));
+				REMOVE_TRAILING_WHITESPACE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				PreferenceConstants.FORMAT_SOURCE_CODE));
+				REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				ENSURE_NEWLINE_AT_EOF));
 
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -79,26 +89,48 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 		Composite composite= ControlFactory.createComposite(parent, 1);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		String label = PreferencesMessages.SaveActionsPreferencePage_removeTrailingWhitespace;
-		Button checkboxTrailingWhitespace = addCheckBox(composite, label,
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE, 0);
-		fRadioEditedLines = addRadioButton(composite, PreferencesMessages.SaveActionsPreferencePage_inEditedLines,
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, 0);
-		fRadioAllLines = addRadioButton(composite, PreferencesMessages.SaveActionsPreferencePage_inAllLines,
+		Button checkboxFormat = addCheckBox(composite,
+				PreferencesMessages.SaveActionsPreferencePage_formatSourceCode, FORMAT_SOURCE_CODE, 0);
+		Composite group = createRadioContainer(composite);
+		fRadioFormatAllLines = addRadioButton(group,
+				PreferencesMessages.SaveActionsPreferencePage_formatAllLines,
 				null, 0);
-		createDependency(checkboxTrailingWhitespace,
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE, fRadioEditedLines);
-		createDependency(checkboxTrailingWhitespace,
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE, fRadioAllLines);
+		fRadioFormatEditedLines = addRadioButton(group,
+				PreferencesMessages.SaveActionsPreferencePage_formatEditedLines,
+				REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, 0);
+		createDependency(checkboxFormat, FORMAT_SOURCE_CODE, fRadioFormatAllLines);
+		createDependency(checkboxFormat, FORMAT_SOURCE_CODE, fRadioFormatEditedLines);
 
 		ControlFactory.createEmptySpace(composite, 1);
 
-		label = PreferencesMessages.SaveActionsPreferencePage_ensureNewline;
-		addCheckBox(composite, label, PreferenceConstants.ENSURE_NEWLINE_AT_EOF, 0);
+		Button checkboxTrailingWhitespace = addCheckBox(composite,
+				PreferencesMessages.SaveActionsPreferencePage_removeTrailingWhitespace,
+				REMOVE_TRAILING_WHITESPACE, 0);
+		group = createRadioContainer(composite);
+		fRadioTrailingWhitespaceAllLines = addRadioButton(group,
+				PreferencesMessages.SaveActionsPreferencePage_inAllLines,
+				null, 0);
+		fRadioTrailingWhitespaceEditedLines = addRadioButton(group,
+				PreferencesMessages.SaveActionsPreferencePage_inEditedLines,
+				REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, 0);
+		createDependency(checkboxTrailingWhitespace, REMOVE_TRAILING_WHITESPACE,
+				fRadioTrailingWhitespaceAllLines);
+		createDependency(checkboxTrailingWhitespace, REMOVE_TRAILING_WHITESPACE,
+				fRadioTrailingWhitespaceEditedLines);
 
-		label = PreferencesMessages.SaveActionsPreferencePage_formatSourceCode;
-		addCheckBox(composite, label, PreferenceConstants.FORMAT_SOURCE_CODE, 0);
+		ControlFactory.createEmptySpace(composite, 1);
 
+		addCheckBox(composite, PreferencesMessages.SaveActionsPreferencePage_ensureNewline,
+				ENSURE_NEWLINE_AT_EOF, 0);
+
+		return composite;
+	}
+
+	private Composite createRadioContainer(Composite parent) {
+		Composite composite = ControlFactory.createComposite(parent, 1);
+		GridLayout layout = (GridLayout) composite.getLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		return composite;
 	}
 
@@ -116,6 +148,7 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 	@Override
 	protected void initializeFields() {
 		super.initializeFields();
-		fRadioAllLines.setSelection(!fRadioEditedLines.getSelection());
+		fRadioFormatAllLines.setSelection(!fRadioFormatEditedLines.getSelection());
+		fRadioTrailingWhitespaceAllLines.setSelection(!fRadioTrailingWhitespaceEditedLines.getSelection());
 	}
 }

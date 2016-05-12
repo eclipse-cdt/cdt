@@ -25,22 +25,22 @@ public class CodeFormatterUtil {
 	 * Creates a string that represents the given number of indentation units.
 	 * The returned string can contain tabs and/or spaces depending on the core
 	 * formatter preferences.
-	 * 
+	 *
 	 * @param indentationUnits the number of indentation units to generate
 	 * @param project the project from which to get the formatter settings,
-	 *        <code>null</code> if the workspace default should be used
+	 *        {@code null} if the workspace default should be used
 	 * @return the indent string
 	 */
 	public static String createIndentString(int indentationUnits, ICProject project) {
-		Map<String, String> options= project != null ? project.getOptions(true) : CCorePlugin.getOptions();		
+		Map<String, String> options= project != null ? project.getOptions(true) : CCorePlugin.getOptions();
 		return ToolFactory.createDefaultCodeFormatter(options).createIndentationString(indentationUnits);
-	} 
-		
+	}
+
 	/**
 	 * Gets the current tab width.
-	 * 
+	 *
 	 * @param project The project where the source is used, used for project
-	 *        specific options or <code>null</code> if the project is unknown
+	 *        specific options or {@code null} if the project is unknown
 	 *        and the workspace default should be used
 	 * @return The tab width
 	 */
@@ -52,37 +52,37 @@ public class CodeFormatterUtil {
 		 * that case.
 		 */
 		String key;
-		if (CCorePlugin.SPACE.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)))
+		if (CCorePlugin.SPACE.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR))) {
 			key= DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
-		else
+		} else {
 			key= DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
-		
+		}
+
 		return getCoreOption(project, key, 4);
 	}
 
 	/**
 	 * Returns the current indent width.
-	 * 
-	 * @param project the project where the source is used or <code>null</code>
+	 *
+	 * @param project the project where the source is used or {@code null}
 	 *        if the project is unknown and the workspace default should be used
 	 * @return the indent width
 	 */
 	public static int getIndentWidth(ICProject project) {
 		String key;
-		if (DefaultCodeFormatterConstants.MIXED.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)))
+		if (DefaultCodeFormatterConstants.MIXED.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR))) {
 			key= DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
-		else
+		} else {
 			key= DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
-		
+		}
+
 		return getCoreOption(project, key, 4);
 	}
 
 	/**
-	 * Returns the possibly <code>project</code>-specific core preference
-	 * defined under <code>key</code>.
-	 * 
-	 * @param project the project to get the preference from, or
-	 *        <code>null</code> to get the global preference
+	 * Returns the possibly {@code project}-specific core preference defined under {@code key}.
+	 *
+	 * @param project the project to get the preference from, or {@code null} to get the global preference
 	 * @param key the key of the preference
 	 * @return the value of the preference
 	 */
@@ -93,12 +93,10 @@ public class CodeFormatterUtil {
 	}
 
 	/**
-	 * Returns the possibly <code>project</code>-specific core preference
-	 * defined under <code>key</code>, or <code>def</code> if the value is
-	 * not a integer.
-	 * 
-	 * @param project the project to get the preference from, or
-	 *        <code>null</code> to get the global preference
+	 * Returns the possibly {@code project}-specific core preference defined under {@code key},
+	 * or {@code def} if the value is not a integer.
+	 *
+	 * @param project the project to get the preference from, or {@code null} to get the global preference
 	 * @param key the key of the preference
 	 * @param def the default value
 	 * @return the value of the preference
@@ -112,27 +110,23 @@ public class CodeFormatterUtil {
 	}
 
 	/**
-	 * Creates edits that describe how to format the given string. Returns <code>null</code>
+	 * Creates edits that describe how to format the given string. Returns {@code null}
 	 * if the code could not be formatted for the given kind.
-	 * 
-	 * @throws IllegalArgumentException If the offset and length are not inside the string, a
-	 *  IllegalArgumentException is thrown.
+	 *
+	 * @throws IllegalArgumentException if the offset and length are not inside the string.
 	 */
-	public static TextEdit format(int kind, String source, int offset, int length,
-			int indentationLevel, String lineSeparator, Map<String, ?> options) {
+	public static TextEdit format(int kind, String source, int offset, int length, int indentationLevel,
+			String lineSeparator, Map<String, ?> options) {
 		if (offset < 0 || length < 0 || offset + length > source.length()) {
 			throw new IllegalArgumentException("offset or length outside of string. offset: " + //$NON-NLS-1$
 					offset + ", length: " + length + ", string size: " + source.length());   //$NON-NLS-1$//$NON-NLS-2$
 		}
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
-		if (formatter != null) {
-			return formatter.format(kind, source, offset, length, indentationLevel, lineSeparator);
-		}
-		return null;
+		return formatter.format(kind, source, offset, length, indentationLevel, lineSeparator);
 	}
-	
-	public static TextEdit format(int kind, String source, int indentationLevel,
-			String lineSeparator, Map<String, ?> options) {
+
+	public static TextEdit format(int kind, String source, int indentationLevel, String lineSeparator,
+			Map<String, ?> options) {
 		String prefix= ""; //$NON-NLS-1$
 		String suffix= ""; //$NON-NLS-1$
 		switch (kind) {
@@ -147,8 +141,7 @@ public class CodeFormatterUtil {
 			break;
 		}
 		String tuSource= prefix + source + suffix;
-		return format(tuSource, prefix.length(), source.length(), indentationLevel, lineSeparator,
-				options);
+		return format(tuSource, prefix.length(), source.length(), indentationLevel, lineSeparator, options);
 	}
 
 	private static TextEdit format(String source, int offset, int length, int indentationLevel,
@@ -160,7 +153,7 @@ public class CodeFormatterUtil {
 		}
 		return edit;
 	}
-	
+
 	/**
 	 * @return The formatter tab width on workspace level.
 	 */

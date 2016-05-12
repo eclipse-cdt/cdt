@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -73,7 +74,8 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 								String name = target + " - " + version; //$NON-NLS-1$
 								if (!names.contains(name)) {
 									names.add(name);
-									manager.addToolChain(new GCCToolChain(this, target, version, dir.toPath(), prefix));
+									manager.addToolChain(new GCCToolChain(this, target, version,
+											new Path[] { dir.toPath() }, prefix));
 								}
 							}
 						} catch (IOException e) {

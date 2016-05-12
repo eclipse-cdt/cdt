@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.LaunchConfigurationTargetedDelegate;
@@ -30,16 +32,16 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 			IProgressMonitor monitor) throws CoreException {
 		IQtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
-		// Set it as active
+		// If found, set as active, if not just return
 		if (qtBuildConfig != null) {
 			IProject project = qtBuildConfig.getBuildConfiguration().getProject();
 			IProjectDescription desc = project.getDescription();
 			desc.setActiveBuildConfig(qtBuildConfig.getBuildConfiguration().getName());
 			project.setDescription(desc, monitor);
+			return superBuildForLaunch(configuration, mode, monitor);
+		} else {
+			return false;
 		}
-
-		// And build
-		return superBuildForLaunch(configuration, mode, monitor);
 	}
 
 	@Override
@@ -85,7 +87,8 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 		}
 
 		// Couldn't find any
-		return null;
+		throw new CoreException(new Status(IStatus.ERROR, Activator.ID,
+				String.format("No suitable SDK found for target %s.", target.getId())));
 	}
 
 }

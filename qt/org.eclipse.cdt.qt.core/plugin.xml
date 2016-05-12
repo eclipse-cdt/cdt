@@ -221,5 +221,16 @@
                 value="x86_64">
           </property>
        </mapping>
+       <mapping
+             spec="win32-g++">
+          <property
+                key="os"
+                value="win32">
+          </property>
+          <property
+                key="arch"
+                value="x86_64">
+          </property>
+       </mapping>
     </extension>
 </plugin>

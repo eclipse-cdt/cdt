@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -19,6 +21,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.utils.PathUtil;
+import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -71,6 +74,21 @@ public class MinGW {
 		// Look in PATH values. Look for mingw32-gcc.exe or x86_64-w64-mingw32-gcc.exe
 		if (rootValue == null) {
 			rootValue = findMingwInPath(envPathValue);
+		}
+
+		// Look in MSYS2
+		if (rootValue == null) {
+			WindowsRegistry registry = WindowsRegistry.getRegistry();
+			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
+			String subkey;
+			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
+				String compKey = uninstallKey + '\\' + subkey;
+				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
+				if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+					rootValue = registry.getCurrentUserValue(compKey, "InstallLocation") + "\\mingw64"; //$NON-NLS-1$ //$NON-NLS-2$
+					break;
+				}
+			}
 		}
 
 		// Try the default MinGW install dir
@@ -137,6 +155,21 @@ public class MinGW {
 			}
 		}
 	
+		// Try under MSYS2
+		if (msysHome == null) {
+			WindowsRegistry registry = WindowsRegistry.getRegistry();
+			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
+			String subkey;
+			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
+				String compKey = uninstallKey + '\\' + subkey;
+				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
+				if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+					msysHome = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+					break;
+				}
+			}
+		}
+		
 		// Try under default MinGW dir
 		if (msysHome == null) {
 			IPath minGwMsysBin = new Path("C:\\MinGW\\msys\\1.0\\bin"); //$NON-NLS-1$

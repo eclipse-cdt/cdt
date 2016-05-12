@@ -507,6 +507,13 @@ public class DataPane extends AbstractPane
         }
         // Prepare to enclose addresses with additional info in a rectangle
         int addressableWidth = getAddressableWidth();
+        if (fRendering.getAddressableSize() == fRendering.getBytesPerColumn()) {
+            // When the cell size is dimensioned to enclose an addressable size, the width can not be larger
+            // than the containing cell, this adjustment is necessary when using radixes where the number of characters
+            // does not increase in proportion to the number of bytes e.g. octal, decimal, etc.
+            addressableWidth = getAddressableWidth() > getCellWidth() ? getCellWidth() : getAddressableWidth();             
+        }
+
         assert addressableWidth > 0;
 
         // Initialize the dimensions for the rectangle

@@ -505,53 +505,73 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
         @Override
         protected void initialize(final RequestMonitor requestMonitor) {
-        	InputStream errorStream = null;
-        	if (fMIBackend instanceof IMIBackend2) {
-        		errorStream = ((IMIBackend2)fMIBackend).getMIErrorStream();
-        	}
-            startCommandProcessing(fMIBackend.getMIInputStream(), fMIBackend.getMIOutputStream(), errorStream);
-            requestMonitor.done();
+        	doCommandMonitoringStep(requestMonitor);
         }
 
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
-            stopCommandProcessing();
-            requestMonitor.done();
+            undoCommandMonitoringStep(requestMonitor);
         }
     }
     
+    /** @since 5.1 */
+    protected void doCommandMonitoringStep(final RequestMonitor requestMonitor) {
+    	InputStream errorStream = null;
+    	if (fMIBackend instanceof IMIBackend2) {
+    		errorStream = ((IMIBackend2)fMIBackend).getMIErrorStream();
+    	}
+    	startCommandProcessing(fMIBackend.getMIInputStream(), fMIBackend.getMIOutputStream(), errorStream);
+    	requestMonitor.done();
+    }
+    
+    /** @since 5.1 */
+    protected void undoCommandMonitoringStep(RequestMonitor requestMonitor) {
+    	stopCommandProcessing();
+    	requestMonitor.done();
+    }
+
     protected class CommandProcessorsStep extends InitializationShutdownStep {
         CommandProcessorsStep(Direction direction) { super(direction); }
 
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
-            try {
-                fCLIProcess = new GDBBackendCLIProcess(GDBControl.this, fMIBackend);
-            }
-            catch(IOException e) {
-                requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$
-                requestMonitor.done();
-                return;
-            }
-            
-            fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, getContext());
-            fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, getContext());
-            fControlEventProcessor = createControlEventProcessor();
-
-            requestMonitor.done();
+            doCommandProcessorsStep(requestMonitor);
         }
-        
+
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
-        	fControlEventProcessor.dispose();
-        	fCLICommandProcessor.dispose();
-            fMIEventProcessor.dispose();
-            fCLIProcess.dispose();
-
-            requestMonitor.done();
+        	undoCommandProcessorsStep(requestMonitor);
         }
     }
     
+    /** @since 5.1 */
+    protected void doCommandProcessorsStep(final RequestMonitor requestMonitor) {
+		try {
+            fCLIProcess = new GDBBackendCLIProcess(GDBControl.this, fMIBackend);
+        }
+        catch(IOException e) {
+            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$
+            requestMonitor.done();
+            return;
+        }
+        
+        fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, getContext());
+        fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, getContext());
+        fControlEventProcessor = createControlEventProcessor();
+
+        requestMonitor.done();
+	}
+
+    /** @since 5.1 */
+    protected void undoCommandProcessorsStep(RequestMonitor requestMonitor) {
+		fControlEventProcessor.dispose();
+    	fCLICommandProcessor.dispose();
+        fMIEventProcessor.dispose();
+        fCLIProcess.dispose();
+
+        requestMonitor.done();
+	}
+
     /**
 	 * @since 4.1
 	 */
@@ -562,45 +582,65 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 		@Override
 		public void initialize( final RequestMonitor requestMonitor ) {
-			fCommandTimeoutManager = createCommandTimeoutManager( GDBControl.this );
-			if (fCommandTimeoutManager != null) {
-				fCommandTimeoutManager.addCommandTimeoutListener(fTimeoutListener);
-			}
-			requestMonitor.done();
+			doCommandTimeoutStep(requestMonitor);
 		}
 
 		@Override
 		protected void shutdown( RequestMonitor requestMonitor ) {
-			if ( fCommandTimeoutManager != null ) {
-				fCommandTimeoutManager.removeCommandTimeoutListener(fTimeoutListener);
-				fCommandTimeoutManager.dispose();
-			}
-			requestMonitor.done();
+			undoCommandTimeoutStep(requestMonitor);
 		}
 	}
+
+    /** @since 5.1 */
+    protected void doCommandTimeoutStep(final RequestMonitor requestMonitor) {
+    	fCommandTimeoutManager = createCommandTimeoutManager( GDBControl.this );
+    	if (fCommandTimeoutManager != null) {
+    		fCommandTimeoutManager.addCommandTimeoutListener(fTimeoutListener);
+    	}
+    	requestMonitor.done();
+    }
+    
+    /** @since 5.1 */
+    protected void undoCommandTimeoutStep(RequestMonitor requestMonitor) {
+    	if ( fCommandTimeoutManager != null ) {
+    		fCommandTimeoutManager.removeCommandTimeoutListener(fTimeoutListener);
+    		fCommandTimeoutManager.dispose();
+    	}
+    	requestMonitor.done();
+    }
 
     protected class RegisterStep extends InitializationShutdownStep {
         RegisterStep(Direction direction) { super(direction); }
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
-            getSession().addServiceEventListener(GDBControl.this, null);
-            register(
-                new String[]{ ICommandControl.class.getName(), 
-                              ICommandControlService.class.getName(), 
-                              IMICommandControl.class.getName(),
-                              AbstractMIControl.class.getName(),
-                              IGDBControl.class.getName() }, 
-                new Hashtable<String,String>());
-            getSession().dispatchEvent(new GDBControlInitializedDMEvent(getContext()), getProperties());
-            requestMonitor.done();
+            doRegisterStep(requestMonitor);
         }
 
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
-            unregister();
-            getSession().removeServiceEventListener(GDBControl.this);
-            requestMonitor.done();
+            undoRegisterStep(requestMonitor);
         }
+    }
+
+    /** @since 5.1 */
+    protected void doRegisterStep(final RequestMonitor requestMonitor) {
+		getSession().addServiceEventListener(GDBControl.this, null);
+        register(
+            new String[]{ ICommandControl.class.getName(), 
+                          ICommandControlService.class.getName(), 
+                          IMICommandControl.class.getName(),
+                          AbstractMIControl.class.getName(),
+                          IGDBControl.class.getName() }, 
+            new Hashtable<String,String>());
+        getSession().dispatchEvent(new GDBControlInitializedDMEvent(getContext()), getProperties());
+        requestMonitor.done();
+	}
+
+    /** @since 5.1 */
+    protected void undoRegisterStep(RequestMonitor requestMonitor) {
+    	unregister();
+    	getSession().removeServiceEventListener(GDBControl.this);
+    	requestMonitor.done();
     }
 
 	/** @since 4.0 */

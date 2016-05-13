@@ -205,7 +205,9 @@
 
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm.ui</module>		
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm-feature</module>
-		
+		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.core</module>
+		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.ui</module>
+
 		<module>qt/org.eclipse.cdt.qt.core</module>
 		<module>qt/org.eclipse.cdt.qt.ui</module>
 		<!--module>qt/org.eclipse.cdt.qt.core.tests</module-->

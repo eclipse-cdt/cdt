@@ -91,7 +91,8 @@ public class GDBControl_7_0 extends GDBControl {
 		return new MIRunControlEventProcessor_7_0(connection, controlDmc);
 	}
     
-    private void listFeatures(final RequestMonitor requestMonitor) {
+    /** @since 5.1 */
+    protected void doListFeatures(final RequestMonitor requestMonitor) {
     	queueCommand(
     			getCommandFactory().createMIListFeatures(getContext()), 
     			new DataRequestMonitor<MIListFeaturesInfo>(getExecutor(), requestMonitor) {
@@ -103,6 +104,11 @@ public class GDBControl_7_0 extends GDBControl {
     			});
     }
 
+    /** @since 5.1 */
+    protected void undoListFeatures(RequestMonitor requestMonitor) {
+    	requestMonitor.done();
+    }
+    
 	@Override
 	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		return new FinalLaunchSequence_7_0(getSession(), attributes, rm);
@@ -130,12 +136,12 @@ public class GDBControl_7_0 extends GDBControl {
 
     	@Override
     	protected void initialize(final RequestMonitor requestMonitor) {
-    		listFeatures(requestMonitor);
+    		doListFeatures(requestMonitor);
     	}
 
     	@Override
     	protected void shutdown(RequestMonitor requestMonitor) {            
-    		requestMonitor.done();
+    		undoListFeatures(requestMonitor);
     	}
     }
 

@@ -289,6 +289,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			return command;
 		}
 
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			if (!command.toString().endsWith(".exe")) { //$NON-NLS-1$
+				command = Paths.get(command.toString() + ".exe"); //$NON-NLS-1$
+			}
+		}
+
 		if (path != null) {
 			for (Path p : path) {
 				Path c = p.resolve(command);

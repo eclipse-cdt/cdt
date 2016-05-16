@@ -17,6 +17,7 @@ import javax.script.ScriptException;
 import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.qt.ui.actions.OpenDeclarationsAction;
 import org.eclipse.cdt.qt.core.IQMLAnalyzer;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -27,8 +28,11 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 /**
@@ -39,14 +43,36 @@ public class QMLEditor extends TextEditor {
 
 	public static final String BRACKET_MATCHING_COLOR_PREFERENCE = "org.eclipse.cdt.qt.ui.qmlMatchingBracketsColor"; //$NON-NLS-1$
 	private static final String BRACKET_MATCHING_PREFERENCE = "org.eclipse.cdt.qt.ui.qmlMatchingBrackets"; //$NON-NLS-1$
-
 	private static final char[] BRACKETS = { '{', '}', '(', ')', '[', ']' };
+
 	private final IQMLAnalyzer analyzer = Activator.getService(IQMLAnalyzer.class);
 
 	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
-		setSourceViewerConfiguration(new QMLSourceViewerConfiguration(this, getPreferenceStore()));
+		IPreferenceStore prefStore = new ChainedPreferenceStore(new IPreferenceStore[] {
+				Activator.getDefault().getPreferenceStore(),
+				CUIPlugin.getDefault().getPreferenceStore(),
+				CUIPlugin.getDefault().getCorePreferenceStore(),
+				EditorsUI.getPreferenceStore()
+			});
+		setPreferenceStore(prefStore);
+		setSourceViewerConfiguration(new QMLSourceViewerConfiguration(this, prefStore));
+	}
+
+	@Override
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		((QMLSourceViewerConfiguration) getSourceViewerConfiguration()).handlePreferenceStoreChanged(event);
+		super.handlePreferenceStoreChanged(event);
+	}
+	
+	@Override
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		if (((QMLSourceViewerConfiguration) getSourceViewerConfiguration()).affectsTextPresentation(event)) {
+			return true;
+		} else {
+			return super.affectsTextPresentation(event);
+		}
 	}
 
 	@Override
@@ -77,7 +103,7 @@ public class QMLEditor extends TextEditor {
 		support.setMatchingCharacterPainterPreferenceKeys(BRACKET_MATCHING_PREFERENCE,
 				BRACKET_MATCHING_COLOR_PREFERENCE);
 
-		IPreferenceStore store = getPreferenceStore();
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		store.setDefault(BRACKET_MATCHING_PREFERENCE, true);
 		store.setDefault(BRACKET_MATCHING_COLOR_PREFERENCE, "155,155,155"); //$NON-NLS-1$
 	}

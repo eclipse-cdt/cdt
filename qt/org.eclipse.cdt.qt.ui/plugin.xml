@@ -68,7 +68,7 @@
           point="org.eclipse.core.filebuffers.documentSetup">
        <participant
              class="org.eclipse.cdt.internal.qt.ui.editor.QMLDocumentSetupParticipant"
-             contentTypeId="qmlFile"
+             contentTypeId="org.eclipse.cdt.qt.core.qmlFile"
              extensions="qml">
        </participant>
     </extension>

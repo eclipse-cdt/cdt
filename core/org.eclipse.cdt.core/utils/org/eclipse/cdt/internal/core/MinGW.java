@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -44,11 +43,13 @@ public class MinGW {
 	private static String envMinGWHomeValueCached_msys = null;
 	private static String mSysLocation = null;
 	private static boolean isMSysLocationCached = false;
-	
-	private final static Map<String/*envPath*/, String/*mingwLocation*/> mingwLocationCache = Collections.synchronizedMap(new WeakHashMap<String, String>(1));
+
+	private final static Map<String/* envPath */, String/* mingwLocation */> mingwLocationCache = Collections
+			.synchronizedMap(new WeakHashMap<String, String>(1));
 
 	/**
-	 * @return The absolute path to MinGW root folder or {@code null} if not found
+	 * @return The absolute path to MinGW root folder or {@code null} if not
+	 *         found
 	 */
 	private static String findMinGWRoot(String envPathValue, String envMinGWHomeValue) {
 		String rootValue = null;
@@ -71,7 +72,8 @@ public class MinGW {
 			}
 		}
 
-		// Look in PATH values. Look for mingw32-gcc.exe or x86_64-w64-mingw32-gcc.exe
+		// Look in PATH values. Look for mingw32-gcc.exe or
+		// x86_64-w64-mingw32-gcc.exe
 		if (rootValue == null) {
 			rootValue = findMingwInPath(envPathValue);
 		}
@@ -81,12 +83,55 @@ public class MinGW {
 			WindowsRegistry registry = WindowsRegistry.getRegistry();
 			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
 			String subkey;
+			boolean on64bit = Platform.getOSArch().equals(Platform.ARCH_X86_64);
+			String key32bit = null;
 			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
 				String compKey = uninstallKey + '\\' + subkey;
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
-				if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
-					rootValue = registry.getCurrentUserValue(compKey, "InstallLocation") + "\\mingw64"; //$NON-NLS-1$ //$NON-NLS-2$
-					break;
+				if (on64bit) {
+					if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+						String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+						String mingwLocation = installLocation + "\\mingw64"; //$NON-NLS-1$
+						File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+						if (gccFile.canExecute()) {
+							rootValue = mingwLocation;
+							break;
+						} else {
+							mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
+							gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+							if (gccFile.canExecute()) {
+								rootValue = mingwLocation;
+								break;
+							}
+						}
+					} else if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
+						key32bit = compKey;
+					}
+				} else {
+					if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
+						String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+						String mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
+						File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+						if (gccFile.canExecute()) {
+							rootValue = mingwLocation;
+							break;
+						}
+					}
+				}
+			}
+
+			if (on64bit && key32bit != null) {
+				String installLocation = registry.getCurrentUserValue(key32bit, "InstallLocation"); //$NON-NLS-1$
+				String mingwLocation = installLocation + "\\mingw64"; //$NON-NLS-1$
+				File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+				if (gccFile.canExecute()) {
+					rootValue = mingwLocation;
+				} else {
+					mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
+					gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+					if (gccFile.canExecute()) {
+						rootValue = mingwLocation;
+					}
 				}
 			}
 		}
@@ -105,7 +150,8 @@ public class MinGW {
 	private static String findMingwInPath(String envPath) {
 		if (envPath == null) {
 			// $PATH from user preferences
-			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
+			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager()
+					.getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
 			if (varPath != null) {
 				envPath = varPath.getValue();
 			}
@@ -114,11 +160,12 @@ public class MinGW {
 		String mingwLocation = mingwLocationCache.get(envPath);
 		// check if WeakHashMap contains the key as null may be the cached value
 		if (mingwLocation == null && !mingwLocationCache.containsKey(envPath)) {
-			// Check for MinGW-w64 on Windows 64 bit, see http://mingw-w64.sourceforge.net/
+			// Check for MinGW-w64 on Windows 64 bit, see
+			// http://mingw-w64.sourceforge.net/
 			if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
 				IPath gcc64Loc = PathUtil.findProgramLocation("x86_64-w64-mingw32-gcc.exe", envPath); //$NON-NLS-1$
 				if (gcc64Loc != null) {
-					mingwLocation  = gcc64Loc.removeLastSegments(2).toOSString();
+					mingwLocation = gcc64Loc.removeLastSegments(2).toOSString();
 				}
 			}
 
@@ -137,14 +184,14 @@ public class MinGW {
 
 	private static String findMSysRoot(String envMinGWHomeValue) {
 		String msysHome = null;
-	
+
 		// Look in the install location parent dir
 		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
 		IPath installMsysBin = installPath.append("msys\\bin"); //$NON-NLS-1$
 		if (installMsysBin.toFile().isDirectory()) {
 			msysHome = installMsysBin.removeLastSegments(1).toOSString();
 		}
-	
+
 		// Look under $MINGW_HOME
 		if (msysHome == null) {
 			if (envMinGWHomeValue != null && !envMinGWHomeValue.isEmpty()) {
@@ -154,22 +201,48 @@ public class MinGW {
 				}
 			}
 		}
-	
+
 		// Try under MSYS2
 		if (msysHome == null) {
+			// Give preference to msys64 on 64-bit platforms and ignore 64 on
+			// 32-bit platforms
 			WindowsRegistry registry = WindowsRegistry.getRegistry();
 			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
 			String subkey;
+			boolean on64bit = Platform.getOSArch().equals(Platform.ARCH_X86_64);
+			String key32bit = null;
 			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
 				String compKey = uninstallKey + '\\' + subkey;
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
-				if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
-					msysHome = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
-					break;
+				if (on64bit) {
+					if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+						String home = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+						if (new File(home).isDirectory()) {
+							msysHome = home;
+							break;
+						}
+					} else if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
+						key32bit = compKey;
+					}
+				} else {
+					if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
+						String home = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+						if (new File(home).isDirectory()) {
+							msysHome = home;
+							break;
+						}
+					}
+				}
+			}
+
+			if (on64bit && key32bit != null) {
+				String home = registry.getCurrentUserValue(key32bit, "InstallLocation"); //$NON-NLS-1$
+				if (new File(home).isDirectory()) {
+					msysHome = home;
 				}
 			}
 		}
-		
+
 		// Try under default MinGW dir
 		if (msysHome == null) {
 			IPath minGwMsysBin = new Path("C:\\MinGW\\msys\\1.0\\bin"); //$NON-NLS-1$
@@ -177,7 +250,7 @@ public class MinGW {
 				msysHome = minGwMsysBin.removeLastSegments(1).toOSString();
 			}
 		}
-	
+
 		// Try in default MSYS root folder
 		if (msysHome == null) {
 			IPath defaultMsysBin = new Path("C:\\msys\\1.0\\bin"); //$NON-NLS-1$
@@ -189,11 +262,12 @@ public class MinGW {
 	}
 
 	/**
-	 * Find location where MinGW is installed. A number of locations is being checked,
-	 * such as environment variable $MINGW_HOME, $PATH, Windows registry et al.
-	 * <br><br>
-	 * If you use this do not cache results to ensure user preferences are accounted for.
-	 * Please rely on internal caching.
+	 * Find location where MinGW is installed. A number of locations is being
+	 * checked, such as environment variable $MINGW_HOME, $PATH, Windows
+	 * registry et al. <br>
+	 * <br>
+	 * If you use this do not cache results to ensure user preferences are
+	 * accounted for. Please rely on internal caching.
 	 * 
 	 * @return MinGW root ("/") path in Windows format.
 	 */
@@ -202,13 +276,17 @@ public class MinGW {
 			return null;
 		}
 
-		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
+		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager()
+				.getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
 		String envPathValue = varPath != null ? varPath.getValue() : null;
-		IEnvironmentVariable varMinGWHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_MINGW_HOME, (ICConfigurationDescription) null, true);
+		IEnvironmentVariable varMinGWHome = CCorePlugin.getDefault().getBuildEnvironmentManager()
+				.getVariable(ENV_MINGW_HOME, (ICConfigurationDescription) null, true);
 		String envMinGWHomeValue = varMinGWHome != null ? varMinGWHome.getValue() : null;
 
-		 // isMinGWLocationCached is used to figure fact of caching when all cached objects are null
-		if (isMinGWLocationCached && CDataUtil.objectsEqual(envPathValue, envPathValueCached) && CDataUtil.objectsEqual(envMinGWHomeValue, envMinGWHomeValueCached)) {
+		// isMinGWLocationCached is used to figure fact of caching when all
+		// cached objects are null
+		if (isMinGWLocationCached && CDataUtil.objectsEqual(envPathValue, envPathValueCached)
+				&& CDataUtil.objectsEqual(envMinGWHomeValue, envMinGWHomeValueCached)) {
 			return minGWLocation;
 		}
 
@@ -221,11 +299,11 @@ public class MinGW {
 	}
 
 	/**
-	 * Find location where MSys is installed. Environment variable $MSYS_HOME and
-	 * some predetermined locations are being checked.
-	 * <br><br>
-	 * If you use this do not cache results to ensure user preferences are accounted for.
-	 * Please rely on internal caching.
+	 * Find location where MSys is installed. Environment variable $MSYS_HOME
+	 * and some predetermined locations are being checked. <br>
+	 * <br>
+	 * If you use this do not cache results to ensure user preferences are
+	 * accounted for. Please rely on internal caching.
 	 * 
 	 * @return MSys root ("/") path in Windows format.
 	 */
@@ -235,7 +313,8 @@ public class MinGW {
 		}
 
 		// Use $MSYS_HOME if defined
-		IEnvironmentVariable varMsysHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_MSYS_HOME, (ICConfigurationDescription) null, true);
+		IEnvironmentVariable varMsysHome = CCorePlugin.getDefault().getBuildEnvironmentManager()
+				.getVariable(ENV_MSYS_HOME, (ICConfigurationDescription) null, true);
 		String msysHomeValue = varMsysHome != null ? varMsysHome.getValue() : null;
 		if (msysHomeValue != null) {
 			return msysHomeValue;
@@ -243,7 +322,8 @@ public class MinGW {
 
 		String envMinGWHomeValue = getMinGWHome();
 
-		// isMSysLocationCached is used to figure whether it was cached when all cached objects are null
+		// isMSysLocationCached is used to figure whether it was cached when all
+		// cached objects are null
 		if (isMSysLocationCached && CDataUtil.objectsEqual(envMinGWHomeValue, envMinGWHomeValueCached_msys)) {
 			return mSysLocation;
 		}
@@ -258,9 +338,10 @@ public class MinGW {
 	/**
 	 * Check if MinGW is available in the path.
 	 *
-	 * @param envPath - list of directories to search for MinGW separated
-	 *    by path separator (format of environment variable $PATH)
-	 *    or {@code null} to use current $PATH.
+	 * @param envPath
+	 *            - list of directories to search for MinGW separated by path
+	 *            separator (format of environment variable $PATH) or
+	 *            {@code null} to use current $PATH.
 	 * @return {@code true} if MinGW is available, {@code false} otherwise.
 	 */
 	public static boolean isAvailable(String envPath) {

@@ -62,7 +62,7 @@ public class Activator extends Plugin {
 
 		QMLAnalyzer qmlAnalyzer = new QMLAnalyzer();
 		context.registerService(IQMLAnalyzer.class, qmlAnalyzer, null);
-		new Job("Load QML Analyzer") { //$NON-NLS-1$
+		Job startupJob = new Job("Load QML Analyzer") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -72,7 +72,9 @@ public class Activator extends Plugin {
 				}
 				return Status.OK_STATUS;
 			}
-		}.schedule();
+		};
+		startupJob.setSystem(true);
+		startupJob.schedule();
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ * Copyright (c) 2005, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,21 +20,33 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IBTreeVisitor {
 	/**
-	 * Compare the record against an internally held key. The comparison must be
-	 * compatible with the one used for the btree.
+	 * Compares the record against an internally held key. The comparison must be
+	 * compatible with the one used for the B-tree.
 	 * Used for visiting.
 	 * 
 	 * @param record
 	 * @return -1 if record < key, 0 if record == key, 1 if record > key
-	 * @throws CoreException
 	 */
-	public abstract int compare(long record) throws CoreException;
+	public int compare(long record) throws CoreException;
 
 	/**
-	 * Visit a given record and return whether to continue or not.
-
-	 * @return <code>true</code> to continue the visit, <code>false</code> to abort it.
-	 * @throws CoreException
+	 * Visits a given record and returns whether to continue or not.
+	 *
+	 * @return {@code true} to continue the visit, {@code false} to abort it.
 	 */
-	public abstract boolean visit(long record) throws CoreException;	
+	public boolean visit(long record) throws CoreException;	
+
+	/**
+	 * Called before visiting a node.
+	 *
+	 * @param record the node being visited
+	 */
+	public default void preNode(long record) throws CoreException {}
+
+	/**
+	 * Called after visiting a node.
+	 *
+	 * @param record the node being visited
+	 */
+	public default void postNode(long record) throws CoreException {}
 }

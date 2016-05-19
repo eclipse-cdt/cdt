@@ -47,7 +47,7 @@ public class BTree {
 	/**
 	 * Constructor.
 	 * 
-	 * @param db the database containing the btree
+	 * @param db the database containing the B-tree
 	 * @param rootPointer offset into database of the pointer to the root node
 	 */
 	public BTree(Database db, long rootPointer, int degree, IBTreeComparator cmp) {
@@ -60,8 +60,8 @@ public class BTree {
 		
 		this.DEGREE = degree;
 		this.MIN_RECORDS = DEGREE - 1;
-		this.MAX_RECORDS = 2*DEGREE - 1;
-		this.MAX_CHILDREN = 2*DEGREE;
+		this.MAX_RECORDS = 2 * DEGREE - 1;
+		this.MAX_CHILDREN = 2 * DEGREE;
 		this.OFFSET_CHILDREN = MAX_RECORDS * Database.INT_SIZE;
 		this.MEDIAN_RECORD = DEGREE - 1;
 	}
@@ -157,7 +157,7 @@ public class BTree {
 			}
 		}
 
-		// Binary search to find the insert point.
+		// Binary search to find the insertion point.
 		int lower= 0; 
 		int upper= MAX_RECORDS - 1;
 		while (lower < upper && getRecord(chunk, node, upper - 1) == 0) {
@@ -165,7 +165,7 @@ public class BTree {
 		}
 
 		while (lower < upper) {
-			int middle= (lower + upper) / 2;
+    		int middle= (lower + upper) >>> 1;
 			long checkRec= getRecord(chunk, node, middle);
 			if (checkRec == 0) {
 				upper= middle;
@@ -414,7 +414,7 @@ public class BTree {
 	}
 
 	/**
-	 * Merge node 'src' onto the right side of node 'dst' using node
+	 * Merges node 'src' onto the right side of node 'dst' using node
 	 * 'keyProvider' as the source of the median key. Bounds checking is not
 	 * performed.
 	 * @param src the key to merge into dst
@@ -446,7 +446,7 @@ public class BTree {
 	}
 
 	/**
-	 * Insert the key and (its predecessor) child at the left side of the specified node. Bounds checking
+	 * Inserts the key and (its predecessor) child at the left side of the specified node. Bounds checking
 	 * is not performed.
 	 * @param node the node to prepend to
 	 * @param key the new leftmost (least) key
@@ -459,7 +459,7 @@ public class BTree {
 	}
 
 	/**
-	 * Insert the key and (its successor) child at the right side of the specified node. Bounds
+	 * Inserts the key and (its successor) child at the right side of the specified node. Bounds
 	 * checking is not performed.
 	 * @param node
 	 * @param key
@@ -471,7 +471,7 @@ public class BTree {
 	}
 
 	/**
-	 * Overwrite a section of the specified node (dst) with the specified section of the source
+	 * Overwrites a section of the specified node (dst) with the specified section of the source
 	 * node. Bounds checking is not performed. To allow just copying of the final child (which has
 	 * no corresponding key) the routine behaves as though there were a corresponding key existing
 	 * with value zero.<p>
@@ -500,7 +500,7 @@ public class BTree {
 	}
 
 	/**
-	 * Delete a section of node content - (key, (predecessor)child) pairs. Bounds checking
+	 * Deletes a section of node content - (key, (predecessor)child) pairs. Bounds checking
 	 * is not performed. To allow deletion of the final child (which has no corresponding key)
 	 * the routine behaves as though there were a corresponding key existing with value zero.<p>
 	 * Content is deleted and remaining content is moved leftward the appropriate amount.
@@ -522,7 +522,7 @@ public class BTree {
 	}
 
 	/**
-	 * Visit all nodes beginning when the visitor comparator
+	 * Visits all nodes beginning when the visitor comparator
 	 * returns >= 0 until the visitor visit returns falls.
 	 * 
 	 * @param visitor
@@ -539,9 +539,7 @@ public class BTree {
 		if (node == 0) {
 			return true;
 		}
-		if (visitor instanceof IBTreeVisitor2) {
-			((IBTreeVisitor2) visitor).preNode(node);
-		}
+		visitor.preNode(node);
 
 		try {
 			Chunk chunk = db.getChunk(node);
@@ -553,7 +551,7 @@ public class BTree {
 				upper--;
 			}
 			while (lower < upper) {
-				int middle= (lower + upper) / 2;
+				int middle= (lower + upper) >>> 1;
 				long checkRec = getRecord(chunk, node, middle);
 				if (checkRec == 0) {
 					upper= middle;
@@ -578,7 +576,7 @@ public class BTree {
 				if (compare > 0) {
 					// Start point is to the left.
 					return accept(getChild(chunk, node, i), visitor);
-				}  else if (compare == 0) {
+				} else if (compare == 0) {
 					if (!accept(getChild(chunk, node, i), visitor)) 
 						return false;
 					if (!visitor.visit(record))
@@ -587,25 +585,14 @@ public class BTree {
 			}
 			return accept(getChild(chunk, node, i), visitor);
 		} finally {
-			if (visitor instanceof IBTreeVisitor2) {
-				((IBTreeVisitor2) visitor).postNode(node);
-			}
+			visitor.postNode(node);
 		}
 	}
 
-	/*
-	 * TODO: It would be good to move these into IBTreeVisitor and eliminate
-	 * IBTreeVisitor2 if this is acceptable.
-	 */
-	private interface IBTreeVisitor2 extends IBTreeVisitor {
-		void preNode(long node) throws CoreException;
-		void postNode(long node) throws CoreException;
-	}
-
 	/**
-	 * Debugging method for checking B-tree invariants
-	 * @return the empty String if B-tree invariants hold, otherwise
-	 * a human readable report
+	 * Debugging method for checking B-tree invariants.
+	 *
+	 * @return the empty String if B-tree invariants hold, otherwise a human readable report
 	 * @throws CoreException
 	 */
 	public String getInvariantsErrorReport() throws CoreException {
@@ -618,7 +605,7 @@ public class BTree {
 	 * A B-tree visitor for checking some B-tree invariants.
 	 * Note ordering invariants are not checked here.
 	 */
-	private class InvariantsChecker implements IBTreeVisitor2 {
+	private class InvariantsChecker implements IBTreeVisitor {
 		boolean valid = true;
 		String msg = ""; //$NON-NLS-1$
 		Integer leafDepth;

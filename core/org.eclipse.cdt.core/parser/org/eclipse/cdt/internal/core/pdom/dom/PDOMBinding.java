@@ -45,14 +45,14 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding {
 	public static final PDOMBinding[] EMPTY_PDOMBINDING_ARRAY = {};
 
-	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE; // size 4
-	private static final int FIRST_DEF_OFFSET    = FIRST_DECL_OFFSET + Database.PTR_SIZE; // size 4
-	private static final int FIRST_REF_OFFSET    = FIRST_DEF_OFFSET + Database.PTR_SIZE; // size 4
-	private static final int LOCAL_TO_FILE		 = FIRST_REF_OFFSET + Database.PTR_SIZE; // size 4
-	private static final int FIRST_EXTREF_OFFSET = LOCAL_TO_FILE + Database.PTR_SIZE; // size 4
+	private static final int FIRST_DECL = PDOMNamedNode.RECORD_SIZE; // size 4
+	private static final int FIRST_DEF = FIRST_DECL + Database.PTR_SIZE; // size 4
+	private static final int FIRST_REF = FIRST_DEF + Database.PTR_SIZE; // size 4
+	private static final int LOCAL_TO_FILE = FIRST_REF + Database.PTR_SIZE; // size 4
+	private static final int FIRST_EXTREF = LOCAL_TO_FILE + Database.PTR_SIZE; // size 4
 
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FIRST_EXTREF_OFFSET + + Database.PTR_SIZE;
+	protected static final int RECORD_SIZE = FIRST_EXTREF + + Database.PTR_SIZE;
 
 	private byte hasDeclaration= -1;
 
@@ -94,18 +94,18 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	 */
 	public static boolean isOrphaned(PDOM pdom, long record) throws CoreException {
 		Database db = pdom.getDB();
-		return db.getRecPtr(record + FIRST_DECL_OFFSET) == 0
-				&& db.getRecPtr(record + FIRST_DEF_OFFSET) == 0
-				&& db.getRecPtr(record + FIRST_REF_OFFSET) == 0
-				&& db.getRecPtr(record + FIRST_EXTREF_OFFSET) == 0;
+		return db.getRecPtr(record + FIRST_DECL) == 0
+				&& db.getRecPtr(record + FIRST_DEF) == 0
+				&& db.getRecPtr(record + FIRST_REF) == 0
+				&& db.getRecPtr(record + FIRST_EXTREF) == 0;
 	}
 
 	@Override
 	public final boolean hasDeclaration() throws CoreException {
 		if (hasDeclaration == -1) {
 			final Database db = getDB();
-			if (db.getRecPtr(record + FIRST_DECL_OFFSET) != 0
-					|| db.getRecPtr(record + FIRST_DEF_OFFSET) != 0) {
+			if (db.getRecPtr(record + FIRST_DECL) != 0
+					|| db.getRecPtr(record + FIRST_DEF) != 0) {
 				hasDeclaration= 1;
 				return true;
 			}
@@ -138,7 +138,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		// contexts that don't know which type of list they are iterating over.  E.g., this is
 		// used when deleting names from a PDOMFile.
 		if (!getLinkage().equals(name.getLinkage())) {
-			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).add(name);
+			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF).add(name);
 			return;
 		}
 
@@ -151,27 +151,27 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	public PDOMName getFirstDeclaration() throws CoreException {
-		long namerec = getDB().getRecPtr(record + FIRST_DECL_OFFSET);
+		long namerec = getDB().getRecPtr(record + FIRST_DECL);
 		return namerec != 0 ? new PDOMName(getLinkage(), namerec) : null;
 	}
 
 	public void setFirstDeclaration(PDOMName name) throws CoreException {
 		long namerec = name != null ? name.getRecord() : 0;
-		getDB().putRecPtr(record + FIRST_DECL_OFFSET, namerec);
+		getDB().putRecPtr(record + FIRST_DECL, namerec);
 	}
 
 	public PDOMName getFirstDefinition() throws CoreException {
-		long namerec = getDB().getRecPtr(record + FIRST_DEF_OFFSET);
+		long namerec = getDB().getRecPtr(record + FIRST_DEF);
 		return namerec != 0 ? new PDOMName(getLinkage(), namerec) : null;
 	}
 
 	public void setFirstDefinition(PDOMName name) throws CoreException {
 		long namerec = name != null ? name.getRecord() : 0;
-		getDB().putRecPtr(record + FIRST_DEF_OFFSET, namerec);
+		getDB().putRecPtr(record + FIRST_DEF, namerec);
 	}
 
 	public PDOMName getFirstReference() throws CoreException {
-		long namerec = getDB().getRecPtr(record + FIRST_REF_OFFSET);
+		long namerec = getDB().getRecPtr(record + FIRST_REF);
 		return namerec != 0 ? new PDOMName(getLinkage(), namerec) : null;
 	}
 
@@ -180,7 +180,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	 * not return null.
 	 */
 	public IPDOMIterator<PDOMName> getExternalReferences() throws CoreException {
-		return new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).getIterator();
+		return new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF).getIterator();
 	}
 
 	/**
@@ -191,7 +191,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		if (linkage.equals(getLinkage())) {
 			setFirstReference(name);
 		} else {
-			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).setFirstReference(linkage, name);
+			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF).setFirstReference(linkage, name);
 		}
 	}
 
@@ -201,13 +201,13 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		// used when deleting names from a PDOMFile.
 		if (name != null
 		 && !getLinkage().equals(name.getLinkage())) {
-			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF_OFFSET).add(name);
+			new PDOMExternalReferencesList(getPDOM(), record + FIRST_EXTREF).add(name);
 			return;
 		}
 
 		// Otherwise put the reference into list of locals.
 		long namerec = name != null ? name.getRecord() : 0;
-		getDB().putRecPtr(record + FIRST_REF_OFFSET, namerec);
+		getDB().putRecPtr(record + FIRST_REF, namerec);
 	}
 
 	@Override
@@ -360,7 +360,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 
 	@Override
 	public boolean hasDefinition() throws CoreException {
-		return getDB().getRecPtr(record + FIRST_DEF_OFFSET) != 0;
+		return getDB().getRecPtr(record + FIRST_DEF) != 0;
 	}
 
 	/**

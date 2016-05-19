@@ -35,21 +35,44 @@ public class Messages extends NLS {
 
 	public static String RemoteCMainTab_Program;
 
-	public static String RemoteCMainTab_Remote_Path_Browse_Button;
+	public static String RemoteCMainTab_RemoteSetupGrp_Title;
+	public static String RemoteCMainTab_RemoteSetupGrp_PathBrowse_Button;
 
 	public static String RemoteCMainTab_Remote_Path_Browse_Button_Title;
-	public static String RemoteCMainTab_SkipDownload;
+	public static String RemoteCMainTab_LocalProgramGrp_Title;
+	public static String RemoteCMainTab_LocalProgramGrp_UseLocal_Check;
+	public static String RemoteCMainTab_LocalProgramGrp_Program_Label;
 	public static String RemoteCMainTab_ErrorNoProgram;
-	public static String RemoteCMainTab_ErrorNoConnection;
-	public static String RemoteCMainTab_Connection;
-	public static String RemoteCMainTab_New;
-	public static String RemoteCMainTab_New_title;
-	public static String RemoteCMainTab_New_conntype_combo_label;
-	public static String RemoteCMainTab_Edit;
-	public static String RemoteCMainTab_Properties;
-	public static String RemoteCMainTab_Properties_title;
-	public static String RemoteCMainTab_Properties_Location;
-	public static String RemoteCMainTab_Properties_Skip_default;
+	public static String RemoteCMainTab_Remote_Program_Error_Not_Absolute;
+	public static String RemoteCMainTab_ConnectionInfo_Label;
+	public static String RemoteCMainTab_ConnectionInfo_Link;
+	/*
+	 * Remote System Tab
+	 */
+	public static String RemoteSystemTab_Tab_Name;
+	public static String RemoteSystemTab_Error_NoConnection;
+	public static String RemoteSystemTab_Error_ConnectionNotFound;
+	public static String RemoteSystemTab_ConnectionGrp_Group_Name;
+	public static String RemoteSystemTab_ConnectionGrp_ConnectionName_Label;
+	public static String RemoteSystemTab_ConnectionGrp_New_Button;
+	public static String RemoteSystemTab_ConnectionGrp_Edit_Button;
+	public static String RemoteSystemTab_ConnectionGrp_Properties_Button;
+	public static String RemoteSystemTab_ConnectionGrp_Type_Property;
+	public static String RemoteSystemTab_ConnectionGrp_Host_Property;
+	public static String RemoteSystemTab_ConnectionGrp_User_Property;
+	public static String RemoteSystemTab_ShowSystemInfo_Check;
+	public static String RemoteSystemTab_ShowSystemInfo_NoInformation;
+	public static String RemoteSystemTab_ShowSystemInfo_Error_UnableToGetInfo;
+	public static String RemoteSystemTab_ShowSystemInfo_OS_Name_Prop;
+	public static String RemoteSystemTab_ShowSystemInfo_OS_Version_Prop;
+	public static String RemoteSystemTab_ShowSystemInfo_OS_Arch_Prop;
+	public static String RemoteSystemTab_ShowSystemInfo_UpdateJob_Title;
+	public static String RemoteSystemTab_ShowSystemInfo_UpdateJob_Error;
+	public static String RemoteSystemTab_PropertiesDialog_Location_Label;
+	public static String RemoteSystemTab_PropertiesDialog_SkipDownload_Check;
+	public static String RemoteSystemTab_PropertiesDialog_Title;
+	public static String RemoteSystemTab_NewDialog_Title;
+	public static String RemoteSystemTab_NewDialog_ConnType_Combo;
 
 	public static String RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage;
 

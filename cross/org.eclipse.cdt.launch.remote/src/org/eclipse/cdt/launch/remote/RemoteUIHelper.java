@@ -89,7 +89,7 @@ public class RemoteUIHelper {
 				Composite composite = (Composite) super.createDialogArea(parent);
 
 				Label label = new Label(composite, SWT.WRAP);
-				label.setText(Messages.RemoteCMainTab_New_conntype_combo_label);
+				label.setText(Messages.RemoteSystemTab_NewDialog_ConnType_Combo);
 				GridData data = new GridData(GridData.GRAB_HORIZONTAL
 						| GridData.GRAB_VERTICAL
 						| GridData.HORIZONTAL_ALIGN_FILL
@@ -136,7 +136,7 @@ public class RemoteUIHelper {
 		}
 
 		NewRemoteConnectionDialog dlg = new NewRemoteConnectionDialog(shell,
-				Messages.RemoteCMainTab_New_title);
+				Messages.RemoteSystemTab_NewDialog_Title);
 		dlg.setBlockOnOpen(true);
 		dlg.open();
 	}

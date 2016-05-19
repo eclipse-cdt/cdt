@@ -41,11 +41,18 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
          point="org.eclipse.debug.ui.launchConfigurationTabs">
          
       <!-- Run Remote application launch tabs-->    
+      <tab id="org.eclipse.cdt.launch.remote.RemoteSystemTab"
+           group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
+           name="Remote System"
+           class="org.eclipse.cdt.launch.remote.tabs.RemoteSystemTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+      </tab>
       <tab id="org.eclipse.rse.remotecdt.launch.RemoteCMainTab"
            group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
            name="Main"
            class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+        <placement after="org.eclipse.cdt.launch.remote.RemoteSystemTab"/>
       </tab>         
       <tab id="org.eclipse.rse.remotecdt.launch.CAgrumentsTab"
            group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
@@ -62,12 +69,19 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
         <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
       </tab>         
       
-      <!-- Debug Remote application launch tabs-->    
+      <!-- Debug Remote application launch tabs-->
+      <tab id="org.eclipse.cdt.launch.remote.dsf.debug.RemoteSystemTab"
+           group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+           name="Remote System"
+           class="org.eclipse.cdt.launch.remote.tabs.RemoteSystemTab">
+           <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+      </tab>
       <tab id="org.eclipse.rse.remotecdt.dsf.gdb.mainTab"
            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
            name="Main"
            class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.cdt.launch.remote.dsf.debug.RemoteSystemTab"/>
       </tab>         
       <tab id="org.eclipse.rse.remotecdt.dsf.debug.CArgumentsTab"
            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"

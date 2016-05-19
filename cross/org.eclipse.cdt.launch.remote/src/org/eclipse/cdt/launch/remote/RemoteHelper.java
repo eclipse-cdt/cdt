@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.launch.remote.Activator;
@@ -113,9 +114,21 @@ public class RemoteHelper {
 			localFile.copy(remoteFile, EFS.OVERWRITE, monitor);
 			// Need to change the permissions to match the original file
 			// permissions because of a bug in upload
-			remoteShellExec(
+			Process p = remoteShellExec(
 					config,
 					"", "chmod", "+x " + spaceEscapify(remoteExePath), new SubProgressMonitor(monitor, 5)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+			// Wait for the permission change
+			try {
+			    int waitTime = 1;
+                boolean exited = p.waitFor(waitTime, TimeUnit.SECONDS);
+                if (!exited) {
+                    Status status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.ERROR, "Failed to change file permissions in the remote system, path: " + remoteExePath, null); //$NON-NLS-1$
+                    throw new CoreException(status);
+                }
+            } catch (InterruptedException e) {
+                // Nothing to do
+            }
 		} catch (CoreException e) {
 			abort(Messages.RemoteRunLaunchDelegate_6, e,
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
@@ -200,7 +213,10 @@ public class RemoteHelper {
 		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
 			remoteCommand = prelaunchCmd + CMD_DELIMITER + remoteCommand;
 
-		IRemoteConnection conn = getCurrentConnection(config);
+        IRemoteConnection conn = getCurrentConnection(config);
+        if (!conn.isOpen()) {
+            conn.open(monitor);
+        }
 
 		IRemoteCommandShellService shellService = conn.getService(IRemoteCommandShellService.class);
 		IRemoteProcess p = null;

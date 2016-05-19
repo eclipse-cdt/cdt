@@ -539,7 +539,7 @@ public class BTree {
 		if (node == 0) {
 			return true;
 		}
-		visitor.preNode(node);
+		visitor.preVisit(node);
 
 		try {
 			Chunk chunk = db.getChunk(node);
@@ -585,7 +585,7 @@ public class BTree {
 			}
 			return accept(getChild(chunk, node, i), visitor);
 		} finally {
-			visitor.postNode(node);
+			visitor.postVisit(node);
 		}
 	}
 
@@ -614,14 +614,14 @@ public class BTree {
 		public String getMsg() { return msg; }
 		public boolean isValid() { return valid; }
 		@Override
-		public void postNode(long node) throws CoreException { depth--; }
+		public void postVisit(long node) throws CoreException { depth--; }
 		@Override
 		public int compare(long record) throws CoreException { return 0; }
 		@Override
 		public boolean visit(long record) throws CoreException { return true; }
 
 		@Override
-		public void preNode(long node) throws CoreException {
+		public void preVisit(long node) throws CoreException {
 			depth++;
 
 			// Collect information for checking.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -24,7 +25,7 @@ public interface IBTreeVisitor {
 	 * compatible with the one used for the B-tree.
 	 * Used for visiting.
 	 * 
-	 * @param record
+	 * @param record the offset of the record to compare with the key
 	 * @return -1 if record < key, 0 if record == key, 1 if record > key
 	 */
 	public int compare(long record) throws CoreException;
@@ -32,21 +33,22 @@ public interface IBTreeVisitor {
 	/**
 	 * Visits a given record and returns whether to continue or not.
 	 *
+	 * @param record the offset of the record being visited
 	 * @return {@code true} to continue the visit, {@code false} to abort it.
 	 */
 	public boolean visit(long record) throws CoreException;	
 
 	/**
-	 * Called before visiting a node.
+	 * Called before visiting a record.
 	 *
-	 * @param record the node being visited
+	 * @param record the offset of the record being visited
 	 */
-	public default void preNode(long record) throws CoreException {}
+	public default void preVisit(long record) throws CoreException {}
 
 	/**
-	 * Called after visiting a node.
+	 * Called after visiting a record.
 	 *
-	 * @param record the node being visited
+	 * @param record the offset of the record being visited
 	 */
-	public default void postNode(long record) throws CoreException {}
+	public default void postVisit(long record) throws CoreException {}
 }

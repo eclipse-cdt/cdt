@@ -41,6 +41,12 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
          point="org.eclipse.debug.ui.launchConfigurationTabs">
          
       <!-- Run Remote application launch tabs-->    
+      <tab id="org.eclipse.cdt.launch.RemoteSystemTab"
+           group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
+           name="Remote System"
+           class="org.eclipse.cdt.launch.remote.tabs.RemoteSystemTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+      </tab>
       <tab id="org.eclipse.rse.remotecdt.launch.RemoteCMainTab"
            group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
            name="Main"
@@ -62,7 +68,13 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
         <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
       </tab>         
       
-      <!-- Debug Remote application launch tabs-->    
+      <!-- Debug Remote application launch tabs-->
+      <tab id="org.eclipse.cdt.launch.dsf.debug.RemoteSystemTab"
+           group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+           name="Remote System"
+           class="org.eclipse.cdt.launch.remote.tabs.RemoteSystemTab">
+           <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+      </tab>
       <tab id="org.eclipse.rse.remotecdt.dsf.gdb.mainTab"
            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
            name="Main"

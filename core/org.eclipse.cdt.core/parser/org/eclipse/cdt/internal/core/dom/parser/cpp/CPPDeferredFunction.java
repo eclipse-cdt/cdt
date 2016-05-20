@@ -16,18 +16,23 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents a reference to a (member) function (instance), which cannot be resolved because 
  * an argument depends on a template parameter. A compiler would resolve it during instantiation.
  */
-public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferredFunction, ICPPComputableFunction {
+public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferredFunction, 
+		ICPPComputableFunction, ISerializableType {
 	private static final ICPPFunctionType FUNCTION_TYPE=
 			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
 
@@ -175,5 +180,42 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	@Override
 	public ICPPExecution getConstructorChainExecution() {
 		return null;
+	}
+
+	@Override
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		short firstBytes = ITypeMarshalBuffer.DEFERRED_FUNCTION;
+		if (this instanceof CPPDeferredConstructor) {
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		}
+		
+		buffer.putShort(firstBytes);
+		buffer.putCharArray(getNameCharArray());
+		buffer.marshalBinding(getOwner());
+		if (getCandidates() != null) {
+			buffer.putInt(getCandidates().length);
+			for (ICPPFunction candidate : getCandidates()) {
+				buffer.marshalBinding(candidate);
+			}
+		} else {
+			buffer.putInt(0);
+		}
+	}
+	
+	public static IBinding unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		char[] name = buffer.getCharArray();
+		IBinding owner = buffer.unmarshalBinding();
+		int length = buffer.getInt();
+		ICPPFunction[] candidates = null;
+		if (length > 0) {
+			candidates = new ICPPFunction[length];
+			for (int i = 0; i < candidates.length; ++i) {
+				candidates[i] = (ICPPFunction) buffer.unmarshalBinding();
+			}
+		}
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0 && (owner instanceof ICPPClassType)) {
+			return new CPPDeferredConstructor((ICPPClassType) owner, candidates);
+		}
+		return new CPPDeferredFunction(owner, name, candidates);
 	}
 }

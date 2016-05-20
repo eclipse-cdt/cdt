@@ -93,6 +93,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
@@ -1444,6 +1445,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return TypeOfUnknownMember.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.INITIALIZER_LIST_TYPE:
 			return InitializerListType.unmarshal(firstBytes, buffer);
+		// Don't handle DEFERRED_FUNCTION, because it's never a type.
 		}
 
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
@@ -1459,6 +1461,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE:
 			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
+		case ITypeMarshalBuffer.DEFERRED_FUNCTION:
+			return CPPDeferredFunction.unmarshal(firstBytes, buffer);
 		}
 
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$

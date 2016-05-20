@@ -43,6 +43,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.Window;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.ui.dialogs.RemoteResourceBrowser;
@@ -327,10 +328,17 @@ public class RemoteCDSFMainTab extends CMainTab {
 	protected void handleRemoteBrowseSelected() {
 		IRemoteConnection currentConnectionSelected = getCurrentConnection();
 		RemoteResourceBrowser b = new RemoteResourceBrowser(getControl().getShell(),
-				SWT.NONE);
+				SWT.RESIZE);
 		b.setConnection(currentConnectionSelected);
 		b.setTitle(Messages.RemoteCMainTab_Remote_Path_Browse_Button_Title);
-		b.open();
+		b.setType(RemoteResourceBrowser.FILE_BROWSER);
+		int returnCode = b.open();
+		
+		// User cancelled the browse dialog?
+		if (returnCode == Window.CANCEL) {
+			return;
+		}
+		
 		IFileStore selectedFile = b.getResource();
 		if (selectedFile != null) {
 			String absPath = selectedFile.toURI().getPath();

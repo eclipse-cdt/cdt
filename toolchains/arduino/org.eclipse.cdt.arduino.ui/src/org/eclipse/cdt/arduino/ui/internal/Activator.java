@@ -1,16 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal;
 
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,19 +25,19 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMG_ARDUINO = PLUGIN_ID + ".arduino"; //$NON-NLS-1$
 	public static final String IMG_CONNECTION_TYPE = PLUGIN_ID + ".connectionType"; //$NON-NLS-1$
-	public static final String IMG_ADD = PLUGIN_ID + ".add";
-	public static final String IMG_DELETE = PLUGIN_ID + ".delete";
+	public static final String IMG_ADD = PLUGIN_ID + ".add"; //$NON-NLS-1$
+	public static final String IMG_DELETE = PLUGIN_ID + ".delete"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		// Load up the Arduino indices
-		getService(ArduinoManager.class).loadIndices();
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);

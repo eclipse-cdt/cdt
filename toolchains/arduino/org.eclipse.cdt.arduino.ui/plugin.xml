@@ -31,12 +31,6 @@
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.cdt.arduino.core.consoleService">
-      <provider
-            class="org.eclipse.cdt.arduino.ui.internal.launch.ArduinoConsole">
-      </provider>
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="org.eclipse.cdt.arduino.ui.internal.remote.ArduinoTargetPropertyPage"
@@ -160,5 +154,26 @@
             A single C++ file with empty setup() and loop() functions.
          </description>
       </template>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:help">
+         <command
+               commandId="org.eclipse.cdt.arduino.ui.openManager"
+               icon="icons/arduino.png"
+               label="%arduinoDownloadsManager"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.cdt.arduino.ui.internal.downloads.OpenDownloadsManager"
+            id="org.eclipse.cdt.arduino.ui.openManager"
+            name="%arduinoDownloadsManager">
+      </command>
    </extension>
 </plugin>

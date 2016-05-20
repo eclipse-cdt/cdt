@@ -7,8 +7,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import java.io.IOException;
+
+import org.eclipse.cdt.arduino.core.internal.Activator;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 
 public class ArduinoToolSystem {
@@ -83,8 +86,12 @@ public class ArduinoToolSystem {
 		}
 	}
 
-	public IStatus install(IProgressMonitor monitor) {
-		return ArduinoManager.downloadAndInstall(url, archiveFileName, tool.getInstallPath(), monitor);
+	public void install(IProgressMonitor monitor) throws CoreException {
+		try {
+			ArduinoManager.downloadAndInstall(url, archiveFileName, tool.getInstallPath(), monitor);
+		} catch (IOException e) {
+			throw Activator.coreException(e);
+		}
 	}
 
 }

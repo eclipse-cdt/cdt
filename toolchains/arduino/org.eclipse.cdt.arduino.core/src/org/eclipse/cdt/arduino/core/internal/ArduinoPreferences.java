@@ -7,9 +7,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
@@ -36,6 +42,18 @@ public class ArduinoPreferences {
 		return getPrefs().get(BOARD_URLS, defaultBoardUrls);
 	}
 
+	public static Collection<URL> getBoardUrlList() throws CoreException {
+		List<URL> urlList = new ArrayList<>();
+		for (String url : getBoardUrls().split("\n")) { //$NON-NLS-1$
+			try {
+				urlList.add(new URL(url.trim()));
+			} catch (MalformedURLException e) {
+				throw Activator.coreException(e);
+			}
+		}
+		return urlList;
+	}
+	
 	public static void setBoardUrls(String boardUrls) {
 		IEclipsePreferences prefs = getPrefs();
 		prefs.put(BOARD_URLS, boardUrls);

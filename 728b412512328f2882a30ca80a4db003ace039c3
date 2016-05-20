@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_56178350",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-05-20T13:07:37Z",
+      "side": 1,
+      "message": "I\u0027d suggest increasing the waitTime a bit.  On a slow target, maybe with a network filesystem, it could happen that the operation takes a bit of time.  And since we will only wait for that time when things go wrong, it won\u0027t slow down things when the process returns quickly and successfully.",
+      "range": {
+        "startLine": 123,
+        "startChar": 22,
+        "endLine": 123,
+        "endChar": 23
+      },
+      "revId": "728b412512328f2882a30ca80a4db003ace039c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_b62527b5",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-05-20T13:07:37Z",
+      "side": 1,
+      "message": "Is there really nothing to do?  If this thread gets interrupted, shouldn\u0027t it abort/exit early?",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 32
+      },
+      "revId": "728b412512328f2882a30ca80a4db003ace039c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

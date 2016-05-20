@@ -109,6 +109,8 @@ public class RemoteConnectionWidget extends Composite {
 					handleNewRemoteConnectionSelected();
 				} else if (source == fLocalButton) {
 					handleButtonSelected();
+				} else if (source == fRemoteButton) {
+					handleButtonSelected();
 				}
 			}
 		}
@@ -288,6 +290,7 @@ public class RemoteConnectionWidget extends Composite {
 			fRemoteButton = new Button(body, SWT.RADIO);
 			fRemoteButton.setText(Messages.RemoteConnectionWidget_Remote);
 			fRemoteButton.setLayoutData(new GridData());
+			fRemoteButton.addSelectionListener(fWidgetListener);
 		} else {
 			Label remoteLabel = new Label(body, SWT.NONE);
 			remoteLabel.setText(Messages.RemoteConnectionWidget_Connection_Name);

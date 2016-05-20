@@ -59,4 +59,17 @@ public class Activator extends Plugin {
 		return ref != null ? context.getService(ref) : null;
 	}
 
+	public static CoreException coreException(Throwable e) {
+		if (e instanceof RuntimeException && e.getCause() instanceof CoreException) {
+			return (CoreException) e.getCause();
+		} else if (e instanceof CoreException) {
+			return (CoreException) e;
+		}
+		return new CoreException(new Status(IStatus.ERROR, getId(), e.getLocalizedMessage(), e));
+	}
+
+	public static CoreException coreException(String message, Throwable e) {
+		return new CoreException(new Status(IStatus.ERROR, getId(), message, e));
+	}
+
 }

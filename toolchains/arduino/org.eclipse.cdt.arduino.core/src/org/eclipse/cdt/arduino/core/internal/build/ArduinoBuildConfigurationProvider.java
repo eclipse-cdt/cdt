@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.build;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
@@ -44,11 +44,11 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 
 	@Override
 	public ICBuildConfiguration getDefaultCBuildConfiguration(IProject project) throws CoreException {
-		ArduinoBoard board = arduinoManager.getBoard("Arduino/Genuino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ArduinoBoard board = arduinoManager.getBoard("arduino", "avr", "Arduino/Genuino Uno"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (board == null) {
-			List<ArduinoBoard> boards = arduinoManager.getInstalledBoards();
+			Collection<ArduinoBoard> boards = arduinoManager.getInstalledBoards();
 			if (!boards.isEmpty()) {
-				board = boards.get(0);
+				board = boards.iterator().next();
 			}
 		}
 		if (board != null) {
@@ -112,7 +112,8 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 		IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
 		IToolChain toolChain = new ArduinoToolChain(provider, config);
 		toolChainManager.addToolChain(toolChain);
-		ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, target, launchMode, toolChain);
+		ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, target, launchMode,
+				toolChain);
 		configManager.addBuildConfiguration(config, arduinoConfig);
 		return arduinoConfig;
 	}

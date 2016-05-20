@@ -19,12 +19,6 @@ public class ToolDependency {
 	private String name;
 	private String version;
 
-	private transient ArduinoPlatform platform;
-
-	public void setOwner(ArduinoPlatform platform) {
-		this.platform = platform;
-	}
-
 	public String getPackager() {
 		return packager;
 	}
@@ -38,25 +32,16 @@ public class ToolDependency {
 	}
 
 	public ArduinoTool getTool() throws CoreException {
-		ArduinoPackage pkg = platform.getPackage();
-		if (!pkg.getName().equals(packager)) {
-			pkg = pkg.getManager().getPackage(packager);
-		}
-
-		return pkg.getTool(name, version);
+		return Activator.getService(ArduinoManager.class).getTool(packager, name, version);
 	}
 
-	public IStatus install(IProgressMonitor monitor) {
-		try {
-			ArduinoTool tool = getTool();
-			if (tool == null) {
-				return new Status(IStatus.ERROR, Activator.getId(),
-						String.format("Tool not found %s %s", name, version));
-			}
-			return getTool().install(monitor);
-		} catch (CoreException e) {
-			return e.getStatus();
+	public void install(IProgressMonitor monitor) throws CoreException {
+		ArduinoTool tool = getTool();
+		if (tool == null) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(),
+					String.format("Tool not found %s %s", name, version)));
 		}
+		getTool().install(monitor);
 	}
 
 }

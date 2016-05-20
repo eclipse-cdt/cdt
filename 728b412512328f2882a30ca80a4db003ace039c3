@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_16c17b97",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-05-20T14:13:47Z",
+      "side": 1,
+      "message": "I am not sure I understand your suggestion.\n\nAlvaro\u0027s code do just that, it spawns the process and waits for it to finish.  The waitTime is just a timeout (perhaps it could be named \"timeout\", actually), so that we don\u0027t wait forever in case something gets stuck.\n\nWhat would be different with what you suggest?",
+      "parentUuid": "87e453f8_96dbcb9a",
+      "range": {
+        "startLine": 123,
+        "startChar": 22,
+        "endLine": 123,
+        "endChar": 23
+      },
+      "revId": "728b412512328f2882a30ca80a4db003ace039c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_b62527b5",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
         "patchSetId": 1

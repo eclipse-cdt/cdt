@@ -284,7 +284,7 @@ public class ValueFactory {
 		if (exp instanceof IASTConditionalExpression) {
 			IASTConditionalExpression cexpr= (IASTConditionalExpression) exp;
 			IValue v= evaluate(cexpr.getLogicalConditionExpression());
-			if (isInvalidValue(v))
+			if (isInvalidValue(v) || v.numericalValue() == null)
 				return v;
 			if (v.numericalValue().longValue() == 0) {
 				return evaluate(cexpr.getNegativeResultExpression());
@@ -482,7 +482,7 @@ public class ValueFactory {
 	}
 
 	private static IValue applyUnaryOperator(final int unaryOp, final IValue value) {
-		if(isInvalidValue(value)) {
+		if(isInvalidValue(value) || value.numericalValue() == null) {
 			return IntegralValue.UNKNOWN;
 		}
 		

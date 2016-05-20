@@ -394,7 +394,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 		final CPPTemplateParameterMap tpMap = (CPPTemplateParameterMap)context.getParameterMap();
 		final int packOffset = context.getPackOffset();
 		
-		IVariable newBinding = (IVariable)tpMap.getInstantiatedBinding(origBinding);
+		IVariable newBinding = tpMap == null ? null : (IVariable)tpMap.getInstantiatedBinding(origBinding);
 		if(newBinding != null) {
 			IType origType = ((IVariable)origBinding).getType();
 			EvalBinding newBindingEval = null;

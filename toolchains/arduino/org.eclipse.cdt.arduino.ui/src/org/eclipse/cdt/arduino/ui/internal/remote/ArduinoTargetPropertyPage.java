@@ -100,9 +100,9 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		workingCopy.setAttribute(ArduinoRemoteConnection.PORT_NAME, portName);
 
 		ArduinoBoard board = boards[boardSelector.getSelectionIndex()];
-		workingCopy.setAttribute(ArduinoRemoteConnection.BOARD_NAME, board.getName());
+		workingCopy.setAttribute(ArduinoRemoteConnection.BOARD_NAME, board.getId());
 		ArduinoPlatform platform = board.getPlatform();
-		workingCopy.setAttribute(ArduinoRemoteConnection.PLATFORM_NAME, platform.getName());
+		workingCopy.setAttribute(ArduinoRemoteConnection.PLATFORM_NAME, platform.getArchitecture());
 		ArduinoPackage pkg = platform.getPackage();
 		workingCopy.setAttribute(ArduinoRemoteConnection.PACKAGE_NAME, pkg.getName());
 

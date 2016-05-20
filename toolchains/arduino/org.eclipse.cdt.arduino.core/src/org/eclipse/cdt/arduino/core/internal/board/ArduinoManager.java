@@ -11,13 +11,12 @@
 package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.FileVisitResult;
@@ -30,8 +29,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -43,23 +47,21 @@ import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
-import org.eclipse.cdt.arduino.core.internal.Messages;
-import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
-import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 public class ArduinoManager {
 
@@ -70,205 +72,442 @@ public class ArduinoManager {
 	public static final String AVR_TOOLCHAIN_ID = "org.eclipse.cdt.arduino.toolChain.avr"; //$NON-NLS-1$
 
 	public static final String LIBRARIES_URL = "http://downloads.arduino.cc/libraries/library_index.json"; //$NON-NLS-1$
+	public static final String LIBRARIES_FILE = "library_index.json"; //$NON-NLS-1$
 
-	private List<PackageIndex> packageIndices;
-	private LibraryIndex libraryIndex;
+	private static final String LIBRARIES = "libraries"; //$NON-NLS-1$
 
-	public void loadIndices() {
-		new Job(Messages.ArduinoBoardManager_0) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				synchronized (ArduinoManager.this) {
-					String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
-					packageIndices = new ArrayList<>(boardUrls.length);
-					for (String boardUrl : boardUrls) {
-						loadPackageIndex(boardUrl, true);
-					}
+	// arduinocdt install properties
+	private static final String VERSION_KEY = "version"; //$NON-NLS-1$
+	private static final String ACCEPTED_KEY = "accepted"; //$NON-NLS-1$
+	private static final String VERSION = "2"; //$NON-NLS-1$
 
-					loadLibraryIndex(true);
-					return Status.OK_STATUS;
-				}
-			}
-		}.schedule();
+	private Properties props;
+
+	private Map<String, ArduinoPackage> packages;
+	private Map<String, ArduinoLibrary> installedLibraries;
+
+	private Path getVersionFile() {
+		return ArduinoPreferences.getArduinoHome().resolve(".version"); //$NON-NLS-1$
 	}
 
-	private void loadPackageIndex(String url, boolean download) {
-		try {
-			URL packageUrl = new URL(url.trim());
-			Path packagePath = ArduinoPreferences.getArduinoHome()
-					.resolve(Paths.get(packageUrl.getPath()).getFileName());
-			File packageFile = packagePath.toFile();
-			if (download) {
-				Files.createDirectories(ArduinoPreferences.getArduinoHome());
+	private void init() throws CoreException {
+		if (props == null) {
+			if (!Files.exists(ArduinoPreferences.getArduinoHome())) {
 				try {
-					Files.copy(packageUrl.openStream(), packagePath, StandardCopyOption.REPLACE_EXISTING);
+					Files.createDirectories(ArduinoPreferences.getArduinoHome());
 				} catch (IOException e) {
-					// make sure we add the package anyway if it exists
-					Activator.log(e);
+					throw Activator.coreException(e);
 				}
 			}
-			if (packageFile.exists()) {
-				try (Reader reader = new FileReader(packageFile)) {
-					PackageIndex index = new Gson().fromJson(reader, PackageIndex.class);
-					index.setOwners(ArduinoManager.this);
-					packageIndices.add(index);
+
+			props = new Properties();
+			Path propsFile = getVersionFile();
+			if (Files.exists(propsFile)) {
+				try (FileReader reader = new FileReader(propsFile.toFile())) {
+					props.load(reader);
+				} catch (IOException e) {
+					throw Activator.coreException(e);
 				}
 			}
-		} catch (IOException e) {
-			Activator.log(e);
+
+			// See if we need a conversion
+			int version = Integer.parseInt(props.getProperty(VERSION_KEY, "1")); //$NON-NLS-1$
+			if (version < Integer.parseInt(VERSION)) {
+				// Need to move the directories around
+				convertPackageDirs();
+
+				props.setProperty(VERSION_KEY, VERSION);
+				try (FileWriter writer = new FileWriter(getVersionFile().toFile())) {
+					props.store(writer, ""); //$NON-NLS-1$
+				} catch (IOException e) {
+					throw Activator.coreException(e);
+				}
+			}
 		}
 	}
 
-	public synchronized List<PackageIndex> getPackageIndices() {
-		if (packageIndices == null) {
-			String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
-			packageIndices = new ArrayList<>(boardUrls.length);
-			for (String boardUrl : boardUrls) {
-				loadPackageIndex(boardUrl, false);
-			}
+	private void convertPackageDirs() throws CoreException {
+		Path packagesDir = ArduinoPreferences.getArduinoHome().resolve("packages"); //$NON-NLS-1$
+		if (!Files.isDirectory(packagesDir)) {
+			return;
 		}
-		return packageIndices;
-	}
 
-	public void loadLibraryIndex(boolean download) {
 		try {
-			URL librariesUrl = new URL(LIBRARIES_URL);
-			Path librariesPath = ArduinoPreferences.getArduinoHome()
-					.resolve(Paths.get(librariesUrl.getPath()).getFileName());
-			File librariesFile = librariesPath.toFile();
-			if (download) {
-				Files.createDirectories(ArduinoPreferences.getArduinoHome());
-				Files.copy(librariesUrl.openStream(), librariesPath, StandardCopyOption.REPLACE_EXISTING);
-			}
-			if (librariesFile.exists()) {
-				try (Reader reader = new FileReader(librariesFile)) {
-					libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
-					libraryIndex.resolve();
+			Files.list(packagesDir).forEach(path -> {
+				try {
+					Path hardwarePath = path.resolve("hardware"); //$NON-NLS-1$
+					Path badPath = hardwarePath.resolve(path.getFileName());
+					Path tmpDir = Files.createTempDirectory(packagesDir, "tbd"); //$NON-NLS-1$
+					Path badPath2 = tmpDir.resolve(badPath.getFileName());
+					Files.move(badPath, badPath2);
+					Files.list(badPath2).forEach(archPath -> {
+						try {
+							Optional<Path> latest = Files.list(archPath)
+									.reduce((path1, path2) -> compareVersions(path1.getFileName().toString(),
+											path2.getFileName().toString()) > 0 ? path1 : path2);
+							if (latest.isPresent()) {
+								Files.move(latest.get(), hardwarePath.resolve(archPath.getFileName()));
+							}
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
+					});
+					recursiveDelete(tmpDir);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
 				}
-			}
-		} catch (IOException e) {
-			Activator.log(e);
+			});
+		} catch (RuntimeException | IOException e) {
+			throw Activator.coreException(e);
 		}
-
 	}
 
-	public LibraryIndex getLibraryIndex() throws CoreException {
-		if (libraryIndex == null) {
-			loadLibraryIndex(false);
+	public void convertLibrariesDir() throws CoreException {
+		Path librariesDir = ArduinoPreferences.getArduinoHome().resolve("libraries"); //$NON-NLS-1$
+		if (!Files.isDirectory(librariesDir)) {
+			return;
 		}
-		return libraryIndex;
-	}
 
-	public ArduinoBoard getBoard(String boardName, String platformName, String packageName) throws CoreException {
-		for (PackageIndex index : getPackageIndices()) {
-			ArduinoPackage pkg = index.getPackage(packageName);
-			if (pkg != null) {
-				ArduinoPlatform platform = pkg.getPlatform(platformName);
-				if (platform != null) {
-					ArduinoBoard board = platform.getBoard(boardName);
-					if (board != null) {
-						return board;
+		try {
+			Path tmpDir = Files.createTempDirectory("alib"); //$NON-NLS-1$
+			Path tmpLibDir = tmpDir.resolve("libraries"); //$NON-NLS-1$
+			Files.move(librariesDir, tmpLibDir);
+			Files.list(tmpLibDir).forEach(path -> {
+				try {
+					Optional<Path> latest = Files.list(path)
+							.reduce((path1, path2) -> compareVersions(path1.getFileName().toString(),
+									path2.getFileName().toString()) > 0 ? path1 : path2);
+					if (latest.isPresent()) {
+						Files.move(latest.get(), librariesDir.resolve(path.getFileName()));
 					}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
 				}
-			}
+			});
+			recursiveDelete(tmpDir);
+		} catch (RuntimeException | IOException e) {
+			throw Activator.coreException(e);
 		}
-		return null;
+
 	}
 
-	public List<ArduinoBoard> getInstalledBoards() throws CoreException {
-		List<ArduinoBoard> boards = new ArrayList<>();
-		for (PackageIndex index : getPackageIndices()) {
-			for (ArduinoPackage pkg : index.getPackages()) {
-				for (ArduinoPlatform platform : pkg.getInstalledPlatforms().values()) {
-					boards.addAll(platform.getBoards());
+	public boolean licenseAccepted() throws CoreException {
+		init();
+		return Boolean.getBoolean(props.getProperty(ACCEPTED_KEY, Boolean.FALSE.toString()));
+	}
+
+	public void acceptLicense() throws CoreException {
+		init();
+		props.setProperty(ACCEPTED_KEY, Boolean.TRUE.toString());
+		try (FileWriter writer = new FileWriter(getVersionFile().toFile())) {
+			props.store(writer, ""); //$NON-NLS-1$
+		} catch (IOException e) {
+			throw Activator.coreException(e);
+		}
+	}
+
+	public Collection<ArduinoPlatform> getInstalledPlatforms() throws CoreException {
+		List<ArduinoPlatform> platforms = new ArrayList<>();
+		for (ArduinoPackage pkg : getPackages()) {
+			platforms.addAll(pkg.getInstalledPlatforms());
+		}
+		return platforms;
+	}
+
+	public Collection<ArduinoPlatform> getAvailablePlatforms(IProgressMonitor monitor) throws CoreException {
+		List<ArduinoPlatform> platforms = new ArrayList<>();
+		Collection<URL> urls = ArduinoPreferences.getBoardUrlList();
+		SubMonitor sub = SubMonitor.convert(monitor, urls.size() + 1);
+
+		sub.beginTask("Downloading package descriptions", urls.size()); //$NON-NLS-1$
+		for (URL url : urls) {
+			Path packagePath = ArduinoPreferences.getArduinoHome()
+					.resolve(Paths.get(url.getPath()).getFileName());
+			try {
+				Files.createDirectories(ArduinoPreferences.getArduinoHome());
+				try (InputStream in = url.openStream()) {
+					Files.copy(in, packagePath, StandardCopyOption.REPLACE_EXISTING);
 				}
+			} catch (IOException e) {
+				throw Activator.coreException(String.format("Error loading %s", url.toString()), e); //$NON-NLS-1$
 			}
+			sub.worked(1);
+		}
+
+		sub.beginTask("Loading available packages", 1); //$NON-NLS-1$
+		resetPackages();
+		for (ArduinoPackage pkg : getPackages()) {
+			platforms.addAll(pkg.getAvailablePlatforms());
+		}
+		sub.done();
+
+		return platforms;
+	}
+
+	public void installPlatforms(Collection<ArduinoPlatform> platforms, IProgressMonitor monitor) throws CoreException {
+		SubMonitor sub = SubMonitor.convert(monitor, platforms.size());
+		for (ArduinoPlatform platform : platforms) {
+			sub.setTaskName(String.format("Installing %s", platform.getName())); //$NON-NLS-1$
+			platform.install(sub);
+			sub.worked(1);
+		}
+		sub.done();
+	}
+
+	public void uninstallPlatforms(Collection<ArduinoPlatform> platforms, IProgressMonitor monitor) {
+		SubMonitor sub = SubMonitor.convert(monitor, platforms.size());
+		for (ArduinoPlatform platform : platforms) {
+			sub.setTaskName(String.format("Uninstalling %s", platform.getName())); //$NON-NLS-1$
+			platform.uninstall(sub);
+			sub.worked(1);
+		}
+		sub.done();
+	}
+
+	public static List<ArduinoPlatform> getSorted(Collection<ArduinoPlatform> platforms) {
+		List<ArduinoPlatform> result = new ArrayList<>(platforms);
+		Collections.sort(result, (plat1, plat2) -> {
+			int c1 = plat1.getPackage().getName().compareToIgnoreCase(plat2.getPackage().getName());
+			if (c1 > 0) {
+				return 1;
+			} else if (c1 < 0) {
+				return -1;
+			} else {
+				return plat1.getArchitecture().compareToIgnoreCase(plat2.getArchitecture());
+			}
+		});
+		return result;
+	}
+
+	private void initPackages() throws CoreException {
+		if (packages == null) {
+			init();
+			packages = new HashMap<>();
+
+			try {
+				Files.list(ArduinoPreferences.getArduinoHome())
+						.filter(path -> path.getFileName().toString().startsWith("package_")) //$NON-NLS-1$
+						.forEach(path -> {
+							try (Reader reader = new FileReader(path.toFile())) {
+								PackageIndex index = new Gson().fromJson(reader, PackageIndex.class);
+								for (ArduinoPackage pkg : index.getPackages()) {
+									pkg.init();
+									packages.put(pkg.getName(), pkg);
+								}
+							} catch (IOException e) {
+								Activator.log(e);
+							}
+						});
+			} catch (IOException e) {
+				throw Activator.coreException(e);
+			}
+		}
+	}
+
+	private Collection<ArduinoPackage> getPackages() throws CoreException {
+		initPackages();
+		return packages.values();
+	}
+
+	public void resetPackages() {
+		packages = null;
+	}
+
+	private ArduinoPackage getPackage(String packageName) throws CoreException {
+		if (packageName == null) {
+			return null;
+		} else {
+			initPackages();
+			return packages.get(packageName);
+		}
+	}
+
+	public Collection<ArduinoBoard> getInstalledBoards() throws CoreException {
+		List<ArduinoBoard> boards = new ArrayList<>();
+		for (ArduinoPlatform platform : getInstalledPlatforms()) {
+			boards.addAll(platform.getBoards());
 		}
 		return boards;
 	}
 
-	public ArduinoPackage getPackage(String packageName) throws CoreException {
-		for (PackageIndex index : getPackageIndices()) {
-			ArduinoPackage pkg = index.getPackage(packageName);
-			if (pkg != null) {
-				return pkg;
+	public ArduinoBoard getBoard(String packageName, String architecture, String boardId) throws CoreException {
+		for (ArduinoPlatform platform : getInstalledPlatforms()) {
+			if (platform.getPackage().getName().equals(packageName)
+					&& platform.getArchitecture().equals(architecture)) {
+				return platform.getBoard(boardId);
 			}
 		}
+
+		// For backwards compat, check platform name
+		for (ArduinoPlatform platform : getInstalledPlatforms()) {
+			if (platform.getPackage().getName().equals(packageName)
+					&& platform.getName().equals(architecture)) {
+				return platform.getBoardByName(boardId);
+			}
+		}
+
 		return null;
 	}
 
-	public ArduinoTool getTool(String packageName, String toolName, String version) throws CoreException {
-		for (PackageIndex index : getPackageIndices()) {
-			ArduinoPackage pkg = index.getPackage(packageName);
-			if (pkg != null) {
-				ArduinoTool tool = pkg.getTool(toolName, version);
-				if (tool != null) {
-					return tool;
+	public ArduinoTool getTool(String packageName, String toolName, String version) {
+		ArduinoPackage pkg = packages.get(packageName);
+		return pkg != null ? pkg.getTool(toolName, version) : null;
+	}
+
+	public void initInstalledLibraries() throws CoreException {
+		init();
+		if (installedLibraries == null) {
+			installedLibraries = new HashMap<>();
+
+			Path librariesDir = ArduinoPreferences.getArduinoHome().resolve("libraries"); //$NON-NLS-1$
+			if (Files.isDirectory(librariesDir)) {
+				try {
+					Files.find(librariesDir, 2,
+							(path, attrs) -> path.getFileName().toString().equals("library.properties")) //$NON-NLS-1$
+							.forEach(path -> {
+								try {
+									ArduinoLibrary library = new ArduinoLibrary(path);
+									installedLibraries.put(library.getName(), library);
+								} catch (CoreException e) {
+									throw new RuntimeException(e);
+								}
+							});
+				} catch (IOException e) {
+					throw Activator.coreException(e);
 				}
 			}
 		}
-		return null;
 	}
 
-	private static final String LIBRARIES = "libraries"; //$NON-NLS-1$
-
-	private IEclipsePreferences getSettings(IProject project) {
-		return new ProjectScope(project).getNode(Activator.getId());
+	public Collection<ArduinoLibrary> getInstalledLibraries() throws CoreException {
+		initInstalledLibraries();
+		return installedLibraries.values();
 	}
 
-	public Collection<ArduinoLibrary> getLibraries(IProject project) throws CoreException {
+	public Collection<ArduinoLibrary> getAvailableLibraries(IProgressMonitor monitor) throws CoreException {
+		try {
+			initInstalledLibraries();
+			Map<String, ArduinoLibrary> libs = new HashMap<>();
+
+			SubMonitor sub = SubMonitor.convert(monitor, "Downloading library index", 2);
+			Path librariesPath = ArduinoPreferences.getArduinoHome().resolve(LIBRARIES_FILE);
+			URL librariesUrl = new URL(LIBRARIES_URL);
+			Files.createDirectories(ArduinoPreferences.getArduinoHome());
+			Files.copy(librariesUrl.openStream(), librariesPath, StandardCopyOption.REPLACE_EXISTING);
+			sub.worked(1);
+
+			try (Reader reader = new FileReader(librariesPath.toFile())) {
+				sub.setTaskName("Calculating available libraries");
+				LibraryIndex libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
+				for (ArduinoLibrary library : libraryIndex.getLibraries()) {
+					String libraryName = library.getName();
+					if (!installedLibraries.containsKey(libraryName)) {
+						ArduinoLibrary current = libs.get(libraryName);
+						if (current == null || compareVersions(library.getVersion(), current.getVersion()) > 0) {
+							libs.put(libraryName, library);
+						}
+					}
+				}
+			}
+			sub.done();
+			return libs.values();
+		} catch (IOException e) {
+			throw Activator.coreException(e);
+		}
+	}
+
+	public void installLibraries(Collection<ArduinoLibrary> libraries, IProgressMonitor monitor) throws CoreException {
+		SubMonitor sub = SubMonitor.convert(monitor, libraries.size());
+		for (ArduinoLibrary library : libraries) {
+			sub.setTaskName(String.format("Installing %s", library.getName())); //$NON-NLS-1$
+			library.install(sub);
+			try {
+				ArduinoLibrary newLibrary = new ArduinoLibrary(library.getInstallPath().resolve("library.properties")); //$NON-NLS-1$
+				installedLibraries.put(newLibrary.getName(), newLibrary);
+			} catch (CoreException e) {
+				throw new RuntimeException(e);
+			}
+			sub.worked(1);
+		}
+		sub.done();
+	}
+
+	public void uninstallLibraries(Collection<ArduinoLibrary> libraries, IProgressMonitor monitor)
+			throws CoreException {
+		SubMonitor sub = SubMonitor.convert(monitor, libraries.size());
+		for (ArduinoLibrary library : libraries) {
+			sub.setTaskName(String.format("Installing %s", library.getName())); //$NON-NLS-1$
+			library.uninstall(sub);
+			installedLibraries.remove(library.getName());
+			sub.worked(1);
+		}
+		sub.done();
+	}
+
+	public Collection<ArduinoLibrary> getLibraries(IProject project)
+			throws CoreException {
+		initInstalledLibraries();
 		IEclipsePreferences settings = getSettings(project);
 		String librarySetting = settings.get(LIBRARIES, "[]"); //$NON-NLS-1$
-		Type stringSet = new TypeToken<Set<String>>() {
-		}.getType();
-		Set<String> libraryNames = new Gson().fromJson(librarySetting, stringSet);
-		LibraryIndex index = Activator.getService(ArduinoManager.class).getLibraryIndex();
+		JsonArray libArray = new JsonParser().parse(librarySetting).getAsJsonArray();
 
-		ICBuildConfiguration cconfig = project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class);
-		ArduinoPlatform platform = cconfig.getAdapter(ArduinoBuildConfiguration.class).getBoard().getPlatform();
-		List<ArduinoLibrary> libraries = new ArrayList<>(libraryNames.size());
-		for (String name : libraryNames) {
-			ArduinoLibrary lib = index.getLibrary(name);
-			if (lib == null) {
-				lib = platform.getLibrary(name);
-			}
-			if (lib != null) {
-				libraries.add(lib);
+		List<ArduinoLibrary> libraries = new ArrayList<>(libArray.size());
+		for (JsonElement libElement : libArray) {
+			if (libElement.isJsonPrimitive()) {
+				String libName = libElement.getAsString();
+				ArduinoLibrary lib = installedLibraries.get(libName);
+				if (lib != null) {
+					libraries.add(lib);
+				}
+			} else {
+				JsonObject libObj = libElement.getAsJsonObject();
+				String packageName = libObj.get("package").getAsString(); //$NON-NLS-1$
+				String platformName = libObj.get("platform").getAsString(); //$NON-NLS-1$
+				String libName = libObj.get("library").getAsString(); //$NON-NLS-1$
+				ArduinoPackage pkg = getPackage(packageName);
+				if (pkg != null) {
+					ArduinoPlatform platform = pkg.getInstalledPlatform(platformName);
+					if (platform != null) {
+						ArduinoLibrary lib = platform.getLibrary(libName);
+						if (lib != null) {
+							libraries.add(lib);
+						}
+					}
+				}
 			}
 		}
 		return libraries;
 	}
 
 	public void setLibraries(final IProject project, final Collection<ArduinoLibrary> libraries) throws CoreException {
-		List<String> libraryNames = new ArrayList<>(libraries.size());
+		JsonArray elements = new JsonArray();
 		for (ArduinoLibrary library : libraries) {
-			libraryNames.add(library.getName());
+			ArduinoPlatform platform = library.getPlatform();
+			if (platform != null) {
+				JsonObject libObj = new JsonObject();
+				libObj.addProperty("package", platform.getPackage().getName()); //$NON-NLS-1$
+				libObj.addProperty("platform", platform.getArchitecture()); //$NON-NLS-1$
+				libObj.addProperty("library", library.getName()); //$NON-NLS-1$
+				elements.add(libObj);
+			} else {
+				elements.add(new JsonPrimitive(library.getName()));
+			}
 		}
 		IEclipsePreferences settings = getSettings(project);
-		settings.put(LIBRARIES, new Gson().toJson(libraryNames));
+		settings.put(LIBRARIES, new Gson().toJson(elements));
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {
-			Activator.log(e);
+			throw Activator.coreException(e);
 		}
-
-		new Job(Messages.ArduinoManager_0) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				MultiStatus mstatus = new MultiStatus(Activator.getId(), 0, Messages.ArduinoManager_1, null);
-				for (ArduinoLibrary library : libraries) {
-					IStatus status = library.install(monitor);
-					if (!status.isOK()) {
-						mstatus.add(status);
-					}
-				}
-				return mstatus;
-			}
-		}.schedule();
 	}
 
-	public static IStatus downloadAndInstall(String url, String archiveFileName, Path installPath,
-			IProgressMonitor monitor) {
+	private IEclipsePreferences getSettings(IProject project) {
+		return new ProjectScope(project).getNode(Activator.getId());
+	}
+
+	public static void downloadAndInstall(String url, String archiveFileName, Path installPath,
+			IProgressMonitor monitor) throws IOException {
 		Exception error = null;
 		for (int retries = 3; retries > 0 && !monitor.isCanceled(); --retries) {
 			try {
@@ -351,15 +590,19 @@ public class ArduinoManager {
 						archiveIn.close();
 					}
 				}
-
-				return Status.OK_STATUS;
+				return;
 			} catch (IOException | CompressorException | ArchiveException e) {
 				error = e;
 				// retry
 			}
 		}
+
 		// out of retries
-		return new Status(IStatus.ERROR, Activator.getId(), Messages.ArduinoManager_2, error);
+		if (error instanceof IOException) {
+			throw (IOException) error;
+		} else {
+			throw new IOException(error);
+		}
 	}
 
 	public static int compareVersions(String version1, String version2) {

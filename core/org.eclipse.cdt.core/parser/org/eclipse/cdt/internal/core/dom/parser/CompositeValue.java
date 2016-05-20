@@ -8,6 +8,9 @@
 *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -160,39 +163,57 @@ public class CompositeValue implements IValue {
 		return new CompositeValue(null, values);
 	}
 	
+	// The set of class types for which composite value creation is in progress on each thread.
+	// Used to guard against infinite recursion due to a class (invalidly) aggregating itself. 
+	private static final ThreadLocal<Set<ICPPClassType>> fCreateInProgress = 
+			new ThreadLocal<Set<ICPPClassType>>() {
+		@Override
+		protected Set<ICPPClassType> initialValue() {
+			return new HashSet<>();
+		}
+	};
+	
 	public static CompositeValue create(ICPPClassType classType) {
-		ActivationRecord record = new ActivationRecord();
-		ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType, null).length];
-		
-		// recursively create all the base class member variables
-		ICPPBase[] bases = ClassTypeHelper.getBases(classType, null);
-		for(ICPPBase base : bases) {
-			IBinding baseClass = base.getBaseClass();
-			if(baseClass instanceof ICPPClassType) {
-				ICPPClassType baseClassType = (ICPPClassType) baseClass;
-				ICPPField[] baseFields = ClassTypeHelper.getDeclaredFields(baseClassType, null);
-				IValue compValue = CompositeValue.create(baseClassType);
-				for(ICPPField baseField : baseFields) {
-					int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
-					record.update(baseField, compValue.get(fieldPos));
-					values[fieldPos] = compValue.get(fieldPos);
+		Set<ICPPClassType> recursionProtectionSet = fCreateInProgress.get();
+		if (!recursionProtectionSet.add(classType)) {
+			return new CompositeValue(null, ICPPEvaluation.EMPTY_ARRAY);
+		}
+		try {
+			ActivationRecord record = new ActivationRecord();
+			ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType, null).length];
+			
+			// recursively create all the base class member variables
+			ICPPBase[] bases = ClassTypeHelper.getBases(classType, null);
+			for(ICPPBase base : bases) {
+				IBinding baseClass = base.getBaseClass();
+				if(baseClass instanceof ICPPClassType) {
+					ICPPClassType baseClassType = (ICPPClassType) baseClass;
+					ICPPField[] baseFields = ClassTypeHelper.getDeclaredFields(baseClassType, null);
+					IValue compValue = CompositeValue.create(baseClassType);
+					for(ICPPField baseField : baseFields) {
+						int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
+						record.update(baseField, compValue.get(fieldPos));
+						values[fieldPos] = compValue.get(fieldPos);
+					}
 				}
 			}
-		}
-		
-		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, null);
-		for (ICPPField field : fields) {
-			InstantiationContext instantiationContext = null;
-			if(classType instanceof ICPPClassSpecialization) {
-				final ICPPClassSpecialization classSpecType = (ICPPClassSpecialization)classType;
-				instantiationContext = new InstantiationContext(classSpecType.getTemplateParameterMap(), classSpecType, null);
-			}
 			
-			final ICPPEvaluation value = EvalUtil.getVariableValue(field, record, instantiationContext);
-			int fieldPos = CPPASTFieldReference.getFieldPosition(field);
-			values[fieldPos] = value;
+			ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, null);
+			for (ICPPField field : fields) {
+				InstantiationContext instantiationContext = null;
+				if(classType instanceof ICPPClassSpecialization) {
+					final ICPPClassSpecialization classSpecType = (ICPPClassSpecialization)classType;
+					instantiationContext = new InstantiationContext(classSpecType.getTemplateParameterMap(), classSpecType, null);
+				}
+				
+				final ICPPEvaluation value = EvalUtil.getVariableValue(field, record, instantiationContext);
+				int fieldPos = CPPASTFieldReference.getFieldPosition(field);
+				values[fieldPos] = value;
+			}
+			return new CompositeValue(null, values);
+		} finally {
+			recursionProtectionSet.remove(classType);
 		}
-		return new CompositeValue(null, values);
 	}
 
 	static IASTName getDefinition(IBinding binding) {

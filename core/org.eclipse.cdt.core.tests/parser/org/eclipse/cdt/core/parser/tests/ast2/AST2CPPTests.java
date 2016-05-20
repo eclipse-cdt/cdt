@@ -11884,4 +11884,41 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testShadowingAliasDeclaration_484200() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	class S {
+	//	    static S waldo;
+	//	};
+	//	void foo(const S& = S());
+	public void testValueRepresentationOfClassWithStaticMemberOfOwnType_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
+	}
+	
+	//	class S {
+	//		S waldo;  // invalid
+	//	};
+	//	void foo(const S& = S());
+	public void testClassDirectlyAggregatingItself_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
+	}
+	
+	//	class T;
+	//	class S {
+	//		T waldo;  // invalid
+	//	};
+	//	class T {
+	//		S waldo;
+	//	};
+	//	void foo(const T& = T());
+	public void testClassIndirectlyAggregatingItself_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
+	}
 }

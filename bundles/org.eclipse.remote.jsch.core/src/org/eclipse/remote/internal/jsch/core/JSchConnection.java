@@ -612,6 +612,9 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	 */
 	@Override
 	public IRemoteProcessBuilder getProcessBuilder(List<String> command) {
+		if (!isOpen()) {
+			return null;
+		}
 		return new JSchProcessBuilder(getRemoteConnection(), command);
 	}
 
@@ -622,6 +625,9 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	 */
 	@Override
 	public IRemoteProcessBuilder getProcessBuilder(String... command) {
+		if (!isOpen()) {
+			return null;
+		}
 		return new JSchProcessBuilder(getRemoteConnection(), command);
 	}
 

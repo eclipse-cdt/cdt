@@ -37,9 +37,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 
 public class ArduinoPlatform {
 
+	// JSON fields
 	private String name;
 	private String architecture;
 	private String version;
@@ -50,6 +52,7 @@ public class ArduinoPlatform {
 	private String size;
 	private List<ArduinoBoard> boards;
 	private List<ToolDependency> toolsDependencies;
+	// end JSON fields
 
 	private ArduinoPackage pkg;
 	private HierarchicalProperties boardsProperties;
@@ -57,13 +60,13 @@ public class ArduinoPlatform {
 	private Map<String, String> menus = new HashMap<>();
 	private Map<String, ArduinoLibrary> libraries;
 
-	void setOwner(ArduinoPackage pkg) {
+	void init(ArduinoPackage pkg) {
 		this.pkg = pkg;
+
 		for (ArduinoBoard board : boards) {
-			board.setOwners(this);
-		}
-		for (ToolDependency toolDep : toolsDependencies) {
-			toolDep.setOwner(this);
+			if (board != null) {
+				board.setOwners(this);
+			}
 		}
 	}
 
@@ -103,33 +106,39 @@ public class ArduinoPlatform {
 		return size;
 	}
 
+	public void setPlatformProperties(Properties platformProperties) {
+		this.platformProperties = platformProperties;
+	}
+
 	public List<ArduinoBoard> getBoards() {
-		if (isInstalled() && boardsProperties == null) {
+		if (boardsProperties == null) {
 			Properties boardProps = new Properties();
 
-			try (InputStream is = new FileInputStream(getInstallPath().resolve("boards.txt").toFile()); //$NON-NLS-1$
-					Reader reader = new InputStreamReader(is, "UTF-8")) { //$NON-NLS-1$
-				boardProps.load(reader);
-			} catch (IOException e) {
-				Activator.log(e);
-			}
-
-			boardsProperties = new HierarchicalProperties(boardProps);
-
-			// Replace the boards with a real ones
-			boards = new ArrayList<>();
-			for (Map.Entry<String, HierarchicalProperties> entry : boardsProperties.getChildren().entrySet()) {
-				if (entry.getValue().getChild("name") != null) { //$NON-NLS-1$
-					// assume things with names are boards
-					boards.add(new ArduinoBoard(entry.getKey(), entry.getValue()).setOwners(this));
+			if (Files.exists(getInstallPath())) {
+				try (InputStream is = new FileInputStream(getInstallPath().resolve("boards.txt").toFile()); //$NON-NLS-1$
+						Reader reader = new InputStreamReader(is, "UTF-8")) { //$NON-NLS-1$
+					boardProps.load(reader);
+				} catch (IOException e) {
+					Activator.log(e);
 				}
-			}
 
-			// Build the menu
-			HierarchicalProperties menuProp = boardsProperties.getChild("menu"); //$NON-NLS-1$
-			if (menuProp != null) {
-				for (Map.Entry<String, HierarchicalProperties> entry : menuProp.getChildren().entrySet()) {
-					menus.put(entry.getKey(), entry.getValue().getValue());
+				boardsProperties = new HierarchicalProperties(boardProps);
+
+				// Replace the boards with a real ones
+				boards = new ArrayList<>();
+				for (Map.Entry<String, HierarchicalProperties> entry : boardsProperties.getChildren().entrySet()) {
+					if (entry.getValue().getChild("name") != null) { //$NON-NLS-1$
+						// assume things with names are boards
+						boards.add(new ArduinoBoard(entry.getKey(), entry.getValue()).setOwners(this));
+					}
+				}
+
+				// Build the menu
+				HierarchicalProperties menuProp = boardsProperties.getChild("menu"); //$NON-NLS-1$
+				if (menuProp != null) {
+					for (Map.Entry<String, HierarchicalProperties> entry : menuProp.getChildren().entrySet()) {
+						menus.put(entry.getKey(), entry.getValue().getValue());
+					}
 				}
 			}
 		}
@@ -140,7 +149,16 @@ public class ArduinoPlatform {
 		return boardsProperties;
 	}
 
-	public ArduinoBoard getBoard(String name) throws CoreException {
+	public ArduinoBoard getBoard(String id) throws CoreException {
+		for (ArduinoBoard board : getBoards()) {
+			if (id.equals(board.getId())) {
+				return board;
+			}
+		}
+		return null;
+	}
+
+	public ArduinoBoard getBoardByName(String name) throws CoreException {
 		for (ArduinoBoard board : getBoards()) {
 			if (name.equals(board.getName())) {
 				return board;
@@ -187,32 +205,8 @@ public class ArduinoPlatform {
 		return platformProperties;
 	}
 
-	public boolean isInstalled() {
-		return getInstallPath().resolve("boards.txt").toFile().exists(); //$NON-NLS-1$
-	}
-
 	public Path getInstallPath() {
-		// TODO remove migration in Neon
-		Path oldPath = ArduinoPreferences.getArduinoHome().resolve("hardware").resolve(pkg.getName()) //$NON-NLS-1$
-				.resolve(architecture).resolve(version);
-		Path newPath = getPackage().getInstallPath().resolve("hardware").resolve(pkg.getName()).resolve(architecture) //$NON-NLS-1$
-				.resolve(version);
-		if (Files.exists(oldPath)) {
-			try {
-				Files.createDirectories(newPath.getParent());
-				Files.move(oldPath, newPath);
-				for (Path parent = oldPath.getParent(); parent != null; parent = parent.getParent()) {
-					if (Files.newDirectoryStream(parent).iterator().hasNext()) {
-						break;
-					} else {
-						Files.delete(parent);
-					}
-				}
-			} catch (IOException e) {
-				Activator.log(e);
-			}
-		}
-		return newPath;
+		return getPackage().getInstallPath().resolve("hardware").resolve(architecture); //$NON-NLS-1$
 	}
 
 	public List<Path> getIncludePath() {
@@ -249,18 +243,17 @@ public class ArduinoPlatform {
 	}
 
 	private void initLibraries() throws CoreException {
-		libraries = new HashMap<>();
-		File[] libraryDirs = getInstallPath().resolve("libraries").toFile().listFiles(); //$NON-NLS-1$
-		if (libraryDirs != null) {
-			for (File libraryDir : libraryDirs) {
-				Path propsPath = libraryDir.toPath().resolve("library.properties"); //$NON-NLS-1$
-				if (propsPath.toFile().exists()) {
-					try {
-						ArduinoLibrary lib = new ArduinoLibrary(propsPath);
-						libraries.put(lib.getName(), lib);
-					} catch (IOException e) {
-						throw new CoreException(
-								new Status(IStatus.ERROR, Activator.getId(), "Loading " + propsPath, e)); //$NON-NLS-1$
+		if (libraries != null) {
+			if (Files.exists(getInstallPath())) {
+				libraries = new HashMap<>();
+				File[] libraryDirs = getInstallPath().resolve("libraries").toFile().listFiles(); //$NON-NLS-1$
+				if (libraryDirs != null) {
+					for (File libraryDir : libraryDirs) {
+						Path propsPath = libraryDir.toPath().resolve("library.properties"); //$NON-NLS-1$
+						if (propsPath.toFile().exists()) {
+							ArduinoLibrary lib = new ArduinoLibrary(propsPath, this);
+							libraries.put(lib.getName(), lib);
+						}
 					}
 				}
 			}
@@ -268,24 +261,35 @@ public class ArduinoPlatform {
 	}
 
 	public synchronized Collection<ArduinoLibrary> getLibraries() throws CoreException {
-		if (libraries == null && isInstalled()) {
-			initLibraries();
-		}
+		initLibraries();
 		return libraries.values();
 	}
 
 	public synchronized ArduinoLibrary getLibrary(String name) throws CoreException {
-		if (libraries == null && isInstalled()) {
-			initLibraries();
-		}
+		initLibraries();
 		return libraries != null ? libraries.get(name) : null;
 	}
 
-	public IStatus install(IProgressMonitor monitor) {
+	public void install(IProgressMonitor monitor) throws CoreException {
+		int work = 1 + toolsDependencies.size();
+
+		boolean exists = Files.exists(getInstallPath());
+		if (exists)
+			work++;
+
+		Path makePath = ArduinoPreferences.getArduinoHome().resolve("make.exe"); //$NON-NLS-1$
+		boolean needMake = Platform.getOS().equals(Platform.OS_WIN32) && !Files.exists(makePath);
+		if (needMake)
+			work++;
+
+		SubMonitor sub = SubMonitor.convert(monitor, work);
+
 		// Check if we're installed already
-		if (isInstalled()) {
+		if (exists) {
 			try {
+				sub.setTaskName(String.format("Removing old package %s", getName()));
 				ArduinoManager.recursiveDelete(getInstallPath());
+				sub.worked(1);
 			} catch (IOException e) {
 				// just log it, shouldn't break the install
 				Activator.log(e);
@@ -294,39 +298,41 @@ public class ArduinoPlatform {
 
 		// Install the tools
 		for (ToolDependency toolDep : toolsDependencies) {
-			IStatus status = toolDep.install(monitor);
-			if (!status.isOK()) {
-				return status;
-			}
+			sub.setTaskName(String.format("Installing tool %s", toolDep.getName()));
+			toolDep.install(monitor);
+			sub.worked(1);
 		}
 
 		// On Windows install make from bintray
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (needMake) {
 			try {
-				Path makePath = ArduinoPreferences.getArduinoHome().resolve("make.exe"); //$NON-NLS-1$
-				if (!makePath.toFile().exists()) {
-					Files.createDirectories(makePath.getParent());
-					URL makeUrl = new URL("https://bintray.com/artifact/download/cdtdoug/tools/make.exe"); //$NON-NLS-1$
-					Files.copy(makeUrl.openStream(), makePath);
-					makePath.toFile().setExecutable(true, false);
-				}
+				sub.setTaskName("Installing make");
+				Files.createDirectories(makePath.getParent());
+				URL makeUrl = new URL("https://bintray.com/artifact/download/cdtdoug/tools/make.exe"); //$NON-NLS-1$
+				Files.copy(makeUrl.openStream(), makePath);
+				makePath.toFile().setExecutable(true, false);
+				sub.worked(1);
 			} catch (IOException e) {
-				return new Status(IStatus.ERROR, Activator.getId(), Messages.ArduinoPlatform_0, e);
+				throw Activator.coreException(e);
 			}
 		}
 
 		// Download platform archive
-		IStatus status = ArduinoManager.downloadAndInstall(url, archiveFileName, getInstallPath(), monitor);
-		if (!status.isOK()) {
-			return status;
+		sub.setTaskName(String.format("Downloading and installing %s", getName()));
+		try {
+			ArduinoManager.downloadAndInstall(url, archiveFileName, getInstallPath(), monitor);
+		} catch (IOException e) {
+			throw Activator.coreException(e);
 		}
+		sub.done();
 
-		return Status.OK_STATUS;
+		pkg.platformInstalled(this);
 	}
 
 	public IStatus uninstall(IProgressMonitor monitor) {
 		try {
 			ArduinoManager.recursiveDelete(getInstallPath());
+			pkg.platformUninstalled(this);
 			// TODO delete tools that aren't needed any more
 			return Status.OK_STATUS;
 		} catch (IOException e) {

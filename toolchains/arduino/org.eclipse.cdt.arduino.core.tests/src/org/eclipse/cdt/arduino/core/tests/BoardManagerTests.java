@@ -17,7 +17,7 @@ public class BoardManagerTests {
 
 	@Test
 	public void loadPackagesTest() throws Exception {
-		assertNotEquals(0, Activator.getService(ArduinoManager.class).getPackageIndices().size());
+		assertNotEquals(0, Activator.getService(ArduinoManager.class).getInstalledPlatforms().size());
 	}
 
 }

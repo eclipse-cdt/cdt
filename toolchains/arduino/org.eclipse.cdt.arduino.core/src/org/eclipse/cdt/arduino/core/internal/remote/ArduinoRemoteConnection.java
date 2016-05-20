@@ -95,14 +95,15 @@ public class ArduinoRemoteConnection
 	}
 
 	public ArduinoBoard getBoard() throws CoreException {
-		return Activator.getService(ArduinoManager.class).getBoard(remoteConnection.getAttribute(BOARD_NAME),
-				remoteConnection.getAttribute(PLATFORM_NAME), remoteConnection.getAttribute(PACKAGE_NAME));
+		return Activator.getService(ArduinoManager.class).getBoard(remoteConnection.getAttribute(PACKAGE_NAME),
+				remoteConnection.getAttribute(PLATFORM_NAME), remoteConnection.getAttribute(BOARD_NAME));
 	}
 
 	public String getPortName() {
 		return remoteConnection.getAttribute(PORT_NAME);
 	}
 
+	@Override
 	public IRemoteProcess getCommandShell(int flags) throws IOException {
 		if (serialPort != null && serialPort.isOpen()) {
 			// can only have one open at a time

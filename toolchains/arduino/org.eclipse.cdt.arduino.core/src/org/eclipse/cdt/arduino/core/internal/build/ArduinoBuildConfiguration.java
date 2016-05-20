@@ -98,15 +98,15 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
 		String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
 		String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
-		ArduinoBoard b = manager.getBoard(boardName, platformName, packageName);
+		ArduinoBoard b = manager.getBoard(packageName, platformName, boardName);
 
 		if (b == null) {
 			// Default to Uno or first one we find
 			b = manager.getBoard("Arduino/Genuino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (b == null) {
-				List<ArduinoBoard> boards = manager.getInstalledBoards();
+				Collection<ArduinoBoard> boards = manager.getInstalledBoards();
 				if (!boards.isEmpty()) {
-					b = boards.get(0);
+					b = boards.iterator().next();
 				}
 			}
 		}
@@ -116,7 +116,8 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		this.launchMode = name.substring(i + 1);
 	}
 
-	ArduinoBuildConfiguration(IBuildConfiguration config, String name, ArduinoBoard board, String launchMode, IToolChain toolChain)
+	ArduinoBuildConfiguration(IBuildConfiguration config, String name, ArduinoBoard board, String launchMode,
+			IToolChain toolChain)
 			throws CoreException {
 		super(config, name, toolChain);
 		this.board = board;

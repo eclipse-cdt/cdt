@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_96dbcb9a",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-20T14:02:45Z",
+      "side": 1,
+      "message": "I\u0027d suggest a different approach: use o.e.r.IRemoteProcessBuilder to spawn the process and wait until it finishes so that you don\u0027t need to rely on waitTime.\n\nIndeed it was something I forgot to change when I moved from RSE to o.e.remote. Good catch!",
+      "parentUuid": "87e453f8_56178350",
+      "range": {
+        "startLine": 123,
+        "startChar": 22,
+        "endLine": 123,
+        "endChar": 23
+      },
+      "revId": "728b412512328f2882a30ca80a4db003ace039c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_b62527b5",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
         "patchSetId": 1

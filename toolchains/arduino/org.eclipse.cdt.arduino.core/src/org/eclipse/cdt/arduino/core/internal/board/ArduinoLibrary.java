@@ -10,6 +10,7 @@ package org.eclipse.cdt.arduino.core.internal.board;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,14 +19,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 public class ArduinoLibrary {
 
+	// JSON fields
 	private String name;
 	private String version;
 	private String author;
@@ -40,18 +42,22 @@ public class ArduinoLibrary {
 	private String archiveFileName;
 	private int size;
 	private String checksum;
+	// end JSON fields
 
 	private Path installPath;
+	private ArduinoPlatform platform;
 
 	public ArduinoLibrary() {
 	}
 
-	public ArduinoLibrary(Path propertiesFile) throws IOException {
+	public ArduinoLibrary(Path propertiesFile) throws CoreException {
 		installPath = propertiesFile.getParent();
 
 		Properties props = new Properties();
 		try (FileReader reader = new FileReader(propertiesFile.toFile())) {
 			props.load(reader);
+		} catch (IOException e) {
+			throw Activator.coreException(e);
 		}
 
 		name = props.getProperty("name"); //$NON-NLS-1$
@@ -62,6 +68,11 @@ public class ArduinoLibrary {
 		paragraph = props.getProperty("paragraph"); //$NON-NLS-1$
 		category = props.getProperty("category"); //$NON-NLS-1$
 		architectures = Arrays.asList(props.getProperty("architectures").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public ArduinoLibrary(Path propertiesFile, ArduinoPlatform platform) throws CoreException {
+		this(propertiesFile);
+		this.platform = platform;
 	}
 
 	public String getName() {
@@ -177,21 +188,33 @@ public class ArduinoLibrary {
 	}
 
 	public Path getInstallPath() {
-		return installPath != null ? installPath
-				: ArduinoPreferences.getArduinoHome().resolve("libraries").resolve(name.replace(' ', '_')) //$NON-NLS-1$
-						.resolve(version);
+		return installPath == null
+				? ArduinoPreferences.getArduinoHome().resolve("libraries").resolve(name.replace(' ', '_')) //$NON-NLS-1$
+				: installPath;
 	}
 
-	public boolean isInstalled() {
-		return getInstallPath().toFile().exists();
+	public ArduinoPlatform getPlatform() {
+		return platform;
 	}
 
-	public IStatus install(IProgressMonitor monitor) {
-		if (isInstalled()) {
-			return Status.OK_STATUS;
+	public void install(IProgressMonitor monitor) throws CoreException {
+		if (Files.exists(getInstallPath())) {
+			uninstall(monitor);
 		}
 
-		return ArduinoManager.downloadAndInstall(url, archiveFileName, getInstallPath(), monitor);
+		try {
+			ArduinoManager.downloadAndInstall(url, archiveFileName, getInstallPath(), monitor);
+		} catch (IOException e) {
+			throw Activator.coreException(e);
+		}
+	}
+
+	public void uninstall(IProgressMonitor monitor) throws CoreException {
+		try {
+			ArduinoManager.recursiveDelete(getInstallPath());
+		} catch (IOException e) {
+			throw Activator.coreException(e);
+		}
 	}
 
 	public Collection<Path> getIncludePath() {
@@ -240,17 +263,69 @@ public class ArduinoLibrary {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof ArduinoLibrary) {
-			return getName().equals(((ArduinoLibrary) obj).getName());
-		} else {
-			return false;
+	public String toString() {
+		return getName();
+	}
+
+	private String fixText(String text) {
+		String fixed = text.replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+		fixed = fixed.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		return fixed;
+	}
+
+	public String toFormText() {
+		StringBuilder text = new StringBuilder();
+
+		text.append("<form>"); //$NON-NLS-1$
+		text.append(String.format("<p><b>%s: %s</b></p>", "Library", fixText(getName()))); //$NON-NLS-1$
+
+		if (getMaintainer() != null) {
+			text.append(String.format("<p>%s: %s</p>", "Maintainer", fixText(getMaintainer()))); //$NON-NLS-1$
 		}
+
+		if (getWebsite() != null) {
+			text.append(String.format("<p><a href=\"%s\">%s</a></p>", getWebsite(), "Online help")); //$NON-NLS-1$
+		}
+
+		text.append(String.format("<p>%s</p>", getSentence()));
+		if (getParagraph() != null && !getParagraph().equals(getSentence())) {
+			text.append(String.format("<p>%s</p>", getParagraph()));
+		}
+
+		text.append("</form>");
+
+		return text.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		return getName().hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((platform == null) ? 0 : platform.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ArduinoLibrary other = (ArduinoLibrary) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (platform == null) {
+			if (other.platform != null)
+				return false;
+		} else if (!platform.equals(other.platform))
+			return false;
+		return true;
 	}
 
 }

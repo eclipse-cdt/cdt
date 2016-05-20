@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_191e0c98",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-20T15:51:19Z",
+      "side": 1,
+      "message": "The RemoteHelper#remoteShellExec uses o.e.r.IRemoteCommandShellService that keeps a shell connection alive, waiting for read/write operations on the channel. You cannot say exactly when the command finished, unless you parse the output. So Alvaro\u0027s solution will always hit the timeout.  \n\nAs opposite, o.e.r.IRemoteProcessBuilder emulates behavior of java.lang.ProcessBuilder. It opens a connection, spawn the process and return an IRemoteProcess object. Then you can simply wait the process to finish (IRemoteProcess.waitFor() - no timeout arguments) before return.",
+      "parentUuid": "87e453f8_16c17b97",
+      "range": {
+        "startLine": 123,
+        "startChar": 22,
+        "endLine": 123,
+        "endChar": 23
+      },
+      "revId": "728b412512328f2882a30ca80a4db003ace039c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_b62527b5",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
         "patchSetId": 1

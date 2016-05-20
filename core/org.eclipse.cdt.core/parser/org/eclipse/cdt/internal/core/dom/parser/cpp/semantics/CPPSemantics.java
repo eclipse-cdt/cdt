@@ -215,7 +215,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMethod;
@@ -460,7 +460,7 @@ public class CPPSemantics {
 						}
 					}
 					if (cls instanceof ICPPUnknownBinding) {
-						binding= new CPPUnknownConstructor(cls);
+						binding= new CPPDeferredConstructor(cls);
 					} else {
 						// Do not interpret template arguments to a template class as being
 						// explicit template arguments to its templated constructor.

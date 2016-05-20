@@ -41,7 +41,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	 */
 	public static ICPPFunction createForCandidates(ICPPFunction... candidates) {
 		if (candidates[0] instanceof ICPPConstructor)
-			return new CPPUnknownConstructor(((ICPPConstructor) candidates[0]).getClassOwner(), candidates);
+			return new CPPDeferredConstructor(((ICPPConstructor) candidates[0]).getClassOwner(), candidates);
 		
 		final IBinding owner = candidates[0].getOwner();
 		return new CPPDeferredFunction(owner, candidates[0].getNameCharArray(), candidates);

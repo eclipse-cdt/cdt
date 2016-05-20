@@ -62,6 +62,8 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -2892,5 +2894,27 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	// empty file
 	public void testStackOverflow_462764() throws Exception {
 		checkBindings();
+	}
+	
+	//	template <typename>
+	//	struct base {
+	//		constexpr base() {}
+	//	};
+	//    
+	//	template <typename T>
+	//	struct derived : base<T> {
+	//		constexpr derived() : base<T>() {}
+	//	};
+	
+	//	derived<int> waldo;
+	public void testSerializationOfUnknownConstructor_490475() throws Exception {
+		IVariable waldo = getBindingFromASTName("waldo", 5);
+		IType derivedInt = waldo.getType();
+		assertInstance(derivedInt, ICPPClassSpecialization.class);
+		ICPPClassType derived = ((ICPPClassSpecialization) derivedInt).getSpecializedBinding();
+		ICPPMethod constructor = ClassTypeHelper.getMethodInClass(derived, MethodKind.DEFAULT_CTOR, null);
+		assertInstance(constructor, ICPPComputableFunction.class);
+		// Trigger deserialization of constructor chain execution
+		((ICPPComputableFunction) constructor).getConstructorChainExecution();
 	}
 }

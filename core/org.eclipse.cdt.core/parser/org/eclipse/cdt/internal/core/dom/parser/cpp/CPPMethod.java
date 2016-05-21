@@ -121,7 +121,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 
 	@Override
 	public ICPPClassType getClassOwner() {
-		ICPPClassScope scope = (ICPPClassScope)getScope();
+		ICPPClassScope scope = (ICPPClassScope) getScope();
 		return scope.getClassType();
 	}
 

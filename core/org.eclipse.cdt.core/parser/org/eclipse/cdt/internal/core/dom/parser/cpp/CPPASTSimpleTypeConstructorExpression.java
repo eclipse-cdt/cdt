@@ -98,6 +98,9 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 			final IType type = CPPVisitor.createType(fDeclSpec);
 			if (fInitializer instanceof ICPPASTConstructorInitializer || fInitializer instanceof ICPPASTInitializerList) {
 				fEvaluation= new EvalTypeId(type, this, EvalConstructor.extractArguments(fInitializer));
+				if (fInitializer instanceof ICPPASTInitializerList) {
+					((EvalTypeId) fEvaluation).setUsesBracedInitList();
+				}
 			} else {
 				fEvaluation= EvalFixed.INCOMPLETE;
 			}

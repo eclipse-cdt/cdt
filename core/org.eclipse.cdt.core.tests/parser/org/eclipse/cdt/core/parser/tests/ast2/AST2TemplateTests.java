@@ -9449,4 +9449,43 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDisambiguationInNoexceptSpecifier_467332() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template <typename T>
+	//	struct C {
+	//	    T field;
+	//	    void meow();
+	//	};
+	//	struct S {
+	//	    template <typename U>
+	//	    auto operator()(U u) -> decltype(C<U>{u});
+	//	};
+	//	int main() {
+	//	    S()(0).meow();  // ERROR: Method 'meow' could not be resolved
+	//	}
+	public void testBraceInitialization_490475a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct S {
+	//	    int x;
+	//	    int y;
+	//	};
+	//
+	//	constexpr int foo(S a, S b) {
+	//	    return a.x - b.x;
+	//	}
+	//
+	//	constexpr S a = S{8, 0};
+	//	constexpr S b = S{21, 0};
+	//
+	//	constexpr int waldo = foo(a, b);
+	public void testBraceInitialization_490475b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable waldo = helper.assertNonProblem("waldo");
+		// TODO(nathanridge): 
+		//   Actually test that we get the correct value.
+		//   For this, we need to add support for aggregate initialization in EvalTypeId.
+		//	 For now, just test that attempting to evaluate doesn't throw an exception.
+		waldo.getInitialValue();
+	}
 }

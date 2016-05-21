@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * The result of instantiating a class template or an explicit specialization of a class template.
+ * The {@link #isExplicitSpecialization()} method is used to distinguish between the two cases.
  */
 class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTemplateInstance {
 	private static final int ARGUMENTS = PDOMCPPClassSpecialization.RECORD_SIZE + 0;

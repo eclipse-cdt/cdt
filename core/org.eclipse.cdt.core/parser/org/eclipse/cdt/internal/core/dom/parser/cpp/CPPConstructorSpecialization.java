@@ -18,10 +18,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
- * Specialization of a constructor for a class-template or class-template specialization
+ * Specialization of a constructor for a class-template or class-template specialization.
  */
-public class CPPConstructorSpecialization extends CPPMethodSpecialization
-		implements ICPPConstructor {
+public class CPPConstructorSpecialization extends CPPMethodSpecialization implements ICPPConstructor {
 
 	public CPPConstructorSpecialization(ICPPConstructor orig, ICPPClassType owner,
 			ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {

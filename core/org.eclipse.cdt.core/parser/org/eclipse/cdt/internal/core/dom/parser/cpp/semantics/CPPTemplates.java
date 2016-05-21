@@ -808,8 +808,8 @@ public class CPPTemplates {
 							return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
 						}
 						ICPPPartialSpecialization partialSpec= findPartialSpecialization(classTemplate, args);
-						if (isDeclaration || isDefinition) {
-							if (partialSpec == null) {
+						if (partialSpec == null) {
+							if (isDeclaration || isDefinition) {
 								if (template instanceof ICPPClassTemplate) {
 									partialSpec = new CPPClassTemplatePartialSpecialization(id, args);
 									if (template instanceof ICPPInternalClassTemplate) {
@@ -827,9 +827,8 @@ public class CPPTemplates {
 								}
 								return partialSpec;
 							}
-						}
-						if (partialSpec == null)
 							return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TYPE, templateName.toCharArray());
+						}
 						result= partialSpec;
 					}
 				}

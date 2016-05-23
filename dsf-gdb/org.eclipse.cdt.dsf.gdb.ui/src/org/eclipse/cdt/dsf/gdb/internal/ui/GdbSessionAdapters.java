@@ -9,6 +9,7 @@
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Mikhail Khodjaiants (Mentor Graphics) - initial API and implementation
  *     Intel Corporation - Added Reverse Debugging BTrace support
+ *     Stefan Sprenger - Bug 491514
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
 import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval;
+import org.eclipse.cdt.debug.core.model.IResolveHandler;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
@@ -58,6 +60,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbRestartCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbSteppingModeTarget;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbConnectCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbDebugNewExecutableCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbResolvePathCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbResumeWithoutSignalCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseResumeCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepIntoCommand;
@@ -217,7 +220,8 @@ public class GdbSessionAdapters {
 			IDebugModelProvider.class, 
 			ILaunch.class,
 			ICEditorTextHover.class,
-			IMemoryBlockAddressInfoRetrieval.class));
+			IMemoryBlockAddressInfoRetrieval.class,
+			IResolveHandler.class));
     }
 
     /**
@@ -309,6 +313,9 @@ public class GdbSessionAdapters {
 		}
 		if (IDisconnectHandler.class.equals(adapterType)) { 
 			return (T)new GdbDisconnectCommand(session);
+		}
+		if (IResolveHandler.class.equals(adapterType)) { 
+			return (T)new GdbResolvePathCommand(session, launch);
 		}
 		if (IModelSelectionPolicyFactory.class.equals(adapterType)) { 
 			return (T)new DefaultDsfModelSelectionPolicyFactory();

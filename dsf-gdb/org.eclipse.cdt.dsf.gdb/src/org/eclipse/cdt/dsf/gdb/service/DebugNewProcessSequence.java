@@ -10,15 +10,18 @@
  *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
  *                               dialog should start (Bug 362039)
  *     Sergey Prigogin (Google) - Bug 381804 
+ *     Stefan Sprenger - Bug 491514 added new step to verify gdb sources
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.model.IResolveHandler;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -30,6 +33,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.actions.IResolve;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
@@ -39,6 +43,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFileListExecSourceFilesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.utils.CommandLineUtil;
@@ -107,6 +112,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 					"stepSpecifyCoreFile",   //$NON-NLS-1$
 					
 					"stepInitializeMemory", //$NON-NLS-1$
+					"stepVerifyProjectFiles", //$NON-NLS-1$
 					"stepStartTrackingBreakpoints", //$NON-NLS-1$
 					"stepStartExecution",   //$NON-NLS-1$
 					"stepCleanupBaseSequence",   //$NON-NLS-1$
@@ -442,6 +448,33 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			rm.done();
 		}
 	}
+	
+	/**
+	 * Opens path mapping wizard if any inconsistencies in gdb source file resolve abilities
+	 * @since 5.0
+	 */
+	@Execute
+	public void stepVerifyProjectFiles(RequestMonitor rm) {
+		fCommandControl.queueCommand(
+				fCommandFactory.createMIFileListExecSourceFiles(getContainerContext()), 
+				new ImmediateDataRequestMonitor<MIInfo>(rm){
+					@Override
+					protected void handleCompleted(){
+						List<String> pathList = ((MIFileListExecSourceFilesInfo)getData()).getPathList();
+						
+						if(pathList != null && pathList.size() != 0){
+							IResolveHandler resolveCommand = (IResolveHandler)fBackend.getSession().getModelAdapter(IResolveHandler.class);
+							if (resolveCommand instanceof IResolve) {
+								((IResolve)resolveCommand).resolve(pathList);
+							} 
+						}
+						
+						rm.done();
+					}
+				});
+		
+	}
+		
 
 	/**
 	 * Initialize the memory service with the data for given process.

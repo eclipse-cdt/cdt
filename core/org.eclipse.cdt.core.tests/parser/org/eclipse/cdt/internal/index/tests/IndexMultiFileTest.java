@@ -124,4 +124,43 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testNamespace_481161() throws Exception {
 		checkBindings();
 	}
+
+	// A.h
+	//	#include "B.h"
+	//
+	//	template <typename T, typename U>
+	//	struct A {
+	//	  A(D<U> p);
+	//	};
+	//
+	//	template <>
+	//	struct A<B, C> {
+	//	  A(D<C> p);
+	//	};
+
+	// B.h
+	//	struct B {};
+	//
+	//	struct C {};
+	//
+	//	template <typename T>
+	//	struct D {};
+
+	// C.h
+	//	class B;
+
+	// confuser.cpp
+	//	#include "B.h"
+
+	// test.cpp *
+	//	#include "A.h"
+	//	#include "C.h"
+	//
+	//	void test() {
+	//	  D<C> x;
+	//	  new A<B, C>(x);
+	//	}
+	public void testExplicitSpecialization_494359() throws Exception {
+		checkBindings();
+	}
 }

@@ -97,6 +97,54 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_85cf0aa3",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-05-24T15:20:28Z",
+      "side": 1,
+      "message": "Done, set to 10 sec.",
+      "parentUuid": "87e453f8_56178350",
+      "range": {
+        "startLine": 123,
+        "startChar": 22,
+        "endLine": 123,
+        "endChar": 23
+      },
+      "revId": "728b412512328f2882a30ca80a4db003ace039c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_65f4bec1",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-05-24T15:20:28Z",
+      "side": 1,
+      "message": "The suggested approach does not always hit the timeout. \nIt returns right away when the process completes, similarly to IRemoteProcess.waifor(),   I could have used Process#wait() similarly to your suggestion, but I am using waitFor in order to cover the possibility of a hanging command.\n  I have double checked on this by testing with time stamps before and after execution and I can see the quick returns with no timeout.\n  I have increased the timeout to cover for slow connections, \nthe update is reflected in patch set 2.",
+      "parentUuid": "87e453f8_191e0c98",
+      "range": {
+        "startLine": 123,
+        "startChar": 22,
+        "endLine": 123,
+        "endChar": 23
+      },
+      "revId": "728b412512328f2882a30ca80a4db003ace039c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_b62527b5",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
         "patchSetId": 1
@@ -108,6 +156,30 @@
       "writtenOn": "2016-05-20T13:07:37Z",
       "side": 1,
       "message": "Is there really nothing to do?  If this thread gets interrupted, shouldn\u0027t it abort/exit early?",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 32
+      },
+      "revId": "728b412512328f2882a30ca80a4db003ace039c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_8501ca3f",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-05-24T15:20:28Z",
+      "side": 1,
+      "message": "Done, \nPatch set 2 reflects this.",
+      "parentUuid": "87e453f8_b62527b5",
       "range": {
         "startLine": 130,
         "startChar": 0,

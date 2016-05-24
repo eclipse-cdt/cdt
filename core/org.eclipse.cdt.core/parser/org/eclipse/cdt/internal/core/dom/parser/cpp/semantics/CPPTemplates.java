@@ -461,7 +461,7 @@ public class CPPTemplates {
 			ICPPTemplateInstance result = ((ICPPInstanceCache) template).getInstance(args);
 			if (forDefinition && result instanceof IIndexBinding)
 				return null;
-			if (result != null) {
+			if (result != null && !result.isExplicitSpecialization()) {
 				// Don't use the cached instance if its argument is an index type and the requested
 				// argument is an AST type. Despite identical signatures the types may be different.
 				ICPPTemplateArgument[] instanceArgs = result.getTemplateArguments();

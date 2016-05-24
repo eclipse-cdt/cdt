@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_05821f0c",
+        "filename": "cross/org.eclipse.cdt.launch.remote/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_b9c6f811",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_d9cbc419",
         "filename": "cross/org.eclipse.cdt.launch.remote/META-INF/MANIFEST.MF",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2016-05-20T22:13:42Z",
       "side": 1,
       "message": "Does not look like it is needed.",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_6579239f",
+        "filename": "cross/org.eclipse.cdt.launch.remote/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "I ran \"find unused dependencies\" tool, it also indicated o.e.debug.core and e.e.core.resources.",
+      "parentUuid": "87e453f8_d9cbc419",
       "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_2531dbf0",
+        "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_cc79446e",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_7941d00b",
         "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2016-05-20T22:13:42Z",
       "side": 1,
       "message": "Do we want this new tab as the first one?  If so, we need to add an \u003cplacement\u003e entry\nto the main tab below (as you can see in the other tabs).  If we don\u0027t want it\nfirst, we should add that entry to this new tab.",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_658923ad",
+        "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "I added the placement. Ideally user should choose the connection first.",
+      "parentUuid": "87e453f8_7941d00b",
       "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_8509cfbe",
+        "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_2c60e8ad",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_99c13cfe",
         "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2016-05-20T22:13:42Z",
       "side": 1,
       "message": "same comment as above",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_a50ecbc2",
+        "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_99c13cfe",
       "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_e5ea9321",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "I was worried about the many warnings due CMainTab being now deprecated. Reverted this change.",
+      "parentUuid": "87e453f8_2ce388c4",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_8c9d7c49",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2016-05-20T22:13:42Z",
       "side": 1,
       "message": "Remove the \u0027this\u0027 prefix, it is not needed and we don\u0027t usually use it.",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_e58e1382",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_8c9d7c49",
       "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_0573ff0a",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_aca23881",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_4c11b40a",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
         "patchSetId": 2
@@ -166,6 +328,24 @@
       "writtenOn": "2016-05-20T22:13:42Z",
       "side": 1,
       "message": "You should override getId() and specify an id for this tab.\nThis will allow to position other tabs with respect to this one.",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_4554274c",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_4c11b40a",
       "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_6551235a",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_2c76284a",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_4c8374a6",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
         "patchSetId": 2
@@ -200,6 +398,24 @@
       "writtenOn": "2016-05-20T22:13:42Z",
       "side": 1,
       "message": "Please use {} even for one-liners",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_80b1bd2f",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_4c8374a6",
       "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_82cf00a3",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Setting null makes the attribute undefined according to the documentation. When you retrieve (getAttribute) an undefined attribute, the default value is return.",
+      "parentUuid": "87e453f8_4c5a94ca",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_6cb2f07c",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
         "patchSetId": 2
@@ -240,6 +474,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_02b21000",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "\"Show\" does not imply it goes to the remote target.\n\"Fetch\" does not imply it will display.\nSo I changed to \"Fetch and display system information\". Does it work?",
+      "parentUuid": "87e453f8_6cb2f07c",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_0cab2c0e",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
         "patchSetId": 2
@@ -251,6 +503,24 @@
       "writtenOn": "2016-05-20T22:13:42Z",
       "side": 1,
       "message": "It would be nice to be consistent about what to show when the systemInfo box is not checked.\nCurrently, when first shown, the text is empty, but then the above mention show when one enbles\nthen disables the checkbox.\nEither alwyas show the message when the box is not checked, or never show it.  Up to you about which.",
+      "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_42f6d803",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteSystemTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 814
+      },
+      "writtenOn": "2016-05-24T15:03:24Z",
+      "side": 1,
+      "message": "Fixed, always show the message when the box is not checked.\n\nNotice this option is not saved as attribute of launch configuration. Should it?",
+      "parentUuid": "87e453f8_0cab2c0e",
       "revId": "94d8c3fbed254302d029b7c5fd7b49a8f14e493a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

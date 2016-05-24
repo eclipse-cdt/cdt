@@ -33,7 +33,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
-@SuppressWarnings("restriction")
 public class TerminalConsoleConnector {
 
 	private final IRemoteConnection connection;
@@ -147,7 +146,10 @@ public class TerminalConsoleConnector {
 					}
 
 					if (width > 0 || height > 0) {
-						TerminalConsoleConnector.this.setTerminalSize();
+						IRemoteProcessTerminalService termService = remoteProcess.getService(IRemoteProcessTerminalService.class);
+						if (termService != null) {
+							termService.setTerminalSize(width, height, 8 * width, 8 * height);
+						}
 					}
 
 					setState(TerminalState.CONNECTED);

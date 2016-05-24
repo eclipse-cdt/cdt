@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -30,11 +30,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 /**
  * Gnu-extension: ({ ... })
  */
-public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
+public class CPPASTCompoundStatementExpression extends ASTNode
+		implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
     private IASTCompoundStatement fStatement;
     private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-    
+
 	public CPPASTCompoundStatementExpression(IASTCompoundStatement statement) {
 		setCompoundStatement(statement);
 	}
@@ -43,7 +44,7 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 	public CPPASTCompoundStatementExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTCompoundStatementExpression copy(CopyStyle style) {
 		CPPASTCompoundStatementExpression copy =
@@ -72,9 +73,11 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 			if (fStatement != null) {
 				IASTStatement[] statements = fStatement.getStatements();
 				if (statements.length > 0) {
-					IASTStatement st = statements[statements.length - 1];
-					if (st instanceof IASTExpressionStatement) {
-						fEval= new EvalCompound(((ICPPASTExpression) ((IASTExpressionStatement) st).getExpression()).getEvaluation(), this);
+					IASTStatement lastStatement = statements[statements.length - 1];
+					if (lastStatement instanceof IASTExpressionStatement) {
+						ICPPASTExpression expression =
+								(ICPPASTExpression) ((IASTExpressionStatement) lastStatement).getExpression();
+						fEval= new EvalCompound(expression.getEvaluation(), this);
 					}
 				}
 			}
@@ -102,9 +105,10 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 	            default: break;
 	        }
 		}
-        
-        if (fStatement != null && !fStatement.accept(action)) return false;
-   
+
+        if (fStatement != null && !fStatement.accept(action))
+        	return false;
+
         if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
@@ -117,12 +121,12 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
         }
         return true;
     }
-    
+
     @Override
 	public IType getExpressionType() {
     	return getEvaluation().getType(this);
 	}
-    
+
 	@Override
 	public boolean isLValue() {
 		return false;

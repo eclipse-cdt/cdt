@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_45d502b1",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-05-24T18:03:47Z",
+      "side": 1,
+      "message": "This setting limits the browsing to only files, \nHowever this former solution allowed directories and files, \nthis covers for the possibility where the binary file does not exits yet e.g. the first time you trigger the launch.\n  Upon selection of a directory, CDT remote launch will append the name of the binary to complete the file path to use.\n\n We shall thefore remove this line.",
+      "revId": "66deda24110b85f4e7c48ec138914758c2d44c46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

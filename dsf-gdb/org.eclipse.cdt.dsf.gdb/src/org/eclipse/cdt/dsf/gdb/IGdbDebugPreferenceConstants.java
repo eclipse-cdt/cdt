@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
+import org.eclipse.cdt.dsf.gdb.breakpoints.IBreakpointUpdater;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 
 /**
@@ -172,5 +173,13 @@ public interface IGdbDebugPreferenceConstants {
 	 */
 	public static final String PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE = "UseProcessorTrace"; //$NON-NLS-1$
 
+	/**
+	 * Boolean preference whether to use breakpoint updaters {@link IBreakpointUpdater}.
+	 * 
+	 * Default is <code>true</code>.
+	 * 
+	 * @since 4.6
+	 */
+	public static final String PREF_USE_BP_UPDATERS = PREFIX + "useBPUpdaters"; //$NON-NLS-1$
 }
 

@@ -47,5 +47,6 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS, false);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER, true);
 		node.put(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE, IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_USE_BP_UPDATERS, true);
 	}
 }

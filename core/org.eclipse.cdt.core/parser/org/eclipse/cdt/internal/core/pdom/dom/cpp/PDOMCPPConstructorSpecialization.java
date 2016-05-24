@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *     QNX - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 

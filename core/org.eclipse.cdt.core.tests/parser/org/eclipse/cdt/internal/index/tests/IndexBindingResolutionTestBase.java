@@ -388,6 +388,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	static protected class NameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
+			shouldVisitImplicitNames = true;
         }
         public List<IASTName> nameList = new ArrayList<>();
 

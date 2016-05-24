@@ -920,19 +920,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE || !isActiveCode()) {
             skipOverCompoundStatement(true);
         } else if (mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE) {
-            if (scanner.isOnTopContext())
+            if (scanner.isOnTopContext()) {
                 compoundStatement();
-            else
+            } else {
                 skipOverCompoundStatement(true);
-        } else if (mode == ParserMode.COMPLETE_PARSE)
+            }
+        } else if (mode == ParserMode.COMPLETE_PARSE) {
             compoundStatement = compoundStatement();
+        }
 
         int lastOffset = consume(IToken.tRPAREN).getEndOffset();
-        IGNUASTCompoundStatementExpression resultExpression = nodeFactory.newGNUCompoundStatementExpression(compoundStatement);
+        IGNUASTCompoundStatementExpression resultExpression =
+        		nodeFactory.newGNUCompoundStatementExpression(compoundStatement);
         ((ASTNode) resultExpression).setOffsetAndLength(startingOffset, lastOffset - startingOffset);
         return resultExpression;
     }
-
 
     /**
      * Models a cast expression followed by an operator. Can be linked into a chain.
@@ -946,7 +948,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		IASTInitializerClause fExpression;
 		final CastAmbiguityMarker fAmbiguityMarker;
 
-		public BinaryOperator(BinaryOperator nextOp, IASTInitializerClause expression, int operatorToken, int leftPrecedence, int rightPrecedence) {
+		public BinaryOperator(BinaryOperator nextOp, IASTInitializerClause expression, int operatorToken,
+				int leftPrecedence, int rightPrecedence) {
 			fNext= nextOp;
 			fOperatorToken= operatorToken;
 			fLeftPrecedence= leftPrecedence;
@@ -1014,7 +1017,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		negative= operator.fNext.fExpression;
             	operator.fNext= operator.fNext.fNext;
         	}
-            IASTConditionalExpression conditionalEx = nodeFactory.newConditionalExpession(left, (IASTExpression) right, (IASTExpression) negative);
+            IASTConditionalExpression conditionalEx =
+            		nodeFactory.newConditionalExpession(left, (IASTExpression) right, (IASTExpression) negative);
             setRange(conditionalEx, left);
             if (negative != null) {
             	adjustLength(conditionalEx, negative);

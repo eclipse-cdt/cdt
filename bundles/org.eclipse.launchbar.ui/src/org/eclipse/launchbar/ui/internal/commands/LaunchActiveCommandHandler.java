@@ -29,9 +29,14 @@ public class LaunchActiveCommandHandler extends AbstractHandler {
 			ILaunchBarManager launchBarManager = Activator.getService(ILaunchBarManager.class);
 			StopActiveCommandHandler.stopActiveLaunches(launchBarManager);
 			ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
-			if (config == null)
+			if (config == null) {
 				return Status.OK_STATUS;
+			}
+
 			ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
+			if (launchMode == null) {
+				return Status.OK_STATUS;
+			}
 			DebugUITools.launch(config, launchMode.getIdentifier());
 
 			return Status.OK_STATUS;

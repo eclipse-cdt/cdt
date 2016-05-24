@@ -140,16 +140,16 @@ public class TerminalConsoleConnector {
 						}
 					}
 
-					if (outThread == null) {
-						outThread = new OutThread();
-						outThread.start();
-					}
-
 					if (width > 0 || height > 0) {
 						IRemoteProcessTerminalService termService = remoteProcess.getService(IRemoteProcessTerminalService.class);
 						if (termService != null) {
 							termService.setTerminalSize(width, height, 8 * width, 8 * height);
 						}
+					}
+
+					if (outThread == null) {
+						outThread = new OutThread();
+						outThread.start();
 					}
 
 					setState(TerminalState.CONNECTED);

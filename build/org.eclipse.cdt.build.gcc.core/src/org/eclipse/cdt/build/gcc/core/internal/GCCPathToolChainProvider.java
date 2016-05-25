@@ -18,8 +18,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.build.gcc.core.GCCToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.build.IToolChainProvider;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Finds gcc and clang on the path.
@@ -74,8 +76,32 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 								String name = target + " - " + version; //$NON-NLS-1$
 								if (!names.contains(name)) {
 									names.add(name);
-									manager.addToolChain(new GCCToolChain(this, target, version,
-											new Path[] { dir.toPath() }, prefix));
+									GCCToolChain toolChain = new GCCToolChain(this, target, version,
+											new Path[] { dir.toPath() }, prefix);
+									String[] tuple = target.split("-"); //$NON-NLS-1$
+									if (tuple.length > 2) {
+										// Arch
+										if ("x86_64".equals(tuple[0])) {
+											toolChain.setProperty(IToolChain.ATTR_ARCH, tuple[0]);
+										} else {
+											toolChain.setProperty(IToolChain.ATTR_ARCH, "x86"); // default
+										}
+										
+										// OS
+										switch (tuple[1]) {
+										case "w64":
+											toolChain.setProperty(IToolChain.ATTR_OS, Platform.OS_WIN32);
+											break;
+										case "linux":
+											toolChain.setProperty(IToolChain.ATTR_OS, Platform.OS_LINUX);
+											break;
+										case "apple":
+											toolChain.setProperty(IToolChain.ATTR_OS, Platform.OS_MACOSX);
+											break;
+										}
+									}
+									toolChain.setProperty(IToolChain.ATTR_PACKAGE, "system");
+									manager.addToolChain(toolChain);
 								}
 							}
 						} catch (IOException e) {

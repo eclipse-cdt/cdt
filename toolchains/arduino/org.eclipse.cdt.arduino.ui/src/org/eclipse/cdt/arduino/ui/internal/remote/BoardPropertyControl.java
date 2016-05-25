@@ -188,15 +188,8 @@ public class BoardPropertyControl extends Composite {
 	}
 
 	public void apply(IRemoteConnectionWorkingCopy workingCopy) {
-		workingCopy.setAttribute(ArduinoRemoteConnection.PORT_NAME, portName);
-
-		workingCopy.setAttribute(ArduinoRemoteConnection.BOARD_NAME, board.getId());
-
-		ArduinoPlatform platform = board.getPlatform();
-		workingCopy.setAttribute(ArduinoRemoteConnection.PLATFORM_NAME, platform.getArchitecture());
-
-		ArduinoPackage pkg = platform.getPackage();
-		workingCopy.setAttribute(ArduinoRemoteConnection.PACKAGE_NAME, pkg.getName());
+		ArduinoRemoteConnection.setBoardId(workingCopy, board);
+		ArduinoRemoteConnection.setPortName(workingCopy, portName);
 
 		String key = null;
 		for (Control control : menuControls) {
@@ -208,7 +201,7 @@ public class BoardPropertyControl extends Composite {
 				String value = ((List<String>) combo.getData()).get(combo.getSelectionIndex());
 
 				if (key != null) {
-					workingCopy.setAttribute(ArduinoBoard.MENU_QUALIFIER + key, value);
+					ArduinoRemoteConnection.setMenuValue(workingCopy, key, value);
 				}
 			}
 		}

@@ -20,7 +20,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.HierarchicalProperties;
 import org.eclipse.cdt.arduino.core.internal.Messages;
-import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -207,39 +205,6 @@ public class ArduinoPlatform {
 
 	public Path getInstallPath() {
 		return getPackage().getInstallPath().resolve("hardware").resolve(architecture); //$NON-NLS-1$
-	}
-
-	public List<Path> getIncludePath() {
-		Path installPath = getInstallPath();
-		return Arrays.asList(installPath.resolve("cores/{build.core}"), //$NON-NLS-1$
-				installPath.resolve("variants/{build.variant}")); //$NON-NLS-1$
-	}
-
-	private void getSources(Collection<String> sources, Path dir, boolean recurse) {
-		for (File file : dir.toFile().listFiles()) {
-			if (file.isDirectory()) {
-				if (recurse) {
-					getSources(sources, file.toPath(), recurse);
-				}
-			} else {
-				if (ArduinoBuildConfiguration.isSource(file.getName())) {
-					sources.add(ArduinoBuildConfiguration.pathString(file.toPath()));
-				}
-			}
-		}
-	}
-
-	public Collection<String> getSources(String core, String variant) {
-		List<String> sources = new ArrayList<>();
-		Path srcPath = getInstallPath().resolve("cores").resolve(core); //$NON-NLS-1$
-		if (srcPath.toFile().isDirectory()) {
-			getSources(sources, srcPath, true);
-		}
-		Path variantPath = getInstallPath().resolve("variants").resolve(variant); //$NON-NLS-1$
-		if (variantPath.toFile().isDirectory()) {
-			getSources(sources, variantPath, true);
-		}
-		return sources;
 	}
 
 	private void initLibraries() throws CoreException {

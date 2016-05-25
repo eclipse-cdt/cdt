@@ -20,6 +20,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public interface ICBuildConfigurationManager {
 
+	/**
+	 * Return the build configuration provider with the given id.
+	 * 
+	 * @param id
+	 * @return build configuration provider
+	 */
 	ICBuildConfigurationProvider getProvider(String id);
 
 	/**
@@ -34,8 +40,6 @@ public interface ICBuildConfigurationManager {
 	 */
 	IBuildConfiguration createBuildConfiguration(ICBuildConfigurationProvider provider, IProject project,
 			String configName, IProgressMonitor monitor) throws CoreException;
-
-	IBuildConfiguration getBuildConfiguration(ICBuildConfigurationProvider provider, IProject project, String configName) throws CoreException;
 
 	/**
 	 * Called by providers to add new build configurations as they are created.
@@ -56,6 +60,4 @@ public interface ICBuildConfigurationManager {
 	 */
 	ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) throws CoreException;
 	
-	ICBuildConfiguration getDefaultBuildConfiguration(IProject project) throws CoreException;
-
 }

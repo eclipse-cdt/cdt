@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_4e635fbc",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-25T10:47:41Z",
+      "side": 1,
+      "message": "NOTE this is Java 8 API but MANIFEST has BREE set to 1.7.",
+      "revId": "e6bec452967a7bd134769703db0359b116769d78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

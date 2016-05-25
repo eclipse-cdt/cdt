@@ -81,7 +81,7 @@ public class NewQtInstallWizardPage extends WizardPage {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							String spec = QtInstall.getSpec(selected);
+							String spec = QtInstall.getSpec(Paths.get(selected));
 							getControl().getDisplay().asyncExec(() -> {
 								specText.setText(spec);
 							});

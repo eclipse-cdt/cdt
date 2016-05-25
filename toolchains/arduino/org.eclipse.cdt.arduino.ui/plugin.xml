@@ -86,12 +86,6 @@
             id="org.eclipse.cdt.arduino.preference.page"
             name="%preferencePage.name">
       </page>
-      <page
-            category="org.eclipse.cdt.arduino.preference.page"
-            class="org.eclipse.cdt.arduino.ui.internal.preferences.ArduinoPlatformsPreferencePage"
-            id="org.eclipse.cdt.arduino.ui.page.platforms"
-            name="Platforms">
-      </page>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

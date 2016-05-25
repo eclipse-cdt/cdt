@@ -26,7 +26,7 @@
       <import feature="org.eclipse.remote" version="2.0.0"/>
       <import feature="org.eclipse.remote.console" version="2.0.0"/>
       <import feature="org.eclipse.cdt" version="9.0.0"/>
-      <import feature="org.eclipse.launchbar.remote" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.launchbar.remote" version="1.0.0"/>
    </requires>
 
    <plugin

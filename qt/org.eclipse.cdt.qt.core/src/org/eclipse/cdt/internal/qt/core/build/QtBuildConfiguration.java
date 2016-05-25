@@ -68,19 +68,20 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 			qtInstall = null;
 		}
 
-		launchMode = settings.get(LAUNCH_MODE, ""); //$NON-NLS-1$
+		launchMode = settings.get(LAUNCH_MODE, null); // $NON-NLS-1$
 	}
 
 	QtBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, IQtInstall qtInstall,
-			String launchMode)
-			throws CoreException {
+			String launchMode) throws CoreException {
 		super(config, name, toolChain);
 		this.qtInstall = qtInstall;
 		this.launchMode = launchMode;
 
 		Preferences settings = getSettings();
 		settings.put(QTINSTALL_NAME, qtInstall.getQmakePath().toString());
-		settings.put(LAUNCH_MODE, launchMode);
+		if (launchMode != null) {
+			settings.put(LAUNCH_MODE, launchMode);
+		}
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {
@@ -108,16 +109,18 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 	}
 
 	@Override
-	public String getQmakeConfig() {
-		switch (launchMode) {
-		case "run": //$NON-NLS-1$
-			return "CONFIG+=release"; //$NON-NLS-1$
-		case "debug": //$NON-NLS-1$
-			return "CONFIG+=debug"; //$NON-NLS-1$
-		default:
-			// TODO probably need an extension point for guidance
-			return null;
+	public String[] getQmakeConfig() {
+		if (launchMode != null) {
+			switch (launchMode) {
+			case "run": //$NON-NLS-1$
+				return new String[] { "CONFIG+=release" }; //$NON-NLS-1$
+			case "debug": //$NON-NLS-1$
+				return new String[] { "CONFIG+=debug" }; //$NON-NLS-1$
+			default:
+				return new String[] { "CONFIG+=launch_mode_" + launchMode }; //$NON-NLS-1$
+			}
 		}
+		return new String[] { "CONFIG+=debug_and_release", "CONFIG+=launch_modeall" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public Path getProjectFile() {
@@ -160,9 +163,11 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 			cmd.add(getQmakeCommand().toString());
 			cmd.add("-E"); //$NON-NLS-1$
 
-			String config = getQmakeConfig();
+			String[] config = getQmakeConfig();
 			if (config != null) {
-				cmd.add(config);
+				for (String str : config) {
+					cmd.add(str);
+				}
 			}
 
 			cmd.add(getProjectFile().toString());
@@ -280,16 +285,17 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 					List<String> command = new ArrayList<>();
 					command.add(getQmakeCommand().toString());
 
-					String config = getQmakeConfig();
+					String[] config = getQmakeConfig();
 					if (config != null) {
-						command.add(config);
+						for (String str : config) {
+							command.add(str);
+						}
 					}
 
 					IFile projectFile = project.getFile(project.getName() + ".pro"); //$NON-NLS-1$
 					command.add(projectFile.getLocation().toOSString());
 
-					ProcessBuilder processBuilder = new ProcessBuilder(command)
-							.directory(getBuildDirectory().toFile());
+					ProcessBuilder processBuilder = new ProcessBuilder(command).directory(getBuildDirectory().toFile());
 					setBuildEnvironment(processBuilder.environment());
 					Process process = processBuilder.start();
 
@@ -305,7 +311,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 				}
 
 				// run make
-				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString()).directory(buildDir.toFile());
+				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString(), "all").directory(buildDir.toFile());
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(makeCommand.toString() + '\n');

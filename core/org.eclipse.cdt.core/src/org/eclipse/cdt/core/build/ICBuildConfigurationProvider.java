@@ -8,7 +8,6 @@
 package org.eclipse.cdt.core.build;
 
 import org.eclipse.core.resources.IBuildConfiguration;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -32,13 +31,5 @@ public interface ICBuildConfigurationProvider {
 	 * @return CDT build configuration for the Platform build configuration
 	 */
 	ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException;
-
-	/**
-	 * Returns a default C build configuration for a given project if any.
-	 * 
-	 * @param project
-	 * @return default C build configuration for the project
-	 */
-	ICBuildConfiguration getDefaultCBuildConfiguration(IProject project) throws CoreException;
 
 }

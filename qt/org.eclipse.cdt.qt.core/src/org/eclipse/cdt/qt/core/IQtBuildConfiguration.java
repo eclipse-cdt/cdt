@@ -18,7 +18,7 @@ public interface IQtBuildConfiguration extends ICBuildConfiguration {
 	
 	Path getQmakeCommand();
 
-	String getQmakeConfig();
+	String[] getQmakeConfig();
 
 	Path getProgramPath() throws CoreException;
 

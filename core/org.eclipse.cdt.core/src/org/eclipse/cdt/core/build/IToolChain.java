@@ -27,11 +27,12 @@ public interface IToolChain extends IAdaptable {
 	// Standard attributes
 	static final String ATTR_OS = "os"; //$NON-NLS-1$
 	static final String ATTR_ARCH = "arch"; //$NON-NLS-1$
+	static final String ATTR_PACKAGE = "package"; // $NON-NLS-2$
 
 	IToolChainProvider getProvider();
 
 	String getId();
-	
+
 	String getVersion();
 
 	String getName();
@@ -46,6 +47,8 @@ public interface IToolChain extends IAdaptable {
 	 *         property
 	 */
 	String getProperty(String key);
+
+	void setProperty(String key, String value);
 
 	IEnvironmentVariable getVariable(String name);
 
@@ -63,5 +66,5 @@ public interface IToolChain extends IAdaptable {
 	IResource[] getResourcesFromCommand(String[] command, URI buildDirectoryURI);
 
 	String getBinaryParserId();
-	
+
 }

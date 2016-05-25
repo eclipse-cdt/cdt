@@ -1147,10 +1147,7 @@ public class CCorePlugin extends Plugin {
 			
 			// If we are new style build configurations, get the provider there
 			IBuildConfiguration activeConfig = project.getActiveBuildConfig();
-			ICBuildConfiguration cconfig = buildConfigManager.getBuildConfiguration(activeConfig);
-			if (cconfig == null) {
-				cconfig = buildConfigManager.getDefaultBuildConfiguration(project);
-			}
+			ICBuildConfiguration cconfig = activeConfig.getAdapter(ICBuildConfiguration.class);
 			if (cconfig != null) {
 				return cconfig;
 			}

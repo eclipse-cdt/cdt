@@ -173,7 +173,7 @@ public class HashTable implements Cloneable {
 		return offset;
 	}
 
-	protected final void linkIntoHashTable(int i, int hash) {
+	protected void linkIntoHashTable(int i, int hash) {
 		if (nextTable == null)
 			return;
 

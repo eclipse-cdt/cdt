@@ -611,11 +611,9 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 				// Check for new style build configs first
 				Set<String> parserIds = new HashSet<>();
 				for (IBuildConfiguration config : project.getBuildConfigs()) {
-					if (!IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(config.getName())) {
-						ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
-						if (cconfig != null) {
-							parserIds.add(cconfig.getBinaryParserId());
-						}
+					ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
+					if (cconfig != null) {
+						parserIds.add(cconfig.getBinaryParserId());
 					}
 				}
 				if (!parserIds.isEmpty()) {

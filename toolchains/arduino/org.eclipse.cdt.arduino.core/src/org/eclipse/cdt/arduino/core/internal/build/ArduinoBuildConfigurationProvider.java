@@ -39,49 +39,28 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 
 	@Override
 	public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
-		return new ArduinoBuildConfiguration(config, name);
-	}
-
-	@Override
-	public ICBuildConfiguration getDefaultCBuildConfiguration(IProject project) throws CoreException {
-		ArduinoBoard board = arduinoManager.getBoard("arduino", "avr", "Arduino/Genuino Uno"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (board == null) {
-			Collection<ArduinoBoard> boards = arduinoManager.getInstalledBoards();
-			if (!boards.isEmpty()) {
-				board = boards.iterator().next();
-			}
-		}
-		if (board != null) {
-			String launchMode = "run"; //$NON-NLS-1$
-			for (IBuildConfiguration config : project.getBuildConfigs()) {
-				ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
-				if (cconfig != null) {
-					ArduinoBuildConfiguration arduinoConfig = cconfig.getAdapter(ArduinoBuildConfiguration.class);
-					if (arduinoConfig != null && arduinoConfig.getLaunchMode().equals(launchMode)
-							&& arduinoConfig.getBoard().equals(board)) {
-						return arduinoConfig;
-					}
+		if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
+			// Use the good ol' Uno as the default
+			ArduinoBoard board = arduinoManager.getBoard("arduino", "avr", "uno"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (board == null) {
+				Collection<ArduinoBoard> boards = arduinoManager.getInstalledBoards();
+				if (!boards.isEmpty()) {
+					board = boards.iterator().next();
 				}
 			}
+			if (board != null) {
+				// Create the toolChain
+				IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
+				IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
+				IToolChain toolChain = new ArduinoToolChain(provider, config);
+				toolChainManager.addToolChain(toolChain);
 
-			// not found, create one
-			String configName = ArduinoBuildConfiguration.generateName(board, launchMode);
-			IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
-					null);
-
-			// Create the toolChain
-			IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
-			IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
-			IToolChain toolChain = new ArduinoToolChain(provider, config);
-			toolChainManager.addToolChain(toolChain);
-
-			ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, board,
-					launchMode, toolChain);
-			arduinoConfig.setActive(null);
-			configManager.addBuildConfiguration(config, arduinoConfig);
-			return arduinoConfig;
+				return new ArduinoBuildConfiguration(config, name, board, "run", toolChain);
+			}
+			return null;
+		} else {
+			return new ArduinoBuildConfiguration(config, name);
 		}
-		return null;
 	}
 
 	public ArduinoBuildConfiguration getConfiguration(IProject project, ArduinoRemoteConnection target,

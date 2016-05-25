@@ -93,6 +93,7 @@
       <category name="extra"/>
    </feature>
    <feature id="org.eclipse.cdt.arduino">
+      <category name="extra"/>
    </feature>
    <iu id="org.freemarker" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.core" version="0.0.0"/>

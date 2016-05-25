@@ -24,7 +24,7 @@ Require-Bundle: org.eclipse.cdt.launch,
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.cdt.internal.launch.remote;x-internal:=true,
  org.eclipse.cdt.launch.remote;x-internal:=true,
  org.eclipse.cdt.launch.remote.launching;x-internal:=true,

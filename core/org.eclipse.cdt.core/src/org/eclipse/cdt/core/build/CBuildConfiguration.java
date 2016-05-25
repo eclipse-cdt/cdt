@@ -101,8 +101,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 		toolChain = tc;
 	}
-
-	public CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
+	
+	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
 		this.config = config;
 		this.name = name;
 		this.toolChain = toolChain;
@@ -118,6 +118,10 @@ public abstract class CBuildConfiguration extends PlatformObject
 		}
 	}
 
+	protected CBuildConfiguration(IBuildConfiguration config, IToolChain toolChain) {
+		this(config, DEFAULT_NAME, toolChain);
+	}
+	
 	@Override
 	public IBuildConfiguration getBuildConfiguration() {
 		return config;

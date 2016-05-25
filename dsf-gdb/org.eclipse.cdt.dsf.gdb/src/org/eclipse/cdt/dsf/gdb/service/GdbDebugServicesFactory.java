@@ -97,10 +97,38 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		fVersion = version;
 		fConfiguration = config;
 	}
-	
-	/** @since 5.0 */
+
+	/**
+	 * @deprecated Use {@link GdbDebugServicesFactory#GdbDebugServicesFactory(String, ILaunchConfiguration)
+	 */
+	@Deprecated
+	public GdbDebugServicesFactory(String version) {
+		fVersion = version;
+		fConfiguration = null;
+	}
+
+	/**
+	 * Returns the launch configuration. This is useful for cases where the
+	 * service to use is dependent on the launch settings.
+	 *
+	 * @return configuration or <code>null</code>
+	 * @since 5.0
+	 */
 	protected ILaunchConfiguration getConfiguration() {
 		return fConfiguration;
+	}
+
+	/**
+	 * Returns true if the services should be created for non-stop mode.
+	 * @return <code>true</code> if services should be created for GDB non-stop
+	 * @since 5.0
+	 */
+	protected boolean getIsNonStopMode() {
+		ILaunchConfiguration configuration = getConfiguration();
+		if (configuration == null) {
+			return false;
+		}
+		return LaunchUtils.getIsNonStopMode(configuration);
 	}
 
 	public String getVersion() { return fVersion; }
@@ -269,7 +297,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
 		// First check for the non-stop case
-		if (LaunchUtils.getIsNonStopMode(getConfiguration())) {
+		if (getIsNonStopMode()) {
 			if (compareVersionWith(GDB_7_2_VERSION) >= 0) {
 				return new GDBRunControl_7_2_NS(session);
 			}

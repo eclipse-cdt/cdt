@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.eclipse.cdt.build.gcc.core.GCCToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.cdt.utils.WindowsRegistry;
@@ -65,8 +66,10 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 		Path msysPath = Paths.get(installLocation);
 		Path gccPath = msysPath.resolve("mingw64\\bin\\gcc.exe"); //$NON-NLS-1$
 		if (Files.exists(gccPath)) {
-			manager.addToolChain(new GCCToolChain(this, "x86_64-w64-mingw32", "msys2.x86_64", new Path[] { //$NON-NLS-1$ //$NON-NLS-2$
-					gccPath.getParent(), msysPath.resolve("bin"), msysPath.resolve("usr\\bin") })); //$NON-NLS-1$ //$NON-NLS-2$
+			GCCToolChain toolChain = new GCCToolChain(this, "x86_64-w64-mingw32", "msys2.x86_64", new Path[] { //$NON-NLS-1$ //$NON-NLS-2$
+					gccPath.getParent(), msysPath.resolve("bin"), msysPath.resolve("usr\\bin") }); //$NON-NLS-1$ //$NON-NLS-2$
+			toolChain.setProperty(IToolChain.ATTR_PACKAGE, "msys2"); //$NON-NLS-1$
+			manager.addToolChain(toolChain);
 			return true;
 		} else {
 			return addToolChain32(manager, registry, key);
@@ -78,8 +81,10 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 		Path msysPath = Paths.get(installLocation);
 		Path gccPath = msysPath.resolve("mingw32\\bin\\gcc.exe"); //$NON-NLS-1$
 		if (Files.exists(gccPath)) {
-			manager.addToolChain(new GCCToolChain(this, "i686-w64-mingw32", "msys2.i686", new Path[] { //$NON-NLS-1$ //$NON-NLS-2$
-					gccPath.getParent(), msysPath.resolve("bin"), msysPath.resolve("usr\\bin") })); //$NON-NLS-1$ //$NON-NLS-2$
+			GCCToolChain toolChain = new GCCToolChain(this, "i686-w64-mingw32", "msys2.i686", new Path[] { //$NON-NLS-1$ //$NON-NLS-2$
+					gccPath.getParent(), msysPath.resolve("bin"), msysPath.resolve("usr\\bin") }); //$NON-NLS-1$ //$NON-NLS-2$
+			toolChain.setProperty(IToolChain.ATTR_PACKAGE, "msys2"); //$NON-NLS-1$
+			manager.addToolChain(toolChain);
 			return true;
 		} else {
 			return false;

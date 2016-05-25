@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core.build;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,15 +17,14 @@ import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.internal.qt.core.QtNature;
 import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
+import org.eclipse.cdt.qt.core.QtMinGWToolChainProvider;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
 public class QtBuildConfigurationProvider implements ICBuildConfigurationProvider {
@@ -43,83 +43,71 @@ public class QtBuildConfigurationProvider implements ICBuildConfigurationProvide
 	@Override
 	public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) {
 		try {
-			// Double check to make sure this config is ours
-			if (!config.getProject().hasNature(QtNature.ID)) {
-				return null;
-			}
+			if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
+				// try the toolchain for the local target
+				Map<String, String> properties = new HashMap<>();
+				properties.put(IToolChain.ATTR_OS, Platform.getOS());
+				properties.put(IToolChain.ATTR_ARCH, Platform.getOSArch());
+				for (IToolChain toolChain : toolChainManager.getToolChainsMatching(properties)) {
+					for (IQtInstall qtInstall : qtInstallManager.getInstalls()) {
+						if (qtInstallManager.supports(qtInstall, toolChain)) {
+							return new QtBuildConfiguration(config, name, toolChain, qtInstall, null);
+						}
+					}
+				}
 
-			return new QtBuildConfiguration(config, name);
+				// local didn't work, try and find one that does
+				for (IToolChain toolChain : toolChainManager.getToolChainsMatching(new HashMap<>())) {
+					for (IQtInstall qtInstall : qtInstallManager.getInstalls()) {
+						if (qtInstallManager.supports(qtInstall, toolChain)) {
+							return new QtBuildConfiguration(config, name, toolChain, qtInstall, null);
+						}
+					}
+				}
+
+				// No valid combinations
+				return null;
+			} else {
+				return new QtBuildConfiguration(config, name);
+			}
 		} catch (CoreException e) {
-			// Failed to create the build config. Return null so it gets recreated.
+			// Failed to create the build config. Return null so it gets
+			// recreated.
 			Activator.log(e);
 			return null;
 		}
 	}
 
-	@Override
-	public ICBuildConfiguration getDefaultCBuildConfiguration(IProject project) {
-		try {
-			if (!project.hasNature(QtNature.ID)) {
-				return null;
-			}
-
-			// try the local target as the default
-			Map<String, String> properties = new HashMap<>();
-			properties.put(IToolChain.ATTR_OS, Platform.getOS());
-			properties.put(IToolChain.ATTR_ARCH, Platform.getOSArch());
-			for (IToolChain toolChain : toolChainManager.getToolChainsMatching(properties)) {
-				IQtBuildConfiguration qtConfig = getConfiguration(project, toolChain, "run", new NullProgressMonitor()); //$NON-NLS-1$
-				if (qtConfig == null) {
-					qtConfig = createConfiguration(project, toolChain, "run", new NullProgressMonitor()); //$NON-NLS-1$
-					if (qtConfig != null) {
-						return qtConfig;
-					}
-				}
-			}
-
-			// local didn't work, try and find one that does
-			for (IToolChain toolChain : toolChainManager.getToolChainsMatching(new HashMap<>())) {
-				IQtBuildConfiguration qtConfig = getConfiguration(project, toolChain, "run", new NullProgressMonitor()); //$NON-NLS-1$
-				if (qtConfig == null) {
-					qtConfig = createConfiguration(project, toolChain, "run", new NullProgressMonitor()); //$NON-NLS-1$
-					if (qtConfig != null) {
-						return qtConfig;
-					}
-				}
-			}
-		} catch (CoreException e) {
-			Activator.log(e);
-		}
-		return null;
-	}
-
-	public IQtBuildConfiguration getConfiguration(IProject project, IToolChain toolChain, String launchMode,
+	public IQtBuildConfiguration getConfiguration(IProject project, Map<String, String> properties, String launchMode,
 			IProgressMonitor monitor) throws CoreException {
+		Collection<IToolChain> toolChains = toolChainManager.getToolChainsMatching(properties);
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
 			ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
 			if (cconfig != null) {
 				IQtBuildConfiguration qtConfig = cconfig.getAdapter(IQtBuildConfiguration.class);
-				if (qtConfig != null && qtConfig.getLaunchMode().equals(launchMode)
-						&& qtConfig.getToolChain().equals(toolChain)) {
-					return qtConfig;
+				if (qtConfig != null && launchMode.equals(qtConfig.getLaunchMode())) {
+					for (IToolChain toolChain : toolChains) {
+						if (qtConfig.getToolChain().equals(toolChain)) {
+							return qtConfig;
+						}
+					}
 				}
 			}
 		}
-		return null;
-	}
 
-	public QtBuildConfiguration createConfiguration(IProject project, IToolChain toolChain, String launchMode,
-			IProgressMonitor monitor) throws CoreException {
-		for (IQtInstall qtInstall : qtInstallManager.getInstalls()) {
-			if (qtInstallManager.supports(qtInstall, toolChain)) {
-				// TODO what if multiple matches
-				String configName = "qt." + qtInstall.getSpec() + "." + launchMode; //$NON-NLS-1$ //$NON-NLS-2$
-				IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
-						monitor);
-				QtBuildConfiguration qtConfig = new QtBuildConfiguration(config, configName, toolChain, qtInstall,
-						launchMode);
-				configManager.addBuildConfiguration(config, qtConfig);
-				return qtConfig;
+		// Not found, create one
+		for (IToolChain toolChain : toolChains) {
+			for (IQtInstall qtInstall : qtInstallManager.getInstalls()) {
+				if (qtInstallManager.supports(qtInstall, toolChain)) {
+					// TODO what if multiple matches, this returns first match
+					String configName = "qt." + qtInstall.getSpec() + "." + launchMode; //$NON-NLS-1$ //$NON-NLS-2$
+					IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
+							monitor);
+					QtBuildConfiguration qtConfig = new QtBuildConfiguration(config, configName, toolChain, qtInstall,
+							launchMode);
+					configManager.addBuildConfiguration(config, qtConfig);
+					return qtConfig;
+				}
 			}
 		}
 

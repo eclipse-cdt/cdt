@@ -29,6 +29,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
+	 * CDT doesn't like that the Platform default config name is an empty string.
+	 * It needs a real name for the name of the build directory, for example.
+	 */
+	public static String DEFAULT_NAME = "default";
+	
+	/**
 	 * Returns the resources build configuration that this CDT build
 	 * configuration is associated with.
 	 * 

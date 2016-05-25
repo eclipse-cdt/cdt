@@ -72,16 +72,19 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 
 		public boolean supports(IProject project) {
 			try {
-				return project.hasNature(natureId);
+				if (natureId != null) {
+					return project.hasNature(natureId);
+				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e.getStatus());
-				return false;
 			}
+			return false;
 		}
 	}
 
 	private Map<String, Provider> providers;
 	private Map<IBuildConfiguration, ICBuildConfiguration> configs = new HashMap<>();
+	private Set<IBuildConfiguration> noConfigs = new HashSet<>();
 
 	public CBuildConfigurationManager() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -105,13 +108,33 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	}
 
 	private Provider getProviderDelegate(String id) {
-		initProviders();
 		return providers.get(id);
 	}
 
 	@Override
 	public ICBuildConfigurationProvider getProvider(String id) {
-		return getProviderDelegate(id).getProvider();
+		initProviders();
+		Provider provider = providers.get(id);
+		return provider != null ? provider.getProvider() : null;
+	}
+	
+	public ICBuildConfigurationProvider getProvider(String id, IProject project) {
+		initProviders();
+		Provider provider = getProviderDelegate(id);
+		if (provider != null && provider.supports(project)) {
+			return provider.getProvider();
+		}
+		return null;
+	}
+
+	public ICBuildConfigurationProvider getProvider(IProject project) throws CoreException {
+		initProviders();
+		for (Provider provider : providers.values()) {
+			if (provider.supports(project)) {
+				return provider.getProvider();
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -143,47 +166,48 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	public ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) throws CoreException {
 		initProviders();
 		synchronized (configs) {
-			ICBuildConfiguration config = configs.get(buildConfig);
-			if (config == null) {
-				String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
-				if (segments.length == 2) {
-					String providerId = segments[0];
-					String configName = segments[1];
+			if (noConfigs.contains(buildConfig)) {
+				return null;
+			} else {
+				ICBuildConfiguration config = configs.get(buildConfig);
+				if (config == null) {
+					String configName;
+					ICBuildConfigurationProvider provider;
+					if (IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfig.getName())) {
+						configName = ICBuildConfiguration.DEFAULT_NAME;
+						provider = getProvider(buildConfig.getProject());
+					} else {
+						String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
+						if (segments.length == 2) {
+							String providerId = segments[0];
+							configName = segments[1];
+							Provider delegate = getProviderDelegate(providerId);
+							if (delegate != null && delegate.supports(buildConfig.getProject())) {
+								provider = delegate.getProvider();
+							} else {
+								return null;
+							}
+						} else {
+							// Not ours
+							return null;
+						}
+					}
 
-					Provider provider = getProviderDelegate(providerId);
-					if (provider != null && provider.supports(buildConfig.getProject())) {
-						config = provider.getProvider().getCBuildConfiguration(buildConfig, configName);
+					config = provider.getCBuildConfiguration(buildConfig, configName);
+					if (config != null) {
 						configs.put(buildConfig, config);
 
-						// Also make sure we reset the binary parser cache for the new config
+						// Also make sure we reset the binary parser cache for
+						// the new config
 						CModelManager.getDefault().resetBinaryParser(buildConfig.getProject());
+					} else {
+						noConfigs.add(buildConfig);
+						return null;
 					}
 				}
-			}
-			return config;
-		}
-	}
-
-	@Override
-	public IBuildConfiguration getBuildConfiguration(ICBuildConfigurationProvider provider, IProject project,
-			String configName) throws CoreException {
-		String name = provider.getId() + '/' + configName;
-		return project.getBuildConfig(name);
-	}
-
-	@Override
-	public ICBuildConfiguration getDefaultBuildConfiguration(IProject project) throws CoreException {
-		initProviders();
-		for (Provider provider : providers.values()) {
-			if (provider.supports(project)) {
-				ICBuildConfiguration config = provider.getProvider().getDefaultCBuildConfiguration(project);
-				if (config != null) {
-					configs.put(config.getBuildConfiguration(), config);
-					return config;
-				}
+				return config;
 			}
 		}
-		return null;
 	}
 
 	@Override

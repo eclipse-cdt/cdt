@@ -72,6 +72,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -256,7 +257,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 	 * the index after your last write operation.
 	 */
 	final protected void addSymbols(Data data, int storageLinkageID, FileContext ctx,
-			IProgressMonitor pm) throws InterruptedException, CoreException {
+			IProgressMonitor monitor) throws InterruptedException, CoreException {
 		if (data.isEmpty() || storageLinkageID == ILinkage.NO_LINKAGE_ID)
 			return;
 
@@ -266,11 +267,12 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 			fShowSyntaxProblems= true;
 		}
 
+		SubMonitor progress = SubMonitor.convert(monitor, 2);
 		// Name resolution.
-		resolveNames(data, pm);
+		resolveNames(data, progress.split(1));
 
 		// Index update.
-		storeSymbolsInIndex(data, storageLinkageID, ctx, pm);
+		storeSymbolsInIndex(data, storageLinkageID, ctx, progress.split(1));
 
 		if (!data.fStatuses.isEmpty()) {
 			List<IStatus> statuses = data.fStatuses;
@@ -294,26 +296,24 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		}
 	}
 
-	private void storeSymbolsInIndex(final Data data, int storageLinkageID, FileContext ctx, IProgressMonitor pm)
-			throws InterruptedException, CoreException {
+	private void storeSymbolsInIndex(final Data data, int storageLinkageID, FileContext ctx,
+			IProgressMonitor monitor) throws InterruptedException, CoreException {
 		final IIndexFragmentFile newFile= ctx == null ? null : ctx.fNewFile;
+		SubMonitor progress = SubMonitor.convert(monitor, data.fSelectedFiles.length * 10);
 		for (int i= 0; i < data.fSelectedFiles.length; i++) {
-			if (pm.isCanceled())
-				return;
-
 			final FileInAST fileInAST= data.fSelectedFiles[i];
 			if (fileInAST != null) {
 				if (fShowActivity) {
 					trace("Indexer: adding " + fileInAST.fileContentKey.getLocation().getURI());  //$NON-NLS-1$
 				}
 				Throwable th= null;
-				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, false, pm);
+				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, false, progress.split(1));
 				lock.acquire();
 				try {
 					final boolean isReplacement= ctx != null && fileInAST.includeStatement == null;
 					IIndexFragmentFile ifile= null;
 					if (!isReplacement || newFile == null) {
-						ifile= storeFileInIndex(data, fileInAST, storageLinkageID, lock);
+						ifile= storeFileInIndex(data, fileInAST, storageLinkageID, lock, progress.split(9));
 						reportFileWrittenToIndex(fileInAST, ifile);
 					}
 
@@ -321,8 +321,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 						if (ifile == null)
 							ifile= newFile;
 						if (ctx != null && !ctx.fOldFile.equals(ifile) && ifile != null) {
-							if (ctx.fOldFile.hasPragmaOnceSemantics() &&
-									!ifile.hasPragmaOnceSemantics()) {
+							if (ctx.fOldFile.hasPragmaOnceSemantics() && !ifile.hasPragmaOnceSemantics()) {
 								data.fIndex.transferContext(ctx.fOldFile, ifile);
 								ctx.fLostPragmaOnceSemantics= true;
 							} else {
@@ -330,16 +329,11 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 							}
 						}
 					}
-				} catch (RuntimeException e) {
-					th= e;
-				} catch (StackOverflowError e) {
-					th= e;
-				} catch (AssertionError e) {
+				} catch (RuntimeException | StackOverflowError | AssertionError e) {
 					th= e;
 				} finally {
-					// Because the caller holds a read-lock, the result cache of the index is never
-					// cleared. Before releasing the lock for the last time in this AST, we clear
-					// the result cache.
+					// Because the caller holds a read-lock, the result cache of the index is never cleared.
+					// Before releasing the lock for the last time in this AST, we clear the result cache.
 					if (i == data.fSelectedFiles.length - 1) {
 						data.fIndex.clearResultCache();
 					}
@@ -354,19 +348,19 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		}
 	}
 
-	private void resolveNames(Data data, IProgressMonitor pm) {
+	private void resolveNames(Data data, IProgressMonitor monitor) {
 		long start= System.currentTimeMillis();
+		SubMonitor progress = SubMonitor.convert(monitor, data.fSelectedFiles.length);
 		for (FileInAST file : data.fSelectedFiles) {
-			if (pm.isCanceled()) {
-				return;
-			}
 			Symbols symbols= data.fSymbolMap.get(file.includeStatement);
 
 			final ArrayList<IASTName[]> names= symbols.fNames;
+			SubMonitor progress2 = SubMonitor.convert(progress, names.size());
 			boolean reported= false;
 			for (Iterator<IASTName[]> j = names.iterator(); j.hasNext();) {
 				final IASTName[] na= j.next();
 				final IASTName name = na[0];
+				progress2.split(1);
 				if (name != null) { // should not be null, just be defensive.
 					Throwable th= null;
 					try {
@@ -558,7 +552,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 	}
 
 	private IIndexFragmentFile storeFileInIndex(Data data, FileInAST astFile, int storageLinkageID,
-			YieldableIndexLock lock) throws CoreException, InterruptedException {
+			YieldableIndexLock lock, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		final IWritableIndex index = data.fIndex;
 		IIndexFragmentFile file;
 		// We create a temporary PDOMFile with zero timestamp, add names to it, then replace

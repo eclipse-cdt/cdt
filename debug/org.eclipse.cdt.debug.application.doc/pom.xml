@@ -77,6 +77,35 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>fake-doc</id>
+			<activation>
+				<property>
+					<name>skipDoc</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<configuration>
+									<target>
+										<touch file="index/indexed_docs" mkdirs="true"/>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 </project>

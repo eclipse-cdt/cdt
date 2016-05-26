@@ -281,6 +281,12 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	}
 
 	public void setTranslationUnitSelection(List<? extends ICElement> filesAndFolders) {
-		fFilesAndFolders= new ArrayList<ICElement>(filesAndFolders);
+		fFilesAndFolders= new ArrayList<>(filesAndFolders);
+	}
+
+	@Override
+	public void cancel() {
+		if (fDelegate != null)
+			fDelegate.cancel();
 	}
 }

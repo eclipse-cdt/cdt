@@ -34,6 +34,14 @@ public interface IPDOMIndexerTask {
 	public void run(IProgressMonitor monitor) throws InterruptedException;
 
 	/**
+	 * Notifies the task that it should stop executing at its earliest convenience.
+	 * It's up to the task whether to react to this method or not.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This default method is not intended to be re-implemented or extended by clients.
+	 */
+	public default void cancel() {}
+
+	/**
 	 * Returns the indexer the task belongs to.
 	 */
 	public IPDOMIndexer getIndexer();

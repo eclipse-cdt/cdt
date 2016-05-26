@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.internal.core.model.DebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.util.Canceler;
 import org.eclipse.cdt.internal.core.util.ICancelable;
 import org.eclipse.cdt.internal.core.util.ICanceler;
 import org.eclipse.core.runtime.Platform;
@@ -31,10 +32,12 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 	private final ICanceler fCanceler;
 
 	public ParserLogService(DebugLogConstants constant) {
-		this(constant, null);
+		this(constant, new Canceler());
 	}
 
 	public ParserLogService(DebugLogConstants constant, ICanceler canceler) {
+		if (canceler == null)
+			throw new NullPointerException();
 		topic = constant;
 		if (CCorePlugin.getDefault() == null) {
 			fIsTracingExceptions= false;
@@ -79,8 +82,16 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 
 	@Override
 	public void setCancelable(ICancelable cancelable) {
-		if (fCanceler != null) {
-			fCanceler.setCancelable(cancelable);
-		}
+		fCanceler.setCancelable(cancelable);
+	}
+
+	@Override
+	public void setCanceled(boolean value) {
+		fCanceler.setCanceled(value);
+	}
+
+	@Override
+	public boolean isCanceled() {
+		return fCanceler.isCanceled();
 	}
 }

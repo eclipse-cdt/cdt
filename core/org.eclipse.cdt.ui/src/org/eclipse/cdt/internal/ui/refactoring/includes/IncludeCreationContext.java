@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
 /**
  * Context for managing include statements.
  */
-public class IncludeCreationContext extends InclusionContext {
+public final class IncludeCreationContext extends InclusionContext {
 	private final IIndex fIndex;
 	private final Set<IPath> fHeadersToInclude;
 	private final Set<IPath> fHeadersAlreadyIncluded;
@@ -108,7 +108,7 @@ public class IncludeCreationContext extends InclusionContext {
 	private static IPath getPath(IIndexFile file) throws CoreException {
 		return IndexLocationFactory.getAbsolutePath(file.getLocation());
 	}
-    
+
 	public Set<IPath> getHeadersToInclude() {
 		return fHeadersToInclude;
 	}
@@ -163,5 +163,14 @@ public class IncludeCreationContext extends InclusionContext {
 				return path;
 		}
 		return null;
+	}
+
+	/**
+	 * Checks if the given file is suitable for inclusion. A file is suitable for inclusion if it is a header
+	 * file, or if it is already included by some other file.
+	 */
+	public final boolean canBeIncluded(IIndexFile indexFile) throws CoreException {
+		return !IncludeUtil.isSource(indexFile, getProject()) ||
+				fIndex.findIncludedBy(indexFile, 0).length != 0;
 	}
 }

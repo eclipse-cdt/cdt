@@ -12,9 +12,6 @@ package org.eclipse.cdt.internal.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -34,8 +31,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
-public abstract class NewElementWizard extends Wizard implements INewWizard {
+import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+
+public abstract class NewElementWizard extends Wizard implements INewWizard {
 	private IWorkbench fWorkbench;
 	private IStructuredSelection fSelection;
 
@@ -65,11 +66,8 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 	/**
 	 * Subclasses should override to perform the actions of the wizard.
 	 * This method is run in the wizard container's context as a workspace runnable.
-	 * @param monitor
-	 * @throws InterruptedException
-	 * @throws CoreException
 	 */
-	protected abstract void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException;
+	protected abstract void finishPage(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns the scheduling rule for creating the element.
@@ -78,11 +76,9 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 		return ResourcesPlugin.getWorkspace().getRoot(); // look all by default
 	}
 	
-	
 	protected boolean canRunForked() {
 		return true;
 	}
-	
 	
 	protected void handleFinishException(Shell shell, InvocationTargetException e) {
 		String title= NewWizardMessages.NewElementWizard_op_error_title; 
@@ -90,19 +86,12 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 		ExceptionHandler.handle(e, shell, title, message);
 	}
 	
-	/*
-	 * @see Wizard#performFinish
-	 */		
 	@Override
 	public boolean performFinish() {
 		IWorkspaceRunnable op= new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-				try {
-					finishPage(monitor);
-				} catch (InterruptedException e) {
-					throw new OperationCanceledException(e.getMessage());
-				}
+				finishPage(monitor);
 			}
 		};
 		try {
@@ -110,15 +99,12 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 		} catch (InvocationTargetException e) {
 			handleFinishException(getShell(), e);
 			return false;
-		} catch  (InterruptedException e) {
+		} catch (InterruptedException e) {
 			return false;
 		}
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		fWorkbench= workbench;
@@ -136,5 +122,4 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 	protected void selectAndReveal(IResource newResource) {
 		BasicNewResourceWizard.selectAndReveal(newResource, fWorkbench.getActiveWorkbenchWindow());
 	}
-
 }

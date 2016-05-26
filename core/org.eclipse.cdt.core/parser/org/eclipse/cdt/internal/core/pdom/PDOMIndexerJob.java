@@ -58,9 +58,13 @@ public class PDOMIndexerJob extends Job {
 		@Override
 		protected void canceling() {
 			// Speed up cancellation by notifying the waiting thread.
-			synchronized(this) {
+			synchronized (this) {
 				fCancelled= true;
 				notify();
+			}
+			synchronized (taskMutex) {
+				if (currentTask != null)
+					currentTask.cancel();
 			}
 		}
 	}
@@ -159,15 +163,7 @@ public class PDOMIndexerJob extends Job {
 				}
 			} while (currentTask != null);
 			return Status.OK_STATUS;
-		} catch (RuntimeException e) {
-			CCorePlugin.log(e);
-			pdomManager.cancelledIndexerJob(true);
-			synchronized (taskMutex) {
-				currentTask= null;
-				taskMutex.notifyAll();
-			}
-			throw e;
-		} catch (Error e) {
+		} catch (RuntimeException | Error e) {
 			CCorePlugin.log(e);
 			pdomManager.cancelledIndexerJob(true);
 			synchronized (taskMutex) {

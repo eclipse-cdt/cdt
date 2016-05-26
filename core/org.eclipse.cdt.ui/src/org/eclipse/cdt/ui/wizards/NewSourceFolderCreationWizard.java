@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.cdt.internal.ui.wizards.folderwizard.NewFolderWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.folderwizard.NewSourceFolderWizardPage;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 public class NewSourceFolderCreationWizard extends NewElementWizard {
-
 	private NewSourceFolderWizardPage fPage;
 
 	public NewSourceFolderCreationWizard() {
@@ -29,9 +30,6 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 		setWindowTitle(NewFolderWizardMessages.NewSourceFolderCreationWizard_title);
 	}
 
-	/*
-	 * @see Wizard#addPages
-	 */	
 	@Override
 	public void addPages() {
 		super.addPages();
@@ -40,17 +38,11 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 		fPage.init(getSelection());
 	}			
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.wizards.NewElementWizard#finishPage(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
-	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
-		fPage.createSourceRoot(monitor); // use the full progress monitor
+	protected void finishPage(IProgressMonitor monitor) throws CoreException {
+		fPage.createSourceRoot(monitor); // Use the full progress monitor.
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		boolean res= super.performFinish();
@@ -59,5 +51,4 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 		}
 		return res;
 	}
-		
 }

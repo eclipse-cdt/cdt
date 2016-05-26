@@ -62,7 +62,7 @@ public class NewClassCreationWizard extends NewElementWizard {
 	}
 
 	@Override
-	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
+	protected void finishPage(IProgressMonitor monitor) throws CoreException {
 		fPage.createClass(monitor); // use the full progress monitor
 	}
 

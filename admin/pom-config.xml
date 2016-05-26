@@ -61,7 +61,7 @@
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
         <platform-site>http://download.eclipse.org/eclipse/updates/4.6milestones</platform-site>
         <platform-release-site>http://download.eclipse.org/releases/neon</platform-release-site>
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20160501200945/repository</orbit-site>
+		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/builds/neon/milestones</cdt-site>
         <rse-site>http://download.eclipse.org/tm/updates/4.0</rse-site>
         <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</remote-site>

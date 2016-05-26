@@ -11,18 +11,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.wizards.NewElementWizard;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.wizards.NewElementWizard;
+
 public abstract class AbstractFileCreationWizard extends NewElementWizard {
-    
-    protected AbstractFileCreationWizardPage fPage = null;
+    protected AbstractFileCreationWizardPage fPage;
     
     public AbstractFileCreationWizard() {
         super();
@@ -31,35 +32,20 @@ public abstract class AbstractFileCreationWizard extends NewElementWizard {
         setWindowTitle(NewFileWizardMessages.AbstractFileCreationWizard_title); 
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#canRunForked()
-     */
     @Override
 	protected boolean canRunForked() {
     	return true;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#finishPage(org.eclipse.core.runtime.IProgressMonitor)
-     */
     @Override
-	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
-        fPage.createFile(monitor); // use the full progress monitor
+	protected void finishPage(IProgressMonitor monitor) throws CoreException {
+        fPage.createFile(monitor); // Use the full progress monitor.
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.wizard.IWizard#performFinish()
-     */
     @Override
 	public boolean performFinish() {
-        boolean res = super.performFinish();
-        if (res) {
+        boolean result = super.performFinish();
+        if (result) {
             //TODO need prefs option for opening editor
             boolean openInEditor = true;
             
@@ -72,6 +58,6 @@ public abstract class AbstractFileCreationWizard extends NewElementWizard {
 				}
 			}
         }
-        return res;
+        return result;
     }
 }

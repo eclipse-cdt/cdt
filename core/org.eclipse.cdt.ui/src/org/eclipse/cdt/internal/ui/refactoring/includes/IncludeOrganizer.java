@@ -888,7 +888,7 @@ public class IncludeOrganizer {
 				Map<IIndexFile, IPath> reachableDeclaringHeaders = new HashMap<>();
 				for (IIndexName indexName : indexNames) {
 					IIndexFile indexFile = indexName.getFile();
-					if (!canBeIncluded(indexFile)) {
+					if (!fContext.canBeIncluded(indexFile)) {
 						// The target is a source file which isn't included by any other files.
 						// Don't include it.
 						continue;
@@ -918,15 +918,10 @@ public class IncludeOrganizer {
 		int pos = 0;
 		for (IIndexName name : names) {
 			IIndexFile file = name.getFile();
-			if (file != null && !blacklist.contains(file) && canBeIncluded(file))
+			if (file != null && !blacklist.contains(file) && fContext.canBeIncluded(file))
 				includable = ArrayUtil.appendAt(includable, pos++, name);
 		}
 		return ArrayUtil.trim(includable, pos);
-	}
-
-	private boolean canBeIncluded(IIndexFile indexFile) throws CoreException {
-		return !IncludeUtil.isSource(indexFile, fContext.getProject()) ||
-				fContext.getIndex().findIncludedBy(indexFile, 0).length != 0;
 	}
 
 	private String createIncludeDirective(IncludePrototype include, String lineComment) {

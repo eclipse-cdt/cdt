@@ -15,23 +15,18 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
 
-import java.net.URI;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.text.edits.InsertEdit;
@@ -39,7 +34,6 @@ import org.eclipse.text.edits.MultiTextEdit;
 
 import com.ibm.icu.text.Collator;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -72,7 +66,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -90,7 +83,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.util.TextUtil;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
@@ -168,14 +160,15 @@ public class IncludeCreator {
 				}
 				IIndexName[] definitions= null;
 				// class, struct, union, enum-type, enum-item
-				if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration || indexBinding instanceof IEnumerator) {
+				if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration
+						|| indexBinding instanceof IEnumerator) {
 					definitions= index.findDefinitions(indexBinding);
-				} else if (indexBinding instanceof ITypedef || (indexBinding instanceof IFunction)) {
+				} else if (indexBinding instanceof ITypedef || indexBinding instanceof IFunction) {
 					definitions = index.findDeclarations(indexBinding);
 				}
 				if (definitions != null) {
 					for (IIndexName definition : definitions) {
-						considerForInclusion(definition, indexBinding, index, headerSubstitutor,
+						considerForInclusion(ast, definition, indexBinding, index, headerSubstitutor,
 								candidatesMap);
 					}
 					if (definitions.length > 0 && adaptedBinding != null) 
@@ -185,7 +178,7 @@ public class IncludeCreator {
 			IIndexMacro[] macros = index.findMacros(nameChars, filter, new NullProgressMonitor());
 			for (IIndexMacro macro : macros) {
 				IIndexName definition = macro.getDefinition();
-				considerForInclusion(definition, macro, index, headerSubstitutor, candidatesMap);
+				considerForInclusion(ast, definition, macro, index, headerSubstitutor, candidatesMap);
 			}
 	
 			final ArrayList<IncludeCandidate> candidates = new ArrayList<>(candidatesMap.values());
@@ -477,25 +470,29 @@ public class IncludeCreator {
 	/**
 	 * Adds an include candidate to the <code>candidates</code> map if the file containing
 	 * the definition is suitable for inclusion.
+	 * @param ast 
 	 */
-	private void considerForInclusion(IIndexName definition, IIndexBinding binding, IIndex index,
-			HeaderSubstitutor headerSubstitutor, Map<String, IncludeCandidate> candidates) throws CoreException {
+	private void considerForInclusion(IASTTranslationUnit ast, IIndexName definition, IIndexBinding binding,
+			IIndex index, HeaderSubstitutor headerSubstitutor, Map<String, IncludeCandidate> candidates)
+			throws CoreException {
 		if (definition == null) {
 			return;
 		}
 		IIndexFile file = definition.getFile();
 		// Consider the file for inclusion only if it is not a source file,
 		// or a source file that was already included by some other file. 
-		if (!isSource(getPath(file)) || index.findIncludedBy(file, 0).length > 0) {
+		if (fContext.canBeIncluded(file)) {
 			IncludeInfo include;
+			IPath header = getAbsolutePath(file.getLocation());
+			header = headerSubstitutor.getPreferredRepresentativeHeader(header);
 			if (fContext.getPreferences().heuristicHeaderSubstitution) {
-				include = getIncludeByHeuristic(file, index);
-			} else {
-				IPath header = getAbsolutePath(file.getLocation());
-				header = headerSubstitutor.getPreferredRepresentativeHeader(header);
-				IncludeGroupStyle style = fContext.getIncludeStyle(header);
-				include = fContext.createIncludeInfo(header, style);
+				boolean reachable = ast.getIndexFileSet().contains(file);
+				InclusionRequest request =
+						new InclusionRequest(binding, Collections.singletonMap(file, header), reachable);
+				header = headerSubstitutor.getPreferredRepresentativeHeaderByHeuristic(request);
 			}
+			IncludeGroupStyle style = fContext.getIncludeStyle(header);
+			include = fContext.createIncludeInfo(header, style);
 
 			if (include != null) {
 				IncludeCandidate candidate = new IncludeCandidate(binding, include);
@@ -646,60 +643,6 @@ public class IncludeCreator {
 		return chain;
 	}
 
-	/**
-	 * Given a header file, decides if this header file should be included directly or
-	 * through another header file. For example, <code>bits/stl_map.h</code> is not supposed
-	 * to be included directly, but should be represented by <code>map</code>.
-	 * @return the header file to include.
-	 */
-	private IIndexFile getRepresentativeFile(IIndexFile headerFile, IIndex index) {
-		try {
-			if (isWorkspaceFile(headerFile.getLocation().getURI())) {
-				return headerFile;
-			}
-			ArrayDeque<IIndexFile> front = new ArrayDeque<>();
-			front.add(headerFile);
-			HashSet<IIndexFile> processed = new HashSet<>();
-			processed.add(headerFile);
-			while (!front.isEmpty()) {
-				IIndexFile file = front.remove();
-				// A header without an extension is a good candidate for inclusion into a C++ source
-				// file.
-				if (fContext.isCXXLanguage() && !hasExtension(getPath(file))) {
-					return file;
-				}
-				IIndexInclude[] includes = index.findIncludedBy(file, 0);
-				for (IIndexInclude include : includes) {
-					IIndexFile includer = include.getIncludedBy();
-					if (!processed.contains(includer)) {
-						URI uri = includer.getLocation().getURI();
-						if (isSource(uri.getPath()) || isWorkspaceFile(uri)) {
-							return file;
-						}
-						front.add(includer);
-						processed.add(includer);
-					}
-				}
-			}
-		} catch (CoreException e) {
-			CUIPlugin.log(e);
-		}
-		return headerFile;
-	}
-
-	private boolean isWorkspaceFile(URI uri) {
-		for (IFile file : ResourceLookup.findFilesForLocationURI(uri)) {
-			if (file.exists()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean hasExtension(String path) {
-		return path.indexOf('.', path.lastIndexOf('/') + 1) >= 0;
-	}
-
 	private IFunctionSummary findContribution(final String name) throws CoreException {
 		ICHelpInvocationContext context = new ICHelpInvocationContext() {
 			@Override
@@ -714,91 +657,6 @@ public class IncludeCreator {
 		};
 
 		return CHelpProviderManager.getDefault().getFunctionInfo(context, name);
-	}
-
-	/**
-	 * Checks if a file is a source file (.c, .cpp, .cc, etc). Header files are not considered
-	 * source files.
-	 *
-	 * @return Returns {@code true} if the the file is a source file.
-	 */
-	private boolean isSource(String filename) {
-		IContentType ct= CCorePlugin.getContentType(fContext.getProject(), filename);
-		if (ct != null) {
-			String id = ct.getId();
-			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static String getPath(IIndexFile file) throws CoreException {
-		return file.getLocation().getURI().getPath();
-	}
-
-	/**
-	 * Returns the {@link IncludeInfo} object to be added to the include list
-	 *
-	 * @param path - the full path of the file to include
-	 * @return the {@link IncludeInfo} object
-	 * @throws CoreException 
-	 */
-	private IncludeInfo getIncludeByHeuristic(IIndexFile file, IIndex index) throws CoreException {
-		file = getRepresentativeFile(file, index);
-		IIndexInclude[] includes = index.findIncludedBy(file);
-		if (includes.length > 0) {
-			// Let the existing includes vote. To be eligible to vote, an include
-			// has to be resolvable in the context of the current translation unit.
-			int systemIncludeVotes = 0;
-			String[] ballotBox = new String[includes.length];
-			int k = 0;
-			for (IIndexInclude include : includes) {
-				if (isResolvableInCurrentContext(include)) {
-					ballotBox[k++] = include.getFullName();
-					if (include.isSystemInclude()) {
-						systemIncludeVotes++;
-					}
-				}
-			}
-			if (k != 0) {
-				Arrays.sort(ballotBox, 0, k);
-				String contender = ballotBox[0];
-				int votes = 1;
-				String winner = contender;
-				int winnerVotes = votes;
-				for (int i = 1; i < k; i++) {
-					if (!ballotBox[i].equals(contender)) {
-						contender = ballotBox[i]; 
-						votes = 1;
-					}
-					votes++;
-					if (votes > winnerVotes) {
-						winner = contender;
-						winnerVotes = votes;
-					}
-				}
-				return new IncludeInfo(winner, systemIncludeVotes * 2 >= k);
-			}
-		}
-
-		// The file has never been included before.
-        IPath targetLocation = getAbsolutePath(file.getLocation());
-        return fContext.getIncludeForHeaderFile(targetLocation);
-    }
-
-	/**
-	 * Returns {@code true} if the given include can be resolved in the context of
-	 * the current translation unit.
-	 */
-	private boolean isResolvableInCurrentContext(IIndexInclude include) {
-		try {
-			IncludeInfo includeInfo = new IncludeInfo(include.getFullName(), include.isSystemInclude());
-			return fContext.resolveInclude(includeInfo) != null;
-		} catch (CoreException e) {
-			CUIPlugin.log(e);
-			return false;
-		}
 	}
 
 	/**

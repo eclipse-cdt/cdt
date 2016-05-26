@@ -12,14 +12,9 @@ package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
- *
  */
-public interface IParserLogService
-{
-
-	public void traceLog( String message );
-//	public void errorLog( String message );
+public interface IParserLogService {
+	public void traceLog(String message);
 	
 	public boolean isTracing();
-
 }

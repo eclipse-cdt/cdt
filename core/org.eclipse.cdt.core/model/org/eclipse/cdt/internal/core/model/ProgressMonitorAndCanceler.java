@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * @since 5.0
  */
 public class ProgressMonitorAndCanceler extends NullProgressMonitor implements ICanceler {
-
 	private ICancelable fCancelable;
 
 	@Override
@@ -41,5 +40,4 @@ public class ProgressMonitorAndCanceler extends NullProgressMonitor implements I
 			fCancelable= null;
 		}
 	}
-
 }

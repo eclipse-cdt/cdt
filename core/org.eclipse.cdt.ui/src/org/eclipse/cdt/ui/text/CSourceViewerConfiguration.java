@@ -114,7 +114,6 @@ import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.typehierarchy.THInformationControl;
 import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
 
-
 /**
  * Configuration for a <code>SourceViewer</code> which shows C/C++ code.
  * <p>
@@ -124,7 +123,6 @@ import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
  * @since 5.1
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
-	
 	protected ITextEditor fTextEditor;
 	/**
 	 * The document partitioning.
@@ -297,14 +295,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		reconciler.setRepairer(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 		
 		ICTokenScanner docCommentSingleScanner= getSinglelineDocCommentScanner(getProject());
-		if(docCommentSingleScanner!=null) {
+		if (docCommentSingleScanner!=null) {
 			dr= new DefaultDamagerRepairer(docCommentSingleScanner);
 			reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
 			reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
 		}
 	
 		ICTokenScanner docCommentMultiScanner= getMultilineDocCommentScanner(getProject());
-		if(docCommentMultiScanner!=null) {
+		if (docCommentMultiScanner!=null) {
 			dr= new DefaultDamagerRepairer(docCommentMultiScanner);
 			reconciler.setDamager(dr, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
 			reconciler.setRepairer(dr, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
@@ -384,7 +382,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
     
 	/**
-	 * @return the code scanner for the given language
+	 * Returns the code scanner for the given language.
 	 */
 	protected RuleBasedScanner getCodeScanner(ILanguage language) {
 		if (fCodeScanner != null) {
@@ -392,12 +390,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		}
 		RuleBasedScanner scanner= null;
 		
-		if(language != null) {
+		if (language != null) {
 			ICLanguageKeywords keywords = language.getAdapter(ICLanguageKeywords.class);
-			if(keywords != null) {
+			if (keywords != null) {
 				scanner = new CCodeScanner(getTokenStoreFactory(), keywords);
-			}
-			else {
+			} else {
 				ILanguageUI languageUI = language.getAdapter(ILanguageUI.class);
 				if (languageUI != null)
 					scanner = languageUI.getCodeScanner();
@@ -413,9 +410,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return scanner;
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getContentAssistant(ISourceViewer)
-	 */
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (getEditor() == null) {
@@ -472,10 +466,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return settings;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getQuickAssistAssistant(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 5.0
-	 */
 	@Override
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		if (getEditor() != null)
@@ -483,14 +473,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fTextEditor != null) {
-			//Delay changed and non-incremental reconciler used due to
-			//PR 130089
+			// Delay changed and non-incremental reconciler used due to PR 130089.
 			CCompositeReconcilingStrategy strategy=
 				new CCompositeReconcilingStrategy(sourceViewer, fTextEditor, getConfiguredDocumentPartitioning(sourceViewer));
 			MonoReconciler reconciler= new CReconciler(fTextEditor, strategy);
@@ -502,9 +488,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
 	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		String partitioning= getConfiguredDocumentPartitioning(sourceViewer);
@@ -539,7 +522,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
 			ITextDoubleClickStrategy single= owner.getSinglelineConfiguration().createDoubleClickStrategy();
 			return single != null ? single : new DefaultTextDoubleClickStrategy();
-		} else if(ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(contentType)) {
+		} else if (ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(contentType)) {
 			IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
 			ITextDoubleClickStrategy multi= owner.getMultilineConfiguration().createDoubleClickStrategy();
 			return multi!=null ? multi : new DefaultTextDoubleClickStrategy();
@@ -552,17 +535,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return new CDoubleClickSelector();
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDefaultPrefixes(ISourceViewer, String)
-	 */
 	@Override
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return new String[] { "//", "//!", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getIndentPrefixes(ISourceViewer, String)
-	 */
 	@Override
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		ICProject project= getCProject();
@@ -571,21 +548,23 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		boolean allowTabs= tabWidth <= indentWidth;
 		
 		String indentMode;
-		if (project == null)
+		if (project == null) {
 			indentMode= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
-		else
+		} else {
 			indentMode= project.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true);
+		}
 
 		boolean useSpaces= CCorePlugin.SPACE.equals(indentMode) || DefaultCodeFormatterConstants.MIXED.equals(indentMode);
 		
 		// assert allowTabs || useSpaces;
 		
-		if (!allowTabs)
+		if (!allowTabs) {
 			return new String[] { getStringWithSpaces(indentWidth), "" }; //$NON-NLS-1$
-		else if  (!useSpaces)
+		} else if (!useSpaces) {
 			return getIndentPrefixesForTab(tabWidth);
-		else
+		} else {
 			return getIndentPrefixesForSpaces(tabWidth);
+		}
 	}
 
 	/**
@@ -649,9 +628,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return element.getCProject();
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getTabWidth(ISourceViewer)
-	 */
 	@Override
 	public int getTabWidth(ISourceViewer sourceViewer) {
 		return CodeFormatterUtil.getTabWidth(getCProject());
@@ -659,8 +635,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	/**
 	 * Returns the configured indent width for this viewer.
-	 * @param sourceViewer
-	 * @return the indent width
 	 */
 	public int getIndentWidth(ISourceViewer sourceViewer) {
 		return CodeFormatterUtil.getIndentWidth(getCProject());
@@ -675,16 +649,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	public boolean useSpacesOnly(ISourceViewer sourceViewer) {
 		ICProject project= getCProject();
 		String option;
-		if (project == null)
+		if (project == null) {
 			option= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
-		else
+		} else {
 			option= project.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true);
+		}
 		return CCorePlugin.SPACE.equals(option);
 	}
 	
-	/**
-	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
-	 */
 	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new HTMLAnnotationHover() {
@@ -695,10 +667,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		};
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
-	 * @since 2.1
-	 */
 	@Override
 	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
 		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
@@ -725,10 +693,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return shortenedStateMasks;
 	}
 	
-	/*
-	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String, int)
-	 * @since 2.1
-	 */
 	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
 		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
@@ -742,17 +706,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return null;
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String)
-	 */
 	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return getTextHover(sourceViewer, contentType, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
 	}
 
-	/**
-	 * @see SourceViewerConfiguration#getConfiguredContentTypes(ISourceViewer)
-	 */
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {
@@ -767,12 +725,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		};
 	}
 	
-	/**
-	 * @see SourceViewerConfiguration#getContentFormatter(ISourceViewer)
-	 */
 	@Override
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
-		
 		final MultiPassContentFormatter formatter =
 			new MultiPassContentFormatter(getConfiguredDocumentPartitioning(sourceViewer),
 				IDocument.DEFAULT_CONTENT_TYPE);
@@ -798,10 +752,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return false;
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getHoverControlCreator(ISourceViewer)
-	 * @since 2.0
-	 */
 	@Override
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
 		return new IInformationControlCreator() {
@@ -830,10 +780,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		};
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getInformationPresenter(ISourceViewer)
-	 * @since 2.0
-	 */
 	@Override
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		InformationPresenter presenter= new InformationPresenter(getInformationPresenterControlCreator(sourceViewer));
@@ -888,9 +834,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			fPreprocessorScanner.adaptToPreferenceChange(event);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		if (fDocumentPartitioning != null)
@@ -919,7 +862,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	/**
      * Creates control for outline presentation in editor.
-     * @return Control.
      */
     protected IInformationControlCreator getHierarchyControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
@@ -975,7 +917,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 	
 	/**
-	 * Reset cached language dependent scanners.
+	 * Resets cached language dependent scanners.
 	 */
 	public void resetScanners() {
 		fCodeScanner= null;
@@ -1019,7 +961,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	
 	/**
      * Creates control for macro exploration in editor.
-     * @return Control.
      */
     protected IInformationControlCreator getMacroExplorationControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
@@ -1033,7 +974,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	
     /**
 	 * @return the IProject associated with this CSourceViewerConfiguration, or null if
-	 * no IProject could be determined
+	 *     no IProject could be determined
 	 */
 	protected IProject getProject() {
 		ICProject cproject= getCProject();
@@ -1055,5 +996,4 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		targets.put("org.eclipse.cdt.ui.cCode", fTextEditor); //$NON-NLS-1$
 		return targets;
 	}
-
 }

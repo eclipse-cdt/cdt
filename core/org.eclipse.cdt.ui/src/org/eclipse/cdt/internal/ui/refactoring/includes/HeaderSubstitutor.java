@@ -79,7 +79,7 @@ public class HeaderSubstitutor {
 					IPath path = IndexLocationFactory.getAbsolutePath(file.getLocation());
 					if (fContext.getCurrentDirectory().isPrefixOf(path)) {
 						// "IWYU pragma: private" does not affect inclusion from files under
-						// the directory where the header is located.  
+						// the directory where the header is located.
 						continue;
 					}
 
@@ -201,9 +201,12 @@ public class HeaderSubstitutor {
 		String symbolName = request.getBinding().getName();
 		ArrayDeque<IIndexFile> front = new ArrayDeque<>();
 		HashSet<IIndexFile> processed = new HashSet<>();
+		IIndexFile bestCandidate = null;
+		IIndexFile candidateWithoutExtension = null;
+		IIndexFile candidateWithMatchingName = null;
 
 		try {
-			// Look for headers without an extension and a matching name.
+			// Look for headers matching by name and headers without an extension.
 			if (fContext.isCXXLanguage()) {
 				front.addAll(indexFiles);
 				processed.addAll(indexFiles);
@@ -213,10 +216,18 @@ public class HeaderSubstitutor {
 
 					String path = IncludeUtil.getPath(file);
 
-					if (!hasExtension(path) && getFilename(path).equalsIgnoreCase(symbolName)) {
-						// A C++ header without an extension and with a name which matches the name
-						// of the symbol which should be declared is a perfect candidate for inclusion.
-						return IndexLocationFactory.getAbsolutePath(file.getLocation());
+					if (getFilename(path).equalsIgnoreCase(symbolName)) {
+						if (!hasExtension(path)) {
+							// A C++ header without an extension and with a name which matches the name
+							// of the symbol that should be declared is a perfect candidate for inclusion.
+							bestCandidate = file;
+							break;
+						}
+						if (candidateWithMatchingName == null)
+							candidateWithMatchingName = file;
+					} else if (!hasExtension(path)) {
+						if (candidateWithoutExtension == null)
+							candidateWithoutExtension = file;
 					}
 
 					// Process the next level of the include hierarchy.
@@ -231,36 +242,41 @@ public class HeaderSubstitutor {
 				}
 			}
 
-			// Repeat the process, this time only looking for headers without an extension.
-			front.clear();
-			front.addAll(indexFiles);
-			processed.clear();
-			processed.addAll(indexFiles);
+			if (bestCandidate == null) {
+				bestCandidate = candidateWithoutExtension;
+			}
+			if (bestCandidate == null) {
+				bestCandidate = candidateWithMatchingName;
+			}
 
-			while (!front.isEmpty()) {
-				IIndexFile file = front.remove();
+			if (bestCandidate == null) {
+				// Repeat inclusion tree search, this time looking for any header included by a source file.
+				front.clear();
+				front.addAll(indexFiles);
+				processed.clear();
+				processed.addAll(indexFiles);
 
-				String path = IncludeUtil.getPath(file);
+				while (!front.isEmpty()) {
+					IIndexFile file = front.remove();
 
-				if (fContext.isCXXLanguage() && !hasExtension(path)) {
-					// A C++ header without an extension is still a very good candidate for inclusion.
-					return IndexLocationFactory.getAbsolutePath(file.getLocation());
-				}
-
-				// Process the next level of the include hierarchy.
-				IIndexInclude[] includes = fContext.getIndex().findIncludedBy(file, 0);
-				for (IIndexInclude include : includes) {
-					IIndexFile includer = include.getIncludedBy();
-					if (!processed.contains(includer)) {
-						URI uri = includer.getLocation().getURI();
-						if (IncludeUtil.isSource(includer, fContext.getProject()) || isWorkspaceFile(uri)) {
-							return IndexLocationFactory.getAbsolutePath(file.getLocation());
+					// Process the next level of the include hierarchy.
+					IIndexInclude[] includes = fContext.getIndex().findIncludedBy(file, 0);
+					for (IIndexInclude include : includes) {
+						IIndexFile includer = include.getIncludedBy();
+						if (!processed.contains(includer)) {
+							URI uri = includer.getLocation().getURI();
+							if (IncludeUtil.isSource(includer, fContext.getProject()) || isWorkspaceFile(uri)) {
+								bestCandidate = file;
+								break;
+							}
+							front.add(includer);
+							processed.add(includer);
 						}
-						front.add(includer);
-						processed.add(includer);
 					}
 				}
 			}
+			if (bestCandidate != null)
+				return IndexLocationFactory.getAbsolutePath(bestCandidate.getLocation());
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}
@@ -269,7 +285,7 @@ public class HeaderSubstitutor {
 	}
 
 	/**
-	 * Returns the set of headers exporting the given symbol. 
+	 * Returns the set of headers exporting the given symbol.
 	 */
 	public Set<IncludeInfo> getExportingHeaders(String symbol) {
 		Set<IncludeInfo> headers = fSymbolExportMap.getMapping(symbol);

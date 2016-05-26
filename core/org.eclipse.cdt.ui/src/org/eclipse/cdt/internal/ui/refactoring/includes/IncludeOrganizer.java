@@ -175,8 +175,8 @@ public class IncludeOrganizer {
 
 	/**
 	 * Organizes the includes for a given translation unit.
+	 *
 	 * @param ast The AST translation unit to process.
-	 * @throws CoreException
 	 */
 	public MultiTextEdit organizeIncludes(IASTTranslationUnit ast) throws CoreException {
 		// Process the given translation unit with the inclusion resolver.
@@ -333,7 +333,6 @@ public class IncludeOrganizer {
 
 	/**
 	 * Creates forward declarations by examining the list of bindings which have to be declared.
-	 * @param pendingBlankLine
 	 */
 	private void createForwardDeclarations(IASTTranslationUnit ast, BindingClassifier classifier,
 			int offset, boolean pendingBlankLine, MultiTextEdit rootEdit)	throws CoreException {
@@ -831,17 +830,17 @@ public class IncludeOrganizer {
 			IIndexName[] indexNames;
 			if (binding instanceof IMacroBinding) {
 				indexNames = IIndexName.EMPTY_ARRAY;
-	    		ILocationResolver resolver = ast.getAdapter(ILocationResolver.class);
-	    		IASTName[] declarations = resolver.getDeclarations((IMacroBinding) binding);
-	    		for (IASTName name : declarations) {
-	    			if (name instanceof IAdaptable) {
-	    				IIndexName indexName = ((IAdaptable) name).getAdapter(IIndexName.class);
-	    				if (indexName != null) {
-		    				indexNames = Arrays.copyOf(indexNames, indexNames.length + 1);
-		    				indexNames[indexNames.length - 1] = indexName;
-	    				}
-	    			}
-	    		}
+				ILocationResolver resolver = ast.getAdapter(ILocationResolver.class);
+				IASTName[] declarations = resolver.getDeclarations((IMacroBinding) binding);
+				for (IASTName name : declarations) {
+					if (name instanceof IAdaptable) {
+						IIndexName indexName = ((IAdaptable) name).getAdapter(IIndexName.class);
+						if (indexName != null) {
+							indexNames = Arrays.copyOf(indexNames, indexNames.length + 1);
+							indexNames[indexNames.length - 1] = indexName;
+						}
+					}
+				}
 			} else if (allowDeclarations || binding instanceof IVariable) {
 				// For a variable we need to include a declaration.
 				indexNames = index.findDeclarations(binding);
@@ -888,7 +887,7 @@ public class IncludeOrganizer {
 				Map<IIndexFile, IPath> reachableDeclaringHeaders = new HashMap<>();
 				for (IIndexName indexName : indexNames) {
 					IIndexFile indexFile = indexName.getFile();
-					if (!canBeIncluded(indexFile)) {
+					if (!fContext.canBeIncluded(indexFile)) {
 						// The target is a source file which isn't included by any other files.
 						// Don't include it.
 						continue;
@@ -918,15 +917,10 @@ public class IncludeOrganizer {
 		int pos = 0;
 		for (IIndexName name : names) {
 			IIndexFile file = name.getFile();
-			if (file != null && !blacklist.contains(file) && canBeIncluded(file))
+			if (file != null && !blacklist.contains(file) && fContext.canBeIncluded(file))
 				includable = ArrayUtil.appendAt(includable, pos++, name);
 		}
 		return ArrayUtil.trim(includable, pos);
-	}
-
-	private boolean canBeIncluded(IIndexFile indexFile) throws CoreException {
-		return !IncludeUtil.isSource(indexFile, fContext.getProject()) ||
-				fContext.getIndex().findIncludedBy(indexFile, 0).length != 0;
 	}
 
 	private String createIncludeDirective(IncludePrototype include, String lineComment) {

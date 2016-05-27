@@ -127,6 +127,7 @@ public class PDOMIndexerJob extends Job {
 					sMonitorDetail= name;
 				}
 			};
+	
 			do {
 				synchronized (taskMutex) {
 					currentTask= null;
@@ -158,25 +159,30 @@ public class PDOMIndexerJob extends Job {
 						}
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
-					} catch (OperationCanceledException e) {
 					}
 				}
 			} while (currentTask != null);
 			return Status.OK_STATUS;
+		} catch (OperationCanceledException e) {
+			indexingAborted();
+			throw e;
 		} catch (RuntimeException | Error e) {
 			CCorePlugin.log(e);
-			pdomManager.cancelledIndexerJob(true);
-			synchronized (taskMutex) {
-				currentTask= null;
-				taskMutex.notifyAll();
-			}
+			indexingAborted();
 			throw e;
 		} finally {
 			synchronized (this) {
 				fMonitor= null;
 			}
 			monitorJob.cancel();
-			monitor.done();
+		}
+	}
+
+	private void indexingAborted() {
+		pdomManager.cancelledIndexerJob(true);
+		synchronized (taskMutex) {
+			currentTask= null;
+			taskMutex.notifyAll();
 		}
 	}
 

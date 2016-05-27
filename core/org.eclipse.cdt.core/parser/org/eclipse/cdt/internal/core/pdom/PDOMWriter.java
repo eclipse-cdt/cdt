@@ -334,6 +334,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 						}
 					}
 				} catch (OperationCanceledException e) {
+					throw e;
 				} catch (RuntimeException | StackOverflowError | AssertionError e) {
 					th= e;
 				} finally {

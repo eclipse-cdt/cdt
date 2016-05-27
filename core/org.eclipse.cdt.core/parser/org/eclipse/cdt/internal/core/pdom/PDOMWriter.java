@@ -494,7 +494,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 				if (cancelationCheckThrottler <= 0) {
 					if (fCancelState.isCanceled())
 						throw new OperationCanceledException();
-					cancelationCheckThrottler = 1000;
+					cancelationCheckThrottler = 100;
 				} else {
 					cancelationCheckThrottler--;
 				}

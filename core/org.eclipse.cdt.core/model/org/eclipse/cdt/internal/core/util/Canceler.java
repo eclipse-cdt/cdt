@@ -5,29 +5,44 @@ package org.eclipse.cdt.internal.core.util;
  */
 public class Canceler implements ICanceler {
 	private ICancelable fCancelable;
-	private boolean canceled;
+	private volatile boolean canceled;
 
 	@Override
-	public synchronized void setCancelable(ICancelable cancelable) {
-		fCancelable= cancelable;
-		checkCanceled();
+	public void setCancelable(ICancelable cancelable) {
+		synchronized (this) {
+			fCancelable= cancelable;
+			cancelable = getCancelableToCancel();
+		}
+		if (cancelable != null)
+			cancelable.cancel();
 	}
 
 	@Override
-	public synchronized void setCanceled(boolean canceled) {
-		this.canceled = canceled;
-		checkCanceled();
+	public void setCanceled(boolean canceled) {
+		ICancelable cancelable;
+		synchronized (this) {
+			this.canceled = canceled;
+			cancelable = getCancelableToCancel();
+		}
+		if (cancelable != null)
+			cancelable.cancel();
 	}
 
 	@Override
-	public synchronized boolean isCanceled() {
+	public boolean isCanceled() {
 		return canceled;
 	}
 
-	private synchronized void checkCanceled() {
-		if (fCancelable != null && canceled) {
-			fCancelable.cancel();
+	/**
+	 * Returns the cancelable to cancel, or {@code null} if there is nothing to cancel.
+	 * Sets {@link #fCancelable} to {@code null}. Has to be called from a synchronized block.
+	 */
+	private ICancelable getCancelableToCancel() {
+		ICancelable cancelable = null;
+		if (canceled) {
+			cancelable = fCancelable;
 			fCancelable= null;
 		}
+		return cancelable;
 	}
 }

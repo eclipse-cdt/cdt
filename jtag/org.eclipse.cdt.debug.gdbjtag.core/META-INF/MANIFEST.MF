@@ -19,4 +19,4 @@ Export-Package: org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.cdt.debug.gdbjtag.core.dsf.gdb.service.extensions,
  org.eclipse.cdt.debug.gdbjtag.core.jtagdevice
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

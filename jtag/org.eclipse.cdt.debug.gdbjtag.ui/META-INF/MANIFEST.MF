@@ -19,4 +19,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.cdt.debug.gdbjtag.internal.ui;x-internal:=true,
  org.eclipse.cdt.debug.gdbjtag.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

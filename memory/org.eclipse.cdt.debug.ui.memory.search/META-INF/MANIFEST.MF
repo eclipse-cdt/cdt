@@ -16,5 +16,5 @@ Eclipse-LazyStart: true
 Bundle-Activator: org.eclipse.cdt.debug.ui.memory.search.MemorySearchPlugin
 Bundle-Vendor: %providerName
 Import-Package: org.eclipse.debug.ui.memory
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.cdt.debug.ui.memory.search

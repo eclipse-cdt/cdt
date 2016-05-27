@@ -19,6 +19,8 @@
 	<properties>
 		<productId>org.eclipse.cdt.debug.application.product</productId>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+		<archiveFileName>cdt-stand-alone-debugger-${unqualifiedVersion}-${build.timestamp}</archiveFileName>
+		<rootFolder>cdt-stand-alone-debugger</rootFolder>
 	</properties>
 
 	<build>
@@ -42,6 +44,7 @@
 						<configuration>
 							<formats>
 								<linux>tar.gz</linux>
+								<macosx>tar.gz</macosx>
 							</formats>
 						</configuration>
 					</execution>
@@ -49,9 +52,9 @@
 				<configuration>
 					<products>
 						<product>
-							<archiveFileName>cdt-stand-alone-debugger-${unqualifiedVersion}-${build.timestamp}</archiveFileName>
+							<archiveFileName>${archiveFileName}</archiveFileName>
 							<id>${productId}</id>
-							<rootFolder>cdt-stand-alone-debugger</rootFolder>
+							<rootFolder>${rootFolder}</rootFolder>
 						</product>
 					</products>
 					<source>repository</source>
@@ -99,7 +102,7 @@
 	<!-- Deploy RCP builds and update site to the downloads area -->
 	<profiles>
 		<profile>
-			<id>production</id>
+			<id>production-test</id>
 			<properties>
 				<rcpDestination>/home/data/httpd/download.eclipse.org/${repo-path}/rcp/</rcpDestination>
 				<rcpSiteDestination>/home/data/httpd/download.eclipse.org/${repo-path}/rcp-repository/</rcpSiteDestination>
@@ -107,44 +110,54 @@
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-p2-director-plugin</artifactId>
+						<version>${tycho-version}</version>
 						<executions>
 							<execution>
-								<id>deploy</id>
-								<phase>verify</phase>
+								<id>materialize-products</id>
 								<goals>
-									<goal>run</goal>
+									<goal>materialize-products</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>archive-products</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>archive-products</goal>
 								</goals>
 								<configuration>
-									<target>
-										<!-- Cleanup the "rcp" destination, and copy over the new archives -->
-										<delete includeemptydirs="false" failonerror="false">
-											<fileset dir="${rcpDestination}">
-												<include name="*.tar.gz" />
-												<include name="*.zip" />
-											</fileset>
-										</delete>
-										<mkdir dir="${rcpDestination}" />
-										<copy includeemptydirs="false" todir="${rcpDestination}">
-											<fileset dir="target/products">
-												<include name="cdt-stand-alone-debugger-*" />
-											</fileset>
-										</copy>
-
-										<!-- Cleanup the "rcp-repository" update site, and copy over the 
-											new one -->
-										<delete includeemptydirs="false" failonerror="false">
-											<fileset dir="${rcpSiteDestination}">
-												<include name="**" />
-											</fileset>
-										</delete>
-										<mkdir dir="${rcpSiteDestination}" />
-										<copy includeemptydirs="false" todir="${rcpSiteDestination}">
-											<fileset dir="target/repository">
-												<include name="**" />
-											</fileset>
-										</copy>
-									</target>
+									<formats>
+										<linux>tar.gz</linux>
+										<macosx>tar.gz</macosx>
+									</formats>
+								</configuration>
+							</execution>
+						</executions>
+						<configuration>
+							<products>
+								<product>
+									<archiveFileName>${archiveFileName}</archiveFileName>
+									<id>${productId}</id>
+									<rootFolder>${rootFolder}</rootFolder>
+								</product>
+							</products>
+							<source>repository</source>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.cbi.maven.plugins</groupId>
+						<artifactId>eclipse-macsigner-plugin</artifactId>
+						<version>${cbi-plugins.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<signFiles>
+										<signFile>${project.build.directory}/products/${productId}/macosx/cocoa/x86_64/${rootFolder}.app</signFile>
+									</signFiles>
 								</configuration>
 							</execution>
 						</executions>

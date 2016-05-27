@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_541be478",
+        "filename": "releng/scripts/ChangeJavaVersion.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-05-27T22:37:08Z",
+      "side": 1,
+      "message": "Should some other preferences be changed too? The script should mimic Eclipse behavior of \"Update the classpath settings\" in the Overview tab of manifest file editor.",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 75
+      },
+      "revId": "421abb1514358e184630fe61c2491bc980586dd1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

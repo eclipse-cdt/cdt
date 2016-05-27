@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.util;
  * @since 5.0
  */
 public interface ICancelable {
-
 	/**
 	 * Marks the receiver cancelled.
 	 */

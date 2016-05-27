@@ -333,6 +333,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 							}
 						}
 					}
+				} catch (OperationCanceledException e) {
 				} catch (RuntimeException | StackOverflowError | AssertionError e) {
 					th= e;
 				} finally {
@@ -494,7 +495,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 				if (cancelationCheckThrottler <= 0) {
 					if (fCancelState.isCanceled())
 						throw new OperationCanceledException();
-					cancelationCheckThrottler = 1000;
+					cancelationCheckThrottler = 100;
 				} else {
 					cancelationCheckThrottler--;
 				}

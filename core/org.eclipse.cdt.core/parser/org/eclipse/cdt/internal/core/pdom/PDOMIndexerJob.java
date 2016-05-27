@@ -135,7 +135,7 @@ public class PDOMIndexerJob extends Job {
 
 					// User cancel, tell manager and return.
 					if (monitor.isCanceled()) {
-						pdomManager.cancelledIndexerJob(cancelledByManager);
+						pdomManager.indexerJobCanceled(cancelledByManager);
 						return Status.CANCEL_STATUS;
 					}
 
@@ -179,7 +179,7 @@ public class PDOMIndexerJob extends Job {
 	}
 
 	private void indexingAborted() {
-		pdomManager.cancelledIndexerJob(true);
+		pdomManager.indexerJobCanceled(true);
 		synchronized (taskMutex) {
 			currentTask= null;
 			taskMutex.notifyAll();

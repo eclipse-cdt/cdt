@@ -165,8 +165,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
      */
     private Map<IProject, IPDOM> fProjectToPDOM= new HashMap<>();
     private Map<File, ICProject> fFileToProject= new HashMap<>();
-	private ListenerList fChangeListeners= new ListenerList();
-	private ListenerList fStateListeners= new ListenerList();
+	private ListenerList<IIndexChangeListener> fChangeListeners= new ListenerList<>();
+	private ListenerList<IIndexerStateListener> fStateListeners= new ListenerList<>();
 
 	private IndexChangeEvent fIndexChangeEvent= new IndexChangeEvent();
 	private IndexerStateEvent fIndexerStateEvent= new IndexerStateEvent();
@@ -714,7 +714,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	return result;
     }
 
-    void cancelledIndexerJob(boolean byManager) {
+    void indexerJobCanceled(boolean byManager) {
     	synchronized (fTaskQueue) {
     		fCurrentTask= null;
     		if (!byManager) {

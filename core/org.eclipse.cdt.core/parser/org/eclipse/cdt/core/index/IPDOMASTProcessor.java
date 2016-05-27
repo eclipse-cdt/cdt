@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  * The PDOMASTProcessor extension point allows contributors to the org.eclipse.cdt.core.PDOMASTProcessor
  * extension-point to store their own information in the persisted index.  The intent is for
  * contributors to define their own ILinkage to avoid managing conflicts with the storage format
- * for existing Linkages.
+ * for existing linkages.
  * <p>
  * NOTE: The existing org.eclipse.cdt.core.language extension-point, allows new pdomLinkageFactories
  * to be added.  However, the {@link IPDOMLinkageFactory} interface which must be implemented is
@@ -27,9 +27,9 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IPDOMASTProcessor {
 	/**
-	 * Process the input ast by adding significant symbols to the given output map.  Return the
-	 * linkage id that should be used to store the result, or {@link ILinkage#NO_LINKAGE_ID} if
-	 * the AST contained nothing of significance to this processor.
+	 * Processes the input AST by adding significant symbols to the given output map.  Returns the linkage id
+	 * that should be used to store the result, or {@link ILinkage#NO_LINKAGE_ID} if the AST contained nothing
+	 * of significance to this processor.
 	 *
 	 * @param ast     The input AST to be processed.
 	 * @param symbols The output map of significant symbols.

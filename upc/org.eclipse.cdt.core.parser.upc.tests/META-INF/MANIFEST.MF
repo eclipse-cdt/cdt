@@ -13,5 +13,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core.lrparser.tests;bundle-version="4.0.0"
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.cdt.core.parser.upc.tests

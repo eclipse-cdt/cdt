@@ -1,11 +1,9 @@
 package org.eclipse.cdt.dsf.gdb.launching;
 
-import java.util.concurrent.ExecutionException;
-
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
@@ -56,34 +54,27 @@ public class GdbSourceLookupParticipant extends DsfSourceLookupParticipant {
 		super.sourceContainersChanged(director);
 
 		/*
-		 * Update the substitution paths in GDB. Ideally we would always run
-		 * this atomically to block the source lookup from attempting to do a
-		 * lookup until GDB is fully updated.
+		 * Update the substitution paths in GDB. Ideally we would always run this atomically to block the
+		 * source lookup from attempting to do a lookup until GDB is fully updated.
 		 * 
-		 * However, if we are already on the executor thread there is no way to
-		 * make this atomic. In practice this case does not matter as the times
-		 * sourceContainersChanged is called when on the executor thread are
-		 * when the launch configuration is being saved and in that case the
-		 * source containers are not even changing.
+		 * However, if we are already on the executor thread there is no way to make this atomic. In practice
+		 * this case does not matter as the times sourceContainersChanged is called when on the executor
+		 * thread are when the launch configuration is being saved and in that case the source containers are
+		 * not even changing.
+		 * 
+		 * if we are not in the executor thread we can assume that the insertion of this task is performed before
+		 * any other new one and shall take place before any new request to GDB.
 		 */
 		if (fExecutor.isInExecutorThread()) {
 			sourceContainersChangedOnDispatchThread(director, new RequestMonitor(fExecutor, null));
 		} else {
-			Query<Object> query = new Query<Object>() {
+			DsfRunnable runSourceContainersChanged = new DsfRunnable() {
 				@Override
-				protected void execute(final DataRequestMonitor<Object> rm) {
-					sourceContainersChangedOnDispatchThread(director, rm);
+				public void run() {
+					sourceContainersChangedOnDispatchThread(director, new RequestMonitor(fExecutor, null));
 				}
-
 			};
-			fExecutor.execute(query);
-			try {
-				query.get();
-			} catch (InterruptedException | ExecutionException e) {
-				// We have failed to update in some way, we don't really have a
-				// path to expose the failure so at least log it.
-				GdbPlugin.log(e);
-			}
+			fExecutor.execute(runSourceContainersChanged);
 		}
 	}
 

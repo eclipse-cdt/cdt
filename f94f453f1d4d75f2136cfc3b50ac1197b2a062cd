@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_d4d9b49d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-28T20:35:57Z",
+      "side": 1,
+      "message": "Sadly this is specifically the opposite of what assumption we have to make. We need to run this atomically if the reason for the change to the configuration is a source lookup change followed by a source lookup. That case is exactly the case that the CSourceNotFound editor leads us into. \n\nBecause it takes two commands to GDB to change source substitution settings, the executor thread is \"released\" while waiting for the result of the first command.\n\nIt is in this window that the UI thread issues a source lookup which does a frame lookup to get the file for the active frame, meaning it gets either old or half working information from GDB.\n\nAdditionally, at the moment we don\u0027t clear the cache until we finish the update of the substitutions. Therefore the UI thread actually gets the cached frame.\n\nI am looking at issuing the clear cache first, followed by queuing both GDB commands at the same time. That may lead to the whole operation being atomic on the executor thread. \n\nI will provide a proposed update for your review, or comments here if I cannot get to the right solution.\n\nThanks!",
+      "revId": "f94f453f1d4d75f2136cfc3b50ac1197b2a062cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -101,6 +101,9 @@ public class BaseTestCase {
     // The set of attributes used for the launch of a single test.
 	private Map<String, Object> launchAttributes;
 
+	// The launch configuration generated from the launch attributes
+	private ILaunchConfiguration fLaunchConfiguration;
+
 	// A set of global launch attributes which are not
 	// reset when we load a new class of tests.
 	// This allows a SuiteGdb to set an attribute
@@ -113,12 +116,6 @@ public class BaseTestCase {
 	/** The MI event associated with the breakpoint at main() */
 	private MIStoppedEvent fInitialStoppedEvent;
 
-	/** Flag we set to true when the target has reached the breakpoint at main() */
-	private boolean fTargetSuspended;
-
-	/** Event semaphore we set when the target has reached the breakpoint at main() */
-	final private Object fTargetSuspendedSem = new Object(); // just used as a semaphore
-
 	private static boolean fgStatusHandlersEnabled = true;
 
 	/** global cache of gdb versions, to avoid running gdb every time just to check if it is present*/
@@ -130,6 +127,10 @@ public class BaseTestCase {
 	private HashMap<String, Integer> fTagLocations = new HashMap<>();
 
     public GdbLaunch getGDBLaunch() { return fLaunch; }
+
+	public ILaunchConfiguration getLaunchConfiguration() {
+		return fLaunchConfiguration;
+	}
 
     public void setLaunchAttribute(String key, Object value) {
     	launchAttributes.put(key, value);
@@ -168,16 +169,33 @@ public class BaseTestCase {
 	 * get to the breakpoint state, as we have no further need to monitor events
 	 * beyond that point.
 	 */
-    protected class SessionEventListener {
-    	private DsfSession fSession;
+	protected static class SessionEventListener {
+		private DsfSession fSession;
 
-		SessionEventListener(DsfSession session) {
-    		fSession = session;
-    		Assert.assertNotNull(session);
-    	}
+		/** The MI event associated with the breakpoint at main() */
+		private MIStoppedEvent fInitialStoppedEvent;
+
+		/** Event semaphore we set when the target has reached the breakpoint at main() */
+		final private Object fTargetSuspendedSem = new Object(); // just used as a semaphore
+
+		/** Flag we set to true when the target has reached the breakpoint at main() */
+		private boolean fTargetSuspended;
+
+		private ILaunchConfiguration fLaunchConfiguration;
+
+		public SessionEventListener(ILaunchConfiguration launchConfiguration) {
+			fLaunchConfiguration = launchConfiguration;
+		}
+
+		public void setSession(DsfSession session) {
+			fSession = session;
+			Assert.assertNotNull(fSession);
+		}
 
 		@DsfServiceEventHandler
-    	public void eventDispatched(IDMEvent<?> event) {
+		public void eventDispatched(IDMEvent<?> event) {
+			Assert.assertNotNull(fSession);
+
 			// Wait for the program to have stopped on main.
 			//
 			// We have to jump through hoops to properly handle the remote
@@ -195,36 +213,57 @@ public class BaseTestCase {
 			// is to look for an ISuspendedDMEvent and then confirming that it indicates
 			// in its frame that it stopped at "main".  This will allow us to skip
 			// the first *stopped event for GDB >= 7.0
-    		if (event instanceof ISuspendedDMEvent) {
-    			if (event instanceof IMIDMEvent) {
-    				IMIDMEvent iMIEvent = (IMIDMEvent)event;
+			if (event instanceof ISuspendedDMEvent) {
+				if (event instanceof IMIDMEvent) {
+					IMIDMEvent iMIEvent = (IMIDMEvent) event;
 
-    				Object miEvent = iMIEvent.getMIEvent();
-    				if (miEvent instanceof MIStoppedEvent) {
-    					// Store the corresponding MI *stopped event
-    					fInitialStoppedEvent = (MIStoppedEvent)miEvent;
+					Object miEvent = iMIEvent.getMIEvent();
+					if (miEvent instanceof MIStoppedEvent) {
+						// Store the corresponding MI *stopped event
+						fInitialStoppedEvent = (MIStoppedEvent) miEvent;
 
-    					// Check the content of the frame for the method we should stop at
-    					String stopAt = (String)launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL);
-    					if (stopAt == null) stopAt = "main";
+						// Check the content of the frame for the method we
+						// should stop at
+						String stopAt = null;
+						try {
+							stopAt = fLaunchConfiguration.getAttribute(
+									ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
+						} catch (CoreException e) {
+						}
+						if (stopAt == null)
+							stopAt = "main";
 
-    					MIFrame frame = fInitialStoppedEvent.getFrame();
-    					if (frame != null &&
-    							frame.getFunction() != null && frame.getFunction().indexOf(stopAt) != -1) {
-    						// Set the event semaphore that will allow the test to proceed
-    						synchronized (fTargetSuspendedSem) {
-    							fTargetSuspended = true;
-    							fTargetSuspendedSem.notify();
-    						}
+						MIFrame frame = fInitialStoppedEvent.getFrame();
+						if (frame != null && frame.getFunction() != null && frame.getFunction().indexOf(stopAt) != -1) {
+							// Set the event semaphore that will allow the test
+							// to proceed
+							synchronized (fTargetSuspendedSem) {
+								fTargetSuspended = true;
+								fTargetSuspendedSem.notify();
+							}
 
-    						// We found our event, no further need for this listener
-    						fSession.removeServiceEventListener(this);
-    					}
-    				}
-    			}
-    		}
-    	}
-    }
+							// We found our event, no further need for this
+							// listener
+							fSession.removeServiceEventListener(this);
+						}
+					}
+				}
+			}
+		}
+
+		public void waitUntilTargetSuspended() throws InterruptedException {
+			if (!fTargetSuspended) {
+				synchronized (fTargetSuspendedSem) {
+					fTargetSuspendedSem.wait(TestsPlugin.massageTimeout(2000));
+					Assert.assertTrue(fTargetSuspended);
+				}
+			}
+		}
+
+		public MIStoppedEvent getInitialStoppedEvent() {
+			return fInitialStoppedEvent;
+		}
+	}
 
 	/**
 	 * Make sure we are starting with a clean/known state. That means no
@@ -360,9 +399,6 @@ public class BaseTestCase {
     		GdbDebugOptions.trace("===============================================================================================\n");
     	}
 
- 		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
-	                                               .equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
-
 		launchGdbServer();
 
  		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
@@ -375,43 +411,8 @@ public class BaseTestCase {
  		assert lcWorkingCopy != null;
  		lcWorkingCopy.setAttributes(launchAttributes);
 
- 		final ILaunchConfiguration lc = lcWorkingCopy.doSave();
-
-		// Register ourselves as a listener for the new session so that we can
-		// register ourselves with that particular session before any events
-		// occur. We want to find out when the break on main() occurs.
- 		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
-			@Override
-			public void sessionStarted(DsfSession session) {
-				session.addServiceEventListener(new SessionEventListener(session), null);
-			}
-		};
-
-		// Launch the debug session. The session-started listener will be called
-		// before the launch() call returns (unless, of course, there was a
-		// problem launching and no session is created).
- 		DsfSession.addSessionStartedListener(sessionStartedListener);
- 		fLaunch = (GdbLaunch)lc.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
- 		DsfSession.removeSessionStartedListener(sessionStartedListener);
-
- 		// If we haven't hit main() yet,
- 		// wait for the program to hit the breakpoint at main() before
-		// proceeding. All tests assume that stable initial state. Two
-		// seconds is plenty; we typically get to that state in a few
-		// hundred milliseconds with the tiny test programs we use.
- 		if (!postMortemLaunch && !fTargetSuspended) {
- 			synchronized (fTargetSuspendedSem) {
- 				fTargetSuspendedSem.wait(TestsPlugin.massageTimeout(2000));
- 				Assert.assertTrue(fTargetSuspended);
- 			}
- 		}
-
- 		// This should be a given if the above check passes
- 		if (!postMortemLaunch) {
- 			synchronized(this) {
- 				Assert.assertNotNull(fInitialStoppedEvent);
- 			}
- 		}
+ 		fLaunchConfiguration = lcWorkingCopy.doSave();
+ 		fLaunch = doLaunchInner();
 
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end
  		if (gdbserverProc != null) {
@@ -423,18 +424,81 @@ public class BaseTestCase {
 
 	}
 
+	protected GdbLaunch doLaunchInner() throws Exception {
+ 		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
+                .equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
+
+ 		SessionEventListener sessionEventListener = new SessionEventListener(fLaunchConfiguration);
+ 		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
+			@Override
+			public void sessionStarted(DsfSession session) {
+				sessionEventListener.setSession(session);
+				session.addServiceEventListener(sessionEventListener, null);
+			}
+		};
+
+		// Launch the debug session. The session-started listener will be called
+		// before the launch() call returns (unless, of course, there was a
+		// problem launching and no session is created).
+ 		DsfSession.addSessionStartedListener(sessionStartedListener);
+ 		GdbLaunch launch = (GdbLaunch)fLaunchConfiguration.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
+ 		DsfSession.removeSessionStartedListener(sessionStartedListener);
+
+ 		try {
+
+ 	 		// If we haven't hit main() yet,
+ 	 		// wait for the program to hit the breakpoint at main() before
+ 			// proceeding. All tests assume that stable initial state. Two
+ 			// seconds is plenty; we typically get to that state in a few
+ 			// hundred milliseconds with the tiny test programs we use.
+ 			if (!postMortemLaunch) {
+ 				sessionEventListener.waitUntilTargetSuspended();
+ 	 		}
+
+ 	 		// This should be a given if the above check passes
+ 	 		if (!postMortemLaunch) {
+ 	 			synchronized(this) {
+ 	 				MIStoppedEvent initialStoppedEvent = sessionEventListener.getInitialStoppedEvent();
+ 	 				Assert.assertNotNull(initialStoppedEvent);
+					if (fInitialStoppedEvent == null) {
+						// On the very first launch we do, save the initial stopped event
+						// XXX: If someone writes a test with an additional launch
+						// that needs this info, they should resolve this return value then
+						fInitialStoppedEvent = initialStoppedEvent;
+					}
+ 	 			}
+ 	 		}
+ 	 		
+ 		} catch (Exception e) {
+ 			try {
+ 				launch.terminate();
+ 				assertLaunchTerminates(launch);
+ 			} catch (Exception inner) {
+ 				e.addSuppressed(inner);
+ 			}
+ 			throw e;
+ 		}
+		
+		return launch;
+	} 	
+
 	/**
 	 * Assert that the launch terminates. Callers should have already
 	 * terminated the launch in some way.
 	 */
 	protected void assertLaunchTerminates() throws Exception {
-		if (fLaunch != null) {
+		GdbLaunch launch = fLaunch;
+		assertLaunchTerminates(launch);
+	}
+
+	protected void assertLaunchTerminates(GdbLaunch launch) throws InterruptedException {
+		if (launch != null) {
 			// Give a few seconds to allow the launch to terminate
 			int waitCount = 100;
-			while (!fLaunch.isTerminated() && --waitCount > 0) {
+			while (!launch.isTerminated() && --waitCount > 0) {
 				Thread.sleep(TestsPlugin.massageTimeout(100));
 			}
-			assertTrue("Launch failed to terminate before timeout", fLaunch.isTerminated());
+			assertTrue("Launch failed to terminate before timeout", launch.isTerminated());
 		}
 	}
 

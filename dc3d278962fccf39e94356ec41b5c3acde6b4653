@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_2b943348",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done.\n\nNote that the year I put in is 2015 as that was the year the code was first written: https://git.eclipse.org/r/#/c/52068/10/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+      "parentUuid": "87e453f8_054da818",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_e557dc9d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2016-05-30T14:02:31Z",
       "side": 1,
       "message": "I think you can update the above comment, since you now found a way to make this \u0027atomic\u0027.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_4b897f31",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_e557dc9d",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_6b8e3b3c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_05b84861",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_2552a4b5",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2016-05-30T14:02:31Z",
       "side": 1,
       "message": "We could get rid of this RM in this new solution, but it would be an API change, so let\u0027s leave it.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_ab7f6385",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "I agree.",
+      "parentUuid": "87e453f8_2552a4b5",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_0bfa1783",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_25bd4452",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_851d38f5",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2016-05-30T14:02:31Z",
       "side": 1,
       "message": "Very nice!",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_4b041f22",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Thanks! This was the key to changing the whole thing to being atomic that I hadn\u0027t realized before. Could have saved a lot of problems if I hadn\u0027t worried about over-clearing the cache, because then I would have looked at this part of the atomicity problem more closely.",
+      "parentUuid": "87e453f8_851d38f5",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_4b1b3f79",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Its not the lambdas so much as the effectively final (another great way of improving verbosity!)\n\nI would prefer not add the final, lets use Java 8 features to improve the readability of the code. However because of limited time to turn this around I will add them. It has taken me a fair while to (start!) getting used to Java 8 too.\n\nPS I may have been tempted to use Mutable Object (https://commons.apache.org/proper/commons-lang/javadocs/api-3.1/org/apache/commons/lang3/mutable/MutableObject.html) had apache commons lang3 been in the target platform. That avoids the [][] which I think looks bad.",
+      "parentUuid": "87e453f8_8507f8d3",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_e5519c5b",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2016-05-30T14:02:31Z",
       "side": 1,
       "message": "Can you explain the new inExecutorThread parameter",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_aba84310",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 838,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_e5519c5b",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_8b92a7d8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 935,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "AFAIK not a problem, the terminate handler gracefully allows launches to be terminated again. It sort of has too as it is quite reasonable that between when terminate was pressed in the UI and received on the executor thread that the target has terminated already.",
+      "parentUuid": "87e453f8_80ec4606",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_c554a04e",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 2
@@ -166,6 +328,24 @@
       "writtenOn": "2016-05-30T14:02:31Z",
       "side": 1,
       "message": "Can you put a comment to explain what the new series of tests below aim to do?",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_ab8f63b3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 939,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done by updating the helper they call.",
+      "parentUuid": "87e453f8_c554a04e",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_cb8cafc1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1291,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Yes, as the bug deals with two launches terminating at the same time. \n\nThe code after the terminate is more than strictly needed. That is because the launches never terminate, so the after test that verifies the launches terminate shows up the error too. However, I wanted to bring the conditions more explicitly into the test and highlight the (user visible) issue of the UI locking.",
+      "parentUuid": "87e453f8_a5a5d400",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_6502ec7e",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 2
@@ -200,6 +398,24 @@
       "writtenOn": "2016-05-30T14:02:31Z",
       "side": 1,
       "message": "\"tries to\" instead of \"thread to\"",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_eb896bae",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "thread to is right. i.e. I use UI thread, not JUnit test thread. I added JUnit and a comma to hopefully clarify for future readers.",
+      "parentUuid": "87e453f8_6502ec7e",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_0b0a17b1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1311,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Yes, but that case would not be a bug, just unusual/unlucky. The bug is that (at the moment) the query never completes.",
+      "parentUuid": "87e453f8_0580484e",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_05ae88f1",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 2
@@ -234,6 +468,24 @@
       "writtenOn": "2016-05-30T14:02:31Z",
       "side": 1,
       "message": "extra \"the\"",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_4b141fd0",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1312,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_05ae88f1",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_4b2b3f07",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1316,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_458fb087",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_4561702c",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 2
@@ -268,6 +538,24 @@
       "writtenOn": "2016-05-30T14:02:31Z",
       "side": 1,
       "message": "Maybe put a Thread.sleep, or a wait, with 100 msec to avoid a tight loop?",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_eb240b3b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1337,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-30T19:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_4561702c",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

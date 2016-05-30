@@ -16,6 +16,24 @@
       "revId": "f94f453f1d4d75f2136cfc3b50ac1197b2a062cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_c5df40d0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T12:35:28Z",
+      "side": 1,
+      "message": "MI commands are ordered so by sending this one first, we can safely assume it will be processed before any further MI command.\n\nHowever, the cache is the problem (and I forgot about it).  An MI command that gets its result from the cache can complete faster than an earlier MI command that needs to be sent do GDB.\n\nSo Jonah is right that this solution is not sufficient.",
+      "parentUuid": "87e453f8_d4d9b49d",
+      "revId": "f94f453f1d4d75f2136cfc3b50ac1197b2a062cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

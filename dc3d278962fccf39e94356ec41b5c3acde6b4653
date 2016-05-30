@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_054da818",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "We forgot to add the copyright header when this file was created.  Please add.  Thanks.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_e557dc9d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "I think you can update the above comment, since you now found a way to make this \u0027atomic\u0027.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_05b84861",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Could you add a comment on why we shouldn\u0027t use a Query here must must release the calling thread instead?\n\nThe test you added will protect us against reverting this change, but its nice to explain to any future designer (or possible our future selves :-)).",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_2552a4b5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "We could get rid of this RM in this new solution, but it would be an API change, so let\u0027s leave it.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_25bd4452",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Could you add details on why clearing the cache is necessary to \u0027make this atomic\u0027?",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_851d38f5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Very nice!",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_8507f8d3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Can you make the two above \u0027final\u0027 to make it clearer why you use an array?  Maybe it is just that I\u0027m not very exposed to lamdas yet.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_e5519c5b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 838,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Can you explain the new inExecutorThread parameter",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_80ec4606",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 935,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Won\u0027t doAfterTest() try to terminate launch1 again?  Is that a problem?",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_c554a04e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 939,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Can you put a comment to explain what the new series of tests below aim to do?",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_a5a5d400",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1291,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Does this test fail with the old solution?",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_6502ec7e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "\"tries to\" instead of \"thread to\"",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_0580484e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1311,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Couldn\u0027t we run the two queries only once both launches have terminated?",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_05ae88f1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1312,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "extra \"the\"",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_458fb087",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1316,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Actually, it is not forceQuitTask that kills the executor.  forceQuitTask will kill GDB if we were not able to kill it cleanly.  If we killed GDB cleanly, we cancel forceQuitTask.\n\nThe executor is disposed in GdbLaunch.launchRemoved() which calls fExecutor.shutdown. GdbLaunch.launchRemoved() is called when the launch is removed from the debug view (when the user clicks on the double XX of the debug view, or when a new launch is started.  In our case, I believe they will hang around until the next test launches a new session.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_4561702c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1337,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-30T14:02:31Z",
+      "side": 1,
+      "message": "Maybe put a Thread.sleep, or a wait, with 100 msec to avoid a tight loop?",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,6 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Kichwa Coders and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Jonah Graham (Kichwa Coders) - initial API and implementation to Add support for gdb's "set substitute-path" (Bug 472765)
+ *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -17,6 +29,8 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBSourceLookup;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 
 /**
@@ -78,7 +92,32 @@ public class GdbSourceLookupParticipant extends DsfSourceLookupParticipant {
 			};
 			fExecutor.execute(query);
 			try {
-				query.get();
+				/*
+				 * This is a workaround to prevent a deadlock due to this
+				 * blocking call. The proper solution of handling this code
+				 * atomically and being non-blocking will be in the next
+				 * release. See Bug 494650 for details.
+				 * 
+				 * Note, even though the timeout is 5 seconds here, the UI
+				 * freeze is actually worst case a 2 x 5 seconds x number of
+				 * simultaneously shutdown launches. This is because each launch
+				 * tries to save the launch configuration 2 times at shutdown
+				 * (once for the Register settings and once for the Memory
+				 * settings), and since each launch notifies all the other
+				 * launches the total UI freeze depends on the number being
+				 * terminated simultaneously.
+				 */
+				query.get(5, TimeUnit.SECONDS);
+			} catch (TimeoutException e) {
+				/*
+				 * Log the error, but with at least a bit of help for the user
+				 */
+				GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+						"There was a timeout completing the operation. " //$NON-NLS-1$
+								+ "This is probably due to terminating two launches at the same time. " //$NON-NLS-1$
+								+ "Please consider terminating one launch at a time to avoid the UI lockup. " //$NON-NLS-1$
+								+ "See Bug 494650 for details.", //$NON-NLS-1$
+						e));
 			} catch (InterruptedException | ExecutionException e) {
 				// We have failed to update in some way, we don't really have a
 				// path to expose the failure so at least log it.

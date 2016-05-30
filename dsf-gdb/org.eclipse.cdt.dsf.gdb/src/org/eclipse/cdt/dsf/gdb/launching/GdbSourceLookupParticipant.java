@@ -1,11 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Kichwa Coders and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Jonah Graham (Kichwa Coders) - initial API and implementation to Add support for gdb's "set substitute-path" (Bug 472765)
+ *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
-
-import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
@@ -56,34 +64,24 @@ public class GdbSourceLookupParticipant extends DsfSourceLookupParticipant {
 		super.sourceContainersChanged(director);
 
 		/*
-		 * Update the substitution paths in GDB. Ideally we would always run
-		 * this atomically to block the source lookup from attempting to do a
-		 * lookup until GDB is fully updated.
-		 * 
-		 * However, if we are already on the executor thread there is no way to
-		 * make this atomic. In practice this case does not matter as the times
-		 * sourceContainersChanged is called when on the executor thread are
-		 * when the launch configuration is being saved and in that case the
-		 * source containers are not even changing.
+		 * The change can be issued directly on the executor thread, or on other
+		 * threads, so we need to continue on the correct thread.
 		 */
 		if (fExecutor.isInExecutorThread()) {
 			sourceContainersChangedOnDispatchThread(director, new RequestMonitor(fExecutor, null));
 		} else {
-			Query<Object> query = new Query<Object>() {
+			/*
+			 * Don't use a Query here, this method must be non-blocking on the
+			 * calling thread as there is an interlock possible when two
+			 * executors get the same update for the same launch configuration
+			 * at the same time. See Bug 494650 for more info.
+			 */
+			fExecutor.execute(new DsfRunnable() {
 				@Override
-				protected void execute(final DataRequestMonitor<Object> rm) {
-					sourceContainersChangedOnDispatchThread(director, rm);
+				public void run() {
+					sourceContainersChangedOnDispatchThread(director, new RequestMonitor(fExecutor, null));
 				}
-
-			};
-			fExecutor.execute(query);
-			try {
-				query.get();
-			} catch (InterruptedException | ExecutionException e) {
-				// We have failed to update in some way, we don't really have a
-				// path to expose the failure so at least log it.
-				GdbPlugin.log(e);
-			}
+			});
 		}
 	}
 
@@ -92,40 +90,31 @@ public class GdbSourceLookupParticipant extends DsfSourceLookupParticipant {
 			final RequestMonitor rm) {
 		IGDBSourceLookup lookup = fServicesTracker.getService(IGDBSourceLookup.class);
 		if (lookup != null) {
+			IStack stackService = fServicesTracker.getService(IStack.class);
+			if (stackService instanceof ICachingService) {
+				/*
+				 * To preserve the atomicity of this method, we need to clear
+				 * the cache without waiting for
+				 * lookup.sourceContainersChanged() to report if there was
+				 * actually a change on the source containers. The cache needs
+				 * to be cleared so that any further requests to GDB (e.g.
+				 * getting stack frames) sees the new values from GDB after the
+				 * source lookup changes. This means we are over clearing the
+				 * cache, but this method is only called when the source
+				 * containers change which does not happen normally during a
+				 * debug session.
+				 * 
+				 * XXX: Adding an event once we finished the update would allow
+				 * other interested parties (such as the Debug View) from being
+				 * notified that the frame data has changed. See Bug 489607.
+				 */
+				ICachingService cachingStackService = (ICachingService) stackService;
+				cachingStackService.flushCache(null);
+			}
+
 			ICommandControlService command = fServicesTracker.getService(ICommandControlService.class);
 			ISourceLookupDMContext context = (ISourceLookupDMContext) command.getContext();
-			lookup.sourceContainersChanged(context, new DataRequestMonitor<Boolean>(fExecutor, rm) {
-				@Override
-				protected void handleCompleted() {
-					/*
-					 * Once GDB is updated, we need to flush the IStack's cache,
-					 * so that #getSourceName get the new names.
-					 */
-					if (isSuccess() && getData()) {
-						IStack stackService = fServicesTracker.getService(IStack.class);
-						if (stackService instanceof ICachingService) {
-							/*
-							 * XXX: Ideally we would issue an event here to
-							 * flush the cache. But if we did that we would have
-							 * to add some interlocking to prevent the call to
-							 * IStack.getFrameData() (Called from
-							 * super.getSourceNameOnDispatchThread) from
-							 * returning until the event had been fully
-							 * propogated. At the moment there is no way to
-							 * ensure that happens.
-							 * 
-							 * XXX: Adding an event would allow other interested
-							 * parties (such as the Debug View) from being
-							 * notified that the frame data has changed. See Bug
-							 * 489607.
-							 */
-							ICachingService cachingStackService = (ICachingService) stackService;
-							cachingStackService.flushCache(null);
-						}
-					}
-					super.handleCompleted();
-				}
-			});
+			lookup.sourceContainersChanged(context, new DataRequestMonitor<Boolean>(fExecutor, rm));
 		} else {
 			rm.done();
 		}

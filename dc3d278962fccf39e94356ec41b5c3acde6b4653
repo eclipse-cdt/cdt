@@ -421,6 +421,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_3d1474cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1291,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-31T13:07:32Z",
+      "side": 1,
+      "message": "It is a race condition. Everytime on my machine the race hits badly. What I will try and do is see if I can force the race to happen more reliably.",
+      "parentUuid": "87e453f8_468a5670",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_6502ec7e",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 2
@@ -502,6 +520,24 @@
       "writtenOn": "2016-05-31T01:53:16Z",
       "side": 1,
       "message": "If the executor has not been shutdown yet, which is the case when we have terminated a launch but not removed it,\nthe query should still work I think.  So, we could just wait for the two launches to terminate and make sure the two queries can be run.\nI\u0027m having trouble understanding why we need to run them repeatedly during the terminate.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_9d1ae8f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1311,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-05-31T13:07:32Z",
+      "side": 1,
+      "message": "I think I have overly complicated this case, the loop was my attempt to make the test more robust, but I am not sure it actually achieved that goal. I will re-simplify this back to the minimal case.",
+      "parentUuid": "87e453f8_c67d86d6",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -18,9 +18,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate2;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
@@ -28,6 +37,9 @@ import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,28 +56,29 @@ import com.ibm.icu.text.DateFormat;
 /**
  * The launch delegate for Run mode.
  */
-public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
-{
+public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 	public LocalRunLaunchDelegate() {
 		// We support project-less run
 		super(false);
 	}
-	
+
 	@Override
-	public void launch( ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
+	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor)
+			throws CoreException {
 		// This delegate is only for Run mode
 		assert mode.equals(ILaunchManager.RUN_MODE);
-		
-		if ( monitor == null ) {
+
+		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		if ( mode.equals(ILaunchManager.RUN_MODE ) ) {
-			runLocalApplication( config, launch, monitor );
+		if (mode.equals(ILaunchManager.RUN_MODE)) {
+			runLocalApplication(config, launch, monitor);
 		}
 	}
 
-	private void runLocalApplication(ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(LaunchMessages.LocalCDILaunchDelegate_0, 10); 
+	private void runLocalApplication(ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor)
+			throws CoreException {
+		monitor.beginTask(LaunchMessages.LocalCDILaunchDelegate_0, 10);
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -77,50 +90,171 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
 			if (wd == null) {
 				wd = new File(System.getProperty("user.home", ".")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			
+
 			String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 			if (args.length() != 0) {
 				args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
 			}
-			
+
 			String[] arguments = CommandLineUtil.argumentsToArray(args);
 			ArrayList<String> command = new ArrayList<>(1 + arguments.length);
 			command.add(exePath.toOSString());
 			command.addAll(Arrays.asList(arguments));
 			monitor.worked(2);
-			
+
 			String[] commandArray = command.toArray(new String[command.size()]);
-			String[] environment = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
+			String[] environment = getLaunchEnvironment(config);
 			Process process = exec(commandArray, environment, wd);
 			monitor.worked(6);
 
 			String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 			String processLabel = String.format("%s (%s)", commandArray[0], timestamp); //$NON-NLS-1$
-			
+
 			DebugPlugin.newProcess(launch, process, processLabel, createProcessAttributes());
 		} finally {
 			monitor.done();
-		}		
+		}
+	}
+
+	/**
+	 * Gets the CDT environment from the CDT project's configuration referenced
+	 * by the launch
+	 */
+	protected String[] getLaunchEnvironment(ILaunchConfiguration config) throws CoreException {
+		// Get the project
+		String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+		IProject project = null;
+		if (projectName == null) {
+			IResource[] resources = config.getMappedResources();
+			if (resources != null && resources.length > 0 && resources[0] instanceof IProject) {
+				project = (IProject) resources[0];
+			}
+		} else {
+			projectName = projectName.trim();
+			if (projectName.length() == 0) {
+				return null;
+			}
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		}
+
+		HashMap<String, String> envMap = new HashMap<String, String>();
+
+		// Add in from the config
+		String[] debugEnv = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
+		if (debugEnv != null) {
+			for (String env : debugEnv) {
+				String[] parts = env.split("=", 2); //$NON-NLS-1$
+				if (parts.length == 2) {
+					envMap.put(parts[0], parts[1]);
+				}
+			}
+		}
+
+		if (project != null && project.isAccessible()) {
+			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
+			if (projDesc != null) {
+				String buildConfigID = config
+						.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
+				ICConfigurationDescription cfg = null;
+				if (buildConfigID.length() != 0) {
+					cfg = projDesc.getConfigurationById(buildConfigID);
+				}
+
+				// if configuration is null fall-back to active
+				if (cfg == null) {
+					cfg = projDesc.getActiveConfiguration();
+				}
+
+				// Environment variables and inherited vars
+				IEnvironmentVariable[] vars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg,
+						true);
+				for (IEnvironmentVariable var : vars) {
+					String value;
+					switch (var.getOperation()) {
+					case IEnvironmentVariable.ENVVAR_REPLACE:
+						value = var.getValue();
+						break;
+					case IEnvironmentVariable.ENVVAR_APPEND:
+						value = envMap.get(var.getName());
+						if (value != null) {
+							value += var.getDelimiter() + var.getValue();
+						} else {
+							value = var.getValue();
+						}
+						break;
+					case IEnvironmentVariable.ENVVAR_PREPEND:
+						value = envMap.get(var.getName());
+						if (value != null) {
+							value = var.getValue() + var.getDelimiter() + value;
+						} else {
+							value = var.getValue();
+						}
+						break;
+					case IEnvironmentVariable.ENVVAR_REMOVE:
+						envMap.remove(var.getName());
+						value = null;
+						break;
+					default:
+						value = null;
+					}
+
+					if (value != null) {
+						envMap.put(var.getName(), value);
+					}
+				}
+
+				// Add variables from build info
+				ICdtVariable[] buildVars = CCorePlugin.getDefault().getCdtVariableManager().getVariables(cfg);
+				for (ICdtVariable var : buildVars) {
+					try {
+						// The project_classpath variable contributed by JDT is
+						// useless for running C/C++ binaries, but it can be
+						// lethal if it has a very large value that exceeds
+						// shell limit. See
+						// http://bugs.eclipse.org/bugs/show_bug.cgi?id=408522
+						if (!"project_classpath".equals(var.getName())) {//$NON-NLS-1$
+							envMap.put(var.getName(), var.getStringValue());
+						}
+					} catch (CdtVariableException e) {
+						// Some Eclipse dynamic variables can't be resolved
+						// dynamically... we don't care.
+					}
+				}
+			}
+		}
+
+		// Turn it into an envp format
+		List<String> strings = new ArrayList<String>(envMap.size());
+		for (Entry<String, String> entry : envMap.entrySet()) {
+			StringBuilder buffer = new StringBuilder(entry.getKey());
+			buffer.append('=').append(entry.getValue());
+			strings.add(buffer.toString());
+		}
+
+		return strings.toArray(new String[strings.size()]);
 	}
 
 	protected Map<String, String> createProcessAttributes() {
 		Map<String, String> attributes = new HashMap<>();
-		
-		// Specify that the process factory (GdbProcessFactory) should use InferiorRuntimeProcess to wrap
+
+		// Specify that the process factory (GdbProcessFactory) should use
+		// InferiorRuntimeProcess to wrap
 		// the process that we are about to run.
-		// Note that GdbProcessFactory is only used for launches created using DSF-GDB not CDI
-	    attributes.put("org.eclipse.cdt.dsf.gdb.createProcessType" /* IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR */, //$NON-NLS-1$
-    		    	   "org.eclipse.cdt.dsf.gdb.inferiorProcess" /* IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE */);  //$NON-NLS-1$
-	    
-	    // Show the exit code of the process in the console title once it has terminated
-	    attributes.put("org.eclipse.cdt.dsf.gdb.inferiorExited" /* IGdbDebugConstants.INFERIOR_EXITED_ATTR */,  //$NON-NLS-1$
-	    		       "");  //$NON-NLS-1$
+		// Note that GdbProcessFactory is only used for launches created using
+		// DSF-GDB not CDI
+		attributes.put("org.eclipse.cdt.dsf.gdb.createProcessType" /* IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR */, //$NON-NLS-1$
+				"org.eclipse.cdt.dsf.gdb.inferiorProcess" /* IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE */); //$NON-NLS-1$
+
+		// Show the exit code of the process in the console title once it has
+		// terminated
+		attributes.put("org.eclipse.cdt.dsf.gdb.inferiorExited" /* IGdbDebugConstants.INFERIOR_EXITED_ATTR */, //$NON-NLS-1$
+				""); //$NON-NLS-1$
 		return attributes;
 	}
 
 	/**
-	 * Method used to check that the project and program are correct.
-	 * Can be overridden to avoid checking certain things.
+	 * Method used to check that the project and program are correct. Can be
+	 * overridden to avoid checking certain things.
 	 */
 	protected IPath checkBinaryDetails(final ILaunchConfiguration config) throws CoreException {
 		// First verify we are dealing with a proper project.
@@ -139,7 +273,8 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
 	 * @param environ
 	 * @param workingDirectory
 	 *            the working directory, or <code>null</code>
-	 * @return the resulting process or <code>null</code> if the exec is cancelled
+	 * @return the resulting process or <code>null</code> if the exec is
+	 *         cancelled
 	 * @see Runtime
 	 * @since 4.7
 	 */
@@ -151,38 +286,40 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
 				return ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory);
 			}
 		} catch (IOException e) {
-			abort(LaunchMessages.LocalCDILaunchDelegate_8, e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); 
+			abort(LaunchMessages.LocalCDILaunchDelegate_8, e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		return null;
 	}
 
-
 	@Override
-    public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
-    	// Setup default Process Factory
+	public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor)
+			throws CoreException {
+		// Setup default Process Factory
 		setDefaultProcessFactory(config);
 
 		return super.preLaunchCheck(config, mode, monitor);
 	}
 
-    /**
-     * Modify the ILaunchConfiguration to set the DebugPlugin.ATTR_PROCESS_FACTORY_ID attribute,
-     * so as to specify the process factory to use.
-     * 
-     * This attribute should only be set if it is not part of the configuration already, to allow
-     * other code to set it to something else.
+	/**
+	 * Modify the ILaunchConfiguration to set the
+	 * DebugPlugin.ATTR_PROCESS_FACTORY_ID attribute, so as to specify the
+	 * process factory to use.
+	 * 
+	 * This attribute should only be set if it is not part of the configuration
+	 * already, to allow other code to set it to something else.
 	 */
-    protected void setDefaultProcessFactory(ILaunchConfiguration config) throws CoreException {
-        if (!config.hasAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID)) {
-            ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-            // Use the debug process factory as it provides extra features for the program
-            // that is being debugged or in this case run.
-            // Effectively, we want to use InferiorRuntimeProcess when doing this Run launch.
-            wc.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID,
-            				"org.eclipse.cdt.dsf.gdb.GdbProcessFactory"); //$NON-NLS-1$
-            wc.doSave();
-        }
-    }
+	protected void setDefaultProcessFactory(ILaunchConfiguration config) throws CoreException {
+		if (!config.hasAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID)) {
+			ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+			// Use the debug process factory as it provides extra features for
+			// the program
+			// that is being debugged or in this case run.
+			// Effectively, we want to use InferiorRuntimeProcess when doing
+			// this Run launch.
+			wc.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, "org.eclipse.cdt.dsf.gdb.GdbProcessFactory"); //$NON-NLS-1$
+			wc.doSave();
+		}
+	}
 
 	@Override
 	protected String getPluginID() {

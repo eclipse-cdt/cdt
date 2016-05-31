@@ -37,6 +37,23 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_468fb687",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-31T01:53:16Z",
+      "side": 1,
+      "message": "Good thinking, that is the right thing to do.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_e557dc9d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbSourceLookupParticipant.java",
         "patchSetId": 2
@@ -387,6 +404,23 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_468a5670",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1291,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-31T01:53:16Z",
+      "side": 1,
+      "message": "I\u0027ve tried this new test with the changes to the test files only, leaving the original code with the bug and the test does not fail for me.\nLooking at the gdb traces, it looks like calling launch1.terminate() will terminate the launch sufficiently\nbefore we get to call launch2.terminate() and the two terminates won\u0027t overlap.  I\u0027m not sure how the launchbar does it, but when\nwe look at the gdb traces in that case, the two terminates overlap.",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_6502ec7e",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
         "patchSetId": 2
@@ -451,6 +485,23 @@
       "side": 1,
       "message": "Yes, but that case would not be a bug, just unusual/unlucky. The bug is that (at the moment) the query never completes.",
       "parentUuid": "87e453f8_0580484e",
+      "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_c67d86d6",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1311,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-05-31T01:53:16Z",
+      "side": 1,
+      "message": "If the executor has not been shutdown yet, which is the case when we have terminated a launch but not removed it,\nthe query should still work I think.  So, we could just wait for the two launches to terminate and make sure the two queries can be run.\nI\u0027m having trouble understanding why we need to run them repeatedly during the terminate.",
       "revId": "dc3d278962fccf39e94356ec41b5c3acde6b4653",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.qt.core.IQtInstall;
@@ -135,6 +136,13 @@ public class QtInstallManager implements IQtInstallManager {
 					return false;
 				}
 			}
+			
+			for (Entry<String, String> property : install.getProperties().entrySet()) {
+				if (!property.getValue().equals(toolChain.getProperty(property.getKey()))) {
+					return false;
+				}
+			}
+
 			return true;
 		} else {
 			// Don't know so returning false

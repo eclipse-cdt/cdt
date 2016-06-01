@@ -55,6 +55,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	private final String prefix;
 	private final IEnvironmentVariable pathVar;
 	private final IEnvironmentVariable[] envVars;
+	private final Map<String, String> properties = new HashMap<>();
 
 	protected String[] compileCommands;
 
@@ -113,16 +114,27 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	@Override
 	public String getProperty(String key) {
-		// this class represents a local toolchain
+		String value = properties.get(key);
+		if (value != null) {
+			return value;
+		}
+		
+		// By default, we're a local GCC
 		switch (key) {
 		case ATTR_OS:
 			return Platform.getOS();
 		case ATTR_ARCH:
 			return Platform.getOSArch();
 		}
+		
 		return null;
 	}
 
+	@Override
+	public void setProperty(String key, String value) {
+		properties.put(key, value);
+	}
+	
 	@Override
 	public String getBinaryParserId() {
 		// Assume local builds

@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationProvider;
 import org.eclipse.core.resources.IProject;
@@ -71,19 +70,12 @@ public abstract class QtLaunchConfigurationDelegate extends LaunchConfigurationT
 				.getProvider(QtBuildConfigurationProvider.ID);
 		IProject project = configuration.getMappedResources()[0].getProject();
 
-		// Find the toolchains that support this target
 		Map<String, String> properties = new HashMap<>();
 		populateToolChainProperties(target, properties);
 
-		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
-		for (IToolChain toolChain : toolChainManager.getToolChainsMatching(properties)) {
-			IQtBuildConfiguration qtConfig = provider.getConfiguration(project, toolChain, mode, monitor);
-			if (qtConfig == null) {
-				qtConfig = provider.createConfiguration(project, toolChain, mode, monitor);
-			}
-			if (qtConfig != null) {
-				return qtConfig;
-			}
+		IQtBuildConfiguration qtConfig = provider.getConfiguration(project, properties, mode, monitor);
+		if (qtConfig != null) {
+			return qtConfig;
 		}
 
 		// Couldn't find any

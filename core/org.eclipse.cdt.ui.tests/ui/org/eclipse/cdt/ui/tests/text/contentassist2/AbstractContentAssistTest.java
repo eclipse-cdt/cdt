@@ -227,8 +227,8 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 			String[][] expectedGuesses = expected.get(proposal);
 			String exp = "";
 			String guess = "";
-			int minLength = expectedGuesses.length < result.length ? expectedGuesses.length : result.length;
-			for (int i = 0; i < minLength; i++) {
+			assertEquals(expectedGuesses.length, result.length);
+			for (int i = 0; i < result.length; i++) {
 				String[] tmp = expectedGuesses[i];
 				Arrays.sort(tmp);
 				exp += toString(tmp) + "\n";

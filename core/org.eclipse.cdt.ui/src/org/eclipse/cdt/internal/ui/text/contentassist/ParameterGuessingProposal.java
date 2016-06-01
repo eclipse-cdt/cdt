@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
@@ -41,14 +45,19 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
 
@@ -166,17 +175,28 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	public void apply(final IDocument document, char trigger, int offset) {
 		super.apply(document, trigger, offset);
 
-		// Initialize necessary fields.
-		fParametersNames = getFunctionParametersNames(fFunctionParameters);
-		fParametersTypes = getFunctionParametersTypes(fFunctionParameters);
-
 		if (fGuessArguments) {
-			try {
-				guessParameters();
-			} catch (Exception e) {
-				CUIPlugin.log(e);
+			IStatus status = ASTProvider.getASTProvider().runOnAST(fTranslationUnit,  ASTProvider.WAIT_ACTIVE_ONLY, 
+					new NullProgressMonitor(), new ASTRunnable() {
+				@Override
+				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+					if (astRoot == null)
+						return Status.CANCEL_STATUS;
+					// Initialize necessary fields.
+					fParametersNames = getFunctionParametersNames(fFunctionParameters);
+					fParametersTypes = getFunctionParametersTypes(fFunctionParameters);
+					
+					try {
+						guessParameters();
+					} catch (Exception e) {
+						CUIPlugin.log(e);
+						return Status.CANCEL_STATUS;
+					}
+					return Status.OK_STATUS;
+				}
+			});
+			if (Status.CANCEL_STATUS == status)
 				return;
-			}
 		}
 		
 		int baseOffset = getReplacementOffset();

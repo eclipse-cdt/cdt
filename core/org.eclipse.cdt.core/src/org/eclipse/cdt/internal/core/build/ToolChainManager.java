@@ -133,6 +133,15 @@ public class ToolChainManager implements IToolChainManager {
 				tcs.add(toolChain);
 			}
 		}
+		
+		// Allow 32-bit compilers on 64-bit machines
+		// TODO is there a cleaner way to do this?
+		if ("x86_64".equals(properties.get(IToolChain.ATTR_ARCH))) { //$NON-NLS-1$
+			Map<String, String> properties32 = new HashMap<>(properties);
+			properties32.put(IToolChain.ATTR_ARCH, "x86"); //$NON-NLS-1$
+			tcs.addAll(getToolChainsMatching(properties32));
+		}
+
 		return tcs;
 	}
 

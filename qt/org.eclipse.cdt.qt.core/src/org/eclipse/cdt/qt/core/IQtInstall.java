@@ -8,6 +8,7 @@
 package org.eclipse.cdt.qt.core;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Represents an installation of the Qt SDK. Qt installs are defined by the path
@@ -24,5 +25,9 @@ public interface IQtInstall {
 	Path getLibPath();
 
 	Path getQmlPath();
+
+	void setProperty(String key, String value);
+
+	Map<String, String> getProperties();
 
 }

@@ -91,8 +91,7 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 	//		tFunc<aClass> (
 	public void testTemplateFunction() throws Exception {
 		Map<String, String[][]> resultsMap = new HashMap<>();
-		resultsMap.put("tFunc<aClass> (x, y)", new String[][] { { "x" },
-				{ "y" } });
+		resultsMap.put("tFunc<aClass> (x, y)", new String[][] { { "aTypeObj" }, { "bTypeObj" } });
 		assertParametersGuesses(resultsMap);
 	}
 
@@ -135,7 +134,7 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 		Map<String, String[][]> resultsMap = new HashMap<>();
 		resultsMap.put("aMethod(c)", new String[][] { { "charX", "charY", "inCall" } });
 		resultsMap.put("aMethod(c, x)", new String[][] {
-				{ "charX", "charY"}, { "inCall" } });
+				{ "charX", "charY", "inCall"}, { "charX", "charY", "inCall" } });
 		assertParametersGuesses(resultsMap);
 	}
 }

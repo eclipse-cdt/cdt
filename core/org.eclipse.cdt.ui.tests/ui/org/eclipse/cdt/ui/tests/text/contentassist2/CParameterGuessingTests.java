@@ -69,6 +69,7 @@ public class CParameterGuessingTests extends AbstractContentAssistTest {
 
 	//	void foo(){
 	//		aStruct ax;
+	//		int x;
 	//		ov
 	public void testMultipleFunctions() throws Exception {
 		Map<String, String[][]> resultsMap = new HashMap<>();

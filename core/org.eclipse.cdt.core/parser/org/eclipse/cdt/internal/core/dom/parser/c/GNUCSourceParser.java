@@ -1730,12 +1730,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     	case IToken.tIDENTIFIER:
     		consume();
             n = getNodeFactory().newName(t.getCharImage());
+            setRange(n, t.getOffset(), t.getEndOffset());
             break;
             
     	case IToken.tCOMPLETION:
     	case IToken.tEOC:
     		consume();
             n = getNodeFactory().newName(t.getCharImage());
+            setRange(n, t.getOffset(), t.getEndOffset());
             createCompletionNode(t).addName(n);
     		return n;
     		
@@ -1743,7 +1745,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     		throw backtrack;
     	}
     	
-        setRange(n, t.getOffset(), t.getEndOffset());
         return n;
     }
 

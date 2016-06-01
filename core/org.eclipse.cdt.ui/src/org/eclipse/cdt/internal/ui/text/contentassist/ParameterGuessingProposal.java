@@ -294,7 +294,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 			boolean isLastParameter = i == count - 1;
 			ArrayList<ICompletionProposal> allProposals = new ArrayList<>();
 			ICompletionProposal[] argumentProposals = guesser.parameterProposals(fParametersTypes[i],
-					paramName, position, fAssignableElements, isLastParameter);
+					paramName, position, fAssignableElements, isLastParameter, ast);
 			allProposals.addAll(Arrays.asList(argumentProposals));
 			fPositions[i] = position;
 			fChoices[i] = argumentProposals;

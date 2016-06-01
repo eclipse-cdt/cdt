@@ -25,6 +25,9 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -50,6 +53,11 @@ import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
@@ -104,12 +112,13 @@ public class ParameterGuesser {
 		}
 	}
 
-	private Collection<Variable> evaluateVisibleMatches(IType expectedType, List<IBinding> suggestions)
+	private Collection<Variable> evaluateVisibleMatches(IType expectedType, List<IBinding> suggestions,
+			IASTTranslationUnit ast)
 			throws CModelException {
 		Set<Variable> res = new HashSet<>();
 		int size = suggestions.size();
 		for (int i = 0; i < size; i++) {
-			Variable variable = createVariable(suggestions.get(i), expectedType, i);
+			Variable variable = createVariable(suggestions.get(i), expectedType, i, ast);
 			if (variable != null) {
 				if (fAlreadyMatchedNames.contains(variable.name)) {
 					variable.alreadyMatched = true;
@@ -131,13 +140,15 @@ public class ParameterGuesser {
 		return null;
 	}
 
-	private Variable createVariable(IBinding element, IType enclosingType, int positionScore)
+	private Variable createVariable(IBinding element, IType enclosingType, int positionScore,
+			IASTTranslationUnit ast)
 			throws CModelException {
 		IType elementType = getType(element);
 		String elementName = element.getName();
 		if (elementType != null
 				&& (elementType.toString().equals(enclosingType.toString())
-						|| elementType.isSameType(enclosingType) 
+						|| elementType.isSameType(enclosingType)
+						|| isImplicitlyConvertible(enclosingType, elementType, ast)
 						|| isParent(elementType, enclosingType)
 						|| isReferenceTo(enclosingType, elementType) 
 						|| isReferenceTo(elementType, enclosingType))) {
@@ -172,6 +183,18 @@ public class ParameterGuesser {
 			IType ptr = ((IPointerType) ref).getType();
 			if (ptr.toString().equals(val.toString()) || ptr.isSameType(val))
 				return true;
+		}
+		return false;
+	}
+	
+	private boolean isImplicitlyConvertible(IType orginType, IType candidateType, IASTNode point) {
+		try {
+			Cost cost = Conversions.checkImplicitConversionSequence(orginType, candidateType,
+					ValueCategory.LVALUE, UDCMode.ALLOWED, Context.ORDINARY, point);
+			if (cost.converts())
+				return true;
+		} catch (DOMException e) {
+			return false;
 		}
 		return false;
 	}
@@ -267,9 +290,9 @@ public class ParameterGuesser {
 	 * @return returns the name of the best match, or <code>null</code> if no match found
 	 */
 	public ICompletionProposal[] parameterProposals(IType expectedType, String paramName, Position pos,
-			List<IBinding> suggestions, boolean isLastParameter)
+			List<IBinding> suggestions, boolean isLastParameter, IASTTranslationUnit ast)
 			throws CModelException {
-		List<Variable> typeMatches = new ArrayList<>(evaluateVisibleMatches(expectedType, suggestions));
+		List<Variable> typeMatches = new ArrayList<>(evaluateVisibleMatches(expectedType, suggestions, ast));
 		orderMatches(typeMatches, paramName);
 
 		ICompletionProposal[] ret = new ICompletionProposal[typeMatches.size()];

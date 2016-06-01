@@ -39,6 +39,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -240,13 +241,14 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		}
 	}
 
-	private Map<String, String[][]> toMap(Object[] results, CompareType compareType) {
+	private Map<String, String[][]> toMap(Object[] results, CompareType compareType) throws CModelException {
 		Map<String, String[][]> resultsMap = new HashMap<>();
 		for (Object result : results) {
 			switch (compareType) {
 			case REPLACEMENT:
 				if (result instanceof ParameterGuessingProposal) {
 					ParameterGuessingProposal proposal = (ParameterGuessingProposal) result;
+					proposal.generateParameterGuesses();
 					String pName = proposal.getReplacementString();
 					ICompletionProposal[][] pProposals = proposal
 							.getParametersGuesses();

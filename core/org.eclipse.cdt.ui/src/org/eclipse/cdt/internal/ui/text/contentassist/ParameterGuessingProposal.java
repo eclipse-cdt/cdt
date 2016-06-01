@@ -176,27 +176,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		super.apply(document, trigger, offset);
 
 		if (fGuessArguments) {
-			IStatus status = ASTProvider.getASTProvider().runOnAST(fTranslationUnit,  ASTProvider.WAIT_ACTIVE_ONLY, 
-					new NullProgressMonitor(), new ASTRunnable() {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
-					if (astRoot == null)
-						return Status.CANCEL_STATUS;
-					// Initialize necessary fields.
-					fParametersNames = getFunctionParametersNames(fFunctionParameters);
-					fParametersTypes = getFunctionParametersTypes(fFunctionParameters);
-					
-					try {
-						guessParameters();
-					} catch (Exception e) {
-						CUIPlugin.log(e);
-						return Status.CANCEL_STATUS;
-					}
-					return Status.OK_STATUS;
-				}
-			});
-			if (Status.CANCEL_STATUS == status)
-				return;
+			generateParameterGuesses();
 		}
 		
 		int baseOffset = getReplacementOffset();
@@ -275,8 +255,32 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 
 		return new Point(fSelectedRegion.getOffset(), fSelectedRegion.getLength());
 	}
+	
+	public void generateParameterGuesses() {
+		IStatus status = ASTProvider.getASTProvider().runOnAST(fTranslationUnit,  ASTProvider.WAIT_ACTIVE_ONLY, 
+				new NullProgressMonitor(), new ASTRunnable() {
+			@Override
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+				if (astRoot == null)
+					return Status.CANCEL_STATUS;
+				try {
+					guessParameters(astRoot);
+				} catch (Exception e) {
+					CUIPlugin.log(e);
+					return Status.CANCEL_STATUS;
+				}
+				return Status.OK_STATUS;
+			}
+		});
+		if (Status.CANCEL_STATUS == status)
+			return;
+	}
 
-	private void guessParameters() throws CModelException {
+	void guessParameters(IASTTranslationUnit ast) throws CModelException {
+		// Initialize necessary fields.
+		fParametersNames = getFunctionParametersNames(fFunctionParameters);
+		fParametersTypes = getFunctionParametersTypes(fFunctionParameters);
+
 		int count = fParametersNames.length;
 		fPositions = new Position[count];
 		fChoices = new ICompletionProposal[count][];

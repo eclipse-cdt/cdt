@@ -426,14 +426,14 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			if(field.getType() instanceof IArrayType) {
 				EvalPointer evalPointer = new EvalPointer(record,
 						new EvalCompositeAccess(new EvalCompositeAccess(evaluatedOwner, fieldPos), 0),
-						evaluatedOwner.getValue(null).get(fieldPos).getTemplateDefinition());
+						getTemplateDefinition());
 				return evalPointer;
 			}
 		}
 
 		EvalReference evalRef = new EvalReference(record,
-				new EvalCompositeAccess(evaluatedOwner, fieldPos),
-				evaluatedOwner.getValue(null).get(fieldPos).getTemplateDefinition());
+				new EvalCompositeAccess(evaluatedOwner, fieldPos), 
+				getTemplateDefinition());
 		return evalRef;
 	}
 

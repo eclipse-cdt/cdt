@@ -279,7 +279,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 			ICPPEvaluation eval = getEvaluation();
 			if (eval instanceof EvalTypeId) {
 				ICPPFunction constructor = ((EvalTypeId) eval).getConstructor(this);
-				if (constructor != null) {
+				if (constructor != null && constructor != EvalTypeId.AGGREGATE_INITIALIZATION) {
 					CPPASTImplicitName name = new CPPASTImplicitName(constructor.getNameCharArray(), this);
 					name.setOffsetAndLength((ASTNode) fDeclSpec);
 					name.setBinding(constructor);

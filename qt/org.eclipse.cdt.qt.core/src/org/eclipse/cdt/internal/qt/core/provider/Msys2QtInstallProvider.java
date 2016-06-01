@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.internal.qt.core.QtInstall;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallProvider;
@@ -40,7 +41,9 @@ public class Msys2QtInstallProvider implements IQtInstallProvider {
 				if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
 					String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
 					Path qmakePath = Paths.get(installLocation + "\\mingw64\\bin\\qmake.exe"); //$NON-NLS-1$
-					installs.add(new QtInstall(qmakePath));
+					QtInstall install = new QtInstall(qmakePath);
+					install.setProperty(IToolChain.ATTR_PACKAGE, "msys2"); //$NON-NLS-1$
+					installs.add(install);
 				}
 			}
 			return installs;

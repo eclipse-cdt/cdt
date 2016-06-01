@@ -113,11 +113,11 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 		if (launchMode != null) {
 			switch (launchMode) {
 			case "run": //$NON-NLS-1$
-				return new String[] { "CONFIG+=release" }; //$NON-NLS-1$
+				return new String[] { "CONFIG-=debug_and_release", "CONFIG+=release" }; //$NON-NLS-1$ //$NON-NLS-2$
 			case "debug": //$NON-NLS-1$
-				return new String[] { "CONFIG+=debug" }; //$NON-NLS-1$
+				return new String[] { "CONFIG-=debug_and_release", "CONFIG+=debug" }; //$NON-NLS-1$ //$NON-NLS-2$
 			default:
-				return new String[] { "CONFIG+=launch_mode_" + launchMode }; //$NON-NLS-1$
+				return new String[] { "CONFIG-=debug_and_release", "CONFIG+=launch_mode_" + launchMode }; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return new String[] { "CONFIG+=debug_and_release", "CONFIG+=launch_modeall" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -136,21 +136,18 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 
 	@Override
 	public Path getProgramPath() throws CoreException {
+		// TODO get the app name from the .pro file.
 		String projectName = getProject().getName();
 		switch (Platform.getOS()) {
 		case Platform.OS_MACOSX:
-			// TODO this is mac local specific and really should be
-			// in the config
-			// TODO also need to pull the app name out of the pro
-			// file name
 			Path appFolder = getBuildDirectory().resolve(projectName + ".app"); //$NON-NLS-1$
 			Path contentsFolder = appFolder.resolve("Contents"); //$NON-NLS-1$
 			Path macosFolder = contentsFolder.resolve("MacOS"); //$NON-NLS-1$
 			return macosFolder.resolve(projectName);
-		case Platform.OS_WIN32: {
-			String subdir = "run".equals(launchMode) ? "release" : "debug"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			return getBuildDirectory().resolve(subdir).resolve(projectName + ".exe"); //$NON-NLS-1$
-		}
+		case Platform.OS_WIN32:
+			return getBuildDirectory().resolve(projectName + ".exe"); //$NON-NLS-1$
+		case Platform.OS_LINUX:
+			return getBuildDirectory().resolve(projectName); //$NON-NLS-1$
 		default:
 			Path releaseFolder = getBuildDirectory().resolve("release"); //$NON-NLS-1$
 			return releaseFolder.resolve(projectName);

@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * Helper class for detecting include guards.
  */
 public class IncludeGuardDetection {
+	private static final String ONCE = "once"; //$NON-NLS-1$
+
 	public static char[] detectIncludeGuard(AbstractCharArray content, Lexer.LexerOptions lexOptions,
 			CharArrayIntMap ppKeywords) {
 		Lexer l= new Lexer(content, lexOptions, ILexerLog.NULL, null);
@@ -33,18 +35,92 @@ public class IncludeGuardDetection {
 		return null;
 	}
 
+	/**
+	 * Handles the case when there is a "#pragma once" before an include guard.
+	 * <p>
+	 * This can be in the form of:
+	 *
+	 * <pre>
+	 * #pragma once
+	 * </pre>
+	 *
+	 * or:
+	 *
+	 * <pre>
+	 * #if (anything)
+	 * #pragma once
+	 * #endif
+	 * </pre>
+	 */
+	private static Token skipPragmaOnce(Lexer l, CharArrayIntMap ppKeywords)
+			throws OffsetLimitReachedException {
+		boolean foundPragma = false;
+		boolean quit = false;
+		boolean foundIf = false;
+
+		// Skip to the first statement.
+		Token t = skipAll(l, Lexer.tNEWLINE);
+		l.saveState(); // Save the state in case we don't find a "#pragma once".
+
+		while (!quit) {
+			switch (t.getType()) {
+			case IToken.tPOUND:
+				t = l.nextToken(); // Just get the next token.
+				break;
+			case IToken.tIDENTIFIER:
+				switch (ppKeywords.get(t.getCharImage())) {
+				case IPreprocessorDirective.ppPragma:
+					t = l.nextToken(); // Get the next token (expecting "once").
+					if (CharArrayUtils.equals(t.getCharImage(), ONCE)) {
+						foundPragma = true;
+						t = skipAll(l, Lexer.tNEWLINE);
+						if (!foundIf) // Just quit if we are not in an '#if' block.
+							quit = true;
+					}
+					break;
+				case IPreprocessorDirective.ppIf:
+					if (foundIf) {
+						quit = true;
+						break;
+					}
+					foundIf = true;
+					t = l.nextDirective(); // Go to the next directive.
+					break;
+				case IPreprocessorDirective.ppEndif:
+					if (foundIf)
+						t = skipAll(l, Lexer.tNEWLINE);
+					quit = true;
+					break;
+				default:
+					quit = true;
+					break;
+				}
+				break;
+			default:
+				quit = true;
+				break;
+			}
+		}
+
+		if (!foundPragma) {
+			l.restoreState();
+			return l.currentToken();
+		}
+		return t;
+	}
+
 	private static char[] findIncludeGuard(Lexer l, CharArrayIntMap ppKeywords) {
- 		try {
-  			if (skipAll(l, Lexer.tNEWLINE).getType() == IToken.tPOUND) {
+		try {
+			if (skipPragmaOnce(l, ppKeywords).getType() == IToken.tPOUND) {
 				Token t = l.nextToken();
 				if (t.getType() == IToken.tIDENTIFIER) {
-					char[] guard= null;
+					char[] guard = null;
 					switch (ppKeywords.get(t.getCharImage())) {
 					case IPreprocessorDirective.ppIfndef:
 						// #ifndef GUARD
-						t= l.nextToken();
+						t = l.nextToken();
 						if (t.getType() == IToken.tIDENTIFIER) {
-							guard= t.getCharImage();
+							guard = t.getCharImage();
 						}
 						break;
 					case IPreprocessorDirective.ppIf:
@@ -64,11 +140,11 @@ public class IncludeGuardDetection {
 						}
 					}
 				}
-  			}
- 		} catch (OffsetLimitReachedException e) {
- 		}
- 		return null;
- 	}
+			}
+		} catch (OffsetLimitReachedException e) {
+		}
+		return null;
+	}
 
 	private static char[] findNotDefined(Lexer l) throws OffsetLimitReachedException {
 		Token t;

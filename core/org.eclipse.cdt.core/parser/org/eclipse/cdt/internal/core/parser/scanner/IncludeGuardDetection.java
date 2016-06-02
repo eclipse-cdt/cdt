@@ -32,24 +32,97 @@ public class IncludeGuardDetection {
 		return null;
 	}
 
+	/*
+	 * This handles the case that it finds a #pragma once before an include guard
+	 * 
+	 * This can be in the form of:
+	 * 
+	 * #pragma once
+	 * 
+	 * or:
+	 * 
+	 * #if (anything)
+	 * #pragma once
+	 * #endif
+	 */
+	private static Token skipPragmaOnce(Lexer l, CharArrayIntMap ppKeywords) throws OffsetLimitReachedException{
+		boolean foundPragma = false;
+		boolean quit = false;
+		boolean foundIf = false;
+
+		// First skip to the first statement
+		Token t = skipAll(l, Lexer.tNEWLINE);
+		l.saveState();// save the state in case we dont find a #pragma once
+
+		while (!quit) {
+			switch (t.getType()) {
+			case IToken.tPOUND:
+				t = l.nextToken();// Just get the next token
+				break;
+			case IToken.tIDENTIFIER:
+				switch (ppKeywords.get(t.getCharImage())) {
+				case IPreprocessorDirective.ppPragma:
+					t = l.nextToken();// get the next token (this should be
+										// "once")
+					if ("once".equals(new String(t.getCharImage())))// Check for
+																	// the once
+					{
+						foundPragma = true;
+						t = skipAll(l, Lexer.tNEWLINE);
+						if (!foundIf)// Just quit if we are not in an if block
+							quit = true;
+					}
+					break;
+				case IPreprocessorDirective.ppIf:
+					if (foundIf) {
+						quit = true;
+						break;
+					}
+					foundIf = true;
+					t = l.nextDirective();// Go to the next directive
+					break;
+				case IPreprocessorDirective.ppEndif:
+					if (foundIf)
+						t = skipAll(l, Lexer.tNEWLINE);
+					quit = true;
+					break;
+				default:
+					quit = true;
+					break;
+
+				}
+				break;
+			default:
+				quit = true;
+				break;
+			}
+
+		}
+		if (!foundPragma) {
+			l.restoreState();
+			return l.currentToken();
+		}
+		return t;
+
+	}
 	private static char[] findIncludeGuard(Lexer l, CharArrayIntMap ppKeywords) {
- 		try {
-  			if (skipAll(l, Lexer.tNEWLINE).getType() == IToken.tPOUND) { 
+		try {
+			if (skipPragmaOnce(l, ppKeywords).getType() == IToken.tPOUND) {
 				Token t = l.nextToken();
 				if (t.getType() == IToken.tIDENTIFIER) {
-					char[] guard= null;
+					char[] guard = null;
 					switch (ppKeywords.get(t.getCharImage())) {
 					case IPreprocessorDirective.ppIfndef:
 						// #ifndef GUARD
-						t= l.nextToken();
+						t = l.nextToken();
 						if (t.getType() == IToken.tIDENTIFIER) {
-							guard= t.getCharImage();
+							guard = t.getCharImage();
 						}
 						break;
 					case IPreprocessorDirective.ppIf:
 						// #if !defined GUARD
 						// #if ((!((defined (GUARD)))))
-						guard = findNotDefined(l); 
+						guard = findNotDefined(l);
 						break;
 					}
 					if (guard != null) {
@@ -63,8 +136,8 @@ public class IncludeGuardDetection {
 						}
 					}
 				}
-  			}
- 		} catch (OffsetLimitReachedException e) {
+			}
+		} catch (OffsetLimitReachedException e) {
  		}
  		return null;
  	}

@@ -39,6 +39,24 @@
       "revId": "421abb1514358e184630fe61c2491bc980586dd1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_5fc766a9",
+        "filename": "releng/scripts/ChangeJavaVersion.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-02T21:56:49Z",
+      "side": 1,
+      "message": "The code is somewhere in PDE, not sure exactly where. It\u0027s quite possible that no other changes are required when switching from Java 7 to 8, but it for sure wasn\u0027t true when switching from 6 to 7.\n\nIt probably makes sense to make this script less general and don\u0027t pretend that it can handle arbitrary Java versions.",
+      "parentUuid": "87e453f8_bf706a50",
+      "revId": "421abb1514358e184630fe61c2491bc980586dd1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

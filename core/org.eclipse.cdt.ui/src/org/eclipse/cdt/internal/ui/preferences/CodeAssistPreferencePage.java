@@ -108,8 +108,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically; 
 		addCheckBox(insertionGroup, label, ContentAssistPreference.PREFIX_COMPLETION, 0);
 
-		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_guessArguments; 
-		addCheckBox(insertionGroup, label, ContentAssistPreference.GUESS_ARGUMENTS, 0);
+		//label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_guessArguments; 
+		//addCheckBox(insertionGroup, label, ContentAssistPreference.GUESS_ARGUMENTS, 0);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// sorting and filtering

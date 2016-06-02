@@ -138,7 +138,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	protected List<ICompletionProposal> computeCompletionProposals(CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) {
 		fPrefix = prefix;
-		fGuessArguments = getPreferenceStore().getBoolean(ContentAssistPreference.GUESS_ARGUMENTS);
+		fGuessArguments = false;  // parameter guessing disabled for now (see bug 495095)
 		fAvailableElements = fGuessArguments ? getDefinedElements(context) : Collections.<IBinding>emptyList();
 		List<ICompletionProposal> proposals = new ArrayList<>();
 

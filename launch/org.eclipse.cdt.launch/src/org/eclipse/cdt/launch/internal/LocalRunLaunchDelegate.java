@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -204,7 +205,8 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 				}
 
 				// Add variables from build info
-				ICdtVariable[] buildVars = CCorePlugin.getDefault().getCdtVariableManager().getVariables(cfg);
+				ICdtVariableManager manager = CCorePlugin.getDefault().getCdtVariableManager();
+				ICdtVariable[] buildVars = manager.getVariables(cfg);
 				for (ICdtVariable var : buildVars) {
 					try {
 						// The project_classpath variable contributed by JDT is
@@ -213,7 +215,8 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 						// shell limit. See
 						// http://bugs.eclipse.org/bugs/show_bug.cgi?id=408522
 						if (!"project_classpath".equals(var.getName())) {//$NON-NLS-1$
-							envMap.put(var.getName(), var.getStringValue());
+							String value = manager.resolveValue(var.getStringValue(), "", File.pathSeparator, cfg); //$NON-NLS-1$
+							envMap.put(var.getName(), value);
 						}
 					} catch (CdtVariableException e) {
 						// Some Eclipse dynamic variables can't be resolved

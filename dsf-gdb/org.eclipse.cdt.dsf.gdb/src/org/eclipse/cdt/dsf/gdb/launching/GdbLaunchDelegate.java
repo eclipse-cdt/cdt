@@ -139,7 +139,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     	
         monitor.worked(1);
 
-        String gdbVersion = getGDBVersion(config);
+        String gdbVersion = launch.getGDBVersion();
         
         // First make sure non-stop is supported, if the user want to use this mode
         if (LaunchUtils.getIsNonStopMode(config) && !isNonStopSupportedInGdbVersion(gdbVersion)) {

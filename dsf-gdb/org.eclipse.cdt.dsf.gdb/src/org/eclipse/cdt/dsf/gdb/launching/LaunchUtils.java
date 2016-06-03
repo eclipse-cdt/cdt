@@ -274,7 +274,7 @@ public class LaunchUtils {
 	 * 
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 * 
- 	 * @deprecated Replaced with GdbLaunch.getLaunchEnvironment()
+ 	 * @deprecated Replaced with {@link GdbLaunch#getGDBVersion()}
 	 */
 	@Deprecated
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
@@ -479,7 +479,7 @@ public class LaunchUtils {
 	 * Gets the CDT environment from the CDT project's configuration referenced by the
 	 * launch
 	 * @since 3.0
-	 * @deprecated Replaced with GdbLaunch.getLaunchEnvironment()
+ 	 * @deprecated Replaced with {@link GdbLaunch#getLaunchEnvironment()}
 	 */
 	@Deprecated
 	public static String[] getLaunchEnvironment(ILaunchConfiguration config) throws CoreException {

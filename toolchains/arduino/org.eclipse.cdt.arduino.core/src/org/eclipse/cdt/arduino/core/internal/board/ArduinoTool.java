@@ -87,6 +87,7 @@ public class ArduinoTool {
 		for (ArduinoToolSystem system : systems) {
 			if (system.isApplicable()) {
 				system.install(monitor);
+				return;
 			}
 		}
 

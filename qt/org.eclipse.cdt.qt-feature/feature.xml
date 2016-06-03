@@ -19,6 +19,10 @@
       %license
    </license>
 
+   <requires>
+      <import feature="org.eclipse.launchbar" version="2.0.0.201605241457"/>
+   </requires>
+
    <plugin
          id="org.eclipse.cdt.qt.core"
          download-size="0"

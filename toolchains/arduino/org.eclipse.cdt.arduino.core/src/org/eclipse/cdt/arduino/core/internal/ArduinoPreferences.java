@@ -38,11 +38,15 @@ public class ArduinoPreferences {
 		return Paths.get(getPrefs().get(ARDUINO_HOME, defaultHome));
 	}
 
+	public static void setArduinoHome(Path home) {
+		getPrefs().put(ARDUINO_HOME, home.toString());
+	}
+	
 	public static String getBoardUrls() {
 		return getPrefs().get(BOARD_URLS, defaultBoardUrls);
 	}
 
-	public static Collection<URL> getBoardUrlList() throws CoreException {
+	public static URL[] getBoardUrlList() throws CoreException {
 		List<URL> urlList = new ArrayList<>();
 		for (String url : getBoardUrls().split("\n")) { //$NON-NLS-1$
 			try {
@@ -51,7 +55,7 @@ public class ArduinoPreferences {
 				throw Activator.coreException(e);
 			}
 		}
-		return urlList;
+		return urlList.toArray(new URL[urlList.size()]);
 	}
 	
 	public static void setBoardUrls(String boardUrls) {
@@ -62,6 +66,22 @@ public class ArduinoPreferences {
 		} catch (BackingStoreException e) {
 			Activator.log(e);
 		}
+	}
+
+	public static void setBoardUrlList(URL[] urls) {
+		StringBuilder str = new StringBuilder();
+		for (int i = 0; i < urls.length - 1; ++i) {
+			str.append(urls[i].toString());
+			str.append('\n');
+		}
+		if (urls.length > 0) {
+			str.append(urls[urls.length - 1].toString());
+		}
+		setBoardUrls(str.toString());
+	}
+
+	public static String getDefaultArduinoHome() {
+		return defaultHome;
 	}
 
 	public static String getDefaultBoardUrls() {

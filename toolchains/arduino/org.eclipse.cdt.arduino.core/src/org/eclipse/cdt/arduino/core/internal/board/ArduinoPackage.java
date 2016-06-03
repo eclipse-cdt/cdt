@@ -92,24 +92,27 @@ public class ArduinoPackage {
 			if (Files.isDirectory(getInstallPath())) {
 				Path platformTxt = Paths.get("platform.txt"); //$NON-NLS-1$
 				try {
-					Files.find(getInstallPath().resolve("hardware"), 2, //$NON-NLS-1$
-							(path, attrs) -> path.getFileName().equals(platformTxt))
-							.forEach(path -> {
-								try (FileReader reader = new FileReader(path.toFile())) {
-									Properties platformProperties = new Properties();
-									platformProperties.load(reader);
-									String arch = path.getName(path.getNameCount() - 2).toString();
-									String version = platformProperties.getProperty("version"); //$NON-NLS-1$
+					Path hardware = getInstallPath().resolve("hardware");
+					if (Files.exists(hardware)) {
+						Files.find(hardware, 2, // $NON-NLS-1$
+								(path, attrs) -> path.getFileName().equals(platformTxt)).forEach(path -> {
+									try (FileReader reader = new FileReader(path.toFile())) {
+										Properties platformProperties = new Properties();
+										platformProperties.load(reader);
+										String arch = path.getName(path.getNameCount() - 2).toString();
+										String version = platformProperties.getProperty("version"); //$NON-NLS-1$
 
-									ArduinoPlatform platform = getPlatform(arch, version);
-									if (platform != null) {
-										platform.setPlatformProperties(platformProperties);
-										installedPlatforms.put(arch, platform);
-									} // TODO manually add it if was removed from index
-								} catch (IOException e) {
-									throw new RuntimeException(e);
-								}
-							});
+										ArduinoPlatform platform = getPlatform(arch, version);
+										if (platform != null) {
+											platform.setPlatformProperties(platformProperties);
+											installedPlatforms.put(arch, platform);
+										} // TODO manually add it if was removed
+											// from index
+									} catch (IOException e) {
+										throw new RuntimeException(e);
+									}
+								});
+					}
 				} catch (IOException e) {
 					throw Activator.coreException(e);
 				}
@@ -164,6 +167,18 @@ public class ArduinoPackage {
 			}
 		}
 		return null;
+	}
+
+	public ArduinoTool getLatestTool(String toolName) {
+		ArduinoTool latest = null;
+		for (ArduinoTool tool : tools) {
+			if (tool.getName().equals(toolName) && tool.isInstalled()) {
+				if (latest == null || ArduinoManager.compareVersions(tool.getVersion(), latest.getVersion()) > 0) {
+					latest = tool;
+				}
+			}
+		}
+		return latest;
 	}
 
 	@Override

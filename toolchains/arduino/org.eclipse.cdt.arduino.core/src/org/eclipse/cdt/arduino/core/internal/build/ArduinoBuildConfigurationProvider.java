@@ -55,7 +55,7 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 				IToolChain toolChain = new ArduinoToolChain(provider, config);
 				toolChainManager.addToolChain(toolChain);
 
-				return new ArduinoBuildConfiguration(config, name, board, "run", toolChain);
+				return new ArduinoBuildConfiguration(config, name, board, "run", toolChain); //$NON-NLS-1$
 			}
 			return null;
 		} else {

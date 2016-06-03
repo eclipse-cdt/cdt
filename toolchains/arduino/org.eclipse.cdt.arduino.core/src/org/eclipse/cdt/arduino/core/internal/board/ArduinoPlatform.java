@@ -209,39 +209,6 @@ public class ArduinoPlatform {
 		return getPackage().getInstallPath().resolve("hardware").resolve(architecture); //$NON-NLS-1$
 	}
 
-	public List<Path> getIncludePath() {
-		Path installPath = getInstallPath();
-		return Arrays.asList(installPath.resolve("cores/{build.core}"), //$NON-NLS-1$
-				installPath.resolve("variants/{build.variant}")); //$NON-NLS-1$
-	}
-
-	private void getSources(Collection<String> sources, Path dir, boolean recurse) {
-		for (File file : dir.toFile().listFiles()) {
-			if (file.isDirectory()) {
-				if (recurse) {
-					getSources(sources, file.toPath(), recurse);
-				}
-			} else {
-				if (ArduinoBuildConfiguration.isSource(file.getName())) {
-					sources.add(ArduinoBuildConfiguration.pathString(file.toPath()));
-				}
-			}
-		}
-	}
-
-	public Collection<String> getSources(String core, String variant) {
-		List<String> sources = new ArrayList<>();
-		Path srcPath = getInstallPath().resolve("cores").resolve(core); //$NON-NLS-1$
-		if (srcPath.toFile().isDirectory()) {
-			getSources(sources, srcPath, true);
-		}
-		Path variantPath = getInstallPath().resolve("variants").resolve(variant); //$NON-NLS-1$
-		if (variantPath.toFile().isDirectory()) {
-			getSources(sources, variantPath, true);
-		}
-		return sources;
-	}
-
 	private void initLibraries() throws CoreException {
 		if (libraries == null) {
 			libraries = new HashMap<>();

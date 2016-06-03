@@ -219,12 +219,12 @@ public class ArduinoManager {
 		return pkg != null ? pkg.getInstalledPlatform(architecture) : null;
 	}
 
-	public Collection<ArduinoPlatform> getAvailablePlatforms(IProgressMonitor monitor) throws CoreException {
+	public synchronized Collection<ArduinoPlatform> getAvailablePlatforms(IProgressMonitor monitor) throws CoreException {
 		List<ArduinoPlatform> platforms = new ArrayList<>();
-		Collection<URL> urls = ArduinoPreferences.getBoardUrlList();
-		SubMonitor sub = SubMonitor.convert(monitor, urls.size() + 1);
+		URL[] urls = ArduinoPreferences.getBoardUrlList();
+		SubMonitor sub = SubMonitor.convert(monitor, urls.length + 1);
 
-		sub.beginTask("Downloading package descriptions", urls.size()); //$NON-NLS-1$
+		sub.beginTask("Downloading package descriptions", urls.length); //$NON-NLS-1$
 		for (URL url : urls) {
 			Path packagePath = ArduinoPreferences.getArduinoHome()
 					.resolve(Paths.get(url.getPath()).getFileName());
@@ -252,7 +252,7 @@ public class ArduinoManager {
 	public void installPlatforms(Collection<ArduinoPlatform> platforms, IProgressMonitor monitor) throws CoreException {
 		SubMonitor sub = SubMonitor.convert(monitor, platforms.size());
 		for (ArduinoPlatform platform : platforms) {
-			sub.setTaskName(String.format("Installing %s", platform.getName())); //$NON-NLS-1$
+			sub.setTaskName(String.format("Installing %s %s", platform.getName(), platform.getVersion())); //$NON-NLS-1$
 			platform.install(sub);
 			sub.worked(1);
 		}
@@ -292,7 +292,7 @@ public class ArduinoManager {
 		return result;
 	}
 
-	private void initPackages() throws CoreException {
+	private synchronized void initPackages() throws CoreException {
 		if (packages == null) {
 			init();
 			packages = new HashMap<>();
@@ -326,7 +326,7 @@ public class ArduinoManager {
 		packages = null;
 	}
 
-	private ArduinoPackage getPackage(String packageName) throws CoreException {
+	public ArduinoPackage getPackage(String packageName) throws CoreException {
 		if (packageName == null) {
 			return null;
 		} else {

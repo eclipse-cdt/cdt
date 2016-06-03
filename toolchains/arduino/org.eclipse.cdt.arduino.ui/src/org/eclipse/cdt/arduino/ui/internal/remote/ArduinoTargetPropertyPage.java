@@ -96,15 +96,11 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		IRemoteConnection remoteConnection = getElement().getAdapter(IRemoteConnection.class);
 		IRemoteConnectionWorkingCopy workingCopy = remoteConnection.getWorkingCopy();
 
-		String portName = portSelector.getItem(portSelector.getSelectionIndex());
-		workingCopy.setAttribute(ArduinoRemoteConnection.PORT_NAME, portName);
-
 		ArduinoBoard board = boards[boardSelector.getSelectionIndex()];
-		workingCopy.setAttribute(ArduinoRemoteConnection.BOARD_NAME, board.getId());
-		ArduinoPlatform platform = board.getPlatform();
-		workingCopy.setAttribute(ArduinoRemoteConnection.PLATFORM_NAME, platform.getArchitecture());
-		ArduinoPackage pkg = platform.getPackage();
-		workingCopy.setAttribute(ArduinoRemoteConnection.PACKAGE_NAME, pkg.getName());
+		ArduinoRemoteConnection.setBoardId(workingCopy, board);
+
+		String portName = portSelector.getItem(portSelector.getSelectionIndex());
+		ArduinoRemoteConnection.setPortName(workingCopy, portName);
 
 		try {
 			workingCopy.save();

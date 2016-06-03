@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +40,7 @@ import org.eclipse.cdt.arduino.core.internal.board.ArduinoLibrary;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoTool;
 import org.eclipse.cdt.arduino.core.internal.board.ToolDependency;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -79,6 +82,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 	private static final String PACKAGE_NAME = "packageName"; //$NON-NLS-1$
 	private static final String PLATFORM_NAME = "platformName"; //$NON-NLS-1$
 	private static final String BOARD_NAME = "boardName"; //$NON-NLS-1$
+	private static final String MENU_QUALIFIER = "menu_"; //$NON-NLS-1$
 
 	private static ArduinoManager manager = Activator.getService(ArduinoManager.class);
 
@@ -117,8 +121,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 	}
 
 	ArduinoBuildConfiguration(IBuildConfiguration config, String name, ArduinoBoard board, String launchMode,
-			IToolChain toolChain)
-			throws CoreException {
+			IToolChain toolChain) throws CoreException {
 		super(config, name, toolChain);
 		this.board = board;
 		this.launchMode = launchMode;
@@ -148,10 +151,9 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		if (menus != null) {
 			Preferences settings = getSettings();
 			for (String id : menus.getChildren().keySet()) {
-				String key = ArduinoBoard.MENU_QUALIFIER + id;
-				String value = target.getRemoteConnection().getAttribute(key);
+				String value = target.getMenuValue(id);
 				if (value != null) {
-					settings.put(key, value);
+					settings.put(MENU_QUALIFIER + id, value);
 				}
 			}
 
@@ -164,7 +166,9 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 	}
 
 	static String generateName(ArduinoBoard board, String launchMode) {
-		return "arduino." + board.getId() + '.' + launchMode; //$NON-NLS-1$
+		ArduinoPlatform platform = board.getPlatform();
+		ArduinoPackage pkg = platform.getPackage();
+		return pkg.getName() + '.' + platform.getArchitecture() + '.' + board.getId() + '.' + launchMode;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -190,8 +194,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		HierarchicalProperties menus = board.getMenus();
 		if (menus != null) {
 			for (String id : menus.getChildren().keySet()) {
-				String key = ArduinoBoard.MENU_QUALIFIER + id;
-				if (!settings.get(key, "").equals(target.getRemoteConnection().getAttribute(key))) { //$NON-NLS-1$
+				if (!settings.get(MENU_QUALIFIER + id, "").equals(target.getMenuValue(id))) { //$NON-NLS-1$
 					return false;
 				}
 			}
@@ -211,19 +214,39 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			// IDE generated properties
 			properties = new Properties();
 			properties.put("runtime.platform.path", platform.getInstallPath().toString()); //$NON-NLS-1$
-			properties.put("runtime.ide.version", "10607"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("runtime.ide.version", "10608"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("software", "ARDUINO"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
 			String configName = getBuildConfiguration().getName();
 			if (configName.equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
 				configName = "default"; //$NON-NLS-1$
 			}
-			properties.put("build.path", configName); //$NON-NLS-1$
+			properties.put("build.path", "."); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.variant.path", //$NON-NLS-1$
 					platform.getInstallPath().resolve("variants").resolve("{build.variant}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
+			// Everyone seems to want to use the avr-gcc tool.
+			ArduinoPackage arduinoPackage = manager.getPackage("arduino"); //$NON-NLS-1$
+			ArduinoTool avrgcc = arduinoPackage.getLatestTool("avr-gcc"); //$NON-NLS-1$
+			if (avrgcc != null) {
+				properties.put("runtime.tools.avr-gcc.path", avrgcc.getInstallPath().toString()); //$NON-NLS-1$
+			}
+			
+			// Super Platform
+			String core = board.getBoardProperties().getProperty("build.core"); //$NON-NLS-1$
+			if (core.contains(":")) { //$NON-NLS-1$
+				String[] segments = core.split(":"); //$NON-NLS-1$
+				if (segments.length == 2) {
+					ArduinoPlatform superPlatform = manager.getInstalledPlatform(segments[0],
+							platform.getArchitecture());
+					if (superPlatform != null) {
+						properties.putAll(superPlatform.getPlatformProperties());
+					}
+				}
+			}
+
 			// Platform
-			properties.putAll(board.getPlatform().getPlatformProperties());
+			properties.putAll(platform.getPlatformProperties());
 
 			// Tools
 			for (ToolDependency toolDep : platform.getToolsDependencies()) {
@@ -238,10 +261,18 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			Preferences settings = getSettings();
 			HierarchicalProperties menus = board.getMenus();
 			if (menus != null) {
-				for (String menuId : menus.getChildren().keySet()) {
-					String value = settings.get(ArduinoBoard.MENU_QUALIFIER + menuId, ""); //$NON-NLS-1$
+				for (Entry<String, HierarchicalProperties> menuEntry : menus.getChildren().entrySet()) {
+					String key = menuEntry.getKey();
+					String defaultValue;
+					Iterator<HierarchicalProperties> i = menuEntry.getValue().getChildren().values().iterator();
+					if (i.hasNext()) {
+						defaultValue = i.next().getValue();
+					} else {
+						defaultValue = ""; //$NON-NLS-1$
+					}
+					String value = settings.get(MENU_QUALIFIER + key, defaultValue);
 					if (!value.isEmpty()) {
-						properties.putAll(board.getMenuProperties(menuId, value));
+						properties.putAll(board.getMenuProperties(key, value));
 					}
 				}
 			}
@@ -250,13 +281,6 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		// always do this in case the project changes names
 		properties.put("build.project_name", getProject().getName()); //$NON-NLS-1$
 		return properties;
-	}
-
-	public IFile getMakeFile() throws CoreException {
-		IFolder buildFolder = (IFolder) getBuildContainer();
-		ArduinoBoard board = getBoard();
-		String makeFileName = board.getId() + ".mk"; //$NON-NLS-1$
-		return buildFolder.getFile(makeFileName);
 	}
 
 	public Map<String, Object> getBuildModel() throws CoreException {
@@ -301,7 +325,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		buildModel.put("project_name", project.getName()); //$NON-NLS-1$
 
 		String includes = null;
-		for (Path include : platform.getIncludePath()) {
+		for (Path include : getIncludePath(platform, properties)) {
 			if (includes == null) {
 				includes = "-I"; //$NON-NLS-1$
 			} else {
@@ -316,10 +340,35 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		}
 		properties.put("includes", includes); //$NON-NLS-1$
 
-		Path platformPath = platform.getInstallPath();
-		buildModel.put("platform_path", pathString(platformPath).replace("+", "\\+")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		buildModel.put("platform_srcs", //$NON-NLS-1$
-				platform.getSources(properties.getProperty("build.core"), properties.getProperty("build.variant"))); //$NON-NLS-1$ //$NON-NLS-2$
+		ArduinoPlatform corePlatform = platform;
+		String core = properties.getProperty("build.core"); //$NON-NLS-1$
+		if (core.contains(":")) { //$NON-NLS-1$
+			String[] segments = core.split(":"); //$NON-NLS-1$
+			if (segments.length == 2) {
+				corePlatform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
+				core = segments[1];
+			}
+		}
+		Path corePath = corePlatform.getInstallPath().resolve("cores").resolve(core); //$NON-NLS-1$
+		buildModel.put("platform_core_path", pathString(corePath)); //$NON-NLS-1$
+		List<String> coreSources = new ArrayList<>();
+		getSources(coreSources, corePath, true);
+		buildModel.put("platform_core_srcs", coreSources); //$NON-NLS-1$
+
+		ArduinoPlatform variantPlatform = platform;
+		String variant = properties.getProperty("build.variant"); //$NON-NLS-1$
+		if (variant.contains(":")) { //$NON-NLS-1$
+			String[] segments = variant.split(":"); //$NON-NLS-1$
+			if (segments.length == 2) {
+				variantPlatform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
+				variant = segments[1];
+			}
+		}
+		Path variantPath = variantPlatform.getInstallPath().resolve("variants").resolve(variant); //$NON-NLS-1$
+		buildModel.put("platform_variant_path", pathString(variantPath)); //$NON-NLS-1$
+		List<String> variantSources = new ArrayList<>();
+		getSources(variantSources, variantPath, true);
+		buildModel.put("platform_variant_srcs", variantSources); //$NON-NLS-1$
 
 		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -340,13 +389,27 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		return buildModel;
 	}
 
+	private static void getSources(Collection<String> sources, Path dir, boolean recurse) {
+		for (File file : dir.toFile().listFiles()) {
+			if (file.isDirectory()) {
+				if (recurse) {
+					getSources(sources, file.toPath(), recurse);
+				}
+			} else {
+				if (ArduinoBuildConfiguration.isSource(file.getName())) {
+					sources.add(ArduinoBuildConfiguration.pathString(file.toPath()));
+				}
+			}
+		}
+	}
+
 	public IFile generateMakeFile(IProgressMonitor monitor) throws CoreException {
 		IFolder buildFolder = (IFolder) getBuildContainer();
 		if (!buildFolder.exists()) {
 			buildFolder.create(true, true, monitor);
 		}
 
-		IFile makefile = getMakeFile();
+		IFile makefile = buildFolder.getFile("Makefile"); //$NON-NLS-1$
 
 		Map<String, Object> buildModel = getBuildModel();
 
@@ -402,7 +465,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		}
 	}
 
-	private String resolvePropertyValue(String value, Properties dict) {
+	private String resolvePropertyValue(String value, Properties dict) throws CoreException {
 		String last;
 		do {
 			last = value;
@@ -414,6 +477,8 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 					String r2 = dict.getProperty(p2);
 					if (r2 != null) {
 						value = value.replace('{' + p2 + '}', r2);
+					} else {
+						throw Activator.coreException(String.format("Undefined key %s", p2), null);
 					}
 				}
 				i = n;
@@ -423,7 +488,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		return value;
 	}
 
-	private String resolveProperty(String property, Properties dict) {
+	private String resolveProperty(String property, Properties dict) throws CoreException {
 		String value = dict.getProperty(property);
 		return value != null ? resolvePropertyValue(value, dict) : null;
 	}
@@ -433,17 +498,17 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 	}
 
 	public String[] getBuildCommand() throws CoreException {
-		return new String[] { getMakeCommand(), "-f", getMakeFile().getName() }; //$NON-NLS-1$
+		return new String[] { getMakeCommand() };
 	}
 
 	public String[] getCleanCommand() throws CoreException {
-		return new String[] { getMakeCommand(), "-f", getMakeFile().getName(), "clean" }; //$NON-NLS-1$ //$NON-NLS-2$
+		return new String[] { getMakeCommand(), "clean" }; //$NON-NLS-1$
 	}
 
 	public String[] getSizeCommand() throws CoreException {
 		// TODO this shouldn't be in the makefile
 		// should be like the upload command
-		return new String[] { getMakeCommand(), "-f", getMakeFile().getName(), "size" }; //$NON-NLS-1$ //$NON-NLS-2$
+		return new String[] { getMakeCommand(), "size" }; //$NON-NLS-1$
 	}
 
 	public String getCodeSizeRegex() throws CoreException {
@@ -508,6 +573,31 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		}
 	}
 
+	private Collection<Path> getIncludePath(ArduinoPlatform platform, Properties properties) throws CoreException {
+		ArduinoPlatform corePlatform = platform;
+		String core = properties.getProperty("build.core"); //$NON-NLS-1$
+		if (core.contains(":")) { //$NON-NLS-1$
+			String[] segments = core.split(":"); //$NON-NLS-1$
+			if (segments.length == 2) {
+				corePlatform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
+				core = segments[1];
+			}
+		}
+
+		ArduinoPlatform variantPlatform = platform;
+		String variant = properties.getProperty("build.variant"); //$NON-NLS-1$
+		if (variant.contains(":")) { //$NON-NLS-1$
+			String[] segments = variant.split(":"); //$NON-NLS-1$
+			if (segments.length == 2) {
+				variantPlatform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
+				variant = segments[1];
+			}
+		}
+
+		return Arrays.asList(corePlatform.getInstallPath().resolve("cores").resolve(core), //$NON-NLS-1$
+				variantPlatform.getInstallPath().resolve("variants").resolve(variant)); //$NON-NLS-1$
+	}
+
 	// Scanner Info Cache
 	private String[] cachedIncludePath;
 	private String cachedInfoCommand;
@@ -537,14 +627,27 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			String commandString = resolveProperty(recipe, properties);
 
 			List<Path> includePath = new ArrayList<>();
-			includePath.addAll(platform.getIncludePath());
+			includePath.addAll(getIncludePath(platform, properties));
 			Collection<ArduinoLibrary> libs = manager.getLibraries(getProject());
 			for (ArduinoLibrary lib : libs) {
 				includePath.addAll(lib.getIncludePath());
 			}
-			String[] includes = includePath.stream()
-					.map(path -> resolvePropertyValue(path.toString(), properties)).collect(Collectors.toList())
-					.toArray(new String[includePath.size()]);
+			String[] includes = null;
+			try {
+				includes = includePath.stream().map(path -> {
+					try {
+						return resolvePropertyValue(path.toString(), properties);
+					} catch (CoreException e) {
+						throw new RuntimeException(e);
+					}
+				}).collect(Collectors.toList()).toArray(new String[includePath.size()]);
+			} catch (RuntimeException e) {
+				if (e.getCause() != null && e.getCause() instanceof CoreException) {
+					throw (CoreException) e.getCause();
+				} else {
+					throw e;
+				}
+			}
 
 			// Use cache if we can
 			if (cachedScannerInfo != null && cachedInfoCommand.equals(commandString)

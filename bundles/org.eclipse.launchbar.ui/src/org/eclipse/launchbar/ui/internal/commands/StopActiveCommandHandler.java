@@ -53,18 +53,20 @@ public class StopActiveCommandHandler extends AbstractHandler {
 							return Status.OK_STATUS;
 						}
 						for (ILaunch launch : activeLaunches) {
-							ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
-							if (activeConfig.equals(launchConfig)) {
-								launch.terminate();
-								continue;
-							}
-							if (launchConfig instanceof ILaunchConfigurationWorkingCopy) {
-								// There are evil delegates that use a working
-								// copy for scratch storage
-								if (activeConfig
-										.equals(((ILaunchConfigurationWorkingCopy) launchConfig).getOriginal())) {
+							if (launch.canTerminate()) {
+								ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
+								if (activeConfig.equals(launchConfig)) {
 									launch.terminate();
 									continue;
+								}
+								if (launchConfig instanceof ILaunchConfigurationWorkingCopy) {
+									// There are evil delegates that use a
+									// working copy for scratch storage
+									if (activeConfig
+											.equals(((ILaunchConfigurationWorkingCopy) launchConfig).getOriginal())) {
+										launch.terminate();
+										continue;
+									}
 								}
 							}
 						}

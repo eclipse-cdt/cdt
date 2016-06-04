@@ -137,8 +137,11 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 
 	/**
 	 * If a user-defined conversion is required to convert 'argument' to type 'targetType',
-	 * return 'argument' wrapped in an evaluation representing the conversion.
-	 * Otherwise, return 'argument' unmodified.
+	 * returns 'argument' wrapped in an evaluation representing the conversion.
+	 * Otherwise, returns 'argument' unmodified.
+	 *
+	 * @param argument the evaluation to convert
+	 * @param targetType the type to convert to
 	 * @param point point of instantiation for name lookups
 	 */
 	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType, 

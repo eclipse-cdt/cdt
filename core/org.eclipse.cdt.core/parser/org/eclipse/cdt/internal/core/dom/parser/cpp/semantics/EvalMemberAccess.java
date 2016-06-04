@@ -210,7 +210,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 
 		if (CPPTemplates.isDependentType(type)) {
 			return returnDependent 
-					  // The type resulting from dereferecing 'type' 
+					  // The type resulting from dereferencing 'type' 
 					? new TypeOfDependentExpression(new EvalUnary(IASTUnaryExpression.op_star, 
 							new EvalFixed(type, LVALUE, Value.UNKNOWN), null, point)) 
 					: null;

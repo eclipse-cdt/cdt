@@ -161,11 +161,15 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 				boolean supportStdin = configuration.getAttribute(
 						ILaunchConstants.ATTR_STDIN_SUPPORT, false);
 
+				boolean privilegedMode = configuration.getAttribute(
+						ILaunchConstants.ATTR_PRIVILEGED_MODE, false);
+
 				launcher.launch(DockerLaunchUIPlugin.PLUGIN_ID, null,
 						connectionUri,
 						image, command,
 						commandDir, workingDir, additionalDirs, origEnv,
-						envMap, null, keepContainer, supportStdin);
+						envMap, null, keepContainer, supportStdin,
+						privilegedMode);
 			} else if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 				String gdbserverPortNumber = configuration.getAttribute(
 						ILaunchConstants.ATTR_GDBSERVER_PORT,
@@ -220,6 +224,9 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 				boolean supportStdin = configuration.getAttribute(
 						ILaunchConstants.ATTR_STDIN_SUPPORT, false);
 
+				boolean privilegedMode = configuration.getAttribute(
+						ILaunchConstants.ATTR_PRIVILEGED_MODE, false);
+
 				StartGdbServerJob job = new StartGdbServerJob(
 						Messages.Gdbserver_start);
 				job.schedule();
@@ -227,7 +234,8 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						connectionUri,
 						image, command,
 						commandDir, workingDir, additionalDirs, origEnv,
-						envMap, ports, keepContainer, supportStdin);
+						envMap, ports, keepContainer, supportStdin,
+						privilegedMode);
 
 				// wait until gdbserver is started successfully and we have its
 				// ip address or

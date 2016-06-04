@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
@@ -109,7 +110,8 @@ public class EvalFixed extends CPPEvaluation {
 	
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
-		return isConstexprValue(fValue, point);
+		return (fType instanceof ICPPClassType && TypeTraits.isEmpty(fType, point))
+				|| isConstexprValue(fValue, point);
 	}
 
 	@Override

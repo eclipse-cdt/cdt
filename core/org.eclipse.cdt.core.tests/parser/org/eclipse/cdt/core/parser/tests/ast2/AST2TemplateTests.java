@@ -9436,7 +9436,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRecursiveTemplateClass_484786() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename T>
 	//	struct S {
 	//		static const bool value = true;
@@ -9446,6 +9446,32 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	void waldo() noexcept(S<Int>::value) {}
 	public void testDisambiguationInNoexceptSpecifier_467332() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename T, typename U>
+	//	struct is_same {};
+	//
+	//	template<typename T>
+	//	struct is_same<T, T> {
+	//	  constexpr operator bool() { return true; }
+	//	};
+	//
+	//	template<bool>
+	//	struct enable_if {};
+	//
+	//	template<>
+	//	struct enable_if<true> {
+	//	  typedef void type;
+	//	};
+	//
+	//	template <typename T>
+	//	typename enable_if<is_same<T, T>{}>::type waldo(T p);
+	//
+	//	void test() {
+	//	  waldo(1);
+	//	}
+	public void testListInitialization_495091() throws Exception {
 		parseAndCheckBindings();
 	}
 }

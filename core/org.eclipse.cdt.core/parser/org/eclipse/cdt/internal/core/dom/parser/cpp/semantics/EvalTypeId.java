@@ -22,16 +22,21 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
@@ -170,10 +175,30 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		IType simplifiedType = SemanticUtil.getNestedType(fInputType, SemanticUtil.TDEF);
 		if (simplifiedType instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) simplifiedType;
-			LookupData data = new LookupData(classType.getNameCharArray(), null, point);
+			ICPPEvaluation[] arguments = fArguments;
 			ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
+			if (arguments.length == 1 && arguments[0] instanceof EvalInitList) {
+				// List-initialization of a class (dcl.init.list-3).
+				if (TypeTraits.isAggregateClass(classType, point)) {
+					// Pretend that aggregate initialization is calling the default constructor.
+					return findDefaultConstructor(classType, constructors);
+				}
+				if (((EvalInitList) arguments[0]).getClauses().length == 0) {
+					ICPPMethod ctor = findDefaultConstructor(classType, constructors);
+					if (ctor != null)
+						return ctor;
+				}
+				ICPPConstructor[] ctors = getInitializerListConstructors(constructors, point);
+				if (ctors.length != 0) {
+					constructors = ctors;
+				} else {
+					arguments = ((EvalInitList) arguments[0]).getClauses();
+				}
+			}
+
+			LookupData data = new LookupData(classType.getNameCharArray(), null, point);
 			data.foundItems = constructors;
-			data.setFunctionArguments(false, fArguments);
+			data.setFunctionArguments(false, arguments);
 			try {
 				IBinding binding = CPPSemantics.resolveFunction(data, constructors, true);
 				if (binding instanceof ICPPFunction) {
@@ -184,6 +209,39 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			}
 		}
 		return null;
+	}
+
+	private ICPPConstructor findDefaultConstructor(ICPPClassType classType, ICPPConstructor[] constructors) {
+		for (ICPPConstructor ctor : constructors) {
+			if (ctor.isImplicit() && ClassTypeHelper.getMethodKind(classType, ctor) == MethodKind.DEFAULT_CTOR)
+				return ctor;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns constructors that can be called by passing a single {@code std::initializer_list}
+	 * as an argument.
+	 */
+	private ICPPConstructor[] getInitializerListConstructors(ICPPConstructor[] constructors, IASTNode point) {
+		ICPPConstructor[] result = ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+		ICPPClassTemplate template = CPPVisitor.get_initializer_list(point);
+		for (ICPPConstructor ctor : constructors) {
+			if (ctor.getRequiredArgumentCount() <= 1) {
+				IType[] parameterTypes = ctor.getType().getParameterTypes();
+				if (parameterTypes.length != 0) {
+					IType type = parameterTypes[0];
+					if (type instanceof ICPPSpecialization) {
+						IBinding specialized = ((ICPPSpecialization) type).getSpecializedBinding();
+						if (specialized instanceof ICPPClassTemplate
+								&& template.isSameType((IType) specialized)) {
+							result = ArrayUtil.append(result, ctor);
+						}
+					}
+				}
+			}
+		}
+		return ArrayUtil.trim(result);
 	}
 
 	@Override

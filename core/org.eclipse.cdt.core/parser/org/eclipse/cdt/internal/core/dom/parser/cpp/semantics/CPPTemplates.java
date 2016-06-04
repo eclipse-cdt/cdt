@@ -2730,9 +2730,15 @@ public class CPPTemplates {
 			}
 			return null;
 		}
-		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN, Context.ORDINARY, point);
-		if (cost == null || !cost.converts())
-			return null;
+		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN,
+				Context.ORDINARY, point);
+		if (cost == null || !cost.converts()) {
+			ICPPEvaluation eval = arg.getNonTypeEvaluation();
+			ICPPEvaluation newEval = CPPEvaluation.maybeApplyConversion(eval, p, point);
+			if (newEval == EvalFixed.INCOMPLETE && newEval != eval)
+				return null;
+			return new CPPTemplateNonTypeArgument(newEval, point);
+		}
 
 		return new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), paramType);
 	}

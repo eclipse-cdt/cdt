@@ -8899,6 +8899,34 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct A {
+	//	  A();
+	//	  A(int);
+	//	  A(int, int);
+	//	};
+	//
+	//	void test() {
+	//	  A{};
+	//	  A{1};
+	//	  A{1, 2};
+	//	}
+	public void testListInitializer_495227() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper ah = getAssertionHelper();
+		IASTImplicitName name = ah.findImplicitName("A{}", 1);
+		IBinding binding = name.resolveBinding();
+		assertTrue(binding instanceof ICPPConstructor);
+		assertEquals(0, ((ICPPConstructor) binding).getType().getParameterTypes().length);
+		name = ah.findImplicitName("A{1}", 1);
+		binding = name.resolveBinding();
+		assertTrue(binding instanceof ICPPConstructor);
+		assertEquals(1, ((ICPPConstructor) binding).getType().getParameterTypes().length);
+		name = ah.findImplicitName("A{1, 2}", 1);
+		binding = name.resolveBinding();
+		assertTrue(binding instanceof ICPPConstructor);
+		assertEquals(2, ((ICPPConstructor) binding).getType().getParameterTypes().length);
+	}
+
 	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}

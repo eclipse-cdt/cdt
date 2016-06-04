@@ -33,6 +33,9 @@ public interface ILaunchConstants {
 	public final static String ATTR_STDIN_SUPPORT = DockerLaunchUIPlugin
 			.getUniqueIdentifier() + ".support_std_input"; //$NON-NLS-1$
 
+	public final static String ATTR_PRIVILEGED_MODE = DockerLaunchUIPlugin
+			.getUniqueIdentifier() + ".privileged_mode"; //$NON-NLS-1$
+
 	// Attributes that need to match CDT attribute names
 	public static final String ATTR_GDBSERVER_PORT = DebugPlugin
 			.getUniqueIdentifier() + ".ATTR_GDBSERVER_PORT"; //$NON-NLS-1$

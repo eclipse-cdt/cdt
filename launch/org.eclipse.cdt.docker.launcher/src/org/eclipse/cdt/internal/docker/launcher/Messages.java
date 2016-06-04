@@ -38,6 +38,7 @@ public class Messages extends NLS {
 	public static String ContainerTab_Remove_Button;
 	public static String ContainerTab_Keep_Label;
 	public static String ContainerTab_Stdin_Support_Label;
+	public static String ContainerTab_Privileged_Mode_Label;
 	public static String ContainerTab_Error_Reading_Configuration;
 	public static String ContainerTab_Connection_Selector_Label;
 	public static String ContainerTab_Image_Selector_Label;

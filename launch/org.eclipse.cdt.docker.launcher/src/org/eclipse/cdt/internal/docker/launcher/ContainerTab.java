@@ -58,6 +58,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	private String connectionUri = "";
 	private Boolean keepValue;
 	private Boolean stdinValue;
+	private Boolean privilegedValue;
 	private IDockerConnection connection;
 	private IDockerConnection[] connections;
 	private IDockerImageListener containerTab;
@@ -66,6 +67,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	private Button removeButton;
 	private Button keepButton;
 	private Button stdinButton;
+	private Button privilegedButton;
 	private Combo imageCombo;
 	private Combo connectionSelector;
 
@@ -263,6 +265,24 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			}
 
 		});
+		privilegedButton = createCheckButton(group,
+				Messages.ContainerTab_Privileged_Mode_Label);
+		privilegedButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		privilegedValue = false;
+		privilegedButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!privilegedValue.equals(privilegedButton.getSelection()))
+					updateLaunchConfigurationDialog();
+				privilegedValue = privilegedButton.getSelection();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
+		});
 	}
 
 	private Composite createComposite(Composite parent, int columns, int hspan,
@@ -434,6 +454,9 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			stdinValue = configuration.getAttribute(
 					ILaunchConstants.ATTR_STDIN_SUPPORT, false);
 			stdinButton.setSelection(stdinValue);
+			privilegedValue = configuration
+					.getAttribute(ILaunchConstants.ATTR_PRIVILEGED_MODE, false);
+			privilegedButton.setSelection(privilegedValue);
 		} catch (CoreException e) {
 			setErrorMessage(Messages.bind(
 					Messages.ContainerTab_Error_Reading_Configuration, e
@@ -455,6 +478,8 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 				keepButton.getSelection());
 		configuration.setAttribute(ILaunchConstants.ATTR_STDIN_SUPPORT,
 				stdinButton.getSelection());
+		configuration.setAttribute(ILaunchConstants.ATTR_PRIVILEGED_MODE,
+				privilegedButton.getSelection());
 	}
 
 	@Override

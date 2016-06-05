@@ -285,7 +285,7 @@ public class ExternalExecutablesManager {
 		}
 
 		// if the icon is still to big -> downscale the biggest
-		if (id.height > 16 && id.width > 16) {
+		if (id != null && id.height > 16 && id.width > 16) {
 			id = biggest.scaledTo(16, 16);
 		}
 

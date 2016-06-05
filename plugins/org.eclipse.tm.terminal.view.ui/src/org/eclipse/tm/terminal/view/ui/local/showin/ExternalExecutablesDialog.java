@@ -409,7 +409,7 @@ public class ExternalExecutablesDialog extends TrayDialog {
 	 */
 	public void setExecutableData(Map<String, String> data) {
 		if (data == null) {
-			executableData = data;
+			executableData = null;
 		} else {
 			executableData = new HashMap<String, String>(data);
 		}

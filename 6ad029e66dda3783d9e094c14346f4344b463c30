@@ -1196,6 +1196,24 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_813d11ed",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 643,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-06-05T10:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_45c16ac8",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_65c666e3",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
         "patchSetId": 1
@@ -1207,6 +1225,24 @@
       "writtenOn": "2016-05-08T00:17:38Z",
       "side": 1,
       "message": "EvalID.create() expects an expression that\u0027s hooked up to the AST.\n\nWe could do this instead:\n\n  - Refactor EvalID.create(IASTIdExpression) to be\n    EvalID.create(IASTName, IASTExpression). We can\n    keep a wrapper EvalID.create(IASTIdExpression expr)\n    which forwards to create(expr.getName(), expr).\n\n  - Here, call EvalID.create(name, this).\n\nAlternatively, since we have an IBinding, we can just create an EvalBinding.",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_a1404d5f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-06-05T10:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_65c666e3",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1258,6 +1294,24 @@
       "writtenOn": "2016-05-08T00:17:38Z",
       "side": 1,
       "message": "Why not ICPPEvaluationOwner?",
+      "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_81fa7181",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTReturnStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-06-05T10:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_e588b6ab",
       "revId": "6ad029e66dda3783d9e094c14346f4344b463c30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

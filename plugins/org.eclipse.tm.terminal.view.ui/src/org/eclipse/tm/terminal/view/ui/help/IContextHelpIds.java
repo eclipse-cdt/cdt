@@ -38,6 +38,7 @@ public interface IContextHelpIds {
 
 	/**
 	 * External executables dialog.
+	 * @since 4.1
 	 */
 	public final static String EXTERNAL_EXECUTABLES_DIALOG = PREFIX + "ExternalExecutablesDialog"; //$NON-NLS-1$
 }

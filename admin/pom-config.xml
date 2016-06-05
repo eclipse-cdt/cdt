@@ -59,7 +59,7 @@
         
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-        <platform-site>http://download.eclipse.org/eclipse/updates/4.6milestones</platform-site>
+        <platform-site>http://download.eclipse.org/eclipse/updates/4.6milestones/S-4.6RC4-201606031000</platform-site>
         <platform-release-site>http://download.eclipse.org/releases/neon</platform-release-site>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/builds/neon/milestones</cdt-site>

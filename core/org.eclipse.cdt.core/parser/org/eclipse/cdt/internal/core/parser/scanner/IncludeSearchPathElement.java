@@ -72,7 +72,7 @@ public final class IncludeSearchPathElement {
 				String framework = includeDirective.substring(0, firstSep);
 				String file = includeDirective.substring(firstSep + 1);
 				if (file.length() > 0) {
-					if (fPath.endsWith(framework + FRAMEWORK_HEADERS)) { //$NON-NLS-1$
+					if (fPath.endsWith(framework + FRAMEWORK_HEADERS)) {
 						return ScannerUtility.createReconciledPath(fPath, file);
 					}
 				}

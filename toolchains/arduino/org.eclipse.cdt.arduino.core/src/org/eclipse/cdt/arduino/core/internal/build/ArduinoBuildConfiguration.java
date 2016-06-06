@@ -225,13 +225,17 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			properties.put("build.variant.path", //$NON-NLS-1$
 					platform.getInstallPath().resolve("variants").resolve("{build.variant}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
-			// Everyone seems to want to use the avr-gcc tool.
+			// Everyone seems to want to use the avr-gcc and avrdude tools
 			ArduinoPackage arduinoPackage = manager.getPackage("arduino"); //$NON-NLS-1$
 			ArduinoTool avrgcc = arduinoPackage.getLatestTool("avr-gcc"); //$NON-NLS-1$
 			if (avrgcc != null) {
 				properties.put("runtime.tools.avr-gcc.path", avrgcc.getInstallPath().toString()); //$NON-NLS-1$
 			}
-			
+			ArduinoTool avrdude = arduinoPackage.getLatestTool("avrdude"); //$NON-NLS-1$
+			if (avrdude != null) {
+				properties.put("runtime.tools.avrdude.path", avrdude.getInstallPath().toString()); //$NON-NLS-1$
+			}
+
 			// Super Platform
 			String core = board.getBoardProperties().getProperty("build.core"); //$NON-NLS-1$
 			if (core.contains(":")) { //$NON-NLS-1$
@@ -471,6 +475,11 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			last = value;
 			for (int i = value.indexOf('{'); i >= 0; i = value.indexOf('{', i)) {
 				i++;
+				if (value.charAt(i) == '{') {
+					i++;
+					continue;
+				}
+
 				int n = value.indexOf('}', i);
 				if (n >= 0) {
 					String p2 = value.substring(i, n);
@@ -485,7 +494,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			}
 		} while (!value.equals(last));
 
-		return value;
+		return value.replace("}}", "}").replace("{{", "{"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	private String resolveProperty(String property, Properties dict) throws CoreException {
@@ -531,8 +540,21 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 
 	public String[] getUploadCommand(String serialPort) throws CoreException {
 		String toolName = getProperties().getProperty("upload.tool"); //$NON-NLS-1$
+		ArduinoPlatform platform = getBoard().getPlatform();
+		if (toolName.contains(":")) { //$NON-NLS-1$
+			String[] segments = toolName.split(":"); //$NON-NLS-1$
+			if (segments.length == 2) {
+				platform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
+				toolName = segments[1];
+			}
+		}
 
 		Properties properties = getProperties();
+		
+		ArduinoTool uploadTool = platform.getPackage().getLatestTool(toolName);
+		if (uploadTool != null) {
+			properties.putAll(uploadTool.getToolProperties());
+		}
 
 		properties.put("serial.port", serialPort); //$NON-NLS-1$
 		// Little bit of weirdness needed for the bossac tool
@@ -547,7 +569,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		properties.put("config.path", "{tools." + toolName + ".config.path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		// properties for the tool flattened
-		HierarchicalProperties toolsProps = new HierarchicalProperties(getBoard().getPlatform().getPlatformProperties())
+		HierarchicalProperties toolsProps = new HierarchicalProperties(platform.getPlatformProperties())
 				.getChild("tools"); //$NON-NLS-1$
 		if (toolsProps != null) {
 			HierarchicalProperties toolProps = toolsProps.getChild(toolName);
@@ -558,13 +580,14 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 
 		// TODO make this a preference
 		properties.put("upload.verbose", properties.getProperty("upload.params.verbose", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.put("upload.verify", properties.getProperty("upload.params.verify", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		// TODO needed this for esptool
 		properties.put("upload.resetmethod", "ck"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String command = resolveProperty("upload.pattern", properties); //$NON-NLS-1$
 		if (command == null) {
-			return new String[] { "command not specified" }; //$NON-NLS-1$
+			throw Activator.coreException("Upload command not specified", null);
 		}
 		if (isWindows) {
 			return splitCommand(command);

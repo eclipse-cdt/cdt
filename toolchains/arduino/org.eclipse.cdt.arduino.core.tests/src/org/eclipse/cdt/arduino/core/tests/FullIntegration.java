@@ -53,14 +53,14 @@ public class FullIntegration {
 		ArduinoPreferences.setBoardUrlList(urls);
 	}
 
-	private Set<ArduinoBoard> getSkipBoards() throws Exception {
-		Set<ArduinoBoard> boards = new HashSet<ArduinoBoard>();
-		
+	private Set<ArduinoBoard> getSkipBuild() throws Exception {
+		Set<ArduinoBoard> boards = new HashSet<>();
+
 		// Fails in arduino too
 		boards.add(arduinoManager.getBoard("arduino", "avr", "robotControl"));
 		boards.add(arduinoManager.getBoard("arduino", "avr", "robotMotor"));
 		boards.add(arduinoManager.getBoard("adafruit", "avr", "adafruit32u4"));
-		
+
 		// TODO Need to add support for menu specific build properties
 		boards.add(arduinoManager.getBoard("arduino", "avr", "mini"));
 		boards.add(arduinoManager.getBoard("arduino", "avr", "lilypad"));
@@ -73,12 +73,28 @@ public class FullIntegration {
 		boards.add(arduinoManager.getBoard("TeeOnArdu", "avr", "CirPlayTeensyCore"));
 		boards.add(arduinoManager.getBoard("TeeOnArdu", "avr", "FloraTeensyCore"));
 		boards.add(arduinoManager.getBoard("TeeOnArdu", "avr", "TeeOnArdu"));
-		
+
 		// TODO build.system.path missing
 		boards.add(arduinoManager.getBoard("arduino", "sam", "arduino_due_x"));
 		boards.add(arduinoManager.getBoard("arduino", "sam", "arduino_due_x_dbg"));
 		boards.add(arduinoManager.getBoard("Intel", "arc32", "arduino_101"));
 
+		return boards;
+	}
+
+	private Set<ArduinoBoard> getSkipUpload() throws Exception {
+		Set<ArduinoBoard> boards = new HashSet<>();
+		
+		// missing upload.protocol
+		boards.add(arduinoManager.getBoard("arduino", "avr", "gemma"));
+		boards.add(arduinoManager.getBoard("adafruit", "avr", "gemma"));
+		boards.add(arduinoManager.getBoard("adafruit", "avr", "trinket5"));
+		boards.add(arduinoManager.getBoard("adafruit", "avr", "trinket3"));
+		
+		// usbtiny missing
+		boards.add(arduinoManager.getBoard("adafruit", "avr", "protrinket3"));
+		boards.add(arduinoManager.getBoard("adafruit", "avr", "protrinket5"));
+		
 		return boards;
 	}
 
@@ -90,11 +106,12 @@ public class FullIntegration {
 		setBoardUrls();
 		loadPlatforms(monitor);
 
+		Set<ArduinoBoard> skipBuild = getSkipBuild();
+		Set<ArduinoBoard> skipUpload = getSkipUpload();
 		IProject project = createProject(monitor);
-		Set<ArduinoBoard> skip = getSkipBoards();
 		for (ArduinoBoard board : arduinoManager.getInstalledBoards()) {
-			if (!skip.contains(board)) {
-				buildBoard(project, board, monitor);
+			if (!skipBuild.contains(board)) {
+				buildBoard(project, board, !skipUpload.contains(board), monitor);
 			}
 		}
 	}
@@ -138,7 +155,7 @@ public class FullIntegration {
 		return generator.getProject();
 	}
 
-	private void buildBoard(IProject project, ArduinoBoard board, IProgressMonitor monitor) throws Exception {
+	private void buildBoard(IProject project, ArduinoBoard board, boolean upload, IProgressMonitor monitor) throws Exception {
 		ArduinoRemoteConnection arduinoTarget = createTarget(board);
 		ArduinoBuildConfigurationProvider provider = (ArduinoBuildConfigurationProvider) buildConfigManager
 				.getProvider(ArduinoBuildConfigurationProvider.ID);
@@ -155,6 +172,11 @@ public class FullIntegration {
 		int rc = process.waitFor();
 		if (rc != 0) {
 			throw new Exception("Build failed");
+		}
+
+		// Test to make sure we can get the upload command cleanly
+		if (upload) {
+			System.out.println(String.join(" ", config.getUploadCommand("port1")));
 		}
 	}
 

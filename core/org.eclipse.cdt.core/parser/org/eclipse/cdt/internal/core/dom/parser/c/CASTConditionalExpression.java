@@ -172,6 +172,10 @@ public class CASTConditionalExpression extends ASTNode implements
 
 	private IType computeResultType(IASTExpression positiveExpression, IASTExpression negativeExpression,
 			                        IType positiveType, IType negativeType) {
+		// Unwrap any top-level cv-qualifiers.
+		positiveType = CVisitor.unwrapCV(positiveType);
+		negativeType = CVisitor.unwrapCV(negativeType);
+		
 		// [6.5.15] p5: If both the second and third operands have arithmetic type, the result type
 		// that would be determined by the usual arithmetic conversions, were they applied to those
 		// two operands, is the type of the result. If both operands have void type, the result has
@@ -222,7 +226,7 @@ public class CASTConditionalExpression extends ASTNode implements
 			return new CPointerType(
 					ExpressionTypes.restoreCV(resultPointee, positivePointeeCV, negativePointeeCV), 0);
 		}
-
+		
 		return null;
 	}
 

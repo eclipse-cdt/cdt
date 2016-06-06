@@ -223,6 +223,10 @@ public class CASTConditionalExpression extends ASTNode implements
 					ExpressionTypes.restoreCV(resultPointee, positivePointeeCV, negativePointeeCV), 0);
 		}
 		
+		//At the end of the day, if both types are the same, then the result is going to be that type.
+		if (positiveType.isSameType(negativeType))
+			return positiveType;
+			
 		return null;
 	}
 

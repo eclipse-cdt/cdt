@@ -7554,6 +7554,17 @@ public class AST2Tests extends AST2TestBase {
     	parseAndCheckBindings(getAboveComment(), C);
     }
     
+	//	struct MyStruct {
+	//		char* str;
+	//	};
+	//	void foo() {
+	//		const struct MyStruct a, b;
+	//		(0 ? a : b).str;
+	//	}
+    public void testCVQualifiedTypesInConversionOperator_495423() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), C);
+    }
+    
     //	_Alignas(8) int x;
     //	_Alignas(int) char y;
 	//	_Alignas(16) struct { int x; int y; };

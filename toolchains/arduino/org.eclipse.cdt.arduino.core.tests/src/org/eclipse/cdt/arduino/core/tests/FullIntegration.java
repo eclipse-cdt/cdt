@@ -31,6 +31,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.remote.core.IRemoteConnection;
@@ -79,6 +80,12 @@ public class FullIntegration {
 		boards.add(arduinoManager.getBoard("arduino", "sam", "arduino_due_x_dbg"));
 		boards.add(arduinoManager.getBoard("Intel", "arc32", "arduino_101"));
 
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			// i586/i686 link missing
+			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
+			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
+			boards.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
+		}
 		return boards;
 	}
 

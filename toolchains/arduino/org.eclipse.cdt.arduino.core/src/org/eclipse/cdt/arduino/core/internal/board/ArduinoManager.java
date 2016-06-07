@@ -90,7 +90,7 @@ public class ArduinoManager {
 		return ArduinoPreferences.getArduinoHome().resolve(".version"); //$NON-NLS-1$
 	}
 
-	private void init() throws CoreException {
+	private synchronized void init() throws CoreException {
 		if (props == null) {
 			if (!Files.exists(ArduinoPreferences.getArduinoHome())) {
 				try {

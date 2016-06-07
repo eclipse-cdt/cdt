@@ -3209,6 +3209,58 @@ public class AST2TemplateTests extends AST2TestBase {
 		ba.assertNonProblem("test=", 4, ICPPField.class);
 	}
 
+	//	template<typename T, typename U>
+	//	struct is_same {};
+	//
+	//	template<typename T>
+	//	struct is_same<T, T> {
+	//	  constexpr operator bool() { return true; }
+	//	};
+	//
+	//	template<bool>
+	//	struct enable_if {};
+	//
+	//	template<>
+	//	struct enable_if<true> {
+	//	  typedef void type;
+	//	};
+	//
+	//	template <typename T>
+	//	typename enable_if<is_same<T, T>{}>::type waldo(T p);
+	//
+	//	void test() {
+	//	  waldo(1);
+	//	}
+	public void testIntegralConversionOperator_495091a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename T, typename U>
+	//	struct is_same {};
+	//
+	//	template<typename T>
+	//	struct is_same<T, T> {
+	//	  constexpr operator bool() { return true; }
+	//	};
+	//
+	//	template<bool>
+	//	struct enable_if {};
+	//
+	//	template<>
+	//	struct enable_if<true> {
+	//	  typedef void type;
+	//	};
+	//
+	//	template <typename T>
+	//	typename enable_if<is_same<T, T>{} && true>::type waldo(T p);
+	//
+	//	void test() {
+	//	  waldo(1);
+	//	}
+	public void testIntegralConversionOperator_495091b() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	class A {
 	//		public:
 	//			A(const A& a) {}
@@ -7348,10 +7400,10 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testTemplateIdNamingAliasTemplateInExpression_472615() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <class>
 	//	struct Traits {
-	//	    template <class U> 
+	//	    template <class U>
 	//	    using rebind = U;
 	//	};
 	//	template <class T>
@@ -7945,7 +7997,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPartialSpecializationForVarargFunctionType_402807() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename T>
 	//	struct waldo {
 	//		typedef int type;
@@ -7958,23 +8010,23 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPartialSpecializationForRefQualifiedFunctionType_485888() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template<typename T>
 	//	struct term_traits;
-	//	
+	//
 	//	template<typename T>
 	//	struct term_traits<T const &> {
 	//	    typedef T value_type;
 	//	};
-	//	
+	//
 	//	template<typename T, int N>
 	//	struct term_traits<T const (&)[N]> {
 	//	    typedef T value_type[N];
 	//	};
-	//	
+	//
 	//	using T = const char(&)[4];
 	//	using ActualType = term_traits<T const &>::value_type;
-	//	
+	//
 	//	using ExpectedType = char[4];
 	public void testQualifierTypeThatCollapsesAfterTypedefSubstitution_487698() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -8133,7 +8185,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testPackExpansionInNestedTemplate_459844() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename T>
 	//	struct A {};
 	//
@@ -8146,21 +8198,21 @@ public class AST2TemplateTests extends AST2TestBase {
 		IVariable answer = helper.assertNonProblem("answer");
 		assertVariableValue(answer, 1);
 	}
-	
+
 
 	//	template <template <class> class ... Mixins>
 	//	struct C : Mixins<int>... {};
-	//	  
+	//
 	//	template <typename>
 	//	struct SpecificMixin {};
-	//	
+	//
 	//	constexpr bool answer = __is_base_of(SpecificMixin<int>, C<SpecificMixin>);
 	public void testTemplateTemplateParameterPack_487703a() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable answer = helper.assertNonProblem("answer");
 		assertVariableValue(answer, 1);
 	}
-	
+
 	//  template <template <class> class ... Mixins>
 	//  struct C : Mixins<C<Mixins...>>... {};
 	//
@@ -8248,16 +8300,16 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	template <typename T>
 	//	auto bar(T t) -> decltype(t->foo);
-	//	
+	//
 	//	int main() {
 	//		S s;
 	//		auto waldo = bar(&s);
 	//	}
 	public void testDependentFieldReference_472436a() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
-		helper.assertVariableType("waldo", CommonCPPTypes.int_);    	
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
-    
+
 	//	struct T {
 	//		int foo;
 	//	};
@@ -8267,16 +8319,16 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	template <typename T>
 	//	auto bar(T t) -> decltype(t->other->foo);
-	//	
+	//
 	//	int main() {
 	//		S s;
 	//		auto waldo = bar(&s);
 	//	}
 	public void testDependentFieldReference_472436b() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
-		helper.assertVariableType("waldo", CommonCPPTypes.int_);    	
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
-	
+
 	//	template <typename>
 	//	struct Bind {};
 	//	template <typename Func, typename ... BoundArgs>
@@ -8468,7 +8520,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testMemberAccessInPackExpansion_442213() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	// Example 1
 	//	template <typename... T>
 	//	void foo1(T&... t) {
@@ -8496,7 +8548,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testMemberAccessViaReferenceInPackExpansion_466845() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <int... I>
 	//	struct C {};
 	//
@@ -8514,11 +8566,11 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void test() {
 	//	  A a;
 	//	  waldo(a, C<>());
-	//	}	
+	//	}
 	public void testDecltypeInPackExpansion_486425a() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <int... I>
 	//	struct C {};
 	//
@@ -8971,7 +9023,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertNonProblem("waldo<T>", ICPPDeferredFunction.class);
 	}
-	
+
 	//	template<bool, typename T = void>
 	//	struct enable_if {};
 	//
@@ -9024,19 +9076,19 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	constexpr bool negate(bool arg) {
 	//	  return !arg;
 	//	}
-	//	    
+	//
 	//	template <bool B>
 	//	struct boolean {
-	//	  constexpr operator bool() { return B; } 
+	//	  constexpr operator bool() { return B; }
 	//	};
-	//	    
+	//
 	//	constexpr bool waldo = negate(boolean<true>());
 	public void testDependentConversionOperator_486426() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPVariable waldo = helper.assertNonProblem("waldo");
 		assertConstantValue(0, waldo);
 	}
-	
+
 	//	template <typename>
 	//	struct C {
 	//	    friend bool operator==(C, C);
@@ -9053,7 +9105,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testStrayFriends_419301() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename>
 	//	struct A {
 	//	  struct B {
@@ -9114,7 +9166,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testConstexprFunctionCallWithNonConstexprArguments_429891() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename>
 	//	struct S;
 	//
@@ -9266,7 +9318,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testAmbiguityResolutionOrder_462348b() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template<typename T>
 	//	struct remove_reference {
 	//	  typedef T type;
@@ -9316,7 +9368,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testAmbiguityResolution_469788() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename> struct S {};
 	//	struct U {};
 	//
@@ -9333,7 +9385,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testAmbiguityResolutionInNestedClassMethodBody_485388() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template<typename T, T v>
 	//	struct F {
 	//	  static constexpr T val = v;
@@ -9369,7 +9421,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRegression_485388a() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
-	
+
 	//	template <typename T>
 	//	struct A {
 	//	  void ma(T);
@@ -9392,7 +9444,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRegression_485388b() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename>
 	//	struct Base {
 	//	    template <typename>
@@ -9404,7 +9456,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  typedef int WALDO;
 	//
 	//	  C() {
-	//	    this->template method<WALDO>(0);    
+	//	    this->template method<WALDO>(0);
 	//	  }
 	//	};
 	public void testRegression_421823() throws Exception {
@@ -9446,32 +9498,6 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	void waldo() noexcept(S<Int>::value) {}
 	public void testDisambiguationInNoexceptSpecifier_467332() throws Exception {
-		parseAndCheckBindings();
-	}
-
-	//	template<typename T, typename U>
-	//	struct is_same {};
-	//
-	//	template<typename T>
-	//	struct is_same<T, T> {
-	//	  constexpr operator bool() { return true; }
-	//	};
-	//
-	//	template<bool>
-	//	struct enable_if {};
-	//
-	//	template<>
-	//	struct enable_if<true> {
-	//	  typedef void type;
-	//	};
-	//
-	//	template <typename T>
-	//	typename enable_if<is_same<T, T>{}>::type waldo(T p);
-	//
-	//	void test() {
-	//	  waldo(1);
-	//	}
-	public void testListInitialization_495091() throws Exception {
 		parseAndCheckBindings();
 	}
 }

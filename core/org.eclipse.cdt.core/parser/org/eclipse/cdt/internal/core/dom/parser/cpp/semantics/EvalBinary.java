@@ -63,6 +63,7 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -135,15 +136,29 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		if (getOverload(point) != null) {
-			// TODO(sprigogin): Simulate execution of a function call.
-			return Value.create(this);
+		ICPPEvaluation arg1 = fArg1;
+		ICPPEvaluation arg2 = fArg2;
+		ICPPFunction overload = getOverload(point);
+		if (overload != null) {
+			ICPPFunctionType functionType = overload.getType();
+			IType[] parameterTypes = functionType.getParameterTypes();
+			arg1 = maybeApplyConversion(fArg1, parameterTypes[0], point);
+			arg2 = maybeApplyConversion(fArg1, parameterTypes[1], point);
+
+			if (!(overload instanceof CPPImplicitFunction)) {
+				if (!overload.isConstexpr())
+					return Value.ERROR;
+				ICPPEvaluation eval = new EvalBinding(overload, null, (IBinding) null);
+				ICPPEvaluation call =
+						new EvalFunctionCall(new ICPPEvaluation[] {eval, arg1, arg2}, (IBinding) null);
+				return call.getValue(point);
+			}
 		}
 
-		IValue v1 = fArg1.getValue(point);
+		IValue v1 = arg1.getValue(point);
 		if (v1 == null || v1 == Value.UNKNOWN)
 			return Value.UNKNOWN;
-		IValue v2 = fArg2.getValue(point);
+		IValue v2 = arg2.getValue(point);
 		if (v2 == null || v2 == Value.UNKNOWN)
 			return Value.UNKNOWN;
 

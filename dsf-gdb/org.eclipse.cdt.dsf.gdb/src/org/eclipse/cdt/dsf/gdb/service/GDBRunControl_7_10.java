@@ -21,10 +21,13 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MINotifyAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -71,6 +74,18 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 		requestMonitor.done();
 	}
 
+	/** @since 5.1 */
+	protected void setReverseTraceMethod(ReverseDebugMethod traceMethod) {
+	   	if (fReverseTraceMethod != traceMethod) {
+			boolean enabled = false;
+			fReverseTraceMethod = traceMethod;
+			if (fReverseTraceMethod != ReverseDebugMethod.OFF) {
+				enabled = true;
+			}
+			setReverseModeEnabled(enabled);
+    	}
+	}
+	
 	@Override
 	public void getReverseTraceMethod(ICommandControlDMContext context, DataRequestMonitor<ReverseDebugMethod> rm) {
 		rm.setData(fReverseTraceMethod);
@@ -151,27 +166,83 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 					if ("record-started".equals(asyncClass) || //$NON-NLS-1$
 						"record-stopped".equals(asyncClass)) {	 //$NON-NLS-1$
 						if ("record-stopped".equals(asyncClass)) { //$NON-NLS-1$
-							fReverseTraceMethod = ReverseDebugMethod.OFF;
-							setReverseModeEnabled(false);
+							setReverseTraceMethod(ReverseDebugMethod.OFF);
 						} else {
-							getConnection().queueCommand(
-								fCommandFactory.createCLIInfoRecord(getConnection().getContext()),
-								new DataRequestMonitor<CLIInfoRecordInfo>(getExecutor(), null) {
-									@Override
-									public void handleCompleted() {
-										if (isSuccess()) {
-											fReverseTraceMethod = getData().getReverseMethod();
-										} else {
-											// Use a default value in case of error
-											fReverseTraceMethod = ReverseDebugMethod.SOFTWARE;
+							// With GDB 7.12, we are provided with the type of record
+							// that was started.
+							ReverseDebugMethod newMethod = getTraceMethodFromOutput(notifyOutput);
+							if (newMethod != null) {
+								setReverseTraceMethod(newMethod);
+							} else {
+								// Don't know what the new method is.  Let's ask GDB
+								getConnection().queueCommand(
+									fCommandFactory.createCLIInfoRecord(getConnection().getContext()),
+									new DataRequestMonitor<CLIInfoRecordInfo>(getExecutor(), null) {
+										@Override
+										public void handleCompleted() {
+											if (isSuccess()) {
+												setReverseTraceMethod(getData().getReverseMethod());
+											} else {
+												// Use a default value in case of error
+												setReverseTraceMethod(ReverseDebugMethod.SOFTWARE);
+											}
 										}
-										setReverseModeEnabled(true);
-									}
-								});
+									});
+							}
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * @return The ReverseDebugMethod as specified by the =record-started event.
+	 *         Returns null if the event does provide that information (GDB < 7.12)
+	 */
+	private ReverseDebugMethod getTraceMethodFromOutput(MINotifyAsyncOutput notifyOutput) {
+		// With GDB 7.12, we are provided with the type of record
+		// that was started.
+		//   =record-started,thread-group="i1",method="btrace",format="bts"
+	    //   =record-started,thread-group="i1",method="btrace",format="pt"
+		//   =record-started,thread-group="i1",method="full"
+		
+		String methodStr = ""; //$NON-NLS-1$
+		String formatStr = ""; //$NON-NLS-1$
+		MIResult[] results = notifyOutput.getMIResults();
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue val = results[i].getMIValue();
+			if (var.equals("method")) { //$NON-NLS-1$
+				if (val instanceof MIConst) {
+					methodStr = ((MIConst)val).getString();
+				}
+			} else if (var.equals("format")) { //$NON-NLS-1$
+				if (val instanceof MIConst) {
+					formatStr = ((MIConst)val).getString();
+				}
+			}
+		}
+		
+		if (methodStr.equals("full")) { //$NON-NLS-1$
+			assert formatStr.isEmpty() : "Unexpected format string for full method in =record-started: " + formatStr; //$NON-NLS-1$
+			return ReverseDebugMethod.SOFTWARE;
+		} 
+		
+		if (methodStr.equals("btrace")){ //$NON-NLS-1$
+			if (formatStr.equals("bts")) { //$NON-NLS-1$
+				return ReverseDebugMethod.BRANCH_TRACE;
+			} else if (formatStr.equals("pt")) { //$NON-NLS-1$
+				return ReverseDebugMethod.PROCESSOR_TRACE;
+			} else {
+				assert false : "Unexpected format string for bts method in =record-started: " + formatStr; //$NON-NLS-1$
+			}
+		}
+
+		// No "method" field matching what we expect, so this must be GDB that does not provide that field
+		assert methodStr.isEmpty() : "Unexpected trace method in =record-started: " + methodStr; //$NON-NLS-1$
+		assert formatStr.isEmpty() : "Unexpected format string in =record-started: " + formatStr; //$NON-NLS-1$
+
+		return null;
 	}
 }

@@ -272,11 +272,11 @@ public class CPPTemplates {
 			return e.getProblem();
 		}
 	}
-	
+
 	/**
-	 * Instantiates an alias template with the given arguments. 
+	 * Instantiates an alias template with the given arguments.
 	 */
-	public static IBinding instantiateAliasTemplate(ICPPAliasTemplate aliasTemplate, 
+	public static IBinding instantiateAliasTemplate(ICPPAliasTemplate aliasTemplate,
 			ICPPTemplateArgument[] args, IASTNode point) {
 		try {
 			args = addDefaultArguments(aliasTemplate, args, point);
@@ -294,10 +294,10 @@ public class CPPTemplates {
 			return e.getProblem();
 		}
 	}
-	
+
 	/**
 	 * Instantiate a specialization of an alias template with the given arguments.
-	 * 
+	 *
 	 * TODO(nathanridge): The reason we have this method is that we (incorrectly) represent
 	 * specializations of alias templates as alias template instances. A specialization of
 	 * an alias template is an alias template, so it needs to be instantiated to produce
@@ -848,7 +848,7 @@ public class CPPTemplates {
 			return e.getProblem();
 		}
 	}
-	
+
 	private static IBinding createAliasTemplaceInstance(ICPPAliasTemplate aliasTemplate,
 			ICPPTemplateArgument[] args, ICPPTemplateParameterMap parameterMap, IType aliasedType,
 			IBinding owner, IASTNode point) {
@@ -1202,7 +1202,7 @@ public class CPPTemplates {
 		if (binding instanceof ICPPDeferredClassInstance) {
 			ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) binding;
 			if (dcl.getClassTemplate() instanceof ICPPTemplateTemplateParameter) {
-				r = combinePackSize(r, determinePackSize((ICPPTemplateParameter) dcl.getClassTemplate(), 
+				r = combinePackSize(r, determinePackSize((ICPPTemplateParameter) dcl.getClassTemplate(),
 						tpMap));
 			}
 			ICPPTemplateArgument[] args = dcl.getTemplateArguments();
@@ -2702,7 +2702,7 @@ public class CPPTemplates {
 	 */
 	private static ICPPTemplateArgument convertNonTypeTemplateArgument(ICPPTemplateDefinition template,
 			final IType paramType, ICPPTemplateArgument arg, IASTNode point) throws DOMException {
-		//14.1s8 function to pointer and array to pointer conversions
+		// 14.1s8 function to pointer and array to pointer conversions.
 		IType a= arg.getTypeOfNonTypeValue();
 		IType p;
 		if (paramType instanceof IFunctionType) {
@@ -2909,8 +2909,8 @@ public class CPPTemplates {
 	            IScope s = ((ICPPClassType) ot1).getCompositeScope();
 	            if (s != null) {
 	            	result= CPPSemantics.resolveUnknownName(s, unknown, context.getPoint());
-	            	if (unknown instanceof ICPPUnknownMemberClassInstance && 
-	            			(result instanceof ICPPTemplateDefinition || 
+	            	if (unknown instanceof ICPPUnknownMemberClassInstance &&
+	            			(result instanceof ICPPTemplateDefinition ||
 	            			 result instanceof ICPPAliasTemplateInstance)) {
 	            		ICPPTemplateArgument[] args1 = instantiateArguments(
 	            				((ICPPUnknownMemberClassInstance) unknown).getArguments(), context, false);
@@ -2923,7 +2923,7 @@ public class CPPTemplates {
 							// TODO(nathanridge): Remove this branch once we properly represent
 							// specializations of alias templates (which will then implement
 							// ICPPAliasTemplate and be caught by the previous branch).
-							result = instantiateAliasTemplateInstance((ICPPAliasTemplateInstance) result, 
+							result = instantiateAliasTemplateInstance((ICPPAliasTemplateInstance) result,
 									args1, context.getPoint());
 	            		}
 	            	}

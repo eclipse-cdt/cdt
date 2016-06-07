@@ -88,6 +88,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
 	/** @since 4.8 */
 	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
+	/** @since 5.1 */
+	public static final String GDB_7_12_VERSION = "7.12"; //$NON-NLS-1$
 
 	private final String fVersion;
 	private final ILaunchConfiguration fConfiguration;
@@ -305,6 +307,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 
 		// Else, handle all-stop mode
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBRunControl_7_12(session);
+		}
 		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
 			return new GDBRunControl_7_10(session);
 		}

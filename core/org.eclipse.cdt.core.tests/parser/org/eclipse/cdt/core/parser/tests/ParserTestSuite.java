@@ -11,16 +11,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMGCCParserExtensionTestSuite;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMParserTestSuite;
 import org.eclipse.cdt.core.parser.tests.ast2.SemanticsTests;
 import org.eclipse.cdt.core.parser.tests.scanner.ScannerTestSuite;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Combines all tests for the parsers.
@@ -34,6 +34,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite(ContentAssistMatcherFactoryTest.class);
 		suite.addTestSuite(CModelElementsTests.class);
 		suite.addTestSuite(StructuralCModelElementsTests.class);
+		suite.addTestSuite(CharArrayObjectMapTest.class);
 		suite.addTestSuite(ObjectMapTest.class);
 		suite.addTestSuite(SemanticsTests.class);
 		suite.addTest(ScannerTestSuite.suite());

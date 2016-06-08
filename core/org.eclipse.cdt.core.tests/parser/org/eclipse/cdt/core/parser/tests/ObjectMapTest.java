@@ -14,15 +14,12 @@
  */
 package org.eclipse.cdt.core.parser.tests;
 
-import java.util.Random;
-
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 import junit.framework.TestCase;
 
 /**
- * @author aniefer
+ * Tests for {@link ObjectMap}.
  */
 public class ObjectMapTest extends TestCase {
 
@@ -138,36 +135,4 @@ public class ObjectMapTest extends TestCase {
         insertContents(map, res);
         assertContents(map, res);
     }
-
-	public void testMapAdd() {
-		CharArrayObjectMap map = new CharArrayObjectMap(4);
-		char[] key1 = "key1".toCharArray();
-		Integer value1 = 43;
-		map.put(key1, value1);
-
-		char[] key2 = "key1".toCharArray();
-		Object value2 = map.get(key2);
-		assertEquals(value1, value2);
-
-		for (int i = 0; i < 25; ++i) {
-			map.put(("ikey" + i).toCharArray(), Integer.valueOf(i));
-		}
-
-		for (int i = 0; i < 25; ++i) {
-			Object ivalue1 = map.get(("ikey" + i).toCharArray());
-			assertEquals(i, ivalue1);
-		}
-	}
-
-	public void testCollisionRatio() {
-		Random random = new Random(239);
-		CharArrayObjectMap map = new CharArrayObjectMap(1);
-		for (int i = 0; i < 20000; i++) {
-			int r = random.nextInt();
-			map.put(("key" + Integer.toUnsignedString(i)).toCharArray(), i);
-			double collisionRatio = (double) map.countCollisions() / map.size();
-			assertTrue(String.format("Collision ratio %.3f is unexpectedly high for map size of %d.", collisionRatio, map.size()),
-					collisionRatio <= 0.4);
-		}
-	}
 }

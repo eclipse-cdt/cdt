@@ -169,7 +169,7 @@ public class CharTable extends HashTable {
 		if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
 			return i;
 
-		// Follow the next chain
+		// Follow the next chain.
 		for (i = nextTable[i] - 1; i >= 0 && i != nextTable[i] - 1; i = nextTable[i] - 1) {
 			if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
 				return i;

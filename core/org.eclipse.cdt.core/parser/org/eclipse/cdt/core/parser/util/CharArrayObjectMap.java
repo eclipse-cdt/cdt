@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 /**
  * @author Doug Schaefer
  */
-public class CharArrayObjectMap <T> extends CharTable {
+public class CharArrayObjectMap<T> extends CharTable {
     public static final CharArrayObjectMap<?> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
         @Override
 		public Object clone() { return this; }

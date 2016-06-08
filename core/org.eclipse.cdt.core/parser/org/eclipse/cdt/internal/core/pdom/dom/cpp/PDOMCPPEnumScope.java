@@ -153,11 +153,11 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 			// there is no cache, build it:
 			List<IPDOMCPPEnumerator> enumerators = new ArrayList<>();
 			enumeration.loadEnumerators(enumerators);
-			map = new CharArrayObjectMap<IPDOMCPPEnumerator>(enumerators.size());
+			map = new CharArrayObjectMap<>(enumerators.size());
 			for (IPDOMCPPEnumerator enumerator : enumerators) {
 				map.put(enumerator.getNameCharArray(), enumerator);
 			}
-			pdom.putCachedResult(key, new SoftReference<CharArrayObjectMap<?>>(map));
+			pdom.putCachedResult(key, new SoftReference<>(map));
 		}
 		return map;
 	}

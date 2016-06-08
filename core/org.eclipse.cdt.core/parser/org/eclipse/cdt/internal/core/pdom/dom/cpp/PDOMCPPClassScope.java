@@ -257,7 +257,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			IPDOMVisitor visitor= new PopulateMap(map);
 			visitor.visit(ct);
 			ct.acceptUncached(visitor);
-			pdom.putCachedResult(key, new SoftReference<CharArrayObjectMap<?>>(map));
+			pdom.putCachedResult(key, new SoftReference<>(map));
 		}
 		return map;
 	}

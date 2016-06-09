@@ -189,6 +189,10 @@ public class MethodContext {
 		return bind1.equals(bind2);
 	}
 
+	public static boolean haveSameClass(MethodContext context1, MethodContext context2) {
+		return isSameClass(context1.declarationName, context2.declarationName);
+	}
+
 	private static ICPPClassType getClassBinding(IASTName declName1) {
 		if (declName1.getParent().getParent().getParent() instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier compTypeSpec =

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,14 +9,21 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractconstant;
 
 import junit.framework.Test;
 
+import java.util.Arrays;
+import java.util.function.Predicate;
+import org.eclipse.core.runtime.CoreException;
+import org.junit.Before;
+
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantInfo;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
@@ -25,8 +32,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
  * Tests for Extract Constant refactoring.
  */
 public class ExtractConstantRefactoringTest extends RefactoringTestBase {
-	private String extractedConstantName = "EXTRACTED";
-	private VisibilityEnum visibility = VisibilityEnum.v_private;
+	private String extractedConstantName;
+	private VisibilityEnum visibility;
 	private ExtractConstantRefactoring refactoring;
 
 	public ExtractConstantRefactoringTest() {
@@ -39,6 +46,13 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 
 	public static Test suite() {
 		return suite(ExtractConstantRefactoringTest.class);
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		extractedConstantName = "EXTRACTED";
+		visibility = VisibilityEnum.v_private;
+		super.setUp();
 	}
 
 	@Override
@@ -791,5 +805,212 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 	//</session>
 	public void testHistoryReplaceNumberPrivate() throws Exception {
 		assertRefactoringSuccess();
+	}
+
+	//A.cpp
+	//void foo() {
+	//	int a = -(/*$*/+(~(10))/*$$*/);
+	//	int b = -(+(~(10)));
+	//	int c = -(+(~(11)));
+	//	int d = +(~(10));
+	//	int e = (~10);
+	//	int f = -(+(-(10)));
+	//}
+	//=
+	//A.cpp
+	//namespace {
+	//
+	//const int EXTRACTED = +(~(10));
+	//
+	//}
+	//
+	//void foo() {
+	//	int a = -(EXTRACTED);
+	//	int b = -(EXTRACTED);
+	//	int c = -(+(~(11)));
+	//	int d = EXTRACTED;
+	//	int e = (~10);
+	//	int f = -(+(-(10)));
+	//}
+	public void testExtractionOfUnaryExpressions() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.cpp
+	//void foo() {
+	//	int i = /*$*/2 * 21/*$$*/;
+	//}
+	//=
+	//namespace {
+	//
+	//const int EXTRACTED = 2 * 21;
+	//
+	//}
+	//
+	//void foo() {
+	//	int i = EXTRACTED;
+	//}
+	public void testSingleBinaryExpression() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.cpp
+	//void foo(int) {
+	//	foo(/*$*/2 * 21/*$$*/);
+	//}
+	//=
+	//namespace {
+	//
+	//const int EXTRACTED = 2 * 21;
+	//
+	//}
+	//
+	//void foo(int) {
+	//	foo(EXTRACTED);
+	//}
+	public void testBinaryExpressionInFunctionCall() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.cpp
+	//void foo(int, int) {
+	//	foo(/*$*/2, 21/*$$*/);
+	//}
+	public void testExtractTwoIndependentLiterals() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//A.cpp
+	//void foo(int, int) {
+	//	/*$*/foo(2, 21)/*$$*/;
+	//}
+	public void testExtractFunctionCall() throws Exception {
+		assertRefactoringFailure();
+	}
+	
+	//A.cpp
+	//void foo() {
+	//	int i = 42;
+	//}
+	public void testNoSelection() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//A.cpp
+	//void foo() {
+	//	int i = 15;
+	//	int j = /*$*/i/*$$*/;
+	//}
+	public void testExtractIdentifier() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//A.cpp
+	//void foo() {
+	//	int i = 4/*$*//*$$*/2;
+	//}
+	//=
+	//namespace {
+	//
+	//const int EXTRACTED = 42;
+	//
+	//}
+	//
+	//void foo() {
+	//	int i = EXTRACTED;
+	//}
+	public void testCarretInLiteral() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.cpp
+	//void foo() {
+	//	int i = 42/*$*//*$$*/;
+	//}
+	//=
+	//namespace {
+	//
+	//const int EXTRACTED = 42;
+	//
+	//}
+	//
+	//void foo() {
+	//	int i = EXTRACTED;
+	//}
+	public void testCarretAtLiteral() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+
+	//A.cpp
+	//int i = /*$*/42/*$$*/;
+	public void testDefaultNameForIntegerLiteral() throws Exception {
+		runUpToInitialConditions();
+		ExtractConstantInfo refactoringInfo = refactoring.getRefactoringInfo();
+		assertEquals("_42", refactoringInfo.getName());
+	}
+
+	// A.cpp
+	// namespace NS_1 {
+	// int i_in_NS1, j_in_NS1;
+	// struct S_in_NS1;
+	// }
+	// namespace NS_2 {
+	// int i_in_NS2;
+	// struct S_in_NS2;
+	// }
+	// using NS_1::j_in_NS1;
+	// using namespace NS_2;
+	// int global_variable;
+	// void free_function();
+	// struct S {
+	// void function(int parameter) {
+	// int local_before;
+	// int local_at = /*$*/42/*$$*/;
+	// {
+	// int nested;
+	// }
+	// int local_after;
+	// }
+	// int member_variable;
+	// void member_function();
+	// };
+	public void testOccupiedAndFreeNamesInContext() throws Exception {
+		runUpToInitialConditions();
+		ExtractConstantInfo refactoringInfo = refactoring.getRefactoringInfo();
+
+		String[] expectedOccupiedNames = { "free_function", "function",
+				"global_variable", "i_in_NS2", "j_in_NS1", "local_after",
+				"local_at", "local_before", "member_function",
+				"member_variable", "parameter", "NS_1", "NS_2", "S",
+				"S_in_NS2" };
+		String[] expectedFreeNames = { "_42", "i_in_NS1", "nested", "S_in_NS1" };
+		String[] allNames = combine(expectedOccupiedNames, expectedFreeNames);
+		String[] usedNames = Arrays.stream(allNames)
+								.filter(refactoringInfo::isNameUsed)
+								.toArray(String[]::new);
+		String[] freeNames = Arrays.stream(allNames)
+								.filter(not(refactoringInfo::isNameUsed))
+								.toArray(String[]::new);
+
+		assertEquals(Arrays.toString(expectedOccupiedNames), Arrays.toString(usedNames));
+		assertEquals(Arrays.toString(expectedFreeNames), Arrays.toString(freeNames));
+	}
+
+	private <T> Predicate<? super T> not(Predicate<? super T> predicate) {
+		return predicate.negate()::test;
+	}
+
+	private String[] combine(String[] array1, String[] array2) {
+		String[] result = new String[array1.length + array2.length];
+		System.arraycopy(array1, 0, result, 0, array1.length);
+		System.arraycopy(array2, 0, result, array1.length, array2.length);
+		return result;
+	}
+
+	private void runUpToInitialConditions() throws CoreException {
+		createRefactoring();
+		refactoring.setContext(new CRefactoringContext(refactoring));
+		refactoring.checkInitialConditions(npm());
 	}
 }

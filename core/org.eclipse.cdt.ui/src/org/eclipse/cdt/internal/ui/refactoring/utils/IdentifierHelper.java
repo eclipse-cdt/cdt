@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -29,6 +29,9 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  * @author Thomas Corbat
  */
 public class IdentifierHelper {
+	private static Pattern IDENTIFIER_PATTERN = Pattern.compile("[a-zA-Z_]\\w*"); //$NON-NLS-1$
+	private static Pattern INVALID_CHARACTER_PATTERN = Pattern.compile("\\W"); //$NON-NLS-1$
+
 	/**
 	 * @param identifier to check
 	 * @return an instance of IdentifierResult that holds the outcome of the validation
@@ -37,7 +40,7 @@ public class IdentifierHelper {
 		if (identifier == null) {
 			return null;
 		}
-		if (isCorrect(identifier)) {
+		if (isValidIdentifier(identifier)) {
 			if (isKeyword(identifier)) {
 				return new IdentifierResult(IdentifierResult.KEYWORD, NLS.bind(Messages.IdentifierHelper_isKeyword, identifier)); 
 			}
@@ -54,34 +57,21 @@ public class IdentifierHelper {
 	}
 
 	private static boolean isKeyword(String identifier) {
-		for (String currentKeyword : getKeywords()) {
-			if (identifier.equals(currentKeyword)) {
-				return true;
-			}
-		}
-		return false;
+		Set<String> keywords = KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, ParserLanguage.CPP);
+		return keywords.contains(identifier);
 	}
 
 	private static boolean hasIllegalCharacters(String identifier) {
-		Pattern p = Pattern.compile("\\W"); //$NON-NLS-1$
-		Matcher m = p.matcher(identifier);
+		Matcher m = INVALID_CHARACTER_PATTERN.matcher(identifier);
 		return m.find();
 	}
 
-	private static boolean isLeadingADigit(String identifier) {
-		Pattern p = Pattern.compile("\\d.*"); //$NON-NLS-1$
-		Matcher m = p.matcher(identifier);
-		return m.matches();
+	public static boolean isLeadingADigit(String identifier) {
+		return identifier.length() > 0 && Character.isDigit(identifier.charAt(0));
 	}
 
-	private static boolean isCorrect(String identifier) {
-		Pattern p = Pattern.compile("[a-zA-Z_]\\w*"); //$NON-NLS-1$
-		Matcher m = p.matcher(identifier);
+	private static boolean isValidIdentifier(String identifier) {
+		Matcher m = IDENTIFIER_PATTERN.matcher(identifier);
 		return m.matches();
-	}
-	
-	public static String[] getKeywords() {
-		Set<String> keywords= KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, ParserLanguage.CPP);
-		return keywords.toArray(new String[keywords.size()]);
 	}
 }

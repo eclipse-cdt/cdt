@@ -124,4 +124,4 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="[5.2.0,7.0.0)",
  com.ibm.icu;bundle-version="4.4.2",
  org.eclipse.e4.ui.css.swt.theme
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

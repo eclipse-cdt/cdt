@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,7 +9,6 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
- *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
@@ -94,14 +93,6 @@ public class SelectionHelper {
 
 	public static boolean isNodeInsideSelection(IASTNode node, Region selection) {
 		return node.isPartOfTranslationUnitFile() && isNodeInsideRegion(node, selection);
-	}
-
-	public static boolean isSelectionInsideNode(IASTNode node, Region selection) {
-		return node.isPartOfTranslationUnitFile() && isRegionInside(selection, getNodeSpan(node));
-	}
-
-	public static boolean nodeMatchesSelection(IASTNode node, Region region) {
-		return getNodeSpan(node).equals(region);
 	}
 
 	protected static Region getNodeSpan(IASTNode region) {

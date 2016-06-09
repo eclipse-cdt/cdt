@@ -109,9 +109,7 @@ public class NodeHelper {
 				context.setType(MethodContext.ContextType.FUNCTION);
 			}
 		}
-		if (name != null) {
-			getMethodContexWithIndex(refactoringContext, translationUnit, name, context, pm);
-		}
+		getMethodContexWithIndex(refactoringContext, translationUnit, name, context, pm);
 		return context;
 	}
 

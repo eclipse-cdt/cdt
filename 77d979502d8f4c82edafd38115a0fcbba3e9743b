@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_b7931c2b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 60240
+      },
+      "writtenOn": "2016-06-09T15:00:13Z",
+      "side": 1,
+      "message": "I guess the else block is not needed coz if its not record-started it will be record-stopped and newMethod is already ReverseDebugMethod.OFF.",
+      "range": {
+        "startLine": 46,
+        "startChar": 7,
+        "endLine": 46,
+        "endChar": 42
+      },
+      "revId": "77d979502d8f4c82edafd38115a0fcbba3e9743b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

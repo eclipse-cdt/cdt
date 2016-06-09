@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+1: Wainer dos Santos Moschetta <wainersm@linux.vnet.ibm.com>
+Code-Review+2: Marc Dumais <marc.dumais@ericsson.com>
+Submitted-by: Marc Dumais <marc.dumais@ericsson.com>
+Submitted-at: Thu, 09 Jun 2016 12:19:43 -0400
+Reviewed-on: https://git.eclipse.org/r/73305
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

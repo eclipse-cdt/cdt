@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_9a948516",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-09T20:38:48Z",
+      "side": 1,
+      "message": "According to the new IProgressMonitor calling conventions (https://eclipse.org/articles/Article-Progress-Monitors/article.html) the lines 158-162 are no longer necessary.\n\nSame in other similar places.",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 3
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_3a90d1a2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-09T20:38:48Z",
+      "side": 1,
+      "message": "\u003c\u003e would be sufficient",
+      "range": {
+        "startLine": 224,
+        "startChar": 66,
+        "endLine": 224,
+        "endChar": 87
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_9aa48504",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-09T20:38:48Z",
+      "side": 1,
+      "message": "Should this be limited to declarations that are located in the translation unit file?",
+      "range": {
+        "startLine": 391,
+        "startChar": 37,
+        "endLine": 391,
+        "endChar": 52
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_da9e0db4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/utils/IdentifierHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-09T20:38:48Z",
+      "side": 1,
+      "message": "Implementation of this and other similar methods is highly inefficient. Better to use Character.isJavaIdentifierStart.",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 21
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_fa802951",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/utils/IdentifierHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-09T20:38:48Z",
+      "side": 1,
+      "message": "It\u0027s preferable to return keywords as a set. This way a loop in line 57 can be avoided.",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 2
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

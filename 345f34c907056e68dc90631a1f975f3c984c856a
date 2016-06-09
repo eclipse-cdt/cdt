@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_b8f6ae00",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CASTConditionalExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-06-09T04:56:32Z",
+      "side": 1,
+      "message": "This is going to miss the case where, say, one operand has type |struct MyStruct|, and the other, |const struct MyStruct|.\n\nI would suggest handling this by unwrapping any top-level IQualifierType at the beginning of the function, like so:\n\n  if (positiveType instanceof IQualifierType) {\n      positiveType \u003d ((IQualifierType) positiveType).getType();\n  }\n\nand similarly for negativeType.",
+      "revId": "345f34c907056e68dc90631a1f975f3c984c856a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

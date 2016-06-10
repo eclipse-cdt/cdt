@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_bdb69b6e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-10T09:12:36Z",
+      "side": 1,
+      "message": "Done - Thanks for pointing out this article. Only one thing was not quite clear to me: In the examples the subMonitors are always split and passed down to the called method. When and how should this chain end? I see three options:\n- Ignore the \"monitor\" parameter at some point.\n- Consume the ticks of the subMonitor using worked().\n- \"Consume\" the ticks of the subMonitor using split(), without passing the resulting SubMonitor as argument.\n\nThe article states that in practice we will only use split(), so I avoided worked(). Having a \"monitor\" parameter for nothing does not make sense either. So I went with the last option, to call split() for the side-effect only.",
+      "parentUuid": "87e453f8_9a948516",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 3
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_3a90d1a2",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_5d9d97ea",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-10T09:12:36Z",
+      "side": 1,
+      "message": "Done - I found some more.",
+      "parentUuid": "87e453f8_3a90d1a2",
+      "range": {
+        "startLine": 224,
+        "startChar": 66,
+        "endLine": 224,
+        "endChar": 87
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_9aa48504",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2016-06-09T20:38:48Z",
       "side": 1,
       "message": "Should this be limited to declarations that are located in the translation unit file?",
+      "range": {
+        "startLine": 391,
+        "startChar": 37,
+        "endLine": 391,
+        "endChar": 52
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_1d35cf60",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-10T09:12:36Z",
+      "side": 1,
+      "message": "Done - I exptected ASTs in the context of refactorings to be parsed without includes. But I agree that this does not always have to be true. I added a filter to only consider declarations that are part of the translation unit file.",
+      "parentUuid": "87e453f8_9aa48504",
       "range": {
         "startLine": 391,
         "startChar": 37,
@@ -118,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_7d7413f2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/utils/IdentifierHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-10T09:12:36Z",
+      "side": 1,
+      "message": "Done - I changed isLeadingADigit to use Character.isDigit(). I left the methods above and below as is, since I could not find a simliar method for characters \u0027a\u0027 to \u0027z\u0027 (lower/upper case), in order to have shorter code. I could implement it manually (ASCII value checks), but I think the regex is more expressive. I extracted the patterns though.",
+      "parentUuid": "87e453f8_ddcb6794",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 21
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_fa802951",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/utils/IdentifierHelper.java",
         "patchSetId": 2
@@ -129,6 +225,30 @@
       "writtenOn": "2016-06-09T20:38:48Z",
       "side": 1,
       "message": "It\u0027s preferable to return keywords as a set. This way a loop in line 57 can be avoided.",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 2
+      },
+      "revId": "bf6474a0124df7096ed3c7b7b628f15f2626d2fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_fd674342",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/utils/IdentifierHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-10T09:12:36Z",
+      "side": 1,
+      "message": "Done - Removed method",
+      "parentUuid": "87e453f8_fa802951",
       "range": {
         "startLine": 83,
         "startChar": 0,

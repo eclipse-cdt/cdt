@@ -2095,6 +2095,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			sSupportedFeatures.add("cxx_alias_templates");
 			sSupportedFeatures.add("cxx_alignas");
 			sSupportedFeatures.add("cxx_alignof");
+			sSupportedFeatures.add("cxx_atomic");
 			sSupportedFeatures.add("cxx_attributes");
 			sSupportedFeatures.add("cxx_auto_type");
 			sSupportedFeatures.add("cxx_constexpr");
@@ -2103,6 +2104,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			sSupportedFeatures.add("cxx_default_function_template_args");
 			sSupportedFeatures.add("cxx_defaulted_functions");
 			sSupportedFeatures.add("cxx_delegating_constructors");
+			sSupportedFeatures.add("cxx_deleted_functions");
 			sSupportedFeatures.add("cxx_explicit_conversions");
 			sSupportedFeatures.add("cxx_generalized_initializers");
 			// missing: cxx_implicit_moves (bug 327301)
@@ -2128,7 +2130,15 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			sSupportedFeatures.add("cxx_variadic_templates");
 			
 			// C++14 features
-			// none supported yet
+			// missing: cxx_aggregate_nsdmi
+			// missing: cxx_binary_literals
+			// missing: cxx_contextual_conversions
+			// missing: cxx_decltype_auto (bug 408470)
+			// missing: cxx_generic_lambdas
+			// missing: cxx_init_captures (bug 413527)
+			// missing: cxx_relaxed_constexpr (bug 490475)
+			// missing: cxx_return_type_deduction (bug 408470)
+			sSupportedFeatures.add("cxx_variable_templates");
 			
 			// C11 features
 			sSupportedFeatures.add("c_alignas");
@@ -2163,8 +2173,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			// missing: is_nothrow_destructible
 			sSupportedFeatures.add("is_pod");
 			sSupportedFeatures.add("is_polymorphic");
+			// missing: is_standard_layout
+			// missing: is_trivial
 			// missing: is_trivially_assignable
 			// missing: is_trivially_constructible
+			// missing: is_trivially_copyable
 			sSupportedFeatures.add("is_union");
 			sSupportedFeatures.add("underlying_type");
 		}

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -330,6 +331,8 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 
 			// Perform template instantiation and overload resolution.
 			IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
+			if (binding == null || binding instanceof IProblemBinding)
+				return EvalFixed.INCOMPLETE;
 			if (binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding))
 				return new EvalBinding(binding, null, getTemplateDefinition());
 		} catch (DOMException e) {

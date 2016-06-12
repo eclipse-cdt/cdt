@@ -22,7 +22,9 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -121,6 +123,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -217,6 +220,13 @@ public class CPPTemplates {
 		@Override
 		protected Integer initialValue() {
 			return 0;
+		}
+	};
+	private static final ThreadLocal<Set<TypeInstantiationRequest>> instantiationsInProgress =
+			new ThreadLocal<Set<TypeInstantiationRequest>>() {
+		@Override
+		protected Set<TypeInstantiationRequest> initialValue() {
+			return new HashSet<>();
 		}
 	};
 
@@ -1426,19 +1436,24 @@ public class CPPTemplates {
 	 * Instantiates the given type with the provided map and packОffset.
 	 * The context is used to replace templates with their specialization, where appropriate.
 	 */
-	public static IType instantiateType(IType type, InstantiationContext context) {
-		try {
-			if (context.getParameterMap() == null)
-				return type;
+	public static IType instantiateType(final IType type, InstantiationContext context) {
+		if (context.getParameterMap() == null)
+			return type;
 
+		TypeInstantiationRequest instantiationRequest = new TypeInstantiationRequest(type, context);
+		if (!instantiationsInProgress.get().add(instantiationRequest)) {
+			System.out.println("Recursion in instantiation of type \"" + type + "\"");  //$NON-NLS-1$//$NON-NLS-2$ //XXX
+			return type instanceof ICPPFunctionType ?
+					ProblemFunctionType.RECURSION_IN_LOOKUP : ProblemType.RECURSION_IN_LOOKUP;
+		}
+
+		try {
 			if (type instanceof ICPPFunctionType) {
 				final ICPPFunctionType ft = (ICPPFunctionType) type;
-				IType ret = null;
-				IType[] params = null;
-				final IType r = ft.getReturnType();
-				ret = instantiateType(r, context);
 				IType[] ps = ft.getParameterTypes();
-				params = instantiateTypes(ps, context);
+				IType[] params = instantiateTypes(ps, context);
+				final IType r = ft.getReturnType();
+				IType ret = instantiateType(r, context);
 				if (ret == r && params == ps) {
 					return type;
 				}
@@ -1574,6 +1589,8 @@ public class CPPTemplates {
 			return type;
 		} catch (DOMException e) {
 			return e.getProblem();
+		} finally {
+			instantiationsInProgress.get().remove(instantiationRequest);
 		}
 	}
 

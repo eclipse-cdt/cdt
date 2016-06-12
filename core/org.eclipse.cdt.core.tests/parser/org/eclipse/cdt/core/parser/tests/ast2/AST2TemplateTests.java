@@ -7818,6 +7818,25 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <class T>
+	//	struct A {};
+	//
+	//	template <class T, class U>
+	//	int B(U p);
+	//
+	//	template <class T>
+	//	auto waldo(T p) -> decltype(B<typename A<T>::type>(p));
+	//
+	//	template <typename T>
+	//	void waldo(T p);
+	//
+	//	void test() {
+	//	  waldo(1);
+	//	}
+	public void testSfinaeInTrailingReturnType_495952() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>

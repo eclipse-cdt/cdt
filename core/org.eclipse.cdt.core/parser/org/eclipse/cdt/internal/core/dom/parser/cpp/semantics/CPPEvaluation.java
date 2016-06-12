@@ -58,9 +58,9 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	}
 
 	protected static ICPPTemplateArgument[] instantiateArguments(ICPPTemplateArgument[] args,
-			InstantiationContext context) {
+			InstantiationContext context, boolean strict) {
 		try {
-			return CPPTemplates.instantiateArguments(args, context, false);
+			return CPPTemplates.instantiateArguments(args, context, strict);
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}

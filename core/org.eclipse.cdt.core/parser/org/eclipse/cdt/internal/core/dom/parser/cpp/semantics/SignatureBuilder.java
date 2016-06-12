@@ -46,6 +46,10 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 		return CharArrayUtils.extractChars(fBuffer);
 	}
 
+	public void clear() {
+		fBuffer.delete(0, fBuffer.length());
+	}
+
 	@Override
 	public void marshalBinding(IBinding binding) throws CoreException {
 		if (binding instanceof ISerializableType) {

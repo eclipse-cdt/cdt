@@ -7818,6 +7818,43 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template<typename T>
+	//	T a();
+	//
+	//	template <class T>
+	//	struct A {};
+	//
+	//	template <class T>
+	//	A<T> b(T t);
+	//
+	//	template <class T, class U>
+	//	void c(U u);
+	//
+	//	template <class T, class U, class W>
+	//	decltype(c<T>(1)) d(W w, U u);
+	//
+	//	template <class T, class U>
+	//	auto d(U u, T t) -> decltype(d<typename A<T>::type>(u, t));
+	//
+	//	template <class T, class U>
+	//	auto e(U u, T t) -> decltype(d(b(u), t));
+	//
+	//	template <typename T, typename U = decltype(e(1, a<T>()))>
+	//	class B {};
+	//
+	//	template <typename T>
+	//	typename B<T>::type waldo(T p);
+	//
+	//	template <typename T>
+	//	int waldo(T p);
+	//
+	//	void test() {
+	//	  waldo(1);
+	//	}
+	public void testSfinaeInTrailingReturnType_495952() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>

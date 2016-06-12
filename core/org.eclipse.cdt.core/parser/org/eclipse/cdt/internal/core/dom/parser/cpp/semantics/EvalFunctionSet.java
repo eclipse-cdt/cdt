@@ -240,7 +240,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		ICPPTemplateArgument[] originalArguments = fFunctionSet.getTemplateArguments();
 		ICPPTemplateArgument[] arguments = originalArguments;
 		if (originalArguments != null)
-			arguments = instantiateArguments(originalArguments, context);
+			arguments = instantiateArguments(originalArguments, context, true);
 
 		IBinding originalOwner = fFunctionSet.getOwner();
 		IBinding owner = originalOwner;

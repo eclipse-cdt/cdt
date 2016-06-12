@@ -343,7 +343,7 @@ public class EvalID extends CPPDependentEvaluation {
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		ICPPTemplateArgument[] templateArgs = fTemplateArgs;
 		if (templateArgs != null) {
-			templateArgs = instantiateArguments(templateArgs, context);
+			templateArgs = instantiateArguments(templateArgs, context, false);
 		}
 
 		ICPPEvaluation fieldOwner = fFieldOwner;

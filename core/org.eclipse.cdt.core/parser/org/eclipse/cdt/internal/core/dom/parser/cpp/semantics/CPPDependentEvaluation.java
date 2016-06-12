@@ -96,7 +96,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 	}
 
 	/**
-	 * Instantiate evaluations that represent subexpressions separated by commas.
+	 * Instantiates evaluations that represent subexpressions separated by commas.
 	 * If a subexpression is a pack expansion expression, and the template parameter map
 	 * contains a mapping for the parameter pack(s) that occur in its expansion pattern,
 	 * the expansion pattern is instantiated once for each mapped template argument,

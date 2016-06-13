@@ -32,6 +32,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -358,9 +359,13 @@ public class BaseTestCase extends TestCase {
 		return clazz.cast(o);
 	}
 	
+	protected static void assertValue(IValue value, long expectedValue) {
+		assertNotNull(value);
+		assertNotNull(value.numericalValue());
+		assertEquals(expectedValue, value.numericalValue().longValue());
+	}
+	
 	protected static void assertVariableValue(IVariable var, long expectedValue) {
-		assertNotNull(var.getInitialValue());
-		assertNotNull(var.getInitialValue().numberValue());
-		assertEquals(expectedValue, var.getInitialValue().numberValue().longValue());
+		assertValue(var.getInitialValue(), expectedValue);
 	}
 }

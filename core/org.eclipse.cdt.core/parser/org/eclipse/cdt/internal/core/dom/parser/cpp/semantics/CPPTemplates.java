@@ -110,6 +110,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -240,7 +241,7 @@ public class CPPTemplates {
 				return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
 
 			if (template instanceof ICPPTemplateTemplateParameter || hasDependentArgument(arguments)) {
-				return deferredInstance(template, arguments);
+				return deferredInstance(template, arguments, point);
 			}
 
 			if (template instanceof ICPPClassTemplatePartialSpecialization) {
@@ -486,7 +487,8 @@ public class CPPTemplates {
 		}
 	}
 
-	private static IBinding deferredInstance(ICPPPartiallySpecializable template, ICPPTemplateArgument[] arguments) throws DOMException {
+	private static IBinding deferredInstance(ICPPPartiallySpecializable template, 
+			ICPPTemplateArgument[] arguments, IASTNode point) throws DOMException {
 		ICPPTemplateInstance instance= getInstance(template, arguments, false);
 		if (instance != null)
 			return instance;
@@ -494,6 +496,16 @@ public class CPPTemplates {
 		if (template instanceof ICPPClassTemplate) {
 			instance = new CPPDeferredClassInstance((ICPPClassTemplate) template, arguments);
 			addInstance(template, arguments, instance);
+		}
+		if (template instanceof ICPPVariableTemplate) {
+			// TODO(nathanridge): Do we need a CPPDeferredVariableInstance?
+			ICPPVariableTemplate variableTemplate = ((ICPPVariableTemplate) template);
+			CPPTemplateParameterMap tpMap = createParameterMap(template, arguments, point);
+			InstantiationContext context = new InstantiationContext(tpMap, point);
+			IType type = instantiateType(variableTemplate.getType(), context);
+			IValue value = instantiateValue(variableTemplate.getInitialValue(), context, 
+					Value.MAX_RECURSION_DEPTH);
+			instance = new CPPVariableInstance(template, template.getOwner(), tpMap, arguments, type, value);
 		}
 		return instance;
 	}
@@ -1670,6 +1682,22 @@ public class CPPTemplates {
 						origInstance.getOwner(), newMap, newArgs, (ICPPFunctionType) newType, newExceptionSpecs);
 				result.setParameters(specializeParameters(origInstance.getParameters(), result, context, maxDepth));
 				return result;
+			}
+		} else if (binding instanceof ICPPVariableInstance) {
+			// TODO(nathanridge):
+			//   Similar to the ICPPFunctionInstance case above, perhaps we should have an
+			//   ICPPDeferredVariableInstance.
+			ICPPVariableInstance origInstance = (ICPPVariableInstance) binding;
+			ICPPTemplateArgument[] origArgs = origInstance.getTemplateArguments();
+			ICPPTemplateArgument[] newArgs = instantiateArguments(origArgs, context, false);
+			if (origArgs != newArgs) {
+				CPPTemplateParameterMap newMap = instantiateArgumentMap(
+						origInstance.getTemplateParameterMap(), context);
+				IType newType = instantiateType(origInstance.getType(), context);
+				IValue newValue = instantiateValue(origInstance.getInitialValue(), context, 
+						Value.MAX_RECURSION_DEPTH);
+				return new CPPVariableInstance(origInstance.getTemplateDefinition(), origInstance.getOwner(), 
+						newMap, newArgs, newType, newValue);
 			}
 		}
 		return binding;

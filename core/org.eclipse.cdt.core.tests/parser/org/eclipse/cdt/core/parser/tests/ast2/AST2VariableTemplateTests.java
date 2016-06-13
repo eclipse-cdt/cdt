@@ -12,14 +12,18 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldTemplateSpecialization;
 
 import junit.framework.TestSuite;
@@ -307,6 +311,34 @@ public class AST2VariableTemplateTests extends AST2TestBase {
 		assertEquals(template, bInstTemplate);
 		assertEquals(template, aInst.getSpecializedBinding());
 		assertEquals(template, bInst.getSpecializedBinding());
+	}
+
+	//	template <typename T>
+	//	struct meta {
+	//		static const bool value = true;
+	//	};
+	//	
+	//  template <typename T>
+	//  constexpr bool var = meta<T>::value;
+	//
+	//  template <bool> struct S {};
+	//
+	//  template <typename T>
+	//  S<var<T>> foo();
+	//
+	//	void bar() {
+	//		auto waldo = foo<int>();
+	//	}
+	public void test_bug494216() throws Exception {
+		parseAndCheckBindings();
+		
+		BindingAssertionHelper ah = getAssertionHelper(ParserLanguage.CPP);
+		ICPPVariable waldo = ah.assertNonProblem("waldo");
+		IType type = waldo.getType();
+		assertInstance(type, CPPClassInstance.class);
+		ICPPTemplateArgument[] args = ((CPPClassInstance) type).getTemplateArguments();
+		assertEquals(1, args.length);
+		assertValue(args[0].getNonTypeValue(), 1);
 	}
 
 	private IASTTranslationUnit parseAndCheckBindings() throws Exception {

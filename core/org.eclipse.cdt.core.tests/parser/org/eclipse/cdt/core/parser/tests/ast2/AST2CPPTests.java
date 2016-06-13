@@ -9572,6 +9572,18 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testLambdaExpression_316307b() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct function {
+	//		template <typename T>
+	//		function(T);
+	//	};
+	//	struct S {
+	//		void waldo();
+	//		function f = [this](){ waldo(); };
+	//	};
+	public void testLambdaInDefaultMemberInitializer_494182() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	typedef int MyType;
 	//

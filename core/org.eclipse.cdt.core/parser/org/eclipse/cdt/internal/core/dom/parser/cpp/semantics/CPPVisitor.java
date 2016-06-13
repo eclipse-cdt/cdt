@@ -2378,6 +2378,14 @@ public class CPPVisitor extends ASTQueries {
 						break;
 					if (node.getParent() instanceof IASTFunctionDefinition)
 						break;
+				} else if (scope instanceof ICPPClassScope) {
+					// Reached a class scope without a function scope in between.
+					// Might be in the default member initializer on a field. 
+					IType type = ((ICPPClassScope) scope).getClassType();
+					if (type instanceof ICPPClassTemplate) {
+				    	type= (ICPPClassType) ((ICPPClassTemplate) type).asDeferredInstance();
+					}
+					return type;
 				}
 				scope = scope.getParent();
 			}

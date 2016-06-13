@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_835fbdf1",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/IToolChain.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-06-13T18:51:17Z",
+      "side": 1,
+      "message": "I get an internalization error here because it should be $NON-NLS-1$ instead of $NON-NLS-2$",
+      "revId": "ee4a577db1bf90fb246c46d639a92fc7b599811b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

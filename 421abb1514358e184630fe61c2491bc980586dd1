@@ -57,6 +57,23 @@
       "revId": "421abb1514358e184630fe61c2491bc980586dd1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_63f711ff",
+        "filename": "releng/scripts/ChangeJavaVersion.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-06-13T20:36:56Z",
+      "side": 1,
+      "message": "I\u0027ve modified the comments of the script to warn that some care must be taken for a new version of java.\nThat being said, the changes performed by the script do look right even for changes from java 6 to java 7\nthanks to changes made to our plugins to make them more generic (see 0cfb15135f399db6b5df0bffab350bbef63a58f6)\nand the removal of releng/org.eclipse.cdt.releng (see f326794be80decb2f51f90dc4d874f8324c40141).\nI\u0027ve checked commit 5d7a19fa6cbc4d1d67685ae170382ca353e38f8b which moved us from java 6 to java 7\nand I confirmed that all changes in that commit were either no longer necessary due to the changes\nmentioned above, or were covered by the script.  So I think we\u0027re safe except for the pom.xml changes that Thomas noticed.",
+      "revId": "421abb1514358e184630fe61c2491bc980586dd1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -505,12 +506,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final IPDOMCPPTemplateParameter[] fTemplateParameters;
 		private final ICPPTemplateParameter[] fOriginalTemplateParameters;
 		private final IType fOriginalType;
+		private final IValue fOriginalValue;
 
 		public ConfigureVariableTemplate(ICPPVariableTemplate original, PDOMCPPVariable template) throws DOMException {
 			fTemplate = template;
 			fTemplateParameters= (IPDOMCPPTemplateParameter[]) ((ICPPVariableTemplate)template).getTemplateParameters();
 			fOriginalTemplateParameters= original.getTemplateParameters();
 			fOriginalType= original.getType();
+			fOriginalValue= original.getInitialValue();
 			postProcesses.add(this);
 		}
 
@@ -521,7 +524,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				if (tp != null)
 					tp.configure(fOriginalTemplateParameters[i]);
 			}
-			PDOMCPPVariableTemplate.initData(fTemplate, fOriginalType);
+			PDOMCPPVariableTemplate.initData(fTemplate, fOriginalType, fOriginalValue);
 		}
 	}
 

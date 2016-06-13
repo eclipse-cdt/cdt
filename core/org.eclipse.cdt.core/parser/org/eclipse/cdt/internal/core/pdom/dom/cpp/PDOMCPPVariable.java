@@ -48,13 +48,12 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		db.putByte(record + ANNOTATIONS, encodeFlags(variable));
 		if (setTypeAndValue) {
 			setType(parent.getLinkage(), variable.getType());
-			setValue(db, variable);
+			setValue(variable.getInitialValue());
 		}
 	}
 
-	private void setValue(Database db, IVariable variable) throws CoreException {
-		IValue val= variable.getInitialValue();
-		getLinkage().storeValue(record + VALUE_OFFSET, val);
+	protected void setValue(IValue value) throws CoreException {
+		getLinkage().storeValue(record + VALUE_OFFSET, value);
 	}
 
 	@Override
@@ -64,7 +63,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 			IVariable var= (IVariable) newBinding;
 			IType newType= var.getType();
 			setType(linkage, newType);
-			setValue(db, var);
+			setValue(var.getInitialValue());
 			db.putByte(record + ANNOTATIONS, encodeFlags(var));
 		}
 	}

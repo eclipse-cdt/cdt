@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -94,9 +95,10 @@ public class PDOMCPPVariableTemplate extends PDOMCPPVariable implements ICPPVari
 		return RECORD_SIZE;
 	}
 
-	public static void initData(PDOMCPPVariable binding, IType fOriginalType) {
+	public static void initData(PDOMCPPVariable binding, IType fOriginalType, IValue fOriginalValue) {
 		try {
 			binding.setType(binding.getLinkage(), fOriginalType);
+			binding.setValue(fOriginalValue);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

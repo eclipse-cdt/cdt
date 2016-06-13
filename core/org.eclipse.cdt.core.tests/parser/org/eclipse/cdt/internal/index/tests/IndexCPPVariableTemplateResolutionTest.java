@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
@@ -196,5 +197,16 @@ public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResoluti
 
 		assertEquals(c.getClass(),
 				((ICPPVariableTemplatePartialSpecialization) cOfIntPtr.getSpecializedBinding()).getPrimaryTemplate().getClass());
+	}
+	
+	//  template <typename T>
+	//  constexpr bool templ = true;
+
+	//  struct A {};
+	//  constexpr bool waldo = templ<A>;
+	public void testStorageOfUninstantiatedValue_bug486671() {
+		checkBindings();
+		IVariable waldo = getBindingFromASTName("waldo", 5);
+		assertVariableValue(waldo, 1);
 	}
 }

@@ -554,4 +554,19 @@ public class SemanticHighlightingTest extends TestCase {
     public void testRecursion_491834() throws Exception {
     	makeAssertions();
     }
+    
+    //	template <typename T>                            //$templateParameter
+    //	bool templ = true;                               //$globalVariable
+    //	struct A {};                                     //$class
+    //	bool x = templ<A>;                               //$globalVariable,globalVariable,class
+    //	struct S {                                       //$class
+    //		template <typename U>                        //$templateParameter
+    //		static bool templ = true;                    //$staticField
+    //		void bar() {                                 //$methodDeclaration
+    //			bool y = templ<A>;                       //$localVariableDeclaration,staticField,class
+    //		}
+    //	};
+    public void testVariableTemplates_486672() throws Exception {
+    	makeAssertions();
+    }
 }

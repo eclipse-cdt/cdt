@@ -252,6 +252,10 @@ public class SemanticHighlightings {
 				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
 					return false;
 				}
+				if (name instanceof ICPPASTTemplateId) {
+					// Variable template instance - do not color the entire template-id.
+					return false;
+				}
 				IBinding binding= token.getBinding();
 				if (binding instanceof IField && !(binding instanceof IProblemBinding)) {
 					return ((IField)binding).isStatic();
@@ -301,6 +305,10 @@ public class SemanticHighlightings {
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
+					return false;
+				}
+				if (name instanceof ICPPASTTemplateId) {
+					// Variable template instance - do not color the entire template-id.
 					return false;
 				}
 				IBinding binding= token.getBinding();
@@ -845,6 +853,10 @@ public class SemanticHighlightings {
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName) {
+					return false;
+				}
+				if (name instanceof ICPPASTTemplateId) {
+					// Variable template instance - do not color the entire template-id.
 					return false;
 				}
 				IBinding binding= token.getBinding();

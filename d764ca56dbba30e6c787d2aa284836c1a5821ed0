@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87e453f8_8cc0cf24",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-13T07:10:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_2608bc66",
+      "range": {
+        "startLine": 157,
+        "startChar": 2,
+        "endLine": 157,
+        "endChar": 21
+      },
+      "revId": "d764ca56dbba30e6c787d2aa284836c1a5821ed0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87e453f8_6612c494",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2016-06-10T17:39:02Z",
       "side": 1,
       "message": "Preferable to break the long line.",
+      "range": {
+        "startLine": 245,
+        "startChar": 64,
+        "endLine": 245,
+        "endChar": 65
+      },
+      "revId": "d764ca56dbba30e6c787d2aa284836c1a5821ed0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_ace2ebbc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/ExtractConstantRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-13T07:10:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e453f8_6612c494",
       "range": {
         "startLine": 245,
         "startChar": 64,

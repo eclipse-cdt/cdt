@@ -24,8 +24,12 @@ import java.util.function.Consumer;
 
 /**
  * @author Doug Schaefer
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CharArrayObjectMap<T> extends CharTable {
+	/**
+	 * An empty immutable {@code CharArrayObjectMap}.
+	 */
     public static final CharArrayObjectMap<?> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
         @Override
 		public Object clone() { return this; }

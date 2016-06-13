@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * @author ddaoust
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CharTable extends HashTable {
 	protected char[][] keyTable;

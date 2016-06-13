@@ -15,6 +15,7 @@ import java.util.Comparator;
 
 /**
  * @author ddaoust
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class HashTable implements Cloneable {
 	// Prime numbers from http://planetmath.org/goodhashtableprimes

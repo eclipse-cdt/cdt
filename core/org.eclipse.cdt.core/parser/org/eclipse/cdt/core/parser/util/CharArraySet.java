@@ -13,8 +13,13 @@ package org.eclipse.cdt.core.parser.util;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class CharArraySet extends CharTable {
-	
+	/**
+	 * An empty immutable {@code CharArraySet}.
+	 */
     public static final CharArraySet EMPTY_SET = new CharArraySet(0) {
         @Override
 		public Object clone() { return this; }

@@ -13,9 +13,12 @@ package org.eclipse.cdt.core.parser.util;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class ObjectSet<T> extends ObjectTable<T> {
 	/**
-	 * Represents the empty ObjectSet
+	 * An empty immutable {@code ObjectSet}.
 	 */
 	@SuppressWarnings("rawtypes")
     public static final ObjectSet EMPTY_SET = new ObjectSet(0) {

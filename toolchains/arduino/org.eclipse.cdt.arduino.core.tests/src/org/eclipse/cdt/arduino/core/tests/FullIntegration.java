@@ -62,6 +62,9 @@ public class FullIntegration {
 		boards.add(arduinoManager.getBoard("arduino", "avr", "robotMotor"));
 		boards.add(arduinoManager.getBoard("adafruit", "avr", "adafruit32u4"));
 
+		// What is Microsoft doing?
+		boards.add(arduinoManager.getBoard("Microsoft", "win10", "w10iotcore"));
+		
 		// TODO Need to add support for menu specific build properties
 		boards.add(arduinoManager.getBoard("arduino", "avr", "mini"));
 		boards.add(arduinoManager.getBoard("arduino", "avr", "lilypad"));
@@ -81,11 +84,19 @@ public class FullIntegration {
 		boards.add(arduinoManager.getBoard("Intel", "arc32", "arduino_101"));
 
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			// i586/i686 link missing
+			// tool chain incorrect?
 			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
 			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
 			boards.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
 		}
+		
+		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+			// i586/pokysdk missing
+			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
+			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
+			boards.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
+		}
+		
 		return boards;
 	}
 

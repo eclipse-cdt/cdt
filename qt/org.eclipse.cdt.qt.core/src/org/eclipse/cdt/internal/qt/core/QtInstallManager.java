@@ -70,7 +70,7 @@ public class QtInstallManager implements IQtInstallManager {
 
 			// Remove ones that aren't valid
 			for (String key : prefs.keys()) {
-				if (installs.get(key) == null) {
+				if (installs.get(Paths.get(key)) == null) {
 					prefs.remove(key);
 				}
 			}
@@ -79,7 +79,7 @@ public class QtInstallManager implements IQtInstallManager {
 			for (Path path : installs.keySet()) {
 				String key = path.toString();
 				if (prefs.get(key, null) == null) {
-					prefs.put(key, installs.get(key).getQmakePath().toString());
+					prefs.put(key, installs.get(path).getQmakePath().toString());
 				}
 			}
 

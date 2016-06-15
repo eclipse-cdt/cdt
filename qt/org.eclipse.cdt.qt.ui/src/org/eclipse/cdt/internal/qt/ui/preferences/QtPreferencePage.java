@@ -85,8 +85,8 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		locationColumn.setText(Messages.QtPreferencePage_2);
 
 		TableColumnLayout tableLayout = new TableColumnLayout();
-		tableLayout.setColumnData(nameColumn, new ColumnWeightData(25, 50, true));
-		tableLayout.setColumnData(locationColumn, new ColumnWeightData(75, 150, true));
+		tableLayout.setColumnData(nameColumn, new ColumnWeightData(75, 350, true));
+		tableLayout.setColumnData(locationColumn, new ColumnWeightData(25, 100, true));
 		installTableComp.setLayout(tableLayout);
 
 		Composite buttonsComp = new Composite(installsGroup, SWT.NONE);

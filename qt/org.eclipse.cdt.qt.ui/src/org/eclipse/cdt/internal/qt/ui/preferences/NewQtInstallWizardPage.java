@@ -48,10 +48,6 @@ public class NewQtInstallWizardPage extends WizardPage {
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		comp.setLayout(new GridLayout(2, false));
 
-		Label nameLabel = new Label(comp, SWT.NONE);
-		nameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		nameLabel.setText(Messages.NewQtInstallWizardPage_2);
-
 		Label locationLabel = new Label(comp, SWT.NONE);
 		locationLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		locationLabel.setText(Messages.NewQtInstallWizardPage_3);

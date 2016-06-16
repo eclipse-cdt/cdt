@@ -78,11 +78,6 @@ public class FullIntegration {
 		boards.add(arduinoManager.getBoard("TeeOnArdu", "avr", "FloraTeensyCore"));
 		boards.add(arduinoManager.getBoard("TeeOnArdu", "avr", "TeeOnArdu"));
 
-		// TODO build.system.path missing
-		boards.add(arduinoManager.getBoard("arduino", "sam", "arduino_due_x"));
-		boards.add(arduinoManager.getBoard("arduino", "sam", "arduino_due_x_dbg"));
-		boards.add(arduinoManager.getBoard("Intel", "arc32", "arduino_101"));
-
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			// tool chain incorrect?
 			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));

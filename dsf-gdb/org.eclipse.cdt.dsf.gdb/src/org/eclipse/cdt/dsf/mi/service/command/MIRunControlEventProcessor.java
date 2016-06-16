@@ -55,6 +55,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MISteppingRangeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIConsoleStreamOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIExecAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -172,6 +173,44 @@ public class MIRunControlEventProcessor
         				fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         			}
     			}
+			} else if (oobr instanceof MIConsoleStreamOutput) {
+				MIConsoleStreamOutput stream = (MIConsoleStreamOutput) oobr;
+				String prefix = "Program terminated with signal"; //$NON-NLS-1$
+				if (stream.getCString().startsWith(prefix)) {
+					MIExecAsyncOutput exec = new MIExecAsyncOutput();
+
+					MIResult name = new MIResult();
+					name.setVariable("signal-name"); //$NON-NLS-1$
+					MIConst nameValue = new MIConst();
+					name.setMIValue(nameValue);
+
+					MIResult meaning = new MIResult();
+					meaning.setVariable("signal-meaning"); //$NON-NLS-1$
+					MIConst meaningValue = new MIConst();
+					meaning.setMIValue(meaningValue);
+
+					/*
+					 * The string should be in the form "Program terminated with signal <signal>, <reason>."
+					 *  For Example:  Program terminated with signal SIGABRT, Aborted.
+					 */
+					
+					// Parse "<signal>, <reason>"
+					String signalDetails = stream.getCString().split("\\.")[0].substring(prefix.length()); //$NON-NLS-1$
+
+					// Should always have comma but check to ensure no IndexOutOfBoundsException
+					int index = signalDetails.indexOf(","); //$NON-NLS-1$
+					if (index >= 0) {
+						nameValue.setCString(signalDetails.substring(0, index).trim());
+						meaningValue.setCString(signalDetails.substring(index + 1).trim());
+					} else {
+						nameValue.setCString(signalDetails);
+						meaningValue.setCString(""); //$NON-NLS-1$
+					}
+
+					exec.setMIResults(new MIResult[] { name, meaning });
+					MIEvent<?> event = createEvent("signal-received", exec); //$NON-NLS-1$
+					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+				}
     		}
     	}
     	

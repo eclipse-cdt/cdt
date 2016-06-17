@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.datamodel;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -346,5 +348,40 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         }
             
         return retVal;
+    }
+    
+    /**
+     * This method looks for a specific DMC, used in a IVMNode type. If found, its index is returned, else
+     * index 0.
+     * 
+     * @param nodeType the node to search on
+     * @param wantedCtx the dmc we are looking-for
+     * @param parentDelta delta for the parent VMNode
+     * @param rm request monitor
+     */
+    protected void getVMCIndexForDmc(IVMNode nodetype, IDMContext wantedCtx, VMDelta parentDelta, DataRequestMonitor<Integer> rm) {
+    	final int indexFailed = 0;
+    	getVMProvider().updateNode(nodetype, new VMChildrenUpdate(
+    			parentDelta, getVMProvider().getPresentationContext(), -1, -1,
+    			new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
+    				@Override
+    				protected void handleSuccess() {
+    					boolean found = false;
+    					for (int i = 0; i < getData().size(); i++) {
+    						if (getData().get(i) instanceof IDMVMContext) {
+    							IDMVMContext vmc = (IDMVMContext)getData().get(i);
+    							if (vmc.getDMContext().equals(wantedCtx)) {
+    								rm.setData(i);
+    								found = true;
+    								break;
+    							}
+    						}
+    					}
+    					if (!found) {
+    						rm.setData(indexFailed);
+    					}
+    					rm.done();
+    				}
+    			}));
     }
 }

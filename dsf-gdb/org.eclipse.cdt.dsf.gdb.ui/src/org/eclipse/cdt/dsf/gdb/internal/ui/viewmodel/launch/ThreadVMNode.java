@@ -18,9 +18,11 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
@@ -35,6 +37,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer.IThreadFrameSwitchedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
@@ -373,11 +376,16 @@ public class ThreadVMNode extends AbstractThreadVMNode
     		// being displayed.
         	return IModelDelta.CONTENT;
         }
+    	else if (e instanceof IThreadFrameSwitchedEvent) {
+    		return IModelDelta.SELECT;
+        }
         return super.getDeltaFlags(e);
     }
     
     @Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    	IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
+    	
         if (fHideRunningThreadsProperty && e instanceof IResumedDMEvent) {
         	// Special handling in the case of hiding the running threads to
         	// cause a proper refresh when a thread is resumed.
@@ -395,10 +403,46 @@ public class ThreadVMNode extends AbstractThreadVMNode
             	ancestorDelta.setFlags(ancestorDelta.getFlags() | IModelDelta.CONTENT);
             }
             rm.done();
+        } else if (e instanceof IThreadFrameSwitchedEvent) {
+        	buildDeltaForThreadFrameSwitchedEvent(dmc, parentDelta, nodeOffset, rm);
         } else {            
             super.buildDelta(e, parentDelta, nodeOffset, rm);
         }
     }
+    
+    private void buildDeltaForThreadFrameSwitchedEvent(IDMContext dmc, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
+    	// we need to find the VMC index for the thread that switched, so we can
+    	// "reveal" it correctly.
+    	getVMCIndexForDmc(
+    			this,
+    			dmc,
+    			parentDelta,
+    			new DataRequestMonitor<Integer>(getExecutor(), rm) {
+    				@Override
+    				protected void handleCompleted() {
+    					if (isSuccess()) {
+    						final int threadOffset = getData();
+    						
+    						isThreadSuspended((IExecutionDMContext)dmc, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+    							@Override
+    							protected void handleSuccess() {
+    								boolean isSuspended = getData();
+    								// Create a delta for the thread node - select if the thread is running, else
+    								// no action (we will let the stack frame node select)
+    								parentDelta.addNode(
+											createVMContext(dmc), 
+											nodeOffset + threadOffset, 
+											isSuspended ? IModelDelta.NO_CHANGE : IModelDelta.SELECT | IModelDelta.FORCE
+									); 
+    								rm.done();
+    							}
+    						});
+    					}
+    				}
+    			});
+    }
+
+
     private static final String MEMENTO_NAME = "THREAD_MEMENTO_NAME"; //$NON-NLS-1$
     
     /*

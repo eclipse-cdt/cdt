@@ -13,10 +13,15 @@ import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.internal.service.IGDBSynchronizer;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,7 +41,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * full-featured CLI interface.  This is only supported with GDB >= 7.12
  * and if IGDBBackend.isFullGdbConsoleSupported() returns true.
  */
-public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConsole {
+public class GdbFullCliConsole extends AbstractConsole implements IGDBDebuggerConsole {
 	private final ILaunch fLaunch;
 	private final String fLabel;
 	private final PTY fGdbPty;
@@ -205,5 +210,35 @@ public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConso
 
 	public IGdbTerminalControlConnector getTerminalControlConnector() {
 		return fTerminalConnector;
+	}
+	
+	// The console was selected - let the synchronizer service know so it can
+	// show the selection corresponding to newly activated console
+	@Override
+	public void consoleSelected() {
+		DsfSession session = ((GdbLaunch)getLaunch()).getSession();
+		if (!session.isActive()) {return;}
+
+		// only trigger the DV selection if the current selection is in
+		// a different session
+		IAdaptable context = DebugUITools.getDebugContext();
+		if (context != null) {
+			ILaunch selectedLaunch =  context.getAdapter(ILaunch.class);
+			if (getLaunch().equals(selectedLaunch)) {
+				return;
+			}
+		}
+
+		session.getExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+				IGDBSynchronizer gdbSync = tracker.getService(IGDBSynchronizer.class);
+				tracker.dispose();
+				if (gdbSync != null) {
+					gdbSync.restoreDVSelectionFromFocus();
+				}
+			}
+		});
 	}
 }

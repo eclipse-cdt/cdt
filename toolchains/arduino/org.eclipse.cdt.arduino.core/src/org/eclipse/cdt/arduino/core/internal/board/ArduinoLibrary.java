@@ -189,7 +189,7 @@ public class ArduinoLibrary {
 
 	public Path getInstallPath() {
 		return installPath == null
-				? ArduinoPreferences.getArduinoHome().resolve("libraries").resolve(name.replace(' ', '_')) //$NON-NLS-1$
+				? ArduinoPreferences.getArduinoHome().resolve("libraries").resolve(name.replaceAll("[ ()]", "_")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				: installPath;
 	}
 

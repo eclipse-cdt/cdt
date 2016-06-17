@@ -212,6 +212,9 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 								fConsoleToPart.put(registered, part);
 								fPartToConsole.put(part, registered);
 								partActivated(part);
+								if (console instanceof IDebuggerConsole) {
+									display((IDebuggerConsole)console);
+								}
 								break;
 							}
 						}
@@ -258,6 +261,8 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 		DebuggerConsoleWorkbenchPart part = fConsoleToPart.get(console);
 		if (part != null) {
 			partActivated(part);
+			// let the console know it's being activated
+	         fActiveConsole.consoleSelected();
 		}
 	}
 

@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
@@ -36,7 +35,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * full-featured CLI interface.  This is only supported with GDB >= 7.12
  * and if IGDBBackend.isFullGdbConsoleSupported() returns true.
  */
-public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConsole {
+public class GdbFullCliConsole extends AbstractConsole implements IGDBDebuggerConsole {
 	private final ILaunch fLaunch;
 	private final String fLabel;
 	private final PTY fGdbPty;
@@ -206,4 +205,5 @@ public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConso
 	public IGdbTerminalControlConnector getTerminalControlConnector() {
 		return fTerminalConnector;
 	}
+	
 }

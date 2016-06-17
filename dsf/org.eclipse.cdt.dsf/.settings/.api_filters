@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.dsf" version="2">
+    <resource path="src/org/eclipse/cdt/dsf/debug/service/IStack.java" type="org.eclipse.cdt.dsf.debug.service.IStack">
+        <filter comment="CDT allows default methods without breaking the API. " id="1209008130">
+            <message_arguments>
+                <message_argument value="2.8"/>
+                <message_argument value="2.9"/>
+                <message_argument value="createFrameDMContext(IRunControl.IExecutionDMContext, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

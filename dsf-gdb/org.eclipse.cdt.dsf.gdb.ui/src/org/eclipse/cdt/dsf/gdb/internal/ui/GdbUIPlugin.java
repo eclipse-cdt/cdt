@@ -14,6 +14,8 @@ package org.eclipse.cdt.dsf.gdb.internal.ui;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.GdbCliConsoleManager;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.TracingConsoleManager;
+import org.eclipse.cdt.dsf.gdb.internal.ui.sync.GdbDebugContextSyncManager;
+import org.eclipse.cdt.dsf.gdb.internal.ui.sync.IDebugSelectionSyncManager;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.core.runtime.IStatus;
@@ -48,6 +50,8 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 
     private static TracingConsoleManager fTracingConsoleManager;
     private static GdbCliConsoleManager fGdbConsoleManager;
+
+    private static IDebugSelectionSyncManager fGdbSelectionSyncManager;
     
     private static IPreferenceStore fCorePreferenceStore;
     
@@ -72,6 +76,9 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		
 		fGdbConsoleManager = new GdbCliConsoleManager();
 		fGdbConsoleManager.startup();
+		
+		fGdbSelectionSyncManager = new GdbDebugContextSyncManager();
+		fGdbSelectionSyncManager.startup();
 	}
 
 	/*
@@ -82,6 +89,7 @@ public class GdbUIPlugin extends AbstractUIPlugin {
     public void stop(BundleContext context) throws Exception {
 		fTracingConsoleManager.shutdown();
 		fGdbConsoleManager.shutdown();
+		fGdbSelectionSyncManager.shutdown();
 
 		disposeAdapterSets();
 		plugin = null;
@@ -93,6 +101,10 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		return fGdbConsoleManager;
 	}
 	
+	public static IDebugSelectionSyncManager getGdbSelectionSyncManager() {
+		return fGdbSelectionSyncManager;
+	}
+
 	/**
 	 * Dispose adapter sets for all launches.
 	 */

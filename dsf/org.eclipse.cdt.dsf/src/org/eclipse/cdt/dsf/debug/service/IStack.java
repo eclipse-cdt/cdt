@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
@@ -82,6 +83,23 @@ public interface IStack extends IDsfService {
      * will fail if the stack frame data is not available.
      */
     void getFrames(IDMContext execContext, DataRequestMonitor<IFrameDMContext[]> rm);
+    
+    /**
+     * Creates a frame context.  This method is intended to be used by other MI
+	 * services and sub-classes which need to create a frame context directly.
+	 * <p>
+	 * Sub-classes can override this method to provide custom stack frame
+	 * context implementation.
+	 * </p>
+	 * @param execDmc Execution context that this frame is to be a child of.
+	 * @param level Level of the new context.
+	 * @return A new frame context.
+	 * 
+     * @since 2.9
+     */
+    default IFrameDMContext createFrameDMContext(IExecutionDMContext execDmc, int level) {
+		return null;
+	}
     
     /**
 	 * When passed in the endIndex of getFrames(...) it indicates that all stack frames are to be retrieved.

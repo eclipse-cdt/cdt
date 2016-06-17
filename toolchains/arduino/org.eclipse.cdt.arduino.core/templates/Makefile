@@ -51,17 +51,24 @@ LIBRARIES_OBJS = \
 <#list libraries_srcs as file>
 <#assign cpp = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.cpp")>
 <#if !cpp>
-<#assign cpp = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.cpp")>
+<#assign cpp = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
 	${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o \
 </#if>
 <#assign c = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.c")>
 <#if !c>
-<#assign c = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.c")>
+<#assign c = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
 	${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.o \
+</#if>
+<#assign S = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.S")>
+<#if !S>
+<#assign S = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.S")>
+</#if>
+<#if S>
+	${build_path}/libraries/${S?groups[1]}/${S?groups[2]}.S.o \
 </#if>
 </#list>
 
@@ -99,7 +106,7 @@ ${build_path}/${project_name}.elf: $(PROJECT_OBJS) $(LIBRARIES_OBJS) ${build_pat
 ${build_path}/core.a:	$(PLATFORM_CORE_OBJS) $(PLATFORM_VARIANT_OBJS)
 
 clean:
-	$(RMDIR) ${build_path}
+	$(RMDIR) ${build_path}/*
 
 size:
 	${recipe_size_pattern}
@@ -191,7 +198,7 @@ ${build_path}/variant/${S?groups[1]}.S.o: ${file}
 <#list libraries_srcs as file>
 <#assign cpp = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.cpp")>
 <#if !cpp>
-<#assign cpp = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.cpp")>
+<#assign cpp = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
 ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o: ${file} ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d
@@ -205,7 +212,7 @@ ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d: ;
 </#if>
 <#assign c = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.c")>
 <#if !c>
-<#assign c = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.c")>
+<#assign c = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
 ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.o: ${file} ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d
@@ -215,6 +222,16 @@ ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.o: ${file} ${build_path}
 ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d: ;
 
 -include ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d
+
+</#if>
+<#assign S = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.S")>
+<#if !S>
+<#assign S = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.S")>
+</#if>
+<#if S>
+${build_path}/libraries/${S?groups[1]}/${S?groups[2]}.S.o: ${file}
+	@$(call mymkdir,$(dir $@))
+	${recipe_S_o_pattern}
 
 </#if>
 </#list>

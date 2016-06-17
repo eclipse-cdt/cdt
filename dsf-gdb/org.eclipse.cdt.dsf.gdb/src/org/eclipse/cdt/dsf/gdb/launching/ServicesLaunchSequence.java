@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
+import org.eclipse.cdt.dsf.gdb.internal.service.IGDBFocusSynchronizer;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
@@ -127,6 +128,10 @@ public class ServicesLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
         	fLaunch.getServiceFactory().createService(MIBreakpointsSynchronizer.class, fSession).initialize(requestMonitor); 
+        }},
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+        	fLaunch.getServiceFactory().createService(IGDBFocusSynchronizer.class, fSession).initialize(requestMonitor); 
         }},
     };
     

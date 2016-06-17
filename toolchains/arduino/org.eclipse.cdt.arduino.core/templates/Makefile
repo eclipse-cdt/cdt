@@ -49,21 +49,21 @@ PLATFORM_VARIANT_OBJS = \
 
 LIBRARIES_OBJS = \
 <#list libraries_srcs as file>
-<#assign cpp = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.cpp")>
+<#assign cpp = file?matches("${libraries_path}/(.*?)/(.*)\\.cpp")>
 <#if !cpp>
 <#assign cpp = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
 	${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o \
 </#if>
-<#assign c = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.c")>
+<#assign c = file?matches("${libraries_path}/(.*?)/(.*)\\.c")>
 <#if !c>
 <#assign c = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
 	${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.o \
 </#if>
-<#assign S = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.S")>
+<#assign S = file?matches("${libraries_path}/(.*?)/(.*)\\.S")>
 <#if !S>
 <#assign S = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.S")>
 </#if>
@@ -196,7 +196,7 @@ ${build_path}/variant/${S?groups[1]}.S.o: ${file}
 </#list>
 
 <#list libraries_srcs as file>
-<#assign cpp = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.cpp")>
+<#assign cpp = file?matches("${libraries_path}/(.*?)/(.*)\\.cpp")>
 <#if !cpp>
 <#assign cpp = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
@@ -210,7 +210,7 @@ ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d: ;
 -include ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d
 
 </#if>
-<#assign c = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.c")>
+<#assign c = file?matches("${libraries_path}/(.*?)/(.*)\\.c")>
 <#if !c>
 <#assign c = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
@@ -224,7 +224,7 @@ ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d: ;
 -include ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d
 
 </#if>
-<#assign S = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.S")>
+<#assign S = file?matches("${libraries_path}/(.*?)/(.*)\\.S")>
 <#if !S>
 <#assign S = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.S")>
 </#if>

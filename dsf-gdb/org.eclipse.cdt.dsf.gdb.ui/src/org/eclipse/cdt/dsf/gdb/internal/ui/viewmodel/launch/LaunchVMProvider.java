@@ -25,7 +25,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractLaunchVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.LaunchRootVMNode;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.StackFramesVMNode;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStartedDMEvent;
@@ -73,7 +72,7 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         IVMNode threadsNode = new ThreadVMNode(this, getSession());
         addChildNodes(containerNode, new IVMNode[] { threadsNode });
         
-        IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
+        IVMNode stackFramesNode = new GdbStackFramesVMNode(this, getSession());
         addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
     }
     

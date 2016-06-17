@@ -35,4 +35,9 @@ public interface IDebuggerConsole extends IConsole {
 	 * Request a re-computation of the name of the console.
 	 */
 	void resetName();
+	
+	/**
+	 * Let the console know that it has become selected
+	 */
+	public void consoleSelected();
 }

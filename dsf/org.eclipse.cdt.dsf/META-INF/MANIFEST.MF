@@ -1,4 +1,4 @@
-Manifest-Version: 1.0
+Manifest-Version: 1.02.8.0-SNAPSHOT
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName

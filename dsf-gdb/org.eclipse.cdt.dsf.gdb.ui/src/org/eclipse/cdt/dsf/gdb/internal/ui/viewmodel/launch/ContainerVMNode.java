@@ -25,6 +25,7 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
@@ -74,6 +75,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer.IStackFrameSwitchedEvent;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer.IThreadSwitchedEvent;
 
 
 public class ContainerVMNode extends AbstractContainerVMNode
@@ -445,20 +448,32 @@ public class ContainerVMNode extends AbstractContainerVMNode
 		    }
 		    return IModelDelta.NO_CHANGE;
 	    }
+		if (e instanceof IStackFrameSwitchedEvent || e instanceof IThreadSwitchedEvent) {
+			return IModelDelta.SELECT;
+		}
+		
 	    return super.getDeltaFlags(e);
 	}
 
 	@Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+		IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
+		
 		if (e instanceof ICommandControlShutdownDMEvent) {
 	        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
 	    } else if (e instanceof IThreadRemovedDMEvent) {
-		    IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
 		    if (dmc instanceof IProcessDMContext) {
 		    	// A process was removed, refresh the parent
 		    	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
 		    }
-	    } else {
+//	    } else if (e instanceof IInferiorSwitchedEvent) {
+	    } else if (e instanceof IStackFrameSwitchedEvent || e instanceof IThreadSwitchedEvent) {
+	    	// select inferior to force the debug view to show it (i.e. scroll up)
+	    	IContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+	        if (containerCtx != null) {
+	        	parentDelta.addNode(createVMContext(containerCtx), IModelDelta.SELECT | IModelDelta.STATE | IModelDelta.FORCE);
+	        }
+		} else {
 	    	super.buildDelta(e, parentDelta, nodeOffset, requestMonitor);
 	    	return;
 	    }

@@ -327,7 +327,7 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 	
 	private void displayConsoleForLaunch(ILaunch launch) {
 		for (IConsole console : getConsoleStack()) {
-			if (launch.equals(((GdbCliConsole)console).getLaunch())) {
+			if (launch != null && launch.equals(((GdbCliConsole)console).getLaunch())) {
 				display(console);
 				break;
 			}

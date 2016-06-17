@@ -21,7 +21,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.dsf.gdb;bundle-version="4.6.0",
  org.eclipse.cdt.dsf.gdb.ui;bundle-version="2.4.0",
  org.eclipse.core.variables
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.docker.launcher;x-internal:=true,
  org.eclipse.cdt.internal.docker.launcher;x-internal:=true,

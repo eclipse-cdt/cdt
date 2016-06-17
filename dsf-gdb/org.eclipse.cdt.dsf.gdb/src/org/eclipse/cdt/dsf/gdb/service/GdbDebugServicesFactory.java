@@ -38,6 +38,8 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.service.GDBSynchronizer;
+import org.eclipse.cdt.dsf.gdb.internal.service.IGDBSynchronizer;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
@@ -169,7 +171,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointsSynchronizerService(session);
-		} 
+		}
+		else if (IGDBSynchronizer.class.isAssignableFrom(clazz)) {
+			return (V)createGDBSynchronizerService(session);
+		}
 
         return super.createService(clazz, session, optionalArguments);
 	}
@@ -226,9 +231,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 
 	protected IMIBackend createBackendGDBService(DsfSession session, ILaunchConfiguration lc) {
-		if (compareVersionWith(GDB_7_12_VERSION) >= 0
-				|| compareVersionWith("7.11.50") >= 0  // TODO remove once GDB 7.12 is released
-				) {
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
 			return new GDBBackend_7_12(session, lc);
 		}
 		return new GDBBackend(session, lc);
@@ -367,6 +370,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 */
 	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
 		return new MIBreakpointsSynchronizer(session);
+	}
+	
+	/**
+	 * @since 5.2
+	 */
+	protected IGDBSynchronizer createGDBSynchronizerService(DsfSession session) {
+		return new GDBSynchronizer(session);
 	}
 	
 	/**

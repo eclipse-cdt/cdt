@@ -240,4 +240,9 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
             return Status.OK_STATUS;
         }
     }
+
+	@Override
+	public void consoleSelected() {
+		// nothing to do
+	}
 }

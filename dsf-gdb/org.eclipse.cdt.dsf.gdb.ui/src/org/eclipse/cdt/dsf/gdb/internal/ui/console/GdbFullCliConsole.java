@@ -9,7 +9,13 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
@@ -102,5 +108,35 @@ public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConso
 		if (fConsolePage != null) {
 			fConsolePage.setInvertedColors(enable);
 		}
+	}
+	
+	// The console was selected - let the synchronizer service know so it can
+	// show the selection corresponding to newly activated console
+	@Override
+	public void consoleSelected() {
+		DsfSession session = ((GdbLaunch)getLaunch()).getSession();
+		if (!session.isActive()) {return;}
+
+		// only trigger the DV selection if the current selection is in
+		// a different session
+		IAdaptable context = DebugUITools.getDebugContext();
+		if (context != null) {
+			ILaunch selectedLaunch =  context.getAdapter(ILaunch.class);
+			if (getLaunch().equals(selectedLaunch)) {
+				return;
+			}
+		}
+
+		session.getExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+				IGDBSynchronizer gdbSync = tracker.getService(IGDBSynchronizer.class);
+				tracker.dispose();
+				if (gdbSync != null) {
+					gdbSync.restoreDVSelectionFromFocus();
+				}
+			}
+		});
 	}
 }

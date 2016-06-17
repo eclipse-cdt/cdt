@@ -18,8 +18,11 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -32,6 +35,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.service.IGDBSynchronizer.IGDBFocusChangedEvent;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
@@ -373,6 +377,9 @@ public class ThreadVMNode extends AbstractThreadVMNode
     		// being displayed.
         	return IModelDelta.CONTENT;
         }
+    	else if (e instanceof IGDBFocusChangedEvent) {
+    		return IModelDelta.SELECT;
+        }
         return super.getDeltaFlags(e);
     }
     
@@ -395,10 +402,49 @@ public class ThreadVMNode extends AbstractThreadVMNode
             	ancestorDelta.setFlags(ancestorDelta.getFlags() | IModelDelta.CONTENT);
             }
             rm.done();
+        } else if (e instanceof IGDBFocusChangedEvent) {
+        	buildDeltaForFocusChangedEvent((IGDBFocusChangedEvent)e, parentDelta, nodeOffset, rm);
         } else {            
             super.buildDelta(e, parentDelta, nodeOffset, rm);
         }
     }
+    
+    private void buildDeltaForFocusChangedEvent(IGDBFocusChangedEvent event, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
+    	getSession().getExecutor().execute(new DsfRunnable() {
+			@Override
+			public void run() {
+				// can we find a thread context in the hierarchy of the IGDBFocusChangedEvent's context? 
+				IDMContext thread = DMContexts.getAncestorOfType(event.getDMContext(), IMIExecutionDMContext.class);
+				final IDMContext newThreadFocus = thread;
+				if (newThreadFocus != null) {
+					// we need to find the VMC index for the thread that switched, so we can
+			    	// select it correctly.
+			    	getVMCIndexForDmc(
+			    			ThreadVMNode.this,
+			    			newThreadFocus,
+			    			parentDelta,
+			    			new DataRequestMonitor<Integer>(getExecutor(), rm) {
+			    				@Override
+								protected void handleSuccess() {
+									final int threadOffset = getData();
+									// Create a delta for the thread node - Select it whether it's running or not
+									// this way the thread will be visible in the DV even if we end-up selecting one
+									// of its frame. Using the FORCE flag to override the sticky selection
+									// policy.
+									parentDelta.addNode(createVMContext(newThreadFocus), nodeOffset + threadOffset,
+											IModelDelta.SELECT | IModelDelta.FORCE);
+									rm.done();
+								}
+			    			});
+				} else {
+					// context not a thread - nothing to do here
+					rm.done();
+				}
+			}
+    	});
+    }
+
+
     private static final String MEMENTO_NAME = "THREAD_MEMENTO_NAME"; //$NON-NLS-1$
     
     /*

@@ -9,7 +9,6 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
@@ -37,7 +36,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * towards GDB.  It is used whenever {@link IGDBBackend#isFullGdbConsoleSupported()}
  * returns false.
  */
-public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole {
+public class GdbBasicCliConsole extends IOConsole implements IGDBDebuggerConsole {
 
 	/**
 	 * A conversion factor used to resolve number of characters from number of lines 

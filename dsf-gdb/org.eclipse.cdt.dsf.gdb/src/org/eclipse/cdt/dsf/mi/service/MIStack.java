@@ -44,6 +44,7 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBStack;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
@@ -65,7 +66,7 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 public class MIStack extends AbstractDsfService
-implements IStack, ICachingService {
+implements IGDBStack, ICachingService {
 	private static final int DEFAULT_STACK_DEPTH = 5;
 
 	protected static class MIFrameDMC extends AbstractDMContext
@@ -439,7 +440,7 @@ implements IStack, ICachingService {
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
 		getSession().addServiceEventListener(this, null);
-		register(new String[]{IStack.class.getName(), MIStack.class.getName()}, new Hashtable<String,String>());
+		register(new String[]{IStack.class.getName(), IGDBStack.class.getName(), MIStack.class.getName()}, new Hashtable<String,String>());
 		rm.done();
 	}
 
@@ -452,17 +453,7 @@ implements IStack, ICachingService {
 		super.shutdown(rm);
 	}
 
-	/**
-	 * Creates a frame context.  This method is intended to be used by other MI
-	 * services and sub-classes which need to create a frame context directly.
-	 * <p>
-	 * Sub-classes can override this method to provide custom stack frame
-	 * context implementation.
-	 * </p>
-	 * @param execDmc Execution context that this frame is to be a child of.
-	 * @param level Level of the new context.
-	 * @return A new frame context.
-	 */
+	@Override
 	public IFrameDMContext createFrameDMContext(IExecutionDMContext execDmc, int level) {
 		return new MIFrameDMC(getSession().getId(), execDmc, level);
 	}

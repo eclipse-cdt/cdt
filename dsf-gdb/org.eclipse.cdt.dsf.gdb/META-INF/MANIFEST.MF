@@ -44,4 +44,10 @@ Export-Package: org.eclipse.cdt.dsf.gdb,
  org.eclipse.cdt.dsf.mi.service.command.commands,
  org.eclipse.cdt.dsf.mi.service.command.events,
  org.eclipse.cdt.dsf.mi.service.command.output
-Import-Package: com.ibm.icu.text
+Import-Package: com.ibm.icu.text,
+ org.eclipse.cdt.dsf.ui.viewmodel.datamodel,
+ org.eclipse.debug.internal.ui.stringsubstitution,
+ org.eclipse.debug.ui,
+ org.eclipse.debug.ui.contexts,
+ org.eclipse.jface.viewers,
+ org.eclipse.ui

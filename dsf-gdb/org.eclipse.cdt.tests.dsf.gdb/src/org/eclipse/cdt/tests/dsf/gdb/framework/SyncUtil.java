@@ -356,6 +356,33 @@ public class SyncUtil {
         }
 	}
 
+	// interrupts a single thread
+	public static MIStoppedEvent interrupt(final IExecutionDMContext dmc) throws Throwable {
+		return interrupt(dmc, DefaultTimeouts.get(ETimeout.interrupt));
+	}
+	
+	public static MIStoppedEvent interrupt(final IExecutionDMContext dmc, int timeout) throws Throwable {
+        final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+            new ServiceEventWaitor<MIStoppedEvent>(
+                    fSession,
+                    MIStoppedEvent.class);
+
+		fRunControl.getExecutor().submit(new Runnable() {
+			@Override
+			public void run() {
+				// No need for a RequestMonitor since we will wait for the
+				// ServiceEvent telling us the program has been resumed
+				fGdbControl.queueCommand(
+						fCommandFactory.createMIExecInterrupt(dmc),
+						null);
+			}
+		});
+		
+		// Wait for the execution to start after the step
+    	return eventWaitor.waitForEvent(timeout);			
+	}
+	
+	
 	public static MIStoppedEvent waitForStop() throws Throwable {
 		return waitForStop(DefaultTimeouts.get(ETimeout.waitForStop));
 	}
@@ -555,7 +582,8 @@ public class SyncUtil {
     		runToLine,
     		runToLocation,
     		step,
-    		waitForStop
+    		waitForStop,
+    		interrupt
     	}
 
 		/**
@@ -585,6 +613,7 @@ public class SyncUtil {
     		sTimeouts.put(ETimeout.runToLocation, 10000);	// 10 seconds    		
     		sTimeouts.put(ETimeout.step, 1000);
     		sTimeouts.put(ETimeout.waitForStop, 10000);	// 10 seconds
+    		sTimeouts.put(ETimeout.interrupt, 1000);	// 10 seconds
     	}
 
 		/**

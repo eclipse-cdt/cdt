@@ -16,6 +16,7 @@ import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIExpressionsNonStopTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIRunControlNonStopTargetAvailableTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.OperationsWhileTargetIsRunningNonStopTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.StepIntoSelectionNonStopTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.ThreadStackFrameSyncTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -57,6 +58,7 @@ import org.junit.runners.Suite;
 		GDBProcessesTest.class,
 		PostMortemCoreTest.class,
 		CommandTimeoutTest.class,
+		ThreadStackFrameSyncTest.class,
 		/* Add your test class here */
 })
 public class SuiteGdb {

@@ -169,7 +169,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointsSynchronizerService(session);
-		} 
+		}
+		else if (IGDBSynchronizer.class.isAssignableFrom(clazz)) {
+			return (V)createGDBSynchronizerService(session);
+		}
 
         return super.createService(clazz, session, optionalArguments);
 	}
@@ -367,6 +370,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 */
 	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
 		return new MIBreakpointsSynchronizer(session);
+	}
+	
+	/**
+	 * @since 5.1
+	 */
+	protected IGDBSynchronizer createGDBSynchronizerService(DsfSession session) {
+		return new GDBSynchronizer(session);
 	}
 	
 	/**

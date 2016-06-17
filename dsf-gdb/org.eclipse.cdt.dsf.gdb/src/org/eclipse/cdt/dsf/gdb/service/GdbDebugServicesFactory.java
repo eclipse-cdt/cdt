@@ -38,6 +38,8 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.service.GDBFocusSynchronizer;
+import org.eclipse.cdt.dsf.gdb.internal.service.IGDBFocusSynchronizer;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
@@ -169,7 +171,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointsSynchronizerService(session);
-		} 
+		}
+		else if (IGDBFocusSynchronizer.class.isAssignableFrom(clazz)) {
+			return (V)createFocusSynchronizerService(session);
+		}
 
         return super.createService(clazz, session, optionalArguments);
 	}
@@ -367,6 +372,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 */
 	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
 		return new MIBreakpointsSynchronizer(session);
+	}
+	
+	/**
+	 * @since 5.2
+	 */
+	protected IGDBFocusSynchronizer createFocusSynchronizerService(DsfSession session) {
+		return new GDBFocusSynchronizer(session);
 	}
 	
 	/**

@@ -257,6 +257,8 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 		GdbConsoleWorkbenchPart part = fConsoleToPart.get(console);
 		if (part != null) {
 			partActivated(part);
+			// let the console know it's being activated
+			((GdbCliConsole)fActiveConsole).consoleActivated();
 		}
 	}
 

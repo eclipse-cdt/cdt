@@ -169,7 +169,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointsSynchronizerService(session);
-		} 
+		}
+		else if (IGDBSynchronizer.class.isAssignableFrom(clazz)) {
+			return (V)createGDBSynchronizerService(session);
+		}
 
         return super.createService(clazz, session, optionalArguments);
 	}
@@ -365,6 +368,19 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 */
 	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
 		return new MIBreakpointsSynchronizer(session);
+	}
+	
+	/**
+	 * @since 5.1
+	 */
+	protected IGDBSynchronizer createGDBSynchronizerService(DsfSession session) {
+//		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBSynchronizer(session);
+//		}
+		
+		// For the synchronizer service to work properly, it requires GDB console improvements
+		// that are only available starting with 7.12
+//		return null;
 	}
 	
 	/**

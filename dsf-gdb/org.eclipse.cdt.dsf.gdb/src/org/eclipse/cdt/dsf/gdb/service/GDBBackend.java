@@ -281,7 +281,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 			proc = ProcessFactory.getFactory().exec(
 					commandLine, 
 					getGDBLaunch().getLaunchEnvironment(),
-					new File(getGDBWorkingDirectory().toOSString()),
+					// Marc D: quick patch to avoid session-killing NPE...
+					new File(getGDBWorkingDirectory() != null ? getGDBWorkingDirectory().toOSString() : ""),
 					new PTY(Mode.TERMINAL)); //TODO The TERMINAL setting breaks older GDBs
 		} catch (IOException e) {
 			String message = "Error while launching command: " + StringUtil.join(commandLine, " "); //$NON-NLS-1$ //$NON-NLS-2$

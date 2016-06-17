@@ -199,6 +199,9 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 								fConsoleToPart.put(registered, part);
 								fPartToConsole.put(part, registered);
 								partActivated(part);
+								if (console instanceof IDebuggerConsole) {
+									display((IDebuggerConsole)console);
+								}
 								break;
 							}
 						}
@@ -245,6 +248,8 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 		DebuggerConsoleWorkbenchPart part = fConsoleToPart.get(console);
 		if (part != null) {
 			partActivated(part);
+			// let the console know it's being activated
+	         fActiveConsole.consoleSelected();
 		}
 	}
 

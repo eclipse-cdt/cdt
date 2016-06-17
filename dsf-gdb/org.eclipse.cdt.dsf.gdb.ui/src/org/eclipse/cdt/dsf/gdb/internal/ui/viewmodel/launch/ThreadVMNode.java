@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer.IThreadSwitchedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
@@ -373,11 +375,16 @@ public class ThreadVMNode extends AbstractThreadVMNode
     		// being displayed.
         	return IModelDelta.CONTENT;
         }
+    	else if (e instanceof IThreadSwitchedEvent) {
+    		return IModelDelta.SELECT | IModelDelta.EXPAND;
+        }
         return super.getDeltaFlags(e);
     }
     
     @Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    	IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
+    	
         if (fHideRunningThreadsProperty && e instanceof IResumedDMEvent) {
         	// Special handling in the case of hiding the running threads to
         	// cause a proper refresh when a thread is resumed.
@@ -395,6 +402,10 @@ public class ThreadVMNode extends AbstractThreadVMNode
             	ancestorDelta.setFlags(ancestorDelta.getFlags() | IModelDelta.CONTENT);
             }
             rm.done();
+        } else if (e instanceof IThreadSwitchedEvent) {
+        	// TODO: make the use of force configurable? It does override the sticky selection policy...
+        	parentDelta.addNode(createVMContext(dmc), IModelDelta.SELECT | IModelDelta.EXPAND | IModelDelta.FORCE);
+        	rm.done();
         } else {            
             super.buildDelta(e, parentDelta, nodeOffset, rm);
         }

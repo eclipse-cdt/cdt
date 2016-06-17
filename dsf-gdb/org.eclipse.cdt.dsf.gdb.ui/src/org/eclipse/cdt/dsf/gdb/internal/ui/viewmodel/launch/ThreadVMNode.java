@@ -15,12 +15,16 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
@@ -34,11 +38,15 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer.IThreadSwitchedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -373,11 +381,16 @@ public class ThreadVMNode extends AbstractThreadVMNode
     		// being displayed.
         	return IModelDelta.CONTENT;
         }
+    	else if (e instanceof IThreadSwitchedEvent) {
+    		return IModelDelta.SELECT;
+        }
         return super.getDeltaFlags(e);
     }
     
     @Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    	IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
+    	
         if (fHideRunningThreadsProperty && e instanceof IResumedDMEvent) {
         	// Special handling in the case of hiding the running threads to
         	// cause a proper refresh when a thread is resumed.
@@ -395,10 +408,123 @@ public class ThreadVMNode extends AbstractThreadVMNode
             	ancestorDelta.setFlags(ancestorDelta.getFlags() | IModelDelta.CONTENT);
             }
             rm.done();
+        } else if (e instanceof IThreadSwitchedEvent) {
+        	buildDeltaForThreadSwitchedEvent(dmc, parentDelta, nodeOffset, rm);
         } else {            
             super.buildDelta(e, parentDelta, nodeOffset, rm);
         }
     }
+    
+    private void buildDeltaForThreadSwitchedEvent(IDMContext dmc, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
+    	// we need to find the VMC index for the thread that switched, so we can
+    	// "reveal" it correctly.
+    	getVMCIndexForDmc(
+    			this,
+    			dmc,
+    			parentDelta,
+    			new DataRequestMonitor<Integer>(getExecutor(), rm) {
+    				@Override
+    				protected void handleCompleted() {
+    					if (isSuccess()) {
+    						final int threadOffset = getData();
+    						isThreadSuspended((IExecutionDMContext)dmc, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+    							@Override
+    							protected void handleSuccess() {
+    								// thread is suspended - select the current stack frame, under the thread node
+    								if (getData()) {
+    									// create the delta for the thread node
+    									VMDelta threadDelta = parentDelta.addNode(
+    											createVMContext(dmc), 
+    											nodeOffset + threadOffset, 
+    											IModelDelta.NO_CHANGE
+    									); 
+    									// retrieve the current stackframe selected in GDB, if any
+    									getCurrentStackFrameNum(new DataRequestMonitor<Integer>(getExecutor(), rm) {
+    										@Override
+											public void handleSuccess() {
+    											final IVMNode firstChildNode = getVMProvider().getChildVMNodes(ThreadVMNode.this)[0];
+    											final int stackFrameNum = getData();
+    											// Retrieve the list of stack frames, and mark the top frame to be selected.
+    	    									getVMProvider().updateNode(
+    	    											firstChildNode,
+    	    											new VMChildrenUpdate(
+    	    													threadDelta,
+    	    													getVMProvider().getPresentationContext(), -1, -1,
+    	    													new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
+    	    														@Override
+    	    														public void handleCompleted() {
+    	    															final List<Object> data= getData();
+    	    															if (data != null && data.size() != 0) {
+    	    																// create the delta for the stack frame node
+    	    																threadDelta.addNode(
+    	    																		data.get(stackFrameNum), 
+    	    																		stackFrameNum, 
+    	    																		IModelDelta.SELECT | IModelDelta.FORCE
+    	    																);
+    	    																rm.done();
+    	    																return;
+    	    															}
+    	    														}
+    	    													})
+    	    											);
+    										}
+    									});
+    								}
+    								// thread is running
+    								else {
+    									// create delta to select the thread node
+    									parentDelta.addNode(
+    											createVMContext(dmc), nodeOffset + threadOffset,
+    											IModelDelta.SELECT | IModelDelta.FORCE);
+    									rm.done();
+    								}
+    							}
+    						});
+    					}
+    				}
+    			});
+    }
+
+
+    /**
+     * This method check whether a thread is currently suspended
+     * @param ctx thread context
+     * @param rm request monitor
+     */
+    private void isThreadSuspended(IExecutionDMContext ctx, final DataRequestMonitor<Boolean> rm) {
+    	try {
+    		getSession().getExecutor().execute(new DsfRunnable() {
+    			@Override
+    			public void run() {
+    				IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+    				rm.setData(runControl.isSuspended(ctx) || runControl.isStepping(ctx));
+    				rm.done();
+    			}});
+    	} catch (RejectedExecutionException e) {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Session shut down", null)); //$NON-NLS-1$);
+	        rm.done();
+    	}
+    }
+    
+     /**
+      * Ask the synchronization service which stack frame is currently selected
+      */
+    private void getCurrentStackFrameNum(final DataRequestMonitor<Integer> rm) {
+    	try {
+    		getSession().getExecutor().execute(new DsfRunnable() {
+    			@Override
+    			public void run() {
+    				IGDBSynchronizer sync = getServicesTracker().getService(IGDBSynchronizer.class);
+    				rm.setData(Integer.parseInt(sync.getCurrentStackFrameId()));
+    				rm.done();
+    			}});
+    	} catch (RejectedExecutionException e) {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Session shut down", null)); //$NON-NLS-1$);
+	        rm.done();
+    	}
+    }
+    
+
     private static final String MEMENTO_NAME = "THREAD_MEMENTO_NAME"; //$NON-NLS-1$
     
     /*

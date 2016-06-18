@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.HierarchicalProperties;
+import org.eclipse.cdt.arduino.core.internal.LinkedProperties;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,7 +55,7 @@ public class ArduinoPlatform {
 
 	private ArduinoPackage pkg;
 	private HierarchicalProperties boardsProperties;
-	private Properties platformProperties;
+	private LinkedProperties platformProperties;
 	private Map<String, String> menus = new HashMap<>();
 	private Map<String, ArduinoLibrary> libraries;
 
@@ -104,13 +105,13 @@ public class ArduinoPlatform {
 		return size;
 	}
 
-	public void setPlatformProperties(Properties platformProperties) {
+	public void setPlatformProperties(LinkedProperties platformProperties) {
 		this.platformProperties = platformProperties;
 	}
 
 	public List<ArduinoBoard> getBoards() {
 		if (boardsProperties == null) {
-			Properties boardProps = new Properties();
+			LinkedProperties boardProps = new LinkedProperties();
 
 			if (Files.exists(getInstallPath())) {
 				try (InputStream is = new FileInputStream(getInstallPath().resolve("boards.txt").toFile()); //$NON-NLS-1$
@@ -182,9 +183,9 @@ public class ArduinoPlatform {
 		return null;
 	}
 
-	public Properties getPlatformProperties() throws CoreException {
+	public LinkedProperties getPlatformProperties() throws CoreException {
 		if (platformProperties == null) {
-			platformProperties = new Properties();
+			platformProperties = new LinkedProperties();
 			try (BufferedReader reader = new BufferedReader(
 					new FileReader(getInstallPath().resolve("platform.txt").toFile()))) { //$NON-NLS-1$
 				// There are regex's here and need to preserve the \'s

@@ -17,10 +17,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
+import org.eclipse.cdt.arduino.core.internal.LinkedProperties;
 import org.eclipse.core.runtime.CoreException;
 
 public class ArduinoPackage {
@@ -92,12 +92,12 @@ public class ArduinoPackage {
 			if (Files.isDirectory(getInstallPath())) {
 				Path platformTxt = Paths.get("platform.txt"); //$NON-NLS-1$
 				try {
-					Path hardware = getInstallPath().resolve("hardware");
+					Path hardware = getInstallPath().resolve("hardware"); //$NON-NLS-1$
 					if (Files.exists(hardware)) {
 						Files.find(hardware, 2, // $NON-NLS-1$
 								(path, attrs) -> path.getFileName().equals(platformTxt)).forEach(path -> {
 									try (FileReader reader = new FileReader(path.toFile())) {
-										Properties platformProperties = new Properties();
+										LinkedProperties platformProperties = new LinkedProperties();
 										platformProperties.load(reader);
 										String arch = path.getName(path.getNameCount() - 2).toString();
 										String version = platformProperties.getProperty("version"); //$NON-NLS-1$

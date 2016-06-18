@@ -358,21 +358,23 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		getSources(coreSources, corePath, true);
 		buildModel.put("platform_core_srcs", coreSources); //$NON-NLS-1$
 
-		ArduinoPlatform variantPlatform = platform;
-		String variant = properties.getProperty("build.variant"); //$NON-NLS-1$
-		if (variant.contains(":")) { //$NON-NLS-1$
-			String[] segments = variant.split(":"); //$NON-NLS-1$
-			if (segments.length == 2) {
-				variantPlatform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
-				variant = segments[1];
-			}
-		}
-		Path variantPath = variantPlatform.getInstallPath().resolve("variants").resolve(variant); //$NON-NLS-1$
-		buildModel.put("platform_variant_path", pathString(variantPath)); //$NON-NLS-1$
 		List<String> variantSources = new ArrayList<>();
-		getSources(variantSources, variantPath, true);
+		String variant = properties.getProperty("build.variant"); //$NON-NLS-1$
+		if (variant != null) {
+			ArduinoPlatform variantPlatform = platform;
+			if (variant.contains(":")) { //$NON-NLS-1$
+				String[] segments = variant.split(":"); //$NON-NLS-1$
+				if (segments.length == 2) {
+					variantPlatform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
+					variant = segments[1];
+				}
+			}
+			Path variantPath = variantPlatform.getInstallPath().resolve("variants").resolve(variant); //$NON-NLS-1$
+			buildModel.put("platform_variant_path", pathString(variantPath)); //$NON-NLS-1$
+			getSources(variantSources, variantPath, true);
+		}
 		buildModel.put("platform_variant_srcs", variantSources); //$NON-NLS-1$
-
+		
 		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("archive_file", "core.a"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -608,12 +610,16 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 
 		ArduinoPlatform variantPlatform = platform;
 		String variant = properties.getProperty("build.variant"); //$NON-NLS-1$
-		if (variant.contains(":")) { //$NON-NLS-1$
-			String[] segments = variant.split(":"); //$NON-NLS-1$
-			if (segments.length == 2) {
-				variantPlatform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
-				variant = segments[1];
+		if (variant != null) {
+			if (variant.contains(":")) { //$NON-NLS-1$
+				String[] segments = variant.split(":"); //$NON-NLS-1$
+				if (segments.length == 2) {
+					variantPlatform = manager.getInstalledPlatform(segments[0], platform.getArchitecture());
+					variant = segments[1];
+				}
 			}
+		} else {
+			return Arrays.asList(corePlatform.getInstallPath().resolve("cores").resolve(core)); //$NON-NLS-1$
 		}
 
 		return Arrays.asList(corePlatform.getInstallPath().resolve("cores").resolve(core), //$NON-NLS-1$

@@ -22,7 +22,11 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSearch;
 
-
+/**
+ * An implicit name is used to resolve uses of implicit bindings, such as overloaded operators.
+ *
+ * @see IASTImplicitName
+ */
 public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 	private boolean alternate;
 	private boolean isOperator;
@@ -89,7 +93,7 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 	public boolean isReference() {
 		return !isDefinition;
 	}
-	
+
 	public void setIsDefinition(boolean val) {
 		isDefinition= val;
 	}
@@ -128,7 +132,7 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 			}
 		}
     }
-	
+
 	// Fallback algorithm to use in computeOperatorOffsets() when the operator is
 	// in a macro expansion.
 	private boolean computeOperatorOffsetsFallback(IASTNode relativeNode, boolean trailing) {
@@ -136,34 +140,36 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 			return false;
 		}
 		ASTNode relative = (ASTNode) relativeNode;
-		
-		// Find the sequence numbers denoting the bounds of the leading or 
-		// trailing syntax, much as IASTNode.getLeadingSyntax() or 
+
+		// Find the sequence numbers denoting the bounds of the leading or
+		// trailing syntax, much as IASTNode.getLeadingSyntax() or
 		// getTrailingSyntax() would. The code here follows the
 		// implementation of those functions closely.
 		ASTNodeSearch visitor = new ASTNodeSearch(relativeNode);
 		IASTNode sibling = trailing ? visitor.findRightSibling() : visitor.findLeftSibling();
 		IASTNode parent = sibling == null ? relativeNode.getParent() : null;
-		if (!((sibling == null || sibling instanceof ASTNode) && 
+		if (!((sibling == null || sibling instanceof ASTNode) &&
 			  (parent == null || parent instanceof ASTNode))) {
 			return false;
 		}
 		ASTNode sib = (ASTNode) sibling;
 		ASTNode par = (ASTNode) parent;
-		int start = trailing ? relative.getOffset() + relative.getLength() 
+		@SuppressWarnings("null")
+		int start = trailing ? relative.getOffset() + relative.getLength()
 		                     : sib != null ? sib.getOffset() + sib.getLength()
 		                                   : par.getOffset();
+   		@SuppressWarnings("null")
 		int end = trailing ? sib != null ? sib.getOffset()
 				                         : par.getOffset() + par.getLength()
 				           : relative.getOffset();
-				                         
+
 	    // If there is only one token within the bounds, it must be the
 	    // operator token, and we have our answer.
 		if (end == start + 1) {
 			setOffsetAndLength(start, 1);
 			return true;
 		}
-		
+
 		// Otherwise, give up.
 		return false;
 	}

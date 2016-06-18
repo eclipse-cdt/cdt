@@ -150,9 +150,11 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 		}
 		ASTNode sib = (ASTNode) sibling;
 		ASTNode par = (ASTNode) parent;
+		@SuppressWarnings("null")
 		int start = trailing ? relative.getOffset() + relative.getLength() 
 		                     : sib != null ? sib.getOffset() + sib.getLength()
 		                                   : par.getOffset();
+   		@SuppressWarnings("null")
 		int end = trailing ? sib != null ? sib.getOffset()
 				                         : par.getOffset() + par.getLength()
 				           : relative.getOffset();
@@ -163,7 +165,7 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 			setOffsetAndLength(start, 1);
 			return true;
 		}
-		
+
 		// Otherwise, give up.
 		return false;
 	}

@@ -40,6 +40,7 @@ public class ArduinoRemoteConnection
 	private static final String PLATFORM_NAME = "arduinoPlatformName"; //$NON-NLS-1$
 	private static final String BOARD_NAME = "arduinoBoardName"; //$NON-NLS-1$
 	private static final String MENU_QUALIFIER = "menu_"; //$NON-NLS-1$
+	private static final String PROGRAMMER = "programmer"; //$NON-NLS-1$
 
 	private final IRemoteConnection remoteConnection;
 	private SerialPort serialPort;
@@ -61,17 +62,25 @@ public class ArduinoRemoteConnection
 		ArduinoPackage pkg = platform.getPackage();
 		workingCopy.setAttribute(PACKAGE_NAME, pkg.getName());
 	}
-	
+
 	public static void setPortName(IRemoteConnectionWorkingCopy workingCopy, String portName) {
 		workingCopy.setAttribute(PORT_NAME, portName);
 	}
-	
+
 	public static void setMenuValue(IRemoteConnectionWorkingCopy workingCopy, String key, String value) {
 		workingCopy.setAttribute(MENU_QUALIFIER + key, value);
 	}
-	
+
+	public static void setProgrammer(IRemoteConnectionWorkingCopy workingCopy, String programmer) {
+		workingCopy.setAttribute(PROGRAMMER, programmer);
+	}
+
 	public String getMenuValue(String key) {
 		return remoteConnection.getAttribute(MENU_QUALIFIER + key);
+	}
+
+	public String getProgrammer() {
+		return remoteConnection.getAttribute(PROGRAMMER);
 	}
 
 	@Override

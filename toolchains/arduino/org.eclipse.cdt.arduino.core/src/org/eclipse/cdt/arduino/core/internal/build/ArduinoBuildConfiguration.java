@@ -83,6 +83,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 	private static final String PLATFORM_NAME = "platformName"; //$NON-NLS-1$
 	private static final String BOARD_NAME = "boardName"; //$NON-NLS-1$
 	private static final String MENU_QUALIFIER = "menu_"; //$NON-NLS-1$
+	private static final String PROGRAMMER = "programmer"; //$NON-NLS-1$
 
 	private static ArduinoManager manager = Activator.getService(ArduinoManager.class);
 
@@ -146,22 +147,28 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			String launchMode, IToolChain toolChain) throws CoreException {
 		this(config, name, target.getBoard(), launchMode, toolChain);
 
+		Preferences settings = getSettings();
+
 		// Store the menu settings
 		HierarchicalProperties menus = board.getMenus();
 		if (menus != null) {
-			Preferences settings = getSettings();
 			for (String id : menus.getChildren().keySet()) {
 				String value = target.getMenuValue(id);
 				if (value != null) {
 					settings.put(MENU_QUALIFIER + id, value);
 				}
 			}
+		}
 
-			try {
-				settings.flush();
-			} catch (BackingStoreException e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Saving preferences", e)); //$NON-NLS-1$
-			}
+		String programmer = target.getProgrammer();
+		if (programmer != null) {
+			settings.put(PROGRAMMER, programmer);
+		}
+
+		try {
+			settings.flush();
+		} catch (BackingStoreException e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Saving preferences", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -540,7 +547,9 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 	}
 
 	public String[] getUploadCommand(String serialPort) throws CoreException {
-		String toolName = getProperties().getProperty("upload.tool"); //$NON-NLS-1$
+		Properties properties = getProperties();
+
+		String toolName = properties.getProperty("upload.tool"); //$NON-NLS-1$
 		ArduinoPlatform platform = getBoard().getPlatform();
 		if (toolName.contains(":")) { //$NON-NLS-1$
 			String[] segments = toolName.split(":"); //$NON-NLS-1$
@@ -550,8 +559,6 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			}
 		}
 
-		Properties properties = getProperties();
-		
 		ArduinoTool uploadTool = platform.getPackage().getLatestTool(toolName);
 		if (uploadTool != null) {
 			properties.putAll(uploadTool.getToolProperties());
@@ -579,14 +586,36 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			}
 		}
 
-		// TODO make this a preference
-		properties.put("upload.verbose", properties.getProperty("upload.params.verbose", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		properties.put("upload.verify", properties.getProperty("upload.params.verify", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String command;
+		if (properties.get("upload.protocol") != null) { //$NON-NLS-1$
+			// TODO make this a preference
+			properties.put("upload.verbose", properties.getProperty("upload.params.verbose", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			properties.put("upload.verify", properties.getProperty("upload.params.verify", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		// TODO needed this for esptool
-		properties.put("upload.resetmethod", "ck"); //$NON-NLS-1$ //$NON-NLS-2$
+			// TODO needed this for esptool
+			properties.put("upload.resetmethod", "ck"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		String command = resolveProperty("upload.pattern", properties); //$NON-NLS-1$
+			command = resolveProperty("upload.pattern", properties); //$NON-NLS-1$
+		} else {
+			// use the bootloader
+			String programmer = getSettings().get(PROGRAMMER, null);
+			if (programmer != null) {
+				HierarchicalProperties programmers = board.getPlatform().getProgrammers();
+				if (programmers != null) {
+					HierarchicalProperties programmerProps = programmers.getChild(programmer);
+					if (programmerProps != null) {
+						properties.putAll(programmerProps.flatten());
+					}
+				}
+			}
+			
+			// TODO preference
+			properties.put("program.verbose", properties.getProperty("program.params.verbose", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			properties.put("program.verify", properties.getProperty("program.params.verify", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+			command = resolveProperty("program.pattern", properties); //$NON-NLS-1$
+		}
+
 		if (command == null) {
 			throw Activator.coreException("Upload command not specified", null);
 		}

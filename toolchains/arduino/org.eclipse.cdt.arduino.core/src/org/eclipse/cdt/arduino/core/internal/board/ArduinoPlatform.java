@@ -56,6 +56,7 @@ public class ArduinoPlatform {
 	private ArduinoPackage pkg;
 	private HierarchicalProperties boardsProperties;
 	private LinkedProperties platformProperties;
+	private HierarchicalProperties programmerProperties;
 	private Map<String, String> menus = new HashMap<>();
 	private Map<String, ArduinoLibrary> libraries;
 
@@ -198,10 +199,36 @@ public class ArduinoPlatform {
 					platformProperties.load(reader1);
 				}
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading platform.txt", e)); //$NON-NLS-1$
+				throw Activator.coreException(e);
 			}
 		}
 		return platformProperties;
+	}
+
+	public HierarchicalProperties getProgrammers() throws CoreException {
+		if (programmerProperties == null) {
+			LinkedProperties props = new LinkedProperties();
+			Path programmersTxt = getInstallPath().resolve("programmers.txt"); //$NON-NLS-1$
+			if (Files.exists(programmersTxt)) {
+				try (FileInputStream in = new FileInputStream(programmersTxt.toFile())) {
+					props.load(in);
+					programmerProperties = new HierarchicalProperties(props);
+				} catch (IOException e) {
+					throw Activator.coreException(e);
+				}
+			} else {
+				// TODO for now, grab the one from the arduino package
+				ArduinoManager manager = Activator.getService(ArduinoManager.class);
+				ArduinoPackage arduinoPkg = manager.getPackage("arduino");
+				if (arduinoPkg != null) {
+					ArduinoPlatform arduinoPlat = arduinoPkg.getInstalledPlatform(getArchitecture());
+					if (arduinoPlat != null) {
+						programmerProperties = arduinoPlat.getProgrammers();
+					}
+				}
+			}
+		}
+		return programmerProperties;
 	}
 
 	public Path getInstallPath() {

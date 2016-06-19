@@ -13,8 +13,8 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
@@ -100,25 +100,6 @@ public class FullIntegration {
 
 	private static void setupSkipUpload() throws Exception {
 		skipUpload = new HashSet<>();
-
-		// missing upload.protocol
-		skipUpload.add(arduinoManager.getBoard("arduino", "avr", "gemma"));
-		skipUpload.add(arduinoManager.getBoard("adafruit", "avr", "gemma"));
-		skipUpload.add(arduinoManager.getBoard("adafruit", "avr", "trinket5"));
-		skipUpload.add(arduinoManager.getBoard("adafruit", "avr", "trinket3"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attinyx7"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attinyx61"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attinyx8"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attiny1634"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attinyx313"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attinyx5"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attinyx4"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attinyx41"));
-		skipUpload.add(arduinoManager.getBoard("ATTinyCore", "avr", "attiny828"));
-		skipUpload.add(arduinoManager.getBoard("arduino-tiny-841", "avr", "attiny1634"));
-		skipUpload.add(arduinoManager.getBoard("arduino-tiny-841", "avr", "attinyx41"));
-		skipUpload.add(arduinoManager.getBoard("arduino-tiny-841", "avr", "attiny828"));
-		skipUpload.add(arduinoManager.getBoard("arduino-tiny-841", "avr", "attiny828"));
 
 		// usbtiny missing
 		skipUpload.add(arduinoManager.getBoard("adafruit", "avr", "protrinket3"));
@@ -226,6 +207,14 @@ public class FullIntegration {
 					ArduinoRemoteConnection.setMenuValue(workingCopy, key, value);
 					break;
 				}
+			}
+		}
+
+		HierarchicalProperties programmers = board.getPlatform().getProgrammers();
+		if (programmers != null && programmers.getChildren() != null) {
+			for (String programmer : programmers.getChildren().keySet()) {
+				ArduinoRemoteConnection.setProgrammer(workingCopy, programmer);
+				break;
 			}
 		}
 

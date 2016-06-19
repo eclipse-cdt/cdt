@@ -17,8 +17,6 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.arduino.core.internal.HierarchicalProperties;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
@@ -49,6 +47,9 @@ public class BoardPropertyControl extends Composite {
 
 	private List<SelectionListener> listeners = Collections.synchronizedList(new ArrayList<SelectionListener>());
 	private List<Control> menuControls = new ArrayList<>();
+	
+	private Label programmerLabel;
+	private Combo programmerCombo;
 
 	public BoardPropertyControl(Composite parent, int style) {
 		super(parent, style);
@@ -158,6 +159,28 @@ public class BoardPropertyControl extends Composite {
 				combo.select(0);
 			}
 		}
+		
+		try {
+			HierarchicalProperties programmers = board.getPlatform().getProgrammers();
+			if (programmers != null && programmers.getChildren() != null) {
+				programmerLabel = new Label(this, SWT.NONE);
+				programmerLabel.setText("Programmer:");
+
+				programmerCombo = new Combo(this, SWT.READ_ONLY);
+				programmerCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
+				List<String> ids = new ArrayList<>();
+				for (Entry<String, HierarchicalProperties> programmer : programmers.getChildren().entrySet()) {
+					ids.add(programmer.getKey());
+					String name = programmer.getValue().getChild("name").getValue(); //$NON-NLS-1$
+					programmerCombo.add(name);
+				}
+				programmerCombo.setData(ids);
+				programmerCombo.select(0);
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
+		}
 	}
 
 	private void boardChanged() {
@@ -169,6 +192,8 @@ public class BoardPropertyControl extends Composite {
 				control.dispose();
 			}
 			menuControls.clear();
+			programmerLabel.dispose();
+			programmerCombo.dispose();
 
 			board = newBoard;
 			updateBoardMenu();
@@ -204,6 +229,12 @@ public class BoardPropertyControl extends Composite {
 					ArduinoRemoteConnection.setMenuValue(workingCopy, key, value);
 				}
 			}
+		}
+		
+		if (programmerCombo != null) {
+			@SuppressWarnings("unchecked")
+			String programmer = ((List<String>) programmerCombo.getData()).get(programmerCombo.getSelectionIndex());
+			ArduinoRemoteConnection.setProgrammer(workingCopy, programmer);
 		}
 	}
 

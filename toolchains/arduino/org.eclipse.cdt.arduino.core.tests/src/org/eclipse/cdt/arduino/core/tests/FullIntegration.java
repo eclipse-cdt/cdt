@@ -65,7 +65,9 @@ public class FullIntegration {
 	private static void setPreferences() throws Exception {
 		URL[] urls = new URL[] { new URL("http://downloads.arduino.cc/packages/package_index.json"),
 				new URL("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json"),
+				new URL("http://arduino.esp8266.com/stable/package_esp8266com_index.json"),
 				new URL("http://drazzy.com/package_drazzy.com_index.json") };
+		// new URL("https://github.com/chipKIT32/chipKIT-core/raw/master/package_chipkit_index.json")
 		ArduinoPreferences.setBoardUrlList(urls);
 
 		Path workspace = Paths.get(ResourcesPlugin.getWorkspace().getRoot().getLocationURI());

@@ -592,9 +592,6 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			properties.put("upload.verbose", properties.getProperty("upload.params.verbose", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			properties.put("upload.verify", properties.getProperty("upload.params.verify", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-			// TODO needed this for esptool
-			properties.put("upload.resetmethod", "ck"); //$NON-NLS-1$ //$NON-NLS-2$
-
 			command = resolveProperty("upload.pattern", properties); //$NON-NLS-1$
 		} else {
 			// use the bootloader

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_0693a9af",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-06-20T18:28:43Z",
+      "side": 1,
+      "message": "Can you also add the ui.disassembly package?\nWe should export everything all the time.\nExplanation here: https://wiki.eclipse.org/Export-Package",
+      "revId": "b0aa52d216303d4399a04557d3eb0e43306325fe",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

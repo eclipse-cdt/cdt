@@ -34,12 +34,12 @@
 	<repositories>
 		<repository>
 			<id>eclipse</id>
-			<url>http://download.eclipse.org/releases/mars/</url>
+			<url>http://download.eclipse.org/releases/neon/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.5/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.6/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -49,7 +49,7 @@
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20151221205849/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

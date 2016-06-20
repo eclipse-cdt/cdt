@@ -19,6 +19,6 @@ Export-Package: org.eclipse.cdt.examples.dsf.pda,
  org.eclipse.cdt.examples.dsf.pda.service,
  org.eclipse.cdt.examples.dsf.pda.service.commands,
  org.eclipse.cdt.examples.dsf.pda.sourcelookup
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %providerName
 Import-Package: com.ibm.icu.text

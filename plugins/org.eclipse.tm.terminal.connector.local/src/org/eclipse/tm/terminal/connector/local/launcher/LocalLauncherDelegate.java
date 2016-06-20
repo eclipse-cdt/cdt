@@ -113,7 +113,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 
 		// Initialize the local terminal working directory.
 		// By default, start the local terminal in the users home directory
-		String initialCwd = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
+		String initialCwd = org.eclipse.tm.terminal.view.ui.activator.UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
 		String cwd = null;
 		if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd) || "".equals(initialCwd.trim())) { //$NON-NLS-1$
 			cwd = System.getProperty("user.home"); //$NON-NLS-1$
@@ -262,7 +262,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 			}
 		}
 		if (shell == null) {
-			shell = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX);
+			shell = org.eclipse.tm.terminal.view.ui.activator.UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX);
 			if (shell == null || "".equals(shell)) { //$NON-NLS-1$
 				if (System.getenv("SHELL") != null && !"".equals(System.getenv("SHELL").trim())) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					shell = System.getenv("SHELL").trim(); //$NON-NLS-1$
@@ -298,7 +298,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 
 		String arguments = (String)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ARGS);
 		if (arguments == null && !Platform.OS_WIN32.equals(Platform.getOS())) {
-			arguments = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS);
+			arguments = org.eclipse.tm.terminal.view.ui.activator.UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS);
 		}
 
 		// Determine if a PTY will be used

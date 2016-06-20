@@ -22,6 +22,23 @@
       "revId": "77d979502d8f4c82edafd38115a0fcbba3e9743b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_c6a2a12a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-06-20T18:10:01Z",
+      "side": 1,
+      "message": "You are right.  However, I find that it does not make it clear that we really want to do that.  Having an explicit else clause makes the code more clear, I find.",
+      "revId": "77d979502d8f4c82edafd38115a0fcbba3e9743b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

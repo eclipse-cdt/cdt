@@ -21,7 +21,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.managedbuilder.gnu.ui;bundle-version="8.2.0",
  org.eclipse.cdt.debug.core,
  org.eclipse.ui.workbench
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir

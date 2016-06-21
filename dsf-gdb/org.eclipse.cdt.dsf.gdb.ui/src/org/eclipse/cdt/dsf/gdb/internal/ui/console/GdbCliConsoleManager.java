@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -23,12 +25,22 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
-import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IConsoleListener;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * A console manager for GDB sessions which adds and removes
@@ -43,6 +55,14 @@ import org.eclipse.ui.console.IConsoleManager;
  * service to establish if it should start a gdb cli console or not.
  */
 public class GdbCliConsoleManager implements ILaunchesListener2 {
+
+	/** A list of all known GDB consoles */
+	private List<GdbCliConsole> fGdbConsoleList = new ArrayList<>();
+	
+	/** A list of listeners registered for notifications of changes to GDB consoles */
+	private ListenerList<IConsoleListener> fConsoleListeners = new ListenerList<>();
+	
+	private ShowGdbConsoleViewJob showGdbConsoleViewJob = new ShowGdbConsoleViewJob();
 
 	/**
 	 * Start the tracing console.  We don't do this in a constructor, because
@@ -68,7 +88,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
     @Override
 	public void launchesAdded(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
-			addCliConsole(launch);
+			handleCliConsoleForLaunch(launch);
 		}
 	}
 
@@ -90,7 +110,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 		}
 	}
 	
-	protected void addCliConsole(ILaunch launch) {
+	protected void handleCliConsoleForLaunch(ILaunch launch) {
 		// Full CLI GDB consoles are only added for GdbLaunches
 		if (launch instanceof GdbLaunch) {
 			new GdbCliConsoleCreator((GdbLaunch)launch).init();
@@ -100,7 +120,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 	protected void removeCliConsole(ILaunch launch) {
 		GdbCliConsole console = getCliConsole(launch);
 		if (console != null) {
-			ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{console});
+			removeCliConsole(console);
 		}
 	}
 
@@ -112,21 +132,96 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 	}
 
 	private GdbCliConsole getCliConsole(ILaunch launch) {
-		ConsolePlugin plugin = ConsolePlugin.getDefault();
-		if (plugin != null) {
-			// This plugin can be null when running headless JUnit tests
-			IConsoleManager manager = plugin.getConsoleManager(); 
-			IConsole[] consoles = manager.getConsoles();
-			for (IConsole console : consoles) {
-				if (console instanceof GdbCliConsole) {
-					GdbCliConsole gdbConsole = (GdbCliConsole)console;
-					if (gdbConsole.getLaunch().equals(launch)) {
-						return gdbConsole;
-					}
-				}
+		GdbCliConsole[] consoles = getCliConsoles();
+		for (GdbCliConsole console : consoles) {
+			if (console.getLaunch().equals(launch)) {
+				return console;
 			}
 		}
 		return null;
+	}
+
+	private void addCliConsole(GdbCliConsole console) {
+	    synchronized (fGdbConsoleList) {
+	    	fGdbConsoleList.add(console);
+	    }
+		for (IConsoleListener listener : fConsoleListeners) {
+			listener.consolesAdded(new IConsole[] { console });
+		}
+	}
+	
+	private void removeCliConsole(GdbCliConsole console) {
+	    synchronized (fGdbConsoleList) {
+	    	fGdbConsoleList.remove(console);
+	    }
+		for (IConsoleListener listener : fConsoleListeners) {
+			listener.consolesRemoved(new IConsole[] { console });
+		}
+	}
+	
+	public GdbCliConsole[] getCliConsoles() {
+	    synchronized (fGdbConsoleList) {
+	    	return fGdbConsoleList.toArray(new GdbCliConsole[fGdbConsoleList.size()]);
+	    }
+	}
+	
+	public void addConsoleListener(IConsoleListener listener) {
+		fConsoleListeners.add(listener);
+	}
+
+	public void removeConsoleListener(IConsoleListener listener) {
+		fConsoleListeners.remove(listener);
+	}
+
+	private class ShowGdbConsoleViewJob extends WorkbenchJob {
+		private IConsole fConsole;
+
+		ShowGdbConsoleViewJob() {
+			super("Show GDB Console View"); //$NON-NLS-1$
+			setSystem(true);
+			setPriority(Job.SHORT);
+		}
+
+		void setConsole(IConsole console) {
+			fConsole = console;
+		}
+
+		@Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+            IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            if (window != null && fConsole != null) {
+                IWorkbenchPage page = window.getActivePage();
+                if (page != null) {
+                	boolean consoleFound = false;
+					IViewPart view = page.findView(GdbConsoleView.GDB_CONSOLE_VIEW_ID);
+					if (view != null) {
+						GdbConsoleView consoleView = (GdbConsoleView)view;
+						boolean consoleVisible = page.isPartVisible(consoleView);
+						if (consoleVisible) {
+							consoleFound = true;
+							page.bringToTop(consoleView);
+						}
+					}
+
+					if (!consoleFound) {
+						try {
+							GdbConsoleView consoleView = (GdbConsoleView)page.showView(GdbConsoleView.GDB_CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_CREATE);
+							page.bringToTop(consoleView);
+						} catch (PartInitException e) {
+							GdbUIPlugin.log(e);
+						}
+					}
+                }
+            }
+            fConsole = null;
+			return Status.OK_STATUS;
+		}
+	}
+
+
+	public void showGdbConsoleView(IConsole console) {
+		showGdbConsoleViewJob.setConsole(console);
+		showGdbConsoleViewJob.schedule(100);
 	}
 
 	/**
@@ -181,14 +276,13 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 				String consoleTitle = fLaunch.getGDBPath().toOSString().trim() + " (" + gdbVersion +")"; //$NON-NLS-1$ //$NON-NLS-2$
 
 				GdbCliConsole console = new GdbCliConsole(fLaunch, consoleTitle);
+    			addCliConsole(console);
 
-				// Register this console
-				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
-
-				// Very important to make sure the console view is open or else things will not work
-				ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
-			}
-    		// Else, not the right type of backend service, or the service said not to start a GdbCliConsole
+    			// Make sure the GDB Console view is visible
+    			showGdbConsoleView(console);
+    		}
+    		// Else, not the right type of backend service, or
+    		// the service said not to start a GdbCliConsole
 		}
 		
 		@ConfinedToDsfExecutor("fSession.getExecutor()")

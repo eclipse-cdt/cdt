@@ -57,8 +57,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         	DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).addDebugContextListener(this);
         }
 
-		if (console instanceof TracingConsole || 
-				(isConsoleGdbCli(console) && console instanceof TextConsole)) {
+		if(console instanceof TracingConsole || isConsoleGdbCli(console)) {
 			TextConsole textConsole = (TextConsole) console;
 
 			// Add the save console action
@@ -73,6 +72,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	/**
 	 * Checks if the the console is the gdb CLI. We don't rely on the attached 
 	 * process name. Instead we check if the process is an instance of GDBProcess
+     * This gdb CLI console will only be used if the full GDB console is not available.
 	 * 
 	 * @param console The console to check
 	 * @return true if the the console is the gdb CLI
@@ -81,9 +81,6 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		if(console instanceof org.eclipse.debug.ui.console.IConsole) {
 			org.eclipse.debug.ui.console.IConsole debugConsole  = (org.eclipse.debug.ui.console.IConsole)console;
 			return (debugConsole.getProcess() instanceof GDBProcess);
-		}
-		if (console instanceof GdbCliConsole) {
-			return true;
 		}
 		return false;
 	}
@@ -157,7 +154,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         }
 
         if (context instanceof GDBProcess) {
-        	return (GDBProcess)context;
+            return (GDBProcess)context;
         }
         
 		if (context != null) {
@@ -198,15 +195,6 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
     @Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
-			if (fView != null && fConsole instanceof GdbCliConsole) {
-				IProcess currentProcess = getCurrentProcess();
-				if (currentProcess instanceof GDBProcess && 
-						((GdbCliConsole)fConsole).getLaunch().equals(currentProcess.getLaunch())) {
-					fView.display(fConsole);
-				}
-				return;
-			}
-			
 			IProcess consoleProcess = getConsoleProcess();
 			if (fView != null && consoleProcess != null && consoleProcess.equals(getCurrentProcess())) {
 	            fView.display(fConsole);
@@ -214,3 +202,4 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		}
 	}
 }
+

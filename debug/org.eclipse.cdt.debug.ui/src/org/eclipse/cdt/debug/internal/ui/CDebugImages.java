@@ -134,6 +134,8 @@ public class CDebugImages {
 	public static final String IMG_WIZBAN_PATH_MAPPING = NAME_PREFIX + "mapping_wiz.gif";	//$NON-NLS-1$
 	public static final String IMG_WIZBAN_PATH_MAP_ENTRY = NAME_PREFIX + "mapentry_wiz.gif";	//$NON-NLS-1$
 
+	public static final String IMG_DEBUGGER_CONSOLE_SELECT = NAME_PREFIX + "debugger_console_select.gif";	//$NON-NLS-1$
+
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -203,6 +205,7 @@ public class CDebugImages {
     public static final ImageDescriptor DESC_OBJS_PATH_MAP_ENTRY = createManaged(T_OBJ, IMG_OBJS_PATH_MAP_ENTRY);
     public static final ImageDescriptor DESC_OBJS_COMMON_TAB = createManaged(T_OBJ, IMG_OBJS_COMMON_TAB);
     public static final ImageDescriptor DESC_OBJS_ARRAY_PARTITION = createManaged(T_OBJ, IMG_OBJS_ARRAY_PARTITION);
+    public static final ImageDescriptor DESC_OBJS_DEBUGGER_CONSOLE_SELECT = createManaged(T_OBJ, IMG_DEBUGGER_CONSOLE_SELECT);
 	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE = createManaged(T_WIZBAN, IMG_WIZBAN_ADD_SOURCE);
 	public static final ImageDescriptor DESC_WIZBAN_PATH_MAPPING = createManaged(T_WIZBAN, IMG_WIZBAN_PATH_MAPPING);
 	public static final ImageDescriptor DESC_WIZBAN_PATH_MAP_ENTRY = createManaged(T_WIZBAN, IMG_WIZBAN_PATH_MAP_ENTRY);

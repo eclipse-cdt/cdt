@@ -13,13 +13,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
+import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -37,18 +43,23 @@ import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
 import org.eclipse.ui.part.Page;
 
-public class GdbCliConsolePage extends Page {
+public class GdbCliConsolePage extends Page implements IDebugContextListener {
 
 	private DsfSession fSession;
+	private ILaunch fLaunch;
 	private Composite fMainComposite;
+	private IDebuggerConsoleView fView;
+	private IDebuggerConsole fConsole;
 	
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
 
-	public GdbCliConsolePage(GdbCliConsole gdbConsole) {
-		ILaunch launch = gdbConsole.getLaunch();
-		if (launch instanceof GdbLaunch) {
-			fSession = ((GdbLaunch)launch).getSession();
+	public GdbCliConsolePage(GdbCliConsole gdbConsole, IDebuggerConsoleView view) {
+		fConsole = gdbConsole;
+		fView = view;
+		fLaunch = gdbConsole.getLaunch();
+		if (fLaunch instanceof GdbLaunch) {
+			fSession = ((GdbLaunch)fLaunch).getSession();
 		} else {
 			assert false;
 		}
@@ -57,6 +68,7 @@ public class GdbCliConsolePage extends Page {
 	@Override
 	public void dispose() {
 		super.dispose();
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		fTerminalControl.disposeTerminal();
 	}
 	
@@ -65,6 +77,8 @@ public class GdbCliConsolePage extends Page {
 		fMainComposite = new Composite(parent, SWT.NONE);
 		fMainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fMainComposite.setLayout(new FillLayout());
+
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
 
 		// Create the terminal control that will be used to interact with GDB
 		fTerminalControl = TerminalViewControlFactory.makeControl(
@@ -159,5 +173,29 @@ public class GdbCliConsolePage extends Page {
 		properties.put(ITerminalsConnectorConstants.PROP_STDERR_LISTENERS, 
 				new ITerminalServiceOutputStreamMonitorListener[0]);
 		return properties;
+	}
+	
+	/**
+	 * Returns the launch to which the current selection belongs.
+	 * 
+	 * @return the launch to which the current selection belongs.
+	 */
+	protected ILaunch getCurrentLaunch() {
+		IAdaptable context = DebugUITools.getDebugContext();
+		if (context != null) {
+			return context.getAdapter(ILaunch.class);
+		}
+		return null;
+	}
+	
+	@Override
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			// Show this GDB console if it matches with the currently
+			// selected debug session
+			if (fLaunch.equals(getCurrentLaunch())) {
+				fView.display(fConsole);
+			}
+		}
 	}
 }

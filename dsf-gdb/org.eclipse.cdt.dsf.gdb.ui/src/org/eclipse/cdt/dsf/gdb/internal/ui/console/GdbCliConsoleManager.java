@@ -12,6 +12,9 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
+import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
@@ -26,9 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
 
 /**
  * A console manager for GDB sessions which adds and removes
@@ -55,20 +55,12 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 
 	public void shutdown() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		removeAllCliConsoles();
-	}
-
-	protected void removeAllCliConsoles() {
-		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
-		for (ILaunch launch : launches) {
-			removeCliConsole(launch);
-		}
 	}
 
     @Override
 	public void launchesAdded(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
-			addCliConsole(launch);
+			handleConsoleForLaunch(launch);
 		}
 	}
 
@@ -79,66 +71,70 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
     @Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
-			removeCliConsole(launch);
+			removeConsole(launch);
 		}
 	}
 	
     @Override
 	public void launchesTerminated(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
-			renameCliConsole(launch);
+			renameConsole(launch);
 		}
 	}
 	
-	protected void addCliConsole(ILaunch launch) {
+	protected void handleConsoleForLaunch(ILaunch launch) {
 		// Full CLI GDB consoles are only added for GdbLaunches
 		if (launch instanceof GdbLaunch) {
-			new GdbCliConsoleCreator((GdbLaunch)launch).init();
+			new GdbConsoleCreator((GdbLaunch)launch).init();
 		}
 	}
 
-	protected void removeCliConsole(ILaunch launch) {
-		GdbCliConsole console = getCliConsole(launch);
+	protected void removeConsole(ILaunch launch) {
+		IDebuggerConsole console = getConsole(launch);
 		if (console != null) {
-			ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{console});
+			removeConsole(console);
 		}
 	}
 
-	protected void renameCliConsole(ILaunch launch) {
-		GdbCliConsole console = getCliConsole(launch);
+	private void renameConsole(ILaunch launch) {
+		IDebuggerConsole console = getConsole(launch);
 		if (console != null) {
 			console.resetName();
 		}		
 	}
 
-	private GdbCliConsole getCliConsole(ILaunch launch) {
-		ConsolePlugin plugin = ConsolePlugin.getDefault();
-		if (plugin != null) {
-			// This plugin can be null when running headless JUnit tests
-			IConsoleManager manager = plugin.getConsoleManager(); 
-			IConsole[] consoles = manager.getConsoles();
-			for (IConsole console : consoles) {
-				if (console instanceof GdbCliConsole) {
-					GdbCliConsole gdbConsole = (GdbCliConsole)console;
-					if (gdbConsole.getLaunch().equals(launch)) {
-						return gdbConsole;
-					}
-				}
+	private IDebuggerConsole getConsole(ILaunch launch) {
+		IDebuggerConsoleManager manager = CDebugUIPlugin.getDebuggerConsoleManager(); 
+		for (IDebuggerConsole console : manager.getConsoles()) {
+			if (console.getLaunch().equals(launch)) {
+				return console;
 			}
 		}
 		return null;
 	}
 
+	private void addConsole(IDebuggerConsole console) {
+		getDebuggerConsoleManager().addConsole(console);
+	}
+	
+	private void removeConsole(IDebuggerConsole console) {
+		getDebuggerConsoleManager().removeConsole(console);
+	}
+	
+	private IDebuggerConsoleManager getDebuggerConsoleManager() {
+		return CDebugUIPlugin.getDebuggerConsoleManager();
+	}
+	
 	/**
 	 * Class that determines if a GdbCliConsole should be created for
 	 * this particular Gdblaunch.  It figures this out by asking the
 	 * Backend service.
 	 */
-	private class GdbCliConsoleCreator {
+	private class GdbConsoleCreator {
 		private GdbLaunch fLaunch;
 		private DsfSession fSession;
 		
-		public GdbCliConsoleCreator(GdbLaunch launch) {
+		public GdbConsoleCreator(GdbLaunch launch) {
 			fLaunch = launch;
 			fSession = launch.getSession();
 		}
@@ -156,10 +152,10 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 		            	
 		            	if (backend != null) {
 		            		// Backend service already available, us it!
-		            		verifyAndCreateCliConsole(backend);
+		            		verifyAndCreateConsole(backend);
 		            	} else {
 		            		// Backend service not available yet, let's wait for it to start.
-		            		fSession.addServiceEventListener(new GdbBackendStartedListener(GdbCliConsoleCreator.this, fSession), null);
+		            		fSession.addServiceEventListener(new GdbBackendStartedListener(GdbConsoleCreator.this, fSession), null);
 		            	}
 		        	}
 		        });
@@ -168,7 +164,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 		}
 		
 		@ConfinedToDsfExecutor("fSession.getExecutor()")
-		private void verifyAndCreateCliConsole(IGDBBackend backend) {
+		private void verifyAndCreateConsole(IGDBBackend backend) {
 			if (backend != null && backend.isFullGdbConsoleSupported()) {
 				// Create an new Cli console .
 				String gdbVersion;
@@ -180,15 +176,14 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 				}
 				String consoleTitle = fLaunch.getGDBPath().toOSString().trim() + " (" + gdbVersion +")"; //$NON-NLS-1$ //$NON-NLS-2$
 
-				GdbCliConsole console = new GdbCliConsole(fLaunch, consoleTitle);
+				IDebuggerConsole console = new GdbCliConsole(fLaunch, consoleTitle);
+    			addConsole(console);
 
-				// Register this console
-				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
-
-				// Very important to make sure the console view is open or else things will not work
-				ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
-			}
-    		// Else, not the right type of backend service, or the service said not to start a GdbCliConsole
+    			// Make sure the Debugger Console view is visible
+    			getDebuggerConsoleManager().showConsoleView(console);
+    		}
+    		// Else, not the right type of backend service, or
+    		// the service said not to start a GdbCliConsole
 		}
 		
 		@ConfinedToDsfExecutor("fSession.getExecutor()")
@@ -197,7 +192,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
         	IGDBBackend backend = tracker.getService(IGDBBackend.class);
         	tracker.dispose();
 
-    		verifyAndCreateCliConsole(backend);
+    		verifyAndCreateConsole(backend);
 		}
 	}
 	
@@ -208,9 +203,9 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 	 */
 	public class GdbBackendStartedListener {
 		private DsfSession fSession;
-		private GdbCliConsoleCreator fCreator;
+		private GdbConsoleCreator fCreator;
 		
-		public GdbBackendStartedListener(GdbCliConsoleCreator creator, DsfSession session) {
+		public GdbBackendStartedListener(GdbConsoleCreator creator, DsfSession session) {
 			fCreator = creator;
 			fSession = session;
 		}

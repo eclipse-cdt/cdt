@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -32,6 +34,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
 
 /**
@@ -83,6 +86,9 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 	 */
 	private int fTracingMinNumCharacters = fTracingMaxNumCharacters - NUMBER_OF_CHARS_TO_DELETE;
 	
+	//TODO handle synchronization
+	private List<GdbCliConsole> fGdbConsoleList = new ArrayList<>();
+	private List<IConsoleListener> fConsoleListeners = new ArrayList<>();
 	/**
 	 * Start the tracing console.  We don't do this in a constructor, because
 	 * we need to use <code>this</code>.
@@ -222,7 +228,7 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 	protected void removeCliConsole(ILaunch launch) {
 		GdbCliConsole console = getCliConsole(launch);
 		if (console != null) {
-			ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{console});
+			removeConsole(console);
 		}
 	}
 
@@ -273,17 +279,12 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 	
 	private GdbCliConsole getCliConsole(ILaunch launch) {
 		if (launch instanceof GdbLaunch) {
-			ConsolePlugin plugin = ConsolePlugin.getDefault();
-			if (plugin != null) {
-				// This plugin can be null when running headless JUnit tests
-				IConsoleManager manager = plugin.getConsoleManager(); 
-				IConsole[] consoles = manager.getConsoles();
-				for (IConsole console : consoles) {
-					if (console instanceof GdbCliConsole) {
-						GdbCliConsole gdbConsole = (GdbCliConsole)console;
-						if (gdbConsole.getLaunch().equals(launch)) {
-							return gdbConsole;
-						}
+			GdbCliConsole[] consoles = getConsoles();
+			for (IConsole console : consoles) {
+				if (console instanceof GdbCliConsole) {
+					GdbCliConsole gdbConsole = (GdbCliConsole)console;
+					if (gdbConsole.getLaunch().equals(launch)) {
+						return gdbConsole;
 					}
 				}
 			}
@@ -322,6 +323,35 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 		}
 	}
 	
+	private void addConsole(GdbCliConsole console) {
+		fGdbConsoleList.add(console);
+		for (IConsoleListener listener : fConsoleListeners) {
+			listener.consolesAdded(new IConsole[] { console });
+		}
+	}
+	
+	private void removeConsole(GdbCliConsole console) {
+		fGdbConsoleList.remove(console);
+		for (IConsoleListener listener : fConsoleListeners) {
+			listener.consolesRemoved(new IConsole[] { console });
+		}
+	}
+	
+	public GdbCliConsole[] getConsoles() {
+		return fGdbConsoleList.toArray(new GdbCliConsole[fGdbConsoleList.size()]);
+	}
+	
+	public void showConsoleView(IConsole console) {
+	}
+
+	public void addConsoleListener(IConsoleListener listener) {
+		fConsoleListeners.add(listener);
+	}
+
+	public void removeConsoleListener(IConsoleListener listener) {
+		fConsoleListeners.remove(listener);
+	}
+
 	/**
 	 * Class that determines if a GdbCliConsole should be created for
 	 * this particular Gdblaunch.  It figures this out by asking the
@@ -371,11 +401,11 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
     			// Create an new Cli console .
     			GdbCliConsole console = new GdbCliConsole(fLaunch, ConsoleMessages.ConsoleMessages_gdb_console_name);
 
-    			// Register this console
-    			ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
+    			// Register this local console
+    			addConsole(console);
 
     			// Very important to make sure the console view is open or else things will not work
-    			ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
+    			showConsoleView(console);
     		}
     		// Else, not the right type of backend service, or
     		// the service said not to start a GdbCliConsole

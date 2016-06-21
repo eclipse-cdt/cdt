@@ -91,10 +91,14 @@ public class GdbCliConsole extends AbstractConsole {
     	}
     }
 
-    @Override
-	public IPageBookViewPage createPage(IConsoleView view) {
+	public IPageBookViewPage createPage(GdbConsoleView view) {
 		view.setFocus();
 		fPage = new GdbCliConsolePage(this);
 		return fPage;
     }
+
+	@Override
+	public IPageBookViewPage createPage(IConsoleView view) {
+		return null;
+	}
 }

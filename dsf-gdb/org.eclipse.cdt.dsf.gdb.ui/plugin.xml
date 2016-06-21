@@ -296,6 +296,13 @@
             name="%view.osresources.name"
             icon="icons/full/view16/osresources_view.gif">
       </view>
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.console.GdbConsoleView"
+            id="org.eclipse.cdt.dsf.gdb.ui.console.gdbconsoleview"
+            name="GDB Console"
+            icon="icons/full/view16/gdb_console_view.png">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

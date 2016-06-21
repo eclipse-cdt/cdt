@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
+import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
+import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -22,7 +24,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * full-featured CLI interface.  This is only supported with GDB >= 7.12
  * and if IGDBBackend.isFullGdbConsoleSupported() returns true.
  */
-public class GdbCliConsole extends AbstractConsole {
+public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
 	private final ILaunch fLaunch;
 	private String fLabel;
 	
@@ -34,9 +36,11 @@ public class GdbCliConsole extends AbstractConsole {
         resetName();
 	}
     
+	@Override
 	public ILaunch getLaunch() { return fLaunch; }
     
-    public void resetName() {
+    @Override
+	public void resetName() {
     	String newName = computeName();
     	String name = getName();
     	if (!name.equals(newName)) {
@@ -71,10 +75,16 @@ public class GdbCliConsole extends AbstractConsole {
         
         return label;
     }
-
-    @Override
-	public IPageBookViewPage createPage(IConsoleView view) {
+    
+	@Override
+	public IPageBookViewPage createPage(IDebuggerConsoleView view) {
 		view.setFocus();
-		return new GdbCliConsolePage(this);
-    }
+		return new GdbCliConsolePage(this, view);
+	}
+
+	@Override
+	public IPageBookViewPage createPage(IConsoleView view) {
+		// This console is not used in the IConsoleView
+		return null;
+	}
 }

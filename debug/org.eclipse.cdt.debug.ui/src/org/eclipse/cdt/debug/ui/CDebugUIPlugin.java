@@ -24,6 +24,8 @@ import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditorManager;
 import org.eclipse.cdt.debug.internal.ui.pinclone.ViewIDCounterManager;
+import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleManager;
+import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
 import org.eclipse.core.resources.IWorkspace;
@@ -81,6 +83,8 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
 
     private DisassemblyEditorManager fDisassemblyEditorManager;
+    
+    private static IDebuggerConsoleManager fDebuggerConsoleManager;
 
 	/**
 	 * The constructor.
@@ -288,6 +292,8 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
         fDisassemblyEditorManager = new DisassemblyEditorManager();
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
 		
+		fDebuggerConsoleManager = new DebuggerConsoleManager();
+		
 		WorkbenchJob wjob = new WorkbenchJob("Initializing CDT Debug UI") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -396,5 +402,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 			image = registry.get(key);
 		}
 		return image;
+	}
+
+	/** @since 8.1 */
+	public static IDebuggerConsoleManager getDebuggerConsoleManager() {
+		return fDebuggerConsoleManager;
 	}
 }

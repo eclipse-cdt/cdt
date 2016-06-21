@@ -41,7 +41,8 @@
              <adapt type="org.eclipse.remote.core.IRemoteConnection">
                 <test
                       forcePluginActivation="false"
-                      property="org.eclipse.cdt.arduino.ui.isArduinoRemote">
+                      property="org.eclipse.remote.core.isConnectionType"
+                      value="org.eclipse.cdt.arduino.core.connectionType">
                 </test>
              </adapt>
           </enabledWhen>

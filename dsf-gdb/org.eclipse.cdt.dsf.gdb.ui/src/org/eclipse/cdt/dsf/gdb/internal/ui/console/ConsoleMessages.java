@@ -24,6 +24,7 @@ public class ConsoleMessages extends NLS {
 	public static String ConsoleMessages_save_confirm_overwrite_desc;
 	public static String ConsoleMessages_save_info_io_error_title;
 	public static String ConsoleMessages_save_info_io_error_desc;
+	public static String ConsoleMessages_no_console;
 	
 	static {
 		// initialize resource bundle

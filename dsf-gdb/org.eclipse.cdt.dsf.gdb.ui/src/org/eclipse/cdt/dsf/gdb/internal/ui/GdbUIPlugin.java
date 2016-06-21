@@ -83,6 +83,10 @@ public class GdbUIPlugin extends AbstractUIPlugin {
         fgBundleContext = null;
 	}
 
+	public static GdbConsoleManager getGdbConsoleManager() {
+		return fGdbConsoleManager;
+	}
+	
 	/**
 	 * Dispose adapter sets for all launches.
 	 */

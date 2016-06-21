@@ -175,6 +175,13 @@
             class="org.eclipse.cdt.debug.internal.ui.views.signals.FlexibleSignalsView"
             id="org.eclipse.cdt.debug.ui.SignalsView">
       </view>
+      <view
+            name="%DebuggerConsoleView.name"
+            icon="icons/view16/debugger_console_view.png"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView"
+            id="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

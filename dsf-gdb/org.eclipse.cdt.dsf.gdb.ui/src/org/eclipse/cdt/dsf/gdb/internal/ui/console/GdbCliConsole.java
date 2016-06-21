@@ -71,10 +71,14 @@ public class GdbCliConsole extends AbstractConsole {
     		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> setName(newName));
     	}
     }
-
-    @Override
-	public IPageBookViewPage createPage(IConsoleView view) {
+    
+	public IPageBookViewPage createPage(GdbConsoleView view) {
 		view.setFocus();
 		return new GdbCliConsolePage(this);
     }
+	
+	@Override
+	public IPageBookViewPage createPage(IConsoleView view) {
+		return null;
+	}
 }

@@ -77,18 +77,19 @@ public class ManagedCommandLineGenerator implements
 		if(outputName.length()>0 && outputName.indexOf("$(") != 0) //$NON-NLS-1$
 			outputName = DOUBLE_QUOTE + outputName + DOUBLE_QUOTE;
 
-		String inputsStr=""; //$NON-NLS-1$
+		String inputsStr = EMPTY;
 		if (inputResources!=null) {
+			StringBuilder sb = new StringBuilder();
 			for (String inp : inputResources) {
 				if(inp!=null && inp.length()>0) {
 					// if the input resource isn't a variable then quote it
 					if(inp.indexOf("$(") != 0) { //$NON-NLS-1$
 						inp = DOUBLE_QUOTE + inp + DOUBLE_QUOTE;
 					}
-					inputsStr = inputsStr + inp + WHITESPACE;
+					sb.append(inp).append(WHITESPACE);
 				}
 			}
-			inputsStr = inputsStr.trim();
+			inputsStr = sb.toString().trim();
 		}
 
 		String flagsStr = stringArrayToString(flags);

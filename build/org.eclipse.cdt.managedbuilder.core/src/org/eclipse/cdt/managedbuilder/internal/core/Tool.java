@@ -1047,12 +1047,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			// input file extensions
 			if (getInputExtensionsList().size() > 0) {
 				Iterator<String> iter = getInputExtensionsList().listIterator();
-				String inputs = iter.next();
+				StringBuilder inputs = new StringBuilder(iter.next());
 				while (iter.hasNext()) {
-					inputs += DEFAULT_SEPARATOR;
-					inputs += iter.next();
+					inputs.append(DEFAULT_SEPARATOR);
+					inputs.append(iter.next());
 				}
-				element.setAttribute(ITool.SOURCES, inputs);
+				element.setAttribute(ITool.SOURCES, inputs.toString());
 			}
 
 			// interface (header file) extensions

@@ -54,7 +54,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 class UpdateManagedProject12 {
-	
+
 	private static final String ID_CYGWIN = "cygwin";	//$NON-NLS-1$
 	private static final String ID_DEBUG = "debug";	//$NON-NLS-1$
 	private static final String ID_DIRS = "dirs";	//$NON-NLS-1$
@@ -201,16 +201,16 @@ class UpdateManagedProject12 {
 				name = "default";	//$NON-NLS-1$
 			}
 			// Reconstruct the extension
-			String extension = ""; //$NON-NLS-1$
+			StringBuilder extension = new StringBuilder();
 			for (int index = 1; index < nameElements.length; ++index) {
-				extension += nameElements[index];
+				extension.append(nameElements[index]);
 				if (index < nameElements.length - 1) {
-					extension += ID_SEPARATOR;	
+					extension.append(ID_SEPARATOR);
 				}
 			}
 			newConfig.setArtifactName(name);
 			if (extension.length() != 0) {
-				newConfig.setArtifactExtension(extension);
+				newConfig.setArtifactExtension(extension.toString());
 			}
 		}
 		

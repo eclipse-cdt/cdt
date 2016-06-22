@@ -168,12 +168,15 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 							String[] values = option.getBasicStringListValue();
 							if(values != null) {
 								optionValue = ""; //$NON-NLS-1$
+								StringBuilder sb = new StringBuilder();
 								String cmd = option.getCommand();
 								for (String value : values) {
 									if(!value.isEmpty() && !value.equals(EMPTY_QUOTED_STRING)) {
-										optionValue = optionValue + cmd + value + ' ';
+										sb.append(cmd).append(value);
+										sb.append(' ');
 									}
 								}
+								optionValue = sb.toString();
 							}
 							break;
 						case IOption.TREE:

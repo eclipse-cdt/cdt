@@ -620,14 +620,14 @@ public class BuildStep implements IBuildStep {
 					BuildResource bRcs[] = (BuildResource[])bType.getResources();
 					int optType = assignToOption.getValueType();
 					if (optType == IOption.STRING) {
-						String optVal = "";	   //$NON-NLS-1$
+						StringBuilder optVal = new StringBuilder();
 						for (int j=0; j<bRcs.length; j++) {
 							if (j != 0) {
-								optVal += " ";	   //$NON-NLS-1$
+								optVal.append(' ');
 							}
-							optVal += BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
+							optVal.append(BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString());
 						}
-						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal);
+						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal.toString());
 					} else if (
 							optType == IOption.STRING_LIST ||
 							optType == IOption.LIBRARIES ||

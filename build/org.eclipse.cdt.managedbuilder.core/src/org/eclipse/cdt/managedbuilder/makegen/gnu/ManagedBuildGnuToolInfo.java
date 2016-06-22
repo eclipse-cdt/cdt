@@ -54,6 +54,7 @@ import org.eclipse.core.runtime.Path;
  */
 public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	/*
 	 * Members
 	 */
@@ -385,14 +386,14 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					try {
 						int optType = assignToOption.getValueType();
 						if (optType == IOption.STRING) {
-							String optVal = "";	   //$NON-NLS-1$
+							StringBuilder optVal = new StringBuilder(EMPTY_STRING);
 							for (int j=0; j<itCommandInputs.size(); j++) {
 								if (j != 0) {
-									optVal += " ";	   //$NON-NLS-1$
+									optVal.append(" ");	   //$NON-NLS-1$
 								}
-								optVal += itCommandInputs.get(j);
+								optVal.append(itCommandInputs.get(j));
 							}
-							ManagedBuildManager.setOption(config, tool, assignToOption, optVal);
+							ManagedBuildManager.setOption(config, tool, assignToOption, optVal.toString());
 						} else if (
 								optType == IOption.STRING_LIST ||
 								optType == IOption.LIBRARIES ||

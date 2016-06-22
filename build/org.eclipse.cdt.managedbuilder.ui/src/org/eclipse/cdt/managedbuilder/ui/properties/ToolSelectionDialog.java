@@ -461,9 +461,9 @@ public class ToolSelectionDialog extends Dialog {
 				getButton(IDialogConstants.OK_ID).setEnabled(true);
 		} else {
 			int c = st.getCode();
-			String s = EMPTY_STR;
+			StringBuilder s = new StringBuilder(EMPTY_STR);
 			if ((c & IModificationStatus.TOOLS_CONFLICT) != 0) {
-				s = s + Messages.ToolSelectionDialog_7;
+				s.append(Messages.ToolSelectionDialog_7);
 				ITool[][] tools = st.getToolsConflicts();
 				List<String> conflictTools = new ArrayList<String>();
 				for (int k=0; k<t2.getItemCount(); k++) {
@@ -482,13 +482,13 @@ public class ToolSelectionDialog extends Dialog {
 				}
 				//bug 189229 - provide more information in the error message for accessibility
 				Iterator<String> iterator = conflictTools.iterator();
-				s = s+" "+ iterator.next(); //$NON-NLS-1$
+				s.append(" ").append(iterator.next()); //$NON-NLS-1$
 				while (iterator.hasNext()) {
-					s = s + ", " + iterator.next(); //$NON-NLS-1$
+					s.append(", ").append(iterator.next()); //$NON-NLS-1$
 				}
 			}
 			if ((c & IModificationStatus.TOOLS_DONT_SUPPORT_MANAGED_BUILD) != 0) {
-				s = s + Messages.ToolSelectionDialog_8;
+				s.append(Messages.ToolSelectionDialog_8);
 				ITool[] tools = st.getNonManagedBuildTools();
 				for (int k=0; k<t2.getItemCount(); k++) {
 					TableItem ti = t2.getItem(k);
@@ -502,15 +502,15 @@ public class ToolSelectionDialog extends Dialog {
 				}
 			}
 			if ((c & IModificationStatus.PROPS_NOT_DEFINED) != 0) {
-				s = s + Messages.ToolSelectionDialog_9;
+				s.append(Messages.ToolSelectionDialog_9);
 			}
 			if ((c & IModificationStatus.PROPS_NOT_SUPPORTED) != 0) {
-				s = s + Messages.ToolSelectionDialog_10;
+				s.append(Messages.ToolSelectionDialog_10);
 			}
 			if ((c & IModificationStatus.REQUIRED_PROPS_NOT_SUPPORTED) != 0) {
-				s = s + Messages.ToolSelectionDialog_11;
+				s.append(Messages.ToolSelectionDialog_11);
 			}
-			errorLabel.setText(s);
+			errorLabel.setText(s.toString());
 //			if(getButton(IDialogConstants.OK_ID) != null)
 //				getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}

@@ -390,12 +390,12 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			tools_group.setVisible(false);
 		} else {
 			tools_group.setVisible(true);
-			String s = EMPTY_STR;
+			StringBuilder s = new StringBuilder(EMPTY_STR);
 			ITool[] tools = ri.getTools();
 			for (ITool tool : tools) {
-				s = s + tool.getUniqueRealName() + "\n"; //$NON-NLS-1$
+				s.append(tool.getUniqueRealName()).append("\n"); //$NON-NLS-1$
 			}
-			text.setText(s);
+			text.setText(s.toString());
 		}
 	}
 

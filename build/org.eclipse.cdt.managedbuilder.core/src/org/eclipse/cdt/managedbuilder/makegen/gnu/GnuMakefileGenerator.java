@@ -1657,18 +1657,18 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		String buildRule = EMPTY_STRING;
 		String outflag = tool.getOutputFlag();
 
-		String primaryOutputs = EMPTY_STRING;
-		String primaryOutputsQuoted = EMPTY_STRING;
+		StringBuilder primaryOutputs = new StringBuilder(EMPTY_STRING);
+		StringBuilder primaryOutputsQuoted = new StringBuilder(EMPTY_STRING);
 		boolean first = true;
 		for (int i=0; i<enumeratedPrimaryOutputs.size(); i++) {
 			String output = enumeratedPrimaryOutputs.get(i);
 			if (!first) {
-				primaryOutputs += WHITESPACE;
-				primaryOutputsQuoted += WHITESPACE;
+				primaryOutputs.append(WHITESPACE);
+				primaryOutputsQuoted.append(WHITESPACE);
 			}
 			first = false;
-			primaryOutputs += output;
-			primaryOutputsQuoted += ensurePathIsGNUMakeTargetRuleCompatibleSyntax(output);
+			primaryOutputs.append(output);
+			primaryOutputsQuoted.append(ensurePathIsGNUMakeTargetRuleCompatibleSyntax(output));
 		}
 
 		buildRule += (primaryOutputsQuoted + COLON + WHITESPACE);
@@ -1718,7 +1718,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			String[] cmdInputs = inputs.toArray(new String[inputs.size()]);
 			IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
 			IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo( tool, command,
-					flags, outflag, outputPrefix, primaryOutputs, cmdInputs, tool.getCommandLinePattern() );
+					flags, outflag, outputPrefix, primaryOutputs.toString(), cmdInputs, tool.getCommandLinePattern() );
 
 			// The command to build
 			String buildCmd = null;
@@ -2420,9 +2420,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		} else {
 			primaryOutputName = escapeWhitespaces(relativePath + fileName + optDotExt);
 		}
-		String otherPrimaryOutputs = EMPTY_STRING;
+		StringBuilder otherPrimaryOutputs = new StringBuilder(EMPTY_STRING);
 		for (int i=1; i<enumeratedPrimaryOutputs.size(); i++) {		// Starting with 1 is intentional
-			otherPrimaryOutputs += WHITESPACE + escapeWhitespaces(enumeratedPrimaryOutputs.get(i).toString());
+			otherPrimaryOutputs.append(WHITESPACE);
+			otherPrimaryOutputs.append(escapeWhitespaces(enumeratedPrimaryOutputs.get(i).toString()));
 		}
 
 		// Output file location needed for the file-specific build macros
@@ -2999,10 +3000,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 						IResourceInfo rcInfo = tool.getParentResourceInfo();
 						if (rcInfo != null) {
 							if (optType == IOption.STRING) {
-								String optVal = "";	   //$NON-NLS-1$
+								StringBuilder optVal = new StringBuilder(EMPTY_STRING);
 								for (int j=0; j<allRes.size(); j++) {
 									if (j != 0) {
-										optVal += " ";	   //$NON-NLS-1$
+										optVal.append(" ");	   //$NON-NLS-1$
 									}
 									String resPath = allRes.get(j).toString();
 									if (!resPath.startsWith("$(")) {   //$NON-NLS-1$
@@ -3014,9 +3015,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 											}
 										}
 									}
-									optVal += ManagedBuildManager.calculateRelativePath(getTopBuildDir(), Path.fromOSString(resPath)).toString();
+									optVal.append(ManagedBuildManager.calculateRelativePath(getTopBuildDir(), Path.fromOSString(resPath)).toString());
 								}
-								ManagedBuildManager.setOption(rcInfo, tool, assignToOption, optVal);
+								ManagedBuildManager.setOption(rcInfo, tool, assignToOption, optVal.toString());
 							} else if (
 									optType == IOption.STRING_LIST ||
 									optType == IOption.LIBRARIES ||
@@ -3605,19 +3606,21 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		Vector<String> bufferTokens = new Vector<String>(Arrays.asList(inBufferString.split("\\s")));	//$NON-NLS-1$
 		Vector<String> deps = new Vector<String>(bufferTokens.size());
 		Iterator<String> tokenIter = bufferTokens.iterator();
+		StringBuilder token = new StringBuilder();
 		while (tokenIter.hasNext()) {
-			String token = tokenIter.next();
+			token.append(tokenIter.next());
 			if (token.lastIndexOf("\\") == token.length() - 1  && token.length() > 1) {	//$NON-NLS-1$
 				// This is escaped so keep adding to the token until we find the end
 				while (tokenIter.hasNext()) {
 					String nextToken = tokenIter.next();
-					token += WHITESPACE + nextToken;
+					token.append(WHITESPACE).append(nextToken);
 					if (!nextToken.endsWith("\\")) {	//$NON-NLS-1$
 						break;
 					}
 				}
 			}
-			deps.add(token);
+			deps.add(token.toString());
+			token.setLength(0);
 		}
 		deps.trimToSize();
 

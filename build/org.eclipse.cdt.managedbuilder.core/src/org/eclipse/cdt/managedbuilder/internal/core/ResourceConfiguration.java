@@ -43,6 +43,7 @@ import org.osgi.framework.Version;
 
 public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	//property name for holding the rebuild state
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
 
@@ -552,7 +553,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * An empty string implies treat as if no resource configuration, i.e., use project level tool.
 		 * This getter routine returns an ITool[] to consumers (i.e., the makefile generator).
 		 */
-		String t_ToolsToInvoke = ""; //$NON-NLS-1$
+		StringBuilder t_ToolsToInvoke = new StringBuilder(EMPTY_STRING);
 		ITool[] resConfigTools;
 		ITool[] tools;
 		String rcbsToolId = ""; //$NON-NLS-1$
@@ -602,28 +603,27 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				tools = new ITool[resConfigTools.length];
 				for ( int i = 0; i < resConfigTools.length; i++ ){
 					if (resConfigTools[i].getId() != rcbsToolId) {
-						t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+						t_ToolsToInvoke.append(resConfigTools[i].getId()).append(";");	//$NON-NLS-1$
 						tools[j++] = resConfigTools[i];
 					}
 				}
-				t_ToolsToInvoke += rcbsToolId;
+				t_ToolsToInvoke.append(rcbsToolId);
 				tools[j++] = resConfigTools[rcbsToolIdx];
-				toolsToInvoke = t_ToolsToInvoke;
+				toolsToInvoke = t_ToolsToInvoke.toString();
 				break;
 			case KIND_APPLY_RCBS_TOOL_BEFORE:
 				j = 0;
 				tools = new ITool[resConfigTools.length];
-				t_ToolsToInvoke = rcbsToolId + ";";	//$NON-NLS-1$
+				t_ToolsToInvoke.append(rcbsToolId).append(";");	//$NON-NLS-1$
 				tools[j++] = resConfigTools[rcbsToolIdx];
 				for ( int i = 0; i < resConfigTools.length; i++ ){
 					if (resConfigTools[i].getId() != rcbsToolId) {
-						t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+						t_ToolsToInvoke.append(resConfigTools[i].getId()).append(";");	//$NON-NLS-1$
 						tools[j++] = resConfigTools[i];
 					}
 				}
 				len = t_ToolsToInvoke.length();
-				t_ToolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
-				toolsToInvoke = t_ToolsToInvoke;
+				toolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
 				break;
 			case KIND_DISABLE_RCBS_TOOL:
 				/*
@@ -639,13 +639,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				tools = new ITool[resConfigTools.length-1];
 				for ( int i = 0; i < resConfigTools.length; i++ ){
 					if (resConfigTools[i].getId() != rcbsToolId) {
-						t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+						t_ToolsToInvoke.append(resConfigTools[i].getId()).append(";");	//$NON-NLS-1$
 						tools[j++] = resConfigTools[i];
 					}
 				}
 				len = t_ToolsToInvoke.length();
-				t_ToolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
-				toolsToInvoke = t_ToolsToInvoke;
+				toolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
 				break;
 			default:
 				/*
@@ -653,12 +652,11 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				 */
 				tools = new ITool[resConfigTools.length];
 				for ( int i = 0; i < resConfigTools.length; i++ ){
-					t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+					t_ToolsToInvoke.append(resConfigTools[i].getId()).append(";");	//$NON-NLS-1$
 					tools[i] = resConfigTools[i];
 				}
 				len = t_ToolsToInvoke.length();
-				t_ToolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
-				toolsToInvoke = t_ToolsToInvoke;
+				toolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
 				break;
 			}
 		}
@@ -669,12 +667,11 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			 */
 			tools = new ITool[resConfigTools.length];
 			for ( int i = 0; i < resConfigTools.length; i++ ){
-				t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+				t_ToolsToInvoke.append(resConfigTools[i].getId()).append(";");	//$NON-NLS-1$
 				tools[i] = resConfigTools[i];
 			}
 			len = t_ToolsToInvoke.length();
-			t_ToolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
-			toolsToInvoke = t_ToolsToInvoke;
+			toolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
 		}
 		return tools;
 	}

@@ -1149,18 +1149,20 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 */
 	@SuppressWarnings("nls")
 	private static String expressionLogicalOr(Set<String> fileExts) {
-		String pattern = "(";
+		StringBuilder pattern = new StringBuilder("(");
 		for (String ext : fileExts) {
 			if (pattern.length() != 1)
-				pattern += "|";
-			pattern += "(" + Pattern.quote(ext) + ")";
+				pattern.append("|");
+			pattern.append("(").append(Pattern.quote(ext));
+			pattern.append(")");
 			ext = ext.toUpperCase();
 			if (!fileExts.contains(ext)) {
-				pattern += "|(" + Pattern.quote(ext) + ")";
+				pattern.append("|(").append(Pattern.quote(ext));
+				pattern.append(")");
 			}
 		}
-		pattern += ")";
-		return pattern;
+		pattern.append(")");
+		return pattern.toString();
 	}
 
 	/**

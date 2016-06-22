@@ -332,15 +332,15 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 		if (binaryParserList != null) {
 			Iterator<String> bparsIter = binaryParserList.listIterator();
-			String listValue = EMPTY_STRING;
+			StringBuilder listValue = new StringBuilder(EMPTY_STRING);
 			while (bparsIter.hasNext()) {
 				String current = bparsIter.next();
-				listValue += current;
+				listValue.append(current);
 				if ((bparsIter.hasNext())) {
-					listValue += ";"; //$NON-NLS-1$
+					listValue.append(";"); //$NON-NLS-1$
 				}
 			}
-			element.setAttribute(BINARY_PARSER, listValue);
+			element.setAttribute(BINARY_PARSER, listValue.toString());
 		}
 
 		if (osList != null) {

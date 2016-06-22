@@ -666,13 +666,13 @@ public class InputType extends BuildObject implements IInputType {
 
 		// dependency (header file) extensions
 		if (getDependencyExtensionsList().size() > 0) {
-			String headers=""; //$NON-NLS-1$
+			StringBuilder headers = new StringBuilder(EMPTY_STRING);
 			for (String header : getDependencyExtensionsList()) {
 				if (headers.length()>0)
-					headers += DEFAULT_SEPARATOR;
-				headers += header;
+					headers.append(DEFAULT_SEPARATOR);
+				headers.append(header);
 			}
-			element.setAttribute(IInputType.DEPENDENCY_EXTENSIONS, headers);
+			element.setAttribute(IInputType.DEPENDENCY_EXTENSIONS, headers.toString());
 		}
 
 		if (optionId != null) {

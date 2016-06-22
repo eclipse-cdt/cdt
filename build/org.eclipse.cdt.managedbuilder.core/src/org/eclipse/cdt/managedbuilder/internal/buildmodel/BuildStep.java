@@ -46,6 +46,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class BuildStep implements IBuildStep {
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private List<BuildIOType> fInputTypes = new ArrayList<BuildIOType>();
 	private List<BuildIOType> fOutputTypes = new ArrayList<BuildIOType>();
 	private ITool fTool;
@@ -620,14 +621,14 @@ public class BuildStep implements IBuildStep {
 					BuildResource bRcs[] = (BuildResource[])bType.getResources();
 					int optType = assignToOption.getValueType();
 					if (optType == IOption.STRING) {
-						String optVal = "";	   //$NON-NLS-1$
+						StringBuilder optVal = new StringBuilder(EMPTY_STRING);
 						for (int j=0; j<bRcs.length; j++) {
 							if (j != 0) {
-								optVal += " ";	   //$NON-NLS-1$
+								optVal.append(" ");	   //$NON-NLS-1$
 							}
-							optVal += BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
+							optVal.append(BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString());
 						}
-						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal);
+						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal.toString());
 					} else if (
 							optType == IOption.STRING_LIST ||
 							optType == IOption.LIBRARIES ||

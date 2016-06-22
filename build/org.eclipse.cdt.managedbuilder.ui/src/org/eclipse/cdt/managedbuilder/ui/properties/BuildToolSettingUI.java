@@ -213,19 +213,21 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		Vector<String> output = new Vector<String>(tokens.size());
 
 		Iterator<String> iter = tokens.iterator();
+		StringBuilder token = new StringBuilder();
 		while(iter.hasNext()){
-			String token = iter.next();
+			token.append(iter.next());
 			int firstIndex = token.indexOf("\"");	//$NON-NLS-1$
 			int lastIndex = token.lastIndexOf("\"");	//$NON-NLS-1$
 			if (firstIndex != -1 && firstIndex == lastIndex) {
 				// Keep looking
 				while (iter.hasNext()) {
 					String nextToken = iter.next();
-					token += WHITESPACE + nextToken;
+					token.append(WHITESPACE).append(nextToken);
 					if (nextToken.indexOf("\"") != -1) break;	//$NON-NLS-1$
 				}
 			}
-			output.add(token);
+			output.add(token.toString());
+			token.setLength(0);
 		}
 		
 		return output;

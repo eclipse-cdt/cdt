@@ -167,12 +167,12 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 			}
 			
 			Iterator<String> iterator = tcs.iterator();
-			String temp = iterator.next();
+			StringBuilder temp = new StringBuilder(iterator.next());
 			while (iterator.hasNext()) {
-				temp = temp + ", " + iterator.next(); //$NON-NLS-1$
+				temp.append(", ").append(iterator.next()); //$NON-NLS-1$
 			}
 		
-			preferredTCsLabel.setText(Messages.PreferredToolchainsTab_3 + temp); 
+			preferredTCsLabel.setText(Messages.PreferredToolchainsTab_3 + temp.toString());
 		}
 	}
 	

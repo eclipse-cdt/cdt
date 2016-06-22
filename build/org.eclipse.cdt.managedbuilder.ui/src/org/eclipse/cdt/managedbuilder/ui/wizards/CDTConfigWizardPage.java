@@ -278,15 +278,15 @@ public class CDTConfigWizardPage extends WizardPage {
 		if (visible && handler != null && !isVisited()) {
 			tv.setInput(CfgHolder.unique(getDefaultCfgs(handler)));
 			tv.setAllChecked(true);
-			String s = EMPTY_STR;
+			StringBuilder s = new StringBuilder();
 			visitedTCs = handler.getSelectedToolChains();
 			for (int i=0; i < visitedTCs.length; i++) {
-				s = s + ((visitedTCs[i] == null) ?
+				s.append(((visitedTCs[i] == null) ?
 						"" : //$NON-NLS-1$
-							visitedTCs[i].getUniqueRealName());
-				if (i < visitedTCs.length - 1) s = s + "\n";  //$NON-NLS-1$
+							visitedTCs[i].getUniqueRealName()));
+				if (i < visitedTCs.length - 1) s.append('\n');
 			}
-			l_chains.setText(s);
+			l_chains.setText(s.toString());
 			l_projtype.setText(handler.getName());
 			setPageComplete(isCustomPageComplete());
 			l_chains.getParent().pack();

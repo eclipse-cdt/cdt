@@ -793,15 +793,14 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 			if (osList != null) {
 				Iterator<String> osIter = osList.listIterator();
-				String listValue = EMPTY_STRING;
+				StringBuilder listValue = new StringBuilder();
 				while (osIter.hasNext()) {
-					String current = osIter.next();
-					listValue += current;
+					listValue.append(osIter.next());
 					if ((osIter.hasNext())) {
-						listValue += ","; //$NON-NLS-1$
+						listValue.append(',');
 					}
 				}
-				element.setAttribute(OS_LIST, listValue);
+				element.setAttribute(OS_LIST, listValue.toString());
 			}
 
 			if (archList != null) {

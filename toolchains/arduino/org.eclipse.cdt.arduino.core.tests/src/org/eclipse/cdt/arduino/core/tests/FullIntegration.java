@@ -84,20 +84,6 @@ public class FullIntegration {
 
 		// What is Microsoft doing?
 		skipBuild.add(arduinoManager.getBoard("Microsoft", "win10", "w10iotcore"));
-
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			// tool chain incorrect?
-			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
-			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
-			skipBuild.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
-		}
-
-		if (Platform.getOS().equals(Platform.OS_LINUX)) {
-			// i586/pokysdk missing
-			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
-			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
-			skipBuild.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
-		}
 	}
 
 	private static void setupSkipUpload() throws Exception {

@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
@@ -219,7 +218,7 @@ public class ArduinoPlatform {
 			} else {
 				// TODO for now, grab the one from the arduino package
 				ArduinoManager manager = Activator.getService(ArduinoManager.class);
-				ArduinoPackage arduinoPkg = manager.getPackage("arduino");
+				ArduinoPackage arduinoPkg = manager.getPackage("arduino"); //$NON-NLS-1$
 				if (arduinoPkg != null) {
 					ArduinoPlatform arduinoPlat = arduinoPkg.getInstalledPlatform(getArchitecture());
 					if (arduinoPlat != null) {
@@ -232,7 +231,8 @@ public class ArduinoPlatform {
 	}
 
 	public Path getInstallPath() {
-		return getPackage().getInstallPath().resolve("hardware").resolve(architecture); //$NON-NLS-1$
+		String vpath = version.replace('+', '_');
+		return getPackage().getInstallPath().resolve("hardware").resolve(architecture).resolve(vpath); //$NON-NLS-1$
 	}
 
 	private void initLibraries() throws CoreException {

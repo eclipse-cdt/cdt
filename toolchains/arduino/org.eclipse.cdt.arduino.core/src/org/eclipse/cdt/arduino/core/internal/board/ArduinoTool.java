@@ -53,26 +53,8 @@ public class ArduinoTool {
 	}
 
 	public Path getInstallPath() {
-		// TODO remove migration in Neon
-		Path oldPath = ArduinoPreferences.getArduinoHome().resolve("tools").resolve(pkg.getName()).resolve(name) //$NON-NLS-1$
-				.resolve(version);
-		Path newPath = getPackage().getInstallPath().resolve("tools").resolve(name).resolve(version); //$NON-NLS-1$
-		if (Files.exists(oldPath)) {
-			try {
-				Files.createDirectories(newPath.getParent());
-				Files.move(oldPath, newPath);
-				for (Path parent = oldPath.getParent(); parent != null; parent = parent.getParent()) {
-					if (Files.newDirectoryStream(parent).iterator().hasNext()) {
-						break;
-					} else {
-						Files.delete(parent);
-					}
-				}
-			} catch (IOException e) {
-				Activator.log(e);
-			}
-		}
-		return newPath;
+		String vpath = version.replace('+', '_');
+		return getPackage().getInstallPath().resolve("tools").resolve(name).resolve(vpath); //$NON-NLS-1$
 	}
 
 	public boolean isInstalled() {

@@ -577,7 +577,16 @@ public class ArduinoManager {
 						}
 
 						// Strip the first directory of the path
-						Path entryPath = installPath.resolve(path.subpath(1, path.getNameCount()));
+						Path entryPath;
+						switch (path.getName(0).toString()) {
+						case "i586":
+						case "i686":
+							// Cheat for Intel
+							entryPath = installPath.resolve(path);
+							break;
+						default:
+							entryPath = installPath.resolve(path.subpath(1, path.getNameCount()));
+						}
 
 						Files.createDirectories(entryPath.getParent());
 

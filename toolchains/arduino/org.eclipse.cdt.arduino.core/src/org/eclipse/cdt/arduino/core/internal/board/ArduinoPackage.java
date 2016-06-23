@@ -7,20 +7,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
-import org.eclipse.cdt.arduino.core.internal.LinkedProperties;
 import org.eclipse.core.runtime.CoreException;
 
 public class ArduinoPackage {
@@ -89,32 +84,19 @@ public class ArduinoPackage {
 		if (installedPlatforms == null) {
 			installedPlatforms = new HashMap<>();
 
-			if (Files.isDirectory(getInstallPath())) {
-				Path platformTxt = Paths.get("platform.txt"); //$NON-NLS-1$
-				try {
-					Path hardware = getInstallPath().resolve("hardware"); //$NON-NLS-1$
-					if (Files.exists(hardware)) {
-						Files.find(hardware, 2, // $NON-NLS-1$
-								(path, attrs) -> path.getFileName().equals(platformTxt)).forEach(path -> {
-									try (FileReader reader = new FileReader(path.toFile())) {
-										LinkedProperties platformProperties = new LinkedProperties();
-										platformProperties.load(reader);
-										String arch = path.getName(path.getNameCount() - 2).toString();
-										String version = platformProperties.getProperty("version"); //$NON-NLS-1$
+			Path hardware = getInstallPath().resolve("hardware"); //$NON-NLS-1$
+			if (Files.isDirectory(hardware)) {
+				for (ArduinoPlatform platform : platforms) {
+					String arch = platform.getArchitecture();
+					String version = platform.getVersion();
 
-										ArduinoPlatform platform = getPlatform(arch, version);
-										if (platform != null) {
-											platform.setPlatformProperties(platformProperties);
-											installedPlatforms.put(arch, platform);
-										} // TODO manually add it if was removed
-											// from index
-									} catch (IOException e) {
-										throw new RuntimeException(e);
-									}
-								});
+					Path platPath = hardware.resolve(arch).resolve(version);
+					if (Files.exists(platPath)) {
+						ArduinoPlatform current = installedPlatforms.get(arch);
+						if (current == null || ArduinoManager.compareVersions(version, current.getVersion()) > 0) {
+							installedPlatforms.put(arch, platform);
+						}
 					}
-				} catch (IOException e) {
-					throw Activator.coreException(e);
 				}
 			}
 		}

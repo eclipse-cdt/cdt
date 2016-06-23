@@ -83,8 +83,8 @@ public class ArduinoDownloadsManager extends WizardDialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		getButton(IDialogConstants.CANCEL_ID).setVisible(false);
-		getButton(IDialogConstants.FINISH_ID).setText("OK");
+		getButton(IDialogConstants.CANCEL_ID).dispose();
+		getButton(IDialogConstants.FINISH_ID).setText("Done");
 	}
 
 }

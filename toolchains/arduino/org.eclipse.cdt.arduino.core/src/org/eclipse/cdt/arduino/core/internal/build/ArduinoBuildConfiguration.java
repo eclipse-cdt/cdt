@@ -381,7 +381,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			getSources(variantSources, variantPath, true);
 		}
 		buildModel.put("platform_variant_srcs", variantSources); //$NON-NLS-1$
-		
+
 		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("archive_file", "core.a"); //$NON-NLS-1$ //$NON-NLS-2$

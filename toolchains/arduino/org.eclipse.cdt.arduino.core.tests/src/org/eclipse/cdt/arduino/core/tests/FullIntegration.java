@@ -63,11 +63,13 @@ public class FullIntegration {
 	private ArduinoBoard board;
 
 	private static void setPreferences() throws Exception {
-		URL[] urls = new URL[] { new URL("http://downloads.arduino.cc/packages/package_index.json"),
+		URL[] urls = new URL[] {
+				new URL("http://downloads.arduino.cc/packages/package_index.json"),
 				new URL("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json"),
 				new URL("http://arduino.esp8266.com/stable/package_esp8266com_index.json"),
-				new URL("http://drazzy.com/package_drazzy.com_index.json") };
-		// new URL("https://github.com/chipKIT32/chipKIT-core/raw/master/package_chipkit_index.json")
+				new URL("http://drazzy.com/package_drazzy.com_index.json"),
+				//new URL("https://github.com/chipKIT32/chipKIT-core/raw/master/package_chipkit_index.json"),
+		};
 		ArduinoPreferences.setBoardUrlList(urls);
 
 		Path workspace = Paths.get(ResourcesPlugin.getWorkspace().getRoot().getLocationURI());
@@ -84,20 +86,6 @@ public class FullIntegration {
 
 		// What is Microsoft doing?
 		skipBuild.add(arduinoManager.getBoard("Microsoft", "win10", "w10iotcore"));
-
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			// tool chain incorrect?
-			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
-			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
-			skipBuild.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
-		}
-
-		if (Platform.getOS().equals(Platform.OS_LINUX)) {
-			// i586/pokysdk missing
-			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
-			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
-			skipBuild.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
-		}
 	}
 
 	private static void setupSkipUpload() throws Exception {

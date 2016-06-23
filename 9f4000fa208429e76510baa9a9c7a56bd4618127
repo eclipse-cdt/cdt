@@ -1,0 +1,533 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_20d7a0bb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/buildmodel/BuildStep.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 624,
+        "startChar": 29,
+        "endLine": 624,
+        "endChar": 60
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_40fbcc39",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/buildmodel/BuildStep.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027 \u0027",
+      "range": {
+        "startLine": 627,
+        "startChar": 22,
+        "endLine": 627,
+        "endChar": 25
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_40d4acb4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 669,
+        "startChar": 27,
+        "endLine": 669,
+        "endChar": 58
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_60dd28d8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(inputStr) in this context is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 82,
+        "startChar": 22,
+        "endLine": 82,
+        "endChar": 50
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_80da34de",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ResourceConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 556,
+        "startChar": 34,
+        "endLine": 556,
+        "endChar": 65
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_20fec02b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ResourceConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027;\u0027\n\nSame below.",
+      "range": {
+        "startLine": 606,
+        "startChar": 63,
+        "endLine": 606,
+        "endChar": 66
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_a0ead06a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/TargetPlatform.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 335,
+        "startChar": 29,
+        "endLine": 335,
+        "endChar": 60
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_00e624a5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/TargetPlatform.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027;\u0027",
+      "range": {
+        "startLine": 340,
+        "startChar": 22,
+        "endLine": 340,
+        "endChar": 25
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_c0efdc7a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 796,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 796,
+        "startChar": 30,
+        "endLine": 796,
+        "endChar": 61
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_e0e0588b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027;\u0027",
+      "range": {
+        "startLine": 800,
+        "startChar": 23,
+        "endLine": 800,
+        "endChar": 26
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_60f44848",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1155,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027|\u0027\n\nSimilar below.",
+      "range": {
+        "startLine": 1155,
+        "startChar": 19,
+        "endLine": 1155,
+        "endChar": 22
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_80f15458",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(\"\") is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 171,
+        "startChar": 27,
+        "endLine": 171,
+        "endChar": 57
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_a01570ff",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1660,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 1660,
+        "startChar": 33,
+        "endLine": 1660,
+        "endChar": 64
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_c01a7c2d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1661,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 1661,
+        "startChar": 39,
+        "endLine": 1661,
+        "endChar": 70
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_e01bf82e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/ManagedBuildGnuToolInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 389,
+        "startChar": 30,
+        "endLine": 389,
+        "endChar": 61
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_0021c45b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/ManagedBuildGnuToolInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027 \u0027",
+      "range": {
+        "startLine": 392,
+        "startChar": 23,
+        "endLine": 392,
+        "endChar": 26
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_200960e8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProject12.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STRING) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 205,
+        "startChar": 29,
+        "endLine": 205,
+        "endChar": 60
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_40066cd8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolChainEditTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STR) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 393,
+        "startChar": 21,
+        "endLine": 393,
+        "endChar": 49
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_600fe8eb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolChainEditTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027\\n\u0027",
+      "range": {
+        "startLine": 396,
+        "startChar": 46,
+        "endLine": 396,
+        "endChar": 50
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_800cf4f6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolSelectionDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STR) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 464,
+        "startChar": 21,
+        "endLine": 464,
+        "endChar": 49
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_a03c907f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolSelectionDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027 \u0027",
+      "range": {
+        "startLine": 485,
+        "startChar": 13,
+        "endLine": 485,
+        "endChar": 16
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_c0419cf3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/CDTConfigWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "new StringBuilder(EMPTY_STR) is equivalent to new StringBuilder()",
+      "range": {
+        "startLine": 281,
+        "startChar": 21,
+        "endLine": 281,
+        "endChar": 49
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_e03218a7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/CDTConfigWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-06-23T04:51:46Z",
+      "side": 1,
+      "message": "Better \u0027\\n\u0027",
+      "range": {
+        "startLine": 287,
+        "startChar": 44,
+        "endLine": 287,
+        "endChar": 48
+      },
+      "revId": "9f4000fa208429e76510baa9a9c7a56bd4618127",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -282,7 +282,10 @@ public class EvalUnary extends CPPDependentEvaluation {
 		ICPPFunction overload = getOverload(point);
 		if (overload != null) {
 			ICPPFunctionType functionType = overload.getType();
-			IType targetType = functionType.getParameterTypes()[0];
+			IType[] parameterTypes = functionType.getParameterTypes();
+			if (parameterTypes.length == 0)
+				return Value.ERROR;
+			IType targetType = parameterTypes[0];
 			arg = maybeApplyConversion(arg, targetType, point);
 			
 			if (!(overload instanceof CPPImplicitFunction)) {

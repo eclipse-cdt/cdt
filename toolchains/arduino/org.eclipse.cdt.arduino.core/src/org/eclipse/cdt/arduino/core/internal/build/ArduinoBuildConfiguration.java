@@ -226,7 +226,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
 			properties.put("build.path", "."); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.core.path", //$NON-NLS-1$
-					platform.getInstallPath().resolve("core").resolve("{build.core}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					platform.getInstallPath().resolve("cores").resolve("{build.core}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.system.path", platform.getInstallPath().resolve("system").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.variant.path", //$NON-NLS-1$
 					platform.getInstallPath().resolve("variants").resolve("{build.variant}").toString()); //$NON-NLS-1$ //$NON-NLS-2$

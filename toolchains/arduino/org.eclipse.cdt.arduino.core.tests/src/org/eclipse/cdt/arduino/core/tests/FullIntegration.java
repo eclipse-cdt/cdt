@@ -68,7 +68,7 @@ public class FullIntegration {
 				new URL("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json"),
 				new URL("http://arduino.esp8266.com/stable/package_esp8266com_index.json"),
 				new URL("http://drazzy.com/package_drazzy.com_index.json"),
-				//new URL("https://github.com/chipKIT32/chipKIT-core/raw/master/package_chipkit_index.json"),
+				new URL("https://github.com/chipKIT32/chipKIT-core/raw/master/package_chipkit_index.json"),
 		};
 		ArduinoPreferences.setBoardUrlList(urls);
 
@@ -83,6 +83,8 @@ public class FullIntegration {
 		skipBuild.add(arduinoManager.getBoard("arduino", "avr", "robotControl"));
 		skipBuild.add(arduinoManager.getBoard("arduino", "avr", "robotMotor"));
 		skipBuild.add(arduinoManager.getBoard("adafruit", "avr", "adafruit32u4"));
+		skipBuild.add(arduinoManager.getBoard("chipKIT", "pic32", "cerebot32mx7"));
+		skipBuild.add(arduinoManager.getBoard("chipKIT", "pic32", "OpenScope"));
 
 		// What is Microsoft doing?
 		skipBuild.add(arduinoManager.getBoard("Microsoft", "win10", "w10iotcore"));

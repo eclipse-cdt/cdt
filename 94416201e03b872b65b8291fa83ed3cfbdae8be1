@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e453f8_83cdd9ac",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIRunControlEventProcessor_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-06-24T13:34:28Z",
+      "side": 1,
+      "message": "Can you add example of string you parsing? The whole thing?\nBecause you splitting by period which I am not sure\nwhere suppose to be",
+      "revId": "94416201e03b872b65b8291fa83ed3cfbdae8be1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87e453f8_83e4f91a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIRunControlEventProcessor_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-06-24T13:34:28Z",
+      "side": 1,
+      "message": "instead of doing indexOf 3 times extra to local var\ni.e k\u003dsignalDetails.indexOf(\",\")\nif (k\u003e\u003d0) {\n ...\n}",
+      "revId": "94416201e03b872b65b8291fa83ed3cfbdae8be1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

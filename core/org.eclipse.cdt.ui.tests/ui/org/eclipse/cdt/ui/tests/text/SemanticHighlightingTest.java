@@ -508,15 +508,6 @@ public class SemanticHighlightingTest extends TestCase {
     	makeAssertions();
     }
     
-    //	#define MACRO(Name, Type) Type Name();           //$macroDefinition
-    //	typedef int Int;                                 //$typedef
-    //	class S {                                        //$class
-    //		MACRO(foo, Int)                              //$macroSubstitution,methodDeclaration,typedef
-    //	};
-    public void testMethodNameInsideMacro_486682() throws Exception {
-    	makeAssertions();
-    }
-    
 	//	#define WALDO(name) const char* Name() override { return name; }  //$macroDefinition
 	//	class S {                                        //$class
 	//		WALDO("name")                                //$macroSubstitution

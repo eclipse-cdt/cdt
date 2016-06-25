@@ -67,8 +67,10 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	private class PositionCollector extends ASTVisitor {
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();
+		private int fMinLocation;
 		
 		public PositionCollector(boolean visitImplicitNames) {
+			fMinLocation= -1;
 			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
 			shouldVisitDeclarations= true;
@@ -90,6 +92,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					visitNode(macroDef.getName());
 				}
 			}
+			fMinLocation= -1;
 
 			// Visit macro expansions.
 			IASTPreprocessorMacroExpansion[] macroExps= tu.getMacroExpansions();
@@ -103,6 +106,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					}
 				}
 			}
+			fMinLocation= -1;
 
 			// Visit ordinary code.
 			return super.visit(tu);
@@ -207,7 +211,14 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			if (imageLocation != null) {
 				if (imageLocation.getLocationKind() != IASTImageLocation.MACRO_DEFINITION) {
-					return imageLocation;
+					int offset= imageLocation.getNodeOffset();
+					if (offset >= fMinLocation) {
+						int length= imageLocation.getNodeLength();
+						if (offset >= 0 && length > 0) {
+							fMinLocation= offset + length;
+							return imageLocation;
+						}
+					}
 				}
 			} else {
 				// Fallback in case no image location available.
@@ -230,9 +241,12 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 */
 		private void highlightLocation(IASTNodeLocation nodeLocation, HighlightingStyle highlightingStyle) {
 			int offset= nodeLocation.getNodeOffset();
-			int length= nodeLocation.getNodeLength();
-			if (offset > -1 && length > 0) {
-				addPosition(offset, length, highlightingStyle);
+			if (offset >= fMinLocation) {
+				int length= nodeLocation.getNodeLength();
+				if (offset > -1 && length > 0) {
+					fMinLocation= offset + length;
+					addPosition(offset, length, highlightingStyle);
+				}
 			}
 		}
 

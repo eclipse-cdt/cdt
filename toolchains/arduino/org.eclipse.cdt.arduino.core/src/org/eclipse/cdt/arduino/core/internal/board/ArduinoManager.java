@@ -83,6 +83,7 @@ public class ArduinoManager {
 
 	private Properties props;
 
+	private Path arduinoHome = ArduinoPreferences.getArduinoHome();
 	private Map<String, ArduinoPackage> packages;
 	private Map<String, ArduinoLibrary> installedLibraries;
 
@@ -91,6 +92,14 @@ public class ArduinoManager {
 	}
 
 	private synchronized void init() throws CoreException {
+		if (!arduinoHome.equals(ArduinoPreferences.getArduinoHome())) {
+			// Arduino Home changed, reset.
+			props = null;
+			packages = null;
+			installedLibraries = null;
+			arduinoHome = ArduinoPreferences.getArduinoHome();
+		}
+
 		if (props == null) {
 			if (!Files.exists(ArduinoPreferences.getArduinoHome())) {
 				try {
@@ -293,8 +302,8 @@ public class ArduinoManager {
 	}
 
 	private synchronized void initPackages() throws CoreException {
+		init();
 		if (packages == null) {
-			init();
 			packages = new HashMap<>();
 
 			try {
@@ -372,7 +381,7 @@ public class ArduinoManager {
 		return pkg != null ? pkg.getTool(toolName, version) : null;
 	}
 
-	public void initInstalledLibraries() throws CoreException {
+	private void initInstalledLibraries() throws CoreException {
 		init();
 		if (installedLibraries == null) {
 			installedLibraries = new HashMap<>();

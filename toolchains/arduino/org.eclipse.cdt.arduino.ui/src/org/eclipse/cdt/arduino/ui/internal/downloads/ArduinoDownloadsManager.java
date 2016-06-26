@@ -19,6 +19,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 public class ArduinoDownloadsManager extends WizardDialog {
@@ -83,8 +84,11 @@ public class ArduinoDownloadsManager extends WizardDialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		getButton(IDialogConstants.CANCEL_ID).dispose();
-		getButton(IDialogConstants.FINISH_ID).setText("Done");
+		getButton(IDialogConstants.CANCEL_ID).setVisible(false);
+		Button finishButton = getButton(IDialogConstants.FINISH_ID);
+		finishButton.setText("Done");
+		// make sure it's far right
+		finishButton.moveBelow(null);
 	}
 
 }

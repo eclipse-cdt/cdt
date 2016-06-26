@@ -31,6 +31,7 @@ public class ArduinoPackage {
 	// end JSON fields
 
 	private Map<String, ArduinoPlatform> installedPlatforms;
+	private Map<String, ArduinoTool> latestTools;
 
 	public String getName() {
 		return name;
@@ -62,6 +63,34 @@ public class ArduinoPackage {
 		}
 		for (ArduinoTool tool : tools) {
 			tool.init(this);
+		}
+	}
+
+	void merge(ArduinoPackage other) {
+		// Redo calculated fields
+		installedPlatforms = null;
+		latestTools = null;
+		
+		if (other.platforms != null) {
+			if (platforms != null) {
+				platforms.addAll(other.platforms);
+			} else {
+				platforms = other.platforms;
+			}
+			for (ArduinoPlatform platform : other.platforms) {
+				platform.init(this);
+			}
+		}
+
+		if (other.tools != null) {
+			if (tools != null) {
+				tools.addAll(other.tools);
+			} else {
+				tools = other.tools;
+			}
+			for (ArduinoTool tool : other.tools) {
+				tool.init(this);
+			}
 		}
 	}
 
@@ -129,9 +158,9 @@ public class ArduinoPackage {
 		Map<String, ArduinoPlatform> platformMap = new HashMap<>();
 		for (ArduinoPlatform platform : platforms) {
 			if (!installedPlatforms.containsKey(platform.getArchitecture())) {
-				ArduinoPlatform p = platformMap.get(platform.getName());
+				ArduinoPlatform p = platformMap.get(platform.getArchitecture());
 				if (p == null || ArduinoManager.compareVersions(platform.getVersion(), p.getVersion()) > 0) {
-					platformMap.put(platform.getName(), platform);
+					platformMap.put(platform.getArchitecture(), platform);
 				}
 			}
 		}
@@ -151,29 +180,40 @@ public class ArduinoPackage {
 		return null;
 	}
 
-	public ArduinoTool getLatestTool(String toolName) {
-		ArduinoTool latest = null;
-		for (ArduinoTool tool : tools) {
-			if (tool.getName().equals(toolName) && tool.isInstalled()) {
-				if (latest == null || ArduinoManager.compareVersions(tool.getVersion(), latest.getVersion()) > 0) {
-					latest = tool;
+	private void initLatestTools() {
+		if (latestTools == null) {
+			latestTools = new HashMap<>();
+			
+			for (ArduinoTool tool : tools) {
+				ArduinoTool current = latestTools.get(tool.getName());
+				if (current == null || ArduinoManager.compareVersions(tool.getVersion(), current.getVersion()) > 0) {
+					latestTools.put(tool.getName(), tool);
 				}
 			}
 		}
-		return latest;
+	}
+
+	public ArduinoTool getLatestTool(String toolName) {
+		initLatestTools();
+		return latestTools.get(toolName);
+	}
+
+	public Collection<ArduinoTool> getLatestTools() {
+		initLatestTools();
+		return latestTools.values();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ArduinoPackage) {
-			return ((ArduinoPackage) obj).getName().equals(name);
+			return ((ArduinoPackage) obj).getName().equals(getName());
 		}
 		return super.equals(obj);
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return getName().hashCode();
 	}
 
 }

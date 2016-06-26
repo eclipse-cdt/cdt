@@ -231,15 +231,16 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			properties.put("build.variant.path", //$NON-NLS-1$
 					platform.getInstallPath().resolve("variants").resolve("{build.variant}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
-			// Everyone seems to want to use the avr-gcc and avrdude tools
+			// Everyone seems to want to use arduino package tools
 			ArduinoPackage arduinoPackage = manager.getPackage("arduino"); //$NON-NLS-1$
-			ArduinoTool avrgcc = arduinoPackage.getLatestTool("avr-gcc"); //$NON-NLS-1$
-			if (avrgcc != null) {
-				properties.put("runtime.tools.avr-gcc.path", avrgcc.getInstallPath().toString()); //$NON-NLS-1$
-			}
-			ArduinoTool avrdude = arduinoPackage.getLatestTool("avrdude"); //$NON-NLS-1$
-			if (avrdude != null) {
-				properties.put("runtime.tools.avrdude.path", avrdude.getInstallPath().toString()); //$NON-NLS-1$
+			if (arduinoPackage != null) {
+				for (ArduinoTool tool : arduinoPackage.getLatestTools()) {
+					properties.put("runtime.tools." + tool.getName() + ".path", tool.getInstallPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				for (ArduinoTool tool : arduinoPackage.getTools()) {
+					properties.put("runtime.tools." + tool.getName() + '-' + tool.getVersion() + ".path", //$NON-NLS-1$ //$NON-NLS-2$
+							tool.getInstallPath().toString());
+				}
 			}
 
 			// Super Platform

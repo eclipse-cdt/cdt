@@ -33,7 +33,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.remote.core.IRemoteConnection;
@@ -66,9 +65,11 @@ public class FullIntegration {
 		URL[] urls = new URL[] {
 				new URL("http://downloads.arduino.cc/packages/package_index.json"),
 				new URL("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json"),
-				new URL("http://arduino.esp8266.com/stable/package_esp8266com_index.json"),
 				new URL("http://drazzy.com/package_drazzy.com_index.json"),
 				new URL("https://github.com/chipKIT32/chipKIT-core/raw/master/package_chipkit_index.json"),
+				// esp8266com and sparkfun overlap with the esp8266 package.
+				new URL("http://arduino.esp8266.com/stable/package_esp8266com_index.json"),
+				//new URL("https://raw.githubusercontent.com/sparkfun/Arduino_Boards/master/IDE_Board_Manager/package_sparkfun_index.json"),
 		};
 		ArduinoPreferences.setBoardUrlList(urls);
 

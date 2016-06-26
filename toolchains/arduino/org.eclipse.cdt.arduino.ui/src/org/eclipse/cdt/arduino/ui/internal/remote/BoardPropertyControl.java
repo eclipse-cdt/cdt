@@ -192,8 +192,10 @@ public class BoardPropertyControl extends Composite {
 				control.dispose();
 			}
 			menuControls.clear();
-			programmerLabel.dispose();
-			programmerCombo.dispose();
+			if (programmerLabel != null) {
+				programmerLabel.dispose();
+				programmerCombo.dispose();
+			}
 
 			board = newBoard;
 			updateBoardMenu();

@@ -304,8 +304,13 @@ public class ArduinoManager {
 							try (Reader reader = new FileReader(path.toFile())) {
 								PackageIndex index = new Gson().fromJson(reader, PackageIndex.class);
 								for (ArduinoPackage pkg : index.getPackages()) {
-									pkg.init();
-									packages.put(pkg.getName(), pkg);
+									ArduinoPackage p = packages.get(pkg.getName());
+									if (p == null) {
+										pkg.init();
+										packages.put(pkg.getName(), pkg);
+									} else {
+										p.merge(pkg);
+									}
 								}
 							} catch (IOException e) {
 								Activator.log(e);

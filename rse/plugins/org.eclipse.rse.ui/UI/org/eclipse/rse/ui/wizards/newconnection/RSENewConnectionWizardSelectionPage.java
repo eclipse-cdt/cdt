@@ -212,7 +212,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		filteredTreeFilter = new RSEWizardSelectionTreePatternFilter();
-		filteredTree = new FilteredTree(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter);
+		filteredTree = new FilteredTree(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter, true);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.heightHint = 325; layoutData.widthHint = 450;

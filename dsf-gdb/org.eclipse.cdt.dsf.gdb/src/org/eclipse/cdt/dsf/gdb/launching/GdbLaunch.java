@@ -70,6 +70,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -617,27 +618,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 * @since 5.0
 	 */
 	public String[] getLaunchEnvironment() throws CoreException {
-		// Get the project
-		String projectName = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				(String) null);
-		IProject project = null;
-		if (projectName == null) {
-			IResource[] resources = getLaunchConfiguration().getMappedResources();
-			if (resources != null && resources.length > 0 && resources[0] instanceof IProject) {
-				project = (IProject) resources[0];
-			}
-		} else {
-			projectName = projectName.trim();
-			if (projectName.length() == 0) {
-				return null;
-			}
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		}
-
-		if (project == null || !project.isAccessible()) {
-			// No project
-			return null;
-		}
+		IProject project = getProject();
 
 		HashMap<String, String> envMap = new HashMap<String, String>();
 		ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
@@ -689,6 +670,30 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		}
 
 		return strings.toArray(new String[strings.size()]);
+	}
+
+	private IProject getProject() throws CoreException {
+		String projectName = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+				(String) null);
+		IProject project = null;
+		if (projectName == null) {
+			IResource[] resources = getLaunchConfiguration().getMappedResources();
+			if (resources != null && resources.length > 0 && resources[0] instanceof IProject) {
+				project = (IProject) resources[0];
+			}
+		} else {
+			projectName = projectName.trim();
+			if (projectName.length() == 0) {
+				return null;
+			}
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		}
+
+		if (project == null || !project.isAccessible()) {
+			// No project
+			return null;
+		}
+		return project;
 	}
 
 	/**
@@ -797,12 +802,34 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 * @since 5.0
 	 */
 	public String getProgramPath() throws CoreException {
-		String programPath = getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
-		if (programPath == null) {
-			programPath = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+		String programName = getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
+		if (programName == null) {
+			programName = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
 					(String) null);
 		}
-		return programPath;
+		if (programName == null) {
+			return null;
+		}
+		programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+		IPath programPath = new Path(programName);
+		if (programPath.isEmpty()) {
+			return null;
+		}
+
+		if (!programPath.isAbsolute()) {
+			IProject project = getProject();
+			ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
+			if (cproject != null) {
+				// Find the specified program within the specified project
+				IFile wsProgramPath = cproject.getProject().getFile(programPath);
+				programPath = wsProgramPath.getLocation();
+			}
+		}
+		if (!programPath.toFile().exists()) {
+			return null;
+		}
+
+		return programPath.toOSString();
 	}
 
 	/**

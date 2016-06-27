@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2009, 2016 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software (IFS)- initial API and implementation
  *     Sergey Prigogin (Google) 
+ *     Thomas Corbat (IFS)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
@@ -31,6 +32,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 public class ExtractConstantRefactoringDescriptor extends CRefactoringDescriptor {
 	protected static final String NAME = "name"; //$NON-NLS-1$
 	protected static final String VISIBILITY = "visibility"; //$NON-NLS-1$
+	protected static final String REPLACE_ALL = "replaceAll"; //$NON-NLS-1$
 	
 	protected ExtractConstantRefactoringDescriptor(String project,
 			String description, String comment, Map<String, String> arguments) {
@@ -47,6 +49,7 @@ public class ExtractConstantRefactoringDescriptor extends CRefactoringDescriptor
 		ExtractConstantInfo info = refactoring.getRefactoringInfo();
 		info.setName(arguments.get(NAME));
 		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));
+		info.setReplaceAllLiterals(Boolean.parseBoolean(arguments.get(REPLACE_ALL)));
 		return refactoring;
 	}
 }

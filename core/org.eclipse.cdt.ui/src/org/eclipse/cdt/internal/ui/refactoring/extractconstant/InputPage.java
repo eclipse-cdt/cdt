@@ -14,10 +14,13 @@ package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -64,6 +67,17 @@ public class InputPage extends UserInputWizardPage {
 			});
 		}
 
+		Button replaceAllOccurencesButton = new Button(control, SWT.CHECK);
+		replaceAllOccurencesButton.setSelection(info.isReplaceAllOccurences());
+		replaceAllOccurencesButton.setText(Messages.InputPage_ReplaceAllOccurrences);
+		replaceAllOccurencesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				info.setReplaceAllLiterals(replaceAllOccurencesButton.getSelection());
+				super.widgetSelected(e);
+			}
+		});
+
 		checkName();
 		control.getVisibiltyGroup().setVisible(showVisibilityPane);
 		setControl(control);
@@ -83,7 +97,7 @@ public class InputPage extends UserInputWizardPage {
 	}
 
 	private void verifyName(String name) {
-		if (info.getUsedNames().contains(name)) {
+		if (info.isNameUsed(name)) {
 			setErrorMessage(NLS.bind(Messages.InputPage_NameAlreadyDefined, name)); 
 			setPageComplete(false);
 		}

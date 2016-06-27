@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 	private String extractedConstantName;
 	private VisibilityEnum visibility;
+	private boolean replaceAllLiterals;
 	private ExtractConstantRefactoring refactoring;
 
 	public ExtractConstantRefactoringTest() {
@@ -52,6 +53,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 	public void setUp() throws Exception {
 		extractedConstantName = "EXTRACTED";
 		visibility = VisibilityEnum.v_private;
+		replaceAllLiterals = true;
 		super.setUp();
 	}
 
@@ -67,6 +69,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 		ExtractConstantInfo info = refactoring.getRefactoringInfo();
 		info.setName(extractedConstantName);
 		info.setVisibility(visibility);
+		info.setReplaceAllLiterals(replaceAllLiterals);
 	}
 
 	//A.h
@@ -670,7 +673,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 	//<refactoring comment="Create constant for 42" description="Extract Constant Refactoring"
 	//fileName="file:${projectPath}/A.cpp" flags="4"
 	//id="org.eclipse.cdt.ui.refactoring.extractconstant.ExtractConstantRefactoring" name="EXTRACTED"
-	//project="RegressionTestProject" selection="64,2" visibility="public"/>
+	//project="RegressionTestProject" selection="64,2" visibility="public" replaceAll="true"/>
 	//</session>
 	//
 	public void testHistoryExtractConstantInt() throws Exception {
@@ -1012,5 +1015,28 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 		createRefactoring();
 		refactoring.setContext(new CRefactoringContext(refactoring));
 		refactoring.checkInitialConditions(npm());
+	}
+
+	//A.cpp
+	//int h = 42;
+	//void foo() {
+	//	int j = 42;
+	//	int i = /*$*/42/*$$*/;
+	//}
+	//=
+	//namespace {
+	//
+	//const int EXTRACTED = 42;
+	//
+	//}
+	//
+	//int h = 42;
+	//void foo() {
+	//	int j = 42;
+	//	int i = EXTRACTED;
+	//}
+	public void testExtractOnlyOneOccurrence() throws Exception {
+		replaceAllLiterals = false;
+		assertRefactoringSuccess();
 	}
 }

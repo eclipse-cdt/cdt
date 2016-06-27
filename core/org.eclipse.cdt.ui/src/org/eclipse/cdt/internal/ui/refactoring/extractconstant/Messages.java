@@ -17,6 +17,7 @@ final class Messages extends NLS {
 	public static String InputPage_ConstName;
 	public static String InputPage_EnterConstName;
 	public static String InputPage_NameAlreadyDefined;
+	public static String InputPage_ReplaceAllOccurrences;
 	public static String ExtractConstantRefactoring_ExtractConst;
 	public static String ExtractConstantRefactoring_LiteralMustBeSelected;
 	public static String ExtractConstantRefactoring_NoLiteralSelected;

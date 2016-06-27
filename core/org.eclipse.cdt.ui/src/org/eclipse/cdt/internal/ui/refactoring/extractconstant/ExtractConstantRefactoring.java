@@ -315,24 +315,29 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 5);
 
 		final Collection<IASTExpression> result = new ArrayList<>();
-		IASTTranslationUnit ast = getAST(tu, subMonitor.split(4));
-		subMonitor.split(1);
-		ast.accept(new ASTVisitor() {
-			{
-				shouldVisitExpressions = true;
-			}
-
-			@Override
-			public int visit(IASTExpression expression) {
-				if (isSameExpressionTree(expression, target)) {
-					if (!(expression.getNodeLocations().length == 1 &&
-							expression.getNodeLocations()[0] instanceof IASTMacroExpansionLocation)) {
-						result.add(expression);
-					}
+		if (info.isReplaceAllOccurences()) {
+			IASTTranslationUnit ast = getAST(tu, subMonitor.split(4));
+			subMonitor.split(1);
+			ast.accept(new ASTVisitor() {
+				{
+					shouldVisitExpressions = true;
 				}
-				return super.visit(expression);
-			}
-		});
+	
+				@Override
+				public int visit(IASTExpression expression) {
+					if (isSameExpressionTree(expression, target)) {
+						if (!(expression.getNodeLocations().length == 1 &&
+								expression.getNodeLocations()[0] instanceof IASTMacroExpansionLocation)) {
+							result.add(expression);
+						}
+					}
+					return super.visit(expression);
+				}
+			});
+		} else {
+			subMonitor.split(5);
+			result.add(target);
+		}
 
 		return result;
 	}
@@ -385,6 +390,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractConstantRefactoringDescriptor.NAME, info.getName());
 		arguments.put(ExtractConstantRefactoringDescriptor.VISIBILITY, info.getVisibility().toString());
+		arguments.put(ExtractConstantRefactoringDescriptor.REPLACE_ALL, Boolean.toString(info.isReplaceAllOccurences()));
 		return arguments;
 	}
 

@@ -16,6 +16,23 @@
       "revId": "75e23127044628155e861bbb4192a9b3d65dd258",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67b59fd9_0e9fbbb1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 814,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-06-27T19:30:02Z",
+      "side": 1,
+      "message": "I gave it a shot, but the API used below uses IPath, so I gave up... I\u0027ll keep it in mind for the future, when it will fit more smoothly.",
+      "revId": "75e23127044628155e861bbb4192a9b3d65dd258",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

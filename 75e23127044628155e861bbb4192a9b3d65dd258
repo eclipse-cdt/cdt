@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67b59fd9_0e241b38",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 814,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-06-27T18:46:27Z",
+      "side": 1,
+      "message": "Just a suggestion, I\u0027ve stopped using IPath as much as I can and use java.nio.file.Path which is more functional. IPath should only be used for workspace paths.",
+      "revId": "75e23127044628155e861bbb4192a9b3d65dd258",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

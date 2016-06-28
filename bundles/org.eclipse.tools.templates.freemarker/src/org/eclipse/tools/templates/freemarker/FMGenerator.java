@@ -182,8 +182,7 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 
 	@Override
 	public IFile[] getFilesToOpen() {
-		// TODO
-		return new IFile[0];
+		return filesToOpen.toArray(new IFile[filesToOpen.size()]);
 	}
 
 	@Override

@@ -548,7 +548,8 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 	}
 
 	public String[] getUploadCommand(String serialPort) throws CoreException {
-		Properties properties = getProperties();
+		Properties properties = new Properties();
+		properties.putAll(getProperties());
 
 		String toolName = properties.getProperty("upload.tool"); //$NON-NLS-1$
 		ArduinoPlatform platform = getBoard().getPlatform();

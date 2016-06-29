@@ -15,6 +15,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -126,5 +127,12 @@ public interface IGDBProcesses extends IMIProcesses {
      * @since 4.0
      */    
     void attachDebuggerToProcess(IProcessDMContext procCtx, String file, DataRequestMonitor<IDMContext> rm);
+
+    /**
+	 * @since 5.1
+	 */
+    default void initializeProcessIO(IContainerDMContext containerDmc, RequestMonitor rm) {
+    	rm.done();
+    }
 
 }

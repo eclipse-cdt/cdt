@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
-import java.util.Map;
+import java.io.OutputStream;
 
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess_7_3;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.utils.pty.PTY;
 
 /**
  * Version for GDB 7.3
@@ -31,11 +31,20 @@ public class GDBProcesses_7_3 extends GDBProcesses_7_2_1 {
 		super(session);
 	}
 
+	/**
+	 * @since 5.1
+	 */
 	@Override
-	protected Sequence getStartOrRestartProcessSequence(DsfExecutor executor, IContainerDMContext containerDmc, 
-			Map<String, Object> attributes, boolean restart, 
-			DataRequestMonitor<IContainerDMContext> rm) {
-		return new StartOrRestartProcessSequence_7_3(executor, containerDmc, attributes, restart, rm);
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, OutputStream outputStream) {
+		return new MIInferiorProcess_7_3(container, outputStream);
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	@Override
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, PTY pty) {
+		return new MIInferiorProcess_7_3(container, pty);
 	}
 	
 	@Override

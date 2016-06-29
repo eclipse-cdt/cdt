@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47b89bd4_d37e4c8a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIRunControlEventProcessor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-06-29T13:31:34Z",
+      "side": 1,
+      "message": "You don\u0027t want to match \\n. I don\u0027t even know why it works it not suppose to match end of lines. Just do\n, (.*)\\\\..*\n\n\\\\. - is .\n.* - mathces everything at the end",
+      "revId": "472c72c745b0040c69153283cff81b88385f95ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47b89bd4_f37b5097",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIRunControlEventProcessor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2016-06-29T13:31:34Z",
+      "side": 1,
+      "message": "You don\u0027t need to check number of groups. If you don\u0027t have two groups it will fail matches",
+      "revId": "472c72c745b0040c69153283cff81b88385f95ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

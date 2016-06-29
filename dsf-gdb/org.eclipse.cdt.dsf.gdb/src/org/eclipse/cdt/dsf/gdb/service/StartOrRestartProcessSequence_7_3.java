@@ -23,7 +23,9 @@ import org.eclipse.cdt.utils.pty.PTY;
 /**
  * Specialization for GDB >= 7.3 
  * @since 4.7
+ * @deprecated No longer needed
  */
+@Deprecated
 public class StartOrRestartProcessSequence_7_3 extends StartOrRestartProcessSequence_7_0 {
 
 	public StartOrRestartProcessSequence_7_3(DsfExecutor executor, IContainerDMContext containerDmc,

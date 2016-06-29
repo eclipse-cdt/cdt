@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "47b89bd4_cdcb09c7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/InputPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-29T06:36:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67b59fd9_0e417b0c",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 77,
+        "endChar": 24
+      },
+      "revId": "ff8d9e09821797e21dcf2dbadfd59f58bb5cf769",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67b59fd9_aed40fb7",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/Messages.properties",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-06-27T17:22:46Z",
       "side": 1,
       "message": "Checkbox labels should have only the first word capitalized.",
+      "range": {
+        "startLine": 16,
+        "startChar": 32,
+        "endLine": 16,
+        "endChar": 55
+      },
+      "revId": "ff8d9e09821797e21dcf2dbadfd59f58bb5cf769",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47b89bd4_edd8cd9a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/extractconstant/Messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-06-29T06:36:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67b59fd9_aed40fb7",
       "range": {
         "startLine": 16,
         "startChar": 32,

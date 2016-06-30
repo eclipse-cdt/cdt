@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47b89bd4_4c9d3246",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SignatureBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-06-30T22:57:41Z",
+      "side": 1,
+      "message": "Did you mean to call this somewhere?",
+      "revId": "820c86104a5aac3271d8bff015c5094501d8d60c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47b89bd4_cce5c2c9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TypeInstantiationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-06-30T22:57:41Z",
+      "side": 1,
+      "message": "Is that as fast as \"obj instanceof TypeInstantiationRequest\"?",
+      "revId": "820c86104a5aac3271d8bff015c5094501d8d60c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

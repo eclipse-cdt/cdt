@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.telnet.connector;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +42,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 	/* default */ Text fHostText;
 	/* default */ Combo fNetworkPortCombo;
 	/* default */ Text fTimeout;
+	/* default */ Combo fEndOfLineCombo;
 	private final TelnetSettings fTerminalSettings;
 
 	public TelnetSettingsPage(TelnetSettings settings) {
@@ -51,6 +53,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		fTerminalSettings.setHost(fHostText.getText());
 		fTerminalSettings.setTimeout(fTimeout.getText());
 		fTerminalSettings.setNetworkPort(getNetworkPort());
+		fTerminalSettings.setEndOfLine(getEndOfLine());
 	}
 
 	@Override
@@ -59,6 +62,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 			setHost(fTerminalSettings.getHost());
 			setTimeout(fTerminalSettings.getTimeoutString());
 			setNetworkPort(fTerminalSettings.getNetworkPortString());
+			setEndOfLine(fTerminalSettings.getEndOfLine());
 		}
 	}
 	private void setHost(String strHost) {
@@ -96,7 +100,13 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 	private NetworkPortMap getNetworkPortMap() {
 		return fTerminalSettings.getProperties().getNetworkPortMap();
 	}
-
+	private void setEndOfLine(String eol) {
+		int idx = fEndOfLineCombo.indexOf(eol);
+		fEndOfLineCombo.select(idx >= 0 ? idx : 0);
+	}
+	private String getEndOfLine() {
+		return fEndOfLineCombo.getText();
+	}
 	@Override
     public boolean validateSettings() {
 		String message = null;
@@ -209,6 +219,18 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 			}
 		});
 		createControlDecoration(fTimeout);
+
+		new Label(composite, SWT.RIGHT).setText(TelnetMessages.END_OF_LINE + ":"); //$NON-NLS-1$
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		fEndOfLineCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fEndOfLineCombo.setLayoutData(gridData);
+		fEndOfLineCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+            public void widgetSelected(SelectionEvent e) {
+				fireListeners(fEndOfLineCombo);
+			}
+		});
+		loadCombo(fEndOfLineCombo, Arrays.asList(ITelnetSettings.EOL_CRNUL, ITelnetSettings.EOL_CRLF));
 
 		loadSettings();
 	}

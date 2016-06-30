@@ -34,6 +34,32 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 public class TelnetConnector extends TerminalConnectorImpl {
+
+	static final class TelnetOutputStream extends FilterOutputStream {
+		final static byte CR = 13;
+		final static byte LF = 10;
+		final static byte NUL = 0;
+		final static byte[] CRNUL = { CR, NUL };
+		final static byte[] CRLF = { CR, LF };
+		final byte[] EOL;
+
+		public TelnetOutputStream(OutputStream outputStream, String endOfLine) {
+			super(outputStream);
+			if (ITelnetSettings.EOL_CRLF.equals(endOfLine))
+				EOL = CRLF;
+			else
+				EOL = CRNUL;
+		}
+
+		@Override
+		public void write(int b) throws IOException {
+			if (b == CR)
+				out.write(EOL);
+			else
+				out.write(b);
+		}
+	}
+
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;
 	private Socket fSocket;
@@ -115,25 +141,8 @@ public class TelnetConnector extends TerminalConnectorImpl {
 			fOutputStream = null;
 			return;
 		}
-		// send LF after CR (telnet end-of-line sequence - RFC 854)
-		fOutputStream = new FilterOutputStream(outputStream) {
-			final byte CR = 13;
-			final byte LF = 10;
-			final byte[] CRLF = { CR, LF };
-			int last = -1;
-			@Override
-			public void write(int b) throws IOException {
-				if (b == LF && last == CR) {
-					last = b;
-					return;
-				}
-				last = b;
-				if (b == CR)
-					out.write(CRLF);
-				else
-					out.write(b);
-			}
-		};
+		// translate CR to telnet end-of-line sequence - RFC 854
+		fOutputStream = new TelnetOutputStream(outputStream, fSettings.getEndOfLine());
 	}
 	Socket getSocket() {
 		return fSocket;

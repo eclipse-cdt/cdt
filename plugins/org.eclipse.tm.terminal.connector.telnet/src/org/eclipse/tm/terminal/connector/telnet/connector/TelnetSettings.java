@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalSettings 
+ * Michael Scharf (Wind River) - extracted from TerminalSettings
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.telnet.connector;
@@ -22,6 +22,7 @@ public class TelnetSettings implements ITelnetSettings {
     protected String fHost;
     protected String fNetworkPort;
     protected String fTimeout;
+    protected String fEndOfLine = EOL_CRNUL;
     private final TelnetProperties fProperties=new TelnetProperties();
 	@Override
     public String getHost() {
@@ -59,6 +60,7 @@ public class TelnetSettings implements ITelnetSettings {
 		fHost = store.get("Host", fProperties.getDefaultHost());//$NON-NLS-1$
 		fNetworkPort = store.get("NetworkPort", fProperties.getDefaultNetworkPort());//$NON-NLS-1$
 		fTimeout = store.get("Timeout","10");//$NON-NLS-1$ //$NON-NLS-2$
+		fEndOfLine = store.get("EndOfLine", EOL_CRNUL);//$NON-NLS-1$
 	}
 
 	@Override
@@ -66,6 +68,7 @@ public class TelnetSettings implements ITelnetSettings {
 		store.put("Host", fHost);//$NON-NLS-1$
 		store.put("NetworkPort", fNetworkPort);//$NON-NLS-1$
 		store.put("Timeout", fTimeout);//$NON-NLS-1$
+		store.put("EndOfLine", fEndOfLine);//$NON-NLS-1$
 	}
 
 	public TelnetProperties getProperties() {
@@ -85,5 +88,14 @@ public class TelnetSettings implements ITelnetSettings {
 
 	public void setTimeout(String timeout) {
 		fTimeout = timeout;
+	}
+
+	public void setEndOfLine(String eol) {
+		fEndOfLine = EOL_CRLF.equals(eol) ? EOL_CRLF : EOL_CRNUL;
+	}
+
+	@Override
+	public String getEndOfLine() {
+		return fEndOfLine;
 	}
 }

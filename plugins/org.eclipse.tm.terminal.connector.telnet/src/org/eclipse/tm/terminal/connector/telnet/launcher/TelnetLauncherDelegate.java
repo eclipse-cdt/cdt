@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2011, 2016 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -134,6 +134,7 @@ public class TelnetLauncherDelegate extends AbstractLauncherDelegate {
 		String port = value != null ? value.toString() : null;
 		value = properties.get(ITerminalsConnectorConstants.PROP_TIMEOUT);
 		String timeout = value != null ? value.toString() : null;
+		String endOfLine = (String)properties.get(ITerminalsConnectorConstants.PROP_TELNET_EOL);
 
 		int portOffset = 0;
 		if (properties.get(ITerminalsConnectorConstants.PROP_IP_PORT_OFFSET) instanceof Integer) {
@@ -156,6 +157,7 @@ public class TelnetLauncherDelegate extends AbstractLauncherDelegate {
 		if (timeout != null) {
 			telnetSettings.setTimeout(timeout);
 		}
+		telnetSettings.setEndOfLine(endOfLine);
 		// And save the settings to the store
 		telnetSettings.save(store);
 

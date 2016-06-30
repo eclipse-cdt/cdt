@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2011, 2016 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -104,6 +104,10 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		value = v != null ? v.toString() : null;
 		if (value != null) telnetSettings.setTimeout(value);
 
+		v = data.get(ITerminalsConnectorConstants.PROP_TELNET_EOL);
+		value = v != null ? v.toString() : null;
+		if (value != null) telnetSettings.setEndOfLine(value);
+
 		value = (String)data.get(ITerminalsConnectorConstants.PROP_ENCODING);
 		if (value != null) setEncoding(value);
 
@@ -124,6 +128,7 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		data.put(ITerminalsConnectorConstants.PROP_IP_HOST,telnetSettings.getHost());
 		data.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.valueOf(telnetSettings.getNetworkPort()));
 		data.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.valueOf(telnetSettings.getTimeout()));
+		data.put(ITerminalsConnectorConstants.PROP_TELNET_EOL, telnetSettings.getEndOfLine());
 		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
     }
 
@@ -143,6 +148,9 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 				}
 				if (hostSettings.get(ITerminalsConnectorConstants.PROP_TIMEOUT) != null) {
 					telnetSettings.setTimeout(hostSettings.get(ITerminalsConnectorConstants.PROP_TIMEOUT));
+				}
+				if (hostSettings.get(ITerminalsConnectorConstants.PROP_TELNET_EOL) != null) {
+					telnetSettings.setEndOfLine(hostSettings.get(ITerminalsConnectorConstants.PROP_TELNET_EOL));
 				}
 				if (hostSettings.get(ITerminalsConnectorConstants.PROP_ENCODING) != null) {
 					setEncoding(hostSettings.get(ITerminalsConnectorConstants.PROP_ENCODING));
@@ -164,23 +172,19 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 	protected void saveSettingsForHost(boolean add){
 		String host = getHostFromSettings();
 		if(host != null && host.length() != 0) {
-			if (hostSettingsMap.containsKey(host)) {
-				Map<String, String> hostSettings=hostSettingsMap.get(host);
-				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_HOST, telnetSettings.getHost());
-				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.toString(telnetSettings.getNetworkPort()));
-				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(telnetSettings.getTimeout()));
-				if (getEncoding() != null) {
-					hostSettings.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
-				}
-			} else if (add) {
-				Map<String, String> hostSettings=new HashMap<String, String>();
-				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_HOST, telnetSettings.getHost());
-				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.toString(telnetSettings.getNetworkPort()));
-				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(telnetSettings.getTimeout()));
-				if (getEncoding() != null) {
-					hostSettings.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
-				}
+			Map<String, String> hostSettings = hostSettingsMap.get(host);
+			if (hostSettings == null && !add) {
+				hostSettings=new HashMap<String, String>();
 				hostSettingsMap.put(host, hostSettings);
+			}
+			if (hostSettings != null) {
+				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_HOST, telnetSettings.getHost());
+				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.toString(telnetSettings.getNetworkPort()));
+				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(telnetSettings.getTimeout()));
+				hostSettings.put(ITerminalsConnectorConstants.PROP_TELNET_EOL, telnetSettings.getEndOfLine());
+				if (getEncoding() != null) {
+					hostSettings.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
+				}
 			}
 		}
 	}

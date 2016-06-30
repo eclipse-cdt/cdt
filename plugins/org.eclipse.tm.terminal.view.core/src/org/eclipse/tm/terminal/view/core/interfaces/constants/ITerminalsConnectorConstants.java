@@ -15,6 +15,9 @@ import org.eclipse.tm.terminal.view.core.interfaces.ITerminalServiceOutputStream
 
 /**
  * Defines the terminals connector constants.
+ *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITerminalsConnectorConstants {
 
@@ -326,6 +329,7 @@ public interface ITerminalsConnectorConstants {
 	 * The end-of-line sequence to be sent to the server on "Enter".
 	 * <p>
 	 * Property Type: {@link String}
+	 * @since 4.1
 	 */
 	public static final String PROP_TELNET_EOL = "telnet.eol"; //$NON-NLS-1$
 

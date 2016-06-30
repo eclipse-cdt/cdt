@@ -21,6 +21,9 @@ public class TelnetMessages extends NLS {
 	public static String HOST;
 	public static String CONNECTION_CLOSED_BY_FOREIGN_HOST;
 	public static String TIMEOUT;
+	/**
+	 * @since 4.2
+	 */
 	public static String END_OF_LINE;
 
  }

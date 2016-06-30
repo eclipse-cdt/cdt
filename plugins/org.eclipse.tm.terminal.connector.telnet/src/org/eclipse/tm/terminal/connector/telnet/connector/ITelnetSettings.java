@@ -13,13 +13,26 @@ package org.eclipse.tm.terminal.connector.telnet.connector;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
+/**
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ */
 public interface ITelnetSettings {
+	/**
+	 * @since 4.2
+	 */
 	static final String EOL_CRNUL = "CR+NUL"; //$NON-NLS-1$
+	/**
+	 * @since 4.2
+	 */
 	static final String EOL_CRLF = "CR+LF"; //$NON-NLS-1$
 
 	String getHost();
 	int getNetworkPort();
 	int getTimeout();
+	/**
+	 * @since 4.2
+	 */
 	String getEndOfLine();
 	String getSummary();
 	void load(ISettingsStore store);

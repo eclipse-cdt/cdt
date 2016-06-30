@@ -18,6 +18,9 @@ package org.eclipse.tm.terminal.connector.telnet.connector;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
+/**
+ * @noreference This class is not intended to be referenced by clients.
+ */
 public class TelnetSettings implements ITelnetSettings {
     protected String fHost;
     protected String fNetworkPort;

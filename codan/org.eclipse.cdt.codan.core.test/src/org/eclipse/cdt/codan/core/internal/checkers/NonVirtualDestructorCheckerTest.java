@@ -14,6 +14,7 @@ package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor;
+import org.eclipse.core.resources.IMarker;
 
 /**
  * Test for {@link NonVirtualDestructor} class.
@@ -202,5 +203,19 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	public void testBug372009_wrongClassNameInMessage() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		assertMessageContains("Foo", markers[0]);
+	}
+
+	//	class Foo {
+	//		virtual void bar();
+	//	};
+	public void testBug496628_MarkerBounds() throws Exception {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		IMarker marker = checkErrorLine(1);
+		int start = marker.getAttribute(IMarker.CHAR_START, -1);
+		int end = marker.getAttribute(IMarker.CHAR_END, -1);
+		// The error should not cover the entire class
+		assertTrue((start == -1 && end == -1) ||  // ok, not multi-line
+				   !code.substring(start, end).contains("\n"));
 	}
 }

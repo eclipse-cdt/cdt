@@ -22,6 +22,7 @@ import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
@@ -198,7 +199,12 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			}
 		}
 		// If the raw signature has more than one line, we highlight only the code
-		// related to the problem.
+		// related to the problem. However, if the problem is associated with a
+		// node representing a class definition, do not highlight the entire class
+		// definition, because that can result in many lines being highlighted.
+		if (astNode instanceof IASTCompositeTypeSpecifier) {
+			return locFactory.createProblemLocation(getFile(), line);
+		} 
 		int start = astLocation.getNodeOffset();
 		int end = start + astLocation.getNodeLength();
 		return locFactory.createProblemLocation(getFile(), start, end, line);

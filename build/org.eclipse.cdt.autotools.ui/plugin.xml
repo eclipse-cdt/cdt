@@ -37,8 +37,6 @@
 	  <content-type id="org.eclipse.cdt.autotools.ui.automake" name="%Automake.name"
 		  base-type="org.eclipse.core.runtime.text"
 		  priority="high"/>
-  </extension>
-   <extension point="org.eclipse.core.contenttype.contentTypes">
       <file-association
        content-type="org.eclipse.cdt.autotools.ui.automake"
        file-names="Makefile.am"
@@ -54,11 +52,6 @@
             icon="icons/autoconf.gif"
             id="org.eclipse.cdt.autotools.ui.editor.autoconf"
             name="%Autoconf.editor.name"/>
-   </extension>
-      <extension
-         id="org.eclipse.cdt.make.editor"
-         name="MakefileEditor"
-         point="org.eclipse.ui.editors">
       <editor
             class="org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeEditor"
             contributorClass="org.eclipse.cdt.internal.autotools.ui.editors.automake.MakefileEditorActionContributor"
@@ -86,6 +79,11 @@
             contextId="org.eclipse.cdt.autotools.ui.editor.scope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="F2"/>
+       <key
+           sequence="Ctrl+O"
+           commandId="org.eclipse.cdt.autotools.ui.command.showOutline"
+           contextId="org.eclipse.cdt.autotools.ui.editor.scope"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -417,6 +415,10 @@
             id="org.eclipse.cdt.autotools.ui.command.reconfigure"
             name="%Reconfigure.label">
       </command>
+      <command
+             categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            id="org.eclipse.cdt.autotools.ui.command.showOutline"
+            name="Show Outline"/>
    </extension>
     <extension
          point="org.eclipse.ui.handlers">
@@ -468,6 +470,10 @@
          <enabledWhen>
             <reference definitionId="org.eclipse.cdt.autotools.ui.handlerEnablement"/>
          </enabledWhen>
+      </handler>
+      <handler
+              class="org.eclipse.cdt.internal.autotools.ui.actions.ShowOutlineHandler"
+              commandId="org.eclipse.cdt.autotools.ui.command.showOutline">
       </handler>
    </extension>
     <extension

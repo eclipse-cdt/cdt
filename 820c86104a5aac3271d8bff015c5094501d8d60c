@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "47b89bd4_2a737dd9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SignatureBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-07-01T16:52:40Z",
+      "side": 1,
+      "message": "Was used in an earlier version of the change but not anymore.",
+      "parentUuid": "47b89bd4_4c9d3246",
+      "revId": "820c86104a5aac3271d8bff015c5094501d8d60c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "47b89bd4_cce5c2c9",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TypeInstantiationRequest.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2016-06-30T22:57:41Z",
       "side": 1,
       "message": "Is that as fast as \"obj instanceof TypeInstantiationRequest\"?",
+      "revId": "820c86104a5aac3271d8bff015c5094501d8d60c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47b89bd4_4a70b1ca",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TypeInstantiationRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-07-01T16:52:40Z",
+      "side": 1,
+      "message": "Almost, but would return false if obj is a subclass of TypeInstantiationRequest different from the class of this.",
+      "parentUuid": "47b89bd4_cce5c2c9",
       "revId": "820c86104a5aac3271d8bff015c5094501d8d60c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -157,6 +157,14 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
      */
 	private Set<IContainerDMContext> fProcRestarting = new HashSet<IContainerDMContext>();
 
+    /** 
+     * The first thread-group id used by GDB.
+     * GDB starts up with certain things already setup, and we need
+     * to prepare some things using this id.
+     * @since 5.1
+     */
+	public static final String INITIAL_THREAD_GROUP_ID = "i1"; //$NON-NLS-1$
+
 	/** 
 	 * Indicates that we are currently visualizing trace data.
 	 */
@@ -307,7 +315,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		                    	if (isInitialProcess()) {
 		                    		// If it is the first inferior, GDB has already created it for us
 		                    		// We really should get the id from GDB instead of hard-coding it
-		        					fContainerDmc = createContainerContext(procCtx, "i1"); //$NON-NLS-1$
+		        					fContainerDmc = createContainerContext(procCtx, INITIAL_THREAD_GROUP_ID);
 		                    		rm.done();
 		                    		return;
 		                    	}

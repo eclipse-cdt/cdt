@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
+import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -67,7 +68,7 @@ public class GDBJtagDSFFinalLaunchSequence_7_2 extends GDBJtagDSFFinalLaunchSequ
 			rm.done();
 			return;
 		}
-        setContainerContext(procService.createContainerContextFromGroupId(gdbControl.getContext(), "i1")); //$NON-NLS-1$
+        setContainerContext(procService.createContainerContextFromGroupId(gdbControl.getContext(), GDBProcesses_7_2.INITIAL_THREAD_GROUP_ID));
 		rm.done();
 	}
 }

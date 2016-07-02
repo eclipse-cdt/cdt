@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MISteppingRangeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupAddedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
@@ -214,6 +216,27 @@ public class MIRunControlEventProcessor_7_0
 
     		    		fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     		    	}
+    			} else if ("thread-group-added".equals(miEvent)) { //$NON-NLS-1$
+    				String groupId = null;
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString().trim();
+    						}
+    					}
+    				}
+    				
+ 					IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    				if (procService != null) {
+    					// When a thread-group is created we don't have a pid, so we can simply create the container with the UNIQUE_GROUP_ID
+    					IMIContainerDMContext containerDmc = procService.createContainerContextFromGroupId(fCommandControl.getContext(), groupId);
+    					MIEvent<?> event =  new MIThreadGroupAddedEvent(containerDmc, exec.getToken());
+   						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    				}
     			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
     				
     				String groupId = null;

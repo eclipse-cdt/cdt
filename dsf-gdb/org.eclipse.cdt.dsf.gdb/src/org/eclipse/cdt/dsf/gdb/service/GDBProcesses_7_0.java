@@ -79,6 +79,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupAddedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -515,7 +516,18 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			(fName == null ? 0 : fName.hashCode()) ^
 			(fOwner == null ? 0 : fOwner.hashCode()) ; }
     }
-    
+
+    /**
+     * Event indicating that an container (debugged process) has been created, but is not yet running.
+     * @since 5.1
+     */
+    public static class ContainerCreatedDMEvent extends AbstractDMEvent<IMIContainerDMContext> 
+    {
+        public ContainerCreatedDMEvent(IMIContainerDMContext context) {
+            super(context);
+        }
+    }        
+
     /**
      * Event indicating that an container (debugged process) has started.  This event
      * implements the {@link IStartedMDEvent} from the IRunControl service. 
@@ -1646,6 +1658,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						}
 
 						// In case the process we restarted was already exited, remove it from our list
+						// We do this here for GDB 7.1, because we know the proper groupId here which
+						// will change when the new restarted process will start.  For GDB >= 7.2
+						// the groupId is fixed so we don't have to do this right away, but it won't hurt.
 						getExitedProcesses().remove(groupId);
 						
 						setData(getData());
@@ -1713,6 +1728,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		}
 	}
 
+    /**
+	 * @since 5.1
+	 */
+    @DsfServiceEventHandler
+    public void eventDispatched(MIThreadGroupAddedEvent e) {
+        getSession().dispatchEvent(new ContainerCreatedDMEvent(e.getDMContext()), getProperties());
+    }
+
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadGroupCreatedEvent e) {
     	IProcessDMContext procDmc = e.getDMContext();
@@ -1779,7 +1802,19 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     // Event handler when a thread or a threadGroup exits
     @DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
-    	if (e instanceof ContainerExitedDMEvent) {
+    	if (e.getDMContext() instanceof IMIContainerDMContext) {
+    		IMIContainerDMContext containerDmc = (IMIContainerDMContext)e.getDMContext();
+    		
+    		// In case the process that just started was already exited (so we are dealing
+    		// with a restart), remove it from our list
+    		// Do this here to handle the restart case triggered by GDB itself
+    		// (user typing 'run' from the GDB console).  In this case, we don't know yet
+    		// we are dealing with a restart, but when we see the process come back, we
+    		// know to remove it from the exited list.  Note that this won't work
+    		// for GDB 7.1 because the groupId of the new process is not the same as the old
+    		// one.  Not worth fixing for such an old version.
+    		getExitedProcesses().remove(containerDmc.getGroupId());
+    		
     		fContainerCommandCache.reset();
     		
     		assert fNumConnected > 0;

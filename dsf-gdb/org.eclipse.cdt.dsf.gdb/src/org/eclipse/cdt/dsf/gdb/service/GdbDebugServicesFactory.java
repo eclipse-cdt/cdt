@@ -165,6 +165,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 				}
 			}
 		}
+		else if (GDBInferiorService.class.isAssignableFrom(clazz)) {
+			return (V)createGDBInferiorService(session);
+		} 
 		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointsSynchronizerService(session);
 		} 
@@ -355,6 +358,12 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		return new GDBHardwareAndOS(session);
 	}
 	
+	/**
+	 * @since 5.1
+	 */
+	protected GDBInferiorService createGDBInferiorService(DsfSession session) {
+		return new GDBInferiorService(session);
+	}
 	/**
 	 * @since 4.2
 	 */

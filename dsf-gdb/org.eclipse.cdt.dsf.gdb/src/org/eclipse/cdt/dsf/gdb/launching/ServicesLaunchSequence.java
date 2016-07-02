@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.gdb.service.GDBInferiorService;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
@@ -64,6 +65,10 @@ public class ServicesLaunchSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
         	fLaunch.getServiceFactory().createService(IProcesses.class, fSession).initialize(requestMonitor);
         }},
+   		new Step() { @Override
+		public void execute(final RequestMonitor requestMonitor) {
+   			fLaunch.getServiceFactory().createService(GDBInferiorService.class, fSession).initialize(requestMonitor); 
+   		}},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
         	fLaunch.getServiceFactory().createService(IRunControl.class, fSession).initialize(requestMonitor);

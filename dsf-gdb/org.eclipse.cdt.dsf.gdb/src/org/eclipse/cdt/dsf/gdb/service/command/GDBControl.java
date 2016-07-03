@@ -68,6 +68,7 @@ import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.IEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConsoleStreamOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -193,6 +194,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private IEventProcessor fMIEventProcessor;
     private IEventProcessor fCLICommandProcessor;
     private IEventProcessor fControlEventProcessor;
+    private IEventProcessor fInferiorEventProcessor;
+    
     private AbstractCLIProcess fCLIProcess;
 
     private GdbCommandTimeoutManager fCommandTimeoutManager;
@@ -558,13 +561,15 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, getContext());
         fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, getContext());
         fControlEventProcessor = createControlEventProcessor();
-
+        fInferiorEventProcessor = createInferiorEventProcessor(GDBControl.this);
+        
         requestMonitor.done();
 	}
 
     /** @since 5.1 */
     protected void undoCommandProcessorsStep(RequestMonitor requestMonitor) {
-		fControlEventProcessor.dispose();
+    	fInferiorEventProcessor.dispose();
+    	fControlEventProcessor.dispose();
     	fCLICommandProcessor.dispose();
         fMIEventProcessor.dispose();
         fCLIProcess.dispose();
@@ -713,6 +718,11 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/** @since 4.3 */
 	protected IEventProcessor createControlEventProcessor() {
 		return new ControlEventProcessor();
+	}
+
+	/** @since 5.1*/
+	protected IEventProcessor createInferiorEventProcessor(ICommandControlService connection) {
+		return new MIInferiorEventProcessor(connection);
 	}
 
 	/**

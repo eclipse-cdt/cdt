@@ -15,8 +15,10 @@ import java.util.Map;
 import org.eclipse.cdt.debug.gdbjtag.core.GDBJtagDSFFinalLaunchSequence_7_7;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_7;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.IEventProcessor;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -35,5 +37,10 @@ public class GDBJtagControl_7_7 extends GDBControl_7_7 {
 	@Override
 	protected Sequence getCompleteInitializationSequence(Map<String,Object> attributes, RequestMonitorWithProgress rm) {
 		return new GDBJtagDSFFinalLaunchSequence_7_7(getSession(), attributes, rm);
+	}
+	
+	@Override
+	protected IEventProcessor createInferiorEventProcessor(ICommandControlService connection) {
+		return new GDBJtagNullEventProcessor();
 	}
 }

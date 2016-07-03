@@ -29,12 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
@@ -1854,17 +1856,24 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		assert fNumConnected > 0;
     		fNumConnected--;
     		
-    		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+    		if (fNumConnected == 0 && 
+    			Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
     				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
     				true, null)) {
-    			if (fNumConnected == 0 && !fProcRestarting) {
-    				// If the last process we are debugging finishes, and we are not restarting it, 
-    				// let's terminate GDB.
-    				// We also do this for a remote attach session, since the 'auto terminate' preference
-    				// is enabled.  If users want to keep the session alive to attach to another process,
-    				// they can simply disable that preference
-    				fCommandControl.terminate(new ImmediateRequestMonitor());
-    			}
+    			// If the last process we are debugging finishes and does not restart 
+    			// let's terminate GDB.  We wait a small delay to see if the process will restart.
+    			// We also do this for a remote attach session, since the 'auto terminate' preference
+    			// is enabled.  If users want to keep the session alive to attach to another process,
+    			// they can simply disable that preference
+    			getExecutor().schedule(new DsfRunnable() {
+					@Override
+					public void run() {
+						// Verify the process didn't restart by checking if we have a new one connected
+						if (fNumConnected == 0) {
+							fCommandControl.terminate(new ImmediateRequestMonitor());
+						}
+					}
+				}, 500, TimeUnit.MILLISECONDS);
     		}
     	} else {
     		fThreadCommandCache.reset();

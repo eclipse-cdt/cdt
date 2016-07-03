@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ICreatedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -699,6 +700,23 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
         getSession().dispatchEvent(new ContainerCreatedDMEvent(containerDmc), getProperties());
     }
     
+	@Override
+	@DsfServiceEventHandler
+    public void eventDispatched(IStartedDMEvent e) {
+    	if (e.getDMContext() instanceof IMIContainerDMContext) {
+    		IMIContainerDMContext containerDmc = (IMIContainerDMContext)e.getDMContext();
+    		
+    		// In case the process that just started was already exited (meaning we are dealing
+    		// with a restart), remove it from our list.
+    		// Do this here to handle the restart case triggered by GDB itself
+    		// (user typing 'run' from the GDB console).  In this case, we don't know yet
+    		// we are dealing with a restart, but when we see the process come back, we
+    		// know to remove it from the exited list.
+    		getExitedProcesses().remove(containerDmc.getGroupId());
+    	}
+    	super.eventDispatched(e);
+	}
+	
     /** @since 4.0 */
     @DsfServiceEventHandler
     @Override

@@ -87,7 +87,14 @@ public interface IRunControl extends IDsfService
          */
         IExecutionDMContext[] getTriggeringContexts();
     }
-    
+
+    /**
+     * Indicates that a new execution context was created but may not have
+     * started execution yet.  
+     * @since 2.8
+     */
+    public interface ICreatedDMEvent extends IDMEvent<IExecutionDMContext> {}
+
     /**
      * Indicates that a new execution context was started.  
      */

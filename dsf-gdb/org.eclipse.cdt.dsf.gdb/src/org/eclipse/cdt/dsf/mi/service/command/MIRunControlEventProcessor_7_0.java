@@ -50,6 +50,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MISteppingRangeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupAddedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
@@ -214,8 +215,31 @@ public class MIRunControlEventProcessor_7_0
 
     		    		fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     		    	}
-    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    			} else if ("thread-group-added".equals(miEvent)) { //$NON-NLS-1$
+    				// With GDB >= 7.2
+    				String groupId = null;
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString().trim();
+    						}
+    					}
+    				}
     				
+ 					IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    				if (procService != null) {
+    					// When a thread-group is first added, there is no process and therefore no pid, so we use UNKNOWN_PROCESS_ID
+    			    	IProcessDMContext processDmc = procService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNKNOWN_PROCESS_ID);
+    					MIEvent<?> event =  new MIThreadGroupAddedEvent(processDmc, exec.getToken(), groupId);
+   						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    				}
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    				// =thread-group-created was used for GDB 7.0 and 7.1,
+    				// but then became =thread-group-started starting with GDB 7.2
     				String groupId = null;
     				String pId = null;
 

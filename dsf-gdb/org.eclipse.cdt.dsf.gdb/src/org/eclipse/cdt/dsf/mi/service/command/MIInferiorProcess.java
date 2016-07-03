@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -58,6 +61,9 @@ import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
 
 /**
  * This Process implementation tracks one of the inferiors that is being debugged 
@@ -110,6 +116,8 @@ public class MIInferiorProcess extends Process
      * value is 0, the inferior process writes the target output. 
      */
     private int fSuppressTargetOutputCounter = 0;
+    
+    private IProcess fRuntimeInferior;
 
     @ThreadSafe
     Integer fExitCode = null;
@@ -416,6 +424,43 @@ public class MIInferiorProcess extends Process
         return fErrorStreamPiped;
     }
     
+	private void addInferiorToLaunch() {
+    	if (fContainerDMContext instanceof IMIContainerDMContext) {
+
+    		ILaunch launch = fContainerDMContext.getAdapter(ILaunch.class);
+
+    		String groupId = ((IMIContainerDMContext)fContainerDMContext).getGroupId();
+
+    		// Add the inferior to the launch.  
+    		// This cannot be done on the executor or things deadlock.
+    		DebugPlugin.getDefault().asyncExec(new Runnable() {
+    			@Override
+    			public void run() {
+    				// Add the inferior
+    				// Need to go through DebugPlugin.newProcess so that we can use 
+    				// the overrideable process factory to allow others to override.
+    				// First set attribute to specify we want to create an inferior process.
+    				// Bug 210366
+    				Map<String, String> attributes = new HashMap<String, String>();
+    				attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR, 
+    						IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
+    				//TODO need label for the console to show
+    				fRuntimeInferior = DebugPlugin.newProcess(launch, MIInferiorProcess.this, "", attributes); //$NON-NLS-1$
+    				// Now set the inferior groupId
+    				fRuntimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
+    			}
+    		});
+    	}
+	}
+
+	/**
+	 * Removes the process with the specified groupId from the launch.
+	 */
+	private void removeInferiorFromLaunch() {
+		ILaunch launch = fContainerDMContext.getAdapter(ILaunch.class);
+		launch.removeProcess(fRuntimeInferior);
+	}
+
 	@Override
     public void eventReceived(Object output) {
         for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
@@ -477,7 +522,9 @@ public class MIInferiorProcess extends Process
     	}
     }
     
-    /** @since 4.2 */
+    /** @since 4.2
+     * @deprecated Replaced by eventDispatched(IExitedDMEvent) */
+    @Deprecated
     @DsfServiceEventHandler
     public void eventDispatched(MIThreadGroupExitedEvent e) {
     }
@@ -511,6 +558,15 @@ public class MIInferiorProcess extends Process
         				fContainerDMContext = (IMIContainerDMContext)e.getDMContext();
     				}
     			}
+    			if (fStarted) {
+        			// The inferior is starting or restarting.  This instance needs
+        			// to add itself to the launch.
+    				addInferiorToLaunch();
+    			}
+    		} else {
+    			// The inferior is restarting.  This instance needs
+    			// to be removed from the launch, while the new instance will add itself
+    	        removeInferiorFromLaunch();
     		}
     	}
     }

@@ -44,6 +44,7 @@ import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_3;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_4;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_7;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
@@ -210,6 +211,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		if (compareVersionWith(GDB_7_4_VERSION) >= 0) {
 			return new GDBControl_7_4(session, config, new CommandFactory_6_8());
+		}
+		if (compareVersionWith(GDB_7_3_VERSION) >= 0) {
+			return new GDBControl_7_3(session, config, new CommandFactory_6_8());
 		}
 		if (compareVersionWith(GDB_7_2_VERSION) >= 0) {
 			return new GDBControl_7_2(session, config, new CommandFactory_6_8());

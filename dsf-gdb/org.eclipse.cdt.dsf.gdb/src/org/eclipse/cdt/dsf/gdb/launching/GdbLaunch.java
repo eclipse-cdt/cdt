@@ -15,6 +15,7 @@ package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -808,12 +809,14 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 					(String) null);
 		}
 		if (programName == null) {
-			return null;
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 		programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
 		IPath programPath = new Path(programName);
 		if (programPath.isEmpty()) {
-			return null;
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 
 		if (!programPath.isAbsolute()) {
@@ -826,10 +829,34 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			}
 		}
 		if (!programPath.toFile().exists()) {
-			return null;
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
+					  new FileNotFoundException(
+							  LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found",  //$NON-NLS-1$ 
+							                                    programPath.toOSString())),
+					  ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 
 		return programPath.toOSString();
+	}
+
+	/**
+	 * Throws a core exception with an error status object built from the given
+	 * message, lower level exception, and error code.
+	 * 
+	 * @param message
+	 *            the status message
+	 * @param exception
+	 *            lower level exception associated with the error, or
+	 *            <code>null</code> if none
+	 * @param code
+	 *            error code
+	 */
+	private static void abort(String message, Throwable exception, int code) throws CoreException {
+		MultiStatus status = new MultiStatus(GdbPlugin.PLUGIN_ID, code, message, exception);
+		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code, 
+				              exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+				              exception));
+		throw new CoreException(status);
 	}
 
 	/**

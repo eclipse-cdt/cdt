@@ -61,12 +61,13 @@ public class TerminalConsoleConnector {
 						}
 					}
 				}
-				setState(TerminalState.CLOSED);
-				synchronized (TerminalConsoleConnector.this) {
-					outThread = null;
-				}
 			} catch (IOException e) {
 				Activator.log(e);
+			}
+
+			synchronized (TerminalConsoleConnector.this) {
+				outThread = null;
+				disconnect();
 			}
 		}
 	}
@@ -135,7 +136,7 @@ public class TerminalConsoleConnector {
 							remoteProcess = connection.getService(IRemoteCommandShellService.class)
 									.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
 						} catch (IOException e) {
-							Activator.log(e);
+							disconnect();
 							return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
 						}
 					}
@@ -165,9 +166,13 @@ public class TerminalConsoleConnector {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					remoteProcess.destroy();
+					remoteProcess = null;
+					setState(TerminalState.CLOSED);
 					return Status.OK_STATUS;
 				}
 			}.schedule();
+		} else {
+			setState(TerminalState.CLOSED);
 		}
 	}
 

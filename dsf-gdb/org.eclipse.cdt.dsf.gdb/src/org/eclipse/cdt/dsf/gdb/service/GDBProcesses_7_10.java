@@ -56,30 +56,35 @@ public class GDBProcesses_7_10 extends GDBProcesses_7_4 {
     		ILaunch launch = procCtx.getAdapter(ILaunch.class);
     		if (launch != null) {
     			try {
-    				ICommandControlDMContext controlContext = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
-    				String reverseMode =
-    						launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
-    								                                     IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT);
-    				if (reverseMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_SOFTWARE)) {
-    					reverseService.enableReverseMode(controlContext, ReverseDebugMethod.SOFTWARE, rm);
-    				}
-    				else if (reverseMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARDWARE)) {
-    					String defaultValue = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
-    							IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
-    							IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE, null);
-    					
-    					ReverseDebugMethod traceMethod = ReverseDebugMethod.GDB_TRACE;
-    					if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
-    						traceMethod = ReverseDebugMethod.BRANCH_TRACE;
-    					} else if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
-    						traceMethod = ReverseDebugMethod.PROCESSOR_TRACE;
-    					}
-    					
-						reverseService.enableReverseMode(controlContext, traceMethod, rm);
-    				}
-    				else {
-    					rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unexpected Reverse debugging mode " + reverseMode, null)); //$NON-NLS-1$
-    				}
+					boolean reverseEnabled =
+							launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+									                                     IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+					if (reverseEnabled) {
+						ICommandControlDMContext controlContext = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
+						String reverseMode =
+								launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
+										IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT);
+						if (reverseMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_SOFTWARE)) {
+							reverseService.enableReverseMode(controlContext, ReverseDebugMethod.SOFTWARE, rm);
+						} else if (reverseMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARDWARE)) {
+							String defaultValue = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
+									IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE,
+									IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE, null);
+
+							ReverseDebugMethod traceMethod = ReverseDebugMethod.GDB_TRACE;
+							if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE)) {
+								traceMethod = ReverseDebugMethod.BRANCH_TRACE;
+							} else if (defaultValue.equals(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE)) {
+								traceMethod = ReverseDebugMethod.PROCESSOR_TRACE;
+							}
+
+							reverseService.enableReverseMode(controlContext, traceMethod, rm);
+						} else {
+							rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unexpected Reverse debugging mode " + reverseMode, null)); //$NON-NLS-1$
+						}
+					} else {
+						rm.done();
+					}
     			} catch (CoreException e) {
     				// Ignore, just don't set reverse method
     				rm.done();

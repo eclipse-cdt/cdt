@@ -69,113 +69,55 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
+import org.eclipse.remote.core.IRemoteConnectionChangeListener;
+import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class ArduinoBuildConfiguration extends CBuildConfiguration implements TemplateLoader {
+public class ArduinoBuildConfiguration extends CBuildConfiguration
+		implements TemplateLoader, IRemoteConnectionChangeListener {
 
-	private static final String PACKAGE_NAME = "packageName"; //$NON-NLS-1$
-	private static final String PLATFORM_NAME = "platformName"; //$NON-NLS-1$
-	private static final String BOARD_NAME = "boardName"; //$NON-NLS-1$
-	private static final String MENU_QUALIFIER = "menu_"; //$NON-NLS-1$
-	private static final String PROGRAMMER = "programmer"; //$NON-NLS-1$
+	private static final ArduinoManager manager = Activator.getService(ArduinoManager.class);
+	private static final boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
 
-	private static ArduinoManager manager = Activator.getService(ArduinoManager.class);
-
-	private final ArduinoBoard board;
+	private final ArduinoRemoteConnection target;
 	private final String launchMode;
+	private ArduinoBoard defaultBoard;
 	private Properties properties;
 
 	// for Makefile generation
 	private Configuration templateConfig;
 
-	private final static boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
-
-	public ArduinoBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
-		super(config, name);
-
-		Preferences settings = getSettings();
-		String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
-		String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
-		String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
-		ArduinoBoard b = manager.getBoard(packageName, platformName, boardName);
-
-		if (b == null) {
-			// Default to Uno or first one we find
-			b = manager.getBoard("Arduino/Genuino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (b == null) {
-				Collection<ArduinoBoard> boards = manager.getInstalledBoards();
-				if (!boards.isEmpty()) {
-					b = boards.iterator().next();
-				}
-			}
-		}
-		board = b;
-
-		int i = name.lastIndexOf('.');
-		this.launchMode = name.substring(i + 1);
+	/**
+	 * Default configuration.
+	 * 
+	 * @param config
+	 */
+	ArduinoBuildConfiguration(IBuildConfiguration config, String name, String launchMode, ArduinoBoard defaultBoard, IToolChain toolChain) throws CoreException {
+		super(config, ".default", toolChain); //$NON-NLS-1$
+		this.target = null;
+		this.launchMode = launchMode;
+		this.defaultBoard = defaultBoard;
 	}
 
-	ArduinoBuildConfiguration(IBuildConfiguration config, String name, ArduinoBoard board, String launchMode,
+	ArduinoBuildConfiguration(IBuildConfiguration config, String name, String launchMode, ArduinoRemoteConnection target,
 			IToolChain toolChain) throws CoreException {
 		super(config, name, toolChain);
-		this.board = board;
+		this.target = target;
 		this.launchMode = launchMode;
-
-		// Store the board identifer
-		ArduinoPlatform platform = board.getPlatform();
-		ArduinoPackage pkg = platform.getPackage();
-
-		Preferences settings = getSettings();
-		settings.put(PACKAGE_NAME, pkg.getName());
-		settings.put(PLATFORM_NAME, platform.getName());
-		settings.put(BOARD_NAME, board.getName());
-
-		try {
-			settings.flush();
-		} catch (BackingStoreException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Saving preferences", e)); //$NON-NLS-1$
-		}
+		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
+		remoteManager.addRemoteConnectionChangeListener(this);
 	}
 
-	ArduinoBuildConfiguration(IBuildConfiguration config, String name, ArduinoRemoteConnection target,
-			String launchMode, IToolChain toolChain) throws CoreException {
-		this(config, name, target.getBoard(), launchMode, toolChain);
-
-		Preferences settings = getSettings();
-
-		// Store the menu settings
-		HierarchicalProperties menus = board.getMenus();
-		if (menus != null) {
-			for (String id : menus.getChildren().keySet()) {
-				String value = target.getMenuValue(id);
-				if (value != null) {
-					settings.put(MENU_QUALIFIER + id, value);
-				}
-			}
+	@Override
+	public synchronized void connectionChanged(RemoteConnectionChangeEvent event) {
+		if (event.getConnection().equals(target.getRemoteConnection())) {
+			properties = null;
 		}
-
-		String programmer = target.getProgrammer();
-		if (programmer != null) {
-			settings.put(PROGRAMMER, programmer);
-		}
-
-		try {
-			settings.flush();
-		} catch (BackingStoreException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Saving preferences", e)); //$NON-NLS-1$
-		}
-	}
-
-	static String generateName(ArduinoBoard board, String launchMode) {
-		ArduinoPlatform platform = board.getPlatform();
-		ArduinoPackage pkg = platform.getPackage();
-		return pkg.getName() + '.' + platform.getArchitecture() + '.' + board.getId() + '.' + launchMode;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -191,31 +133,21 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 		return launchMode;
 	}
 
-	public boolean matches(ArduinoRemoteConnection target) throws CoreException {
-		ArduinoBoard otherBoard = target.getBoard();
-		if (!getBoard().equals(otherBoard)) {
-			return false;
-		}
-
-		Preferences settings = getSettings();
-		HierarchicalProperties menus = board.getMenus();
-		if (menus != null) {
-			for (String id : menus.getChildren().keySet()) {
-				if (!settings.get(MENU_QUALIFIER + id, "").equals(target.getMenuValue(id))) { //$NON-NLS-1$
-					return false;
-				}
-			}
-		}
-
-		return true;
+	public ArduinoRemoteConnection getTarget() {
+		return target;
 	}
 
 	public ArduinoBoard getBoard() throws CoreException {
-		return board;
+		if (target != null) {
+			return target.getBoard();
+		} else {
+			return defaultBoard;
+		}
 	}
 
 	private synchronized Properties getProperties() throws CoreException {
 		if (properties == null) {
+			ArduinoBoard board = getBoard();
 			ArduinoPlatform platform = board.getPlatform();
 
 			// IDE generated properties
@@ -265,24 +197,22 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			}
 
 			// Board
-			ArduinoBoard board = getBoard();
 			properties.putAll(board.getBoardProperties());
 
 			// Menus
-			Preferences settings = getSettings();
 			HierarchicalProperties menus = board.getMenus();
 			if (menus != null) {
 				for (Entry<String, HierarchicalProperties> menuEntry : menus.getChildren().entrySet()) {
 					String key = menuEntry.getKey();
-					String defaultValue;
-					Iterator<HierarchicalProperties> i = menuEntry.getValue().getChildren().values().iterator();
-					if (i.hasNext()) {
-						defaultValue = i.next().getValue();
-					} else {
-						defaultValue = ""; //$NON-NLS-1$
+					String value = target.getMenuValue(key);
+					if (value == null || value.isEmpty()) {
+						Iterator<HierarchicalProperties> i = menuEntry.getValue().getChildren().values().iterator();
+						if (i.hasNext()) {
+							HierarchicalProperties first = i.next();
+							value = first.getValue();
+						}
 					}
-					String value = settings.get(MENU_QUALIFIER + key, defaultValue);
-					if (!value.isEmpty()) {
+					if (value != null && !value.isEmpty()) {
 						properties.putAll(board.getMenuProperties(key, value));
 					}
 				}
@@ -597,9 +527,9 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 			command = resolveProperty("upload.pattern", properties); //$NON-NLS-1$
 		} else {
 			// use the bootloader
-			String programmer = getSettings().get(PROGRAMMER, null);
+			String programmer = target.getProgrammer();
 			if (programmer != null) {
-				HierarchicalProperties programmers = board.getPlatform().getProgrammers();
+				HierarchicalProperties programmers = getBoard().getPlatform().getProgrammers();
 				if (programmers != null) {
 					HierarchicalProperties programmerProps = programmers.getChild(programmer);
 					if (programmerProps != null) {
@@ -607,7 +537,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration implements Te
 					}
 				}
 			}
-			
+
 			// TODO preference
 			properties.put("program.verbose", properties.getProperty("program.params.verbose", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			properties.put("program.verify", properties.getProperty("program.params.verify", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

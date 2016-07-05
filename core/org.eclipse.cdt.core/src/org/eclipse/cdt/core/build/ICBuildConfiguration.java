@@ -31,8 +31,11 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	/**
 	 * CDT doesn't like that the Platform default config name is an empty string.
 	 * It needs a real name for the name of the build directory, for example.
+	 * 
+	 * @deprecated each build config can use their own default name.
 	 */
-	public static String DEFAULT_NAME = "default";
+	@Deprecated
+	public static String DEFAULT_NAME = "default"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the resources build configuration that this CDT build

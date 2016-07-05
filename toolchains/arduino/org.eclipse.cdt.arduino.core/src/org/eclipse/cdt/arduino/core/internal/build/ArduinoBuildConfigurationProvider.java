@@ -23,6 +23,9 @@ import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteServicesManager;
 
 public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationProvider {
 
@@ -49,52 +52,54 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 				}
 			}
 			if (board != null) {
-				// Create the toolChain
-				IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
-				IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
-				IToolChain toolChain = new ArduinoToolChain(provider, config);
-				toolChainManager.addToolChain(toolChain);
-
-				return new ArduinoBuildConfiguration(config, name, board, "run", toolChain); //$NON-NLS-1$
+				IToolChain toolChain = createToolChain(config);
+				return new ArduinoBuildConfiguration(config, name, "run", board, toolChain); //$NON-NLS-1$
 			}
-			return null;
 		} else {
-			return new ArduinoBuildConfiguration(config, name);
-		}
-	}
+			IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
+			IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
+			IRemoteConnection connection = connectionType.getConnection(name);
+			if (connection == null) {
+				throw Activator.coreException(String.format("Unknown connection: %s", name), null);
+			}
 
-	public ArduinoBuildConfiguration getConfiguration(IProject project, ArduinoRemoteConnection target,
-			String launchMode,
-			IProgressMonitor monitor) throws CoreException {
-		ArduinoBoard board = target.getBoard();
-		for (IBuildConfiguration config : project.getBuildConfigs()) {
-			ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
-			if (cconfig != null) {
-				ArduinoBuildConfiguration arduinoConfig = cconfig.getAdapter(ArduinoBuildConfiguration.class);
-				if (arduinoConfig != null && arduinoConfig.getLaunchMode().equals(launchMode)
-						&& arduinoConfig.getBoard().equals(board) && arduinoConfig.matches(target)) {
-					return arduinoConfig;
-				}
+			ArduinoRemoteConnection target = connection.getService(ArduinoRemoteConnection.class);
+			if (target != null) {
+				IToolChain toolChain = createToolChain(config);
+				return new ArduinoBuildConfiguration(config, name, "run", target, toolChain); //$NON-NLS-1$
 			}
 		}
 		return null;
 	}
 
-	public ArduinoBuildConfiguration createConfiguration(IProject project, ArduinoRemoteConnection target,
-			String launchMode,
-			IProgressMonitor monitor) throws CoreException {
-		ArduinoBoard board = target.getBoard();
-		String configName = ArduinoBuildConfiguration.generateName(board, launchMode);
-		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
-				monitor);
-		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
-		IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
-		IToolChain toolChain = new ArduinoToolChain(provider, config);
-		toolChainManager.addToolChain(toolChain);
-		ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, target, launchMode,
+	public ArduinoBuildConfiguration getConfiguration(IProject project, ArduinoRemoteConnection target,
+			String launchMode, IProgressMonitor monitor) throws CoreException {
+		for (IBuildConfiguration config : project.getBuildConfigs()) {
+			ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
+			if (cconfig != null) {
+				ArduinoBuildConfiguration arduinoConfig = cconfig.getAdapter(ArduinoBuildConfiguration.class);
+				if (arduinoConfig != null && target.equals(arduinoConfig.getTarget())
+						&& arduinoConfig.getLaunchMode().equals(launchMode)) {
+					return arduinoConfig;
+				}
+			}
+		}
+
+		// Make a new one
+		String configName = target.getRemoteConnection().getName();
+		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName, monitor);
+		IToolChain toolChain = createToolChain(config);
+		ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, "run", target, //$NON-NLS-1$
 				toolChain);
 		configManager.addBuildConfiguration(config, arduinoConfig);
 		return arduinoConfig;
 	}
 
+	private IToolChain createToolChain(IBuildConfiguration config) throws CoreException {
+		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
+		IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
+		IToolChain toolChain = new ArduinoToolChain(provider, config);
+		toolChainManager.addToolChain(toolChain);
+		return toolChain;
+	}
 }

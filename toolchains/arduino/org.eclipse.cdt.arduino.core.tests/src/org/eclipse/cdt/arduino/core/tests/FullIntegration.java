@@ -158,7 +158,7 @@ public class FullIntegration {
 		ArduinoRemoteConnection arduinoTarget = createTarget(board);
 		ArduinoBuildConfigurationProvider provider = (ArduinoBuildConfigurationProvider) buildConfigManager
 				.getProvider(ArduinoBuildConfigurationProvider.ID);
-		ArduinoBuildConfiguration config = provider.createConfiguration(project, arduinoTarget, "run", monitor);
+		ArduinoBuildConfiguration config = provider.getConfiguration(project, arduinoTarget, "run", monitor);
 
 		System.out.println(String.format("Building board: %s\n    %s - %s", board.getName(), board.getId(),
 				board.getPlatform().getInstallPath()));
@@ -181,12 +181,16 @@ public class FullIntegration {
 
 	private ArduinoRemoteConnection createTarget(ArduinoBoard board) throws Exception {
 		IRemoteConnectionType type = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
-		IRemoteConnection connection = type.getConnection(board.getName());
+		String arch = board.getPlatform().getArchitecture();
+		String pkg = board.getPlatform().getPackage().getName();
+		String targetName = pkg + '-' + arch + '-' + board.getName().replace('/', '_');
+
+		IRemoteConnection connection = type.getConnection(targetName);
 		if (connection != null) {
 			type.removeConnection(connection);
 		}
 
-		IRemoteConnectionWorkingCopy workingCopy = type.newConnection(board.getName());
+		IRemoteConnectionWorkingCopy workingCopy = type.newConnection(targetName);
 		ArduinoRemoteConnection.setBoardId(workingCopy, board);
 		ArduinoRemoteConnection.setPortName(workingCopy, "port1");
 

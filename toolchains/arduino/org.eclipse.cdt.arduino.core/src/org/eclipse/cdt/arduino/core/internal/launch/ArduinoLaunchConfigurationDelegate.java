@@ -115,10 +115,6 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationTarge
 			IProgressMonitor monitor) throws CoreException {
 		ArduinoBuildConfigurationProvider provider = (ArduinoBuildConfigurationProvider) buildConfigManager
 				.getProvider(ArduinoBuildConfigurationProvider.ID);
-		ArduinoBuildConfiguration config = provider.getConfiguration(project, arduinoTarget, launchMode, monitor);
-		if (config == null) {
-			config = provider.createConfiguration(project, arduinoTarget, launchMode, monitor);
-		}
-		return config;
+		return provider.getConfiguration(project, arduinoTarget, launchMode, monitor);
 	}
 }

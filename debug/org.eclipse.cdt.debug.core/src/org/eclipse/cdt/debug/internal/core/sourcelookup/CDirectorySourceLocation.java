@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,17 +107,15 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(ICSourceLocation.class))
-			return this;
+			return (T) this;
 		if (adapter.equals(CDirectorySourceLocation.class))
-			return this;
+			return (T) this;
 		if (adapter.equals(IPath.class))
-			return getDirectory();
+			return (T) getDirectory();
 		return null;
 	}
 

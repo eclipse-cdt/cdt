@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,20 +83,17 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		return (getCSourceLocator() != null) ? getCSourceLocator().contains(resource) : false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(CSourceManager.class))
-			return this;
+			return (T) this;
 		if (adapter.equals(ICSourceLocator.class))
-			return this;
+			return (T) this;
 		if (adapter.equals(IPersistableSourceLocator.class))
-			return this;
+			return (T) this;
 		if (adapter.equals(IResourceChangeListener.class) && fSourceLocator instanceof IResourceChangeListener)
-			return fSourceLocator;
+			return (T) fSourceLocator;
 		return null;
 	}
 

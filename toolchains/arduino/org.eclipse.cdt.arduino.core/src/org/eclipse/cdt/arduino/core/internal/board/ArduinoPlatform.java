@@ -52,6 +52,7 @@ public class ArduinoPlatform {
 	private List<ToolDependency> toolsDependencies;
 	// end JSON fields
 
+	private Path installPath;
 	private ArduinoPackage pkg;
 	private HierarchicalProperties boardsProperties;
 	private LinkedProperties platformProperties;
@@ -231,7 +232,17 @@ public class ArduinoPlatform {
 	}
 
 	public Path getInstallPath() {
-		return getPackage().getInstallPath().resolve("hardware").resolve(getArchitecture()).resolve(getVersion()); //$NON-NLS-1$
+		if (installPath == null) {
+			Path oldPath = getPackage().getInstallPath().resolve("hardware").resolve(getPackage().getName()) //$NON-NLS-1$
+					.resolve(getArchitecture()).resolve(getVersion());
+			if (Files.exists(oldPath)) {
+				installPath = oldPath;
+			} else {
+				installPath = getPackage().getInstallPath().resolve("hardware").resolve(getArchitecture()) //$NON-NLS-1$
+						.resolve(getVersion());
+			}
+		}
+		return installPath;
 	}
 
 	private void initLibraries() throws CoreException {

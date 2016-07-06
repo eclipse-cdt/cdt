@@ -122,9 +122,6 @@ public class ArduinoManager {
 			// See if we need a conversion
 			int version = Integer.parseInt(props.getProperty(VERSION_KEY, "1")); //$NON-NLS-1$
 			if (version < Integer.parseInt(VERSION)) {
-				// Need to move the directories around
-				convertPackageDirs();
-
 				props.setProperty(VERSION_KEY, VERSION);
 				try (FileWriter writer = new FileWriter(getVersionFile().toFile())) {
 					props.store(writer, ""); //$NON-NLS-1$
@@ -132,44 +129,6 @@ public class ArduinoManager {
 					throw Activator.coreException(e);
 				}
 			}
-		}
-	}
-
-	private void convertPackageDirs() throws CoreException {
-		Path packagesDir = ArduinoPreferences.getArduinoHome().resolve("packages"); //$NON-NLS-1$
-		if (!Files.isDirectory(packagesDir)) {
-			return;
-		}
-
-		try {
-			Files.list(packagesDir).forEach(path -> {
-				try {
-					Path hardwarePath = path.resolve("hardware"); //$NON-NLS-1$
-					Path badPath = hardwarePath.resolve(path.getFileName());
-					if (Files.exists(badPath)) {
-						Path tmpDir = Files.createTempDirectory(packagesDir, "tbd"); //$NON-NLS-1$
-						Path badPath2 = tmpDir.resolve(badPath.getFileName());
-						Files.move(badPath, badPath2);
-						Files.list(badPath2).forEach(archPath -> {
-							try {
-								Optional<Path> latest = Files.list(archPath)
-										.reduce((path1, path2) -> compareVersions(path1.getFileName().toString(),
-												path2.getFileName().toString()) > 0 ? path1 : path2);
-								if (latest.isPresent()) {
-									Files.move(latest.get(), hardwarePath.resolve(archPath.getFileName()));
-								}
-							} catch (IOException e) {
-								throw new RuntimeException(e);
-							}
-						});
-						recursiveDelete(tmpDir);
-					}
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			});
-		} catch (RuntimeException | IOException e) {
-			throw Activator.coreException(e);
 		}
 	}
 

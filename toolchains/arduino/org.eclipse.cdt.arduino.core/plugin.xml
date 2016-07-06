@@ -99,4 +99,16 @@
             id="org.eclipse.cdt.arduino.core.toolChainProvider">
       </provider>
    </extension>
+   <extension
+         id="arduinoBuilder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            callOnEmptyDelta="true"
+            hasNature="false"
+            isConfigurable="true"
+            supportsConfigurations="true">
+         <run
+               class="org.eclipse.cdt.core.build.CBuilder">
+         </run></builder>
+   </extension>
 </plugin>

@@ -74,9 +74,9 @@
         xsi:type="pde:APIBaselineTask"
         id="baseline"
         name="CDT"
-        version="8.8"
+        version="9.0"
         location="${workspace.location/../api.baseline}"
-        remoteURI="http://download.eclipse.org/tools/cdt/releases/8.8/cdt-8.8.0.zip"/>
+        remoteURI="http://download.eclipse.org/tools/cdt/releases/9.0/cdt-9.0.0.zip"/>
     <setupTask
         xsi:type="git:GitCloneTask"
         id="git.clone.cdt"
@@ -174,7 +174,7 @@
         <repositoryList
             name="Neon">
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20151221205849/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
           <repository
               url="http://download.eclipse.org/technology/swtbot/snapshots/"/>
           <repository

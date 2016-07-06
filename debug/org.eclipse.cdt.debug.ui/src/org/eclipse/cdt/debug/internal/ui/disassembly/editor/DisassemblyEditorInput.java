@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ARM Limited and others.
+ * Copyright (c) 2008, 2016 ARM Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,12 +70,8 @@ public class DisassemblyEditorInput implements IEditorInput {
         return ""; //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
     @Override
-	@SuppressWarnings("unchecked")
-    public Object getAdapter( Class adapter ) {
+    public <T> T getAdapter( Class<T> adapter ) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Freescale, Inc.
+ * Copyright (c) 2005, 2016 Freescale, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,14 +24,11 @@ public class CMemoryAdapterFactory implements IAdapterFactory {
 
 	private static IAddMemoryBlocksTarget fgAddMemoryBlocks = new AddMemoryBlocks();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.isInstance(adaptableObject)) {
-			return adaptableObject;
+			return (T) adaptableObject;
 		}
 
 		// If the backend supports memory spaces we use a custom Add Monitor
@@ -40,19 +37,15 @@ public class CMemoryAdapterFactory implements IAdapterFactory {
 		// necessary.
 		if (adapterType.equals(IAddMemoryBlocksTarget.class)) {
 			if (adaptableObject instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
-				return fgAddMemoryBlocks;
+				return (T) fgAddMemoryBlocks;
 			}
 		}
 		
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IAddMemoryBlocksTarget.class };
 	}
 }

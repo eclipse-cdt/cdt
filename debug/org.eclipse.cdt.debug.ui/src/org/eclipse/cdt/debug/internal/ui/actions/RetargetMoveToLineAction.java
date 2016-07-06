@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2016 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,11 +84,8 @@ public class RetargetMoveToLineAction extends RetargetAction {
 			((IMoveToLineTarget)target).canMoveToLine(part, selection, fTargetElement);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getAdapterClass()
-	 */
 	@Override
-	protected Class getAdapterClass() {
+	protected Class<?> getAdapterClass() {
 		return IMoveToLineTarget.class;
 	}
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,33 +22,26 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
  */
 public class RetargettableActionAdapterFactory implements IAdapterFactory {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter( Object adaptableObject, Class adapterType ) {
+	public <T> T getAdapter( Object adaptableObject, Class<T> adapterType ) {
 		if ( adapterType == IRunToLineTarget.class ) {
-			return new RunToLineAdapter();
+			return (T) new RunToLineAdapter();
 		} 
 		if ( adapterType == IResumeAtLineTarget.class ) {
-			return new ResumeAtLineAdapter();
+			return (T) new ResumeAtLineAdapter();
 		}
 		if ( adapterType == IMoveToLineTarget.class ) {
-			return new MoveToLineAdapter();
+			return (T) new MoveToLineAdapter();
 		} 		
 		if ( adapterType == IResumeWithoutSignalHandler.class ) {
-			return new ResumeWithoutSignalCommand();
+			return (T) new ResumeWithoutSignalCommand();
 		} 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[]{ IRunToLineTarget.class, 
 				            IResumeAtLineTarget.class, 
 				            IMoveToLineTarget.class,

@@ -62,7 +62,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     private HashMap<String, Object> fOriginalValues = new HashMap<String, Object>();
     private boolean fIsDirty = false; 
     private boolean fIsCanceled = false;
-    private ListenerList fListeners;
+    private ListenerList<IPropertyChangeListener> fListeners;
     private final CBreakpointContext fContext;
     
     public CBreakpointPreferenceStore() {
@@ -70,7 +70,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     }
 
     public CBreakpointPreferenceStore(CBreakpointContext context, Map<String, Object> attributes) {
-        fListeners = new ListenerList(org.eclipse.core.runtime.ListenerList.IDENTITY);
+        fListeners = new ListenerList<>(org.eclipse.core.runtime.ListenerList.IDENTITY);
         fContext = context;
         
         fOriginalValues.clear();

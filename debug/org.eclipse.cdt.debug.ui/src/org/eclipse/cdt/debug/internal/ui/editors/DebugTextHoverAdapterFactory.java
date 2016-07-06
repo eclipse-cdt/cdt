@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,18 +24,17 @@ public class DebugTextHoverAdapterFactory implements IAdapterFactory {
     private static final Class<?>[] TYPES = { ICEditorTextHover.class };
     private static final Object fDebugTextHover= new DebugTextHover();
     
-    @Override
-	@SuppressWarnings("rawtypes")
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+    @SuppressWarnings("unchecked")
+	@Override
+    public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
         if (adaptableObject instanceof ICStackFrame) {
-            return fDebugTextHover;
+            return (T) fDebugTextHover;
         }
         return null;
     }
 
     @Override
-	@SuppressWarnings("rawtypes")
-    public Class[] getAdapterList() {
+    public Class<?>[] getAdapterList() {
         return TYPES;
     }
 

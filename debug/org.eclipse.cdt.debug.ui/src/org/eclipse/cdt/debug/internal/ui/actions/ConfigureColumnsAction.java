@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,13 +67,13 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 
     class ColumnLabelProvider extends LabelProvider {
 
-        private Map fImages = new HashMap();
+        private Map<ImageDescriptor, Image> fImages = new HashMap<>();
 
         @Override
 		public Image getImage( Object element ) {
             ImageDescriptor imageDescriptor = fViewer.getColumnPresentation().getImageDescriptor( (String)element );
             if ( imageDescriptor != null ) {
-                Image image = (Image)fImages.get( imageDescriptor );
+                Image image = fImages.get( imageDescriptor );
                 if ( image == null ) {
                     image = imageDescriptor.createImage();
                     fImages.put( imageDescriptor, image );
@@ -91,9 +91,9 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
         @Override
 		public void dispose() {
             super.dispose();
-            Iterator iterator = fImages.values().iterator();
+            Iterator<Image> iterator = fImages.values().iterator();
             while( iterator.hasNext() ) {
-                Image image = (Image)iterator.next();
+                Image image = iterator.next();
                 image.dispose();
             }
             fImages.clear();
@@ -124,7 +124,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
                 new ColumnLabelProvider(), "Select the &columns to display:" );
         PlatformUI.getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.CONFIGURE_COLUMNS_DIALOG );
         String[] visibleColumns = fViewer.getVisibleColumns();
-        List initialSelection = new ArrayList( visibleColumns.length );
+        List<String> initialSelection = new ArrayList<>( visibleColumns.length );
         for( int i = 0; i < visibleColumns.length; i++ ) {
             initialSelection.add( visibleColumns[i] );
         }

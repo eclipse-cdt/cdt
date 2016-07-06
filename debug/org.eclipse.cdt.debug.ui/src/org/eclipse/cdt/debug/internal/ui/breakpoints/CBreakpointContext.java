@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems and others.
+ * Copyright (c) 2007, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -227,35 +227,35 @@ class CBreakpointContextAdapterFactory implements IAdapterFactory {
     private static final IActionFilter fgActionFilter = new CBreakpointContextActionFilter();
     private static final IWorkbenchAdapter fgWorkbenchAdapter = new CBreakpointContextWorkbenchAdapter();
     
-    @Override
-	public Object getAdapter(Object obj, @SuppressWarnings("rawtypes") Class adapterType) {
+    @SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Object obj, Class<T> adapterType) {
         // Note: only return the breakpoint object as an adapter if it has 
         // an associated marker.  Otherwise the property pages will throw multiple 
         // exceptions.
         if (adapterType.isInstance( ((CBreakpointContext)obj).getBreakpoint() ) &&
             ((CBreakpointContext)obj).getBreakpoint().getMarker() != null) 
         {
-            return ((CBreakpointContext)obj).getBreakpoint();
+            return (T) ((CBreakpointContext)obj).getBreakpoint();
         }
         
         if ( IPreferenceStore.class.equals(adapterType) ) {
-        	return ((CBreakpointContext)obj).getPreferenceStore();
+        	return (T) ((CBreakpointContext)obj).getPreferenceStore();
         }
         
         if (IActionFilter.class.equals(adapterType)) {
-            return fgActionFilter;
+            return (T) fgActionFilter;
         }
         
         if (IWorkbenchAdapter.class.equals(adapterType)) {
-            return fgWorkbenchAdapter;
+            return (T) fgWorkbenchAdapter;
         }
 
         return null;
     }
     
-    @SuppressWarnings("rawtypes")
     @Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
         return fgAdapterList;
     }
 }

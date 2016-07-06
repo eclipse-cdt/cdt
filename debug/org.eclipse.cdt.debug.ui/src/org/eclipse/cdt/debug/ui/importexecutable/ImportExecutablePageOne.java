@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Nokia and others.
+ * Copyright (c) 2007, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,13 +112,13 @@ public class ImportExecutablePageOne extends WizardPage {
 		if (point != null)
 		{
 			IExtension[] exts = point.getExtensions();
-			ArrayList extensionsInUse = new ArrayList();
+			ArrayList<IExtension> extensionsInUse = new ArrayList<>();
 			for (int i = 0; i < exts.length; i++) {
 				if (isExtensionVisible(exts[i])) {
 					extensionsInUse.add(exts[i]);
 				}
 			}
-			binaryParserExtensions = (IExtension[]) extensionsInUse.toArray(new IExtension[extensionsInUse.size()]);
+			binaryParserExtensions = extensionsInUse.toArray(new IExtension[extensionsInUse.size()]);
 		}
 		
 		supportedBinaryParsers = new IBinaryParser[supportedBinaryParserIds.length];
@@ -147,7 +147,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		selectMultipleTitle.setEnabled(!selectSingleFile);
 	}
 
-	private boolean collectExecutableFiles(Collection files, File directory,
+	private boolean collectExecutableFiles(Collection<File> files, File directory,
 			IProgressMonitor monitor) {
 
 		if (monitor.isCanceled())
@@ -600,10 +600,10 @@ public class ImportExecutablePageOne extends WizardPage {
 					executables = new File[0];
 					if (directory.isDirectory()) {
 
-						Collection files = new ArrayList();
+						Collection<File> files = new ArrayList<>();
 						if (!collectExecutableFiles(files, directory, monitor))
 							return;
-						executables = (File[]) files.toArray(new File[files.size()]);
+						executables = files.toArray(new File[files.size()]);
 					}
 					monitor.done();
 				}

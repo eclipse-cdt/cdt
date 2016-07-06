@@ -197,7 +197,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 * 
 	 * @return the type of adapter this action works on
 	 */
-	protected abstract Class getAdapterClass();
+	protected abstract Class<?> getAdapterClass();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)

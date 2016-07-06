@@ -443,13 +443,11 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         return NAME;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
-    @Override
-	public Object getAdapter(Class required) {
+    @SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> required) {
         if (ITextViewer.class.equals(required)) {
-            return fSourceViewer;
+            return (T) fSourceViewer;
         }
         return null;
     }

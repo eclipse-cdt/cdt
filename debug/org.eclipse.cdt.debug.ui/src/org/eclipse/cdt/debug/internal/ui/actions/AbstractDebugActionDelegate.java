@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,17 +180,14 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	private void runInForeground(final IStructuredSelection selection) {
 	    final MultiStatus status= 
 			new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null); 	    
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-			@Override
-			public void run() {
-			    Iterator selectionIter = selection.iterator();
-				while (selectionIter.hasNext()) {
-					Object element= selectionIter.next();
-					try {
-						doAction(element);
-					} catch (DebugException e) {
-						status.merge(e.getStatus());
-					}
+		BusyIndicator.showWhile(Display.getCurrent(), () -> {
+		    Iterator<?> selectionIter = selection.iterator();
+			while (selectionIter.hasNext()) {
+				Object element= selectionIter.next();
+				try {
+					doAction(element);
+				} catch (DebugException e) {
+					status.merge(e.getStatus());
 				}
 			}
 		});
@@ -395,7 +392,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		if (selection.size() == 0) {
 			return false;
 		}
-		Iterator itr= selection.iterator();
+		Iterator<?> itr= selection.iterator();
 		while (itr.hasNext()) {
 			Object element= itr.next();
 			if (!isEnabledFor(element)) {

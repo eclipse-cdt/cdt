@@ -13,10 +13,43 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * Interface used by the Template Wizard to call on the generator to generate. Also provides other
+ * utility methods as necessary, but that should be limited.
+ */
 public interface IGenerator {
 
-	void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException;
+	/**
+	 * Generate.
+	 * 
+	 * @param model
+	 * @param monitor
+	 * @throws CoreException
+	 * @deprecated The generator should manage it's own model.
+	 */
+	@Deprecated
+	default void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
+		if (model.isEmpty()) {
+			generate(monitor);
+		}
+	}
 
-	IFile[] getFilesToOpen();
+	/**
+	 * Generate.
+	 * 
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	default void generate(IProgressMonitor monitor) throws CoreException {
+	};
+
+	/**
+	 * Return which files should be opened in the workbench when the generation is complete.
+	 * 
+	 * @return files to open
+	 */
+	default IFile[] getFilesToOpen() {
+		return new IFile[0];
+	}
 
 }

@@ -24,17 +24,52 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
+/**
+ * The wizard component of a template. Takes over when the template is selected in the from the
+ * Template Selection Page in the parent wizard.
+ */
 public abstract class TemplateWizard extends BasicNewResourceWizard {
 
+	/**
+	 * The generator to be called when the wizard is finished.
+	 * 
+	 * @return generator
+	 */
 	protected abstract IGenerator getGenerator();
 	
+	/**
+	 * Populate the model.
+	 * 
+	 * @param model
+	 * @deprecated The subclass should initialize the generator with information in the
+	 *             getGenerator() method.
+	 */
+	@Deprecated
 	protected void populateModel(Map<String, Object> model) {
 		// nothing by default
 	}
-	
+
+	/**
+	 * Perform additional UI actions after the generation is complete.
+	 * 
+	 * @param generator
+	 */
+	protected void postProcess(IGenerator generator) {
+		try {
+			IWorkbenchPage activePage = getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			for (IFile file : generator.getFilesToOpen()) {
+				IDE.openEditor(activePage, file);
+			}
+		} catch (PartInitException e) {
+			Activator.log(e);
+		}
+	}
+
 	@Override
 	public boolean performFinish() {
 		IGenerator generator = getGenerator();
+		// TODO remove the model in 2.0. The getGenerator method should have
+		// initialized this.
 		Map<String, Object> model = new HashMap<>();
 		populateModel(model);
 
@@ -45,20 +80,13 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 						throws CoreException, InvocationTargetException, InterruptedException {
 					monitor.beginTask("Generating project", 1); //$NON-NLS-1$
 					generator.generate(model, monitor);
-					monitor.done();
 					getWorkbench().getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							try {
-								IWorkbenchPage activePage = getWorkbench().getActiveWorkbenchWindow().getActivePage();
-								for (IFile file : generator.getFilesToOpen()) {
-									IDE.openEditor(activePage, file);
-								}
-							} catch (PartInitException e) {
-								Activator.log(e);
-							}
+							postProcess(generator);
 						}
 					});
+					monitor.done();
 				}
 
 				@Override

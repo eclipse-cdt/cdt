@@ -1077,9 +1077,10 @@ public class CPPTemplates {
 			} else if (decl instanceof IEnumerator) {
 				IEnumerator enumerator = (IEnumerator) decl;
 				ICPPEnumeration enumeration = (ICPPEnumeration) enumerator.getOwner();
-				ICPPEnumerationSpecialization enumSpec =
-						(ICPPEnumerationSpecialization) owner.specializeMember(enumeration, point);
-				spec = enumSpec.specializeEnumerator(enumerator);
+				IBinding enumSpec = owner.specializeMember(enumeration, point);
+				if (enumSpec instanceof ICPPEnumerationSpecialization) {
+					spec = ((ICPPEnumerationSpecialization) enumSpec).specializeEnumerator(enumerator);
+				}
 			} else if (decl instanceof ICPPUsingDeclaration) {
 				IBinding[] delegates= ((ICPPUsingDeclaration) decl).getDelegates();
 				List<IBinding> result= new ArrayList<>();

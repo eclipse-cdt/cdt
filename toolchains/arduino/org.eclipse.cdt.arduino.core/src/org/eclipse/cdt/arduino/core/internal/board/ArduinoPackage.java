@@ -109,7 +109,7 @@ public class ArduinoPackage {
 		return ArduinoPreferences.getArduinoHome().resolve("packages").resolve(getName()); //$NON-NLS-1$
 	}
 
-	private void initInstalledPlatforms() throws CoreException {
+	private synchronized void initInstalledPlatforms() throws CoreException {
 		if (installedPlatforms == null) {
 			installedPlatforms = new HashMap<>();
 
@@ -160,6 +160,21 @@ public class ArduinoPackage {
 			if (!installedPlatforms.containsKey(platform.getArchitecture())) {
 				ArduinoPlatform p = platformMap.get(platform.getArchitecture());
 				if (p == null || ArduinoManager.compareVersions(platform.getVersion(), p.getVersion()) > 0) {
+					platformMap.put(platform.getArchitecture(), platform);
+				}
+			}
+		}
+		return platformMap.values();
+	}
+	
+	public Collection<ArduinoPlatform> getPlatformUpdates() throws CoreException {
+		initInstalledPlatforms();
+		Map<String, ArduinoPlatform> platformMap = new HashMap<>();
+		for (ArduinoPlatform platform : platforms) {
+			ArduinoPlatform installed = installedPlatforms.get(platform.getArchitecture());
+			if (installed != null && ArduinoManager.compareVersions(platform.getVersion(), installed.getVersion()) > 0) {
+				ArduinoPlatform current = platformMap.get(platform.getArchitecture());
+				if (current == null || ArduinoManager.compareVersions(platform.getVersion(), current.getVersion()) > 0) {
 					platformMap.put(platform.getArchitecture(), platform);
 				}
 			}

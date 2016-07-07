@@ -199,7 +199,7 @@ public class LibrariesTabControl extends Composite {
 		try {
 			container.run(true, true, monitor -> {
 				try {
-					for (ArduinoLibrary available : manager.getAvailableLibraries(monitor)) {
+					for (ArduinoLibrary available : manager.getLibraryUpdates(monitor)) {
 						ArduinoLibrary installed = manager.getInstalledLibrary(available.getName());
 						if (installed != null) {
 							if (ArduinoManager.compareVersions(available.getVersion(), installed.getVersion()) > 0) {

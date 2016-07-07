@@ -197,7 +197,7 @@ public class PlatformsTabControl extends Composite {
 		try {
 			container.run(true, true, monitor -> {
 				try {
-					for (ArduinoPlatform available : manager.getAvailablePlatforms(monitor)) {
+					for (ArduinoPlatform available : manager.getPlatformUpdates(monitor)) {
 						ArduinoPlatform installed = manager.getInstalledPlatform(available.getPackage().getName(),
 								available.getArchitecture());
 						if (installed != null) {

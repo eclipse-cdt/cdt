@@ -219,6 +219,36 @@ public class ArduinoManager {
 		return platforms;
 	}
 
+	public synchronized Collection<ArduinoPlatform> getPlatformUpdates(IProgressMonitor monitor)
+			throws CoreException {
+		List<ArduinoPlatform> platforms = new ArrayList<>();
+		URL[] urls = ArduinoPreferences.getBoardUrlList();
+		SubMonitor sub = SubMonitor.convert(monitor, urls.length + 1);
+
+		sub.beginTask("Downloading package descriptions", urls.length); //$NON-NLS-1$
+		for (URL url : urls) {
+			Path packagePath = ArduinoPreferences.getArduinoHome().resolve(Paths.get(url.getPath()).getFileName());
+			try {
+				Files.createDirectories(ArduinoPreferences.getArduinoHome());
+				try (InputStream in = url.openStream()) {
+					Files.copy(in, packagePath, StandardCopyOption.REPLACE_EXISTING);
+				}
+			} catch (IOException e) {
+				throw Activator.coreException(String.format("Error loading %s", url.toString()), e); //$NON-NLS-1$
+			}
+			sub.worked(1);
+		}
+
+		sub.beginTask("Loading available package updates", 1); //$NON-NLS-1$
+		resetPackages();
+		for (ArduinoPackage pkg : getPackages()) {
+			platforms.addAll(pkg.getPlatformUpdates());
+		}
+		sub.done();
+
+		return platforms;
+	}
+
 	public void installPlatforms(Collection<ArduinoPlatform> platforms, IProgressMonitor monitor) throws CoreException {
 		SubMonitor sub = SubMonitor.convert(monitor, platforms.size());
 		for (ArduinoPlatform platform : platforms) {
@@ -394,6 +424,39 @@ public class ArduinoManager {
 				for (ArduinoLibrary library : libraryIndex.getLibraries()) {
 					String libraryName = library.getName();
 					if (!installedLibraries.containsKey(libraryName)) {
+						ArduinoLibrary current = libs.get(libraryName);
+						if (current == null || compareVersions(library.getVersion(), current.getVersion()) > 0) {
+							libs.put(libraryName, library);
+						}
+					}
+				}
+			}
+			sub.done();
+			return libs.values();
+		} catch (IOException e) {
+			throw Activator.coreException(e);
+		}
+	}
+
+	public Collection<ArduinoLibrary> getLibraryUpdates(IProgressMonitor monitor) throws CoreException {
+		try {
+			initInstalledLibraries();
+			Map<String, ArduinoLibrary> libs = new HashMap<>();
+
+			SubMonitor sub = SubMonitor.convert(monitor, "Downloading library index", 2);
+			Path librariesPath = ArduinoPreferences.getArduinoHome().resolve(LIBRARIES_FILE);
+			URL librariesUrl = new URL(LIBRARIES_URL);
+			Files.createDirectories(ArduinoPreferences.getArduinoHome());
+			Files.copy(librariesUrl.openStream(), librariesPath, StandardCopyOption.REPLACE_EXISTING);
+			sub.worked(1);
+
+			try (Reader reader = new FileReader(librariesPath.toFile())) {
+				sub.setTaskName("Calculating library updates");
+				LibraryIndex libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
+				for (ArduinoLibrary library : libraryIndex.getLibraries()) {
+					String libraryName = library.getName();
+					ArduinoLibrary installed = installedLibraries.get(libraryName);
+					if (installed != null && compareVersions(library.getVersion(), installed.getVersion()) > 0) {
 						ArduinoLibrary current = libs.get(libraryName);
 						if (current == null || compareVersions(library.getVersion(), current.getVersion()) > 0) {
 							libs.put(libraryName, library);

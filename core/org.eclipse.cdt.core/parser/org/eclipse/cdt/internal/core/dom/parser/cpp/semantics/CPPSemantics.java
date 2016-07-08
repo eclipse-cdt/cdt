@@ -465,7 +465,7 @@ public class CPPSemantics {
 						// Do not interpret template arguments to a template class as being
 						// explicit template arguments to its templated constructor.
 						data.setTemplateArguments(null);
-						binding= CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true);
+						binding= resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true);
 					}
 				} catch (DOMException e) {
 					return e.getProblem();
@@ -2538,7 +2538,7 @@ public class CPPSemantics {
 			return CPPDeferredFunction.createForCandidates(fns);
 		}
 
-		IFunction[] ambiguousFunctions= null;   // Ambiguity, 2 functions are equally good.
+		IFunction[] ambiguousFunctions= null;   // Ambiguity, two or more functions are equally good.
 		FunctionCost bestFnCost = null;		    // The cost of the best function.
 
 		// Loop over all functions
@@ -3005,7 +3005,7 @@ public class CPPSemantics {
     				LookupData data= new LookupData(name);
     				data.setFunctionArguments(false, init.getArguments());
     				try {
-    					IBinding ctor = CPPSemantics.resolveFunction(data,
+    					IBinding ctor = resolveFunction(data,
     							ClassTypeHelper.getConstructors((ICPPClassType) targetType, name), true);
     					if (ctor instanceof ICPPConstructor) {
     						int i= 0;
@@ -3964,13 +3964,13 @@ public class CPPSemantics {
 
 		// Find all bindings that match the first part of the name.  For each such binding,
 		// lookup the second part of the name.
-		for (IBinding binding : CPPSemantics.findBindings(scope, part1, false)) {
+		for (IBinding binding : findBindings(scope, part1, false)) {
 			findBindingsForQualifiedName(getLookupScope(binding), part2, bindings);
 		}
 	}
 
-	private static ICPPScope getNamespaceScope(CPPASTTranslationUnit tu, String[] namespaceParts, IASTNode point)
-			throws DOMException {
+	private static ICPPScope getNamespaceScope(CPPASTTranslationUnit tu, String[] namespaceParts,
+			IASTNode point) throws DOMException {
 		ICPPScope nsScope= tu.getScope();
 		outer: for (String nsPart : namespaceParts) {
 			nsPart= nsPart.trim();
@@ -4099,7 +4099,8 @@ public class CPPSemantics {
 			} else {
 				if (function instanceof ICPPTemplateDefinition) {
 					final ICPPTemplateDefinition funcTemplate = (ICPPTemplateDefinition) function;
-					if (!isSameTemplateParameterList(funcTemplate.getTemplateParameters(), templateDecl.getTemplateParameters())) {
+					if (!isSameTemplateParameterList(funcTemplate.getTemplateParameters(),
+							templateDecl.getTemplateParameters())) {
 						return false;
 					}
 				} else {
@@ -4118,7 +4119,8 @@ public class CPPSemantics {
 		return false;
 	}
 
-	private static boolean isSameTemplateParameterList(ICPPTemplateParameter[] tplist, ICPPASTTemplateParameter[] tps) {
+	private static boolean isSameTemplateParameterList(ICPPTemplateParameter[] tplist,
+			ICPPASTTemplateParameter[] tps) {
 		if (tplist.length != tps.length)
 			return false;
 

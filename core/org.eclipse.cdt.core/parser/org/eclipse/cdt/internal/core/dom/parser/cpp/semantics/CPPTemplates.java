@@ -966,7 +966,7 @@ public class CPPTemplates {
 			} // else reuse last parameter (which should be a pack)
 			@SuppressWarnings("null")
 			IValue defaultValue = par.getDefaultValue();
-			IValue specializedValue = CPPTemplates.instantiateValue(defaultValue, context, maxdepth);
+			IValue specializedValue = instantiateValue(defaultValue, context, maxdepth);
 			result[i] = new CPPParameterSpecialization(par, functionSpec, specializedParameterTypes[i],
 					specializedValue, context.getParameterMap());
 		}
@@ -998,7 +998,7 @@ public class CPPTemplates {
 			} else if (decl instanceof ICPPClassTemplate) {
 				ICPPClassTemplate template = (ICPPClassTemplate) decl;
 				CPPClassTemplateSpecialization classTemplateSpec = new CPPClassTemplateSpecialization(template, owner, tpMap);
-				classTemplateSpec.setTemplateParameters(CPPTemplates.specializeTemplateParameters(classTemplateSpec,
+				classTemplateSpec.setTemplateParameters(specializeTemplateParameters(classTemplateSpec,
 						(ICPPScope) classTemplateSpec.getScope(), template.getTemplateParameters(), owner, point));
 				spec = classTemplateSpec;
 			} else if (decl instanceof ICPPClassType) {
@@ -1016,7 +1016,7 @@ public class CPPTemplates {
 				if (decl instanceof ICPPFieldTemplate) {
 					CPPFieldTemplateSpecialization fieldTempSpec = new CPPFieldTemplateSpecialization(decl,
 							owner, tpMap, type, value);
-					ICPPTemplateParameter[] params = CPPTemplates.specializeTemplateParameters(fieldTempSpec,
+					ICPPTemplateParameter[] params = specializeTemplateParameters(fieldTempSpec,
 							(ICPPScope) fieldTempSpec.getScope(),
 							((ICPPFieldTemplate) decl).getTemplateParameters(), owner, point);
 					fieldTempSpec.setTemplateParameters(params);
@@ -1041,7 +1041,7 @@ public class CPPTemplates {
 							methodSpec = new CPPMethodTemplateSpecialization((ICPPMethod) decl, owner, tpMap,
 									type, exceptionSpecs);
 						}
-						methodSpec.setTemplateParameters(CPPTemplates.specializeTemplateParameters(methodSpec,
+						methodSpec.setTemplateParameters(specializeTemplateParameters(methodSpec,
 								(ICPPScope) methodSpec.getScope(),
 								((ICPPFunctionTemplate) decl).getTemplateParameters(), owner, point));
 						functionSpec = methodSpec;
@@ -1443,7 +1443,6 @@ public class CPPTemplates {
 
 		TypeInstantiationRequest instantiationRequest = new TypeInstantiationRequest(type, context);
 		if (!instantiationsInProgress.get().add(instantiationRequest)) {
-			System.out.println("Recursion in instantiation of type \"" + type + "\"");  //$NON-NLS-1$//$NON-NLS-2$ //XXX
 			return type instanceof ICPPFunctionType ?
 					ProblemFunctionType.RECURSION_IN_LOOKUP : ProblemType.RECURSION_IN_LOOKUP;
 		}

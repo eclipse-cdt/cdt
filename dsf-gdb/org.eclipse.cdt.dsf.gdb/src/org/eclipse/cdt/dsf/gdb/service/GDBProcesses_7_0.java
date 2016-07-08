@@ -575,7 +575,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	// change at any time.  However, it is inefficient to send more than one of this command at
 	// the same time.  This cache will help us avoid that.  The idea is that we cache the command,
 	// but as soon as it returns, we clear the cache.  So the cache will only trigger for those 
-	// overlapping situations.
+	// overlapping situations.  Using this cache also allows to handle the all-stop case
+	// when the target can be unavailable and instead of hanging, the cache will return an error.
 	private CommandCache fListThreadGroupsAvailableCache;
 
     // A map of process id to process names.  A name is fetched whenever we start
@@ -960,19 +961,85 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				// I haven't found a good way to get the pid yet, so let's not show it.
 				id = null;
 			} else {
-				name = fDebuggedProcessesAndNames.get(id);
-				if (name == null) {
+				if (fDebuggedProcessesAndNames.containsKey(id)) {
+					name = fDebuggedProcessesAndNames.get(id);
+					assert name != null;
+					if (name == null) {
+						// Should not happen, but just in case...use the
+						// binary file name (absolute path)
+						name = fBackend.getProgramPath().toOSString();
+						fDebuggedProcessesAndNames.put(id, name);
+					} else if (name.isEmpty()) {
+						// We know of the process but haven't fetched its name yet.
+						// Let's fetch it now.
+						// GDB is debugging a new process. Let's fetch its
+						// name and remember it. In order to get the name,
+						// we have to request all running processes, not
+						// just the ones being debugged. We got a lot more 
+						// information when we request all processes.
+    					final String finalPId = id;
+						fListThreadGroupsAvailableCache.execute(
+							fCommandFactory.createMIListThreadGroups(fCommandControl.getContext(), true),
+							new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), null) {
+								@Override
+								protected void handleCompleted() {
+									// We cannot actually cache this command since the process
+									// list may change.  But this cache allows to avoid overlapping
+									// sending of this command and proper handling if the target is
+									// unavailable.
+									fListThreadGroupsAvailableCache.reset();
+									
+									// Note that the output of the "-list-thread-groups --available" command
+									// still shows the pid as a groupId, even for GDB 7.2.
+									String name = null;
+									if (isSuccess()) {
+										for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
+											if (groupInfo.getPid().equals(finalPId)) {
+												name = groupInfo.getName();
+												fDebuggedProcessesAndNames.put(finalPId, name);
+												break;
+											}
+										}
+									} else {
+										// Looks like this gdb doesn't truly support
+										// "-list-thread-groups --available". Get the
+										// process list natively if we're debugging locally
+										if (fBackend.getSessionType() == SessionType.LOCAL) {
+    										try {
+    											IProcessList list = CCorePlugin.getDefault().getProcessList();
+    											if (list != null) {
+    												int pId_int = Integer.parseInt(finalPId);
+    												for (IProcessInfo procInfo : list.getProcessList()) {
+    													if (procInfo.getPid() == pId_int) {
+    														name = procInfo.getName();
+    														fDebuggedProcessesAndNames.put(finalPId, name);
+    														break;
+    													}
+    												}
+        										}
+    										} catch (Exception e) {
+    			        	        			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, "Could not get process name", e)); //$NON-NLS-1$        	        			
+    										}
+										} 
+									}
+									
+									if (name == null) {
+										// No way to get the name right now, so use the binary file name (absolute path)
+										name = fBackend.getProgramPath().toOSString();
+										fDebuggedProcessesAndNames.put(finalPId, name);
+									}
+									rm.done(new MIThreadDMData(name, finalPId));
+								}
+							});
+						return;
+					}
+				} else {
 					// We don't have the name in our map.  This could happen
 					// if a process has terminated but the 
 					// debug session is not terminated because the preference
 					// to keep GDB running has been selected or because there
 					// are other processes part of that session.
-					name = "Unknown name"; //$NON-NLS-1$
-				} else if (name.length() == 0) {
-					// Probably will not happen, but just in case...use the
-					// binary file name (absolute path)
-					name = fBackend.getProgramPath().toOSString();
-					fDebuggedProcessesAndNames.put(id, name);
+					name = "Unknown name"; //$NON-NLS-1$					
 				}
 			}
 			rm.setData(new MIThreadDMData(name, id));
@@ -1733,6 +1800,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		// This will happen in all-stop mode
     		fContainerCommandCache.setContextAvailable(e.getDMContext(), false);
     		fThreadCommandCache.setContextAvailable(e.getDMContext(), false);
+    		fListThreadGroupsAvailableCache.setContextAvailable(e.getDMContext(), false);
     	} else {
        		// This will happen in non-stop mode
     		// Keep target available for Container commands
@@ -1746,6 +1814,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		// This will happen in all-stop mode
        		fContainerCommandCache.setContextAvailable(fCommandControl.getContext(), true);
        		fThreadCommandCache.setContextAvailable(fCommandControl.getContext(), true);
+    		fListThreadGroupsAvailableCache.setContextAvailable(fCommandControl.getContext(), true);
        	} else {
        		// This will happen in non-stop mode
        	}
@@ -1806,6 +1875,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	public void flushCache(IDMContext context) {
 		fContainerCommandCache.reset(context);
 		fThreadCommandCache.reset(context);
+		// Not technically needed since we are supposed to have
+		// cleared this cache as soon as the it gets the answer
+		// from GDB; but to be more future-proof, might as well
+		// clear it here also.
+		fListThreadGroupsAvailableCache.reset(context);
 	}
 
 	/*
@@ -1870,57 +1944,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				}
 
     				if (groupId != null) {
-    						getGroupToPidMap().put(groupId, pId);
-    						
-    						fDebuggedProcessesAndNames.put(pId, ""); //$NON-NLS-1$
-    					
-							// GDB is debugging a new process. Let's fetch its
-							// name and remember it. In order to get the name,
-							// we have to request all running processes, not
-							// just the ones being debugged. We got a lot more 
-    						// information when we request all processes.
-        					final String finalPId = pId;
-    						fListThreadGroupsAvailableCache.execute(
-    								fCommandFactory.createMIListThreadGroups(fCommandControl.getContext(), true),
-    								new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), null) {
-    									@Override
-    									protected void handleCompleted() {
-    										// We cannot actually cache this command since the process
-    										// list may change.  But this cache allows to avoid overlapping
-    										// sending of this command.
-    										fListThreadGroupsAvailableCache.reset();
+    					getGroupToPidMap().put(groupId, pId);
 
-    										// Note that the output of the "-list-thread-groups --available" command
-    										// still shows the pid as a groupId, even for GDB 7.2.
-    										if (isSuccess()) {
-    											for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
-    												if (groupInfo.getPid().equals(finalPId)) {
-    													fDebuggedProcessesAndNames.put(finalPId, groupInfo.getName());
-    												}
-    											}
-    										}
-    										else {
-    											// Looks like this gdb doesn't truly support
-    											// "-list-thread-groups --available". Get the
-    											// process list natively if we're debugging locally
-    											if (fBackend.getSessionType() == SessionType.LOCAL) {
-	    											IProcessList list = null;
-	    											try {
-	    												list = CCorePlugin.getDefault().getProcessList();
-	        											int pId_int = Integer.parseInt(finalPId);
-	        											for (IProcessInfo procInfo : list.getProcessList()) {
-	        												if (procInfo.getPid() == pId_int) {
-	        													fDebuggedProcessesAndNames.put(finalPId, procInfo.getName());
-	        													break;
-	        												}
-	        											}
-	    											} catch (CoreException e) {
-	    											}
-    											}
-    										}
-    									}
-    								});
-    					}
+    					// Mark that we know this new process, but don't fetch its
+    					// name until it is requested.
+    					fDebuggedProcessesAndNames.put(pId, ""); //$NON-NLS-1$
+    				}    					
     			} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     				String groupId = null;
 

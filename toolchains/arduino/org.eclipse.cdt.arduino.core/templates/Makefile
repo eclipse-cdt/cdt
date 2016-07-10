@@ -1,9 +1,11 @@
 ifeq ($(OS),Windows_NT)
 SHELL = $(ComSpec)
 RMDIR = rmdir /s /q
+RM = del /q
 mymkdir = if not exist "$1" mkdir "$1"
 else
 RMDIR = rm -fr
+RM = rm -f
 mymkdir = mkdir -p $1
 endif
 
@@ -11,7 +13,7 @@ PROJECT_OBJS = \
 <#list project_srcs as file>
 <#assign cpp = file?matches("(.*)\\.cpp")>
 <#if cpp>
-	${build_path}/project/${cpp?groups[1]}.cpp.o \
+	project/${cpp?groups[1]}.cpp.o \
 </#if>
 </#list>
 
@@ -19,15 +21,15 @@ PLATFORM_CORE_OBJS = \
 <#list platform_core_srcs as file>
 <#assign cpp = file?matches("${platform_core_path}/(.*)\\.cpp")>
 <#if cpp>
-	${build_path}/core/${cpp?groups[1]}.cpp.o \
+	core/${cpp?groups[1]}.cpp.o \
 </#if>
 <#assign c = file?matches("${platform_core_path}/(.*)\\.c")>
 <#if c>
-	${build_path}/core/${c?groups[1]}.c.o \
+	core/${c?groups[1]}.c.o \
 </#if>
 <#assign S = file?matches("${platform_core_path}/(.*)\\.S")>
 <#if S>
-	${build_path}/core/${S?groups[1]}.S.o \
+	core/${S?groups[1]}.S.o \
 </#if>
 </#list>
 
@@ -35,15 +37,15 @@ PLATFORM_VARIANT_OBJS = \
 <#list platform_variant_srcs as file>
 <#assign cpp = file?matches("${platform_variant_path}/(.*)\\.cpp")>
 <#if cpp>
-	${build_path}/variant/${cpp?groups[1]}.cpp.o \
+	variant/${cpp?groups[1]}.cpp.o \
 </#if>
 <#assign c = file?matches("${platform_variant_path}/(.*)\\.c")>
 <#if c>
-	${build_path}/variant/${c?groups[1]}.c.o \
+	variant/${c?groups[1]}.c.o \
 </#if>
 <#assign S = file?matches("${platform_variant_path}/(.*)\\.S")>
 <#if S>
-	${build_path}/variant/${S?groups[1]}.S.o \
+	variant/${S?groups[1]}.S.o \
 </#if>
 </#list>
 
@@ -54,59 +56,60 @@ LIBRARIES_OBJS = \
 <#assign cpp = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
-	${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o \
+	libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o \
 </#if>
 <#assign c = file?matches("${libraries_path}/(.*?)/(.*)\\.c")>
 <#if !c>
 <#assign c = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
-	${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.o \
+	libraries/${c?groups[1]}/${c?groups[2]}.c.o \
 </#if>
 <#assign S = file?matches("${libraries_path}/(.*?)/(.*)\\.S")>
 <#if !S>
 <#assign S = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.S")>
 </#if>
 <#if S>
-	${build_path}/libraries/${S?groups[1]}/${S?groups[2]}.S.o \
+	libraries/${S?groups[1]}/${S?groups[2]}.S.o \
 </#if>
 </#list>
 
 TARGETS = \
 <#if recipe_objcopy_hex_pattern??>
-	${build_path}/${project_name}.hex \
+	${project_name}.hex \
 </#if>
 <#if recipe_objcopy_epp_pattern??>
-	${build_path}/${project_name}.eep \
+	${project_name}.eep \
 </#if>
 <#if recipe_objcopy_bin_pattern??>
-	${build_path}/${project_name}.bin \
+	${project_name}.bin \
 </#if>
 
 all: $(TARGETS)
 
 <#if recipe_objcopy_hex_pattern??>
-${build_path}/${project_name}.hex: ${build_path}/${project_name}.elf
+${project_name}.hex: ${project_name}.elf
 	${recipe_objcopy_hex_pattern}
 
 </#if>
 <#if recipe_objcopy_epp_pattern??>
-${build_path}/${project_name}.eep: ${build_path}/${project_name}.elf
+${project_name}.eep: ${project_name}.elf
 	${recipe_objcopy_eep_pattern}
 
 </#if>
 <#if recipe_objcopy_bin_pattern??>
-${build_path}/${project_name}.bin: ${build_path}/${project_name}.elf
+${project_name}.bin: ${project_name}.elf
 	${recipe_objcopy_bin_pattern}
 
 </#if>
-${build_path}/${project_name}.elf: $(PROJECT_OBJS) $(LIBRARIES_OBJS) ${build_path}/core.a
+${project_name}.elf: $(PROJECT_OBJS) $(LIBRARIES_OBJS) core.a
 	${recipe_c_combine_pattern}
 
-${build_path}/core.a:	$(PLATFORM_CORE_OBJS) $(PLATFORM_VARIANT_OBJS)
+core.a:	$(PLATFORM_CORE_OBJS) $(PLATFORM_VARIANT_OBJS)
 
 clean:
-	$(RMDIR) ${build_path}/*
+	-$(RMDIR) project core variant libraries
+	-$(RM) *.hex *.eep *.bin *.elf *.a *.ar *.d
 
 size:
 	${recipe_size_pattern}
@@ -114,13 +117,13 @@ size:
 <#list project_srcs as file>
 <#assign cpp = file?matches("(.*)\\.cpp")>
 <#if cpp>
-${build_path}/project/${cpp?groups[1]}.cpp.o: ../../${file} ${build_path}/project/${cpp?groups[1]}.cpp.d
+project/${cpp?groups[1]}.cpp.o: ../../${file} project/${cpp?groups[1]}.cpp.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_cpp_o_pattern}
 
-${build_path}/project/${cpp?groups[1]}.cpp.d: ;
+project/${cpp?groups[1]}.cpp.d: ;
 
--include ${build_path}/project/${cpp?groups[1]}.cpp.d 
+-include project/${cpp?groups[1]}.cpp.d 
 
 </#if>
 </#list>
@@ -128,31 +131,31 @@ ${build_path}/project/${cpp?groups[1]}.cpp.d: ;
 <#list platform_core_srcs as file>
 <#assign cpp = file?matches("${platform_core_path}/(.*)\\.cpp")>
 <#if cpp>
-${build_path}/core/${cpp?groups[1]}.cpp.o: ${file} ${build_path}/core/${cpp?groups[1]}.cpp.d
+core/${cpp?groups[1]}.cpp.o: ${file} core/${cpp?groups[1]}.cpp.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_cpp_o_pattern_plat}
 	${recipe_ar_pattern}
 
-${build_path}/core/${cpp?groups[1]}.cpp.d: ;
+core/${cpp?groups[1]}.cpp.d: ;
 
--include ${build_path}/core/${cpp?groups[1]}.cpp.d
+-include core/${cpp?groups[1]}.cpp.d
 
 </#if>
 <#assign c = file?matches("${platform_core_path}/(.*)\\.c")>
 <#if c>
-${build_path}/core/${c?groups[1]}.c.o: ${file} ${build_path}/core/${c?groups[1]}.c.d
+core/${c?groups[1]}.c.o: ${file} core/${c?groups[1]}.c.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_c_o_pattern_plat}
 	${recipe_ar_pattern}
 	
-${build_path}/core/${c?groups[1]}.c.d: ;
+core/${c?groups[1]}.c.d: ;
 
--include ${build_path}/core/${c?groups[1]}.c.d
+-include core/${c?groups[1]}.c.d
 
 </#if>
 <#assign S = file?matches("${platform_core_path}/(.*)\\.S")>
 <#if S>
-${build_path}/core/${S?groups[1]}.S.o: ${file}
+core/${S?groups[1]}.S.o: ${file}
 	@$(call mymkdir,$(dir $@))
 	${recipe_S_o_pattern_plat}
 	${recipe_ar_pattern}
@@ -163,31 +166,31 @@ ${build_path}/core/${S?groups[1]}.S.o: ${file}
 <#list platform_variant_srcs as file>
 <#assign cpp = file?matches("${platform_variant_path}/(.*)\\.cpp")>
 <#if cpp>
-${build_path}/variant/${cpp?groups[1]}.cpp.o: ${file} ${build_path}/variant/${cpp?groups[1]}.cpp.d
+variant/${cpp?groups[1]}.cpp.o: ${file} variant/${cpp?groups[1]}.cpp.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_cpp_o_pattern_plat}
 	${recipe_ar_pattern}
 
-${build_path}/variant/${cpp?groups[1]}.cpp.d: ;
+variant/${cpp?groups[1]}.cpp.d: ;
 
--include ${build_path}/variant/${cpp?groups[1]}.cpp.d
+-include variant/${cpp?groups[1]}.cpp.d
 
 </#if>
 <#assign c = file?matches("${platform_variant_path}/(.*)\\.c")>
 <#if c>
-${build_path}/variant/${c?groups[1]}.c.o: ${file} ${build_path}/variant/${c?groups[1]}.c.d
+variant/${c?groups[1]}.c.o: ${file} variant/${c?groups[1]}.c.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_c_o_pattern_plat}
 	${recipe_ar_pattern}
 	
-${build_path}/variant/${c?groups[1]}.c.d: ;
+variant/${c?groups[1]}.c.d: ;
 
--include ${build_path}/variant/${c?groups[1]}.c.d
+-include variant/${c?groups[1]}.c.d
 
 </#if>
 <#assign S = file?matches("${platform_variant_path}/(.*)\\.S")>
 <#if S>
-${build_path}/variant/${S?groups[1]}.S.o: ${file}
+variant/${S?groups[1]}.S.o: ${file}
 	@$(call mymkdir,$(dir $@))
 	${recipe_S_o_pattern_plat}
 	${recipe_ar_pattern}
@@ -201,13 +204,13 @@ ${build_path}/variant/${S?groups[1]}.S.o: ${file}
 <#assign cpp = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
-${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o: ${file} ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d
+libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o: ${file} libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_cpp_o_pattern}
 
-${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d: ;
+libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d: ;
 
--include ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d
+-include libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d
 
 </#if>
 <#assign c = file?matches("${libraries_path}/(.*?)/(.*)\\.c")>
@@ -215,13 +218,13 @@ ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d: ;
 <#assign c = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
-${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.o: ${file} ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d
+libraries/${c?groups[1]}/${c?groups[2]}.c.o: ${file} libraries/${c?groups[1]}/${c?groups[2]}.c.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_c_o_pattern}
 
-${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d: ;
+libraries/${c?groups[1]}/${c?groups[2]}.c.d: ;
 
--include ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d
+-include libraries/${c?groups[1]}/${c?groups[2]}.c.d
 
 </#if>
 <#assign S = file?matches("${libraries_path}/(.*?)/(.*)\\.S")>
@@ -229,7 +232,7 @@ ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.d: ;
 <#assign S = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.S")>
 </#if>
 <#if S>
-${build_path}/libraries/${S?groups[1]}/${S?groups[2]}.S.o: ${file}
+libraries/${S?groups[1]}/${S?groups[2]}.S.o: ${file}
 	@$(call mymkdir,$(dir $@))
 	${recipe_S_o_pattern}
 

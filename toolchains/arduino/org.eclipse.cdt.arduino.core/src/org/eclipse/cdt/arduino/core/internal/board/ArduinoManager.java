@@ -379,7 +379,7 @@ public class ArduinoManager {
 			Path librariesDir = ArduinoPreferences.getArduinoHome().resolve("libraries"); //$NON-NLS-1$
 			if (Files.isDirectory(librariesDir)) {
 				try {
-					Files.find(librariesDir, 2,
+					Files.find(librariesDir, 3,
 							(path, attrs) -> path.getFileName().toString().equals("library.properties")) //$NON-NLS-1$
 							.forEach(path -> {
 								try {

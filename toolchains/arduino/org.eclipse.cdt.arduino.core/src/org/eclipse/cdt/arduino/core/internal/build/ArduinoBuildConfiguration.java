@@ -229,8 +229,11 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 		ArduinoBoard board = getBoard();
 		ArduinoPlatform platform = board.getPlatform();
 
+		Properties properties = new Properties();
 		Map<String, Object> buildModel = new HashMap<>();
 		buildModel.put("boardId", board.getId()); //$NON-NLS-1$
+		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// The list of source files in the project
 		final Path projectPath = new File(project.getLocationURI()).toPath();
@@ -260,7 +263,6 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 		buildModel.put("libraries_path", pathString(ArduinoPreferences.getArduinoHome().resolve("libraries"))); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// the recipes
-		Properties properties = new Properties();
 		properties.putAll(getProperties());
 		buildModel.put("build_path", properties.get("build.path")); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("project_name", project.getName()); //$NON-NLS-1$
@@ -274,12 +276,18 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 			}
 			includes += '"' + pathString(include) + '"';
 		}
+		
+		// Magic recipes for platform builds with platform includes
+		properties.put("includes", includes); //$NON-NLS-1$
+		buildModel.put("recipe_cpp_o_pattern_plat", resolveProperty("recipe.cpp.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
+		buildModel.put("recipe_c_o_pattern_plat", resolveProperty("recipe.c.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
+		buildModel.put("recipe_S_o_pattern_plat", resolveProperty("recipe.S.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
+
 		for (ArduinoLibrary lib : manager.getLibraries(project)) {
 			for (Path include : lib.getIncludePath()) {
 				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
 			}
 		}
-		properties.put("includes", includes); //$NON-NLS-1$
 
 		ArduinoPlatform corePlatform = platform;
 		String core = properties.getProperty("build.core"); //$NON-NLS-1$
@@ -313,8 +321,6 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 		}
 		buildModel.put("platform_variant_srcs", variantSources); //$NON-NLS-1$
 
-		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("archive_file", "core.a"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("archive_file_path", "{build.path}/{archive_file}"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("object_files", "$(PROJECT_OBJS) $(LIBRARIES_OBJS)"); //$NON-NLS-1$ //$NON-NLS-2$

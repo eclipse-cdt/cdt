@@ -130,7 +130,7 @@ ${build_path}/project/${cpp?groups[1]}.cpp.d: ;
 <#if cpp>
 ${build_path}/core/${cpp?groups[1]}.cpp.o: ${file} ${build_path}/core/${cpp?groups[1]}.cpp.d
 	@$(call mymkdir,$(dir $@))
-	${recipe_cpp_o_pattern}
+	${recipe_cpp_o_pattern_plat}
 	${recipe_ar_pattern}
 
 ${build_path}/core/${cpp?groups[1]}.cpp.d: ;
@@ -142,7 +142,7 @@ ${build_path}/core/${cpp?groups[1]}.cpp.d: ;
 <#if c>
 ${build_path}/core/${c?groups[1]}.c.o: ${file} ${build_path}/core/${c?groups[1]}.c.d
 	@$(call mymkdir,$(dir $@))
-	${recipe_c_o_pattern}
+	${recipe_c_o_pattern_plat}
 	${recipe_ar_pattern}
 	
 ${build_path}/core/${c?groups[1]}.c.d: ;
@@ -154,7 +154,7 @@ ${build_path}/core/${c?groups[1]}.c.d: ;
 <#if S>
 ${build_path}/core/${S?groups[1]}.S.o: ${file}
 	@$(call mymkdir,$(dir $@))
-	${recipe_S_o_pattern}
+	${recipe_S_o_pattern_plat}
 	${recipe_ar_pattern}
 
 </#if>
@@ -165,7 +165,7 @@ ${build_path}/core/${S?groups[1]}.S.o: ${file}
 <#if cpp>
 ${build_path}/variant/${cpp?groups[1]}.cpp.o: ${file} ${build_path}/variant/${cpp?groups[1]}.cpp.d
 	@$(call mymkdir,$(dir $@))
-	${recipe_cpp_o_pattern}
+	${recipe_cpp_o_pattern_plat}
 	${recipe_ar_pattern}
 
 ${build_path}/variant/${cpp?groups[1]}.cpp.d: ;
@@ -177,7 +177,7 @@ ${build_path}/variant/${cpp?groups[1]}.cpp.d: ;
 <#if c>
 ${build_path}/variant/${c?groups[1]}.c.o: ${file} ${build_path}/variant/${c?groups[1]}.c.d
 	@$(call mymkdir,$(dir $@))
-	${recipe_c_o_pattern}
+	${recipe_c_o_pattern_plat}
 	${recipe_ar_pattern}
 	
 ${build_path}/variant/${c?groups[1]}.c.d: ;
@@ -189,7 +189,7 @@ ${build_path}/variant/${c?groups[1]}.c.d: ;
 <#if S>
 ${build_path}/variant/${S?groups[1]}.S.o: ${file}
 	@$(call mymkdir,$(dir $@))
-	${recipe_S_o_pattern}
+	${recipe_S_o_pattern_plat}
 	${recipe_ar_pattern}
 
 </#if>

@@ -1649,7 +1649,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	/** @since 4.0 */
 	@Override
 	public void canRestart(IContainerDMContext containerDmc, DataRequestMonitor<Boolean> rm) {		
-    	if (fBackend.getIsAttachSession() || fBackend.getSessionType() == SessionType.CORE) {
+    	if (fBackend.getSessionType() == SessionType.CORE) {
         	rm.setData(false);
         	rm.done();
         	return;

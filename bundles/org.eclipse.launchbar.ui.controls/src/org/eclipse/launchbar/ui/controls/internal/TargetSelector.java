@@ -112,7 +112,7 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 							String compId = target.getTypeId()
 									+ (status.getCode() == Code.ERROR ? ".error" : ".warning"); //$NON-NLS-1$ //$NON-NLS-2$
 							Image image = Activator.getDefault().getImageRegistry().get(compId);
-							if (image == null) {
+							if (image == null && baseImage != null) {
 								ImageDescriptor desc = new CompositeImageDescriptor() {
 									@Override
 									protected Point getSize() {

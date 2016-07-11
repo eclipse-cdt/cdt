@@ -3702,6 +3702,50 @@ public class AST2TemplateTests extends AST2TestBase {
         assertInstance(mt1, ICPPFunctionTemplate.class);
     }
 
+	//	template <typename T>
+	//	struct A {
+	//	  template <typename U>
+	//	  static U m();
+	//	};
+	//
+	//	template <typename T, typename U = decltype(A<T>::template m<char>())>
+	//	class B {};
+	//
+	//	template <typename T>
+	//	void waldo(T p);
+	//
+	//	template <typename T>
+	//	typename B<T>::type waldo(T p);
+	//
+	//	void test() {
+	//	  waldo(1);
+	//	}
+	public void testMethodTemplate_497535a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	struct A {
+	//	  template <typename U>
+	//	  static U m();
+	//	};
+	//
+	//	template <typename T, typename U = decltype(A<T>::template m())>
+	//	class B {};
+	//
+	//	template <typename T>
+	//	void waldo(T p);
+	//
+	//	template <typename T>
+	//	typename B<T>::type waldo(T p);
+	//
+	//	void test() {
+	//	  waldo(1);
+	//	}
+	public void testMethodTemplate_497535b() throws Exception {
+		parseAndCheckBindings();
+	}
+
     //    template <typename T, typename U=T> class XT {};
     //    template <typename T> class XT<T,T> {public: int partial;};
     //    void test() {

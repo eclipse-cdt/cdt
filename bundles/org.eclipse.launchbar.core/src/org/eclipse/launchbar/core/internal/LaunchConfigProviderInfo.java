@@ -83,8 +83,12 @@ public class LaunchConfigProviderInfo {
 	}
 
 	public boolean enabled(Object element) {
-		if (expression == null)
+		if (expression == null) {
 			return true;
+		}
+		if (element == null) {
+			return true;
+		}
 		try {
 			EvaluationResult result = expression.evaluate(new EvaluationContext(null, element));
 			return (result == EvaluationResult.TRUE);

@@ -13,12 +13,6 @@ import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
 import org.osgi.service.prefs.Preferences;
 
 public class LaunchTarget extends PlatformObject implements ILaunchTarget {
-	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---") {
-		@Override
-		public ILaunchTargetWorkingCopy getWorkingCopy() {
-			throw new UnsupportedOperationException("getWorkingCopy is not supported for NULL_TARGET");
-		};
-	};
 	private final String typeId;
 	private final String id;
 	final Preferences attributes;
@@ -27,7 +21,7 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 	 * This should only be used to create the null target. There are no attributes supported on the
 	 * null target.
 	 */
-	private LaunchTarget(String typeId, String id) {
+	public LaunchTarget(String typeId, String id) {
 		this.typeId = typeId;
 		this.id = id;
 		this.attributes = null;

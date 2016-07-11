@@ -26,7 +26,12 @@ public interface ILaunchTarget extends IAdaptable {
 	/**
 	 * The null target, which is the default when no other target is available.
 	 */
-	public static final ILaunchTarget NULL_TARGET = LaunchTarget.NULL_TARGET;
+	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---") { //$NON-NLS-1$ //$NON-NLS-2$
+		@Override
+		public ILaunchTargetWorkingCopy getWorkingCopy() {
+			throw new UnsupportedOperationException("getWorkingCopy is not supported for NULL_TARGET");
+		};
+	};
 
 	/**
 	 * The id for the target. It is unique for each type.

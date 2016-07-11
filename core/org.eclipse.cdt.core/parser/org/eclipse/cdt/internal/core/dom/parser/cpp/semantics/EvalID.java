@@ -422,20 +422,25 @@ public class EvalID extends CPPDependentEvaluation {
 		} catch (DOMException e) {
 		}
 		IBinding[] bindings = data.getFoundBindings();
-		if (bindings.length >= 1 && bindings[0] instanceof ICPPFunction) {
-			ICPPFunction[] functions = new ICPPFunction[bindings.length];
-			System.arraycopy(bindings, 0, functions, 0, bindings.length);
-			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fQualified, fAddressOf, 
-					impliedObjectType, getTemplateDefinition());
-		}
-		IBinding binding = bindings.length == 1 ? bindings[0] : null;
-		if (binding instanceof IEnumerator) {
-			return new EvalBinding(binding, null, getTemplateDefinition());
-		} else if (binding instanceof ICPPMember) {
-			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
-		} else if (binding instanceof CPPFunctionSet) {
-			return new EvalFunctionSet((CPPFunctionSet) binding, fQualified, fAddressOf, impliedObjectType, 
-					getTemplateDefinition());
+		if (bindings.length != 0) {
+			IBinding binding = bindings[0];
+			if (binding instanceof ICPPFunction) {
+				ICPPFunction[] functions = new ICPPFunction[bindings.length];
+				System.arraycopy(bindings, 0, functions, 0, bindings.length);
+				return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fQualified,
+						fAddressOf, impliedObjectType, getTemplateDefinition());
+			}
+			if (binding instanceof CPPFunctionSet) {
+				return new EvalFunctionSet((CPPFunctionSet) binding, fQualified, fAddressOf,
+						impliedObjectType, getTemplateDefinition());
+			}
+			if (binding instanceof IEnumerator) {
+				return new EvalBinding(binding, null, getTemplateDefinition());
+			}
+			if (binding instanceof ICPPMember) {
+				return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false,
+						getTemplateDefinition());
+			}
 		}
 		return null;
 	}

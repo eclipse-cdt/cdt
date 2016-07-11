@@ -422,7 +422,7 @@ public class EvalID extends CPPDependentEvaluation {
 		} catch (DOMException e) {
 		}
 		IBinding[] bindings = data.getFoundBindings();
-		if (bindings.length > 1 && bindings[0] instanceof ICPPFunction) {
+		if (bindings.length >= 1 && bindings[0] instanceof ICPPFunction) {
 			ICPPFunction[] functions = new ICPPFunction[bindings.length];
 			System.arraycopy(bindings, 0, functions, 0, bindings.length);
 			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fQualified, fAddressOf, 

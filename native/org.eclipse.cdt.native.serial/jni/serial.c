@@ -149,6 +149,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 
 	// ignore parity
+	options.c_iflag &= ~(IGNCR | ICRNL);
 	options.c_iflag |= IGNPAR;
 
 	options.c_cc[VMIN]     = 0;   // min chars to read

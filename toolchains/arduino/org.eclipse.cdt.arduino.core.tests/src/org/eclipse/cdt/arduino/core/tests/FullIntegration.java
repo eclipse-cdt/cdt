@@ -184,6 +184,7 @@ public class FullIntegration {
 		String arch = board.getPlatform().getArchitecture();
 		String pkg = board.getPlatform().getPackage().getName();
 		String targetName = pkg + '-' + arch + '-' + board.getName().replace('/', '_');
+		targetName = targetName.trim();
 
 		IRemoteConnection connection = type.getConnection(targetName);
 		if (connection != null) {

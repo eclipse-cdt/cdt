@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_be8d0f40",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 999,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-07-13T17:25:27Z",
+      "side": 1,
+      "message": "We can stop the loop here, so we can add a break;",
+      "revId": "19d00e10faade72aa7e554d8fb2506b91d9ceba0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5ef9538d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1009,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-07-13T17:25:27Z",
+      "side": 1,
+      "message": "null check missing here",
+      "revId": "19d00e10faade72aa7e554d8fb2506b91d9ceba0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_9e1a0b74",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1018,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-07-13T17:25:27Z",
+      "side": 1,
+      "message": "since we have a catch here may be we should make it trap Exception, so we can also mark the request montior as done e.g. NumberFormatException",
+      "revId": "19d00e10faade72aa7e554d8fb2506b91d9ceba0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_be126f91",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1040,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-07-13T17:25:27Z",
+      "side": 1,
+      "message": "It\u0027s unlikely but possible to have a name \u003d\u003d null here, should not we use the binary name for this case?",
+      "revId": "19d00e10faade72aa7e554d8fb2506b91d9ceba0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_fe3067ee",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1875,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-07-13T17:25:27Z",
+      "side": 1,
+      "message": "typo: mor efuture",
+      "revId": "19d00e10faade72aa7e554d8fb2506b91d9ceba0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

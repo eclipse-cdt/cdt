@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.docker.launcher;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +119,13 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 
 		IPath commandPath = getCommandPath(configuration);
 		if (commandPath != null) {
+			// create some labels to allow user to filter out such Containers if
+			// kept
+			Map<String, String> labels = new HashMap<>();
+			labels.put("CDTLaunch", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			String projectName = configuration.getAttribute(
+					ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+			labels.put("CDTProject", projectName); //$NON-NLS-1$
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
 				String commandDir = commandPath.removeLastSegments(1)
 						.toString();
@@ -169,7 +177,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						image, command,
 						commandDir, workingDir, additionalDirs, origEnv,
 						envMap, null, keepContainer, supportStdin,
-						privilegedMode);
+						privilegedMode, labels);
 			} else if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 				String gdbserverPortNumber = configuration.getAttribute(
 						ILaunchConstants.ATTR_GDBSERVER_PORT,
@@ -235,7 +243,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						image, command,
 						commandDir, workingDir, additionalDirs, origEnv,
 						envMap, ports, keepContainer, supportStdin,
-						privilegedMode);
+						privilegedMode, labels);
 
 				// wait until gdbserver is started successfully and we have its
 				// ip address or

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -242,9 +243,24 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		}
 		if (function == null)
 			return this;
+
 		ICPPEvaluation eval = CPPFunction.getReturnExpression(function, context.getPoint());
-		if (eval == null)
-			return EvalFixed.INCOMPLETE;
+		if (eval == null) {
+			if (!(function instanceof ICPPTemplateInstance)
+					|| ((ICPPTemplateInstance) function).isExplicitSpecialization()) {
+				return EvalFixed.INCOMPLETE;
+			}
+			ICPPTemplateInstance functionInstance = (ICPPTemplateInstance) function;
+			IBinding specialized = functionInstance.getSpecializedBinding();
+			if (!(specialized instanceof ICPPFunction))
+				return this;
+			eval = CPPFunction.getReturnExpression((ICPPFunction) specialized, context.getPoint());
+			if (eval == null)
+				return EvalFixed.INCOMPLETE;
+			InstantiationContext instantiationContext =
+					new InstantiationContext(functionInstance.getTemplateParameterMap(), context.getPoint());
+			return eval.instantiate(instantiationContext, Value.MAX_RECURSION_DEPTH);
+		}
 		CPPFunctionParameterMap parameterMap = buildParameterMap(function, context.getPoint());
 		return eval.computeForFunctionCall(parameterMap, context.recordStep());
 	}

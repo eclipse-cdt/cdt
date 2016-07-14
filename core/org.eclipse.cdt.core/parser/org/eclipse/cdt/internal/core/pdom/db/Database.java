@@ -718,7 +718,7 @@ public class Database {
 		// Be careful as other readers may access chunks concurrently.
 		ArrayList<Chunk> dirtyChunks= new ArrayList<>();
 		synchronized (fCache) {
-			for (int i= 1; i < fChunksUsed ; i++) {
+			for (int i= 1; i < fChunksUsed; i++) {
 				Chunk chunk= fChunks[i];
 				if (chunk != null && chunk.fDirty) {
 					dirtyChunks.add(chunk);

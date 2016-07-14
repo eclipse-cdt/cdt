@@ -121,11 +121,11 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 		if (commandPath != null) {
 			// create some labels to allow user to filter out such Containers if
 			// kept
-			Map<String, String> labels = new HashMap<>();
-			labels.put("CDTLaunch", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			HashMap<String, String> labels = new HashMap<>();
+			labels.put("org.eclipse.cdt.container-launch", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			String projectName = configuration.getAttribute(
 					ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
-			labels.put("CDTProject", projectName); //$NON-NLS-1$
+			labels.put("org.eclipse.cdt.project-name", projectName); //$NON-NLS-1$
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
 				String commandDir = commandPath.removeLastSegments(1)
 						.toString();

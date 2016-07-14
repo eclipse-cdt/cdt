@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,8 +75,19 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 		return manifest;
 	}
 
+	protected void populateModel(Map<String, Object> model) {
+		// default nothing
+	}
+
+	@Override
+	public void generate(IProgressMonitor monitor) throws CoreException {
+		generate(new HashMap<>(), monitor);
+	}
+
 	@Override
 	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
+		populateModel(model);
+
 		// If no manifest, just return
 		if (manifestPath == null) {
 			return;

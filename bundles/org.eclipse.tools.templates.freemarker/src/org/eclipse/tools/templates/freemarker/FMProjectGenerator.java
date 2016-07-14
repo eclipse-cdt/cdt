@@ -48,10 +48,15 @@ public abstract class FMProjectGenerator extends FMGenerator {
 	}
 
 	@Override
-	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
+	protected void populateModel(Map<String, Object> model) {
+		super.populateModel(model);
+
 		// Make sure project name is in model
 		model.put("projectName", projectName); //$NON-NLS-1$
+	}
 
+	@Override
+	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
 		// Create the project
 		createProject(monitor);
 
@@ -59,7 +64,7 @@ public abstract class FMProjectGenerator extends FMGenerator {
 		super.generate(model, monitor);
 	}
 
-	protected void createProject(IProgressMonitor monitor) throws CoreException {
+	protected IProject createProject(IProgressMonitor monitor) throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		project = workspace.getRoot().getProject(projectName);
@@ -76,6 +81,8 @@ public abstract class FMProjectGenerator extends FMGenerator {
 			// TODO make sure it's got all our settings or is this an error
 			// condition?
 		}
+
+		return project;
 	}
 
 }

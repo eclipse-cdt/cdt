@@ -11,4 +11,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.tools.templates.core;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.tools.templates.ui
+Export-Package: org.eclipse.tools.templates.ui,
+ org.eclipse.tools.templates.ui.internal

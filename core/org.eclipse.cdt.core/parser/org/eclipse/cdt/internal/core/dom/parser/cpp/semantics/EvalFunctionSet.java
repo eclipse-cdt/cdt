@@ -58,6 +58,8 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	// by asking the first function in the set for its name.)
 	// Exactly one of fFunctionSet and fName should be non-null.
 	private final char[] fName;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalFunctionSet(CPPFunctionSet set, boolean qualified, boolean addressOf, IType impliedObjectType,
 			IASTNode pointOfDefinition) {
@@ -140,6 +142,14 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		if (fFunctionSet == null)
 			return false;
 		for (ICPPFunction f : fFunctionSet.getBindings()) {

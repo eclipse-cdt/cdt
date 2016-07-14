@@ -45,6 +45,8 @@ public class EvalFixed extends CPPEvaluation {
 	private boolean fCheckedIsTypeDependent;
 	private boolean fIsValueDependent;
 	private boolean fCheckedIsValueDependent;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalFixed(IType type, ValueCategory cat, IValue value) {
 		// Avoid nesting EvalFixed's as nesting causes the signature to be different.
@@ -54,7 +56,7 @@ public class EvalFixed extends CPPEvaluation {
 			cat = inner.fValueCategory;
 			value = inner.fValue;
 		}
-		
+
 		if (type instanceof CPPBasicType) {
 			Long num = value.numericalValue();
 			if (num != null) {
@@ -67,7 +69,7 @@ public class EvalFixed extends CPPEvaluation {
 		fValueCategory= cat;
 		fValue= value;
 	}
-	
+
 	public IType getType() {
 		return fType;
 	}
@@ -107,9 +109,17 @@ public class EvalFixed extends CPPEvaluation {
 		}
 		return fIsValueDependent;
 	}
-	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return (fType instanceof ICPPClassType && TypeTraits.isEmpty(fType, point))
 				|| isConstexprValue(fValue, point);
 	}
@@ -180,11 +190,11 @@ public class EvalFixed extends CPPEvaluation {
 		IValue value = CPPTemplates.instantiateValue(fValue, context, maxDepth);
 		if (type == fType && value == fValue)
 			return this;
-		// If an error occurred while instantiating the value (such as a substitution failure), 
+		// If an error occurred while instantiating the value (such as a substitution failure),
 		// propagate that error.
 		if (value == Value.ERROR)
 			return EvalFixed.INCOMPLETE;
-		// Resolve the parameter pack type to the underlying type if the instantiated value is not dependent. 
+		// Resolve the parameter pack type to the underlying type if the instantiated value is not dependent.
 		if (type instanceof ICPPParameterPackType && value.numericalValue() != null)
 			type = ((ICPPParameterPackType) type).getType();
 		return new EvalFixed(type, fValueCategory, value);

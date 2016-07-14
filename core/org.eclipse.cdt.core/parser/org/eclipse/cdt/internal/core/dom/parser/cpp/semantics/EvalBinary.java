@@ -81,6 +81,8 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalBinary(int operator, ICPPEvaluation arg1, ICPPEvaluation arg2, IASTNode pointOfDefinition) {
 		this(operator, arg1, arg2, findEnclosingTemplate(pointOfDefinition));
@@ -201,9 +203,17 @@ public class EvalBinary extends CPPDependentEvaluation {
 	public boolean isValueDependent() {
 		return fArg1.isValueDependent() || fArg2.isValueDependent();
 	}
-	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return fArg1.isConstantExpression(point)
 			&& fArg2.isConstantExpression(point)
 			&& isNullOrConstexprFunc(getOverload(point));
@@ -262,7 +272,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 			IType type = fArg1.getType(point);
 			type= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
     		if (type instanceof ICPPClassType) {
-    			return CPPSemantics.findOverloadedBinaryOperator(point, getTemplateDefinitionScope(), 
+    			return CPPSemantics.findOverloadedBinaryOperator(point, getTemplateDefinitionScope(),
     					OverloadableOperator.BRACKET, fArg1, fArg2);
     		}
 		} else {

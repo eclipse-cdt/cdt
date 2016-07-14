@@ -36,9 +36,11 @@ public class EvalComma extends CPPDependentEvaluation {
 	private ICPPFunction[] fOverloads;
 
 	private IType fType;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalComma(ICPPEvaluation[] evals, IASTNode pointOfDefinition) {
-		this(evals, findEnclosingTemplate(pointOfDefinition));		
+		this(evals, findEnclosingTemplate(pointOfDefinition));
 	}
 
 	public EvalComma(ICPPEvaluation[] evals, IBinding templateDefinition) {
@@ -72,9 +74,17 @@ public class EvalComma extends CPPDependentEvaluation {
 	public boolean isValueDependent() {
 		return containsDependentValue(fArguments);
 	}
-	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		if (!areAllConstantExpressions(fArguments, point)) {
 			return false;
 		}

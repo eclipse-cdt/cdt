@@ -53,6 +53,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	private ICPPFunction fConstructor = CPPFunction.UNINITIALIZED_FUNCTION;
 	private boolean fCheckedIsTypeDependent;
 	private boolean fIsTypeDependent;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalTypeId(IType type, IASTNode pointOfDefinition, ICPPEvaluation... arguments) {
 		this(type, findEnclosingTemplate(pointOfDefinition), false, arguments);
@@ -151,6 +153,14 @@ public class EvalTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return !fRepresentsNewExpression
 				&& areAllConstantExpressions(fArguments, point)
 				&& isNullOrConstexprFunc(getConstructor(point));
@@ -298,7 +308,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, 
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
 			ConstexprEvaluationContext context) {
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {

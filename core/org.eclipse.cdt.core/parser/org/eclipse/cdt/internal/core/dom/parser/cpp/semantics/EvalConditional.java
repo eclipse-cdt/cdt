@@ -55,6 +55,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 	private ValueCategory fValueCategory;
 	private IType fType;
 	private ICPPFunction fOverload;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalConditional(ICPPEvaluation condition, ICPPEvaluation positive, ICPPEvaluation negative,
 			boolean positiveThrows, boolean negativeThrows, IASTNode pointOfDefinition) {
@@ -149,6 +151,14 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return fCondition.isConstantExpression(point)
 			&& (fPositive == null || fPositive.isConstantExpression(point))
 			&& fNegative.isConstantExpression(point);
@@ -243,7 +253,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 		// 5.16-5: At least one class type but no conversion
 		if (isClassType2 || isClassType3) {
-			fOverload = CPPSemantics.findOverloadedConditionalOperator(point, getTemplateDefinitionScope(), positive, fNegative);			
+			fOverload = CPPSemantics.findOverloadedConditionalOperator(point, getTemplateDefinitionScope(), positive, fNegative);
 			if (fOverload != null) {
 				fType= ExpressionTypes.typeFromFunctionCall(fOverload);
 			} else {

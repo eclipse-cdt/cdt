@@ -45,6 +45,8 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fArguments;
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalFunctionCall(ICPPEvaluation[] args, IASTNode pointOfDefinition) {
 		this(args, findEnclosingTemplate(pointOfDefinition));
@@ -85,6 +87,14 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return areAllConstantExpressions(fArguments, point) && isNullOrConstexprFunc(getOverload(point));
 	}
 
@@ -101,7 +111,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 		IType t= SemanticUtil.getNestedType(fArguments[0].getType(point), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
-	    	return CPPSemantics.findOverloadedOperator(point, getTemplateDefinitionScope(), fArguments, t, 
+	    	return CPPSemantics.findOverloadedOperator(point, getTemplateDefinitionScope(), fArguments, t,
 	    			OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
 		}
 		return null;
@@ -121,7 +131,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		ICPPFunction overload = getOverload(point);
 		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
-		
+
 		ICPPEvaluation function = fArguments[0];
 		IType result = ExpressionTypes.typeFromFunctionCall(function.getType(point));
 		if (function instanceof EvalMemberAccess) {
@@ -135,7 +145,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		ICPPEvaluation eval = computeForFunctionCall(new ConstexprEvaluationContext(point));
 		if (eval == this) {
 			return Value.create(eval);
-		} 
+		}
 		return eval.getValue(point);
 	}
 

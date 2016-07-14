@@ -79,6 +79,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 	private final IBinding fAddressOfQualifiedNameBinding;
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding,
 			IASTNode pointOfDefinition) {
@@ -149,9 +151,17 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return fArgument.isValueDependent();
 		}
 	}
-	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return fArgument.isConstantExpression(point)
 			&& isNullOrConstexprFunc(getOverload(point));
 	}
@@ -287,7 +297,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 				return Value.ERROR;
 			IType targetType = parameterTypes[0];
 			arg = maybeApplyConversion(arg, targetType, point);
-			
+
 			if (!(overload instanceof CPPImplicitFunction)) {
 				if (!overload.isConstexpr())
 					return Value.ERROR;
@@ -381,7 +391,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, 
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
 			ConstexprEvaluationContext context) {
 		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, context.recordStep());
 		if (argument == fArgument)

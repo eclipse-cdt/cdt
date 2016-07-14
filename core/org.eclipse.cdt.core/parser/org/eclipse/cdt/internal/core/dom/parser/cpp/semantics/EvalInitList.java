@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class EvalInitList extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fClauses;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalInitList(ICPPEvaluation[] clauses, IASTNode pointOfDefinition) {
 		this(clauses, findEnclosingTemplate(pointOfDefinition));
@@ -64,9 +66,17 @@ public class EvalInitList extends CPPDependentEvaluation {
 	public boolean isValueDependent() {
 		return containsDependentValue(fClauses);
 	}
-	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return areAllConstantExpressions(fClauses, point);
 	}
 

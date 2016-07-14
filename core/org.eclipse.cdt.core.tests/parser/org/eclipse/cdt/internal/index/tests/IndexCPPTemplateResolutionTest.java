@@ -2375,9 +2375,9 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	B<bool>::type x;
 	//	B<int*>::type y;
 	public void testConstexprFunction_395238_2() throws Exception {
-		ITypedef td = getBindingFromASTName("type x", 4, ITypedef.class);
+		ITypedef td = getBindingFromFirstIdentifier("type x", ITypedef.class);
 		assertEquals("bool", ASTTypeUtil.getType(td.getType()));
-		getProblemFromASTName("type y", 4);
+		getProblemFromFirstIdentifier("type y");
 	}
 
 	//	template <class RandomAccessRange, class BinaryPredicate>
@@ -2536,6 +2536,51 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		checkBindings();
 	}
 
+	//	// Empty header.
+
+	//	template <typename T, T v>
+	//	constexpr T a() { return v; }
+	//
+	//	template <typename T>
+	//	constexpr T A(T n, int i, T j = 1) {
+	//	  return (i < 1) ? j : (i == 1) ? n * j : A<T>(n * n, i / 2, (i % 2) ? j * n : j);
+	//	}
+	//
+	//	template <int I, int J, int K, typename T>
+	//	struct B {
+	//	  static constexpr int b(T n);
+	//	};
+	//
+	//	template <int I, int J, typename T>
+	//	struct B<I, J, J, T> {
+	//	  static constexpr int b(T n) {
+	//	    return J;
+	//	  }
+	//	};
+	//
+	//	template <int I, int J, int K, typename T>
+	//	constexpr int B<I, J, K, T>::b(T n) {
+	//	  return (n < a<T, A<T>(I, (J + K) / 2)>()) ?
+	//	      B<I, J, (J + K) / 2, T>::b(n) :
+	//	      B<I, (J + K) / 2 + 1, K, T>::b(n);
+	//	}
+	//
+	//	template <int I, typename T>
+	//	constexpr int C(T v = 2000000000) {
+	//	  return v < I ? 1 : 1 + C<I, T>(v / I);
+	//	}
+	//
+	//	template <int I, typename T>
+	//	constexpr int D(T n) {
+	//	  return B<I, 1, C<I, T>(), T>::b(n);
+	//	}
+	//
+	//	static_assert(D<10>(1000000000) == 10, "");
+	public void testOOM_497875() throws Exception {
+		// TODO(sprigogin): Uncomment after http://bugs.eclipse.org/497931 is fixed.
+//		checkBindings();
+	}
+
 	//  template <typename>
 	//  struct basic_A {
 	//      bool eof() const;
@@ -2664,7 +2709,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	//	constexpr int waldo = foo<int>();
 	public void testInstantiationOfReturnExpression_484959() throws Exception {
-		ICPPVariable waldo = getBindingFromASTName("waldo", 5);
+		ICPPVariable waldo = getBindingFromFirstIdentifier("waldo");
 		assertVariableValue(waldo, 42);
 	}
 

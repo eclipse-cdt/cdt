@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -130,7 +131,10 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			typelist = PDOMCPPTypeList.putTypes(this, astFunction.getExceptionSpecification());
 		}
 		db.putRecPtr(record + EXCEPTION_SPEC, typelist);
-		linkage.new ConfigureFunctionSpecialization(astFunction, this, point);
+		if (!(astFunction instanceof ICPPTemplateInstance)
+				|| ((ICPPTemplateInstance) astFunction).isExplicitSpecialization()) {
+			linkage.new ConfigureFunctionSpecialization(astFunction, this, point);
+		}
 	}
 
 	private short getAnnotation(ICPPFunction astFunction) {

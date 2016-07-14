@@ -33,6 +33,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.remote.core.IRemoteConnection;
@@ -89,6 +90,17 @@ public class FullIntegration {
 
 		// What is Microsoft doing?
 		skipBuild.add(arduinoManager.getBoard("Microsoft", "win10", "w10iotcore"));
+		
+		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+			// Doesn't work with case sensitive file systems
+			skipBuild.add(arduinoManager.getBoard("chipKIT", "pic32", "uno_pmod"));
+			skipBuild.add(arduinoManager.getBoard("chipKIT", "pic32", "openbci"));
+			
+			// Something wrong with the Intel Galileo and Edison toolchains on Linux
+			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
+			skipBuild.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
+			skipBuild.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
+		}
 	}
 
 	private static void setupSkipUpload() throws Exception {

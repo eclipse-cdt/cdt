@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -225,6 +225,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		bars.setGlobalActionHandler(CdtActionConstants.ADD_BLOCK_COMMENT, getAction(textEditor, "AddBlockComment")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.REMOVE_BLOCK_COMMENT, getAction(textEditor, "RemoveBlockComment")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.INDENT, getAction(textEditor, "Indent")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.ALIGN_CONST, getAction(textEditor, "AlignConst")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.ADD_INCLUDE, getAction(textEditor, "AddInclude")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.ORGANIZE_INCLUDES, getAction(textEditor, "OrganizeIncludes")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.SORT_LINES, getAction(textEditor, "SortLines")); //$NON-NLS-1$

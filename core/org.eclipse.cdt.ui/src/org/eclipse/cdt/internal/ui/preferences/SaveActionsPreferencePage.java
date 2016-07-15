@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Google, Inc and others.
+ * Copyright (c) 2013, 2016 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import static org.eclipse.cdt.ui.PreferenceConstants.FORMAT_SOURCE_CODE;
 import static org.eclipse.cdt.ui.PreferenceConstants.FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES;
 import static org.eclipse.cdt.ui.PreferenceConstants.REMOVE_TRAILING_WHITESPACE;
 import static org.eclipse.cdt.ui.PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES;
+import static org.eclipse.cdt.ui.PreferenceConstants.ALIGN_ALL_CONST;
 
 import java.util.ArrayList;
 
@@ -58,6 +59,8 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 				REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				ENSURE_NEWLINE_AT_EOF));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				ALIGN_ALL_CONST));
 
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -122,6 +125,11 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 
 		addCheckBox(composite, PreferencesMessages.SaveActionsPreferencePage_ensureNewline,
 				ENSURE_NEWLINE_AT_EOF, 0);
+
+		ControlFactory.createEmptySpace(composite, 1);
+
+		addCheckBox(composite, PreferencesMessages.SaveActionsPreferencePage_alignConst,
+				ALIGN_ALL_CONST, 0);
 
 		return composite;
 	}

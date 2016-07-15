@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.indent"</code>).
 	 */
 	public static final String INDENT = "org.eclipse.cdt.ui.edit.text.c.indent"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the source -> align const action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.align.const"</code>).
+	 */
+	public static final String ALIGN_CONST = "org.eclipse.cdt.ui.edit.text.c.align.const"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the source -> format action

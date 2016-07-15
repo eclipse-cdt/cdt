@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,5 +75,6 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU, CCorePreferenceConstants.DEFAULT_SCALABILITY_LIMIT_TOKENS_PER_TU);
 		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS, CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TOKENS);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE, CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
 	}
 }

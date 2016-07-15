@@ -32,12 +32,15 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 			getCDTUIKey(PreferenceConstants.FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT);
 	private static final Key FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER =
 			getCDTUIKey(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER);
+	private static final Key PLACE_CONST_RIGHT_OF_TYPE =
+			getCDTUIKey(PreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE);
 
 	private static Key[] getAllKeys() {
 		return new Key[] {
 				CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER,
 				FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT,
 				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER,
+				PLACE_CONST_RIGHT_OF_TYPE,
 			};
 	}
 
@@ -64,6 +67,9 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 
 		composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_function_output_parameter_style); 
 		fillFunctionOutputParameterStyleSection(composite);
+		
+		composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_const_keyword_placement);
+		fillConstPlacementsSections(composite);
 
 		scrolled.setContent(control);
 		final Point size= control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -102,6 +108,17 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, FALSE_TRUE, 0);
 		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_pass_by_pointer,
 				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, TRUE_FALSE, 0);
+	}
+	
+	private void fillConstPlacementsSections(Composite composite) {
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 3;
+		composite.setLayout(layout);
+
+		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_const_left,
+				PLACE_CONST_RIGHT_OF_TYPE, FALSE_TRUE, 0);
+		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_const_right,
+				PLACE_CONST_RIGHT_OF_TYPE, TRUE_FALSE, 0);
 	}
 
 	@Override

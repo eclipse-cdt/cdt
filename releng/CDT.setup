@@ -168,6 +168,8 @@
             name="org.eclipse.tools.templates.freemarker"/>
         <requirement
             name="org.eclipse.tools.templates.ui"/>
+        <requirement
+            name="org.eclipse.ui.trace"/>
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>

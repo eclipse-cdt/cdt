@@ -349,6 +349,21 @@ public class CCorePreferenceConstants {
 	// NOTE: This default came from measurements using a 1Gb heap on a 64-bit VM.  The test project was
 	//       boost-1.55.0.  This default will index all but 9 files without running out of memory.
 
+	/**
+	 * A named preference that specifies whether the const qualifier is written to the right (or left) of
+	 * the type in a declaration specifier.
+	 *
+	 * @since 6.3
+	 */
+	public static final String PLACE_CONST_RIGHT_OF_TYPE =  "astwriter.placeConstRightOfType"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #PLACE_CONST_RIGHT_OF_TYPE}.
+	 *
+	 * @since 6.3
+	 */
+	public static final boolean DEFAULT_PLACE_CONST_RIGHT_OF_TYPE = false;
+
     /**
      * Returns the node in the preference in the given context.
      *

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -93,6 +94,15 @@ public class ASTWriterVisitor extends ASTVisitor {
 		this(new NodeCommentMap());
 	}
 
+	/**
+	 * Creates a writer with an empty comment map that uses const placement
+	 * properties of the project associated with the provided translation unit.
+	 */
+	public ASTWriterVisitor(ITranslationUnit tu) {
+		this();
+		configureForTU(tu);
+	}
+
 	public ASTWriterVisitor(NodeCommentMap commentMap) {
 		super();
 		init(commentMap);
@@ -112,6 +122,11 @@ public class ASTWriterVisitor extends ASTVisitor {
 		nameWriter = new NameWriter(scribe, this, commentMap);
 		tempParameterWriter = new TemplateParameterWriter(scribe, this, commentMap);
 		attributeWriter = new AttributeWriter(scribe, this, commentMap);
+	}
+
+	public void configureForTU(ITranslationUnit tu) {
+		boolean placeConstRight = ConstPlacement.placeConstRight(tu);
+		declSpecWriter.setPlaceConstRight(placeConstRight);
 	}
 
 	@Override

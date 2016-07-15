@@ -73,7 +73,7 @@ public class ASTWriter {
 	 */
 	public String write(IASTNode rootNode, NodeCommentMap commentMap) throws ProblemRuntimeException {
 		ChangeGeneratorWriterVisitor writer = new ChangeGeneratorWriterVisitor(
-				modificationStore, null, commentMap);
+				modificationStore, null, commentMap, ConstPlacement.placeConstRight(rootNode));
 		if (rootNode != null) {
 			rootNode.accept(writer);
 		}

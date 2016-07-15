@@ -263,14 +263,16 @@ public class LibrariesTabControl extends Composite {
 			SelectLibrariesDialog selectDialog = new SelectLibrariesDialog(getShell());
 			selectDialog.setLibraries(availableLibraries);
 			if (selectDialog.open() == Window.OK) {
-				Collection<ArduinoLibrary> selectedLibraries = selectDialog.getChecked();
-				container.run(true, true, monitor -> {
-					try {
-						manager.installLibraries(selectedLibraries, monitor);
-					} catch (CoreException e) {
-						Activator.log(e);
-					}
-				});
+				if (ArduinoDownloadsManager.checkLicense(getShell())) {
+					Collection<ArduinoLibrary> selectedLibraries = selectDialog.getChecked();
+					container.run(true, true, monitor -> {
+						try {
+							manager.installLibraries(selectedLibraries, monitor);
+						} catch (CoreException e) {
+							Activator.log(e);
+						}
+					});
+				}
 			}
 			populateTable();
 		} catch (InterruptedException | InvocationTargetException e) {

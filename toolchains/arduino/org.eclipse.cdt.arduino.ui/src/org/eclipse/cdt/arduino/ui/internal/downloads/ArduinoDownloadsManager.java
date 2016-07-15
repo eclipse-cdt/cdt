@@ -7,8 +7,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.downloads;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -21,6 +26,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 public class ArduinoDownloadsManager extends WizardDialog {
 
@@ -89,6 +95,28 @@ public class ArduinoDownloadsManager extends WizardDialog {
 		finishButton.setText("Done");
 		// make sure it's far right
 		finishButton.moveBelow(null);
+	}
+
+	static boolean checkLicense(Shell shell) {
+		File acceptedFile = ArduinoPreferences.getArduinoHome().resolve(".accepted").toFile(); //$NON-NLS-1$
+		if (!acceptedFile.exists()) {
+			String message = "Do you accept the licenses for the platforms and libraries you are downloading?";
+			MessageDialog dialog = new MessageDialog(shell, "Arduino Licensing", null, message,
+					MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
+			int rc = dialog.open();
+			if (rc == 0) {
+				try {
+					acceptedFile.createNewFile();
+				} catch (IOException e) {
+					Activator.log(e);
+				}
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
 	}
 
 }

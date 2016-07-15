@@ -257,14 +257,16 @@ public class PlatformsTabControl extends Composite {
 			SelectPlatformsDialog selectDialog = new SelectPlatformsDialog(getShell());
 			selectDialog.setPlatforms(availablePlatforms);
 			if (selectDialog.open() == Window.OK) {
-				Collection<ArduinoPlatform> selectedPlatforms = selectDialog.getSelectedPlatforms();
-				container.run(true, true, monitor -> {
-					try {
-						manager.installPlatforms(selectedPlatforms, monitor);
-					} catch (CoreException e) {
-						Activator.log(e);
-					}
-				});
+				if (ArduinoDownloadsManager.checkLicense(getShell())) {
+					Collection<ArduinoPlatform> selectedPlatforms = selectDialog.getSelectedPlatforms();
+					container.run(true, true, monitor -> {
+						try {
+							manager.installPlatforms(selectedPlatforms, monitor);
+						} catch (CoreException e) {
+							Activator.log(e);
+						}
+					});
+				}
 			}
 			populateTable();
 		} catch (InterruptedException | InvocationTargetException e) {

@@ -2114,6 +2114,13 @@ public class PreferenceConstants {
 	public static final String INCLUDE_STYLE_MATCHING_PATTERN = "includeStyle.matchingPattern"; //$NON-NLS-1$
 
 	/**
+	 * Preference key for whether to 'align' the const keyword to a specific position relative to the type name.
+	 *
+	 * @since 6.2
+	 */
+	public static final String ALIGN_ALL_CONST = "alignConst"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls whether annotation roll over is used or not.
 	 * <p>
 	 * Value is of type <code>Boolean</code>. If <code>true</code> the annotation ruler column
@@ -2229,6 +2236,7 @@ public class PreferenceConstants {
 		store.setDefault(REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, true);
 		store.setDefault(ENSURE_NEWLINE_AT_EOF, true);
 		store.setDefault(FORMAT_SOURCE_CODE, false);
+		store.setDefault(ALIGN_ALL_CONST, false);
 		store.setDefault(FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES, true);
 
 		// Formatter profile

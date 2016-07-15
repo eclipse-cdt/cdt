@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.debug.ui.memory.source"
       label="%featureName"
-      version="9.0.0.qualifier"
+      version="9.0.1.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -33,13 +33,13 @@
          version="0.0.0"
          unpack="false"/>
 
-    <plugin
+   <plugin
          id="org.eclipse.cdt.debug.ui.memory.floatingpoint.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.eclipse.cdt.debug.ui.memory.transport.source"
          download-size="0"

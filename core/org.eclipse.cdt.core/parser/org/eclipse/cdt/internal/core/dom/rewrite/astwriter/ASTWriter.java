@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -23,13 +24,16 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.ChangeGeneratorWriterVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+import org.eclipse.core.resources.IProject;
 
 import java.util.List;
 
@@ -73,11 +77,27 @@ public class ASTWriter {
 	 */
 	public String write(IASTNode rootNode, NodeCommentMap commentMap) throws ProblemRuntimeException {
 		ChangeGeneratorWriterVisitor writer = new ChangeGeneratorWriterVisitor(
-				modificationStore, null, commentMap);
+				modificationStore, null, commentMap, placeConstRight(rootNode));
 		if (rootNode != null) {
 			rootNode.accept(writer);
 		}
 		return writer.toString();
+	}
+
+	private boolean placeConstRight(IASTNode node) {
+		IProject project = null;
+		if (node != null) {
+			IASTTranslationUnit astTU = node.getTranslationUnit();
+			if (astTU != null) {
+				ITranslationUnit tu = astTU.getOriginatingTranslationUnit();
+				if (tu != null) {
+					project = tu.getCProject().getProject();
+				}
+			}
+		}
+		return CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE, project,
+				CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
 	}
 
 	/**

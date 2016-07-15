@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -56,6 +57,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeExcepti
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.formatter.ChangeFormatter;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -341,7 +343,7 @@ public class ChangeGenerator extends ASTVisitor {
 		if (modifications.isEmpty())
 			return;
 		ChangeGeneratorWriterVisitor writer =
-				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
+				new ChangeGeneratorWriterVisitor(modificationStore, commentMap, placeConstRight(anchorNode));
 		IASTNode newNode = null;
 		for (ASTModification modification : modifications) {
 			boolean first = newNode == null;
@@ -385,7 +387,7 @@ public class ChangeGenerator extends ASTVisitor {
 		List<ASTModification> modifications = getModifications(node, ModificationKind.REPLACE);
 		String source = node.getTranslationUnit().getRawSignature();
 		ChangeGeneratorWriterVisitor writer =
-				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
+				new ChangeGeneratorWriterVisitor(modificationStore, commentMap, placeConstRight(node));
 		IASTFileLocation fileLocation = node.getFileLocation();
 		addToRootEdit(node);
 		if (modifications.size() == 1 && modifications.get(0).getNewNode() == null) {
@@ -444,7 +446,7 @@ public class ChangeGenerator extends ASTVisitor {
 		if (modifications.isEmpty())
 			return;
 		ChangeGeneratorWriterVisitor writer =
-				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
+				new ChangeGeneratorWriterVisitor(modificationStore, commentMap, placeConstRight(node));
 		ReplaceEdit anchor = getAppendAnchor(node);
 		Assert.isNotNull(anchor);
 		IASTNode precedingNode = getLastNodeBeforeAppendPoint(node);
@@ -492,7 +494,7 @@ public class ChangeGenerator extends ASTVisitor {
 
 		addToRootEdit(node);
 		ChangeGeneratorWriterVisitor writer =
-				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
+				new ChangeGeneratorWriterVisitor(modificationStore, commentMap, placeConstRight(node));
 		IASTNode newNode = null;
 		for (ASTModification modification : modifications) {
 			boolean first = newNode == null;
@@ -523,6 +525,22 @@ public class ChangeGenerator extends ASTVisitor {
 			addChildEdit(new InsertEdit(offset, code));
 		if (endOffset > offset)
 			addChildEdit(new DeleteEdit(offset, endOffset - offset));
+	}
+
+	private boolean placeConstRight(IASTNode node) {
+		IProject project = null;
+		if (node != null) {
+			IASTTranslationUnit astTU = node.getTranslationUnit();
+			if (astTU != null) {
+				ITranslationUnit tu = astTU.getOriginatingTranslationUnit();
+				if (tu != null) {
+					project = tu.getCProject().getProject();
+				}
+			}
+		}
+		return CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE, project,
+				CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
 	}
 
 	/**

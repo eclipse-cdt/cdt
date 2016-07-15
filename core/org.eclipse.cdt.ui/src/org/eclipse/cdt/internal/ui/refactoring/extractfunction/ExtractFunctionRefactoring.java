@@ -1092,7 +1092,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						buf.append(' ');
 				}
 				IASTParameterDeclaration declaration = parameter.getParameterDeclaration(nodeFactory);
-				ASTWriterVisitor writer = new ASTWriterVisitor();
+				ASTWriterVisitor writer = new ASTWriterVisitor(parameter.getTranslationUnit());
 				declaration.accept(writer);
 				buf.append(writer.toString());
 				first = false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc and others.
+ * Copyright (c) 2012, 2016 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
@@ -32,12 +34,15 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 			getCDTUIKey(PreferenceConstants.FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT);
 	private static final Key FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER =
 			getCDTUIKey(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER);
+	private static final Key PLACE_CONST_RIGHT_OF_TYPE =
+			getKey(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE);
 
 	private static Key[] getAllKeys() {
 		return new Key[] {
 				CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER,
 				FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT,
 				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER,
+				PLACE_CONST_RIGHT_OF_TYPE,
 			};
 	}
 
@@ -64,6 +69,9 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 
 		composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_function_output_parameter_style); 
 		fillFunctionOutputParameterStyleSection(composite);
+		
+		composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_const_keyword_placement);
+		fillConstPlacementsSections(composite);
 
 		scrolled.setContent(control);
 		final Point size= control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -102,6 +110,17 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, FALSE_TRUE, 0);
 		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_pass_by_pointer,
 				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, TRUE_FALSE, 0);
+	}
+
+	private void fillConstPlacementsSections(Composite composite) {
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 3;
+		composite.setLayout(layout);
+
+		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_const_left,
+				PLACE_CONST_RIGHT_OF_TYPE, FALSE_TRUE, 0);
+		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_const_right,
+				PLACE_CONST_RIGHT_OF_TYPE, TRUE_FALSE, 0);
 	}
 
 	@Override

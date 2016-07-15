@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
@@ -37,9 +38,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+import org.eclipse.core.resources.IProject;
 
 /**
  * Visits all nodes, prints leading comments and handles macro expansions. The
@@ -93,6 +96,15 @@ public class ASTWriterVisitor extends ASTVisitor {
 		this(new NodeCommentMap());
 	}
 
+	/**
+	 * Creates a writer with an empty comment map that uses const placement
+	 * properties of the project associated with the provided translation unit.
+	 */
+	public ASTWriterVisitor(ITranslationUnit tu) {
+		this();
+		configureForTU(tu);
+	}
+
 	public ASTWriterVisitor(NodeCommentMap commentMap) {
 		super();
 		init(commentMap);
@@ -112,6 +124,22 @@ public class ASTWriterVisitor extends ASTVisitor {
 		nameWriter = new NameWriter(scribe, this, commentMap);
 		tempParameterWriter = new TemplateParameterWriter(scribe, this, commentMap);
 		attributeWriter = new AttributeWriter(scribe, this, commentMap);
+	}
+	
+	private boolean placeConstRight(IProject project) {
+		if (project == null) {
+			return false;
+		}
+		return CCorePreferenceConstants.getPreference(
+				CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE, project,
+				CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
+	}
+
+	public void configureForTU(ITranslationUnit tu) {
+		if (tu != null) {
+			boolean placeConstRight = placeConstRight(tu.getCProject().getProject());
+			declSpecWriter.setPlaceConstRight(placeConstRight);
+		}
 	}
 
 	@Override

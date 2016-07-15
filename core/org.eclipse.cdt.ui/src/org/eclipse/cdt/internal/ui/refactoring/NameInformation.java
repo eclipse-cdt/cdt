@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
@@ -213,11 +214,12 @@ public class NameInformation {
 	public String getTypeName() {
 		if (newTypeName != null)
 			return newTypeName;
-		INodeFactory nodeFactory = name.getTranslationUnit().getASTNodeFactory();
+		IASTTranslationUnit translationUnit = name.getTranslationUnit();
+		INodeFactory nodeFactory = translationUnit.getASTNodeFactory();
 		IASTParameterDeclaration declaration = getParameterDeclaration(nodeFactory, null);
 		if (declaration == null)
 			return null;
-		ASTWriterVisitor writer = new ASTWriterVisitor();
+		ASTWriterVisitor writer = new ASTWriterVisitor(translationUnit.getOriginatingTranslationUnit());
 		declaration.accept(writer);
 		return writer.toString();
 	}
@@ -230,12 +232,13 @@ public class NameInformation {
 	public String getReturnType() {
 		if (!isReturnValue())
 			return null;
-		INodeFactory nodeFactory = name.getTranslationUnit().getASTNodeFactory();
+		IASTTranslationUnit translationUnit = name.getTranslationUnit();
+		INodeFactory nodeFactory = translationUnit.getASTNodeFactory();
 		IASTDeclarator sourceDeclarator = getDeclarator();
 		IASTDeclSpecifier declSpec = safeCopy(getDeclSpecifier());
 		IASTDeclarator declarator = createDeclarator(nodeFactory, sourceDeclarator, null);
 		IASTParameterDeclaration declaration = nodeFactory.newParameterDeclaration(declSpec, declarator);
-		ASTWriterVisitor writer = new ASTWriterVisitor();
+		ASTWriterVisitor writer = new ASTWriterVisitor(translationUnit.getOriginatingTranslationUnit());
 		declaration.accept(writer);
 		return writer.toString();
 	}

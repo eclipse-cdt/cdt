@@ -50,18 +50,26 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @author Emanuel Graf IFS
  */
 public class DeclSpecWriter extends NodeWriter {
+	private boolean constRight = false;
 	
 	public DeclSpecWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 
+	public void setPlaceConstRight(boolean placeConstRight) {
+		constRight = placeConstRight;
+	}
+
 	protected void writeDelcSpec(IASTDeclSpecifier declSpec) {
-		// Write general DelcSpec Keywords
-		writeDeclSpec(declSpec);
+		writeDeclSpec(declSpec, !constRight);
 		if (declSpec instanceof ICPPASTDeclSpecifier) {
 			writeCPPDeclSpec((ICPPASTDeclSpecifier) declSpec);
 		} else if (declSpec instanceof ICASTDeclSpecifier) {
 			writeCDeclSpec((ICASTDeclSpecifier) declSpec);
+		}
+		if(constRight && declSpec.isConst()) {
+			scribe.printSpace();
+			scribe.printStringSpace(Keywords.CONST);
 		}
 	}
 
@@ -343,7 +351,7 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 	}
 
-	private void writeDeclSpec(IASTDeclSpecifier declSpec) {
+	private void writeDeclSpec(IASTDeclSpecifier declSpec, boolean constEnabled) {
 		if (declSpec.isInline()) {
 			scribe.printStringSpace(Keywords.INLINE);
 		}
@@ -364,7 +372,7 @@ public class DeclSpecWriter extends NodeWriter {
 			scribe.printStringSpace(Keywords.REGISTER);
 			break;
 		}
-		if (declSpec.isConst()) {
+		if (declSpec.isConst() && constEnabled) {
 			scribe.printStringSpace(Keywords.CONST);
 		}
 		if (declSpec.isVolatile()) {

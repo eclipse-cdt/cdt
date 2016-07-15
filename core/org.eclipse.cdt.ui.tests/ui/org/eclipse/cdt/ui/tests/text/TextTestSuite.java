@@ -31,6 +31,7 @@ import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
 	AsmPartitionerTest.class,
 
     // smart edit tests
+	AlignConstActionTest.class,
 	CAutoIndentTest.class,
 	CHeuristicScannerTest.class,
 	BracketInserterTest.class,

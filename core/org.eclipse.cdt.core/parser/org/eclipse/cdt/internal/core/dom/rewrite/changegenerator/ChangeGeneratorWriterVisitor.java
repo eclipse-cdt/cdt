@@ -50,7 +50,7 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 	private ModificationScopeStack stack;
 
 	public ChangeGeneratorWriterVisitor(ASTVisitor delegateVisitor,
-			ASTModificationStore modificationStore, String fileScope, NodeCommentMap commentMap) {
+			ASTModificationStore modificationStore, String fileScope, NodeCommentMap commentMap, boolean placeConstRight) {
 		super(commentMap);
 
 		this.modificationStore = modificationStore;
@@ -75,12 +75,12 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		shouldVisitTypeIds = delegateVisitor.shouldVisitTypeIds;
 	}
 
-	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, NodeCommentMap nodeMap) {
-		this(modStore, null, nodeMap);
+	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, NodeCommentMap nodeMap, boolean placeConstRight) {
+		this(modStore, null, nodeMap, placeConstRight);
 	}
 
 	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, String fileScope,
-			NodeCommentMap commentMap) {
+			NodeCommentMap commentMap, boolean placeConstRight) {
 		super(commentMap);
 		this.modificationStore = modStore;
 		this.fileScope = fileScope;
@@ -89,7 +89,7 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		declaratorWriter = new ModifiedASTDeclaratorWriter(scribe, this, stack, commentMap);
 		expWriter = new ModifiedASTExpressionWriter(scribe, this, macroHandler,	stack, commentMap);
 		statementWriter = new ModifiedASTStatementWriter(scribe, this, stack, commentMap);
-		declSpecWriter = new ModifiedASTDeclSpecWriter(scribe, this, stack, commentMap);
+		declSpecWriter = new ModifiedASTDeclSpecWriter(scribe, this, stack, commentMap, placeConstRight);
 		declarationWriter = new ModifiedASTDeclarationWriter(scribe, this, stack, commentMap);
 	}
 

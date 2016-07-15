@@ -146,6 +146,10 @@
       </activityPatternBinding>
       <activityPatternBinding
             activityId="org.eclipse.cdt.debug.application.activity.filterMenus"
+            pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.AlignConst">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.application.activity.filterMenus"
             pattern="org.eclipse.cdt.ui/org.eclipse.cdt.ui.actions.ShiftLeft">
       </activityPatternBinding>
       <activityPatternBinding

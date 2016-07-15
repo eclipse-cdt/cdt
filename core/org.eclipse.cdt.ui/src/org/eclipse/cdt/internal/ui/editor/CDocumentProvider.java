@@ -89,6 +89,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
+import org.eclipse.cdt.internal.ui.saveactions.AlignConstSaveAction;
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
 import org.eclipse.cdt.internal.ui.text.spelling.CoreSpellingProblem;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -963,7 +964,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 */
 	private void performSaveActions(ITranslationUnit tu, ITextFileBuffer buffer, IProgressMonitor monitor)
 			throws CoreException {
-		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldFormatCode()) {
+		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldFormatCode() || shouldAlignAllConst()) {
 			SubMonitor progress = SubMonitor.convert(monitor, 2);
 			IDocumentUndoManager undoManager= null;
 			IRegion[] changedRegions= needsChangedRegions() ?
@@ -991,6 +992,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 					}
 					edit.apply(document);
 				}
+				
+				if (shouldAlignAllConst()) {
+					AlignConstSaveAction.perform();
+				}
+				
 			} catch (MalformedTreeException | BadLocationException e) {
 				String message= e.getMessage();
 				if (message == null)
@@ -1025,6 +1031,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	private static boolean isLimitedRemoveTrailingWhitespace() {
 		return PreferenceConstants.getPreferenceStore().getBoolean(
 				PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES);
+	}
+	
+	private static boolean shouldAlignAllConst() {
+		return PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.ALIGN_ALL_CONST);
 	}
 
 	private static boolean needsChangedRegions() {

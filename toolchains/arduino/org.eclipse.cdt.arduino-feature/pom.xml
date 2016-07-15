@@ -12,4 +12,5 @@
 
 	<artifactId>org.eclipse.cdt.arduino</artifactId>
 	<packaging>eclipse-feature</packaging>
+	<version>9.0.1-SNAPSHOT</version>
 </project>

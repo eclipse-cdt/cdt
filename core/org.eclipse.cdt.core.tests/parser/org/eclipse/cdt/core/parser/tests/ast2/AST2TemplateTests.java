@@ -9463,6 +9463,14 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <int I, typename T>
+	//	constexpr int waldo(T v) {
+	//	  return v < I ? 1 : 1 + waldo<I, T>(v / I);
+	//	}
+	public void _testAmbiguityResolution_497931() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename> struct S {};
 	//	struct U {};
 	//

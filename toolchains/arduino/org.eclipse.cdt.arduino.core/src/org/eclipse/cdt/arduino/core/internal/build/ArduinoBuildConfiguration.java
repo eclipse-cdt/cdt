@@ -277,17 +277,17 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 			includes += '"' + pathString(include) + '"';
 		}
 		
-		// Magic recipes for platform builds with platform includes
-		properties.put("includes", includes); //$NON-NLS-1$
-		buildModel.put("recipe_cpp_o_pattern_plat", resolveProperty("recipe.cpp.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
-		buildModel.put("recipe_c_o_pattern_plat", resolveProperty("recipe.c.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
-		buildModel.put("recipe_S_o_pattern_plat", resolveProperty("recipe.S.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
-
 		for (ArduinoLibrary lib : manager.getLibraries(project)) {
 			for (Path include : lib.getIncludePath()) {
 				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
 			}
 		}
+
+		// Magic recipes for platform builds with platform includes
+		properties.put("includes", includes); //$NON-NLS-1$
+		buildModel.put("recipe_cpp_o_pattern_plat", resolveProperty("recipe.cpp.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
+		buildModel.put("recipe_c_o_pattern_plat", resolveProperty("recipe.c.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
+		buildModel.put("recipe_S_o_pattern_plat", resolveProperty("recipe.S.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		ArduinoPlatform corePlatform = platform;
 		String core = properties.getProperty("build.core"); //$NON-NLS-1$

@@ -182,7 +182,7 @@
           <repository
               url="http://download.eclipse.org/tm/updates/4.0/"/>
           <repository
-              url="http://download.eclipse.org/eclipse/updates/4.6milestones/"/>
+              url="http://download.eclipse.org/eclipse/updates/4.6/"/>
           <repository
               url="http://download.eclipse.org/tools/ptp/builds/remote/neon/milestones"/>
           <repository

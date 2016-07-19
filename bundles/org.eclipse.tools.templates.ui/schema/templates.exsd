@@ -85,7 +85,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.INewWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tools.templates.ui.TemplateWizard:"/>
                </appinfo>
             </annotation>
          </attribute>

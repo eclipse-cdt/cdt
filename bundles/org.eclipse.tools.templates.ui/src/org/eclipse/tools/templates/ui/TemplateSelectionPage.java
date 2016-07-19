@@ -29,8 +29,6 @@ import org.eclipse.tools.templates.ui.internal.TagListViewer;
 import org.eclipse.tools.templates.ui.internal.Template;
 import org.eclipse.tools.templates.ui.internal.TemplateExtension;
 import org.eclipse.tools.templates.ui.internal.TemplateTable;
-import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 public class TemplateSelectionPage extends WizardPage {
 
@@ -99,9 +97,9 @@ public class TemplateSelectionPage extends WizardPage {
 		Template template = templateTable.getSelectedTemplate();
 		if (template != null) {
 			try {
-				IWorkbenchWizard nextWizard = template.getWizard();
-				BasicNewResourceWizard oldWizard = (BasicNewResourceWizard) getWizard();
-				nextWizard.init(oldWizard.getWorkbench(), oldWizard.getSelection());
+				NewWizard oldWizard = (NewWizard) getWizard();
+				TemplateWizard nextWizard = (TemplateWizard) template.getWizard();
+				oldWizard.initialize(nextWizard);
 				nextWizard.addPages();
 				return nextWizard.getPages()[0];
 			} catch (CoreException e) {

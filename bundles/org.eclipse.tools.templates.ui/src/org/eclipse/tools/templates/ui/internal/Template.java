@@ -65,6 +65,11 @@ public class Template {
 	}
 
 	public boolean hasTag(String tagId) {
+		if (tagId.equals(Tag.ALL_ID)) {
+			// All means all
+			return true;
+		}
+
 		initTags();
 		return tags.containsKey(tagId);
 	}

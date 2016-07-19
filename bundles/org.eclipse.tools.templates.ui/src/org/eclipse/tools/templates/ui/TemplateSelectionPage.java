@@ -8,13 +8,13 @@
 package org.eclipse.tools.templates.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -33,13 +33,24 @@ import org.eclipse.tools.templates.ui.internal.TemplateTable;
 public class TemplateSelectionPage extends WizardPage {
 
 	private final String[] requestedTags;
+	private final List<Template> templates;
 
-	private ListViewer tagList;
+	private TagListViewer tagList;
 	private TemplateTable templateTable;
 
 	public TemplateSelectionPage(String pageName, String... tags) {
 		super(pageName);
 		this.requestedTags = tags;
+		TemplateExtension templateExtension = Activator.getTemplateExtension();
+		templates = new ArrayList<>();
+		for (Template template : templateExtension.getTemplates()) {
+			for (String requestedTag : requestedTags) {
+				if (template.hasTag(requestedTag)) {
+					templates.add(template);
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -51,6 +62,18 @@ public class TemplateSelectionPage extends WizardPage {
 		tagList.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
+				Collection<Tag> selectedTags = tagList.getSelectedTags();
+				List<Template> selectedTemplates = new ArrayList<>();
+				for (Template template : templates) {
+					for (Tag tag : selectedTags) {
+						if (template.hasTag(tag.getId())) {
+							selectedTemplates.add(template);
+							break;
+						}
+					}
+				}
+
+				templateTable.setTemplates(selectedTemplates);
 			}
 		});
 
@@ -69,17 +92,6 @@ public class TemplateSelectionPage extends WizardPage {
 			}
 		});
 
-		TemplateExtension templateExtension = Activator.getTemplateExtension();
-		List<Template> templates = new ArrayList<>();
-		for (Template template : templateExtension.getTemplates()) {
-			for (String requestedTag : requestedTags) {
-				if (template.hasTag(requestedTag)) {
-					templates.add(template);
-					break;
-				}
-			}
-		}
-
 		Set<Tag> tags = new HashSet<>();
 		for (Template template : templates) {
 			tags.addAll(template.getTags());
@@ -87,7 +99,7 @@ public class TemplateSelectionPage extends WizardPage {
 
 		templateTable.setTemplates(templates);
 		tagList.setInput(tags);
-		tagList.getList().select(0);
+		tagList.getList().select(0); // All
 		
 		form.setWeights(new int[] { 20, 80 });
 	}

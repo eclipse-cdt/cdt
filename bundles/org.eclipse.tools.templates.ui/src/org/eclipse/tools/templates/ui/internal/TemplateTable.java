@@ -49,7 +49,7 @@ public class TemplateTable implements Listener {
 	}
 
 	public void setTemplates(Collection<Template> templates) {
-		table.clearAll();
+		table.removeAll();
 		for (Template template : templates) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setData(template);

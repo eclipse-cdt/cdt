@@ -7,9 +7,12 @@
  *******************************************************************************/
 package org.eclipse.tools.templates.ui.internal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -18,6 +21,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
 public class TagListViewer extends ListViewer {
+
+	private Tag[] tags;
 
 	public TagListViewer(Composite parent, int style) {
 		super(parent, style);
@@ -34,8 +39,6 @@ public class TagListViewer extends ListViewer {
 		});
 
 		setContentProvider(new IStructuredContentProvider() {
-			private Tag[] tags;
-
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				if (newInput != null) {
@@ -67,6 +70,17 @@ public class TagListViewer extends ListViewer {
 				return tags;
 			}
 		});
+	}
+
+	public Collection<Tag> getSelectedTags() {
+		List<Tag> selectedTags = new ArrayList<>();
+		Iterator<Object> i = getStructuredSelection().iterator();
+		while (i.hasNext()) {
+			Tag tag = (Tag) i.next();
+			selectedTags.add(tag);
+		}
+
+		return selectedTags;
 	}
 
 }

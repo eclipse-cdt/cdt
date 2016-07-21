@@ -37,9 +37,8 @@ import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
 public class ModificationCollector {
 	private final IResourceChangeDescriptionFactory deltaFactory;
 
-	// Each translation unit can have only one ASTRewrite
-	private final Map<IASTTranslationUnit, ASTRewrite> rewriters =
-			new HashMap<IASTTranslationUnit, ASTRewrite>();
+	// Each translation unit can have only one ASTRewrite.
+	private final Map<IASTTranslationUnit, ASTRewrite> rewriters = new HashMap<>();
 
 	private Collection<CreateFileChange> changes;
 
@@ -63,7 +62,7 @@ public class ModificationCollector {
 	// Creating new files doesn't concern the rewriter, the refactorings can add them here as needed.
 	public void addFileChange(CreateFileChange change) {
 		if (changes == null) {
-			changes = new ArrayList<CreateFileChange>();
+			changes = new ArrayList<>();
 		}
 		changes.add(change);
 		if (deltaFactory != null)
@@ -92,6 +91,7 @@ public class ModificationCollector {
 	/**
 	 * If {@code change} is a CompositeChange, merges it into the {@code receiver}, otherwise
 	 * adds it to the {@code receiver}.
+	 *
 	 * @param change The change being added.
 	 * @param receiver The composite change that receives the addition.
 	 */

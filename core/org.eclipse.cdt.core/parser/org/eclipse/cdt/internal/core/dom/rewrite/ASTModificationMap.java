@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.core.dom.rewrite;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKin
  * @since 5.0
  */
 public class ASTModificationMap {
-	private final Map<IASTNode, List<ASTModification>> fModifications= new HashMap<IASTNode, List<ASTModification>>();
+	private final Map<IASTNode, List<ASTModification>> fModifications= new IdentityHashMap<>();
 
 	/**
 	 * Adds a modification to this modification map.
@@ -38,7 +38,7 @@ public class ASTModificationMap {
 		IASTNode targetNode = mod.getTargetNode();
 		List<ASTModification> mods= fModifications.get(targetNode);
 		if (mods == null || mods.isEmpty()) {
-			mods= new ArrayList<ASTModification>();
+			mods= new ArrayList<>();
 			mods.add(mod);
 			fModifications.put(targetNode, mods);
 		} else {

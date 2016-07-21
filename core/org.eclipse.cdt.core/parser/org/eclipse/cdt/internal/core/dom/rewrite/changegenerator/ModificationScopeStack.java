@@ -7,37 +7,38 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 
 public class ModificationScopeStack {
-	private LinkedList<List<ASTModification>> scopeStack;
-	private ASTModificationStore modStore;
+	private final Deque<List<ASTModification>> scopeStack;
+	private final ASTModificationStore modStore;
 
 	public ModificationScopeStack(ASTModificationStore modificationStore) {
-		scopeStack = new LinkedList<List<ASTModification>>();
+		scopeStack = new ArrayDeque<>();
 		modStore = modificationStore;
-		ArrayList<ASTModification> nullModList = new ArrayList<ASTModification>();
+		ArrayList<ASTModification> nullModList = new ArrayList<>();
 		nullModList.add(null);
 		scopeStack.addFirst(nullModList);
 	}
 	
 	public void pushScope(IASTNode node) {
-		List<ASTModification> newMods = new ArrayList<ASTModification>();
-		for(ASTModification peekMod : scopeStack.peek()) {
+		List<ASTModification> newMods = new ArrayList<>();
+		for (ASTModification peekMod : scopeStack.peek()) {
 			ASTModificationMap nestedMods = modStore.getNestedModifications(peekMod);
 			if (nestedMods != null) {
 				newMods.addAll(nestedMods.getModificationsForNode(node));
@@ -59,13 +60,13 @@ public class ModificationScopeStack {
 
 	public void popScope(IASTNode node) {
 		List<ASTModification> peek = scopeStack.peek();
-		if (peek != null) {
-			if (!peek.isEmpty() && peek.get(0)!=null) {
-				if( peek.get(0).getKind() == ModificationKind.REPLACE){
-					if(peek.get(0).getTargetNode() == node)
+		if (peek != null && !peek.isEmpty()) {
+			ASTModification modification = peek.get(0);
+			if (modification != null) {
+				if (modification.getKind() == ModificationKind.REPLACE) {
+					if (modification.getTargetNode() == node)
 						scopeStack.removeFirst();
-				}
-				else if(peek.get(0).getNewNode() == node){
+				} else if (modification.getNewNode() == node) {
 					scopeStack.removeFirst();
 				}
 			}
@@ -77,7 +78,7 @@ public class ModificationScopeStack {
 		if (aktModList == null) {
 			return getNestedModifiedNodes();
 		}
-		Collection<IASTNode> nodes = new ArrayList<IASTNode>();
+		Collection<IASTNode> nodes = new ArrayList<>();
 		for (ASTModification modification : aktModList) {
 			ASTModificationMap nestedModifications = modStore.getNestedModifications(modification);
 			if (nestedModifications != null) {
@@ -89,7 +90,7 @@ public class ModificationScopeStack {
 
 	private Collection<IASTNode> getNestedModifiedNodes() {
 		ASTModificationMap rootModifications = modStore.getRootModifications();
-		if(rootModifications == null) {
+		if (rootModifications == null) {
 			return Collections.emptyList();
 		}
 		return rootModifications.getModifiedNodes();
@@ -100,10 +101,10 @@ public class ModificationScopeStack {
 		if (aktModList == null) {
 			return getNestedModifikationsForNode(node);
 		}
-		List<ASTModification> modForNodeList = new ArrayList<ASTModification>();
+		List<ASTModification> modForNodeList = new ArrayList<>();
 		for (ASTModification modification : aktModList) {
 			ASTModificationMap nestedModifications = modStore.getNestedModifications(modification);
-			if(nestedModifications != null) {
+			if (nestedModifications != null) {
 				modForNodeList.addAll(nestedModifications.getModificationsForNode(node));
 			}
 		}
@@ -111,46 +112,41 @@ public class ModificationScopeStack {
 	}
 
 	public void clean(IASTNode actualNode) {
-		while(scopeStack.size() > 1){
+		while (scopeStack.size() > 1) {
 			for (IASTNode currentModifiedNode : getModifiedNodes()) {
 				for (ASTModification currentMod : getModificationsForNode(currentModifiedNode)) {
-					if(currentMod.getNewNode() == actualNode){
+					if (currentMod.getNewNode() == actualNode) {
 						return;
 					}
 				}
 			}
-			if(!nodeIsChildOfModifications(actualNode, scopeStack.getFirst())){
-				if(scopeStack.getFirst().get(0).getTargetNode().getTranslationUnit() == actualNode.getTranslationUnit()){
+			if (!nodeIsChildOfModifications(actualNode, scopeStack.getFirst())) {
+				if (scopeStack.getFirst().get(0).getTargetNode().getTranslationUnit() == actualNode.getTranslationUnit()) {
 					scopeStack.removeFirst();
-				}
-				else{
+				} else {
 					return;
 				}
-			}
-			else{
+			} else {
 				return;
 			}
 		}
 	}
 
-	private boolean nodeIsChildOfModifications(IASTNode actualNode,
-			List<ASTModification> modifications) {
-		for(ASTModification currentModification : modifications){
-			if(currentModification != null && nodeIsChildOfModification(currentModification, actualNode)){
+	private boolean nodeIsChildOfModifications(IASTNode actualNode, List<ASTModification> modifications) {
+		for (ASTModification currentModification : modifications) {
+			if (currentModification != null && nodeIsChildOfModification(currentModification, actualNode)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean nodeIsChildOfModification(
-			ASTModification modification, IASTNode actualNode) {
+	private boolean nodeIsChildOfModification(ASTModification modification, IASTNode actualNode) {
 		IASTNode nodeToTest = actualNode;
-		while(nodeToTest != null){
-			if(modification.getNewNode() == nodeToTest){
+		while (nodeToTest != null) {
+			if (modification.getNewNode() == nodeToTest) {
 				return true;
-			}
-			else{
+			} else {
 				nodeToTest = nodeToTest.getParent();
 			}
 		}

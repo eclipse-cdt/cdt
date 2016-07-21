@@ -78,7 +78,7 @@ public abstract class CRefactoring extends Refactoring {
 		this.project = project;
 		this.initStatus= new RefactoringStatus();
 		if (!(element instanceof ISourceReference)) {
-			this.tu = null;
+			tu = null;
 			initStatus.addFatalError(Messages.Refactoring_SelectionNotValid);
 			return;
 		}
@@ -87,11 +87,11 @@ public abstract class CRefactoring extends Refactoring {
 		tu = CModelUtil.toWorkingCopy(sourceRef.getTranslationUnit());
 
 		if (selection instanceof ITextSelection) {
-			this.selectedRegion = SelectionHelper.getRegion(selection);
+			selectedRegion = SelectionHelper.getRegion(selection);
 		} else {
 			try {
 				ISourceRange sourceRange = sourceRef.getSourceRange();
-				this.selectedRegion = new Region(sourceRange.getIdStartPos(), sourceRange.getIdLength());
+				selectedRegion = new Region(sourceRange.getIdStartPos(), sourceRange.getIdLength());
 			} catch (CModelException e) {
 				CUIPlugin.log(e);
 			}

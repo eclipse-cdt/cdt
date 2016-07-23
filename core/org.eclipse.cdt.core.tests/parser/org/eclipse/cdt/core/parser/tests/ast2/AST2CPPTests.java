@@ -10149,6 +10149,30 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testOverloadedOperatorWithInheritanceDistance_335387() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct Object {
+	//	    bool IsOk() const;
+	//	};
+	//
+	//	struct Bitmap;
+	//
+	//	struct Region : Object {
+	//	    Region(const Bitmap& bmp) {
+	//	        Union(bmp);
+	//	    }
+	//
+	//	    void Union(const Region&);
+	//	    void Union(const Bitmap&);
+	//	};
+	//
+	//	struct Bitmap : Object {};
+	//
+	//	void waldo(Bitmap& icon) {
+	//	    icon.IsOk();  // ERROR: "Method 'IsOk' could not be resolved"
+	//	}
+	public void testBaseComputationWhileTypeIsIncomplete_498393() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	// namespace ns {int a;}
 	// using ns::a;

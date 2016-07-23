@@ -194,7 +194,7 @@ public class ClassTypeHelper {
 				if (backup != null)
 					return backup.getBases();
 
-				return ICPPBase.EMPTY_BASE_ARRAY;
+				return ICPPBase.NO_BASES_BECAUSE_TYPE_IS_INCOMPLETE;
 			}
 		}
 

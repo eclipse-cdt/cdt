@@ -317,7 +317,13 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	@Override
 	public ICPPBase[] getBases() {
 		if (bases == null) {
-			bases = ClassTypeHelper.getBases(this);
+			ICPPBase[] result = ClassTypeHelper.getBases(this);
+			// Do not cache the computed bases if the class is incomplete.
+			// When the class becomes complete, the answer may be different.
+			if (result != ICPPBase.NO_BASES_BECAUSE_TYPE_IS_INCOMPLETE) {
+				bases = result;
+			}
+			return result;
 		}
 		return bases;
 	}

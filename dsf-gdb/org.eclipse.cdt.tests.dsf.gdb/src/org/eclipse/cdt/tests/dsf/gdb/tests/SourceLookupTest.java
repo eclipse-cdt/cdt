@@ -46,8 +46,8 @@ import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
-import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupParticipant;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -67,14 +67,18 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
@@ -268,8 +272,16 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * file.
 	 */
 	protected void assertSourceNotFound() throws Throwable {
+		assertSourceNotFound(getGDBLaunch());
+	}
+
+	/**
+	 * Custom assertion that neither GDB nor the Source Locator found the source
+	 * file.
+	 */
+	protected void assertSourceNotFound(GdbLaunch launch) throws Throwable {
 		// Check file as resolved by source lookup director
-		ISourceLookupDirector director = (ISourceLookupDirector) getGDBLaunch().getSourceLocator();
+		ISourceLookupDirector director = (ISourceLookupDirector) launch.getSourceLocator();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(0, 0);
 		Object sourceElement = director.getSourceElement(frameDmc);
 		assertNull("Source Locator unexpectedly found the source", sourceElement);
@@ -294,8 +306,16 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * found the source file.
 	 */
 	protected void assertSourceFoundByDirectorOnly() throws Throwable {
+		assertSourceFoundByDirectorOnly(getGDBLaunch());
+	}
+
+	/**
+	 * Custom assertion that GDB did not find the source, but the Source Locator
+	 * found the source file.
+	 */
+	protected void assertSourceFoundByDirectorOnly(GdbLaunch launch) throws Throwable {
 		// Check file as resolved by source lookup director
-		ISourceLookupDirector director = (ISourceLookupDirector) getGDBLaunch().getSourceLocator();
+		ISourceLookupDirector director = (ISourceLookupDirector) launch.getSourceLocator();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(0, 0);
 		Object sourceElement = director.getSourceElement(frameDmc);
 		assertTrue("Source locator failed to find source", sourceElement instanceof IStorage);
@@ -313,8 +333,15 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * Custom assertion that GDB and the Source Locator found the source file.
 	 */
 	protected void assertSourceFound() throws Throwable {
+		assertSourceFound(getGDBLaunch());
+	}
+
+	/**
+	 * Custom assertion that GDB and the Source Locator found the source file.
+	 */
+	protected void assertSourceFound(GdbLaunch launch) throws Throwable {
 		// Check file as resolved by source lookup director
-		ISourceLookupDirector director = (ISourceLookupDirector) getGDBLaunch().getSourceLocator();
+		ISourceLookupDirector director = (ISourceLookupDirector) launch.getSourceLocator();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(0, 0);
 		Object sourceElement = director.getSourceElement(frameDmc);
 		assertTrue("Source locator failed to find source", sourceElement instanceof IStorage);
@@ -475,11 +502,12 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * and no fullname field. This means there is no path to source map against.
 	 * 
 	 * In version >= 7.6 the MI frame info has file="SourceLookup.cc",fullname=
-	 * "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build/SourceLookup.cc"
+	 * "<cdt.git
+	 * path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build/SourceLookup.cc"
 	 * fields, so there is a path to do the mapping against. Recall that the
-	 * test maps
-	 * "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build"
-	 * to "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src"
+	 * test maps "<cdt.git
+	 * path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build" to
+	 * "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src"
 	 */
 	protected void assumeGdbVersionFullnameWorking() {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
@@ -684,6 +712,36 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		query.get();
 	}
 
+	interface UpdateSourceDirectorCallback {
+		void update(AbstractSourceLookupDirector director);
+	}
+
+	/**
+	 * Adapted from CSourceNotFound on how a launch configuration is updated
+	 */
+	protected void updateSourceDirector(UpdateSourceDirectorCallback updater) throws CoreException {
+		ILaunchConfigurationWorkingCopy configuration = getLaunchConfiguration().getWorkingCopy();
+		String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String) null);
+		String type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
+		if (type == null) {
+			type = configuration.getType().getSourceLocatorId();
+		}
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ISourceLocator locator = launchManager.newSourceLocator(type);
+		assertTrue(locator instanceof AbstractSourceLookupDirector);
+		AbstractSourceLookupDirector director = (AbstractSourceLookupDirector) locator;
+		if (memento == null) {
+			director.initializeDefaults(configuration);
+		} else {
+			director.initializeFromMemento(memento, configuration);
+		}
+
+		updater.update(director);
+		configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, director.getMemento());
+		configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, director.getId());
+		configuration.doSave();
+	}
+
 	/**
 	 * Test that if the user changes the source mappings in the middle of a
 	 * debug session (e.g. with CSourceNotFoundEditor) that the lookups are
@@ -692,7 +750,6 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	public void sourceMappingChangesHelper(boolean withBackend) throws Throwable {
 		doMappingAndLaunch(EXEC_AC_NAME, withBackend);
 
-		DsfSourceLookupDirector sourceLocator = (DsfSourceLookupDirector) getGDBLaunch().getSourceLocator();
 		MapEntrySourceContainer incorrectMapEntry = new MapEntrySourceContainer(BUILD_ABSPATH + "/incorrectsubpath",
 				new Path(SOURCE_ABSPATH));
 
@@ -703,11 +760,15 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		}
 
 		// Change the source mappings
-		ISourceContainer[] containers = sourceLocator.getSourceContainers();
-		MappingSourceContainer mappingSourceContainer = (MappingSourceContainer) containers[1];
-		mappingSourceContainer.removeMapEntry(fMapEntrySourceContainerC);
-		mappingSourceContainer.addMapEntry(incorrectMapEntry);
-		sourceLocator.setSourceContainers(containers);
+		final ISourceContainer[][] containers = new ISourceContainer[1][];
+		final MappingSourceContainer[] mappingSourceContainer = new MappingSourceContainer[1];
+		updateSourceDirector(director -> {
+			containers[0] = director.getSourceContainers();
+			mappingSourceContainer[0] = (MappingSourceContainer) containers[0][1];
+			mappingSourceContainer[0].removeMapEntry(fMapEntrySourceContainerC);
+			mappingSourceContainer[0].addMapEntry(incorrectMapEntry);
+			director.setSourceContainers(containers[0]);
+		});
 
 		/*
 		 * GDB (pre 7.0) changes the current directory when the above source is
@@ -724,11 +785,13 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		assertSourceNotFound();
 
 		// Change the source mappings back
-		containers = sourceLocator.getSourceContainers();
-		mappingSourceContainer = (MappingSourceContainer) containers[1];
-		mappingSourceContainer.removeMapEntry(incorrectMapEntry);
-		mappingSourceContainer.addMapEntry(fMapEntrySourceContainerC);
-		sourceLocator.setSourceContainers(containers);
+		updateSourceDirector(director -> {
+			containers[0] = director.getSourceContainers();
+			mappingSourceContainer[0] = (MappingSourceContainer) containers[0][1];
+			mappingSourceContainer[0].removeMapEntry(incorrectMapEntry);
+			mappingSourceContainer[0].addMapEntry(fMapEntrySourceContainerC);
+			director.setSourceContainers(containers[0]);
+		});
 
 		if (withBackend) {
 			assertSourceFound();
@@ -748,28 +811,67 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	}
 
 	/**
+	 * Set the source mapping to work with AC executable
+	 */
+	protected void setSourceMappingAddedHelper_AC(boolean withBackend) throws CoreException {
+		updateSourceDirector(director -> {
+			// Set the source mappings
+			ISourceContainer[] containers = director.getSourceContainers();
+			MappingSourceContainer mappingSourceContainer = new MappingSourceContainer("Mappings");
+			mappingSourceContainer.setIsMappingWithBackendEnabled(withBackend);
+			mappingSourceContainer.addMapEntry(fMapEntrySourceContainerC);
+			ISourceContainer[] newContainers = new ISourceContainer[containers.length + 1];
+			System.arraycopy(containers, 0, newContainers, 0, containers.length);
+			newContainers[newContainers.length - 1] = mappingSourceContainer;
+			director.setSourceContainers(newContainers);
+		});
+	}
+
+	/**
 	 * Test that if the user changes the source mappings in the middle of a
 	 * debug session (e.g. with CSourceNotFoundEditor) that the lookups are
 	 * updated.
 	 *
 	 * This version is for a new source mapping where there wasn't one
 	 * previously.
+	 * 
+	 * @param withBackend
+	 *            when <code>true</code> perform the mapping with the debugger
+	 *            backend (i.e. set substitute-path), when <code>false</code>
+	 *            use path mappings handled by the source lookup in CDT
+	 *            (specifically withBackend maps to
+	 *            {@link MappingSourceContainer#isMappingWithBackendEnabled()})
+	 * @param inExecutorThread
+	 *            when <code>true</code> perform the modification of the source
+	 *            mapping on the executor thread, when <code>false</code>
+	 *            perform the change in the JUnit thread. This allows the
+	 *            different code paths in
+	 *            {@link GdbSourceLookupParticipant#sourceContainersChanged(ISourceLookupDirector)}
+	 *            to be exercised.
 	 */
-	public void sourceMappingAddedHelper(boolean withBackend) throws Throwable {
+	public void sourceMappingAddedHelper(boolean withBackend, boolean inExecutorThread) throws Throwable {
 		doLaunch(EXEC_PATH + EXEC_AC_NAME);
 
 		assertSourceNotFound();
 
-		// Set the source mappings
-		DsfSourceLookupDirector sourceLocator = (DsfSourceLookupDirector) getGDBLaunch().getSourceLocator();
-		ISourceContainer[] containers = sourceLocator.getSourceContainers();
-		MappingSourceContainer mappingSourceContainer = new MappingSourceContainer("Mappings");
-		mappingSourceContainer.setIsMappingWithBackendEnabled(withBackend);
-		mappingSourceContainer.addMapEntry(fMapEntrySourceContainerC);
-		ISourceContainer[] newContainers = new ISourceContainer[containers.length + 1];
-		System.arraycopy(containers, 0, newContainers, 0, containers.length);
-		newContainers[newContainers.length - 1] = mappingSourceContainer;
-		sourceLocator.setSourceContainers(newContainers);
+		if (inExecutorThread) {
+			Query<Object> query = new Query<Object>() {
+
+				@Override
+				protected void execute(DataRequestMonitor<Object> rm) {
+					try {
+						setSourceMappingAddedHelper_AC(withBackend);
+					} catch (CoreException e) {
+						rm.setStatus(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Update mappings failed", e));
+					}
+					rm.done();
+				}
+			};
+			getGDBLaunch().getSession().getExecutor().execute(query);
+			query.get();
+		} else {
+			setSourceMappingAddedHelper_AC(withBackend);
+		}
 
 		if (withBackend) {
 			assertSourceFound();
@@ -778,14 +880,114 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		}
 	}
 
+	/**
+	 * Test that two launches get updated from the same launch configuration
+	 * change to the source lookup.
+	 * 
+	 * This is the same test as
+	 * {@link #sourceMappingAddedHelper(boolean, boolean)} but with two launches
+	 * on the same launch configuration.
+	 * 
+	 * @see #sourceMappingAddedHelper(boolean, boolean)
+	 */
+	public void sourceMappingAddedTwoLaunchesHelper(boolean withBackend, boolean inExecutorThread) throws Throwable {
+		Assume.assumeFalse("Test framework only supports multiple launches for non-remote", remote);
+		// Launch first session
+		doLaunch(EXEC_PATH + EXEC_AC_NAME);
+		GdbLaunch launch1 = getGDBLaunch();
+		// Launch additional session with same launch configuration
+		GdbLaunch launch2 = doLaunchInner();
+
+		try {
+			// We are abusing SyncUtil here a little, SyncUtil is
+			// a static everything class, so we keep switching between
+			// the two launches
+			SyncUtil.initialize(launch1.getSession());
+			assertSourceNotFound(launch1);
+			SyncUtil.initialize(launch2.getSession());
+			assertSourceNotFound(launch2);
+
+			SyncUtil.initialize(launch1.getSession());
+			if (inExecutorThread) {
+				Query<Object> query = new Query<Object>() {
+
+					@Override
+					protected void execute(DataRequestMonitor<Object> rm) {
+						try {
+							setSourceMappingAddedHelper_AC(withBackend);
+						} catch (CoreException e) {
+							rm.setStatus(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Update mappings failed", e));
+						}
+						rm.done();
+					}
+				};
+				getGDBLaunch().getSession().getExecutor().execute(query);
+				query.get();
+			} else {
+				setSourceMappingAddedHelper_AC(withBackend);
+			}
+
+			SyncUtil.initialize(launch1.getSession());
+			if (withBackend) {
+				assertSourceFound(launch1);
+			} else {
+				assertSourceFoundByDirectorOnly(launch1);
+			}
+
+			SyncUtil.initialize(launch2.getSession());
+			if (withBackend) {
+				assertSourceFound(launch2);
+			} else {
+				assertSourceFoundByDirectorOnly(launch2);
+			}
+
+		} finally {
+			launch1.terminate();
+			launch2.terminate();
+
+			assertLaunchTerminates(launch1);
+			assertLaunchTerminates(launch2);
+		}
+	}
+
 	@Test
 	public void sourceMappingAdded() throws Throwable {
-		sourceMappingAddedHelper(false);
+		sourceMappingAddedHelper(false, false);
 	}
 
 	@Test
 	public void sourceSubstituteAdded() throws Throwable {
-		sourceMappingAddedHelper(true);
+		sourceMappingAddedHelper(true, false);
+	}
+
+	@Test
+	public void sourceMappingAddedTwoLaunches() throws Throwable {
+		sourceMappingAddedTwoLaunchesHelper(false, false);
+	}
+
+	@Test
+	public void sourceSubstituteAddedTwoLaunches() throws Throwable {
+		sourceMappingAddedTwoLaunchesHelper(true, false);
+	}
+
+	@Test
+	public void sourceMappingAddedInExecutorThread() throws Throwable {
+		sourceMappingAddedHelper(false, true);
+	}
+
+	@Test
+	public void sourceSubstituteAddedInExecutorThread() throws Throwable {
+		sourceMappingAddedHelper(true, true);
+	}
+
+	@Test
+	public void sourceMappingAddedInExecutorThreadTwoLaunches() throws Throwable {
+		sourceMappingAddedTwoLaunchesHelper(false, true);
+	}
+
+	@Test
+	public void sourceSubstituteAddedInExecutorThreadTwoLaunches() throws Throwable {
+		sourceMappingAddedTwoLaunchesHelper(true, true);
 	}
 
 	/**

@@ -47,6 +47,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -79,6 +80,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
+import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -1089,5 +1091,46 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 */
 		assertSourceFound();
 		assertInsertBreakpointSuccessful();
+	}
+
+	/**
+	 * Test that two launches can be launched and terminated without becoming
+	 * interlocked.
+	 * 
+	 * This is a regression test for Bug 494650.
+	 */
+	@Test
+	public void twoLaunchesTerminate() throws Throwable {
+		Assume.assumeFalse("Test framework only supports multiple launches for non-remote", remote);
+		// Launch first session
+		doLaunch(EXEC_PATH + EXEC_NAME);
+		GdbLaunch launch1 = getGDBLaunch();
+		// Launch additional session with same launch configuration
+		GdbLaunch launch2 = doLaunchInner();
+
+		/*
+		 * Bug 494650 affects when two launches are terminated too close
+		 * together. In normal operation that means that the two terminates is
+		 * sufficient. However, it can happen that the first one terminates
+		 * progresses sufficiently far that the deadlock does not happen on the
+		 * second.
+		 */
+		launch1.terminate();
+		launch2.terminate();
+
+		/*
+		 * In Bug 494650 the UI locks up because the executor thread of both
+		 * sessions is waiting on each other and the UI thread is waiting on the
+		 * executor thread. The UI thread is waiting by using a Query, and
+		 * before the bug fix the two executor threads were waiting on each
+		 * other using a Query too.
+		 * 
+		 * This test does not use the UI thread (aka main), but instead the
+		 * JUnit test thread. We determine success if both launches terminate,
+		 * because if they both terminate they have stayed responsive and
+		 * successfully completed the entire shutdown sequences without
+		 * deadlocking.
+		 */
+		waitUntil("Timeout waiting for launches to terminate", () -> launch1.isTerminated() && launch2.isTerminated());
 	}
 }

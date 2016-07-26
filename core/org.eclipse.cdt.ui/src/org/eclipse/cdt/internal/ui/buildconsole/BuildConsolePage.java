@@ -50,6 +50,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -122,8 +123,8 @@ public class BuildConsolePage extends Page
 
 	// actions
 	private ClearOutputAction fClearOutputAction;
-	private Map<String, IAction> fGlobalActions = new HashMap<String, IAction>(10);
-	private List<String> fSelectionActions = new ArrayList<String>(3);
+	private Map<String, IAction> fGlobalActions = new HashMap<>(10);
+	private List<String> fSelectionActions = new ArrayList<>(3);
 	private CopyBuildLogAction fSaveLogAction;
 
 	// menus
@@ -521,7 +522,10 @@ public class BuildConsolePage extends Page
 	 *            tab width
 	 */
 	protected void setTabs(int tabs) {
-		getViewer().getTextWidget().setTabs(tabs);
+		StyledText textWidget = getViewer().getTextWidget();
+		if (textWidget != null) {
+			textWidget.setTabs(tabs);
+		}
 	}
 
 	/**

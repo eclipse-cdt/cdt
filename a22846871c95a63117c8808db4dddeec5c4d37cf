@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_f5f9448f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2016-07-26T18:30:22Z",
+      "side": 1,
+      "message": "Only thing I can think of is if it can handle \"09.1\" (without actually testing it, I think the previous if statement may flag it as a malformed octal sequence.)",
+      "revId": "a22846871c95a63117c8808db4dddeec5c4d37cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

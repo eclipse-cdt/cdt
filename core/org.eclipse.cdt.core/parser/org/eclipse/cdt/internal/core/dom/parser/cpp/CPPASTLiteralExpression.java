@@ -444,8 +444,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				while (Character.isDigit(c) && i < fValue.length) {
 					c = fValue[++i];
 				}
-				return i;
 			}
+			
+			/*
+			 * A floating-point constant could also have a leading zero 
+			 */
+			return handleDecimalOrExponent(c, i);
 		} else if (Character.isDigit(c)) {
 			/* decimal-literal :
 			*    nonzero-digit         (c has to be this to get into this else)
@@ -455,18 +459,26 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			while (Character.isDigit(c) && i < fValue.length) {
 				c = fValue[++i];
 			}
-			
-			if (c == '.') {
-				return afterDecimalPoint(i);
-			} else if ((c | 0x20) == 'e') {
-				return exponentPart(i);
-			}
+
+			return handleDecimalOrExponent(c, i);
 		} else {
 			// Somehow we got called and there wasn't a digit
 			// Shouldn't get here
 			assert false;
 		}
 		
+		return i;
+	}
+	
+	/*
+	 * Consumes a decimal point or exponent, if present.
+	 */
+	private int handleDecimalOrExponent(char c, int i) {
+		if (c == '.') {
+			return afterDecimalPoint(i);
+		} else if ((c | 0x20) == 'e') {
+			return exponentPart(i);
+		}
 		return i;
 	}
 	

@@ -11785,6 +11785,14 @@ public class AST2CPPTests extends AST2TestBase {
 		assertTrue(test.getType() instanceof IProblemType); // resolution is ambiguous
 	}
 	
+	//	double waldo1 = 02.968;
+	//	double waldo2 = 09.268;
+	//	double waldo3 = 02e2;
+	//	double waldo4 = 09e2;
+	public void testFloatLiteralWithLeadingZero_498434() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+	
 	//	char foo() {
 	//		return '*';
 	//	}

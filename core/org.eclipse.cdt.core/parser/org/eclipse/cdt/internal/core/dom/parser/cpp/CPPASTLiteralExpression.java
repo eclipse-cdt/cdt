@@ -446,6 +446,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				}
 				return i;
 			}
+			/*
+			 * A floating-point constant could also have a leading zero 
+			 */
+			if (c == '.') {
+				return afterDecimalPoint(i);
+			}
 		} else if (Character.isDigit(c)) {
 			/* decimal-literal :
 			*    nonzero-digit         (c has to be this to get into this else)

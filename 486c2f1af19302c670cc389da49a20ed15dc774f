@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_3a0e4b74",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-07-26T13:40:23Z",
+      "side": 1,
+      "message": "When running unit tests, I get an NPE on this line, from the getGDBWorkingDirectory() call. No problem when running a normal interactive session.",
+      "revId": "486c2f1af19302c670cc389da49a20ed15dc774f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

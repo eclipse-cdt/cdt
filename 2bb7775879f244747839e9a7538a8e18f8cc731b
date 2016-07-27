@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_ed209ca5",
+        "filename": "releng/org.eclipse.cdt.testing-feature/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-07-27T14:59:25Z",
+      "side": 1,
+      "message": "we should specify the version. It\u0027s good practice to have specific versions to have a more stable build.",
+      "range": {
+        "startLine": 22,
+        "startChar": 5,
+        "endLine": 22,
+        "endChar": 15
+      },
+      "revId": "2bb7775879f244747839e9a7538a8e18f8cc731b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_0d26b0bf",
+        "filename": "releng/org.eclipse.cdt.testing-feature/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-07-27T14:59:25Z",
+      "side": 1,
+      "message": "here too",
+      "range": {
+        "startLine": 41,
+        "startChar": 5,
+        "endLine": 41,
+        "endChar": 15
+      },
+      "revId": "2bb7775879f244747839e9a7538a8e18f8cc731b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

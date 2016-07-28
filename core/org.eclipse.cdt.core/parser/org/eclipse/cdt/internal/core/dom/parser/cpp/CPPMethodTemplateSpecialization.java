@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -110,5 +111,15 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 	@Override
 	public ICPPClassSpecialization getOwner() {
 		return (ICPPClassSpecialization) super.getOwner();
+	}
+
+	/**
+	 * Overridden to emphasize that {@link #fTemplateParameters} does not participate in the equality
+	 * relationship. 
+	 */
+	@SuppressWarnings("javadoc")
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
 	}
 }

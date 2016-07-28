@@ -59,7 +59,9 @@ public class TypeInstantiationRequest {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!obj.getClass().equals(getClass()))
+		if (this == obj)
+			return true;
+		if (!getClass().equals(obj.getClass()))
 			return false;
 		TypeInstantiationRequest other = (TypeInstantiationRequest) obj;
 		if (!type.isSameType(other.type))

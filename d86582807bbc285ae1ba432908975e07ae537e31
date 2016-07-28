@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_bc24103a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CSelectMarkerRulerAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-07-28T19:58:22Z",
+      "side": 1,
+      "message": "missing copyright update",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_dc30e473",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-07-28T19:58:22Z",
+      "side": 1,
+      "message": "missing copyright year",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_fc35a861",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/AnnotationExpandHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-07-28T19:58:22Z",
+      "side": 1,
+      "message": "only first and most recent year ought to be listed. See https://eclipse.org/legal/copyrightandlicensenotice.php",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_570d8d43",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CExpandHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-07-28T19:58:22Z",
+      "side": 1,
+      "message": "Seeing as EDITOR_CORRECTION_INDICATION is not used anywhere in the code base, I don\u0027t think there is much to resolve. Just remove the TODO with the explanation of what you have worked out.",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_b7a269ab",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CExpandHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-07-28T19:58:22Z",
+      "side": 1,
+      "message": "unnecessary comment. I do note however that for CDT you have moved the bp to last item, but it is first for JDT. Any reason? In the light of the renewed interest on platform text editor and moving all this type of code back to common code it might not be worth having a difference. Or if the difference is significant, moving to improve JDT too (at least a bug report).",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_f7414163",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/PreferenceConstants.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2123,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-07-28T19:58:22Z",
+      "side": 1,
+      "message": "This needs to be since 6.1 and the MANIFEST.MF/pom.xml needs version bump",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

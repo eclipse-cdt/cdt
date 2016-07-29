@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kichwa Coders and others.
+ * Copyright (c) 2015, 2016 Kichwa Coders and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,18 +116,22 @@ public class GDBSourceLookup extends CSourceLookup implements IGDBSourceLookup {
 		if (entries.equals(fCachedEntries)) {
 			rm.done(false);
 		} else {
+			/*
+			 * Issue the clear and set commands back to back so that the
+			 * executor thread atomically changes the source lookup settings.
+			 * Any commands to GDB issued after this call will get the new
+			 * source substitute settings.
+			 */
+			CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					rm.done(true);
+				}
+			};
 			fCommand.queueCommand(fCommandFactory.createCLIUnsetSubstitutePath(sourceLookupCtx),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-						@Override
-						protected void handleSuccess() {
-							initializeSourceSubstitutions(sourceLookupCtx, new RequestMonitor(getExecutor(), rm) {
-								@Override
-								protected void handleSuccess() {
-									rm.done(true);
-								}
-							});
-						}
-					});
+					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));
+			initializeSourceSubstitutions(sourceLookupCtx, new RequestMonitor(getExecutor(), countingRm));
+			countingRm.setDoneCount(2);
 		}
 	}
 

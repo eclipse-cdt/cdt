@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_327f4752",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CSelectMarkerRulerAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2016-07-29T08:00:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_bc24103a",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_dc30e473",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.java",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_127a4361",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2016-07-29T08:00:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_dc30e473",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_fc35a861",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/AnnotationExpandHover.java",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2016-07-28T19:58:22Z",
       "side": 1,
       "message": "only first and most recent year ought to be listed. See https://eclipse.org/legal/copyrightandlicensenotice.php",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_f274ef76",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/AnnotationExpandHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2016-07-29T08:00:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_fc35a861",
       "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_5234bbe1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CExpandHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2016-07-29T08:00:23Z",
+      "side": 1,
+      "message": "Feedback (during the CDT hackathon) was that having breakpoints as the 1st item made it harder to see the 1st annotation. With breakpoints as the 1st you would need to hover, wait then move your mouse. With breakpoints as the last item you don\u0027t need to do that.\n\nThis combines with the improvement of triggering to tooltip on the 1st item at the same time the expanded hover is displayed.\n\nI have removed this comment (which in in JDT but with \"first\") and expanded one one on line 220.\n\nAssuming this is accepted I will raise a JDT ticket with this and see what they think, along with the tooltip display improvement. \n\nAs this class would need to stay within CDT even if AnnotationExpandHover as moved to platform this behavior could stay, though it would be nice for both CDT \u0026 JDT to behave the same.",
+      "parentUuid": "27af2791_b7a269ab",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_f7414163",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/PreferenceConstants.java",
         "patchSetId": 5
@@ -98,6 +170,24 @@
       "writtenOn": "2016-07-28T19:58:22Z",
       "side": 1,
       "message": "This needs to be since 6.1 and the MANIFEST.MF/pom.xml needs version bump",
+      "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_12ede3b2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/PreferenceConstants.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2123,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2016-07-29T08:00:23Z",
+      "side": 1,
+      "message": "Forgot to go back and update this since was originally made before 9.0 release. Done.",
+      "parentUuid": "27af2791_f7414163",
       "revId": "d86582807bbc285ae1ba432908975e07ae537e31",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

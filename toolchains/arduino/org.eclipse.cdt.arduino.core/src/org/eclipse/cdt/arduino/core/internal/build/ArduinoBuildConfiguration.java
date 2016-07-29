@@ -298,6 +298,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 				core = segments[1];
 			}
 		}
+		buildModel.put("platform_path", pathString(corePlatform.getInstallPath())); //$NON-NLS-1$
 		Path corePath = corePlatform.getInstallPath().resolve("cores").resolve(core); //$NON-NLS-1$
 		buildModel.put("platform_core_path", pathString(corePath)); //$NON-NLS-1$
 		List<String> coreSources = new ArrayList<>();

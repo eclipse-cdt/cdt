@@ -233,7 +233,7 @@ public class BoardPropertyControl extends Composite {
 			}
 		}
 		
-		if (programmerCombo != null) {
+		if (programmerCombo != null && !programmerCombo.isDisposed()) {
 			@SuppressWarnings("unchecked")
 			String programmer = ((List<String>) programmerCombo.getData()).get(programmerCombo.getSelectionIndex());
 			ArduinoRemoteConnection.setProgrammer(workingCopy, programmer);

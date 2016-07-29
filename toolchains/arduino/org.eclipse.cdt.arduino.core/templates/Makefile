@@ -53,21 +53,21 @@ LIBRARIES_OBJS = \
 <#list libraries_srcs as file>
 <#assign cpp = file?matches("${libraries_path}/(.*?)/(.*)\\.cpp")>
 <#if !cpp>
-<#assign cpp = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.cpp")>
+<#assign cpp = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
 	libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o \
 </#if>
 <#assign c = file?matches("${libraries_path}/(.*?)/(.*)\\.c")>
 <#if !c>
-<#assign c = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.c")>
+<#assign c = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
 	libraries/${c?groups[1]}/${c?groups[2]}.c.o \
 </#if>
 <#assign S = file?matches("${libraries_path}/(.*?)/(.*)\\.S")>
 <#if !S>
-<#assign S = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.S")>
+<#assign S = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.S")>
 </#if>
 <#if S>
 	libraries/${S?groups[1]}/${S?groups[2]}.S.o \
@@ -201,7 +201,7 @@ variant/${S?groups[1]}.S.o: ${file}
 <#list libraries_srcs as file>
 <#assign cpp = file?matches("${libraries_path}/(.*?)/(.*)\\.cpp")>
 <#if !cpp>
-<#assign cpp = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.cpp")>
+<#assign cpp = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
 libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o: ${file} libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d
@@ -215,7 +215,7 @@ libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.d: ;
 </#if>
 <#assign c = file?matches("${libraries_path}/(.*?)/(.*)\\.c")>
 <#if !c>
-<#assign c = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.c")>
+<#assign c = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
 libraries/${c?groups[1]}/${c?groups[2]}.c.o: ${file} libraries/${c?groups[1]}/${c?groups[2]}.c.d
@@ -229,7 +229,7 @@ libraries/${c?groups[1]}/${c?groups[2]}.c.d: ;
 </#if>
 <#assign S = file?matches("${libraries_path}/(.*?)/(.*)\\.S")>
 <#if !S>
-<#assign S = file?matches("${platform_core_path}/libraries/(.*?)/(.*)\\.S")>
+<#assign S = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.S")>
 </#if>
 <#if S>
 libraries/${S?groups[1]}/${S?groups[2]}.S.o: ${file}

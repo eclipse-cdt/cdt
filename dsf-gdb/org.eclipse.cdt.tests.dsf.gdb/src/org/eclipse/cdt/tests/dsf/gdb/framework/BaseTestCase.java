@@ -98,7 +98,7 @@ public class BaseTestCase {
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
 	private static final String DEFAULT_EXEC_NAME = "GDBMIGenericTestApp.exe";
 
-    private static GdbLaunch fLaunch;
+	private GdbLaunch fLaunch;
 
     // The set of attributes used for the launch of a single test.
 	private Map<String, Object> launchAttributes;
@@ -131,7 +131,9 @@ public class BaseTestCase {
 	/**
 	 * Return the launch created when {@link #doLaunch()} was called.
 	 */
-    public GdbLaunch getGDBLaunch() { return fLaunch; }
+	public GdbLaunch getGDBLaunch() {
+		return fLaunch;
+	}
 
 	public ILaunchConfiguration getLaunchConfiguration() {
 		return fLaunchConfiguration;

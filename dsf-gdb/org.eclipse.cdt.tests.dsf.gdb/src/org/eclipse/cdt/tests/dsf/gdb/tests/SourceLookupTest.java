@@ -42,11 +42,14 @@ import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContaine
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -79,6 +82,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
+import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -1089,5 +1093,70 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 */
 		assertSourceFound();
 		assertInsertBreakpointSuccessful();
+	}
+
+	/**
+	 * Terminate the session on the executor thread without blocking.
+	 * 
+	 * This models the way DsfTerminateCommand terminates the launches.
+	 */
+	protected void terminateAsync(DsfSession session) throws Exception {
+		DsfExecutor executor = session.getExecutor();
+		executor.execute(() -> {
+			DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+			IGDBControl commandControl = tracker.getService(IGDBControl.class);
+			tracker.dispose();
+			commandControl.terminate(new RequestMonitor(executor, null));
+		});
+	}
+
+	/**
+	 * Test that two launches can be launched and terminated without becoming
+	 * interlocked.
+	 * 
+	 * This is a regression test for Bug 494650.
+	 * 
+	 * XXX: If this test fails as it did for the reason of Bug 494650, there is
+	 * deadlock and the JVM does not recover, causing this test to timeout and
+	 * all subsequent tests not to work.
+	 */
+	@Test
+	public void twoLaunchesTerminate() throws Throwable {
+		Assume.assumeFalse("Test framework only supports multiple launches for non-remote", remote);
+		// Launch first session
+		doLaunch(EXEC_PATH + EXEC_NAME);
+		GdbLaunch launch1 = getGDBLaunch();
+		// Launch additional session with same launch configuration
+		GdbLaunch launch2 = doLaunchInner();
+
+		/*
+		 * Bug 494650 affects when two launches are terminated too close
+		 * together. In normal operation that means that the two terminates is
+		 * sufficient. However, it can happen that the first one terminates
+		 * progresses sufficiently far that the deadlock does not happen on the
+		 * second.
+		 * 
+		 * NOTE: Can't use launch.terminate() here because it terminates
+		 * synchronously when adapters are not installed. Instead we need to
+		 * issue the terminates in a non-blocking way on both the the executor
+		 * threads, the way that terminate works when adapters are installed.
+		 */
+		terminateAsync(launch1.getSession());
+		terminateAsync(launch2.getSession());
+
+		/*
+		 * In Bug 494650 the UI locks up because the executor thread of both
+		 * sessions is waiting on each other and the UI thread is waiting on the
+		 * executor thread. The UI thread is waiting by using a Query, and
+		 * before the bug fix the two executor threads were waiting on each
+		 * other using a Query too.
+		 * 
+		 * This test does not use the UI thread (aka main), but instead the
+		 * JUnit test thread. We determine success if both launches terminate,
+		 * because if they both terminate they have stayed responsive and
+		 * successfully completed the entire shutdown sequences without
+		 * deadlocking.
+		 */
+		waitUntil("Timeout waiting for launches to terminate", () -> launch1.isTerminated() && launch2.isTerminated());
 	}
 }

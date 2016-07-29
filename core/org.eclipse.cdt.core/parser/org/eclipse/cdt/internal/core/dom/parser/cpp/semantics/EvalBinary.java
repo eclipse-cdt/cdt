@@ -145,7 +145,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 			ICPPFunctionType functionType = overload.getType();
 			IType[] parameterTypes = functionType.getParameterTypes();
 			arg1 = maybeApplyConversion(fArg1, parameterTypes[0], point);
-			arg2 = maybeApplyConversion(fArg1, parameterTypes[1], point);
+			arg2 = maybeApplyConversion(fArg2, parameterTypes[1], point);
 
 			if (!(overload instanceof CPPImplicitFunction)) {
 				if (!overload.isConstexpr())

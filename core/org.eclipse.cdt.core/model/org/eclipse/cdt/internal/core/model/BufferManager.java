@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Rational Software - Initial API and implementation
+ *     Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
-
 
 import java.util.Enumeration;
 
@@ -19,40 +18,40 @@ import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+
 /**
  * The buffer manager manages the set of open buffers.
  * It implements an LRU cache of buffers.
  *
- * This class is similar to the JDT BufferManager class
+ * This class is similar to the JDT BufferManager class.
  */
-
 public class BufferManager implements IBufferFactory {
-
 	/**
 	 * An LRU cache of <code>IBuffers</code>.
 	 */
-	public class BufferCache<K> extends OverflowingLRUCache<K,IBuffer> {
+	public class BufferCache<K> extends OverflowingLRUCache<K, IBuffer> {
 		/**
 		 * Constructs a new buffer cache of the given size.
 		 */
 		public BufferCache(int size) {
 			super(size);
 		}
+
 		/**
 		 * Constructs a new buffer cache of the given size.
 		 */
 		public BufferCache(int size, int overflow) {
 			super(size, overflow);
 		}
+
 		/**
-		 * Returns true if the buffer is successfully closed and
-		 * removed from the cache, otherwise false.
+		 * Returns true if the buffer is successfully closed and removed from the cache,
+		 * otherwise false.
 		 *
-		 * <p>NOTE: this triggers an external removal of this buffer
-		 * by closing the buffer.
+		 * <p>NOTE: this triggers an external removal of this buffer by closing the buffer.
 		 */
 		@Override
-		protected boolean close(LRUCacheEntry<K,IBuffer> entry) {
+		protected boolean close(LRUCacheEntry<K, IBuffer> entry) {
 			IBuffer buffer= entry._fValue;
 			if (buffer.hasUnsavedChanges()) {
 				return false;
@@ -60,8 +59,9 @@ public class BufferManager implements IBufferFactory {
 			buffer.close();
 			return true;
 		}
+
 		/**
-		 * Returns a new instance of the reciever.
+		 * Returns a new instance of the receiver.
 		 */
 		@Override
 		protected OverflowingLRUCache<K, IBuffer> newInstance(int size, int overflow) {
@@ -72,16 +72,16 @@ public class BufferManager implements IBufferFactory {
 	protected static BufferManager DEFAULT_BUFFER_MANAGER;
 
 	/**
-	 * LRU cache of buffers. The key and value for an entry
-	 * in the table is the identical buffer.
+	 * LRU cache of buffers. The key and value for an entry in the table is the identical buffer.
 	 */
-	protected OverflowingLRUCache<IOpenable, IBuffer> openBuffers = new BufferCache<IOpenable>(60);
+	protected OverflowingLRUCache<IOpenable, IBuffer> openBuffers = new BufferCache<>(60);
 
 	/**
 	 * Creates a new buffer manager.
 	 */
 	public BufferManager() {
 	}
+
 	/**
 	 * Adds a buffer to the table of open buffers.
 	 */
@@ -89,19 +89,11 @@ public class BufferManager implements IBufferFactory {
 		openBuffers.put(buffer.getOwner(), buffer);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBufferFactory#createBuffer(org.eclipse.cdt.core.model.IOpenable)
-	 */
 	@Override
 	public IBuffer createBuffer(IOpenable owner) {
-		ICElement element = (ICElement)owner;
-
+		ICElement element = (ICElement) owner;
 		IResource resource = element.getResource();
-		return
-			new Buffer(
-				resource instanceof IFile ? (IFile)resource : null,
-				owner,
-				element.isReadOnly());
+		return new Buffer(resource instanceof IFile ? (IFile) resource : null, owner, element.isReadOnly());
 	}
 
 	/**
@@ -110,14 +102,16 @@ public class BufferManager implements IBufferFactory {
 	 * buffer associated with it.
 	 */
 	public IBuffer getBuffer(IOpenable owner) {
-		return (IBuffer)openBuffers.get(owner);
+		return (IBuffer) openBuffers.get(owner);
 	}
+
 	/**
 	 * Returns the default buffer factory.
 	 */
 	public IBufferFactory getDefaultBufferFactory() {
 		return this;
 	}
+
 	/**
 	 * Returns the default buffer manager.
 	 */
@@ -127,6 +121,7 @@ public class BufferManager implements IBufferFactory {
 		}
 		return DEFAULT_BUFFER_MANAGER;
 	}
+
 	/**
 	 * Returns an enumeration of all open buffers.
 	 * <p>
@@ -142,12 +137,10 @@ public class BufferManager implements IBufferFactory {
 		}
 	}
 
-
 	/**
 	 * Removes a buffer from the table of open buffers.
 	 */
 	protected void removeBuffer(IBuffer buffer) {
 		openBuffers.remove(buffer.getOwner());
 	}
-
 }

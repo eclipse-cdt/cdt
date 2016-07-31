@@ -28,36 +28,33 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwner, IASTDeclarationListOwner,
 		IASTAttributeOwner {
 	/**
-	 * <code>OWNED_DECLARATION</code> is the role served by all the nested
-	 * declarations.
+	 * {@code OWNED_DECLARATION} is the role served by all the nested declarations.
 	 */
 	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
 			"ICPPASTNamespaceDefinition.OWNED_DECLARATION - Role served by nested declarations"); //$NON-NLS-1$
 
 	/**
-	 * <code>NAMESPACE_NAME</code> is the role served by the name in this
-	 * interface.
+	 * {@code NAMESPACE_NAME} is the role served by the name in this interface.
 	 */
 	public static final ASTNodeProperty NAMESPACE_NAME = new ASTNodeProperty(
 			"ICPPASTNamespaceDefinition.NAMESPACE_NAME - Role served by name"); //$NON-NLS-1$
 
 	/**
-	 * Get the name.
+	 * Returns the name of the namespace.
 	 * 
-	 * @return <code>IASTName</code>
+	 * @return {@code IASTName}
 	 */
 	public IASTName getName();
 
 	/**
-	 * Set the name.
+	 * Sets the name.
 	 * 
-	 * @param name
-	 *            <code>IASTName</code>
+	 * @param name the name to be set
 	 */
 	public void setName(IASTName name);
 
 	/**
-	 * Specify whether the namespace definition is inline.
+	 * Specifies whether the namespace definition is inline.
 	 * @since 5.3
 	 */
 	public void setIsInline(boolean isInline);
@@ -78,7 +75,7 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	/**
 	 * Adds a declaration to the namespace.
 	 * 
-	 * @param declaration <code>IASTDeclaration</code>
+	 * @param declaration {@code IASTDeclaration}
 	 */
 	@Override
 	public void addDeclaration(IASTDeclaration declaration);
@@ -86,7 +83,7 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	/**
 	 * Returns the scope object represented by this construct.
 	 * 
-	 * @return <code>IScope</code>
+	 * @return {@code IScope}
 	 */
 	public IScope getScope();
 	

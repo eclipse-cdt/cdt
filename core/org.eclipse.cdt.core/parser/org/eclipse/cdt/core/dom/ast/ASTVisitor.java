@@ -127,7 +127,7 @@ public abstract class ASTVisitor {
 	public boolean shouldVisitBaseSpecifiers = false;
 
 	/**
-	 * Set this flag to visit to visit namespaces.
+	 * Set this flag to visit namespace definitions.
 	 */
 	public boolean shouldVisitNamespaces = false;
 

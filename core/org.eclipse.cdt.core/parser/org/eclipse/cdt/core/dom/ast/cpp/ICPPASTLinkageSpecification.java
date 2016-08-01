@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -21,45 +21,41 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTLinkageSpecification extends IASTDeclaration, IASTDeclarationListOwner {
+	/**
+	 * {@code OWNED_DECLARATION} is the owned declaration role for linkages.
+	 */
+	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
+			"ICPPASTLinkageSpecification.OWNED_DECLARATION - Owned Declaration role for linkages"); //$NON-NLS-1$
 
 	/**
-	 * Get the "literal" that represents the linkage.
+	 * Returns the "literal" that represents the linkage.
 	 * 
 	 * @return String
 	 */
 	public String getLiteral();
 
 	/**
-	 * Set the "literal" that represents the linkage.
+	 * Sets the "literal" that represents the linkage.
 	 * 
-	 * @param value
-	 *            String
+	 * @param value the "literal" that represents the linkage
 	 */
 	public void setLiteral(String value);
 
 	/**
-	 * <code>OWNED_DECLARATION</code> is the owned declaration role for
-	 * linkages.
-	 */
-	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
-			"ICPPASTLinkageSpecification.OWNED_DECLARATION - Owned Declaration role for linkages"); //$NON-NLS-1$
-
-	/**
-	 * Get all of the declarations.
+	 * Returns all of the declarations.
 	 * 
-	 * @return <code>IASTDeclaration[] </code>
+	 * @return {@code IASTDeclaration[]}
 	 */
 	public IASTDeclaration[] getDeclarations();
 
 	/**
-	 * Add another declaration to the linkage.
+	 * Adds another declaration to the linkage.
 	 * 
-	 * @param declaration
-	 *            <code>IASTDeclaration</code>
+	 * @param declaration the declaration to add
 	 */
 	@Override
 	public void addDeclaration(IASTDeclaration declaration);
-	
+
 	/**
 	 * @since 5.1
 	 */

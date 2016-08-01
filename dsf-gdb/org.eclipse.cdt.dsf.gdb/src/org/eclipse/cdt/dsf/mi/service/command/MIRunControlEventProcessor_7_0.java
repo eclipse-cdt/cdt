@@ -245,6 +245,7 @@ public class MIRunControlEventProcessor_7_0
     				// but then became =thread-group-started starting with GDB 7.2
     				String groupId = null;
     				String pId = null;
+    				String launchType = null;
 
     				MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
@@ -259,6 +260,11 @@ public class MIRunControlEventProcessor_7_0
     						if (val instanceof MIConst) {
     							pId = ((MIConst) val).getString().trim();
     						}
+    					} else if (var.equals("launch-type")) { //$NON-NLS-1$
+    						// Available starting with GDB 7.12
+    						if (val instanceof MIConst) {
+    							launchType = ((MIConst) val).getString().trim();
+    						}
     					}
     				}
     				
@@ -271,7 +277,7 @@ public class MIRunControlEventProcessor_7_0
     				if (pId != null && procService != null) {
     					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, pId);
 
-    					MIEvent<?> event =  new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
+    					MIEvent<?> event =  new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId, launchType);
    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     				}
     			} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$

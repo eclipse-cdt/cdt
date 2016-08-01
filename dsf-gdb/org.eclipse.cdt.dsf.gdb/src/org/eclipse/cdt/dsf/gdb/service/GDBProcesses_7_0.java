@@ -525,9 +525,23 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public static class ContainerStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IStartedDMEvent
     {
+    	private final String fLaunchType;
+
         public ContainerStartedDMEvent(IContainerDMContext context) {
             super(context);
+            fLaunchType = null;
         }
+
+        /** @since 5.1 */
+        public ContainerStartedDMEvent(IContainerDMContext context, String launchType) {
+            super(context);
+            fLaunchType = launchType;
+        }
+
+        /** @since 5.1 */
+		public String getfLaunchType() {
+			return fLaunchType;
+		}
     }        
     
     /**
@@ -1786,7 +1800,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public void eventDispatched(final MIThreadGroupCreatedEvent e) {
     	IProcessDMContext procDmc = e.getDMContext();
         IMIContainerDMContext containerDmc = e.getGroupId() != null ? createContainerContext(procDmc, e.getGroupId()) : null;
-        getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
+        getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc, e.getLaunchType()), getProperties());
     }
 
     @DsfServiceEventHandler

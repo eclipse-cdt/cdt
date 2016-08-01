@@ -48,6 +48,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerStartedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
@@ -562,6 +563,15 @@ public class MIInferiorProcess extends Process
     		}
     		
     		if (correctInferior) {
+    			if (e instanceof ContainerStartedDMEvent) {
+    				String launchType = ((ContainerStartedDMEvent)e).getfLaunchType();
+    				if (launchType != null && launchType.equals("attach")) { //$NON-NLS-1$
+    					// We don't track the inferior since it is an attach case
+    					dispose();
+    					return;
+    				}
+    			}
+    			
     			if (!fStarted) {
     				fStarted = true;
     				// Store the fully-formed container

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_8fdf0986",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 512,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-08-01T19:12:35Z",
+      "side": 1,
+      "message": "if (fGdbVersion ! null) {\n  return fGdbVersion;\n}\n\nto avoid more nesting?",
+      "range": {
+        "startLine": 512,
+        "startChar": 2,
+        "endLine": 512,
+        "endChar": 28
+      },
+      "revId": "182c822930d6b11143ab82fb1b11becd39ef6624",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

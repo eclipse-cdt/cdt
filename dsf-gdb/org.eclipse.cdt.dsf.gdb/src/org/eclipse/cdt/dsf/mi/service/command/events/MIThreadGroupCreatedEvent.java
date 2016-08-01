@@ -24,12 +24,22 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 public class MIThreadGroupCreatedEvent extends MIEvent<IProcessDMContext> {
 
     final private String fGroupId;
+    final private String fLaunchType;
 
     public MIThreadGroupCreatedEvent(IProcessDMContext ctx, int token, String groupId) {
-        super(ctx, token, null);
-        fGroupId = groupId;
+        this(ctx, token, null, null);
     }
     
+    /** @since 5.1 */
+    public MIThreadGroupCreatedEvent(IProcessDMContext ctx, int token, String groupId, String launchType) {
+        super(ctx, token, null);
+        fGroupId = groupId;
+        fLaunchType = launchType;
+    }
+
     public String getGroupId() { return fGroupId; }
+    
+    /** @since 5.1 */
+    public String getLaunchType() { return fLaunchType; }
 
 }

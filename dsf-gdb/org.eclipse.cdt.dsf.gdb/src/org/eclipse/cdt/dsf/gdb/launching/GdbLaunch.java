@@ -114,6 +114,8 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	private IMemoryBlockRetrievalManager fMemRetrievalManager;
 	private IDsfDebugServicesFactory fServiceFactory;
 	private ILaunchTarget fLaunchTarget;
+	
+	private String fGdbVersion;
 
 	public GdbLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
@@ -500,82 +502,84 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * This method actually launches 'gdb --version' to determine the version of
-	 * the GDB that is being used. This method should ideally be called only
-	 * once per session and the resulting version string stored for future uses.
+	 * the GDB that is being used. The result is then cached for any future requests.
 	 * 
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 * 
 	 * @since 5.0
 	 */
 	public String getGDBVersion() throws CoreException {
-		String cmd = getGDBPath().toOSString() + " --version"; //$NON-NLS-1$
+		if (fGdbVersion == null) {
+			String cmd = getGDBPath().toOSString() + " --version"; //$NON-NLS-1$
 
-		// Parse cmd to properly handle spaces and such things (bug 458499)
-		String[] args = CommandLineUtil.argumentsToArray(cmd);
+			// Parse cmd to properly handle spaces and such things (bug 458499)
+			String[] args = CommandLineUtil.argumentsToArray(cmd);
 
-		Process process = null;
-		Job timeoutJob = null;
-		try {
-			process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment());
+			Process process = null;
+			Job timeoutJob = null;
+			try {
+				process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment());
 
-			// Start a timeout job to make sure we don't get stuck waiting for
-			// an answer from a gdb that is hanging
-			// Bug 376203
-			final Process finalProc = process;
-			timeoutJob = new Job("GDB version timeout job") { //$NON-NLS-1$
-				{
-					setSystem(true);
-				}
-
-				@Override
-				protected IStatus run(IProgressMonitor arg) {
-					// Took too long. Kill the gdb process and
-					// let things clean up.
-					finalProc.destroy();
-					return Status.OK_STATUS;
-				}
-			};
-			timeoutJob.schedule(10000);
-
-			String streamOutput = readStream(process.getInputStream());
-
-			String gdbVersion = LaunchUtils.getGDBVersionFromText(streamOutput);
-			if (gdbVersion == null || gdbVersion.isEmpty()) {
-				Exception detailedException = null;
-				if (!streamOutput.isEmpty()) {
-					// We got some output but couldn't parse it. Make that
-					// output visible to the user in the error dialog.
-					detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$
-				} else {
-					// We got no output. Check if we got something on the error
-					// stream.
-					streamOutput = readStream(process.getErrorStream());
-					if (!streamOutput.isEmpty()) {
-						detailedException = new Exception(streamOutput);
+				// Start a timeout job to make sure we don't get stuck waiting for
+				// an answer from a gdb that is hanging
+				// Bug 376203
+				final Process finalProc = process;
+				timeoutJob = new Job("GDB version timeout job") { //$NON-NLS-1$
+					{
+						setSystem(true);
 					}
+
+					@Override
+					protected IStatus run(IProgressMonitor arg) {
+						// Took too long. Kill the gdb process and
+						// let things clean up.
+						finalProc.destroy();
+						return Status.OK_STATUS;
+					}
+				};
+				timeoutJob.schedule(10000);
+
+				String streamOutput = readStream(process.getInputStream());
+
+				String gdbVersion = LaunchUtils.getGDBVersionFromText(streamOutput);
+				if (gdbVersion == null || gdbVersion.isEmpty()) {
+					Exception detailedException = null;
+					if (!streamOutput.isEmpty()) {
+						// We got some output but couldn't parse it. Make that
+						// output visible to the user in the error dialog.
+						detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$
+					} else {
+						// We got no output. Check if we got something on the error
+						// stream.
+						streamOutput = readStream(process.getErrorStream());
+						if (!streamOutput.isEmpty()) {
+							detailedException = new Exception(streamOutput);
+						}
+					}
+
+					throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+							"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
+							detailedException));
+				}
+				fGdbVersion = gdbVersion;
+			} catch (IOException e) {
+				throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
+						"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
+			} finally {
+				// If we get here we are obviously not stuck reading the stream so
+				// we can cancel the timeout job.
+				// Note that it may already have executed, but that is not a
+				// problem.
+				if (timeoutJob != null) {
+					timeoutJob.cancel();
 				}
 
-				throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-						"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
-						detailedException));
-			}
-			return gdbVersion;
-		} catch (IOException e) {
-			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-					"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
-		} finally {
-			// If we get here we are obviously not stuck reading the stream so
-			// we can cancel the timeout job.
-			// Note that it may already have executed, but that is not a
-			// problem.
-			if (timeoutJob != null) {
-				timeoutJob.cancel();
-			}
-
-			if (process != null) {
-				process.destroy();
+				if (process != null) {
+					process.destroy();
+				}
 			}
 		}
+		return fGdbVersion;
 	}
 
 	/**

@@ -114,6 +114,8 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	private IMemoryBlockRetrievalManager fMemRetrievalManager;
 	private IDsfDebugServicesFactory fServiceFactory;
 	private ILaunchTarget fLaunchTarget;
+	
+	private String fGdbVersion;
 
 	public GdbLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
@@ -500,14 +502,17 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * This method actually launches 'gdb --version' to determine the version of
-	 * the GDB that is being used. This method should ideally be called only
-	 * once per session and the resulting version string stored for future uses.
+	 * the GDB that is being used. The result is then cached for any future requests.
 	 * 
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 * 
 	 * @since 5.0
 	 */
 	public String getGDBVersion() throws CoreException {
+		if (fGdbVersion != null) {
+			return fGdbVersion;
+		}
+		
 		String cmd = getGDBPath().toOSString() + " --version"; //$NON-NLS-1$
 
 		// Parse cmd to properly handle spaces and such things (bug 458499)
@@ -559,7 +564,8 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 						"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
 						detailedException));
 			}
-			return gdbVersion;
+			fGdbVersion = gdbVersion;
+			return fGdbVersion;
 		} catch (IOException e) {
 			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
 					"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$

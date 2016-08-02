@@ -20,6 +20,10 @@ public class Messages extends NLS {
 	public static String LLDBCDebuggerPage_browse_dialog_title;
 	public static String LLDBCDebuggerPage_tab_name;
 	public static String LLDBCDebuggerPage_debugger_command;
+	public static String LLDBDebugPreferencePage_Stop_on_startup_at;
+	public static String LLDBDebugPreferencePage_description;
+	public static String LLDBDebugPreferencePage_defaults_label;
+	public static String LLDBDebugPreferencePage_see_gdb_preferences;
 
 	static {
 		// initialize resource bundle

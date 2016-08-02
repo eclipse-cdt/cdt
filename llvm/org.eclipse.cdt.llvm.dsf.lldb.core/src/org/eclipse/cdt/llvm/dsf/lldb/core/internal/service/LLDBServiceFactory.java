@@ -9,6 +9,7 @@
 package org.eclipse.cdt.llvm.dsf.lldb.core.internal.service;
 
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -40,5 +41,10 @@ public class LLDBServiceFactory extends GdbDebugServicesFactory {
 	@Override
 	protected IBreakpoints createBreakpointService(DsfSession session) {
 		return new LLDBBreakpoints(session);
+	}
+
+	@Override
+	protected IProcesses createProcessesService(DsfSession session) {
+		return new LLDBProcesses(session);
 	}
 }

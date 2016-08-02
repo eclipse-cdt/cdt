@@ -30,8 +30,18 @@ public class LLDBLocalApplicationCDebuggerTab extends LocalApplicationCDebuggerT
 	private final static String LOCAL_DEBUGGER_ID = "lldb-mi";//$NON-NLS-1$
 
 	protected void initDebuggerTypes(String selection) {
-		setDebuggerId(LOCAL_DEBUGGER_ID);
-		updateComboFromSelection();
+		if (fAttachMode) {
+			setInitializeDefault(selection.isEmpty());
+
+			if (selection.isEmpty()) {
+				selection = LOCAL_DEBUGGER_ID;
+			}
+
+			loadDebuggerCombo(new String[] { LOCAL_DEBUGGER_ID }, selection);
+		} else {
+			setDebuggerId(LOCAL_DEBUGGER_ID);
+			updateComboFromSelection();
+		}
 	}
 
 	/*

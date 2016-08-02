@@ -13,6 +13,16 @@
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
             type="org.eclipse.cdt.launch.applicationLaunchType">
       </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.cdt.llvm.dsf.lldb.launch.attachCLaunch"
+            type="org.eclipse.cdt.launch.attachLaunchType"
+            modes="debug"
+            delegate="org.eclipse.cdt.llvm.dsf.lldb.core.internal.launching.LLDBAttachLaunchDelegate"
+            name="%launchDelegate.attach.name"
+            delegateDescription="%launchDelegate.attach.description"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

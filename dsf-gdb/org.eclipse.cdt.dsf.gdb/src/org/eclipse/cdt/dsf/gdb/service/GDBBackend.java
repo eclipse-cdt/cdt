@@ -549,6 +549,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 					if (jobThread != null) {
 						jobThread.interrupt();
 					}
+					if (fProcess != null) {
+						fProcess.destroy();
+					}
 					requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 							DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
 					requestMonitor.done();

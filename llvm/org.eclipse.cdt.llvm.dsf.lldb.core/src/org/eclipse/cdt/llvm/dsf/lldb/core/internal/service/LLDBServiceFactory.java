@@ -9,6 +9,7 @@
 package org.eclipse.cdt.llvm.dsf.lldb.core.internal.service;
 
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
@@ -46,5 +47,10 @@ public class LLDBServiceFactory extends GdbDebugServicesFactory {
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
 		return new LLDBRunControl(session);
+	}
+
+	@Override
+	protected IProcesses createProcessesService(DsfSession session) {
+		return new LLDBProcesses(session);
 	}
 }

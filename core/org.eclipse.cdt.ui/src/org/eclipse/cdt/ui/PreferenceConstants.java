@@ -2153,7 +2153,7 @@ public class PreferenceConstants {
 
 		store.setDefault(EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT, true);
 
-		store.setDefault(EDITOR_ANNOTATION_ROLL_OVER, false);		
+		store.setDefault(EDITOR_ANNOTATION_ROLL_OVER, true);
 
 		// Syntax highlighting
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);

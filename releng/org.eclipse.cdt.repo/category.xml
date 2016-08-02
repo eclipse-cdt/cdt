@@ -98,6 +98,12 @@
       <category name="extra"/>
    <feature id="org.eclipse.cdt.cmake">
    </feature>
+   <feature url="features/org.eclipse.cdt.llvm.dsf.lldb_0.0.0.qualifier.jar" id="org.eclipse.cdt.llvm.dsf.lldb" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.llvm.dsf.lldb.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.llvm.dsf.lldb.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <iu id="com.google.gson" version="0.0.0"/>
    <iu id="org.freemarker" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.core" version="0.0.0"/>

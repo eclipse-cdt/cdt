@@ -50,6 +50,39 @@
         <associatedDelegate delegate="org.eclipse.cdt.llvm.dsf.lldb.launch.localCLaunch"/>
         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
       </tab>
+
+      <!-- Attach launch tabs-->
+      <tab
+            id="org.eclipse.cdt.llvm.dsf.lldb.launch.attachLaunch.mainTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainAttachTab">
+        <associatedDelegate delegate="org.eclipse.cdt.llvm.dsf.lldb.launch.attachCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.llvm.dsf.lldb.launch.attachLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.llvm.dsf.lldb.ui.internal.LLDBAttachCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.llvm.dsf.lldb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.llvm.dsf.lldb.launch.attachLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.llvm.dsf.lldb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.llvm.dsf.lldb.launch.attachLaunch.commonTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.llvm.dsf.lldb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
    </extension>
 
 </plugin>

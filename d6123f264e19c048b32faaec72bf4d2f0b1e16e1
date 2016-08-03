@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_f6bf75f6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_c7b2c5ff",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_60463f77",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsole.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "We can check for IMIExecutionDMContext directly here as IExecutionDMContext applies to the container level as well.",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_16c6a990",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_60463f77",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_36c1ed76",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_a092175b",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_a0fdb77b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "clean up commented out lines",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_56d0213f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_a0fdb77b",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_76cb6596",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_8066f39e",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_c070eb51",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
         "patchSetId": 5
@@ -98,6 +188,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "remove commented out line",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_96d9d96c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_c070eb51",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_b6dc1d5b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_804d131b",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_a05057ad",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
         "patchSetId": 5
@@ -132,6 +258,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "needs copyright header",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_d6d35146",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_a05057ad",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_f6d69536",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_40f13b06",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_60ec7f32",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
         "patchSetId": 5
@@ -166,6 +328,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "Missing the copyright block",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_16edc900",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_60ec7f32",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_36e80def",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_60c71faa",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_a09857ce",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
         "patchSetId": 5
@@ -200,6 +398,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "Same thing here, it shall be private",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_56e7411e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_a09857ce",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_76e2850e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_a083f759",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_bbab288f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
         "patchSetId": 5
@@ -234,6 +468,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "typo: generates to generate",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_96047955",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_bbab288f",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_b607bd56",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_9bfae481",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_db045c24",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
         "patchSetId": 5
@@ -268,6 +538,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "No need to define and create \"event\" on separate lines, \nwe can simply use new ..Event on the disptatchEvent",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_d60ef172",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_db045c24",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -308,6 +596,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_36f3adda",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_3b30f8eb",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_1be7b4d1",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 5
@@ -319,6 +625,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "This method is not been called, so it can be removed",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5602e142",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_1be7b4d1",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -342,6 +666,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_76fd25a3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_5be12cb8",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_3b0398c8",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 5
@@ -353,6 +695,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "interrupt is not used, we can remove it",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_962b99b8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_3b0398c8",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -376,6 +736,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_b62eddc6",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_9b3bc486",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_7b243061",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
         "patchSetId": 5
@@ -387,6 +765,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "Copyright missing",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_d62511e3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_7b243061",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -427,6 +823,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_f62855bb",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_5b8dacb9",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_3b19d805",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
         "patchSetId": 5
@@ -438,6 +852,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "too many empty separator lines ?",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_161f8994",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_3b19d805",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -461,6 +893,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_361acda2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_db2b7c05",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_5b3f6c3d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
         "patchSetId": 5
@@ -472,6 +922,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "use massageTimeout instead, see above",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_561901ab",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_5b3f6c3d",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -495,6 +963,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_76144573",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_7b3a704d",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_9b0ae4af",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
         "patchSetId": 5
@@ -512,6 +998,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_96563931",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_9b0ae4af",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_db145cd2",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
         "patchSetId": 5
@@ -523,6 +1027,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "use massageTimeout, see comment above",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_b6597d63",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:24:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_db145cd2",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,548 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_c7b2c5ff",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "This listener can be spawn outside of the console context, \nso we get as must synchronization as we can get from any version of GDB.     \n  So this one can be on its own e.g. created from the GdbUIPlugin activator",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_60463f77",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "We can check for IMIExecutionDMContext directly here as IExecutionDMContext applies to the container level as well.",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_a092175b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "The frame selection could be merge under the same runnable, i.e. the one triggering the selection of a thread.",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_a0fdb77b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "clean up commented out lines",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_8066f39e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "remove commented out line",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_c070eb51",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "remove commented out line",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_804d131b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "remove commented out line",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_a05057ad",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "needs copyright header",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_40f13b06",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "dsf.gdb should not depend on the UI to avoid cyclic dependencies. i.e. all new imports shall be removed",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_60ec7f32",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "Missing the copyright block",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_60c71faa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "this shall be private so we expose the interfaces rather than the implementation",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_a09857ce",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "Same thing here, it shall be private",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_a083f759",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "it\u0027s may be better for this case to invert the condition so we can avoid reduce the if  e.g. if (!condition) { return; }",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_bbab288f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "typo: generates to generate",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_9bfae481",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "No need to define and create \"event\" on separate lines, \nwe can simply use new ..Event on the disptatchEvent",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_db045c24",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "No need to define and create \"event\" on separate lines, \nwe can simply use new ..Event on the disptatchEvent",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_1b0ed441",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "Need to clean up e.g. removing commented out lines",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_3b30f8eb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "we removed the dependency to the console and GDB version, \nso this comment shall be updated accordingly.",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_1be7b4d1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "This method is not been called, so it can be removed",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5be12cb8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "This method is only called from the one above which is not used, so this can be removed as well",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_3b0398c8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "interrupt is not used, we can remove it",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_9b3bc486",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "interrupt is not used, so we can remove it",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_7b243061",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "Copyright missing",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_fb4a00fd",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "This is probably the longest name for a class I have seen :-)\n\nI propose: \n   ThreadStackFrameSyncTest",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5b8dacb9",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "I guess we don\u0027t need a new constant as  TimeUnit.MILLISECONDS is already a constant and can be used directly.",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_3b19d805",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "too many empty separator lines ?",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_db2b7c05",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "use massageTimeout instead, see above",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5b3f6c3d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "use massageTimeout instead, see above",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_7b3a704d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "use massageTimeout instead, see above",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_9b0ae4af",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "We shall use TestsPlugin.massageTimeout to allow for a tweak of timeout values when running on slow build machines.\ne.g.\n    queueConsoleCommand(command, TestsPlugin.massageTimeout(DEFAULT_TIMEOUT), TimeUnit.MILLISECONDS);",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_db145cd2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "use massageTimeout, see comment above",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_fb384089",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/update/AbstractCachingVMProvider.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 904,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T18:14:30Z",
+      "side": 1,
+      "message": "don\u0027t forget to remove this one",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

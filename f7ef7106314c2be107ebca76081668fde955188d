@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_f6abf55b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-03T19:29:07Z",
+      "side": 1,
+      "message": "shouldn\u0027t we call destroy instead ? more future proof.\n\nI am not sure on how the other monitor jobs are scheduled, may be a monitor job should realize of the timeout and trigger the shutdown ?\n\nWe can play with it if you know a good way to reproduce it.",
+      "revId": "f7ef7106314c2be107ebca76081668fde955188d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

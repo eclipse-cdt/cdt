@@ -280,7 +280,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTName newName(char[] name);
 	
 	/**
-	 * @since 6.0
+	 * @since 6.1
 	 */
 	@Override
 	public ICPPASTName newName(String name);

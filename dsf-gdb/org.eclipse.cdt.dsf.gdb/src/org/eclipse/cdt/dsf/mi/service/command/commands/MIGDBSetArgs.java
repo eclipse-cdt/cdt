@@ -39,7 +39,7 @@ public class MIGDBSetArgs extends MIGDBSet {
 		}
 	}
 
-	private static class MIArgumentAdjustable extends MICommandAdjustable {
+	public static class MIArgumentAdjustable extends MICommandAdjustable {
 
 		public MIArgumentAdjustable(String value) {
 			super(value);
@@ -48,30 +48,24 @@ public class MIGDBSetArgs extends MIGDBSet {
 		@Override
 		public String getAdjustedValue() {
 			// Replace and concatenate all occurrences of:
-			// ' with "'"
-			//   (as ' is used to surround everything else
-			//    it has to be quoted or escaped)
+			// semicolon character with ";"
+			//   ; is treated literally within quotes to avoid
+			//   ending the command
 			// newline character with $'\n'
 			//   (\n is treated literally within quotes or
 			//    as just 'n' otherwise, whilst supplying
 			//    the newline character literally ends the command)
-			// Anything in between and around these occurrences
-			// is surrounded by single quotes.
-			//   (to prevent bash from carrying out substitutions
-			//    or running arbitrary code with backticks or $())
 			StringBuilder builder = new StringBuilder();
-			builder.append('\'');
 			for (int j = 0; j < value.length(); j++) {
 				char c = value.charAt(j);
-				if (c == '\'') {
-					builder.append("'\"'\"'"); //$NON-NLS-1$
-				} else if (c == '\n') {
+				if (c == '\n') {
 					builder.append("'$'\\n''"); //$NON-NLS-1$
+				} else if (c == ';') {
+					builder.append("\";\""); //$NON-NLS-1$
 				} else {
 					builder.append(c);
 				}
 			}
-			builder.append('\'');
 			return builder.toString();
 		}
 	}

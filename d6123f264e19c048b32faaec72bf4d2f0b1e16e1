@@ -579,6 +579,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_127952e7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-04T17:30:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_1b0ed441",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_3b30f8eb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBSynchronizer.java",
         "patchSetId": 5
@@ -800,6 +818,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "This is probably the longest name for a class I have seen :-)\n\nI propose: \n   ThreadStackFrameSyncTest",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_b5c5f085",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/GDBConsoleInferiorThreadStackframeSynchronizationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-04T17:30:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_fb4a00fd",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1062,6 +1098,24 @@
       "writtenOn": "2016-08-03T18:14:30Z",
       "side": 1,
       "message": "don\u0027t forget to remove this one",
+      "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_f5cf68a1",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/update/AbstractCachingVMProvider.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 904,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-04T17:30:17Z",
+      "side": 1,
+      "message": "will try to remember :)",
+      "parentUuid": "27af2791_fb384089",
       "revId": "d6123f264e19c048b32faaec72bf4d2f0b1e16e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

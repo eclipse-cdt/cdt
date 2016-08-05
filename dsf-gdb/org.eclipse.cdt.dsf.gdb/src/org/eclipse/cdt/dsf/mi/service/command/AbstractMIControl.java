@@ -51,6 +51,8 @@ import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackSelectFrame;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadSelect;
 import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -367,14 +369,22 @@ public abstract class AbstractMIControl extends AbstractDsfService
 			final CommandHandle handle = fCommandQueue.remove(0);
 			if (handle != null) {
 				processCommandSent(handle);
+				
+				MICommand<MIInfo> command = handle.getCommand();
+
+				// These commands explicitly change the current GDB thread/stack frame 
+				// so there is no need to prepend them with another instance of themselves
+				if (command instanceof MIThreadSelect || command instanceof MIStackSelectFrame) {
+					return;
+				}
 
 				// Older debuggers didn't support the --thread/--frame options
 				// Also, not all commands support those options (e.g., CLI commands)
-				if (!fUseThreadAndFrameOptions || !handle.getCommand().supportsThreadAndFrameOptions()) {
+				if (!fUseThreadAndFrameOptions || !command.supportsThreadAndFrameOptions()) {
 					// Without the --thread/--frame, we need to send the proper 
 					// -thread-select and -stack-frame-select before sending the command
 					
-					final IDMContext targetContext = handle.fCommand.getContext();
+					final IDMContext targetContext = command.getContext();
 					final String targetThread = handle.getThreadId();
 					final int targetFrame = handle.getStackFrameId();
 
@@ -406,7 +416,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
 					}
 				}
 
-				if (!(handle.getCommand() instanceof RawCommand)) {
+				if (!(command instanceof RawCommand)) {
 					// Only generate a token id if the command is not a RawCommand
 					// RawCommands are sent to GDB without an answer expected, so we don't
 					// need a token id.  In fact, GDB will fail if we send one in this case.

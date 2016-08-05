@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_016f3eef",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-08-05T15:24:53Z",
+      "side": 1,
+      "message": "The if just below, includes the check \n\n   command.supportsThreadAndFrameOptions, \n\nthis is the only place in CDT where we call this function, and we can see that MIThreadSelect and MIStackSelectFrame override the default to return false.   Which does not seem correct since they are them selves thread and frame selection by nature.  \n\nShouldn\u0027t we just remove the overriding ?",
+      "revId": "293e2021313d725298d005a4aed143ee840346a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

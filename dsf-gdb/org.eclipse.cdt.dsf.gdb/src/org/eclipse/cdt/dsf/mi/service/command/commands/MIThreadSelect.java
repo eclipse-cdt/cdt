@@ -37,9 +37,4 @@ public class MIThreadSelect extends MICommand<MIInfo>
 	public MIThreadSelect(IDMContext ctx, String threadNum) {
 		super(ctx, "-thread-select", new String[]{threadNum}); //$NON-NLS-1$
 	}
-
-	@Override
-	public boolean supportsThreadAndFrameOptions() {
-		return false;
-	}
 }

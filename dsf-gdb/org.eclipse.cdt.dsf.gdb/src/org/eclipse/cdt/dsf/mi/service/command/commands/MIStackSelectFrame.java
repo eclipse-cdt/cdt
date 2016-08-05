@@ -28,9 +28,4 @@ public class MIStackSelectFrame extends MICommand<MIInfo> {
 	public MIStackSelectFrame(IDMContext ctx, int frameNum) {
 		super(ctx, "-stack-select-frame", new String[]{Integer.toString(frameNum)}); //$NON-NLS-1$
 	}
-	
-	@Override
-	public boolean supportsThreadAndFrameOptions() {
-		return false;
-	}
 }

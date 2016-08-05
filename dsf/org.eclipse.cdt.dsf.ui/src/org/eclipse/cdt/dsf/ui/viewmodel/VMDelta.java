@@ -325,6 +325,12 @@ public class VMDelta extends ModelDelta {
             if ((flags & IModelDelta.UNINSTALL) > 0) {
                 buf.append("UNINSTALL | "); //$NON-NLS-1$
             }
+            if ((flags & IModelDelta.REVEAL) > 0) {
+                buf.append("REVEAL | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.FORCE) > 0) {
+                buf.append("FORCE | "); //$NON-NLS-1$
+            }
         }
         buf.append('\n');
         buf.append(indent).append("\t\tIndex: "); //$NON-NLS-1$

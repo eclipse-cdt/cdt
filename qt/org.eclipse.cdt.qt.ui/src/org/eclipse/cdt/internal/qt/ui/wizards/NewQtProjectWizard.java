@@ -7,29 +7,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.wizards;
 
-import org.eclipse.tools.templates.ui.TemplateSelectionPage;
-import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.eclipse.tools.templates.ui.NewWizard;
 
-public class NewQtProjectWizard extends BasicNewResourceWizard {
+public class NewQtProjectWizard extends NewWizard {
 
 	private static final String QT_TAG_ID = "org.eclipse.cdt.qt.ui.tag"; //$NON-NLS-1$
 
-	private TemplateSelectionPage templateSelectionPage;
-
 	public NewQtProjectWizard() {
-		setForcePreviousAndNextButtons(true);
+		super(QT_TAG_ID);
 	}
 	
-	@Override
-	public void addPages() {
-		templateSelectionPage = new TemplateSelectionPage("templateSelection", QT_TAG_ID); //$NON-NLS-1$
-		templateSelectionPage.setTitle("Template for New Qt Project");
-		this.addPage(templateSelectionPage);
-	}
-
-	@Override
-	public boolean performFinish() {
-		return true;
-	}
-
 }

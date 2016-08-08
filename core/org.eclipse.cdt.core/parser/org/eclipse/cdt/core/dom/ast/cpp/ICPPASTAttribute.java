@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+
 /**
  * Represents a C++11 (ISO/IEC 14882:2011 7.6) attribute.
  *
@@ -26,7 +27,6 @@ public interface ICPPASTAttribute extends IASTAttribute {
 	public char[] getScope();
 
 	/**
-	 *
 	 * Returns true if this attribute has a pack expansion.
 	 */
 	public boolean hasPackExpansion();

@@ -30,20 +30,6 @@ public interface ICPPASTTemplateId extends ICPPASTName, IASTNameOwner {
 			"ICPPASTTemplateId.TEMPLATE_NAME - TemplateId Name"); //$NON-NLS-1$
 
 	/**
-	 * Returns the name.
-	 * 
-	 * @return {@code IASTName}
-	 */
-	public IASTName getTemplateName();
-
-	/**
-	 * Sets the name.
-	 * 
-	 * @param name {@code IASTName}
-	 */
-	public void setTemplateName(IASTName name);
-
-	/**
 	 * TEMPLATE_ID_ARGUMENT = template id argument.
 	 */
 	public static final ASTNodeProperty TEMPLATE_ID_ARGUMENT = new ASTNodeProperty(
@@ -51,9 +37,24 @@ public interface ICPPASTTemplateId extends ICPPASTName, IASTNameOwner {
 
 	/**
 	 * @deprecated Use IASTNode.EMPTY_NODE_ARRAY instead.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final IASTNode[] EMPTY_ARG_ARRAY = IASTNode.EMPTY_NODE_ARRAY;
+
+	/**
+	 * Returns the name of the template.
+	 * 
+	 * @return {@code IASTName}
+	 */
+	public IASTName getTemplateName();
+
+	/**
+	 * Sets the name of the template.
+	 * 
+	 * @param name {@code IASTName}
+	 */
+	public void setTemplateName(IASTName name);
 
 	/**
 	 * Adds template argument.

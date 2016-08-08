@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplateSpecialization extends IASTDeclaration {
-
 	/**
 	 * The declaration that the specialization affects.
 	 */

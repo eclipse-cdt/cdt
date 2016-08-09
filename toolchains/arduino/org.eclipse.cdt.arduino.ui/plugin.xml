@@ -142,12 +142,15 @@
             id="org.eclipse.cdt.arduino.ui.template.sketch"
             label="Arduino C++ Sketch"
             wizard="org.eclipse.cdt.arduino.ui.internal.project.NewArduinoCPPSketchWizard">
-         <tagReference
-               id="org.eclipse.cdt.arduino.ui.tag">
-         </tagReference>
          <description>
             A single C++ file with empty setup() and loop() functions.
          </description>
+         <tagReference
+               id="org.eclipse.cdt.arduino.ui.tag">
+         </tagReference>
+         <tagReference
+               id="org.eclipse.cdt.ui.cdtTag">
+         </tagReference>
       </template>
    </extension>
    <extension

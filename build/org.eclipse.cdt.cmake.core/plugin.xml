@@ -9,23 +9,6 @@
                class="org.eclipse.cdt.cmake.core.CMakeNature">
          </run>
       </runtime>
-      <builder
-            id="org.eclipse.cdt.cmake.core.cmakeBuilder">
-      </builder>
-   </extension>
-   <extension
-         id="cmakeBuilder"
-         name="CMake Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="true"
-            hasNature="true"
-            isConfigurable="true"
-            supportsConfigurations="true">
-         <run
-               class="org.eclipse.cdt.cmake.core.internal.CMakeBuilder">
-         </run>
-      </builder>
    </extension>
    <extension
          point="org.eclipse.launchbar.core.launchBarContributions">
@@ -41,14 +24,6 @@
                   forcePluginActivation="true"
                   property="org.eclipse.core.resources.projectNature"
                   value="org.eclipse.cdt.cmake.core.cmakeNature">
-            </test>
-         </enablement>
-         <enablement>
-            <instanceof
-                  value="org.eclipse.core.resources.IProject">
-            </instanceof>
-            <test
-                  property="org.eclipse.core.resources.projectNature">
             </test>
          </enablement>
       </descriptorType>
@@ -69,11 +44,11 @@
       </launchConfigurationType>
    </extension>
    <extension
-         point="org.eclipse.cdt.core.ScannerInfoProvider2">
+         point="org.eclipse.cdt.core.buildConfigProvider">
       <provider
-            builder="org.eclipse.cdt.cmake.core.cmakeBuilder"
-            class="org.eclipse.cdt.cmake.core.internal.CMakeScannerInfoProvider">
+            class="org.eclipse.cdt.cmake.core.internal.CMakeBuildConfigurationProvider"
+            id="org.eclipse.cdt.cmake.core.provider"
+            natureId="org.eclipse.cdt.cmake.core.cmakeNature">
       </provider>
    </extension>
-
 </plugin>

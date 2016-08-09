@@ -1,49 +1,40 @@
-/*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
 package org.eclipse.cdt.cmake.ui.internal;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.cdt.cmake.core.CMakeProjectGenerator;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.tools.templates.core.IGenerator;
+import org.eclipse.tools.templates.ui.TemplateWizard;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
-public class NewCMakeProjectWizard extends BasicNewProjectResourceWizard {
+public class NewCMakeProjectWizard extends TemplateWizard {
+
+	private WizardNewProjectCreationPage mainPage;
 
 	@Override
-	public boolean performFinish() {
-		if (!super.performFinish()) {
-			return false;
-		}
-
-		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+	public void addPages() {
+		mainPage = new WizardNewProjectCreationPage("basicNewProjectPage") { //$NON-NLS-1$
 			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					monitor.beginTask("Generating project", 1);
-					CMakeProjectGenerator generator = new CMakeProjectGenerator(getNewProject());
-					generator.generate(monitor);
-					monitor.done();
-				} catch (CoreException e) {
-					Activator.log(e);
-				}
+			public void createControl(Composite parent) {
+				super.createControl(parent);
+				createWorkingSetGroup((Composite) getControl(), getSelection(),
+						new String[] { "org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$
+				Dialog.applyDialogFont(getControl());
 			}
-		});
+		};
+		mainPage.setTitle("New Arduino Project"); //$NON-NLS-1$
+		mainPage.setDescription("Specify properties of new Arduino project."); //$NON-NLS-1$
+		this.addPage(mainPage);
+	}
 
-		try {
-			getContainer().run(false, true, op);
-		} catch (InvocationTargetException | InterruptedException e) {
-			return false;
+	@Override
+	protected IGenerator getGenerator() {
+		CMakeProjectGenerator generator = new CMakeProjectGenerator("templates/simple/manifest.xml"); //$NON-NLS-1$
+		generator.setProjectName(mainPage.getProjectName());
+		if (!mainPage.useDefaults()) {
+			generator.setLocationURI(mainPage.getLocationURI());
 		}
-		return true;
+		return generator;
 	}
 
 }

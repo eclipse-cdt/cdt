@@ -40,10 +40,12 @@ public class ArduinoRemoteConnection
 	private static final String PLATFORM_NAME = "arduinoPlatformName"; //$NON-NLS-1$
 	private static final String BOARD_NAME = "arduinoBoardName"; //$NON-NLS-1$
 	private static final String MENU_QUALIFIER = "menu_"; //$NON-NLS-1$
+	private static final String PROGRAMMER = "programmer"; //$NON-NLS-1$
 
 	private final IRemoteConnection remoteConnection;
 	private SerialPort serialPort;
 	private SerialPortCommandShell commandShell;
+	private ArduinoBoard board;
 
 	private static final Map<IRemoteConnection, ArduinoRemoteConnection> connectionMap = new HashMap<>();
 
@@ -61,17 +63,25 @@ public class ArduinoRemoteConnection
 		ArduinoPackage pkg = platform.getPackage();
 		workingCopy.setAttribute(PACKAGE_NAME, pkg.getName());
 	}
-	
+
 	public static void setPortName(IRemoteConnectionWorkingCopy workingCopy, String portName) {
 		workingCopy.setAttribute(PORT_NAME, portName);
 	}
-	
+
 	public static void setMenuValue(IRemoteConnectionWorkingCopy workingCopy, String key, String value) {
 		workingCopy.setAttribute(MENU_QUALIFIER + key, value);
 	}
-	
+
+	public static void setProgrammer(IRemoteConnectionWorkingCopy workingCopy, String programmer) {
+		workingCopy.setAttribute(PROGRAMMER, programmer);
+	}
+
 	public String getMenuValue(String key) {
 		return remoteConnection.getAttribute(MENU_QUALIFIER + key);
+	}
+
+	public String getProgrammer() {
+		return remoteConnection.getAttribute(PROGRAMMER);
 	}
 
 	@Override
@@ -122,8 +132,33 @@ public class ArduinoRemoteConnection
 	}
 
 	public ArduinoBoard getBoard() throws CoreException {
-		return Activator.getService(ArduinoManager.class).getBoard(remoteConnection.getAttribute(PACKAGE_NAME),
-				remoteConnection.getAttribute(PLATFORM_NAME), remoteConnection.getAttribute(BOARD_NAME));
+		if (board == null) {
+			String pkgName = remoteConnection.getAttribute(PACKAGE_NAME);
+			String platName = remoteConnection.getAttribute(PLATFORM_NAME);
+			String boardName = remoteConnection.getAttribute(BOARD_NAME);
+			ArduinoManager manager = Activator.getService(ArduinoManager.class);
+			board = manager.getBoard(pkgName, platName, boardName);
+
+			if (board == null) {
+				// Old style board attributes?
+				ArduinoPackage pkg = manager.getPackage(pkgName);
+				if (pkg != null) {
+					for (ArduinoPlatform plat : pkg.getAvailablePlatforms()) {
+						if (plat.getName().equals(platName)) {
+							platName = plat.getArchitecture();
+							for (ArduinoBoard b : plat.getBoards()) {
+								if (b.getName().equals(boardName)) {
+									board = b;
+									return board;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return board;
 	}
 
 	public String getPortName() {

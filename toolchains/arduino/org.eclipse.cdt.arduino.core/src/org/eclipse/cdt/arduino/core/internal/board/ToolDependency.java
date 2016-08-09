@@ -28,18 +28,18 @@ public class ToolDependency {
 	}
 
 	public String getVersion() {
-		return version;
+		return version.replace('+', '_');
 	}
 
 	public ArduinoTool getTool() throws CoreException {
-		return Activator.getService(ArduinoManager.class).getTool(packager, name, version);
+		return Activator.getService(ArduinoManager.class).getTool(getPackager(), getName(), getVersion());
 	}
 
 	public void install(IProgressMonitor monitor) throws CoreException {
 		ArduinoTool tool = getTool();
 		if (tool == null) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(),
-					String.format("Tool not found %s %s", name, version)));
+					String.format("Tool not found %s %s", getName(), getVersion())));
 		}
 		getTool().install(monitor);
 	}

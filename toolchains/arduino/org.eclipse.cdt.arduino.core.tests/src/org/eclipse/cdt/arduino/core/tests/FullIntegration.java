@@ -172,7 +172,7 @@ public class FullIntegration {
 		ArduinoRemoteConnection arduinoTarget = createTarget(board);
 		ArduinoBuildConfigurationProvider provider = (ArduinoBuildConfigurationProvider) buildConfigManager
 				.getProvider(ArduinoBuildConfigurationProvider.ID);
-		ArduinoBuildConfiguration config = provider.createConfiguration(project, arduinoTarget, "run", monitor);
+		ArduinoBuildConfiguration config = provider.getConfiguration(project, arduinoTarget, "run", monitor);
 
 		System.out.println(String.format("Building board: %s\n    %s - %s", board.getName(), board.getId(),
 				board.getPlatform().getInstallPath()));

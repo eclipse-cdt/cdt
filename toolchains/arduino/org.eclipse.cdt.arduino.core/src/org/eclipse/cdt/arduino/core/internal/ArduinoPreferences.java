@@ -39,7 +39,13 @@ public class ArduinoPreferences {
 	}
 
 	public static void setArduinoHome(Path home) {
-		getPrefs().put(ARDUINO_HOME, home.toString());
+		IEclipsePreferences prefs = getPrefs();
+		prefs.put(ARDUINO_HOME, home.toString());
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
 	}
 	
 	public static String getBoardUrls() {

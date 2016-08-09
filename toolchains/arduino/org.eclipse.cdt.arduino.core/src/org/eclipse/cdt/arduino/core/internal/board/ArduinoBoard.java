@@ -93,4 +93,11 @@ public class ArduinoBoard {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		String arch = getPlatform().getArchitecture();
+		String pkg = getPlatform().getPackage().getName();
+		return pkg + ',' + arch + ',' + id + ',' + name;
+	}
+	
 }

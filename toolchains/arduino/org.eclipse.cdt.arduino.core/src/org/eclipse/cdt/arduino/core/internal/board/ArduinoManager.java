@@ -83,6 +83,7 @@ public class ArduinoManager {
 
 	private Properties props;
 
+	private Path arduinoHome = ArduinoPreferences.getArduinoHome();
 	private Map<String, ArduinoPackage> packages;
 	private Map<String, ArduinoLibrary> installedLibraries;
 
@@ -91,6 +92,14 @@ public class ArduinoManager {
 	}
 
 	private synchronized void init() throws CoreException {
+		if (!arduinoHome.equals(ArduinoPreferences.getArduinoHome())) {
+			// Arduino Home changed, reset.
+			props = null;
+			packages = null;
+			installedLibraries = null;
+			arduinoHome = ArduinoPreferences.getArduinoHome();
+		}
+
 		if (props == null) {
 			if (!Files.exists(ArduinoPreferences.getArduinoHome())) {
 				try {
@@ -113,9 +122,6 @@ public class ArduinoManager {
 			// See if we need a conversion
 			int version = Integer.parseInt(props.getProperty(VERSION_KEY, "1")); //$NON-NLS-1$
 			if (version < Integer.parseInt(VERSION)) {
-				// Need to move the directories around
-				convertPackageDirs();
-
 				props.setProperty(VERSION_KEY, VERSION);
 				try (FileWriter writer = new FileWriter(getVersionFile().toFile())) {
 					props.store(writer, ""); //$NON-NLS-1$
@@ -123,42 +129,6 @@ public class ArduinoManager {
 					throw Activator.coreException(e);
 				}
 			}
-		}
-	}
-
-	private void convertPackageDirs() throws CoreException {
-		Path packagesDir = ArduinoPreferences.getArduinoHome().resolve("packages"); //$NON-NLS-1$
-		if (!Files.isDirectory(packagesDir)) {
-			return;
-		}
-
-		try {
-			Files.list(packagesDir).forEach(path -> {
-				try {
-					Path hardwarePath = path.resolve("hardware"); //$NON-NLS-1$
-					Path badPath = hardwarePath.resolve(path.getFileName());
-					Path tmpDir = Files.createTempDirectory(packagesDir, "tbd"); //$NON-NLS-1$
-					Path badPath2 = tmpDir.resolve(badPath.getFileName());
-					Files.move(badPath, badPath2);
-					Files.list(badPath2).forEach(archPath -> {
-						try {
-							Optional<Path> latest = Files.list(archPath)
-									.reduce((path1, path2) -> compareVersions(path1.getFileName().toString(),
-											path2.getFileName().toString()) > 0 ? path1 : path2);
-							if (latest.isPresent()) {
-								Files.move(latest.get(), hardwarePath.resolve(archPath.getFileName()));
-							}
-						} catch (IOException e) {
-							throw new RuntimeException(e);
-						}
-					});
-					recursiveDelete(tmpDir);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			});
-		} catch (RuntimeException | IOException e) {
-			throw Activator.coreException(e);
 		}
 	}
 
@@ -219,15 +189,15 @@ public class ArduinoManager {
 		return pkg != null ? pkg.getInstalledPlatform(architecture) : null;
 	}
 
-	public synchronized Collection<ArduinoPlatform> getAvailablePlatforms(IProgressMonitor monitor) throws CoreException {
+	public synchronized Collection<ArduinoPlatform> getAvailablePlatforms(IProgressMonitor monitor)
+			throws CoreException {
 		List<ArduinoPlatform> platforms = new ArrayList<>();
 		URL[] urls = ArduinoPreferences.getBoardUrlList();
 		SubMonitor sub = SubMonitor.convert(monitor, urls.length + 1);
 
 		sub.beginTask("Downloading package descriptions", urls.length); //$NON-NLS-1$
 		for (URL url : urls) {
-			Path packagePath = ArduinoPreferences.getArduinoHome()
-					.resolve(Paths.get(url.getPath()).getFileName());
+			Path packagePath = ArduinoPreferences.getArduinoHome().resolve(Paths.get(url.getPath()).getFileName());
 			try {
 				Files.createDirectories(ArduinoPreferences.getArduinoHome());
 				try (InputStream in = url.openStream()) {
@@ -243,6 +213,36 @@ public class ArduinoManager {
 		resetPackages();
 		for (ArduinoPackage pkg : getPackages()) {
 			platforms.addAll(pkg.getAvailablePlatforms());
+		}
+		sub.done();
+
+		return platforms;
+	}
+
+	public synchronized Collection<ArduinoPlatform> getPlatformUpdates(IProgressMonitor monitor)
+			throws CoreException {
+		List<ArduinoPlatform> platforms = new ArrayList<>();
+		URL[] urls = ArduinoPreferences.getBoardUrlList();
+		SubMonitor sub = SubMonitor.convert(monitor, urls.length + 1);
+
+		sub.beginTask("Downloading package descriptions", urls.length); //$NON-NLS-1$
+		for (URL url : urls) {
+			Path packagePath = ArduinoPreferences.getArduinoHome().resolve(Paths.get(url.getPath()).getFileName());
+			try {
+				Files.createDirectories(ArduinoPreferences.getArduinoHome());
+				try (InputStream in = url.openStream()) {
+					Files.copy(in, packagePath, StandardCopyOption.REPLACE_EXISTING);
+				}
+			} catch (IOException e) {
+				throw Activator.coreException(String.format("Error loading %s", url.toString()), e); //$NON-NLS-1$
+			}
+			sub.worked(1);
+		}
+
+		sub.beginTask("Loading available package updates", 1); //$NON-NLS-1$
+		resetPackages();
+		for (ArduinoPackage pkg : getPackages()) {
+			platforms.addAll(pkg.getPlatformUpdates());
 		}
 		sub.done();
 
@@ -293,8 +293,8 @@ public class ArduinoManager {
 	}
 
 	private synchronized void initPackages() throws CoreException {
+		init();
 		if (packages == null) {
-			init();
 			packages = new HashMap<>();
 
 			try {
@@ -304,8 +304,13 @@ public class ArduinoManager {
 							try (Reader reader = new FileReader(path.toFile())) {
 								PackageIndex index = new Gson().fromJson(reader, PackageIndex.class);
 								for (ArduinoPackage pkg : index.getPackages()) {
-									pkg.init();
-									packages.put(pkg.getName(), pkg);
+									ArduinoPackage p = packages.get(pkg.getName());
+									if (p == null) {
+										pkg.init();
+										packages.put(pkg.getName(), pkg);
+									} else {
+										p.merge(pkg);
+									}
 								}
 							} catch (IOException e) {
 								Activator.log(e);
@@ -353,8 +358,7 @@ public class ArduinoManager {
 
 		// For backwards compat, check platform name
 		for (ArduinoPlatform platform : getInstalledPlatforms()) {
-			if (platform.getPackage().getName().equals(packageName)
-					&& platform.getName().equals(architecture)) {
+			if (platform.getPackage().getName().equals(packageName) && platform.getName().equals(architecture)) {
 				return platform.getBoardByName(boardId);
 			}
 		}
@@ -367,7 +371,7 @@ public class ArduinoManager {
 		return pkg != null ? pkg.getTool(toolName, version) : null;
 	}
 
-	public void initInstalledLibraries() throws CoreException {
+	private void initInstalledLibraries() throws CoreException {
 		init();
 		if (installedLibraries == null) {
 			installedLibraries = new HashMap<>();
@@ -375,7 +379,7 @@ public class ArduinoManager {
 			Path librariesDir = ArduinoPreferences.getArduinoHome().resolve("libraries"); //$NON-NLS-1$
 			if (Files.isDirectory(librariesDir)) {
 				try {
-					Files.find(librariesDir, 2,
+					Files.find(librariesDir, 3,
 							(path, attrs) -> path.getFileName().toString().equals("library.properties")) //$NON-NLS-1$
 							.forEach(path -> {
 								try {
@@ -434,6 +438,39 @@ public class ArduinoManager {
 		}
 	}
 
+	public Collection<ArduinoLibrary> getLibraryUpdates(IProgressMonitor monitor) throws CoreException {
+		try {
+			initInstalledLibraries();
+			Map<String, ArduinoLibrary> libs = new HashMap<>();
+
+			SubMonitor sub = SubMonitor.convert(monitor, "Downloading library index", 2);
+			Path librariesPath = ArduinoPreferences.getArduinoHome().resolve(LIBRARIES_FILE);
+			URL librariesUrl = new URL(LIBRARIES_URL);
+			Files.createDirectories(ArduinoPreferences.getArduinoHome());
+			Files.copy(librariesUrl.openStream(), librariesPath, StandardCopyOption.REPLACE_EXISTING);
+			sub.worked(1);
+
+			try (Reader reader = new FileReader(librariesPath.toFile())) {
+				sub.setTaskName("Calculating library updates");
+				LibraryIndex libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
+				for (ArduinoLibrary library : libraryIndex.getLibraries()) {
+					String libraryName = library.getName();
+					ArduinoLibrary installed = installedLibraries.get(libraryName);
+					if (installed != null && compareVersions(library.getVersion(), installed.getVersion()) > 0) {
+						ArduinoLibrary current = libs.get(libraryName);
+						if (current == null || compareVersions(library.getVersion(), current.getVersion()) > 0) {
+							libs.put(libraryName, library);
+						}
+					}
+				}
+			}
+			sub.done();
+			return libs.values();
+		} catch (IOException e) {
+			throw Activator.coreException(e);
+		}
+	}
+
 	public void installLibraries(Collection<ArduinoLibrary> libraries, IProgressMonitor monitor) throws CoreException {
 		SubMonitor sub = SubMonitor.convert(monitor, libraries.size());
 		for (ArduinoLibrary library : libraries) {
@@ -462,8 +499,7 @@ public class ArduinoManager {
 		sub.done();
 	}
 
-	public Collection<ArduinoLibrary> getLibraries(IProject project)
-			throws CoreException {
+	public Collection<ArduinoLibrary> getLibraries(IProject project) throws CoreException {
 		initInstalledLibraries();
 		IEclipsePreferences settings = getSettings(project);
 		String librarySetting = settings.get(LIBRARIES, "[]"); //$NON-NLS-1$
@@ -577,7 +613,16 @@ public class ArduinoManager {
 						}
 
 						// Strip the first directory of the path
-						Path entryPath = installPath.resolve(path.subpath(1, path.getNameCount()));
+						Path entryPath;
+						switch (path.getName(0).toString()) {
+						case "i586":
+						case "i686":
+							// Cheat for Intel
+							entryPath = installPath.resolve(path);
+							break;
+						default:
+							entryPath = installPath.resolve(path.subpath(1, path.getNameCount()));
+						}
 
 						Files.createDirectories(entryPath.getParent());
 

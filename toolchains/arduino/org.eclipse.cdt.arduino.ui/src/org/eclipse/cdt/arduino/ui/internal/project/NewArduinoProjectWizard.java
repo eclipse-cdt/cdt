@@ -7,29 +7,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.project;
 
-import org.eclipse.tools.templates.ui.TemplateSelectionPage;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.tools.templates.ui.NewWizard;
 
-public class NewArduinoProjectWizard extends BasicNewProjectResourceWizard {
+public class NewArduinoProjectWizard extends NewWizard {
 
 	private static final String ARDUINO_TAG_ID = "org.eclipse.cdt.arduino.ui.tag"; //$NON-NLS-1$
 
-	private TemplateSelectionPage templateSelectionPage;
-
 	public NewArduinoProjectWizard() {
-		setForcePreviousAndNextButtons(true);
-	}
-	
-	@Override
-	public void addPages() {
-		templateSelectionPage = new TemplateSelectionPage("templateSelection", ARDUINO_TAG_ID); //$NON-NLS-1$
-		templateSelectionPage.setTitle("Template for New Arduino Project");
-		this.addPage(templateSelectionPage);
-	}
-
-	@Override
-	public boolean performFinish() {
-		return true;
+		super(ARDUINO_TAG_ID);
 	}
 
 }

@@ -24,11 +24,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.HierarchicalProperties;
+import org.eclipse.cdt.arduino.core.internal.LinkedProperties;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,9 +52,11 @@ public class ArduinoPlatform {
 	private List<ToolDependency> toolsDependencies;
 	// end JSON fields
 
+	private Path installPath;
 	private ArduinoPackage pkg;
 	private HierarchicalProperties boardsProperties;
-	private Properties platformProperties;
+	private LinkedProperties platformProperties;
+	private HierarchicalProperties programmerProperties;
 	private Map<String, String> menus = new HashMap<>();
 	private Map<String, ArduinoLibrary> libraries;
 
@@ -81,7 +83,7 @@ public class ArduinoPlatform {
 	}
 
 	public String getVersion() {
-		return version;
+		return version.replace('+', '_');
 	}
 
 	public String getCategory() {
@@ -104,13 +106,13 @@ public class ArduinoPlatform {
 		return size;
 	}
 
-	public void setPlatformProperties(Properties platformProperties) {
+	public void setPlatformProperties(LinkedProperties platformProperties) {
 		this.platformProperties = platformProperties;
 	}
 
 	public List<ArduinoBoard> getBoards() {
 		if (boardsProperties == null) {
-			Properties boardProps = new Properties();
+			LinkedProperties boardProps = new LinkedProperties();
 
 			if (Files.exists(getInstallPath())) {
 				try (InputStream is = new FileInputStream(getInstallPath().resolve("boards.txt").toFile()); //$NON-NLS-1$
@@ -182,9 +184,9 @@ public class ArduinoPlatform {
 		return null;
 	}
 
-	public Properties getPlatformProperties() throws CoreException {
+	public LinkedProperties getPlatformProperties() throws CoreException {
 		if (platformProperties == null) {
-			platformProperties = new Properties();
+			platformProperties = new LinkedProperties();
 			try (BufferedReader reader = new BufferedReader(
 					new FileReader(getInstallPath().resolve("platform.txt").toFile()))) { //$NON-NLS-1$
 				// There are regex's here and need to preserve the \'s
@@ -197,14 +199,50 @@ public class ArduinoPlatform {
 					platformProperties.load(reader1);
 				}
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading platform.txt", e)); //$NON-NLS-1$
+				throw Activator.coreException(e);
 			}
 		}
 		return platformProperties;
 	}
 
+	public HierarchicalProperties getProgrammers() throws CoreException {
+		if (programmerProperties == null) {
+			LinkedProperties props = new LinkedProperties();
+			Path programmersTxt = getInstallPath().resolve("programmers.txt"); //$NON-NLS-1$
+			if (Files.exists(programmersTxt)) {
+				try (FileInputStream in = new FileInputStream(programmersTxt.toFile())) {
+					props.load(in);
+					programmerProperties = new HierarchicalProperties(props);
+				} catch (IOException e) {
+					throw Activator.coreException(e);
+				}
+			} else {
+				// TODO for now, grab the one from the arduino package
+				ArduinoManager manager = Activator.getService(ArduinoManager.class);
+				ArduinoPackage arduinoPkg = manager.getPackage("arduino"); //$NON-NLS-1$
+				if (arduinoPkg != null) {
+					ArduinoPlatform arduinoPlat = arduinoPkg.getInstalledPlatform(getArchitecture());
+					if (arduinoPlat != null) {
+						programmerProperties = arduinoPlat.getProgrammers();
+					}
+				}
+			}
+		}
+		return programmerProperties;
+	}
+
 	public Path getInstallPath() {
-		return getPackage().getInstallPath().resolve("hardware").resolve(architecture); //$NON-NLS-1$
+		if (installPath == null) {
+			Path oldPath = getPackage().getInstallPath().resolve("hardware").resolve(getPackage().getName()) //$NON-NLS-1$
+					.resolve(getArchitecture()).resolve(getVersion());
+			if (Files.exists(oldPath)) {
+				installPath = oldPath;
+			} else {
+				installPath = getPackage().getInstallPath().resolve("hardware").resolve(getArchitecture()) //$NON-NLS-1$
+						.resolve(getVersion());
+			}
+		}
+		return installPath;
 	}
 
 	private void initLibraries() throws CoreException {

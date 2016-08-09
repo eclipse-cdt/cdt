@@ -197,7 +197,7 @@ public class PlatformsTabControl extends Composite {
 		try {
 			container.run(true, true, monitor -> {
 				try {
-					for (ArduinoPlatform available : manager.getAvailablePlatforms(monitor)) {
+					for (ArduinoPlatform available : manager.getPlatformUpdates(monitor)) {
 						ArduinoPlatform installed = manager.getInstalledPlatform(available.getPackage().getName(),
 								available.getArchitecture());
 						if (installed != null) {
@@ -257,14 +257,16 @@ public class PlatformsTabControl extends Composite {
 			SelectPlatformsDialog selectDialog = new SelectPlatformsDialog(getShell());
 			selectDialog.setPlatforms(availablePlatforms);
 			if (selectDialog.open() == Window.OK) {
-				Collection<ArduinoPlatform> selectedPlatforms = selectDialog.getSelectedPlatforms();
-				container.run(true, true, monitor -> {
-					try {
-						manager.installPlatforms(selectedPlatforms, monitor);
-					} catch (CoreException e) {
-						Activator.log(e);
-					}
-				});
+				if (ArduinoDownloadsManager.checkLicense(getShell())) {
+					Collection<ArduinoPlatform> selectedPlatforms = selectDialog.getSelectedPlatforms();
+					container.run(true, true, monitor -> {
+						try {
+							manager.installPlatforms(selectedPlatforms, monitor);
+						} catch (CoreException e) {
+							Activator.log(e);
+						}
+					});
+				}
 			}
 			populateTable();
 		} catch (InterruptedException | InvocationTargetException e) {

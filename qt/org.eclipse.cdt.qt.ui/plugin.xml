@@ -131,16 +131,19 @@
              label="Qt">
        </tag>
        <template
-             icon="icons/HelloWorld48.png"
+             icon="icons/qt_logo.png"
              id="org.eclipse.cdt.qt.ui.template.helloWorld"
-             label="C++/QML HelloWorld"
+             label="Qt C++/QML Application"
              wizard="org.eclipse.cdt.internal.qt.ui.wizards.HelloWorldWizard">
+          <description>
+             A simple Hello World Qt Application with main function in C++ and the UI in QML.
+          </description>
           <tagReference
                 id="org.eclipse.cdt.qt.ui.tag">
           </tagReference>
-          <description>
-             A simple Hello World App with main function in C++ and the UI in QML.
-          </description>
+          <tagReference
+                id="org.eclipse.cdt.ui.cdtTag">
+          </tagReference>
        </template>
     </extension>
     <extension

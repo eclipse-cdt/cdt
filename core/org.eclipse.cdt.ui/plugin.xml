@@ -458,6 +458,20 @@
              %Cproject.desc
          </description>
       </wizard>
+       <wizard
+             canFinishEarly="false"
+             category="org.eclipse.cdt.ui.newCWizards"
+             class="org.eclipse.cdt.internal.ui.wizards.project.NewCDTProjectWizard"
+             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+             hasPages="true"
+             icon="icons/elcl16/newmngc_app.gif"
+             id="org.eclipse.cdt.ui.wizard.project"
+             name="%CDTproject"
+             project="true">
+          <description>
+             %CDTproject.desc
+          </description>
+       </wizard>
    </extension>
 
 <!-- Define the document setup participant for the C/C++ and Assembly Editors -->
@@ -4932,6 +4946,13 @@
              refid="org.eclipse.e4.ui.css.theme.e4_dark">
        </themeid>
     </stylesheet>
+ </extension>
+ <extension
+       point="org.eclipse.tools.templates.ui.templates">
+    <tag
+          id="org.eclipse.cdt.ui.cdtTag"
+          label="C/C++">
+    </tag>
  </extension>
 
 </plugin>

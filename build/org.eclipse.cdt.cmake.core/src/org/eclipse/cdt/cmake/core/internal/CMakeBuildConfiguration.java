@@ -52,7 +52,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			if (!Files.exists(buildDir.resolve("Makefile"))) { //$NON-NLS-1$
 				// TODO assuming cmake is in the path here, probably need a
 				// preference in case it isn't.
-				List<String> command = Arrays.asList("cmake", //$NON-NLS-1$
+				List<String> command = Arrays.asList("/usr/local/bin/cmake", //$NON-NLS-1$
 						"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", new File(project.getLocationURI()).getAbsolutePath()); //$NON-NLS-1$
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 				Process process = processBuilder.start();

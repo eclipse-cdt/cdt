@@ -7,8 +7,12 @@
  *******************************************************************************/
 package org.eclipse.tools.templates.ui.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -50,7 +54,14 @@ public class TemplateTable implements Listener {
 
 	public void setTemplates(Collection<Template> templates) {
 		table.removeAll();
-		for (Template template : templates) {
+		List<Template> sorted = new ArrayList<>(templates);
+		Collections.sort(sorted, new Comparator<Template>() {
+			@Override
+			public int compare(Template o1, Template o2) {
+				return o1.getLabel().compareToIgnoreCase(o2.getLabel());
+			}
+		});
+		for (Template template : sorted) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setData(template);
 		}

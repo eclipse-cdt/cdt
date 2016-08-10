@@ -33,7 +33,7 @@ public class FindProgramLocationTest extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		ResourceHelper.cleanUp(getName());
 	}
 
 	public void testCornerCases() throws CoreException, IOException {

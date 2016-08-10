@@ -683,10 +683,40 @@ public class ResourceHelper {
 	 * This method removes *all* Workspace IResources and any external
 	 * files / folders created with the #createWorkspaceFile #createWorkspaceFolder
 	 * methods in this class
+	 * 
+	 * @deprecated Use {@link #cleanUp(String)} instead so test name can be printed in diagnostics
 	 */
 	public static void cleanUp() throws CoreException, IOException {
+		cleanUp("<unknown>");
+	}
+	
+	/**
+	 * Clean-up any files created as part of a unit test.
+	 * This method removes *all* Workspace IResources and any external
+	 * files / folders created with the #createWorkspaceFile #createWorkspaceFolder
+	 * methods in this class
+	 */
+	public static void cleanUp(String testName) throws CoreException, IOException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		root.refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
+
+		// Bug 499471: there is a race condition in the indexer when projects
+		// are created and deleted quickly. Therefore, wait for the indexer
+		// to be idle before deleting projects.
+		if (!CCorePlugin.getIndexManager().isIndexerIdle()) {
+			long startTime = System.currentTimeMillis();
+			// the 2 second wait is very long in practice, when the race condition is
+			// happening the total join time is just a few ms.
+			boolean joinSuccess = CCorePlugin.getIndexManager().joinIndexer(2000, new NullProgressMonitor());
+			if (!joinSuccess) {
+				System.err.println(
+						"Indexer did not stop runing, possible deadlock about to happen. Running test " + testName);
+			}
+			long endTime = System.currentTimeMillis();
+			long duration = endTime - startTime;
+			System.err.println("Indexer join took " + duration + "ms for test " + testName);
+		}
+		
 
 		// Delete all external files & folders created using ResourceHelper
 		for (String loc : externalFilesCreated) {

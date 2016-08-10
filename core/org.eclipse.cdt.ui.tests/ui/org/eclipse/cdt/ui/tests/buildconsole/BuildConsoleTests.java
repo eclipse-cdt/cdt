@@ -54,7 +54,7 @@ public class BuildConsoleTests extends BaseUITestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		ResourceHelper.cleanUp(getName());
 		super.tearDown();
 	}
 

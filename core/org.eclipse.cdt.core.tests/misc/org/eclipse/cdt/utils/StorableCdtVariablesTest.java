@@ -37,7 +37,7 @@ public class StorableCdtVariablesTest extends TestCase {
 	
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		ResourceHelper.cleanUp(getName());
 	}
 	
 	/**

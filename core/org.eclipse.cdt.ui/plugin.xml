@@ -3502,6 +3502,11 @@
                <and>
                   <test property="org.eclipse.core.resources.projectNature"
                         value="org.eclipse.cdt.core.cnature"/>
+                  <not>
+                     <test
+                           property="org.eclipse.cdt.core.build.isSupported">
+                     </test>
+                  </not>
                   <test property="org.eclipse.cdt.ui.checkPreference"
                         value="org.eclipse.cdt.core/language.settings.providers.disabled=false"/>
                </and>

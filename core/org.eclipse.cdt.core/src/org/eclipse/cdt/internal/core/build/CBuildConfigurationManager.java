@@ -281,4 +281,25 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 		}
 	}
 
+	@Override
+	public boolean supports(IProject project) throws CoreException {
+		initProviders();
+
+		// First see if we have a build config registered
+		for (IBuildConfiguration config : project.getBuildConfigs()) {
+			if (configs.containsKey(config)) {
+				return true;
+			}
+		}
+
+		// See if one of the providers supports this project
+		for (Provider provider : providers.values()) {
+			if (provider.supports(project)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 }

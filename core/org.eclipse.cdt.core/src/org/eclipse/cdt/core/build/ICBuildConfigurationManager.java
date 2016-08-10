@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * to CDT build configuration.
  * 
  * @since 6.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICBuildConfigurationManager {
 
@@ -59,5 +60,17 @@ public interface ICBuildConfigurationManager {
 	 * @return the matching CDT build configuration
 	 */
 	ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) throws CoreException;
-	
+
+	/**
+	 * Does this build system support this project. This is determined by
+	 * searching the build configuration providers looking to see if any of them
+	 * support this project.
+	 * 
+	 * @param project
+	 * @return is this project supported by this build system
+	 * @throws CoreException
+	 * @since 6.1
+	 */
+	boolean supports(IProject project) throws CoreException;
+
 }

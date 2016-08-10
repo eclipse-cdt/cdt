@@ -4958,6 +4958,30 @@
           id="org.eclipse.cdt.ui.cdtTag"
           label="C/C++">
     </tag>
+    <template
+          icon="icons/cdt_logo_48.png"
+          id="org.eclipse.cdt.ui.managed.c"
+          label="C Managed Build"
+          wizard="org.eclipse.cdt.internal.ui.wizards.CProjectWizard2">
+       <description>
+          A C Project build using the CDT&apos;s managed build system.
+       </description>
+       <tagReference
+             id="org.eclipse.cdt.ui.cdtTag">
+       </tagReference>
+    </template>
+    <template
+          icon="icons/cdt_logo_48.png"
+          id="org.eclipse.cdt.ui.managed.cpp"
+          label="C++ Managed Build"
+          wizard="org.eclipse.cdt.internal.ui.wizards.CCProjectWizard2">
+       <description>
+          A C++ Project build using the CDT&apos;s managed build system.
+       </description>
+       <tagReference
+             id="org.eclipse.cdt.ui.cdtTag">
+       </tagReference>
+    </template>
  </extension>
 
 </plugin>

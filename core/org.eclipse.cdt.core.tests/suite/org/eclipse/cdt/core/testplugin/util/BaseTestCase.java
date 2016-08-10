@@ -101,7 +101,7 @@ public class BaseTestCase extends TestCase {
 		for (File file; (file = filesToDeleteOnTearDown.pollLast()) != null;) {
 			file.delete();
 		}
-		ResourceHelper.cleanUp();
+		ResourceHelper.cleanUp(getName());
 		TestScannerProvider.clear();
 		super.tearDown();
 	}

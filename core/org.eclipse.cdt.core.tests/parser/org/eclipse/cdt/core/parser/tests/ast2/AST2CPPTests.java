@@ -11956,4 +11956,70 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testEnumDeclaredLaterInClass_491747() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct A {};
+	//	A&& foo();
+	//	A a;
+	//	decltype(auto) b = a; // decltype(b) is A
+	//	decltype(auto) c(a); // decltype(c) is A
+	//	decltype(auto) d = (a); // decltype(d) is A &
+	//	decltype(auto) e = foo(); // decltype(e) is A &&
+	//	static decltype(auto) f = 0.0; // decltype(f) is double
+	//	decltype(auto) g = &a, h = &b; // decltype(g) and decltype(h) are A *
+	//	decltype(auto) i = { 'a', 'b' }; // Error - cannot deduce decltype(auto) from initializer list.
+	//	decltype(auto) j = new decltype(auto)(1L); // decltype(j) is long int *
+	//	decltype(auto) k; // Error - missing initializer.
+	public void testDecltypeAutoVariableTypes_482225() throws Exception {
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		ICPPVariable b = bh.assertNonProblem("b =", 1);
+		assertEquals("A", ASTTypeUtil.getType(b.getType()));
+
+		ICPPVariable c = bh.assertNonProblem("c(a)", 1);
+		assertEquals("A", ASTTypeUtil.getType(c.getType()));
+
+		ICPPVariable d = bh.assertNonProblem("d =", 1);
+		assertEquals("A &", ASTTypeUtil.getType(d.getType()));
+
+		ICPPVariable e = bh.assertNonProblem("e =", 1);
+		assertEquals("A &&", ASTTypeUtil.getType(e.getType()));
+
+		ICPPVariable f = bh.assertNonProblem("f =", 1);
+		assertEquals("double", ASTTypeUtil.getType(f.getType()));
+
+		ICPPVariable g = bh.assertNonProblem("g =", 1);
+		assertEquals("A *", ASTTypeUtil.getType(g.getType()));
+
+		ICPPVariable h = bh.assertNonProblem("h =", 1);
+		assertEquals("A *", ASTTypeUtil.getType(h.getType()));
+
+		ICPPVariable i = bh.assertNonProblem("i =", 1);
+		IProblemType iType = (IProblemType) i.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, iType.getID());
+
+		ICPPVariable j = bh.assertNonProblem("j =", 1);
+		assertEquals("long int *", ASTTypeUtil.getType(j.getType()));
+
+		ICPPVariable k = bh.assertNonProblem("k;", 1);
+		IProblemType kType = (IProblemType) k.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, kType.getID());
+	}
+
+	//	auto foo() -> decltype(auto) {
+	//		return 23.0;
+	//	}
+	public void testDecltypeAutoTrailingReturnType_482225() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	decltype(auto) foo() {
+	//		return 23.0;
+	//	}
+	public void testDecltypeAutoReturnType_482225() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -123,6 +123,7 @@ public class DeclSpecWriter extends NodeWriter {
 				return Keywords.TYPEOF;
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
+		case IASTSimpleDeclSpecifier.t_decltype_auto:
 			if (isCpp)
 				return Keywords.DECLTYPE;
 			break;
@@ -381,6 +382,10 @@ public class DeclSpecWriter extends NodeWriter {
 		} else if (simpDeclSpec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
 			scribe.print('(');
 			visitNodeIfNotNull(simpDeclSpec.getDeclTypeExpression());
+			scribe.print(')');
+		} else if (simpDeclSpec.getType() == IASTSimpleDeclSpecifier.t_decltype_auto) {
+			scribe.print('(');
+			scribe.print(Keywords.AUTO);
 			scribe.print(')');
 		}
 	}

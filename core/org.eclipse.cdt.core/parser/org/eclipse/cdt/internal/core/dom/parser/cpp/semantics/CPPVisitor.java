@@ -2028,9 +2028,14 @@ public class CPPVisitor extends ASTQueries {
 			throw new IllegalArgumentException();
 		}
 
-		if (declSpec instanceof ICPPASTSimpleDeclSpecifier &&
-				((ICPPASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
-			return createAutoType(declSpec, declarator);
+		if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
+			ICPPASTSimpleDeclSpecifier simpleDeclSpecifier = (ICPPASTSimpleDeclSpecifier) declSpec;
+			int declSpecifierType = simpleDeclSpecifier.getType();
+			if (declSpecifierType == IASTSimpleDeclSpecifier.t_auto) {
+				return createAutoType(declSpec, declarator);
+			} else if (declSpecifierType == IASTSimpleDeclSpecifier.t_decltype_auto) {
+				return createDecltypeAutoType(declarator, simpleDeclSpecifier);
+			}
 		}
 
 		IType type = createType(declSpec);
@@ -2056,6 +2061,35 @@ public class CPPVisitor extends ASTQueries {
 			type= new CPPParameterPackType(type);
 		}
 		return type;
+	}
+
+	private static IType createDecltypeAutoType(IASTDeclarator declarator, ICPPASTSimpleDeclSpecifier simpleDeclSpecifier) {
+		IASTInitializerClause initializerClause = getInitializerClauseForDecltypeAuto(declarator);
+		if (initializerClause instanceof IASTExpression) {
+			return getDeclType((IASTExpression) initializerClause);
+		}
+		return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE);
+	}
+
+	private static IASTInitializerClause getInitializerClauseForDecltypeAuto(IASTDeclarator declarator) {
+		IASTInitializer initializer = declarator.getInitializer();
+		if (initializer == null) {
+			ICPPASTNewExpression newExpression = CPPVisitor.findAncestorWithType(declarator, ICPPASTNewExpression.class);
+			if (newExpression != null) {
+				initializer = newExpression.getInitializer();
+			}
+		}
+		if (initializer instanceof IASTEqualsInitializer) {
+			return ((IASTEqualsInitializer) initializer).getInitializerClause();
+		} else if (initializer instanceof ICPPASTConstructorInitializer) {
+			ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
+			IASTInitializerClause[] arguments = constructorInitializer.getArguments();
+			if (arguments.length == 1) {
+				return arguments[0];
+			}
+		}
+		
+		return null;
 	}
 
 	private static IType createAutoType(final IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
@@ -2281,41 +2315,48 @@ public class CPPVisitor extends ASTQueries {
 	 */
 	private static IType getDeclType(ICPPASTSimpleDeclSpecifier spec) {
 		IASTExpression expr = spec.getDeclTypeExpression();
-		if (expr == null)
+		if (expr == null) {
 			return null;
+		}
+		int specifierType = spec.getType();
+		if (specifierType == IASTSimpleDeclSpecifier.t_decltype || specifierType == IASTSimpleDeclSpecifier.t_decltype_auto) {
+			return getDeclType(expr);
+		}
+		return expr.getExpressionType();
+	}
 
-		if (spec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
-			IASTName namedEntity= null;
-			if (expr instanceof IASTIdExpression) {
-				namedEntity= ((IASTIdExpression) expr).getName();
-			} else if (expr instanceof IASTFieldReference) {
-				namedEntity= ((IASTFieldReference) expr).getFieldName();
+	/**
+	 * Computes the type for an expression in decltype(expr) context.
+	 */
+	private static IType getDeclType(IASTExpression expr) {
+		IASTName namedEntity= null;
+		if (expr instanceof IASTIdExpression) {
+			namedEntity= ((IASTIdExpression) expr).getName();
+		} else if (expr instanceof IASTFieldReference) {
+			namedEntity= ((IASTFieldReference) expr).getFieldName();
+		}
+		if (namedEntity != null) {
+			IBinding b= namedEntity.resolvePreBinding();
+			if (b instanceof IType) {
+				return (IType) b;
 			}
-			if (namedEntity != null) {
-				IBinding b= namedEntity.resolvePreBinding();
-				if (b instanceof IType) {
-					return (IType) b;
-				}
-				if (b instanceof IVariable) {
-					return ((IVariable) b).getType();
-				}
-				if (b instanceof IFunction) {
-					return ((IFunction) b).getType();
-				}
+			if (b instanceof IVariable) {
+				return ((IVariable) b).getType();
+			}
+			if (b instanceof IFunction) {
+				return ((IFunction) b).getType();
 			}
 		}
 		IType type = expr.getExpressionType();
-		if (spec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
-			switch (expr.getValueCategory()) {
-			case XVALUE:
-				type= new CPPReferenceType(type, true);
-				break;
-			case LVALUE:
-				type= new CPPReferenceType(type, false);
-				break;
-			case PRVALUE:
-				break;
-			}
+		switch (expr.getValueCategory()) {
+		case XVALUE:
+			type= new CPPReferenceType(type, true);
+			break;
+		case LVALUE:
+			type= new CPPReferenceType(type, false);
+			break;
+		case PRVALUE:
+			break;
 		}
 		return type;
 	}

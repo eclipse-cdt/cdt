@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Doug Schaefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *	   Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -129,6 +130,12 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @since 5.10
 	 */
 	public static final int t_decimal128 = 17;
+
+	/**
+	 * <code>decltype(auto) c = expression;</code>
+	 * @since 6.1
+	 */
+	public static final int t_decltype_auto = 18;
 
 	/**
 	 * @since 5.1

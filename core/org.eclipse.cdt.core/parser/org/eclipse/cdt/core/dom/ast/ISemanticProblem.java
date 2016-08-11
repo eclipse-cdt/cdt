@@ -43,6 +43,8 @@ public interface ISemanticProblem {
 	int TYPE_NOT_PERSISTED							= 10005;
 	/** @since 5.6 */
 	int TYPE_ENUMERATION_EXPECTED					= 10006;
+	/** @since 6.1 */
+	int TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE		= 10007;
 
 	/**
      * Returns the ID of the problem.

@@ -3032,4 +3032,102 @@ public class CodeFormatterTest extends BaseUITestCase {
 		String expected = before;
 		assertFormatterResult(before, expected);
 	}
+	
+	
+	//int abcde = 100; // line 1 of comment
+	//				 // line 2 of comment
+
+	//int abcde = 100; // line 1 of comment
+	//				 // line 2 of comment
+	public void testLineCommentAsBlocks1a() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE_UP_LINE_COMMENT_IN_BLOCKS_ON_FIRST_COLUMN,
+				DefaultCodeFormatterConstants.TRUE);
+		assertFormatterResult();
+	}
+	
+	//int abcde = 100; // line 1 of comment
+	//				 // line 2 of comment
+
+	//int abcde = 100; // line 1 of comment
+	//// line 2 of comment
+	public void testLineCommentAsBlocks1b() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE_UP_LINE_COMMENT_IN_BLOCKS_ON_FIRST_COLUMN,
+				DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
+
+	//void x() {
+	//	int abcde = 100; // line 1 of comment
+	//					 // line 2 of comment
+	//}
+
+	//void x() {
+	//	int abcde = 100; // line 1 of comment
+	//					 // line 2 of comment
+	//}
+	public void testLineCommentAsBlocks2() throws Exception {
+		assertFormatterResult();
+	}
+
+	//  // line 1 of comment
+	//// line 2 of comment
+
+	//// line 1 of comment
+	//// line 2 of comment
+	public void testLineCommentAsBlocks3() throws Exception {
+		assertFormatterResult();
+	}
+
+	//// line 1 of comment
+	//  // line 2 of comment
+
+	//// line 1 of comment
+	//// line 2 of comment
+	public void testLineCommentAsBlocks4() throws Exception {
+		assertFormatterResult();
+	}
+
+	//  // line 1 of comment
+	//  // line 2 of comment
+
+	//// line 1 of comment
+	//// line 2 of comment
+	public void testLineCommentAsBlocks5() throws Exception {
+		assertFormatterResult();
+	}
+
+	//// line 1 of comment
+	//// line 2 of comment
+
+	//// line 1 of comment
+	//// line 2 of comment
+	public void testLineCommentAsBlocks6() throws Exception {
+		assertFormatterResult();
+	}
+
+	//int abcde = 100; // line 1 of comment
+	//				 // line 2 of comment
+	//
+	//// line 1 of another comment block, delimited by blank line
+
+	//int abcde = 100; // line 1 of comment
+	//				 // line 2 of comment
+	//
+	//// line 1 of another comment block, delimited by blank line
+	public void testLineCommentAsBlocks7() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE_UP_LINE_COMMENT_IN_BLOCKS_ON_FIRST_COLUMN,
+				DefaultCodeFormatterConstants.TRUE);
+		assertFormatterResult();
+	}
+
+	//int main(void) { // line 1 of comment
+	//				 // line 2 of comment
+	//}
+
+	//int main(void) { // line 1 of comment
+	//				 // line 2 of comment
+	//}
+	public void testLineCommentAsBlocks8() throws Exception {
+		assertFormatterResult();
+	}
 }

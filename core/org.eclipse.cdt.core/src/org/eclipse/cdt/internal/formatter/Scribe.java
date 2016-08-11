@@ -1318,7 +1318,7 @@ public class Scribe {
 		// Print comment line indentation
 		int commentIndentationLevel;
 		boolean onFirstColumn = isOnFirstColumn(start);
-		if (indentationLevel == 0) {
+		if (!preferences.comment_line_up_line_comment_in_blocks_on_first_column && indentationLevel == 0) {
 			commentIndentationLevel = column - 1;
 		} else {
 			if (onFirstColumn && preferences.never_indent_line_comments_on_first_column) {

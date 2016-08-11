@@ -72,8 +72,13 @@ public class CommentsTabPage extends FormatterTabPage {
 
 	private final String PREVIEW=
 		createPreviewHeader(FormatterMessages.CommentsTabPage_preview_header) + 
+		"int gVariable = 100;    \t\t// line 1 of comment\n" + //$NON-NLS-1$
+		// needs as many tabs as indent size, consider case when tab indent size is 1
+		"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t// line 2 of comment\n" + //$NON-NLS-1$
+		"\n" + //$NON-NLS-1$
 		"void lineComments() {\n" +  //$NON-NLS-1$
 		"\tprintf(\"%d\\n\", 1234);   \t\t// Integer number\n" +  //$NON-NLS-1$
+		"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t// More here\n" +  //$NON-NLS-1$
 		"\tprintf(\"%.5g\\n\", 12.34);\t\t// Floating point number\n" +  //$NON-NLS-1$
 		"}\n"; //$NON-NLS-1$
 
@@ -96,6 +101,7 @@ public class CommentsTabPage extends FormatterTabPage {
 //		final CheckboxPreference singleLineCommentsOnFirstColumn= createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_format_line_comments_on_first_column, DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT_LINE_COMMENT_STARTING_ON_FIRST_COLUMN, false);
 //		((GridData) singleLineCommentsOnFirstColumn.getControl().getLayoutData()).horizontalIndent= indent;
 		createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_preserve_white_space_before_line_comment, DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT, false);
+		createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_line_up_line_comment_in_blocks_on_first_column, DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE_UP_LINE_COMMENT_IN_BLOCKS_ON_FIRST_COLUMN, false);
 		createNumberPref(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_line_width, DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, 0, 9999);
 //		final CheckboxPreference singleLineComments= createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_enable_line_comment_formatting, DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT_LINE_COMMENT, false);
 //		createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_never_indent_line_comments_on_first_column, DefaultCodeFormatterConstants.FORMATTER_NEVER_INDENT_LINE_COMMENTS_ON_FIRST_COLUMN, false);

@@ -31,7 +31,7 @@ import org.eclipse.text.edits.TextEdit;
 
 /**
  * This class is responsible for dumping formatted source.
- * 
+ *
  * @since 4.0
  */
 public class Scribe {
@@ -50,7 +50,7 @@ public class Scribe {
 	public Alignment currentAlignment;
 	public Alignment memberAlignment;
 	public AlignmentException currentAlignmentException;
-	
+
 	/** @see Alignment#tailFormatter */
 	private Runnable tailFormatter;
 
@@ -227,7 +227,7 @@ public class Scribe {
 
 	/**
 	 * Trims redundant prefix from a replacement edit and, if there is anything left, appends
-	 * the replacement edit to the edits array.   
+	 * the replacement edit to the edits array.
 	 */
 	private void appendOptimizedReplaceEdit(int offset, int length, CharSequence replacement) {
 		int replacementLength = replacement.length();
@@ -239,7 +239,7 @@ public class Scribe {
 		length -= i;
 		if (i > 0) {
 			replacement = i == replacementLength ?
-					 EMPTY_STRING : replacement.subSequence(i, replacementLength);
+					EMPTY_STRING : replacement.subSequence(i, replacementLength);
 		}
 		if (length > 0 || replacement.length() > 0) {
 			edits[editsIndex++]= new OptimizedReplaceEdit(offset, length, replacement);
@@ -552,10 +552,10 @@ public class Scribe {
 				if (currentAlignment != null && !formatBrace) {
 					indentationLevel = currentAlignment.breakIndentationLevel;
 				}
-				
+
 				// Set the flag to indicate that a specific indentation is currently in used
 				preserveLineBreakIndentation = true;
-				
+
 				// Print the computed indentation in the buffer
 				printIndentationIfNecessary(tempBuffer);
 
@@ -1063,7 +1063,7 @@ public class Scribe {
 
 	/**
 	 * Prints comment at the current position.
-	 * 
+	 *
 	 * @return {@code true} if a writespace character was encountered preceding the next token,
 	 */
 	public boolean printComment(int trailing) {
@@ -1178,7 +1178,7 @@ public class Scribe {
 						}
 						scanner.resetTo(currentTokenStartPosition, scannerEndPosition);
 						return hasWhitespace;
-					} 
+					}
 					// If one or several new lines are consumed, following comments
 					// cannot be considered as trailing ones.
 					if (lines >= 1) {
@@ -1308,24 +1308,24 @@ public class Scribe {
 	}
 
 	private void printLineComment() {
-    	int currentTokenStartPosition = scanner.getCurrentTokenStartPosition();
-    	int currentTokenEndPosition = scanner.getCurrentTokenEndPosition() + 1;
-    	scanner.resetTo(currentTokenStartPosition, currentTokenEndPosition);
-    	int currentCharacter;
-    	int start = currentTokenStartPosition;
-    	int nextCharacterStart = currentTokenStartPosition;
+		int currentTokenStartPosition = scanner.getCurrentTokenStartPosition();
+		int currentTokenEndPosition = scanner.getCurrentTokenEndPosition() + 1;
+		scanner.resetTo(currentTokenStartPosition, currentTokenEndPosition);
+		int currentCharacter;
+		int start = currentTokenStartPosition;
+		int nextCharacterStart = currentTokenStartPosition;
 
-    	// Print comment line indentation
-    	int commentIndentationLevel;
-   		boolean onFirstColumn = isOnFirstColumn(start);
-    	if (indentationLevel == 0) {
-    		commentIndentationLevel = column - 1;
-    	} else {
+		// Print comment line indentation
+		int commentIndentationLevel;
+		boolean onFirstColumn = isOnFirstColumn(start);
+		if (indentationLevel == 0) {
+			commentIndentationLevel = column - 1;
+		} else {
 			if (onFirstColumn && preferences.never_indent_line_comments_on_first_column) {
-	   			commentIndentationLevel = column - 1;
-    		} else {
-    			// Indentation may be specific for contiguous comment
-    			// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=293300
+				commentIndentationLevel = column - 1;
+			} else {
+				// Indentation may be specific for contiguous comment
+				// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=293300
 				if (lastLineComment.contiguous) {
 					// The leading spaces have been set while looping in the printComment(int) method
 					int currentCommentIndentation = computeIndentation(lastLineComment.leadingSpaces, 0);
@@ -1344,18 +1344,18 @@ public class Scribe {
 						indentationLevel = lastLineComment.indentation;
 						printIndentationIfNecessary();
 						indentationLevel = currentIndentationLevel;
-			   			commentIndentationLevel = lastLineComment.indentation;
+						commentIndentationLevel = lastLineComment.indentation;
 					} else {
 						printIndentationIfNecessary();
-			   			commentIndentationLevel = column - 1;
+						commentIndentationLevel = column - 1;
 					}
 				} else {
-	    			printIndentationIfNecessary();
-		   			commentIndentationLevel = column - 1;
+					printIndentationIfNecessary();
+					commentIndentationLevel = column - 1;
 				}
-    		}
-    	}
-    	
+			}
+		}
+
 		// Prepare white space before the comment.
 		StringBuilder whitespace = null;
 		if (!lastLineComment.contiguous && commentIndentationLevel != indentationLevel &&
@@ -1374,9 +1374,9 @@ public class Scribe {
 			}
 		}
 
-    	// Store line comment information
+		// Store line comment information
 		lastLineComment.currentIndentation = getIndentationOfOffset(currentTokenStartPosition);
-   		lastLineComment.contiguous = true;
+		lastLineComment.contiguous = true;
 
 		while (true) {
 			Location location = new Location(this, scanner.getCurrentPosition());
@@ -1386,35 +1386,35 @@ public class Scribe {
 			if (whitespace != null) {
 				addInsertEdit(currentTokenStartPosition, whitespace);
 				commentIndent = computeIndentation(whitespace, commentIndentationLevel);
-		    	needSpace = false;
-		    	pendingSpace = false;
+				needSpace = false;
+				pendingSpace = false;
 			}
 			lastLineComment.indentation = commentIndent;
 
-	    	int previousStart = currentTokenStartPosition;
-	
-	    	int indent = commentIndent;
-	    	loop: while (nextCharacterStart <= currentTokenEndPosition &&
-	    			(currentCharacter = scanner.getNextChar()) != -1) {
-	    		nextCharacterStart = scanner.getCurrentPosition();
-	
-	    		switch (currentCharacter) {
+			int previousStart = currentTokenStartPosition;
+
+			int indent = commentIndent;
+			loop: while (nextCharacterStart <= currentTokenEndPosition &&
+					(currentCharacter = scanner.getNextChar()) != -1) {
+				nextCharacterStart = scanner.getCurrentPosition();
+
+				switch (currentCharacter) {
 				case '\r':
 				case '\n':
 					start = previousStart;
 					break loop;
-	    		}
-	    		indent = computeIndentation((char) currentCharacter, indent);
-	    		previousStart = nextCharacterStart;
-	    	}
+				}
+				indent = computeIndentation((char) currentCharacter, indent);
+				previousStart = nextCharacterStart;
+			}
 
-	    	if (start != currentTokenStartPosition) {
-	    		// This means that the line comment doesn't end the file
-	    		addReplaceEdit(start, currentTokenEndPosition - 1, lineSeparator);
-	    		line++;
-	    		column = 1;
-	    		lastNumberOfNewLines = 1;
-	    	}
+			if (start != currentTokenStartPosition) {
+				// This means that the line comment doesn't end the file
+				addReplaceEdit(start, currentTokenEndPosition - 1, lineSeparator);
+				line++;
+				column = 1;
+				lastNumberOfNewLines = 1;
+			}
 			if (!checkLineWrapping || indent <= pageWidth || whitespace == null ||
 					commentIndent - commentIndentationLevel <= preferences.comment_min_distance_between_code_and_line_comment) {
 				break;
@@ -1423,44 +1423,44 @@ public class Scribe {
 			// Maximum line length was exceeded. Try to reduce white space before the comment by
 			// removing the last white space character.
 			whitespace.deleteCharAt(whitespace.length() - 1);
-	    	if (computeIndentation(lastLineComment.leadingSpaces, commentIndentationLevel) - commentIndentationLevel <
-	    			preferences.comment_min_distance_between_code_and_line_comment) {
-	    		// The white space shrank too much. Rebuild it to satisfy the minimum distance
-	    		// requirement.
-	    		whitespace.delete(0, whitespace.length());
-    			for (int i = 0; i < preferences.comment_min_distance_between_code_and_line_comment; i++) {
+			if (computeIndentation(lastLineComment.leadingSpaces, commentIndentationLevel) - commentIndentationLevel <
+					preferences.comment_min_distance_between_code_and_line_comment) {
+				// The white space shrank too much. Rebuild it to satisfy the minimum distance
+				// requirement.
+				whitespace.delete(0, whitespace.length());
+				for (int i = 0; i < preferences.comment_min_distance_between_code_and_line_comment; i++) {
 					whitespace.append(' ');
 				}
-	    	}
-	    	resetAt(location);
+			}
+			resetAt(location);
 			scanner.resetTo(location.inputOffset, scanner.eofPosition);
 		}
 
-    	needSpace = false;
-    	pendingSpace = false;
-    	// realign to the proper value
-    	if (currentAlignment != null) {
-    		if (memberAlignment != null) {
-    			// select the last alignment
-    			if (currentAlignment.location.inputOffset > memberAlignment.location.inputOffset) {
-    				if (currentAlignment.couldBreak() && currentAlignment.wasSplit) {
-    					currentAlignment.performFragmentEffect();
-    				}
-    			} else {
-    				indentationLevel = Math.max(indentationLevel, memberAlignment.breakIndentationLevel);
-    			}
-    		} else if (currentAlignment.couldBreak() && currentAlignment.wasSplit) {
-    			currentAlignment.performFragmentEffect();
-    		}
-    		if (currentAlignment.name.equals(Alignment.BINARY_EXPRESSION) &&
-    				currentAlignment.enclosing != null &&
-    				currentAlignment.enclosing.equals(Alignment.BINARY_EXPRESSION) &&
-    				indentationLevel < currentAlignment.breakIndentationLevel) {
-    			indentationLevel = currentAlignment.breakIndentationLevel;
-    		}
-    	}
-    	scanner.resetTo(currentTokenEndPosition, scannerEndPosition);
-    }
+		needSpace = false;
+		pendingSpace = false;
+		// realign to the proper value
+		if (currentAlignment != null) {
+			if (memberAlignment != null) {
+				// select the last alignment
+				if (currentAlignment.location.inputOffset > memberAlignment.location.inputOffset) {
+					if (currentAlignment.couldBreak() && currentAlignment.wasSplit) {
+						currentAlignment.performFragmentEffect();
+					}
+				} else {
+					indentationLevel = Math.max(indentationLevel, memberAlignment.breakIndentationLevel);
+				}
+			} else if (currentAlignment.couldBreak() && currentAlignment.wasSplit) {
+				currentAlignment.performFragmentEffect();
+			}
+			if (currentAlignment.name.equals(Alignment.BINARY_EXPRESSION) &&
+					currentAlignment.enclosing != null &&
+					currentAlignment.enclosing.equals(Alignment.BINARY_EXPRESSION) &&
+					indentationLevel < currentAlignment.breakIndentationLevel) {
+				indentationLevel = currentAlignment.breakIndentationLevel;
+			}
+		}
+		scanner.resetTo(currentTokenEndPosition, scannerEndPosition);
+	}
 
 	public void printEmptyLines(int linesNumber) {
 		printEmptyLines(linesNumber, scanner.getCurrentTokenEndPosition() + 1);
@@ -1598,7 +1598,7 @@ public class Scribe {
 			// Ensure that the scribe is at the beginning of a new line
 			// only if no specific indentation has been previously set.
 			if (!preserveLineBreakIndentation) {
-				column = 1; 
+				column = 1;
 			}
 			preserveLineBreakIndentation = false;
 			return;
@@ -1918,7 +1918,7 @@ public class Scribe {
 	 * Skips to the next occurrence of the given token type.
 	 * If successful, the next token will be the expected token,
 	 * otherwise the scanner position is left unchanged.
-	 * 
+	 *
 	 * @param expectedTokenType
 	 * @return  <code>true</code> if a matching token was skipped to
 	 */
@@ -1941,7 +1941,7 @@ public class Scribe {
 	 * Searches for the next occurrence of the given token type.
 	 * If successful, returns the offset of the found token, otherwise -1.
 	 * The scanner position is left unchanged.
-	 * 
+	 *
 	 * @param tokenType type of the token to look for
 	 * @return the position of the matching token, if found, otherwise -1.
 	 */
@@ -1953,7 +1953,7 @@ public class Scribe {
 	 * Searches for the next occurrence of the given token type.
 	 * If successful, returns the offset of the found token, otherwise -1.
 	 * The scanner position is left unchanged.
-	 * 
+	 *
 	 * @param tokenType type of the token to look for
 	 * @param endPosition end position limiting the search
 	 * @return the position of the matching token, if found, otherwise -1.
@@ -2023,7 +2023,7 @@ public class Scribe {
 	 * Searches for the next occurrence of the given token type.
 	 * If successful, returns the offset of the found token, otherwise -1.
 	 * The scanner position is left unchanged.
-	 * 
+	 *
 	 * @param tokenType type of the token to look for
 	 * @param startPosition position where to start the search
 	 * @param endPosition end position limiting the search

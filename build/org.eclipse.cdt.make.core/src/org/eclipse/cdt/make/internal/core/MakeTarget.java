@@ -48,8 +48,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	private IContainer container;
 	private int appendEnvironment = USE_PROJECT_ENV_SETTING;
 	private boolean appendProjectEnvironment = true;
-	private Map<String, String> buildEnvironment = new HashMap<String, String>();
-	private final Map<String, String> targetAttributes = new HashMap<String, String>();
+	private Map<String, String> buildEnvironment = new HashMap<>();
+	private final Map<String, String> targetAttributes = new HashMap<>();
 
 	public MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
 		this.manager = manager;
@@ -238,7 +238,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 			env.putAll(getEnvironment());
 		}
 
-		HashMap<String, String> envMap = new HashMap<String, String>(env.entrySet().size());
+		HashMap<String, String> envMap = new HashMap<>(env.entrySet().size());
 		boolean win32 = Platform.getOS().equals(Constants.OS_WIN32);
 		for (Entry<String, String> entry : env.entrySet()) {
 			String key = entry.getKey();
@@ -273,7 +273,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 
 	@Override
 	public void setEnvironment(Map<String, String> env) throws CoreException {
-		buildEnvironment = new HashMap<String, String>(env);
+		buildEnvironment = new HashMap<>(env);
 		manager.updateTarget(this);
 	}
 
@@ -322,7 +322,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	@Override
 	public void build(IProgressMonitor monitor) throws CoreException {
 		final String builderID = manager.getBuilderID(targetBuilderID);
-		final HashMap<String, String> infoMap = new HashMap<String, String>();
+		final HashMap<String, String> infoMap = new HashMap<>();
 
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(infoMap, builderID);
 		info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
@@ -372,14 +372,4 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		}
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter.equals(IProject.class)) {
-			return (T) getProject();
-		} else if (adapter.equals(IResource.class)) {
-			return (T) container;
-		}
-		return super.getAdapter(adapter);
-	}
 }

@@ -208,4 +208,19 @@ public class TelnetConnection implements IRemoteConnectionControlService, IRemot
 	protected void terminated(TelnetCommandShell shell) {
 		shells.remove(shell);
 	}
+
+	@Override
+	public String getPassphrase() {
+		return ""; //$NON-NLS-1$
+	}
+
+	@Override
+	public String getPassword() {
+		return remoteConnection.getSecureAttribute(PASSWORD_ATTR);
+	}
+
+	@Override
+	public boolean usePassword() {
+		return true;
+	}
 }

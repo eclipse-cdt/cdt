@@ -37,7 +37,31 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	 * @return timeout
 	 */
 	int getTimeout();
+	
+	/**
+	 * Get the pass phrase associated with this connection.
+	 * 
+	 * @return pass phrase
+	 * @since 3.0
+	 */
+	String getPassphrase();
+	
+	/**
+	 * Get the password associated with this connection.
+	 * 
+	 * @return password
+	 * @since 3.0
+	 */
+	String getPassword();
 
+	/**
+	 * Get the value of the use password authentication flag. If true, the connection will try using a password first.
+	 * 
+	 * @return use password authentication flag
+	 * @since 3.0
+	 */
+	boolean usePassword();
+	
 	/**
 	 * Obtain the flag that indicates a login shell should be started once the connection is established
 	 * 

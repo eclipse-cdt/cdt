@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.core;
 
-import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,8 +47,6 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.UIKeyboardInteractive;
-import com.jcraft.jsch.UserInfo;
 
 /**
  * @since 5.0
@@ -71,175 +68,6 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	public static final String TIMEOUT_ATTR = "JSCH_TIMEOUT_ATTR"; //$NON-NLS-1$
 	public static final String USE_LOGIN_SHELL_ATTR = "JSCH_USE_LOGIN_SHELL_ATTR"; //$NON-NLS-1$
 	public static final String LOGIN_SHELL_COMMAND_ATTR = "JSCH_LOGIN_SHELL_COMMAND_ATTR"; //$NON-NLS-1$
-
-	/**
-	 * Class to supply credentials from connection attributes without user interaction.
-	 */
-	private class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
-		private boolean firstTryPassphrase = true;
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.UserInfo#getPassphrase()
-		 */
-		@Override
-		public String getPassphrase() {
-			if (logging) {
-				System.out.println("getPassphrase"); //$NON-NLS-1$
-			}
-			return JSchConnection.this.getPassphrase();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.UserInfo#getPassword()
-		 */
-		@Override
-		public String getPassword() {
-			if (logging) {
-				System.out.println("getPassword"); //$NON-NLS-1$
-			}
-			return JSchConnection.this.getPassword();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.UIKeyboardInteractive#promptKeyboardInteractive(java.lang.String, java.lang.String,
-		 * java.lang.String, java.lang.String[], boolean[])
-		 */
-		@Override
-		public String[] promptKeyboardInteractive(String destination, String name, String instruction, String[] prompt,
-				boolean[] echo) {
-			if (logging) {
-				System.out.println("promptKeyboardInteractive:" + destination + ":" + name + ":" + instruction); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-				for (String p : prompt) {
-					System.out.println(" " + p); //$NON-NLS-1$
-				}
-			}
-
-			IUserAuthenticatorService authService = fRemoteConnection.getService(IUserAuthenticatorService.class);
-			if (authService != null) {
-				String[] result = authService.prompt(destination, name, instruction, prompt, echo);
-				if (result != null) {
-					if (prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
-						IRemoteConnectionWorkingCopy wc = fRemoteConnection.getWorkingCopy();
-						wc.setSecureAttribute(PASSWORD_ATTR, result[0]);
-						try {
-							wc.save();
-						} catch (RemoteConnectionException e) {
-							Activator.log(e.getStatus());
-						}
-					}
-				}
-				return result;
-			}
-			return null;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.UserInfo#promptPassphrase(java.lang.String)
-		 */
-		@Override
-		public boolean promptPassphrase(String message) {
-			if (logging) {
-				System.out.println("promptPassphrase:" + message); //$NON-NLS-1$
-			}
-			if (firstTryPassphrase && !getPassphrase().equals("")) { //$NON-NLS-1$
-				firstTryPassphrase = false;
-				return true;
-			}
-			IUserAuthenticatorService authService = fRemoteConnection.getService(IUserAuthenticatorService.class);
-			if (authService != null) {
-				PasswordAuthentication auth = authService.prompt(getUsername(), message);
-				if (auth == null) {
-					return false;
-				}
-				IRemoteConnectionWorkingCopy wc = fRemoteConnection.getWorkingCopy();
-				wc.setAttribute(USERNAME_ATTR, auth.getUserName());
-				wc.setSecureAttribute(PASSPHRASE_ATTR, new String(auth.getPassword()));
-				try {
-					wc.save();
-				} catch (RemoteConnectionException e) {
-					Activator.log(e.getStatus());
-				}
-				return true;
-			}
-			return false;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.UserInfo#promptPassword(java.lang.String)
-		 */
-		@Override
-		public boolean promptPassword(String message) {
-			if (logging) {
-				System.out.println("promptPassword:" + message); //$NON-NLS-1$
-			}
-			IUserAuthenticatorService authService = fRemoteConnection.getService(IUserAuthenticatorService.class);
-			if (authService != null) {
-				PasswordAuthentication auth = authService.prompt(getUsername(), message);
-				if (auth == null) {
-					return false;
-				}
-				IRemoteConnectionWorkingCopy wc = fRemoteConnection.getWorkingCopy();
-				wc.setAttribute(USERNAME_ATTR, auth.getUserName());
-				wc.setSecureAttribute(PASSWORD_ATTR, new String(auth.getPassword()));
-				try {
-					wc.save();
-				} catch (RemoteConnectionException e) {
-					Activator.log(e.getStatus());
-				}
-				return true;
-			}
-			return false;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.UserInfo#promptYesNo(java.lang.String)
-		 */
-		@Override
-		public boolean promptYesNo(String message) {
-			if (logging) {
-				System.out.println("promptYesNo:" + message); //$NON-NLS-1$
-			}
-			IUserAuthenticatorService authService = fRemoteConnection.getService(IUserAuthenticatorService.class);
-			if (authService != null) {
-				int prompt = authService.prompt(IUserAuthenticatorService.QUESTION, Messages.AuthInfo_Authentication_message,
-						message, new int[] { IUserAuthenticatorService.YES, IUserAuthenticatorService.NO },
-						IUserAuthenticatorService.YES);
-				return prompt == IUserAuthenticatorService.YES;
-			}
-			return true;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.UserInfo#showMessage(java.lang.String)
-		 */
-		@Override
-		public void showMessage(String message) {
-			if (logging) {
-				System.out.println("showMessage:" + message); //$NON-NLS-1$
-			}
-			IUserAuthenticatorService authService = fRemoteConnection.getService(IUserAuthenticatorService.class);
-			if (authService != null) {
-				authService.prompt(IUserAuthenticatorService.INFORMATION, Messages.AuthInfo_Authentication_message, message,
-						new int[] { IUserAuthenticatorService.OK }, IUserAuthenticatorService.OK);
-			}
-		}
-	}
-
-	private final boolean logging = false;
 
 	public static final int DEFAULT_PORT = 22;
 	public static final int DEFAULT_TIMEOUT = 0;
@@ -789,7 +617,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 		return hasOpenSession() && isFullySetup;
 	}
 
-	public boolean isPasswordAuth() {
+	public boolean usePassword() {
 		String str = fRemoteConnection.getAttribute(IS_PASSWORD_ATTR);
 		return !str.isEmpty() ? Boolean.parseBoolean(str) : DEFAULT_IS_PASSWORD;
 	}
@@ -925,14 +753,17 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	private Session newSession(IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor progress = SubMonitor.convert(monitor, 10);
 		try {
-			Session session = fJSchService.createSession(getHostname(), getPort(), getUsername());
-			session.setUserInfo(new JSchUserInfo());
-			if (isPasswordAuth()) {
+			IRemoteConnectionWorkingCopy wc = getRemoteConnection().getWorkingCopy();
+			IRemoteConnectionHostService hostService = wc.getService(IRemoteConnectionHostService.class);
+			IUserAuthenticatorService authService = wc.getService(IUserAuthenticatorService.class);
+			Session session = fJSchService.createSession(hostService.getHostname(), hostService.getPort(), hostService.getUsername());
+			session.setUserInfo(new JSchUserInfo(hostService, authService));
+			if (hostService.usePassword()) {
 				session.setConfig("PreferredAuthentications", "password,keyboard-interactive,gssapi-with-mic,publickey"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				session.setConfig("PreferredAuthentications", "publickey,gssapi-with-mic,password,keyboard-interactive"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			String password = getPassword();
+			String password = hostService.getPassword();
 			if (!password.isEmpty()) {
 				session.setPassword(password);
 			}
@@ -948,11 +779,12 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 					session.connect(getTimeout() * 1000); // the fJSchService doesn't pass the timeout correctly
 				}
 			}
-			if (!progress.isCanceled()) {
-				fSessions.add(session);
-				return session;
+			if (progress.isCanceled()) {
+				return null;
 			}
-			return null;
+			wc.save();
+			fSessions.add(session);
+			return session;
 		} catch (OperationCanceledException e) {
 			throw new RemoteConnectionException(Messages.JSchConnection_0);
 		} catch (JSchException e) {

@@ -47,11 +47,15 @@ public class CopyTargetAction extends SelectionListenerAction {
 	/**
 	 * Constructor setting internal private fields and initializing the action.
 	 *
-	 * @param shell - the shell in which to show any dialogs.
-	 * @param clipboard - system clipboard.
-	 * @param pasteAction -associated paste action. May be {@code null}.
+	 * @param shell
+	 *            - the shell in which to show any dialogs.
+	 * @param clipboard
+	 *            - system clipboard.
+	 * @param pasteAction
+	 *            -associated paste action. May be {@code null}.
+	 * @since 7.3
 	 */
-	protected CopyTargetAction(Shell shell, Clipboard clipboard, PasteTargetAction pasteAction) {
+	public CopyTargetAction(Shell shell, Clipboard clipboard, PasteTargetAction pasteAction) {
 		super(MakeUIPlugin.getResourceString("CopyTargetAction.label")); //$NON-NLS-1$
 		this.shell = shell;
 		this.clipboard = clipboard;

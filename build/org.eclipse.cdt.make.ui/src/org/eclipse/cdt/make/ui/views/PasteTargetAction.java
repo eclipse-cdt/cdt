@@ -49,10 +49,13 @@ public class PasteTargetAction extends SelectionListenerAction {
 	/**
 	 * Constructor setting internal private fields and initializing the action.
 	 *
-	 * @param shell - the shell in which to show any dialogs.
-	 * @param clipboard - system clipboard.
+	 * @param shell
+	 *            - the shell in which to show any dialogs.
+	 * @param clipboard
+	 *            - system clipboard.
+	 * @since 7.3
 	 */
-	protected PasteTargetAction(Shell shell, Clipboard clipboard) {
+	public PasteTargetAction(Shell shell, Clipboard clipboard) {
 		super(MakeUIPlugin.getResourceString("PasteTargetAction.label")); //$NON-NLS-1$
 		this.shell = shell;
 		this.clipboard = clipboard;

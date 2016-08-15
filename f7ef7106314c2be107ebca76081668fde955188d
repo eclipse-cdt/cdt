@@ -16,6 +16,23 @@
       "revId": "f7ef7106314c2be107ebca76081668fde955188d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_77ed0300",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-08-15T14:40:42Z",
+      "side": 1,
+      "message": "Good point about calling destroy().  Done.\nAs for the monitor jobs, we have two of them.  The first is the one we are modifying now, which waits 30 seconds\nand if GDB was not launched as we expect, it times out and cleans up.\nThe other is the MonitorJob, but that one monitors GDB _after_ it was successfully started for our scenario.\nSo, I think the 30 second timeout job needs to properly cleanup when GDB is not properly started.\n\nTo test the situation of starting GDB but not getting the prompt and not cleaning up properly, what I did was\nchange the launch parameters in getGDBCommandLineArray() to be\n\t\tString cmd \u003d getGDBPath().toOSString() + \" -ex \\\\\\\"set prompt badprompt\\\\\\\"\";\t\nGDB will launch but we\u0027ll hang waiting for the (gdb) prompt.\nAfter 30 seconds, the above job will trigger and cleanup.\nBut if you do a ps -ef|grep gdb, you will see that we weren\u0027t kill GDB before this patch.",
+      "revId": "f7ef7106314c2be107ebca76081668fde955188d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_c6dc6706",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsole.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-16T15:04:38Z",
+      "side": 1,
+      "message": "moving this method above computeName() would make the code flow better (i.e. if one follows the calls from the constructor, it would be in the correct order)",
+      "revId": "7343814e7391431ad8a3683283ec7d7cdd0b59cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_d1550249",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleManager.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-16T15:04:38Z",
+      "side": 1,
+      "message": "missing \u0027.\u0027 to finish sentence",
+      "revId": "7343814e7391431ad8a3683283ec7d7cdd0b59cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_cd79e2e8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-16T15:04:38Z",
+      "side": 1,
+      "message": "overriden -\u003e overridden\n\"an\" -\u003e \"a\"",
+      "revId": "7343814e7391431ad8a3683283ec7d7cdd0b59cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_88bb58b9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend_7_12.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-16T15:04:38Z",
+      "side": 1,
+      "message": "add -\u003e add to",
+      "revId": "7343814e7391431ad8a3683283ec7d7cdd0b59cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_a6a693c0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend_7_12.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-16T15:04:38Z",
+      "side": 1,
+      "message": "Replace \"The below\" by \"This\"?",
+      "revId": "7343814e7391431ad8a3683283ec7d7cdd0b59cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

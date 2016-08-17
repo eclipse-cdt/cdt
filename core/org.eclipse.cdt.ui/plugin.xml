@@ -2289,25 +2289,25 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"      
-            sequence="CTRL+SHIFT+ARROW_UP"
+            sequence="CTRL+SHIFT+PAGE_UP"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.enclosing"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"      
-            sequence="CTRL+SHIFT+ARROW_RIGHT"
+            sequence="CTRL+SHIFT+END"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.next"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"      
-            sequence="CTRL+SHIFT+ARROW_LEFT"
+            sequence="CTRL+SHIFT+HOME"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.previous"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"      
-            sequence="CTRL+SHIFT+ARROW_DOWN"
+            sequence="CTRL+SHIFT+PAGE_DOWN"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.last"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            

@@ -21,6 +21,7 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -34,6 +35,8 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
@@ -257,6 +260,17 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
     @DsfServiceEventHandler
     public void eventDispatched_7_1(IStartedDMEvent e) {
        	fCommandForCoresCache.reset();
+       	
+       	if (e.getDMContext() instanceof IContainerDMContext) {
+			IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+			if (runControl != null && runControl.getRunMode() == MIRunMode.ALL_STOP) {
+				// When a process starts in all-stop, GDB is not available until we receive
+				// a *stopped event.  Mark the caches unavailable right away because waiting
+				// for the *running event may take too long and requests to this service could
+				// arrive and find the caches mistakenly still available 
+				fCommandForCoresCache.setContextAvailable(e.getDMContext(), false);
+			}
+       	}
 	}
     
     // Event handler when a thread or a threadGroup exits, core allocation

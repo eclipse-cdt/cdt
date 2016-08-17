@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,12 +30,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
@@ -79,6 +82,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -95,10 +99,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.osgi.framework.BundleContext;
@@ -588,6 +594,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	// be running at the time.  Bug 303503
     private Map<String, String> fDebuggedProcessesAndNames = new HashMap<>();
 
+    private Map<String, PTY> fGroupIdToPTYMap = new HashMap<>();
+    private List<String> fExitedGroupId = new ArrayList<>();
+
    /**
     * Information about an exited process
     * @since 4.7
@@ -665,14 +674,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
      */  
     private boolean fInitialProcess = true;
     
-    /**
-     * Keeps track of the fact that we are restarting a process or not.
-     * This is important so that we know if we should automatically terminate
-     * GDB or not.  If the process is being restarted, we have to make sure
-     * not to kill GDB.
-     */
-    private boolean fProcRestarting;
-
     public GDBProcesses_7_0(DsfSession session) {
     	super(session);
     }
@@ -1680,8 +1681,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	/** @since 4.0 */
 	@Override
 	public void restart(IContainerDMContext containerDmc, final Map<String, Object> attributes, final DataRequestMonitor<IContainerDMContext> rm) {
-		fProcRestarting = true;
-		
 		// Before performing the restart, check if the process is properly suspended.
 		// For such a case, we usually use IMIRunControl.isTargetAcceptingCommands().
 		// However, in non-stop, although the target is accepting command, a restart
@@ -1708,11 +1707,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				startOrRestart(newContainerDmc, attributes, true, new ImmediateDataRequestMonitor<IContainerDMContext>(rm) {
 					@Override
 					protected void handleCompleted() {
-						if (!isSuccess()) {
-							fProcRestarting = false;
-						}
-
 						// In case the process we restarted was already exited, remove it from our list
+						// We do this here for GDB 7.1, because we know the proper groupId here which
+						// will change when the new restarted process will start.  For GDB >= 7.2
+						// the groupId is fixed so we don't have to do this right away, but it won't hurt.
 						getExitedProcesses().remove(groupId);
 						
 						setData(getData());
@@ -1757,11 +1755,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		return new StartOrRestartProcessSequence_7_0(executor, containerDmc, attributes, restart, rm);
 	}
 	
-	
 	/**
 	 * Removes the process with the specified groupId from the launch.
 	 */
-	private void removeProcessFromLaunch(String groupId) {
+	private String removeProcessFromLaunch(String groupId) {
 		ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
 		IProcess[] launchProcesses = launch.getProcesses();
 		for (IProcess process : launchProcesses) {
@@ -1774,11 +1771,58 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				if (groupAttribute == null || groupAttribute.equals(MIProcesses.UNIQUE_GROUP_ID) ||
 						groupAttribute.equals(groupId)) {			        					
 					launch.removeProcess(process);
-					break;
+					return process.getLabel();
 				}
 			}
 		}
+		return null;
 	}
+
+	/**
+	 * Add the specified process to the launch.
+	 */
+	private void addProcessToLaunch(Process inferior, String groupId, String label) {
+		// Add the inferior to the launch.  
+		// This cannot be done on the executor or things deadlock.
+		DebugPlugin.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				// Add the inferior
+				// Need to go through DebugPlugin.newProcess so that we can use 
+				// the overrideable process factory to allow others to override.
+				// First set attribute to specify we want to create an inferior process.
+				// Bug 210366
+				ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
+				Map<String, String> attributes = new HashMap<String, String>();
+				attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR, 
+						IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
+				IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label != null ? label : "", attributes); //$NON-NLS-1$
+				// Now set the inferior groupId
+				runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
+			}
+		});
+	}
+	
+    /**
+	 * @since 5.1
+	 */
+	@Override
+	public void createConsole(IContainerDMContext containerDmc, String label, PTY pty, RequestMonitor rm) {
+		if (containerDmc instanceof IMIContainerDMContext) {
+			String groupId = ((IMIContainerDMContext)containerDmc).getGroupId();
+			// Create an MIInferiorProcess to track the new instance of the process,
+			// remove the old one from the launch, and add the new one to the launch.
+			Process inferiorProcess;
+			if (pty == null) {
+				inferiorProcess = createInferiorProcess(containerDmc, fBackend.getMIOutputStream());
+			} else {
+				fGroupIdToPTYMap.put(groupId, pty);
+				inferiorProcess = createInferiorProcess(containerDmc, pty);
+			}
+			addProcessToLaunch(inferiorProcess, groupId, label);
+		}
+		rm.done();
+    }
 
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadGroupCreatedEvent e) {
@@ -1807,6 +1851,20 @@ public class GDBProcesses_7_0 extends AbstractDsfService
        	}
     }
 
+	/** @since 5.1*/
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, OutputStream outputStream) {
+		return new MIInferiorProcess(container, outputStream);
+	}
+
+	/** @since 5.1*/
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, PTY pty) {
+		return new MIInferiorProcess(container, pty);
+	}
+
+    private void handleRestartingProcess(IMIContainerDMContext containerDmc) {
+		String label = removeProcessFromLaunch(containerDmc.getGroupId());
+		createConsole(containerDmc, label, fGroupIdToPTYMap.get(containerDmc.getGroupId()), new ImmediateRequestMonitor());
+    }
 
     @DsfServiceEventHandler
     public void eventDispatched(ISuspendedDMEvent e) {
@@ -1836,10 +1894,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     // Event handler when a thread or threadGroup starts
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
-    	if (e instanceof ContainerStartedDMEvent) {
+    	if (e.getDMContext() instanceof IMIContainerDMContext) {
+    		String groupId = ((IMIContainerDMContext)e.getDMContext()).getGroupId();
+			if (fExitedGroupId.remove(groupId)) {
+    			// The process in question is restarting.
+				handleRestartingProcess((IMIContainerDMContext)e.getDMContext());
+    		}
+
     		fContainerCommandCache.reset();
     		fNumConnected++;
-    		fProcRestarting = false;
     	} else {
     		fThreadCommandCache.reset();
     	}
@@ -1848,30 +1911,39 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     // Event handler when a thread or a threadGroup exits
     @DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
-    	if (e instanceof ContainerExitedDMEvent) {
+    	if (e.getDMContext() instanceof IMIContainerDMContext) {
+    		fExitedGroupId.add(((IMIContainerDMContext)e.getDMContext()).getGroupId());
+    		
     		fContainerCommandCache.reset();
     		
     		assert fNumConnected > 0;
     		fNumConnected--;
     		
-    		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
-    				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
-    				true, null)) {
-    			if (fNumConnected == 0 && !fProcRestarting) {
-    				// If the last process we are debugging finishes, and we are not restarting it, 
-    				// let's terminate GDB.
-    				// We also do this for a remote attach session, since the 'auto terminate' preference
-    				// is enabled.  If users want to keep the session alive to attach to another process,
-    				// they can simply disable that preference
-    				fCommandControl.terminate(new ImmediateRequestMonitor());
-    			}
+    		if (fNumConnected == 0 && 
+    				Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+    						IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
+    						true, null)) {
+    			// If the last process we are debugging finishes and does not restart 
+    			// let's terminate GDB.  We wait a small delay to see if the process will restart.
+    			// We also do this for a remote attach session, since the 'auto terminate' preference
+    			// is enabled.  If users want to keep the session alive to attach to another process,
+    			// they can simply disable that preference
+    			getExecutor().schedule(new DsfRunnable() {
+    				@Override
+    				public void run() {
+    					// Verify the process didn't restart by checking if we have a new one connected
+    					if (fNumConnected == 0) {
+    						fCommandControl.terminate(new ImmediateRequestMonitor());
+    					}
+    				}
+    			}, 500, TimeUnit.MILLISECONDS);    	
     		}
     	} else {
     		fThreadCommandCache.reset();
     	}
     }
-
-	@Override
+    
+    @Override
 	public void flushCache(IDMContext context) {
 		fContainerCommandCache.reset(context);
 		fThreadCommandCache.reset(context);
@@ -1944,6 +2016,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				}
 
     				if (groupId != null) {
+						// In case the process that just started was already exited (so we are dealing
+					    // with a restart), remove it from our list
+					    // Do this here to handle the restart case triggered by GDB itself
+						// (user typing 'run' from the GDB console).  In this case, we don't know yet
+						// we are dealing with a restart, but when we see the process come back, we
+						// know to remove it from the exited list.  Note that this won't work
+						// for GDB 7.1 because the groupId of the new process is not the same as the old
+						// one.  Not worth fixing for such an old version.
+						getExitedProcesses().remove(groupId);
+
     					getGroupToPidMap().put(groupId, pId);
 
     					// Mark that we know this new process, but don't fetch its
@@ -1969,8 +2051,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     					// GDB is no longer debugging this process.  Remove it from our list
     					String name = fDebuggedProcessesAndNames.remove(pId);
-    					if (!fProcRestarting && !getDetachedProcesses().remove(groupId)) {
-    						// If the process is not restarting and was not detached, 
+    					if (!getDetachedProcesses().remove(groupId)) {
+    						// If the process was not detached, 
     						// store it in the list of exited processes.
     						getExitedProcesses().put(groupId, new ExitedProcInfo(pId, name));
     					}

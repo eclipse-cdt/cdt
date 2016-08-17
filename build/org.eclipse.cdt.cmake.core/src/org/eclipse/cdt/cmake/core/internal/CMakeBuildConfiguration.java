@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
@@ -60,15 +61,15 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				watchProcess(process, new IConsoleParser[0], console);
 			}
 
-			// TODO need to figure out which builder to call. Hardcoding to make
-			// for now.
-			List<String> command = Arrays.asList("make"); //$NON-NLS-1$
-			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
-			Process process = processBuilder.start();
-			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-			
-			// TODO error parsers
-			watchProcess(process, new IConsoleParser[0], console);
+			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
+					getToolChain().getErrorParserIds())) {
+				// TODO need to figure out which builder to call. Hardcoding to make for now.
+				List<String> command = Arrays.asList("make"); //$NON-NLS-1$
+				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
+				Process process = processBuilder.start();
+				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
+				watchProcess(process, new IConsoleParser[] { epm }, console);
+			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			return new IProject[] { project };
@@ -79,8 +80,33 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	
 	@Override
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
-		
+		IProject project = getProject();
+		try {
+			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+
+			ConsoleOutputStream outStream = console.getOutputStream();
+
+			Path buildDir = getBuildDirectory();
+
+			if (!Files.exists(buildDir.resolve("Makefile"))) { //$NON-NLS-1$
+				outStream.write("Makefile not found. Assuming clean");
+				return;
+			}
+
+			// TODO need to figure out which builder to call. Hardcoding to make
+			// for now.
+			List<String> command = Arrays.asList("make", "clean"); //$NON-NLS-1$
+			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
+			Process process = processBuilder.start();
+			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
+
+			// TODO error parsers
+			watchProcess(process, new IConsoleParser[0], console);
+
+			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		} catch (IOException e) {
+			throw new CoreException(Activator.errorStatus(String.format("Cleaning %s", project.getName()), e));
+		}
 	}
 
 	@Override

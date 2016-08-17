@@ -274,39 +274,40 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 				return null;
 			}
 
-			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
-					getToolChain().getErrorParserIds())) {
-				Path buildDir = getBuildDirectory();
-				if (!buildDir.resolve("Makefile").toFile().exists()) { //$NON-NLS-1$
-					// Need to run qmake
-					List<String> command = new ArrayList<>();
-					command.add(getQmakeCommand().toString());
+			Path buildDir = getBuildDirectory();
 
-					String[] config = getQmakeConfig();
-					if (config != null) {
-						for (String str : config) {
-							command.add(str);
-						}
+			if (!buildDir.resolve("Makefile").toFile().exists()) { //$NON-NLS-1$
+				// Need to run qmake
+				List<String> command = new ArrayList<>();
+				command.add(getQmakeCommand().toString());
+
+				String[] config = getQmakeConfig();
+				if (config != null) {
+					for (String str : config) {
+						command.add(str);
 					}
-
-					IFile projectFile = project.getFile(project.getName() + ".pro"); //$NON-NLS-1$
-					command.add(projectFile.getLocation().toOSString());
-
-					ProcessBuilder processBuilder = new ProcessBuilder(command).directory(getBuildDirectory().toFile());
-					setBuildEnvironment(processBuilder.environment());
-					Process process = processBuilder.start();
-
-					StringBuffer msg = new StringBuffer();
-					for (String arg : command) {
-						msg.append(arg).append(' ');
-					}
-					msg.append('\n');
-					outStream.write(msg.toString());
-
-					// TODO qmake error parser
-					watchProcess(process, new IConsoleParser[0], console);
 				}
 
+				IFile projectFile = project.getFile(project.getName() + ".pro"); //$NON-NLS-1$
+				command.add(projectFile.getLocation().toOSString());
+
+				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(getBuildDirectory().toFile());
+				setBuildEnvironment(processBuilder.environment());
+				Process process = processBuilder.start();
+
+				StringBuffer msg = new StringBuffer();
+				for (String arg : command) {
+					msg.append(arg).append(' ');
+				}
+				msg.append('\n');
+				outStream.write(msg.toString());
+
+				// TODO qmake error parser
+				watchProcess(process, new IConsoleParser[0], console);
+			}
+
+			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
+					getToolChain().getErrorParserIds())) {
 				// run make
 				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString(), "all").directory(buildDir.toFile());
 				setBuildEnvironment(processBuilder.environment());

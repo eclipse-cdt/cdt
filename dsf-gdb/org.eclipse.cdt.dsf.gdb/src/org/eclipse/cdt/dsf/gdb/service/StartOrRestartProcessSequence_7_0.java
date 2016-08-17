@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -31,14 +32,11 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
-import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
@@ -46,12 +44,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.cdt.utils.pty.PersistentPTY;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IProcess;
 
 /**
  * This class causes a process to start (run for the first time), or to
@@ -262,8 +258,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
     /**
      * This method does the necessary work to setup the input/output streams for the
      * inferior process, by either preparing the PTY to be used, or by simply leaving
-     * the PTY null, which indicates that the input/output streams of the CLI should
-     * be used instead; this decision is based on the type of session.
+     * the PTY null, which indicates that the input/output streams are handled externally;
+     * this decision is based on the type of session.
      */
 	@Execute
     public void stepInitializeInputOutput(final RequestMonitor rm) {
@@ -273,10 +269,21 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
     		fPty = null;
     		rm.done();
     	} else {
+    		if (fRestart) {
+    			// For a restart we re-use the previous PersistentPTY
+    			rm.done();
+    			return;
+    		}
+    		
     		// Every other type of session that can get to this code, is starting a new process
     		// and requires a pty for it.
     		try {
-    			fPty = new PTY();
+    			// Use a PersistentPTY so it can be re-used for restarts.
+    			// It is possible that the inferior will be restarted by the user from
+    			// the GDB console, in which case, we are not able to create a new PTY
+    			// for it; using a persistentPTY allows this to work since the persistentPTY
+    			// does not need to be replaced but can continue to be used.
+    			fPty = new PersistentPTY();
 				fPty.validateSlaveName();
 
     			// Tell GDB to use this PTY
@@ -298,12 +305,20 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
     	}
     }
 	
-	/** @since 4.7 */
+	/** 
+	 * @since 4.7 
+	 * @deprecated The creation of MIInferiorProcess has been moved to the IGDBProcesses service
+	 */
+	@Deprecated
 	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, OutputStream outputStream) {
 		return new MIInferiorProcess(container, outputStream);
 	}
 
-	/** @since 4.7 */
+	/** 
+	 * @since 4.7 
+	 * @deprecated The creation of MIInferiorProcess has been moved to the IGDBProcesses service
+	 */
+	@Deprecated
 	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, PTY pty) {
 		return new MIInferiorProcess(container, pty);
 	}
@@ -312,29 +327,23 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	 * Before running the program, we must create its console for IO.
 	 */
 	@Execute
-	public void stepCreateConsole(final RequestMonitor rm) {
+	public void stepCreateConsole(RequestMonitor rm) {
     	if (fBackend.getSessionType() == SessionType.REMOTE) {
     		// The program output for a remote session is handled by gdbserver. Therefore,
     		// no need to create an inferior process and add it to the launch.
     		rm.done();
     		return;
     	}
-    	
-		Process inferiorProcess;
-		if (fPty == null) {
-			inferiorProcess = createInferiorProcess(fContainerDmc, fBackend.getMIOutputStream());
-		} else {
-			inferiorProcess = createInferiorProcess(fContainerDmc, fPty);
+
+		if (fRestart) {
+			// For a restart, the IGDBProcesses service already handles creating the new
+			// console.  We do it this way because a restart can be triggered by the user
+			// on the GDB console, so this class isn't even called in that case.
+			rm.done();
+			return;
 		}
 
-		final Process inferior = inferiorProcess;
-		final ILaunch launch = getContainerContext().getAdapter(ILaunch.class);
-
-		// This is the groupId of the new process that will be started, even in the
-		// case of a restart.
-		final String groupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
-
-		// For multi-process, we cannot simply use the name given by the backend service
+    	// For multi-process, we cannot simply use the name given by the backend service
 		// because we may not be starting that process, but another one.
 		// Instead, we can look in the attributes for the binary name, which we stored
 		// there for this case, specifically.
@@ -350,46 +359,11 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 						defaultPathName);
 		final String pathLabel = new Path(progPathName).lastSegment();    			 
 
-		// Add the inferior to the launch.  
-		// This cannot be done on the executor or things deadlock.
-		DebugPlugin.getDefault().asyncExec(new Runnable() {
+		fProcService.createConsole(fContainerDmc, pathLabel, fPty, new ImmediateRequestMonitor() {
 			@Override
-			public void run() {
-				String label = pathLabel;
-
-				if (fRestart) {
-					// For a restart, remove the old inferior
-					IProcess[] launchProcesses = launch.getProcesses();
-					for (IProcess process : launchProcesses) {
-						if (process instanceof InferiorRuntimeProcess) {
-							String groupAttribute = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
-
-							// if the groupAttribute is not set in the process we know we are dealing
-							// with single process debugging so the one process is the one we want.
-							// If the groupAttribute is set, then we must make sure it is the proper inferior
-							if (groupAttribute == null || groupAttribute.equals(MIProcesses.UNIQUE_GROUP_ID) ||
-									groupAttribute.equals(groupId)) {			        					
-								launch.removeProcess(process);
-								// Use the exact same label as before
-								label = process.getLabel();
-								break;
-							}
-						}
-					}
-				}
-
-				// Add the inferior
-				// Need to go through DebugPlugin.newProcess so that we can use 
-				// the overrideable process factory to allow others to override.
-				// First set attribute to specify we want to create an inferior process.
-				// Bug 210366
-				Map<String, String> attributes = new HashMap<String, String>();
-			    attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR, 
-			    		       IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
-			    IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);
-			    // Now set the inferior groupId
-				runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
-
+			protected void handleCompleted() {
+				// Accept errors.  The console won't be created but the rest will mostly work
+				// This can especially happen if extenders did not implement IGDBProcesses.createConsole()
 				rm.done();
 			}
 		});

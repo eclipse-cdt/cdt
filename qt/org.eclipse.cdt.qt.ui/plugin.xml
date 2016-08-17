@@ -36,18 +36,6 @@
         </completionProposalComputer>
     </extension>
     <extension
-          point="org.eclipse.ui.newWizards">
-       <wizard
-             category="org.eclipse.cdt.ui.newCWizards"
-             class="org.eclipse.cdt.internal.qt.ui.wizards.NewQtProjectWizard"
-             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-             icon="icons/qt16.png"
-             id="org.eclipse.cdt.qt.ui.newProject"
-             name="%newProject.name"
-             project="true">
-       </wizard>
-    </extension>
-    <extension
           point="org.eclipse.ui.editors">
        <editor
              class="org.eclipse.cdt.internal.qt.ui.editor.QMLEditor"

@@ -15,12 +15,18 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public interface IGDBProcesses extends IMIProcesses {
 	
@@ -127,4 +133,17 @@ public interface IGDBProcesses extends IMIProcesses {
      */    
     void attachDebuggerToProcess(IProcessDMContext procCtx, String file, DataRequestMonitor<IDMContext> rm);
 
+	/**
+     * Adds a process representing the inferior to the launch.  An I/O console will be created if necessary.
+     *
+     * @param containerDmc The inferior for which a a process will be added to the launch.
+     * @param label The name to use for the console if created.
+     * @param pty The PTY to be used by the console for I/O
+     * @param rm The requestMonitor that indicates that the request has been completed.
+     * 
+	 * @since 5.2
+	 */
+	default void addInferiorToLaunch(IContainerDMContext containerDmc, String label, PTY pty, RequestMonitor rm)	{
+		rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
+	}
 }

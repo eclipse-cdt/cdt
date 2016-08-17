@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
@@ -27,6 +29,7 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
@@ -34,6 +37,7 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
@@ -42,6 +46,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -57,7 +62,11 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
 
 /**
  * This Process implementation tracks one of the inferiors that is being debugged 
@@ -91,6 +100,7 @@ public class MIInferiorProcess extends Process
 
     private final IMICommandControl fCommandControl;
     private CommandFactory fCommandFactory;
+    private IProcesses fProcesses;
 
     private IContainerDMContext fContainerDMContext;
     
@@ -110,6 +120,8 @@ public class MIInferiorProcess extends Process
      * value is 0, the inferior process writes the target output. 
      */
     private int fSuppressTargetOutputCounter = 0;
+    
+    private IProcess fRuntimeInferior;
 
     @ThreadSafe
     Integer fExitCode = null;
@@ -171,6 +183,7 @@ public class MIInferiorProcess extends Process
         
         DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
         fCommandControl = tracker.getService(IMICommandControl.class);
+        fProcesses = tracker.getService(IProcesses.class);
         tracker.dispose();
         
        	fCommandFactory = fCommandControl.getCommandFactory();
@@ -416,6 +429,42 @@ public class MIInferiorProcess extends Process
         return fErrorStreamPiped;
     }
     
+	private void addInferiorToLaunch(String label) {
+    	if (fContainerDMContext instanceof IMIContainerDMContext) {
+
+    		ILaunch launch = fContainerDMContext.getAdapter(ILaunch.class);
+
+    		String groupId = ((IMIContainerDMContext)fContainerDMContext).getGroupId();
+
+    		// Add the inferior to the launch.  
+    		// This cannot be done on the executor or things deadlock.
+    		DebugPlugin.getDefault().asyncExec(new Runnable() {
+    			@Override
+    			public void run() {
+    				// Add the inferior
+    				// Need to go through DebugPlugin.newProcess so that we can use 
+    				// the overrideable process factory to allow others to override.
+    				// First set attribute to specify we want to create an inferior process.
+    				// Bug 210366
+    				Map<String, String> attributes = new HashMap<String, String>();
+    				attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR, 
+    						IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
+    				fRuntimeInferior = DebugPlugin.newProcess(launch, MIInferiorProcess.this, label, attributes);
+    				// Now set the inferior groupId
+    				fRuntimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
+    			}
+    		});
+    	}
+	}
+
+	/**
+	 * Removes the process with the specified groupId from the launch.
+	 */
+	private void removeInferiorFromLaunch() {
+		ILaunch launch = fContainerDMContext.getAdapter(ILaunch.class);
+		launch.removeProcess(fRuntimeInferior);
+	}
+
 	@Override
     public void eventReceived(Object output) {
         for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
@@ -457,6 +506,20 @@ public class MIInferiorProcess extends Process
         }
     }
 
+	private boolean isCorrectGroupId(String groupId) {
+		String inferiorGroup = ((IMIContainerDMContext)fContainerDMContext).getGroupId();
+		if (inferiorGroup == null || inferiorGroup.length() == 0) {
+			// Single process case
+			return true;
+		}
+
+		if (inferiorGroup.equals(groupId)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
     /**
 	 * @since 4.0
 	 */
@@ -477,7 +540,10 @@ public class MIInferiorProcess extends Process
     	}
     }
     
-    /** @since 4.2 */
+    /** 
+     * @since 4.2
+     * @deprecated Replaced by eventDispatched(IExitedDMEvent) */
+    @Deprecated
     @DsfServiceEventHandler
     public void eventDispatched(MIThreadGroupExitedEvent e) {
     }
@@ -488,28 +554,36 @@ public class MIInferiorProcess extends Process
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
     	if (e.getDMContext() instanceof IMIContainerDMContext) {
-    		// Mark the inferior started if the event is for this inferior.
-    		// We may get other started events in the cases of a restarts
-    		if (!fStarted) {
-    			// For multi-process, make sure the started event
-    			// is actually for this inferior.
-    			// We must compare the groupId and not the full context
-    			// because the container that we currently hold is incomplete
-    			// because the pid was not determined yet.
-    			String inferiorGroup = ((IMIContainerDMContext)fContainerDMContext).getGroupId();
-
-    			if (inferiorGroup == null || inferiorGroup.length() == 0) {
-    				// Single process case, so we know we have started
+    		// For multi-process, make sure the started event
+    		// is actually for this inferior.
+    		// We must compare the groupId and not the full context
+    		// because the container that we currently hold is incomplete
+    		// because the pid was not determined yet.
+     		if (isCorrectGroupId(((IMIContainerDMContext)e.getDMContext()).getGroupId())) {
+    			if (!fStarted) {
     				fStarted = true;
     				// Store the fully-formed container
     				fContainerDMContext = (IMIContainerDMContext)e.getDMContext();
+
+    				IProcessDMContext processDMContext = DMContexts.getAncestorOfType(fContainerDMContext,IProcessDMContext.class);
+    				// The inferior is starting or restarting.  This instance needs
+    				// to add itself to the launch.
+    				fProcesses.getExecutionData(processDMContext, new ImmediateDataRequestMonitor<IThreadDMData>() {
+    					@Override
+    					protected void handleCompleted() {
+    						String label;
+    						if (isSuccess() && getData() != null) {
+    							label = new Path(getData().getName()).lastSegment();
+    						} else {
+    							label = "console (" + ((IMIContainerDMContext)fContainerDMContext).getGroupId() + ")";  //$NON-NLS-1$//$NON-NLS-2$
+    						}
+    						addInferiorToLaunch(label);
+    					}
+    				});
     			} else {
-    				String startedGroup = ((IMIContainerDMContext)e.getDMContext()).getGroupId();
-    				if (inferiorGroup.equals(startedGroup)) {
-    					fStarted = true;
-        				// Store the fully-formed container
-        				fContainerDMContext = (IMIContainerDMContext)e.getDMContext();
-    				}
+    				// The inferior is restarting.  This instance needs
+    				// to be removed from the launch, while the new instance will add itself
+    				removeInferiorFromLaunch();    	    				
     			}
     		}
     	}

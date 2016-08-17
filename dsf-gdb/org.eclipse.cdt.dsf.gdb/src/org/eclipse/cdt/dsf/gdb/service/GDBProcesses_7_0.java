@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,12 +31,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
@@ -79,6 +83,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -95,6 +100,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -1757,7 +1763,70 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		return new StartOrRestartProcessSequence_7_0(executor, containerDmc, attributes, restart, rm);
 	}
 	
-	
+    /**
+	 * @since 5.1
+	 */
+	@Override
+	public void initializeInferior(IContainerDMContext containerDmc, RequestMonitor rm) {
+		if (fBackend.getSessionType() == SessionType.REMOTE ||
+				fBackend.getSessionType() == SessionType.CORE) {
+			// The program input and output for a remote session is handled by gdbserver,
+			// while there is no output for a core session. 
+			// Therefore, no need to create a pty or a class to track the inferior.
+			rm.done();
+		} else {
+			if (!(containerDmc instanceof IMIContainerDMContext)) {
+				rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
+				return;
+			}
+			
+			// TODO only do this if the current inferior is not an attached one, i.e., if it already had a tty (except the very first case)
+			// Every other type of session that can get to this code, is starting a new process
+			// and requires a pty for it.
+			try {
+				PTY pty = new PTY();
+				pty.validateSlaveName();
+
+				// Tell GDB to use this PTY
+				fCommandControl.queueCommand(
+						fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext)containerDmc, pty.getSlaveName()), 
+						new ImmediateDataRequestMonitor<MIInfo>(rm) {
+							@Override
+							protected void handleSuccess() {
+								createInferiorProcess(containerDmc, pty);
+								rm.done();
+							}
+
+							@Override
+							protected void handleFailure() {
+								// We were not able to tell GDB to use the PTY
+								// so we won't use it.
+								createInferiorProcess(containerDmc, fBackend.getMIOutputStream());
+								rm.done();
+							}
+						});
+			} catch (IOException e) {
+				// Unable to create a PTY
+				createInferiorProcess(containerDmc, fBackend.getMIOutputStream());
+				rm.done();
+			}
+		}
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, OutputStream outputStream) {
+		return new MIInferiorProcess(container, outputStream);
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, PTY pty) {
+		return new MIInferiorProcess(container, pty);
+	}
+
 	/**
 	 * Removes the process with the specified groupId from the launch.
 	 */
@@ -1836,10 +1905,32 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     // Event handler when a thread or threadGroup starts
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
-    	if (e instanceof ContainerStartedDMEvent) {
+    	if (e.getDMContext() instanceof IMIContainerDMContext) {
+
     		fContainerCommandCache.reset();
     		fNumConnected++;
     		fProcRestarting = false;
+ 
+			IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+			if (runControl != null && runControl.getRunMode() == MIRunMode.ALL_STOP) {
+				// When a process starts in all-stop, GDB is not available until we receive
+				// a *stopped event.  Mark the caches unavailable right away because waiting
+				// for the *running event may take too long and requests to this service could
+				// arrive and find the caches mistakenly still available 
+				fContainerCommandCache.setContextAvailable(e.getDMContext(), false);
+				fThreadCommandCache.setContextAvailable(e.getDMContext(), false);
+				fListThreadGroupsAvailableCache.setContextAvailable(e.getDMContext(), false);
+			}
+			
+    		// Whenever an inferior starts to run (=thread-group-started), everything is
+    		// already setup for it, so we can setup right away in case the instance is
+    		// restarted.
+    		// Since the restart can be triggered from the GDB console by typing 'run, 
+    		// we won't know it happened until the new process is running, by which time we 
+    		// already have to have the PTY set in GDB.
+    		// That is why we do it right here, even if a restart may never happen.
+    		initializeInferior((IMIContainerDMContext)e.getDMContext(), new RequestMonitor(getExecutor(), null));
+
     	} else {
     		fThreadCommandCache.reset();
     	}
@@ -1854,17 +1945,24 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		assert fNumConnected > 0;
     		fNumConnected--;
     		
-    		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+    		if (fNumConnected == 0 && 
+    			Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
     				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
     				true, null)) {
-    			if (fNumConnected == 0 && !fProcRestarting) {
-    				// If the last process we are debugging finishes, and we are not restarting it, 
-    				// let's terminate GDB.
-    				// We also do this for a remote attach session, since the 'auto terminate' preference
-    				// is enabled.  If users want to keep the session alive to attach to another process,
-    				// they can simply disable that preference
-    				fCommandControl.terminate(new ImmediateRequestMonitor());
-    			}
+    			// If the last process we are debugging finishes and does not restart 
+    			// let's terminate GDB.  We wait a small delay to see if the process will restart.
+    			// We also do this for a remote attach session, since the 'auto terminate' preference
+    			// is enabled.  If users want to keep the session alive to attach to another process,
+    			// they can simply disable that preference
+    			getExecutor().schedule(new DsfRunnable() {
+					@Override
+					public void run() {
+						// Verify the process didn't restart by checking if we have a new one connected
+						if (fNumConnected == 0) {
+							fCommandControl.terminate(new ImmediateRequestMonitor());
+						}
+					}
+				}, 500, TimeUnit.MILLISECONDS);
     		}
     	} else {
     		fThreadCommandCache.reset();

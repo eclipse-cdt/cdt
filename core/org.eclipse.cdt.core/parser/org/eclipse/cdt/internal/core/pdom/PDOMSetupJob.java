@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -37,7 +37,7 @@ public class PDOMSetupJob extends Job {
 	
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		while (true) {
 			ICProject cproject= fManager.getNextProject();
 			if (cproject == null)
@@ -52,10 +52,10 @@ public class PDOMSetupJob extends Job {
 				if (fManager.fTraceIndexerSetup) 
 					System.out.println("Indexer: Setup is postponed: " + project.getName()); //$NON-NLS-1$
 			} else {
-				syncronizeProjectSettings(project, new SubProgressMonitor(monitor, 1));
+				syncronizeProjectSettings(project, progress.newChild(1));
 				if (fManager.getIndexer(cproject) == null) {
 					try {
-						fManager.createIndexer(cproject, new SubProgressMonitor(monitor, 99));
+						fManager.createIndexer(cproject, progress.newChild(99));
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 						return Status.CANCEL_STATUS;

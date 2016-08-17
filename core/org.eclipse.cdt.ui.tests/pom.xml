@@ -14,7 +14,11 @@
 	<version>5.5.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.ui.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
-	
+
+	<properties>
+		<extra.vmargs></extra.vmargs>
+	</properties>
+
 	<!-- Uncommenting this is useful when the repo is built first then you want to run tests on this plugin only -->
 	<!-- <repositories>
 		<repository>
@@ -23,6 +27,21 @@
 			<layout>p2</layout>
 		</repository>
 	</repositories>-->
+
+	<profiles>
+		<profile>
+			<id>indexer-timeout-set</id>
+			<activation>
+				<property>
+					<name>indexer.timeout</name>
+				</property>
+			</activation>
+			<properties>
+				<extra.vmargs>-Dindexer.timeout=${indexer.timeout}</extra.vmargs>
+			</properties>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -31,7 +50,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
+					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs}</argLine>
 					<includes>
 						<include>**/AutomatedSuite.*</include>
 					</includes>

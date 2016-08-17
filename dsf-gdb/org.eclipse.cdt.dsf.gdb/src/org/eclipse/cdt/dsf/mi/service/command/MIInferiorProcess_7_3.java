@@ -77,6 +77,12 @@ public class MIInferiorProcess_7_3 extends MIInferiorProcess
     public void eventDispatched(MIThreadGroupExitedEvent e) {
 		if (getContainer() instanceof IMIContainerDMContext) {
 			if (((IMIContainerDMContext)getContainer()).getGroupId().equals(e.getGroupId())) {
+    			// With recent changes, we notice a restart by the exited/started
+    			// events, and only then create the new inferior; this means the new
+    			// inferior will no longer receive the exited event for the old inferior.
+    			// But it does not hurt to leave the below if check just in case.
+    			assert isStarted() : "Exited event should only be received for a started inferior"; //$NON-NLS-1$
+
     			if (isStarted()) {
     				// Only handle this event if this process was already
     				// started.  This is to protect ourselves in the case of

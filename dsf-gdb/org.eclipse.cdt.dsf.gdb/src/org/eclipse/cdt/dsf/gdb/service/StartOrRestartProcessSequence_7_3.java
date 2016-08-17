@@ -31,11 +31,15 @@ public class StartOrRestartProcessSequence_7_3 extends StartOrRestartProcessSequ
 		super(executor, containerDmc, attributes, restart, rm);
 	}
 
+	/** @deprecated The creation of MIInferiorProcess has been moved to the IGDBProcesses service */
+	@Deprecated
 	@Override
 	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, OutputStream outputStream) {
 		return new MIInferiorProcess_7_3(container, outputStream);
 	}
 
+	/** @deprecated The creation of MIInferiorProcess has been moved to the IGDBProcesses service */
+	@Deprecated
 	@Override
 	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, PTY pty) {
 		return new MIInferiorProcess_7_3(container, pty);

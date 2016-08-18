@@ -9,8 +9,12 @@ package org.eclipse.cdt.core.build;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IResource;
@@ -54,8 +58,30 @@ public interface IToolChain extends IAdaptable {
 
 	IEnvironmentVariable[] getVariables();
 
-	IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, Path command, String[] args,
-			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI);
+	/**
+	 * @since 6.1
+	 */
+	default IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, List<String> command,
+			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI) {
+		return null;
+	}
+
+	@Deprecated
+	default IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, Path command, String[] args,
+			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI) {
+		List<String> commandStrings = new ArrayList<>(args.length + 1);
+		commandStrings.add(command.toString());
+		commandStrings.addAll(Arrays.asList(args));
+		return getScannerInfo(buildConfig, commandStrings, baseScannerInfo, resource, buildDirectoryURI);
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	default IExtendedScannerInfo getDefaultScannerInfo(IBuildConfiguration buildConfig,
+			IExtendedScannerInfo baseScannerInfo, ILanguage language, URI buildDirectoryURI) {
+		return null;
+	}
 
 	String[] getErrorParserIds();
 
@@ -63,7 +89,31 @@ public interface IToolChain extends IAdaptable {
 
 	String[] getCompileCommands();
 
-	IResource[] getResourcesFromCommand(String[] command, URI buildDirectoryURI);
+	/**
+	 * @since 6.1
+	 */
+	default String[] getCompileCommands(ILanguage language) {
+		return new String[0];
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	default IResource[] getResourcesFromCommand(List<String> command, URI buildDirectoryURI) {
+		return new IResource[0];
+	}
+
+	@Deprecated
+	default IResource[] getResourcesFromCommand(String[] command, URI buildDirectoryURI) {
+		return getResourcesFromCommand(Arrays.asList(command), buildDirectoryURI);
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	default List<String> stripCommand(List<String> command, IResource[] resources) {
+		return command;
+	}
 
 	String getBinaryParserId();
 

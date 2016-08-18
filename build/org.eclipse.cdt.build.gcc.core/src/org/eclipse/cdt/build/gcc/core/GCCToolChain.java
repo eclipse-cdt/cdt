@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +26,11 @@ import org.eclipse.cdt.build.gcc.core.internal.Activator;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainProvider;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
@@ -56,8 +58,6 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	private final IEnvironmentVariable pathVar;
 	private final IEnvironmentVariable[] envVars;
 	private final Map<String, String> properties = new HashMap<>();
-
-	protected String[] compileCommands;
 
 	public GCCToolChain(IToolChainProvider provider, String id, String version) {
 		this(provider, id, version, null, null);
@@ -157,11 +157,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	}
 
 	@Override
-	public IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, Path command, String[] args,
+	public IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, List<String> commandStrings,
 			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI) {
 		try {
 			Path buildDirectory = Paths.get(buildDirectoryURI);
 
+			Path command = Paths.get(commandStrings.get(0));
 			List<String> commandLine = new ArrayList<>();
 			if (command.isAbsolute()) {
 				commandLine.add(command.toString());
@@ -176,7 +177,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			}
 
 			addDiscoveryOptions(commandLine);
-			commandLine.addAll(Arrays.asList(args));
+			commandLine.addAll(commandStrings.subList(1, commandStrings.size()));
 
 			// Change output to stdout
 			boolean haveOut = false;
@@ -225,51 +226,111 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				commandLine.add(tmpFile.toString());
 			}
 
-			Files.createDirectories(buildDirectory);
-
-			// Startup the command
-			ProcessBuilder processBuilder = new ProcessBuilder(commandLine).directory(buildDirectory.toFile())
-					.redirectErrorStream(true);
-			CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(processBuilder.environment(),
-					buildConfig, true);
-			Process process = processBuilder.start();
-
-			// Scan for the scanner info
-			Map<String, String> symbols = new HashMap<>();
-			List<String> includePath = new ArrayList<>();
-			Pattern definePattern = Pattern.compile("#define (.*)\\s(.*)"); //$NON-NLS-1$
-			boolean inIncludePaths = false;
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-					if (inIncludePaths) {
-						if (line.equals("End of search list.")) { //$NON-NLS-1$
-							inIncludePaths = false;
-						} else {
-							includePath.add(line.trim());
-						}
-					} else if (line.startsWith("#define ")) { //$NON-NLS-1$
-						Matcher matcher = definePattern.matcher(line);
-						if (matcher.matches()) {
-							symbols.put(matcher.group(1), matcher.group(2));
-						}
-					} else if (line.equals("#include <...> search starts here:")) { //$NON-NLS-1$
-						inIncludePaths = true;
-					}
-				}
-			}
-
-			try {
-				process.waitFor();
-			} catch (InterruptedException e) {
-				Activator.log(e);
-			}
-			Files.delete(tmpFile);
-
-			return new ExtendedScannerInfo(symbols, includePath.toArray(new String[includePath.size()]));
+			return getScannerInfo(buildConfig, commandLine, buildDirectory, tmpFile);
 		} catch (IOException e) {
 			Activator.log(e);
 			return null;
 		}
+	}
+
+	@Override
+	public IExtendedScannerInfo getDefaultScannerInfo(IBuildConfiguration buildConfig,
+			IExtendedScannerInfo baseScannerInfo, ILanguage language, URI buildDirectoryURI) {
+		try {
+			String[] commands = getCompileCommands(language);
+			if (commands == null || commands.length == 0) {
+				// no default commands
+				return null;
+			}
+
+			Path buildDirectory = Paths.get(buildDirectoryURI);
+
+			// Pick the first one
+			Path command = Paths.get(commands[0]);
+			List<String> commandLine = new ArrayList<>();
+			if (command.isAbsolute()) {
+				commandLine.add(command.toString());
+			} else {
+				commandLine.add(getCommandPath(command).toString());
+			}
+
+			if (baseScannerInfo != null && baseScannerInfo.getIncludePaths() != null) {
+				for (String includePath : baseScannerInfo.getIncludePaths()) {
+					commandLine.add("-I" + includePath); //$NON-NLS-1$
+				}
+			}
+
+			addDiscoveryOptions(commandLine);
+
+			// output to stdout
+			commandLine.add("-o"); //$NON-NLS-1$
+			commandLine.add("-"); //$NON-NLS-1$
+
+			// Source is an empty tmp file
+			String extension;
+			if (GPPLanguage.ID.equals(language.getId())) {
+				extension = ".cpp";
+			} else if (GCCLanguage.ID.equals(language.getId())) {
+				extension = ".c";
+			} else {
+				// In theory we shouldn't get here
+				return null;
+			}
+
+			Path tmpFile = Files.createTempFile(buildDirectory, ".sc", extension); //$NON-NLS-1$
+			commandLine.add(tmpFile.toString());
+
+			return getScannerInfo(buildConfig, commandLine, buildDirectory, tmpFile);
+		} catch (IOException e) {
+			Activator.log(e);
+			return null;
+		}
+	}
+
+	private IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, List<String> commandLine,
+			Path buildDirectory, Path tmpFile) throws IOException {
+		Files.createDirectories(buildDirectory);
+
+		// Startup the command
+		ProcessBuilder processBuilder = new ProcessBuilder(commandLine).directory(buildDirectory.toFile())
+				.redirectErrorStream(true);
+		CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(processBuilder.environment(),
+				buildConfig, true);
+		Process process = processBuilder.start();
+
+		// Scan for the scanner info
+		Map<String, String> symbols = new HashMap<>();
+		List<String> includePath = new ArrayList<>();
+		Pattern definePattern = Pattern.compile("#define (.*)\\s(.*)"); //$NON-NLS-1$
+		boolean inIncludePaths = false;
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+				if (inIncludePaths) {
+					if (line.equals("End of search list.")) { //$NON-NLS-1$
+						inIncludePaths = false;
+					} else {
+						includePath.add(line.trim());
+					}
+				} else if (line.startsWith("#define ")) { //$NON-NLS-1$
+					Matcher matcher = definePattern.matcher(line);
+					if (matcher.matches()) {
+						symbols.put(matcher.group(1), matcher.group(2));
+					}
+				} else if (line.equals("#include <...> search starts here:")) { //$NON-NLS-1$
+					inIncludePaths = true;
+				}
+			}
+		}
+
+		try {
+			process.waitFor();
+		} catch (InterruptedException e) {
+			Activator.log(e);
+		}
+		Files.delete(tmpFile);
+
+		return new ExtendedScannerInfo(symbols, includePath.toArray(new String[includePath.size()]));
+
 	}
 
 	@Override
@@ -331,37 +392,63 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	@Override
 	public String[] getCompileCommands() {
-		if (compileCommands == null) {
-			List<String> cmds = new ArrayList<>();
-			for (String cmd : new String[] { "gcc", "g++", "clang", "clang++" }) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				cmd = prefix != null ? cmd : prefix + cmd;
-				Path cmdPath = getCommandPath(Paths.get(cmd));
-				if (cmdPath != null) {
-					cmds.add(cmd);
-				}
-			}
-			compileCommands = cmds.toArray(new String[compileCommands.length]);
-		}
-		return compileCommands;
+		return new String[] { "gcc", "g++", "clang", "clang++", "cc", "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 
 	@Override
-	public IResource[] getResourcesFromCommand(String[] cmd, URI buildDirectoryURI) {
+	public String[] getCompileCommands(ILanguage language) {
+		if (GPPLanguage.ID.equals(language.getId())) {
+			return new String[] { "g++", "clang++", "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		} else if (GCCLanguage.ID.equals(language.getId())) {
+			return new String[] { "gcc", "clang", "cc" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		} else {
+			return new String[0];
+		}
+	}
+
+	@Override
+	public IResource[] getResourcesFromCommand(List<String> cmd, URI buildDirectoryURI) {
 		// Start at the back looking for arguments
 		List<IResource> resources = new ArrayList<>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		for (int i = cmd.length - 1; i >= 0; --i) {
-			String arg = cmd[i];
+		for (int i = cmd.size() - 1; i >= 0; --i) {
+			String arg = cmd.get(i);
 			if (arg.startsWith("-")) { //$NON-NLS-1$
 				// ran into an option, we're done.
 				break;
 			}
-			for (IFile resource : root.findFilesForLocationURI(buildDirectoryURI.resolve(arg))) {
+			Path srcPath = Paths.get(arg);
+			URI uri;
+			if (srcPath.isAbsolute()) {
+				uri = srcPath.toUri();
+			} else {
+				uri = buildDirectoryURI.resolve(arg);
+			}
+
+			for (IFile resource : root.findFilesForLocationURI(uri)) {
 				resources.add(resource);
 			}
 		}
 
 		return resources.toArray(new IResource[resources.size()]);
+	}
+
+	@Override
+	public List<String> stripCommand(List<String> command, IResource[] resources) {
+		List<String> newCommand = new ArrayList<>();
+
+		for (int i = 0; i < command.size() - resources.length; ++i) {
+			String arg = command.get(i);
+			if (arg.startsWith("-o")) { //$NON-NLS-1$
+				if (arg.equals("-o")) { //$NON-NLS-1$
+					i++;
+				}
+				continue;
+			}
+			newCommand.add(arg);
+		}
+
+		return newCommand;
 	}
 
 }

@@ -1,8 +1,7 @@
 <templateManifest>
-	<srcRoot dir="src"/>
 	<file src="/templates/simple/CMakeLists.txt"
 		dest="/${projectName}/CMakeLists.txt"/>
 	<file src="/templates/simple/main.cpp"
-		dest="/${projectName}/src/${projectName}.cpp"
+		dest="/${projectName}/${projectName}.cpp"
 		open="true"/>
 </templateManifest>

@@ -8,6 +8,7 @@
 package org.eclipse.cdt.cmake.core.internal;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,13 +22,14 @@ import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import com.google.gson.Gson;
 
 public class CMakeBuildConfiguration extends CBuildConfiguration {
 
@@ -44,10 +46,10 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			throws CoreException {
 		IProject project = getProject();
 		try {
-			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false,  IResource.DEPTH_INFINITE);
+			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
 			ConsoleOutputStream outStream = console.getOutputStream();
-			
+
 			Path buildDir = getBuildDirectory();
 
 			if (!Files.exists(buildDir.resolve("Makefile"))) { //$NON-NLS-1$
@@ -72,12 +74,16 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+			// Load compile_commands.json file
+			processCompileCommandsFile(monitor);
+
 			return new IProject[] { project };
 		} catch (IOException e) {
 			throw new CoreException(Activator.errorStatus(String.format("Building %s", project.getName()), e));
 		}
 	}
-	
+
 	@Override
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
@@ -89,7 +95,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			Path buildDir = getBuildDirectory();
 
 			if (!Files.exists(buildDir.resolve("Makefile"))) { //$NON-NLS-1$
-				outStream.write("Makefile not found. Assuming clean");
+				outStream.write("Makefile not found. Assuming clean.");
 				return;
 			}
 
@@ -99,8 +105,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 			Process process = processBuilder.start();
 			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-
-			// TODO error parsers
 			watchProcess(process, new IConsoleParser[0], console);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -109,10 +113,23 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	@Override
-	public IScannerInfo getScannerInformation(IResource resource) {
-		// TODO Auto-generated method stub
-		return null;
+	private void processCompileCommandsFile(IProgressMonitor monitor) throws CoreException {
+		IProject project = getProject();
+		Path commandsFile = getBuildDirectory().resolve("compile_commands.json"); //$NON-NLS-1$
+		if (Files.exists(commandsFile)) {
+			monitor.setTaskName("Processing compile_commands.json");
+			try (FileReader reader = new FileReader(commandsFile.toFile())) {
+				Gson gson = new Gson();
+				CompileCommand[] commands = gson.fromJson(reader, CompileCommand[].class);
+				for (CompileCommand command : commands) {
+					processLine(command.getCommand());
+				}
+				shutdown();
+			} catch (IOException e) {
+				throw new CoreException(
+						Activator.errorStatus(String.format("Processing compile commands %s", project.getName()), e));
+			}
+		}
 	}
-	
+
 }

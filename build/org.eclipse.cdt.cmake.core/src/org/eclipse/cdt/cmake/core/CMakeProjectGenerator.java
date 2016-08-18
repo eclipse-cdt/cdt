@@ -55,13 +55,18 @@ public class CMakeProjectGenerator extends FMProjectGenerator {
 		// Create the source folders
 		IProject project = getProject();
 		List<IPathEntry> entries = new ArrayList<>();
-		for (SourceRoot srcRoot : getManifest().getSrcRoots()) {
-			IFolder sourceFolder = project.getFolder(srcRoot.getDir());
-			if (!sourceFolder.exists()) {
-				sourceFolder.create(true, true, monitor);
+		List<SourceRoot> srcRoots = getManifest().getSrcRoots();
+		if (srcRoots != null && !srcRoots.isEmpty()) {
+			for (SourceRoot srcRoot : srcRoots) {
+				IFolder sourceFolder = project.getFolder(srcRoot.getDir());
+				if (!sourceFolder.exists()) {
+					sourceFolder.create(true, true, monitor);
+				}
+	
+				entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
 			}
-
-			entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
+		} else {
+			entries.add(CoreModel.newSourceEntry(getProject().getFullPath()));
 		}
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);

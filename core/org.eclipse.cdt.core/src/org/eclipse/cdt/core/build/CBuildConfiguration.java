@@ -9,18 +9,24 @@ package org.eclipse.cdt.core.build;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -30,14 +36,19 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
+import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.parser.ParserSettings2;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
@@ -58,6 +69,15 @@ import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
 /**
  * Root class for CDT build configurations. Provides access to the build
  * settings for subclasses.
@@ -72,9 +92,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 	private static final String TOOLCHAIN_ID = "cdt.toolChain.id"; //$NON-NLS-1$
 	private static final String TOOLCHAIN_VERSION = "cdt.toolChain.version"; //$NON-NLS-1$
 
+	private static final List<String> DEFAULT_COMMAND = new ArrayList<>(0);
+
 	private final String name;
 	private final IBuildConfiguration config;
 	private final IToolChain toolChain;
+
+	private final Map<IResource, List<IScannerInfoChangeListener>> scannerInfoListeners = new HashMap<>();
+	private ScannerInfoCache scannerInfoCache;
 
 	protected CBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		this.config = config;
@@ -98,10 +123,9 @@ public abstract class CBuildConfiguration extends PlatformObject
 						String.format("Toolchain missing for config: %s", config.getName())));
 			}
 		}
-
 		toolChain = tc;
 	}
-	
+
 	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
 		this.config = config;
 		this.name = name;
@@ -121,7 +145,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 	protected CBuildConfiguration(IBuildConfiguration config, IToolChain toolChain) {
 		this(config, DEFAULT_NAME, toolChain);
 	}
-	
+
 	@Override
 	public IBuildConfiguration getBuildConfiguration() {
 		return config;
@@ -374,56 +398,182 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	}
 
-	private Map<IResource, IExtendedScannerInfo> cheaterInfo;
-	private boolean infoChanged = false;
+	private File getScannerInfoCacheFile() {
+		return CCorePlugin.getDefault().getStateLocation().append("infoCache") //$NON-NLS-1$
+				.append(getProject().getName()).append(name + ".json").toFile(); //$NON-NLS-1$
+	}
 
-	private void initScannerInfo() {
-		if (cheaterInfo == null) {
-			cheaterInfo = new HashMap<>();
+	private static class IExtendedScannerInfoCreator implements JsonDeserializer<IExtendedScannerInfo> {
+		@Override
+		public IExtendedScannerInfo deserialize(JsonElement element, Type arg1,
+				JsonDeserializationContext arg2) throws JsonParseException {
+			JsonObject infoObj = element.getAsJsonObject();
+
+			Map<String, String> definedSymbols = null;
+			if (infoObj.has("definedSymbols")) { //$NON-NLS-1$
+				JsonObject definedSymbolsObj = infoObj.get("definedSymbols").getAsJsonObject(); //$NON-NLS-1$
+				definedSymbols = new HashMap<>();
+				for (Entry<String, JsonElement> entry : definedSymbolsObj.entrySet()) {
+					definedSymbols.put(entry.getKey(), entry.getValue().getAsString());
+				}
+			}
+
+			String[] includePaths = null;
+			if (infoObj.has("includePaths")) { //$NON-NLS-1$
+				JsonArray includePathsArray = infoObj.get("includePaths").getAsJsonArray(); //$NON-NLS-1$
+				List<String> includePathsList = new ArrayList<>(includePathsArray.size());
+				for (Iterator<JsonElement> i = includePathsArray.iterator(); i.hasNext();) {
+					includePathsList.add(i.next().getAsString());
+				}
+				includePaths = includePathsList.toArray(new String[includePathsList.size()]);
+			}
+
+			IncludeExportPatterns includeExportPatterns = null;
+			if (infoObj.has("includeExportPatterns")) { //$NON-NLS-1$
+				JsonObject includeExportPatternsObj = infoObj.get("includeExportPatterns").getAsJsonObject(); //$NON-NLS-1$
+				String exportPattern = null;
+				if (includeExportPatternsObj.has("includeExportPattern")) { //$NON-NLS-1$
+					exportPattern = includeExportPatternsObj.get("includeExportPattern") //$NON-NLS-1$
+							.getAsJsonObject().get("pattern").getAsString(); //$NON-NLS-1$
+				}
+
+				String beginExportsPattern = null;
+				if (includeExportPatternsObj.has("includeBeginExportPattern")) { //$NON-NLS-1$
+					beginExportsPattern = includeExportPatternsObj.get("includeBeginExportPattern") //$NON-NLS-1$
+							.getAsJsonObject().get("pattern").getAsString(); //$NON-NLS-1$
+				}
+
+				String endExportsPattern = null;
+				if (includeExportPatternsObj.has("includeEndExportPattern")) { //$NON-NLS-1$
+					endExportsPattern = includeExportPatternsObj.get("includeEndExportPattern") //$NON-NLS-1$
+							.getAsJsonObject().get("pattern").getAsString(); //$NON-NLS-1$
+				}
+
+				includeExportPatterns = new IncludeExportPatterns(exportPattern, beginExportsPattern,
+						endExportsPattern);
+			}
+
+			ExtendedScannerInfo info = new ExtendedScannerInfo(definedSymbols, includePaths);
+			info.setIncludeExportPatterns(includeExportPatterns);
+			info.setParserSettings(new ParserSettings2());
+			return info;
 		}
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	protected void loadScannerInfoCache() {
+		if (scannerInfoCache == null) {
+			File cacheFile = getScannerInfoCacheFile();
+			if (cacheFile.exists()) {
+				try (FileReader reader = new FileReader(cacheFile)) {
+					GsonBuilder gsonBuilder = new GsonBuilder();
+					gsonBuilder.registerTypeAdapter(IExtendedScannerInfo.class,
+							new IExtendedScannerInfoCreator());
+					Gson gson = gsonBuilder.create();
+					scannerInfoCache = gson.fromJson(reader, ScannerInfoCache.class);
+				} catch (IOException e) {
+					CCorePlugin.log(e);
+					scannerInfoCache = new ScannerInfoCache();
+				}
+			} else {
+				scannerInfoCache = new ScannerInfoCache();
+			}
+			scannerInfoCache.initCache();
+		}
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	protected void saveScannerInfoCache() {
+		File cacheFile = getScannerInfoCacheFile();
+		if (!cacheFile.getParentFile().exists()) {
+			try {
+				Files.createDirectories(cacheFile.getParentFile().toPath());
+			} catch (IOException e) {
+				CCorePlugin.log(e);
+				return;
+			}
+		}
+
+		try (FileWriter writer = new FileWriter(getScannerInfoCacheFile())) {
+			Gson gson = new Gson();
+			gson.toJson(scannerInfoCache, writer);
+		} catch (IOException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	protected ScannerInfoCache getScannerInfoCache() {
+		return scannerInfoCache;
 	}
 
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
-		initScannerInfo();
-		return cheaterInfo.get(resource);
+		loadScannerInfoCache();
+		IExtendedScannerInfo info = scannerInfoCache.getScannerInfo(resource);
+		if (info == null) {
+			ICElement celement = CCorePlugin.getDefault().getCoreModel().create(resource);
+			if (celement instanceof ITranslationUnit) {
+				ITranslationUnit tu = (ITranslationUnit) celement;
+				try {
+					info = getToolChain().getDefaultScannerInfo(getBuildConfiguration(), null,
+							tu.getLanguage(), getBuildDirectoryURI());
+					scannerInfoCache.addScannerInfo(DEFAULT_COMMAND, info, resource);
+					saveScannerInfoCache();
+				} catch (CoreException e) {
+					CCorePlugin.log(e.getStatus());
+				}
+			}
+		}
+		return info;
 	}
+
+	private boolean infoChanged = false;
 
 	@Override
 	public boolean processLine(String line) {
 		// TODO smarter line parsing to deal with quoted arguments
-		String[] command = line.split("\\s+"); //$NON-NLS-1$
+		List<String> command = Arrays.asList(line.split("\\s+")); //$NON-NLS-1$
 
 		// Make sure it's a compile command
-		boolean found = false;
 		String[] compileCommands = toolChain.getCompileCommands();
+		loop:
 		for (String arg : command) {
 			if (arg.startsWith("-")) { //$NON-NLS-1$
 				// option found, missed our command
-				break;
+				return false;
 			}
 
 			for (String cc : compileCommands) {
-				if (arg.equals(cc)) {
-					found = true;
-					break;
+				if (arg.endsWith(cc)
+						&& (arg.equals(cc) || arg.endsWith("/" + cc) || arg.endsWith("\\" + cc))) { //$NON-NLS-1$ //$NON-NLS-2$
+					break loop;
 				}
 			}
-		}
-
-		if (!found) {
-			return false;
 		}
 
 		try {
 			IResource[] resources = toolChain.getResourcesFromCommand(command, getBuildDirectoryURI());
 			if (resources != null) {
+				List<String> commandStrings = toolChain.stripCommand(command, resources);
+
 				for (IResource resource : resources) {
-					initScannerInfo();
-					cheaterInfo.put(resource,
-							getToolChain().getScannerInfo(getBuildConfiguration(), findCommand(command[0]),
-									Arrays.copyOfRange(command, 1, command.length), null, resource,
-									getBuildDirectoryURI()));
+					loadScannerInfoCache();
+					if (scannerInfoCache.hasCommand(commandStrings)) {
+						scannerInfoCache.addResource(commandStrings, resource);
+					} else {
+						Path commandPath = findCommand(command.get(0));
+						command.set(0, commandPath.toString());
+						IExtendedScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(),
+								command, null, resource, getBuildDirectoryURI());
+						scannerInfoCache.addScannerInfo(commandStrings, info, resource);
+					}
 					infoChanged = true;
 				}
 				return true;
@@ -441,7 +591,9 @@ public abstract class CBuildConfiguration extends PlatformObject
 		// TODO persist changes
 
 		// Trigger a reindex if anything changed
+		// TODO be more surgical
 		if (infoChanged) {
+			saveScannerInfoCache();
 			CCorePlugin.getIndexManager().reindex(CoreModel.getDefault().create(getProject()));
 			infoChanged = false;
 		}
@@ -449,12 +601,23 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	@Override
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {
-		// TODO for IScannerInfoProvider
+		List<IScannerInfoChangeListener> listeners = scannerInfoListeners.get(resource);
+		if (listeners == null) {
+			listeners = new ArrayList<>();
+			scannerInfoListeners.put(resource, listeners);
+		}
+		listeners.add(listener);
 	}
 
 	@Override
 	public void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
-		// TODO for IScannerInfoProvider
+		List<IScannerInfoChangeListener> listeners = scannerInfoListeners.get(resource);
+		if (listeners != null) {
+			listeners.remove(listener);
+			if (listeners.isEmpty()) {
+				scannerInfoListeners.remove(resource);
+			}
+		}
 	}
 
 }

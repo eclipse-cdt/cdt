@@ -37,6 +37,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer;
 import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer.IThreadFrameSwitchedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -47,6 +48,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelBackground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
@@ -66,6 +68,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IMemento;
 
 
@@ -112,6 +115,15 @@ public class ThreadVMNode extends AbstractThreadVMNode
         provider.setColumnInfo(
             PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
             new LabelColumnInfo(new LabelAttribute[] { 
+            	new LabelBackground(new RGB(238,238,224))
+    			{
+    				{ setPropertyNames(new String[] { ILaunchVMConstants.PROP_ELEMENT_SELECTED}); }
+    				@Override
+    				public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+    					Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_ELEMENT_SELECTED);
+    					return prop;
+    				};                    
+    			},
                 // Text is made of the thread name followed by its state and state change reason. 
                 new GdbExecutionContextLabelText(
                     MessagesForGdbLaunchVM.ThreadVMNode_No_columns__text_format,
@@ -301,6 +313,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
                 update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
             if (execDmc != null) {
                 update.setProperty(ILaunchVMConstants.PROP_ID, execDmc.getThreadId());
+                update.setProperty(ILaunchVMConstants.PROP_ELEMENT_SELECTED, isThreadSelected(execDmc) );
 
                 // set pin properties
                 IPinElementColorDescriptor colorDesc = PinCloneUtils.getPinElementColorDescriptor(GdbPinProvider.getPinnedHandles(), execDmc);
@@ -339,6 +352,20 @@ public class ThreadVMNode extends AbstractThreadVMNode
             countringRm.setDoneCount(count);
         }
         super.updatePropertiesInSessionThread(parentUpdates);
+    }
+    
+    boolean isThreadSelected(IMIExecutionDMContext execDmc) {
+    	IGDBSynchronizer syncService = getServicesTracker().getService(IGDBSynchronizer.class);
+    	Object[] sel = syncService.getSelection();
+    	
+    	for (Object s : sel) {
+    		if (s instanceof IMIExecutionDMContext) {
+    			if (s.equals(execDmc)) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
     }
     
     protected void fillThreadDataProperties(IPropertiesUpdate update, IThreadDMData data) {

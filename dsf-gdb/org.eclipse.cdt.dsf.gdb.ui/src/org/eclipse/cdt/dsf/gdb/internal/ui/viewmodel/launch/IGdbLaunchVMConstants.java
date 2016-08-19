@@ -57,4 +57,14 @@ public interface IGdbLaunchVMConstants {
     * If set, the value of the property indicates the exit code returned.
     */
     public static final String PROP_EXIT_CODE = "exit_code"; //$NON-NLS-1$  
+    
+//    /**
+//     * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
+//     */
+//    public static final String PROP_ELEMENT_SELECTED_KNOWN = "element_selected_known"; //$NON-NLS-1$  
+//    /**
+//    * If set, the value of the property indicates the exit code returned.
+//    */
+//    public static final String PROP_ELEMENT_SELECTED = "element_selected"; //$NON-NLS-1$  
+    
 }

@@ -22,6 +22,30 @@
       "revId": "ec8dec43008fe4c816979110c4ce3e79408ad3be",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_aeb2da2f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2090,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-08-19T14:34:25Z",
+      "side": 1,
+      "message": "Done - Yes, I actually meant to.",
+      "parentUuid": "27af2791_cb6aa00b",
+      "range": {
+        "startLine": 2090,
+        "startChar": 4,
+        "endLine": 2090,
+        "endChar": 6
+      },
+      "revId": "ec8dec43008fe4c816979110c4ce3e79408ad3be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

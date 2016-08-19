@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_b80a20af",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11972,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-08-19T09:06:44Z",
+      "side": 1,
+      "message": "Good point! I\u0027ve added the test for checking this case, letting x have the type deduced from 42. I agree that it should be ill-formed in C++14. But GCC as well as Clang already accept a declaration of this form, which I think is a safe way to handle this case with regard to the upcomming C++17. \n\nWhile trying to do something reasonable in an error situation is likely ok, the more difficult question will be how to handle declarations like \"auto x{42}\" when C++17 is released.",
+      "parentUuid": "27af2791_b85780d5",
+      "revId": "e9e907ae3b1521a9121550b3241cbc797994128a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_786ec8a4",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTSimpleDeclSpecifier.java",
         "patchSetId": 1
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "27af2791_983abc4a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTSimpleDeclSpecifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-08-19T09:06:44Z",
+      "side": 1,
+      "message": "Oh, I guess I missed that. Thanks for the info!",
+      "parentUuid": "27af2791_786ec8a4",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 27
+      },
+      "revId": "e9e907ae3b1521a9121550b3241cbc797994128a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_9869dc9b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 1
@@ -53,6 +95,24 @@
       "writtenOn": "2016-08-19T02:01:15Z",
       "side": 1,
       "message": "Why handle t_decltype_auto here? We should never get in here for decltype(auto) because getDeclTypeExpression() will be null.",
+      "revId": "e9e907ae3b1521a9121550b3241cbc797994128a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_78cc08cf",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2322,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2016-08-19T09:06:44Z",
+      "side": 1,
+      "message": "Done - That\u0027s true, it makes absolutely no sense here.",
+      "parentUuid": "27af2791_9869dc9b",
       "revId": "e9e907ae3b1521a9121550b3241cbc797994128a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

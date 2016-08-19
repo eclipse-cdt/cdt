@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_cb6aa00b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2090,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-08-19T14:27:44Z",
+      "side": 1,
+      "message": "Did you mean to write \"else if\" here?",
+      "range": {
+        "startLine": 2090,
+        "startChar": 4,
+        "endLine": 2090,
+        "endChar": 6
+      },
+      "revId": "ec8dec43008fe4c816979110c4ce3e79408ad3be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

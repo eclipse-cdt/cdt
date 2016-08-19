@@ -362,7 +362,9 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 	        // show the threads in the new container. 
 	        // Note: the EXPAND flag implies refreshing the parent element.
 			if (dmc instanceof IContainerDMContext) {
-		        parentDelta.addNode(createVMContext(dmc), IModelDelta.EXPAND | IModelDelta.SELECT);
+				// note: use the FORCE flag to override the sticky policy. Starting a process is user-triggered, and
+				// it makes sense for the selection to follow the new process, in this case.
+		        parentDelta.addNode(createVMContext(dmc), IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.FORCE);
 			} else {
 				IContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
 				if (containerCtx != null) {

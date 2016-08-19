@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -39,6 +40,9 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
         if (IGdbLaunchVMConstants.PROP_EXIT_CODE_KNOWN.equals(propertyName)) {
         	return properties.get(IGdbLaunchVMConstants.PROP_EXIT_CODE) != null ? 1 : 0;
         }
+        if (ILaunchVMConstants.PROP_ELEMENT_SELECTED_KNOWN.equals(propertyName)) {
+        	return properties.get(ILaunchVMConstants.PROP_ELEMENT_SELECTED) != null ? 1 : 0;
+        }
         return super.getPropertyValue(propertyName, status, properties);
     }
 
@@ -51,7 +55,9 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
             IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN.equals(propertyName) ||
         	IGdbLaunchVMConstants.PROP_THREAD_SUMMARY.equals(propertyName) ||
         	IGdbLaunchVMConstants.PROP_EXIT_CODE_KNOWN.equals(propertyName) ||
-        	IGdbLaunchVMConstants.PROP_EXIT_CODE.equals(propertyName))
+        	IGdbLaunchVMConstants.PROP_EXIT_CODE.equals(propertyName ) || 
+        	ILaunchVMConstants.PROP_ELEMENT_SELECTED_KNOWN.equals(propertyName) ||
+        	ILaunchVMConstants.PROP_ELEMENT_SELECTED.equals(propertyName))
         {
         	return true;
         } 

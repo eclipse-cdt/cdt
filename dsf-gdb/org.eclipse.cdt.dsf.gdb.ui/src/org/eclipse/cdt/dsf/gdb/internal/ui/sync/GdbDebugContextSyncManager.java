@@ -49,9 +49,9 @@ public class GdbDebugContextSyncManager implements IDebugSelectionSyncManager, I
 				// A thread or stack frame was selected. In either case, have GDB switch to the new
 				// corresponding thread, if required.
 
-				// Get the execution context and then get the thread from the execution model.
-				final IMIExecutionDMContext executionDMC = DMContexts.getAncestorOfType(dmc,
-						IMIExecutionDMContext.class);
+				// Get the execution context
+				final IMIExecutionDMContext executionDMC = 
+						DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
 				if (executionDMC == null) {
 					return;
 				}
@@ -73,14 +73,14 @@ public class GdbDebugContextSyncManager implements IDebugSelectionSyncManager, I
 						IGDBSynchronizer gdbSync = tracker.getService(IGDBSynchronizer.class);
 						if (gdbSync != null) {
 							
-							Object[] sel; 
-							if (dmc instanceof IFrameDMContext) {
-								sel = new Object[] {executionDMC, dmc};
-							}
-							else {
-								sel = new Object[] {executionDMC};
-							}
-							gdbSync.setGDBSelection(sel);
+//							Object[] sel; 
+//							if (dmc instanceof IFrameDMContext) {
+//								sel = new Object[] {executionDMC, dmc};
+//							}
+//							else {
+//								sel = new Object[] {executionDMC};
+//							}
+							gdbSync.setGDBSelection(new Object[] {dmc});
 						}
 
 						tracker.dispose();

@@ -37,6 +37,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 
@@ -170,4 +171,15 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
             // Session disposed, ignore.
         }
     }
+    
+    @Override
+    public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
+    	return super.createColumnPresentation(context, element);
+    }
+    
+    @Override
+    public String getColumnPresentationId(IPresentationContext context, Object element) {
+        return super.getColumnPresentationId(context, element);
+    }
+    
 }

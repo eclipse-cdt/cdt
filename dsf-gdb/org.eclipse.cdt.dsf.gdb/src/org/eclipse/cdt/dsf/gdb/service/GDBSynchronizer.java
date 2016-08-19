@@ -9,16 +9,17 @@ package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.Hashtable;
 
-import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
@@ -54,6 +55,11 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 	 */
 	private static boolean fSyncEnabled = true;
 	
+	/** 
+     * This event indicates that GDB has switched its current thread and/or frame,
+     *  as a result of an event not triggered by CDT - for example a console command typed
+     *  by the user. 
+     */
 	private class ThreadFrameSwitchedEvent extends AbstractDMEvent<IExecutionDMContext> implements IThreadFrameSwitchedEvent 
 	{
 		IFrameDMContext fFrameCtx;
@@ -65,6 +71,15 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 		@Override
 		public IFrameDMContext getCurrentFrameContext() {
 			return fFrameCtx;
+		}
+	}
+	
+	/**
+     * A generic event that causes a refresh of the VMNode corresponding to IDMContext parameter. 
+     */
+	private class RefreshElementEvent extends AbstractDMEvent<IDMContext> implements IRefreshElementEvent {
+		public RefreshElementEvent(IDMContext context) {
+			super(context);
 		}
 	}
 
@@ -129,58 +144,114 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 	}
 	
 	@Override
-	public void setGDBSelection(Object[] selection) {
+	public void setGDBSelection(final Object[] selection) {
 		assert selection != null;
-		for (Object s : selection) {
-			if (s instanceof IExecutionDMContext) {
-				setCurrentGDBThread((IExecutionDMContext)s);
-			}
-			else if (s instanceof IFrameDMContext) {
-				setCurrentGDBStackFrame((IFrameDMContext)s);
-			}
-			else {
-				assert false;
-			}
-		}
+		
+		getExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				Object s = selection[0];
+				// new selection is a frame?
+				if (s instanceof IFrameDMContext) {
+					// set as new current frame
+					setCurrentGDBStackFrame((IFrameDMContext)s,  new ImmediateRequestMonitor() {} );
+				}
+				// new selection is a thread?
+				else if (s instanceof IExecutionDMContext) {
+					// set as new thread
+					setCurrentGDBThread((IExecutionDMContext)s, new ImmediateRequestMonitor() {
+						@Override
+						protected void handleCompleted() {
+							// do we already have a valid frame selection, for that new selected thread? 
+							if (!getThreadFromFrame(fCurrentStackFrameCtx).equals(fCurrentThreadCtx)) 
+							{
+								// no, then select default frame level, for new thread
+								setCurrentGDBStackFrame(createFrameContext((IExecutionDMContext)s, STACKFRAME_ID_DEFAULT), new ImmediateRequestMonitor() {});
+							}
+						}
+					} );
+				}
+				else {
+					assert false;
+				}
+				
+			}});
 	}
 	
-	protected void setCurrentGDBThread(IExecutionDMContext execCtx) {
-		if (!(execCtx instanceof IMIExecutionDMContext)) {
+	protected void setCurrentGDBThread(final IExecutionDMContext newThread, ImmediateRequestMonitor rm) {
+		if (!(newThread instanceof IMIExecutionDMContext)) {
 			return;
 		}
 		
-		if (!execCtx.equals(fCurrentThreadCtx)) {
-			fCurrentThreadCtx = execCtx;
+		final IExecutionDMContext oldThread = fCurrentThreadCtx;
+		final IFrameDMContext oldFrame = fCurrentStackFrameCtx;
+		
+		if (!newThread.equals(oldThread)) {
 			if (isSyncEnabled()) {
-				// have GDB change its current selected thread
-				this.getSession().getExecutor().execute(new DsfRunnable() {
+				// Create a mi-thread-select and send the command
+				ICommand<MIInfo> command =  fCommandFactory.createMIThreadSelect(newThread, getThreadIdFromContext(newThread));
+				fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm) {
 					@Override
-					public void run() {
-						// Create a mi-thread-select and send the command
-						ICommand<MIInfo> command =  fCommandFactory.createMIThreadSelect(execCtx, getCurrentThreadId());
-						fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> () {});
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							fCurrentThreadCtx = newThread;
+							fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(oldThread), fCommandControl.getProperties());
+							fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(fCurrentThreadCtx), fCommandControl.getProperties());
+						}
+						rm.done();
 					}
 				});
+			}
+			else {
+				fCurrentThreadCtx = newThread;
+				fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(oldThread), fCommandControl.getProperties());
+				fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(fCurrentThreadCtx), fCommandControl.getProperties());
+				rm.done();
 			}
 		}
 	}
 
-	protected void setCurrentGDBStackFrame(IFrameDMContext frameCtx) {
-		// a stack frame was selected. If it was required, we already switched the thread above, now take
-		// care of the stack frame
-		if (!frameCtx.equals(fCurrentStackFrameCtx)) {
-			fCurrentStackFrameCtx = frameCtx;
-			if (isSyncEnabled()) {
-				// have GDB change its current selected frame
-				this.getSession().getExecutor().execute(new DsfRunnable() {
+	protected void setCurrentGDBStackFrame(final IFrameDMContext newFrame, ImmediateRequestMonitor rm) {
+		// before switch
+		final IFrameDMContext oldFrame = fCurrentStackFrameCtx;
+		final IExecutionDMContext oldThread = fCurrentThreadCtx;
+		
+		// a stack frame was selected. If it was required, we already switched the thread, now take
+		// care of the frame
+		if (!newFrame.equals(oldFrame)) {
+			if (isSyncEnabled() && 	isThreadSuspended(getThreadFromFrame(newFrame))) {
+				// Create a mi-stack-select-frame and send the command
+				ICommand<MIInfo> command = fCommandFactory.createMIStackSelectFrame(newFrame, newFrame.getLevel());
+				fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm) {
 					@Override
-					public void run() {
-						// Create a mi-stack-select-frame and send the command
-						ICommand<MIInfo> command = fCommandFactory.createMIStackSelectFrame(frameCtx, fCurrentStackFrameCtx.getLevel());
-						fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>() {
-						});
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							fCurrentStackFrameCtx = newFrame;
+							// note: CDT also switches the thread when doing a 
+							// createMIStackSelectFrame
+							fCurrentThreadCtx = getThreadFromFrame(fCurrentStackFrameCtx);
+							
+							// notify that the selected GDB frame has changed - one notification to update the highlight 
+							// of the previously selected thread/frame, and another one for the newly selected ones 
+							fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(oldFrame), fCommandControl.getProperties());
+							fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(fCurrentStackFrameCtx), fCommandControl.getProperties());
+							
+							// implicit thread switch?
+							if (!oldThread.equals(fCurrentThreadCtx)) {
+								fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(oldThread), fCommandControl.getProperties());
+								fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(fCurrentThreadCtx), fCommandControl.getProperties());
+							}
+						}
+						rm.done();
 					}
 				});
+			}
+			else {
+				fCurrentStackFrameCtx = newFrame;
+				// notify that the selected GDB frame has changed - one notification to update the highlight 
+				// of the previously selected thread/frame, and another one for the newly selected ones 
+				fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(oldFrame), fCommandControl.getProperties());
+				rm.done();
 			}
 		}
 	}
@@ -240,16 +311,33 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
     				frameLevel = frameLevel != null ? frameLevel : STACKFRAME_ID_DEFAULT;
     				
     				// update current thread and SF
-    				fCurrentThreadCtx = createExecContext(tid);
-    				fCurrentStackFrameCtx = createFrameContext(fCurrentThreadCtx, frameLevel);
-    				
-    				createAndDispatchThreadSwitchedEvent();
+    				switchSelection(tid, frameLevel);
     			}
     		}
     	}
 	}
 
-	protected void createAndDispatchThreadSwitchedEvent() {
+	
+	protected void switchSelection(String newTid, String newFrameLevel) {
+		IFrameDMContext oldFrame = fCurrentStackFrameCtx;
+		IExecutionDMContext oldThread = fCurrentThreadCtx;
+		
+		// update current thread and SF
+		fCurrentThreadCtx = createExecContext(newTid);
+		fCurrentStackFrameCtx = createFrameContext(fCurrentThreadCtx, newFrameLevel);
+		
+		createAndDispatchThreadFrameSwitchedEvent();
+
+		createAndDispatchRefreshElementEvent(oldFrame);
+		createAndDispatchRefreshElementEvent(fCurrentStackFrameCtx);
+		if (!oldThread.equals(fCurrentThreadCtx)) {
+			createAndDispatchRefreshElementEvent(oldThread);
+			createAndDispatchRefreshElementEvent(fCurrentThreadCtx);
+		}
+	}
+	
+	
+	protected void createAndDispatchThreadFrameSwitchedEvent() {
 		if (isSyncEnabled()) {
 			// create DSF event and dispatch
 			fCommandControl.getSession().dispatchEvent(new ThreadFrameSwitchedEvent(fCurrentThreadCtx, fCurrentStackFrameCtx), 
@@ -257,6 +345,14 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 		}
 	}
 
+	protected void createAndDispatchRefreshElementEvent(IDMContext ctx) {
+		if (isSyncEnabled()) {
+			// create DSF event and dispatch
+			fCommandControl.getSession().dispatchEvent(new RefreshElementEvent(ctx), 
+					fCommandControl.getProperties());
+		}
+	}
+	
 	private IExecutionDMContext createExecContext(String tid) {
 		assert tid != null;
 		IContainerDMContext parentContainer = 
@@ -275,7 +371,7 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 	@Override
 	public void consoleActivated() {
 		// get debug view to select this session's current thread/frame
-		createAndDispatchThreadSwitchedEvent();
+		createAndDispatchThreadFrameSwitchedEvent();
 	}
 
 
@@ -284,28 +380,35 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 		fSyncEnabled = enabled;
 	}
 	
-	protected boolean isSyncEnabled() {
+	@Override
+	public boolean isSyncEnabled() {
 		return fSyncEnabled;
 	}
 
-	// convenience method that returns the current thread id
-	protected String getCurrentThreadId() {
-		if (fCurrentThreadCtx != null && fCurrentThreadCtx instanceof IMIExecutionDMContext) {
-			return ((IMIExecutionDMContext)fCurrentThreadCtx).getThreadId();
-		}
-		return null;
-	}
-	// convenience method that returns the current stack frame id
-	protected String getCurrentStackFrameId() {
-		if (fCurrentStackFrameCtx != null) {
-			return String.valueOf(fCurrentStackFrameCtx.getLevel());
+	// convenience method that returns the thread id from a thread context
+	protected String getThreadIdFromContext(IExecutionDMContext threadCtx) {
+		if (threadCtx != null && threadCtx instanceof IMIExecutionDMContext) {
+			return ((IMIExecutionDMContext)threadCtx).getThreadId();
 		}
 		return null;
 	}
 
 	@Override
 	public Object[] getSelection() {
-		return new Object[] { fCurrentThreadCtx, fCurrentStackFrameCtx };
+		if (isSyncEnabled()) {
+			return new Object[] { fCurrentThreadCtx, fCurrentStackFrameCtx };
+		}
+		else {
+			return new Object[] { };
+		}
 	}
 	
+	protected boolean isThreadSuspended(IExecutionDMContext ctx) {
+		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+		return runControl.isSuspended(ctx); 
+	}
+	
+	protected IExecutionDMContext getThreadFromFrame(IFrameDMContext frame) {
+		return DMContexts.getAncestorOfType(frame, IExecutionDMContext.class);
+	}
 }

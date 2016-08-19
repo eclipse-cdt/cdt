@@ -180,11 +180,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 			assertEquals("3",switchThreadAndCaptureThreadSwitchedEvent("3"));
 			assertEquals("4",switchThreadAndCaptureThreadSwitchedEvent("4"));
 			assertEquals("5",switchThreadAndCaptureThreadSwitchedEvent("5"));
-			assertEquals("1",switchThreadAndCaptureThreadSwitchedEvent("1"));
-			// note: ATM GDB generated the "=thread-selected" event even if
-			// the thread has not switched following the "thread <tid>" CLI command. 
-			// If that changes, we should see a failure (timeout) on the call below: 
-			assertEquals("1",switchThreadAndCaptureThreadSwitchedEvent("1"));
 		}
 	}
 	
@@ -298,13 +293,12 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		// *** at this point all 5 threads should be stopped
 
 		for (int i = 0; i < 2; i++) {
-			// have the sync service set GDB current tid to thread 5
-//			fGdbSync.setCurrentGDBStackFrame(SyncUtil.getStackFrame(1, 1));
-			fGdbSync.setGDBSelection(new Object[] {getContextForThreadId(1), SyncUtil.getStackFrame(1, 1)});
+			// set gdb selection to thread 1, frame 1 
+			fGdbSync.setGDBSelection(new Object[] {SyncUtil.getStackFrame(1, 1)});
 			assertEquals("1", getCurrentStackFrameLevel());
 
-//			fGdbSync.setCurrentGDBStackFrame(SyncUtil.getStackFrame(1, 0));
-			fGdbSync.setGDBSelection(new Object[] {getContextForThreadId(1), SyncUtil.getStackFrame(1, 0)});
+			// set gdb selection to thread 1, frame 0
+			fGdbSync.setGDBSelection(new Object[] {SyncUtil.getStackFrame(1, 0)});
 			assertEquals("0", getCurrentStackFrameLevel());
 		}
 

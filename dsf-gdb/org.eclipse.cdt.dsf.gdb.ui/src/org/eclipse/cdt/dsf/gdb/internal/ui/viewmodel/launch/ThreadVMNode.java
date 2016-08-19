@@ -37,6 +37,8 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer.IRefreshElementEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer.IThreadFrameSwitchedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -47,7 +49,10 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelBackground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelFont;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelForeground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
@@ -66,6 +71,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.IMemento;
 
 
@@ -109,9 +116,53 @@ public class ThreadVMNode extends AbstractThreadVMNode
     protected IElementLabelProvider createLabelProvider() {
         PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
         
+        FontData fontDataBold = new FontData();
+        fontDataBold.setStyle(SWT.BOLD);
+        fontDataBold.setHeight(ILaunchVMConstants.SELECTION_HIGHLIGHT_FONT_SIZE);
+        
+        FontData fontDataItalic = new FontData();
+        fontDataItalic.setStyle(SWT.ITALIC);
+        fontDataItalic.setHeight(ILaunchVMConstants.SELECTION_HIGHLIGHT_FONT_SIZE);
+
         provider.setColumnInfo(
             PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
             new LabelColumnInfo(new LabelAttribute[] { 
+            	new LabelBackground(ILaunchVMConstants.SELECTION_HIGHLIGHT_BG_COLOR)
+    			{
+    				{ setPropertyNames(new String[] { ILaunchVMConstants.PROP_ELEMENT_SELECTED}); }
+    				@Override
+    				public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+    					Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_ELEMENT_SELECTED);
+    					return ILaunchVMConstants.SELECTION_HIGHLIGHT_BG ? prop : false;
+    				};                    
+    			},
+           		new LabelForeground(ILaunchVMConstants.SELECTION_HIGHLIGHT_FG_COLOR)
+       			{
+       				{ setPropertyNames(new String[] { ILaunchVMConstants.PROP_ELEMENT_SELECTED}); }
+       				@Override
+       				public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+       					Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_ELEMENT_SELECTED);
+        				return ILaunchVMConstants.SELECTION_HIGHLIGHT_FG ? prop : false;
+        			};                    
+        		},
+    			new LabelFont(fontDataBold)
+    			{
+    				{ setPropertyNames(new String[] { ILaunchVMConstants.PROP_ELEMENT_SELECTED}); }
+    				@Override
+    				public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+    					Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_ELEMENT_SELECTED);
+    					return ILaunchVMConstants.SELECTION_HIGHLIGHT_BOLD ? prop : false;
+    				};                    
+    			},
+    			new LabelFont(fontDataItalic)
+    			{
+    				{ setPropertyNames(new String[] { ILaunchVMConstants.PROP_ELEMENT_SELECTED}); }
+    				@Override
+    				public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+    					Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_ELEMENT_SELECTED);
+    					return ILaunchVMConstants.SELECTION_HIGHLIGHT_ITALIC ? prop : false;
+    				};                    
+    			},
                 // Text is made of the thread name followed by its state and state change reason. 
                 new GdbExecutionContextLabelText(
                     MessagesForGdbLaunchVM.ThreadVMNode_No_columns__text_format,
@@ -301,6 +352,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
                 update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
             if (execDmc != null) {
                 update.setProperty(ILaunchVMConstants.PROP_ID, execDmc.getThreadId());
+                update.setProperty(ILaunchVMConstants.PROP_ELEMENT_SELECTED, isThreadSelected(execDmc) );
 
                 // set pin properties
                 IPinElementColorDescriptor colorDesc = PinCloneUtils.getPinElementColorDescriptor(GdbPinProvider.getPinnedHandles(), execDmc);
@@ -341,6 +393,20 @@ public class ThreadVMNode extends AbstractThreadVMNode
         super.updatePropertiesInSessionThread(parentUpdates);
     }
     
+    protected boolean isThreadSelected(IMIExecutionDMContext execDmc) {
+    	IGDBSynchronizer syncService = getServicesTracker().getService(IGDBSynchronizer.class);
+    	Object[] sel = syncService.getSelection();
+    	
+    	for (Object s : sel) {
+    		if (s instanceof IMIExecutionDMContext) {
+    			if (s.equals(execDmc)) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
     protected void fillThreadDataProperties(IPropertiesUpdate update, IThreadDMData data) {
     	if (data.getName() != null && data.getName().length() > 0) {
     		update.setProperty(PROP_NAME, data.getName());
@@ -379,6 +445,9 @@ public class ThreadVMNode extends AbstractThreadVMNode
     	else if (e instanceof IThreadFrameSwitchedEvent) {
     		return IModelDelta.SELECT;
         }
+    	else if (e instanceof IRefreshElementEvent) {
+        	return IModelDelta.STATE;
+        }
         return super.getDeltaFlags(e);
     }
     
@@ -405,8 +474,13 @@ public class ThreadVMNode extends AbstractThreadVMNode
             rm.done();
         } else if (e instanceof IThreadFrameSwitchedEvent) {
         	buildDeltaForThreadFrameSwitchedEvent(dmc, parentDelta, nodeOffset, rm);
+        } else if (e instanceof IRefreshElementEvent) {
+        	if (dmc instanceof IExecutionDMContext) {
+        		parentDelta.addNode(createVMContext(dmc) , IModelDelta.STATE);
+        	}
+        	rm.done();
         } else {            
-            super.buildDelta(e, parentDelta, nodeOffset, rm);
+        	super.buildDelta(e, parentDelta, nodeOffset, rm);
         }
     }
     

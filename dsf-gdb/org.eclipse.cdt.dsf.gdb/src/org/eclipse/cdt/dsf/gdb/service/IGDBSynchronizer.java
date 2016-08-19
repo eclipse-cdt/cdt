@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -30,26 +31,35 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  */
 public interface IGDBSynchronizer extends IDsfService {
 	/**
-	 * Returns an array of contexts, representing the current selection
+	 * Returns an array of contexts, representing the current synchronized selection. If 
+	 * synchronization is currently disabled, this method will return an empty list.
 	 */
 	Object[] getSelection();
 	
 	/**  
 	 * Sets the service's current selection. If synchronization is enabled, a best 
-	 * effort attempt will be made to propagate the selection to GDB.
+	 * effort attempt will be made to propagate the selection to GDB. Selection defined
+	 * as an array of object to permit future flexibility, even if we expect a single
+	 * thread or frame context, ATM
 	 * 
 	 * @param  selection an array of objects, each a context representing a selection
 	 */
 	void setGDBSelection(Object[] selection);
 	
 	/** 
-     * This event interface indicates that GDB has switched its current thread and/or frame,
+     * This event indicates that GDB has switched its current thread and/or frame,
      *  as a result of an event not triggered by CDT - for example a console command typed
      *  by the user. 
      */
     interface IThreadFrameSwitchedEvent extends IDMEvent<IExecutionDMContext> {
     	IFrameDMContext getCurrentFrameContext();
     }
+    
+    /**
+     * A generic event that causes a refresh of the VMNode corresponding to IDMContext parameter.  
+     */
+    interface IRefreshElementEvent extends IDMEvent<IDMContext> {}
+    
     
     /**
      * This tells the synchronizer that the GDB console, that corresponds to this instance of the 
@@ -70,4 +80,10 @@ public interface IGDBSynchronizer extends IDsfService {
      * @param enabled whether the synchronization should be enabled or not
      */
     void setSyncEnabled(boolean enabled);
+    
+    /**
+     * Returns whether the synchronization is currently enabled
+     * @return
+     */
+    boolean isSyncEnabled();
 }

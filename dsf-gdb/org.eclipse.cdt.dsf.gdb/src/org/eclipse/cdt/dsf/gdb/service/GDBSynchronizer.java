@@ -15,6 +15,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -65,6 +66,15 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 		@Override
 		public IFrameDMContext getCurrentFrameContext() {
 			return fFrameCtx;
+		}
+	}
+	
+	/**
+     * A generic selection state changed event.
+     */
+	public class SelectionChangedEvent extends AbstractDMEvent<IDMContext> implements ISelectionChangedEvent {
+		public SelectionChangedEvent(IDMContext context) {
+			super(context);
 		}
 	}
 
@@ -240,15 +250,28 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
     				frameLevel = frameLevel != null ? frameLevel : STACKFRAME_ID_DEFAULT;
     				
     				// update current thread and SF
-    				fCurrentThreadCtx = createExecContext(tid);
-    				fCurrentStackFrameCtx = createFrameContext(fCurrentThreadCtx, frameLevel);
-    				
-    				createAndDispatchThreadSwitchedEvent();
+    				switchSelection(tid, frameLevel);
     			}
     		}
     	}
 	}
 
+	
+	protected void switchSelection(String newTid, String newFrameLevel) {
+		IFrameDMContext oldFrame = fCurrentStackFrameCtx;
+		
+		// update current thread and SF
+		fCurrentThreadCtx = createExecContext(newTid);
+		fCurrentStackFrameCtx = createFrameContext(fCurrentThreadCtx, newFrameLevel);
+		
+		// only need to send one event for both thread and frame - the 
+		// VMNodes of both types will understand to refresh
+		createAndDispatchSelectionChangedEvent(oldFrame);
+		createAndDispatchThreadSwitchedEvent();
+		createAndDispatchSelectionChangedEvent(fCurrentStackFrameCtx);
+	}
+	
+	
 	protected void createAndDispatchThreadSwitchedEvent() {
 		if (isSyncEnabled()) {
 			// create DSF event and dispatch
@@ -257,6 +280,14 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 		}
 	}
 
+	protected void createAndDispatchSelectionChangedEvent(IDMContext ctx) {
+		if (isSyncEnabled()) {
+			// create DSF event and dispatch
+			fCommandControl.getSession().dispatchEvent(new SelectionChangedEvent(ctx), 
+					fCommandControl.getProperties());
+		}
+	}
+	
 	private IExecutionDMContext createExecContext(String tid) {
 		assert tid != null;
 		IContainerDMContext parentContainer = 

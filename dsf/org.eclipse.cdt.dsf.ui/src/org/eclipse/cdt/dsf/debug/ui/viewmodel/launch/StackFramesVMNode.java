@@ -37,6 +37,8 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
+import org.eclipse.cdt.dsf.gdb.service.GDBSynchronizer.SelectionChangedEvent;
+import org.eclipse.cdt.dsf.gdb.service.IGDBSynchronizer;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -51,6 +53,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelBackground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
@@ -69,6 +72,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IMemento;
 
 public class StackFramesVMNode extends AbstractDMVMNode 
@@ -148,6 +152,15 @@ public class StackFramesVMNode extends AbstractDMVMNode
         provider.setColumnInfo(
             PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
             new LabelColumnInfo(new LabelAttribute[] { 
+            	new LabelBackground(new RGB(238,238,224))
+				{
+					{ setPropertyNames(new String[] { ILaunchVMConstants.PROP_ELEMENT_SELECTED }); }
+					@Override
+					public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+						Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_ELEMENT_SELECTED);
+						return prop;
+					};                    
+				},
                 new LabelText(
                     MessagesForLaunchVM.StackFramesVMNode_No_columns__Incomplete_stack_marker__text_format,
                     new String[] { PROP_IS_INCOMPLETE_STACK_MARKER })
@@ -458,6 +471,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
             	handleFailedUpdate(update);
             	continue;
             }
+            
+            update.setProperty(ILaunchVMConstants.PROP_ELEMENT_SELECTED, isFrameSelected(dmc) );
 
             IRunControl runControlService = getServicesTracker().getService(IRunControl.class);
             IExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IExecutionDMContext.class);
@@ -478,6 +493,20 @@ public class StackFramesVMNode extends AbstractDMVMNode
                     }
                 });
         }
+    }
+    
+	protected boolean isFrameSelected(IFrameDMContext frameDmc) {
+    	IGDBSynchronizer syncService = getServicesTracker().getService(IGDBSynchronizer.class);
+    	Object[] sel = syncService.getSelection();
+    	
+    	for (Object s : sel) {
+    		if (s instanceof IFrameDMContext) {
+    			if (s.equals(frameDmc)) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
     }
 
     protected void fillFrameDataProperties(IPropertiesUpdate update, IFrameDMData data) {
@@ -630,7 +659,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
             } else if (IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY.equals(property)) {
                 return IModelDelta.STATE;
             }
-        } else {
+        } else if (e instanceof SelectionChangedEvent) {
+        	return IModelDelta.STATE;
+        }
+        else {
     	}
 
         return IModelDelta.NO_CHANGE;
@@ -690,7 +722,14 @@ public class StackFramesVMNode extends AbstractDMVMNode
             } else {
             	rm.done();
             }
-        } else {
+        } else if (e instanceof SelectionChangedEvent) {
+        	IDMContext ctx = ((SelectionChangedEvent)e).getDMContext();
+        	if (ctx instanceof IFrameDMContext) {
+        		parent.addNode(createVMContext(ctx) , IModelDelta.STATE);
+        		rm.done();
+        	}
+        } 
+        else {
             rm.done();
         }
     }

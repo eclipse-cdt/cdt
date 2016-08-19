@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -50,6 +51,12 @@ public interface IGDBSynchronizer extends IDsfService {
     interface IThreadFrameSwitchedEvent extends IDMEvent<IExecutionDMContext> {
     	IFrameDMContext getCurrentFrameContext();
     }
+    
+    /**
+     * A generic selection state changed event.
+     */
+    interface ISelectionChangedEvent extends IDMEvent<IDMContext> {}
+    
     
     /**
      * This tells the synchronizer that the GDB console, that corresponds to this instance of the 

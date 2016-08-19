@@ -41,4 +41,7 @@ public interface ILaunchVMConstants {
      */
     public static final String PROP_STATE_CHANGE_DETAILS = "state_change_details";  //$NON-NLS-1$
 
+    public static final String PROP_ELEMENT_SELECTED_KNOWN = "element_selected_known"; //$NON-NLS-1$  
+    
+    public static final String PROP_ELEMENT_SELECTED = "element_selected"; //$NON-NLS-1$  
 }

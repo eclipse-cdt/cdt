@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_b85780d5",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11972,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-08-19T02:01:15Z",
+      "side": 1,
+      "message": "Please add a test case for:\n\n  decltype(auto) x{42};\n\nwhich is ill-formed for the same reason, although gcc accepts it as an extension.\n\n(Or, if you think we should match gcc and accept it as an extension too, we could do that too.)",
+      "revId": "e9e907ae3b1521a9121550b3241cbc797994128a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_786ec8a4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTSimpleDeclSpecifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-08-19T02:01:15Z",
+      "side": 1,
+      "message": "For future reference, it is no longer necessary to update the year manually. (It was announced a few months ago on the mailing list. An automatic process will do it before each release, based on the commit history.)",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 27
+      },
+      "revId": "e9e907ae3b1521a9121550b3241cbc797994128a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_9869dc9b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2322,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-08-19T02:01:15Z",
+      "side": 1,
+      "message": "Why handle t_decltype_auto here? We should never get in here for decltype(auto) because getDeclTypeExpression() will be null.",
+      "revId": "e9e907ae3b1521a9121550b3241cbc797994128a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

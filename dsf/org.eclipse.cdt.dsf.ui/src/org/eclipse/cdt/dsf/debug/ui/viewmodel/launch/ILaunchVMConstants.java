@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
+import org.eclipse.swt.graphics.RGB;
 
 /**
  * @since 2.0
@@ -41,4 +42,29 @@ public interface ILaunchVMConstants {
      */
     public static final String PROP_STATE_CHANGE_DETAILS = "state_change_details";  //$NON-NLS-1$
 
+    public static final String PROP_ELEMENT_SELECTED_KNOWN = "element_selected_known"; //$NON-NLS-1$  
+    
+    public static final String PROP_ELEMENT_SELECTED = "element_selected"; //$NON-NLS-1$
+    
+    
+    // temp, for prototyping purposes
+    public boolean SELECTION_HIGHLIGHT_BG = true;
+    public boolean SELECTION_HIGHLIGHT_FG = false;
+    public RGB SELECTION_HIGHLIGHT_BG_COLOR = new RGB(238,238,224); 
+    public RGB SELECTION_HIGHLIGHT_FG_COLOR = new RGB(45,45,215);
+    
+//    public boolean SELECTION_HIGHLIGHT_BOLD = false;
+//    public boolean SELECTION_HIGHLIGHT_ITALIC = true;
+    public boolean SELECTION_HIGHLIGHT_BOLD = false;
+    public boolean SELECTION_HIGHLIGHT_ITALIC = false;
+    
+    public boolean SELECTION_HIGHLIGHT_ASCII_MARKER = true; // <-- gdb N
+    
+    public int SELECTION_HIGHLIGHT_FONT_SIZE = 12;
+    
+
+//    public boolean SELECTION_HIGHLIGHT_IMAGE = true;
+    
+//    public boolean SELECTION_HIGHLIGHT_2_COLUMNS_IN_DV = true;
+    
 }

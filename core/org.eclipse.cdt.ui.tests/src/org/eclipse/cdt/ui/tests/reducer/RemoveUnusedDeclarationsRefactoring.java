@@ -61,9 +61,11 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -74,6 +76,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
@@ -81,6 +84,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
@@ -262,6 +266,9 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 			return false;
 		}
 
+		if (ASTQueries.findAncestorWithType(declaration, ICPPASTLambdaExpression.class) != null)
+			return true; // Removing inside lambda expressions is unsafe.
+
 		Collection<IASTName> declaredNames = getDeclaredNames(declaration);
 		if (declaredNames == null)
 			return true;
@@ -290,7 +297,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 						IASTNode[] declarations = ((ICPPInternalBinding) binding).getDeclarations();
 						if (declarations != null && declarations.length != 0) {
 							IASTNode firstDeclaration = declarations[0];
-							int firstDeclarationOffset = ASTNodes.offset(firstDeclaration);
+							int firstDeclarationOffset = ASTNodes.endOffset(firstDeclaration);
 							if (startOffset > firstDeclarationOffset) {
 								startPoint = firstDeclaration;
 								startOffset = firstDeclarationOffset;
@@ -303,11 +310,17 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 			for (IASTName name : names) {
 				if (name != declName) {
 					char[] nameChars = name.getSimpleID();
+
 					int offset = nameChars.length != 0 && nameChars[0] == '~' ? 1 : 0;
-					if (CharArrayUtils.equals(nameChars, offset, nameChars.length - offset, declNameChars)
-							&& (ASTNodes.offset(name) >= startOffset
-									|| isInsideTemplateDeclarationOrSpecialization(name))) {
-						return true;
+					if (CharArrayUtils.equals(nameChars, offset, nameChars.length - offset, declNameChars)) {
+						IASTDeclaration decl = findTopMostNonTemplateDeclaration(name);
+						if (decl == null) {
+							if (ASTNodes.offset(name) >= startOffset)
+								return true;
+						} else {
+							if (!isDeclaredBy(name, decl))
+								return true;
+						}
 					}
 				}
 			}
@@ -364,10 +377,59 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 		return null;
 	}
 
-	private static boolean isInsideTemplateDeclarationOrSpecialization(IASTNode node) {
-		while ((node = node.getParent()) != null) {
-			if (node instanceof ICPPASTTemplateDeclaration || node instanceof ICPPASTTemplateSpecialization)
-				return true;
+	private static IASTDeclaration findTopMostNonTemplateDeclaration(IASTName name) {
+		IASTNode node = name;
+		ASTNodeProperty property = name.getPropertyInParent();
+		while (property == ICPPASTTemplateId.TEMPLATE_NAME
+				|| property == ICPPASTQualifiedName.SEGMENT_NAME && node == ((ICPPASTQualifiedName) node.getParent()).getLastName()) {
+			node = node.getParent();
+			property = node.getPropertyInParent();
+		}
+		if (property == IASTDeclarator.DECLARATOR_NAME || property == IASTCompositeTypeSpecifier.TYPE_NAME) {
+			node = node.getParent().getParent();
+		}
+		for (IASTNode parent; (parent = node.getParent()) != null; node = parent) {
+			if (!(parent instanceof IASTDeclaration)
+					|| parent instanceof ICPPASTTemplateDeclaration
+					|| parent instanceof ICPPASTTemplateSpecialization) {
+				if (node instanceof IASTDeclaration) {
+					return (IASTDeclaration) node;
+				}
+				break;
+			}
+		}
+			
+		return null;
+	}
+
+	/**
+	 * Checks if {@code name} is declared by the {@code declaration}.
+	 */
+	private static boolean isDeclaredBy(IASTName name, IASTDeclaration declaration) {
+		if (declaration.getPropertyInParent() == ICPPASTTemplateSpecialization.OWNED_DECLARATION)
+			return false;
+		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME && ((ICPPASTTemplateId) name.getParent()).resolveBinding() instanceof ICPPPartialSpecialization)
+			return false;
+		if (declaration instanceof IASTSimpleDeclaration) {
+			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
+			if (declSpec instanceof ICPPASTDeclSpecifier && ((ICPPASTDeclSpecifier) declSpec).isFriend())
+				return false;
+		}
+
+		while (name instanceof ICPPASTTemplateId) {
+			name = ((ICPPASTTemplateId) name).getTemplateName(); 
+		}
+		char[] nameChars = name.getSimpleID();
+		Collection<IASTName> declaredNames = getDeclaredNames(declaration);
+		if (declaredNames != null) {
+			for (IASTName declaredName : declaredNames) {
+				while (declaredName instanceof ICPPASTTemplateId) {
+					declaredName = ((ICPPASTTemplateId) declaredName).getTemplateName(); 
+				}
+				char[] declaredNameChars = declaredName.getSimpleID();
+				if (Arrays.equals(nameChars, declaredNameChars))
+					return true;
+			}
 		}
 			
 		return false;

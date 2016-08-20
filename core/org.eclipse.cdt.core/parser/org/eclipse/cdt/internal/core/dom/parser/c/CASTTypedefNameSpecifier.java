@@ -24,9 +24,8 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 /**
  * @author jcamelon
  */
-public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
-        ICASTTypedefNameSpecifier, IASTCompletionContext {
-
+public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier
+		implements ICASTTypedefNameSpecifier, IASTCompletionContext {
     private IASTName name;
 
     public CASTTypedefNameSpecifier() {
@@ -64,23 +63,24 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if (!visitAlignmentSpecifiers(action)) {
+        if (!visitAlignmentSpecifiers(action))
         	return false;
-        }
-        if( name != null ) if( !name.accept( action ) ) return false;
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (name != null && !name.accept(action))
+        	return false;
+
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -88,7 +88,8 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if( n == name )	return r_reference;
+		if (n == name)
+			return r_reference;
 		return r_unclear;
 	}
 

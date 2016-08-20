@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -19,9 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier,
-		ICPPASTDeclSpecifier {
-
+public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier, ICPPASTDeclSpecifier {
 	/**
 	 * Was typename token consumed?
 	 * 
@@ -48,5 +46,4 @@ public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier,
 	 */
 	@Override
 	public ICPPASTNamedTypeSpecifier copy(CopyStyle style);
-
 }

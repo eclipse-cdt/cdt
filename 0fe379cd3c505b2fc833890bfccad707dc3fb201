@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_c450cdae",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/IToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-08-22T04:47:53Z",
+      "side": 1,
+      "message": "The number one rule for API methods is to have detailed Javadocs.",
+      "range": {
+        "startLine": 64,
+        "startChar": 30,
+        "endLine": 64,
+        "endChar": 44
+      },
+      "revId": "0fe379cd3c505b2fc833890bfccad707dc3fb201",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

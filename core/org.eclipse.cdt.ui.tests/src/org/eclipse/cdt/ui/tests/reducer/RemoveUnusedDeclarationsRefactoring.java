@@ -76,6 +76,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.index.IIndex;
@@ -275,11 +276,11 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 
 		for (IASTName declName : declaredNames) {
 			char[] declNameChars = declName.getSimpleID();
-			if (declNameChars.length != 0 && declNameChars[0] == '~')
-				declNameChars = Arrays.copyOfRange(declNameChars, 1, declNameChars.length);
 			IASTNode startPoint = declName;
 			int startOffset = ASTNodes.endOffset(declaration);
-			if (declaration.getPropertyInParent() == IASTCompositeTypeSpecifier.MEMBER_DECLARATION) {
+			if (declaration.getPropertyInParent() == IASTCompositeTypeSpecifier.MEMBER_DECLARATION
+					&& !(declName.resolveBinding() instanceof ICPPConstructor)
+					&& (declNameChars.length == 0 || declNameChars[0] != '~')) {
 				// Member declarations can be referenced by other members declared before them.
 				startPoint = declaration.getParent();
 				startOffset = ASTNodes.offset(startPoint);
@@ -287,6 +288,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 				ASTNodeProperty property = declName.getPropertyInParent();
 				if (property == IASTCompositeTypeSpecifier.TYPE_NAME
 						|| property == ICPPASTEnumerationSpecifier.ENUMERATION_NAME && ((ICPPASTEnumerationSpecifier) declName.getParent()).isScoped()) {
+					// Start from the first forward declaration of class or scoped enumeration. 
 					while (declName instanceof ICPPASTTemplateId) {
 						declName = ((ICPPASTTemplateId) declName).getTemplateName();
 					}
@@ -307,17 +309,24 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 				}
 			}
 			
+			if (declNameChars.length != 0 && declNameChars[0] == '~')
+				declNameChars = Arrays.copyOfRange(declNameChars, 1, declNameChars.length);
+
+			int declOffset = ASTNodes.offset(declaration);
+			int declEndOffset = ASTNodes.endOffset(declaration);
+
 			for (IASTName name : names) {
 				if (name != declName) {
 					char[] nameChars = name.getSimpleID();
 
 					int offset = nameChars.length != 0 && nameChars[0] == '~' ? 1 : 0;
 					if (CharArrayUtils.equals(nameChars, offset, nameChars.length - offset, declNameChars)) {
-						IASTDeclaration decl = findTopmostNonTemplateDeclaration(name);
-						if (decl == null) {
-							if (ASTNodes.offset(name) >= startOffset)
+						int nameOffset = ASTNodes.offset(name);
+						if (nameOffset >= declEndOffset || nameOffset >= startOffset && nameOffset < declOffset) {
+							IASTDeclaration decl = findTopmostNonTemplateDeclaration(name);
+							if (decl == null)
 								return true;
-						} else {
+
 							if (!isDeclaredBy(name, decl))
 								return true;
 						}
@@ -389,13 +398,16 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 			node = node.getParent();
 			property = node.getPropertyInParent();
 		}
-		if (property == IASTDeclarator.DECLARATOR_NAME || property == IASTCompositeTypeSpecifier.TYPE_NAME) {
+		if (property == IASTDeclarator.DECLARATOR_NAME
+				|| property == IASTCompositeTypeSpecifier.TYPE_NAME
+				|| property == IASTElaboratedTypeSpecifier.TYPE_NAME) {
 			node = node.getParent().getParent();
 		}
 		for (IASTNode parent; (parent = node.getParent()) != null; node = parent) {
 			if (!(parent instanceof IASTDeclaration)
 					|| parent instanceof ICPPASTTemplateDeclaration
-					|| parent instanceof ICPPASTTemplateSpecialization) {
+					|| parent instanceof ICPPASTTemplateSpecialization
+					|| parent instanceof ICPPASTNamespaceDefinition) {
 				if (node instanceof IASTDeclaration) {
 					return (IASTDeclaration) node;
 				}

@@ -667,8 +667,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 
                 try {
                     if (fOutputStream != null) {
-                        fOutputStream.write(str.getBytes());
-                        fOutputStream.flush();
                         
                         if (GdbDebugOptions.DEBUG) {
                         	GdbDebugOptions.trace(String.format( "%s %s  %s", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, str)); //$NON-NLS-1$
@@ -689,6 +687,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         		setMITracingStream(null);
                         	}
                         }
+
+                        fOutputStream.write(str.getBytes());
+                        fOutputStream.flush();
                     }
                 } catch (IOException e) {
                     // Shutdown thread in case of IO error.

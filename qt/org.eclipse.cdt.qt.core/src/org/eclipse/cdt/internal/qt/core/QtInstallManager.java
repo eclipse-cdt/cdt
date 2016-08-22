@@ -9,16 +9,21 @@ package org.eclipse.cdt.internal.qt.core;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.qt.core.IQtInstall;
+import org.eclipse.cdt.qt.core.IQtInstallListener;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.cdt.qt.core.IQtInstallProvider;
+import org.eclipse.cdt.qt.core.QtInstallEvent;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -31,6 +36,7 @@ public class QtInstallManager implements IQtInstallManager {
 
 	private Map<Path, IQtInstall> installs;
 	private Map<String, IConfigurationElement> toolChainMap;
+	private List<IQtInstallListener> listeners = new LinkedList<>();
 
 	private Preferences getPreferences() {
 		return ConfigurationScope.INSTANCE.getNode(Activator.ID).node("qtInstalls"); //$NON-NLS-1$
@@ -109,7 +115,20 @@ public class QtInstallManager implements IQtInstallManager {
 	}
 
 	@Override
+	public Collection<IQtInstall> getInstall(String spec) {
+		initInstalls();
+		List<IQtInstall> installList = new ArrayList<>();
+		for (IQtInstall install : installs.values()) {
+			if (install.getSpec().equals(spec)) {
+				installList.add(install);
+			}
+		}
+		return installList;
+	}
+
+	@Override
 	public void removeInstall(IQtInstall install) {
+		fireEvent(new QtInstallEvent(QtInstallEvent.REMOVED, install));
 		installs.remove(install.getQmakePath());
 		saveInstalls();
 	}
@@ -147,6 +166,22 @@ public class QtInstallManager implements IQtInstallManager {
 		} else {
 			// Don't know so returning false
 			return false;
+		}
+	}
+
+	@Override
+	public void addListener(IQtInstallListener listener) {
+		listeners.add(listener);
+	}
+
+	@Override
+	public void removeListener(IQtInstallListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void fireEvent(QtInstallEvent event) {
+		for (IQtInstallListener listener : listeners) {
+			listener.installChanged(event);
 		}
 	}
 

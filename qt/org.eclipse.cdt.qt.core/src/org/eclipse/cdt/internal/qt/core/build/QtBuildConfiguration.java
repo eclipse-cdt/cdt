@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,9 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.IQtInstall;
+import org.eclipse.cdt.qt.core.IQtInstallListener;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
+import org.eclipse.cdt.qt.core.QtInstallEvent;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -47,25 +50,43 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class QtBuildConfiguration extends CBuildConfiguration implements ICBuildConfiguration, IQtBuildConfiguration {
+public class QtBuildConfiguration extends CBuildConfiguration
+		implements ICBuildConfiguration, IQtBuildConfiguration, IQtInstallListener {
 
 	private static final String QTINSTALL_NAME = "cdt.qt.install.name"; //$NON-NLS-1$
+	private static final String QTINSTALL_SPEC = "cdt.qt.install.spec"; //$NON-NLS-1$
 	private static final String LAUNCH_MODE = "cdt.qt.launchMode"; //$NON-NLS-1$
 
-	private final IQtInstall qtInstall;
 	private final String launchMode;
+	private final String qtInstallSpec;
+	private IQtInstall qtInstall;
 	private Map<String, String> properties;
 
 	public QtBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
 
+		IQtInstallManager manager = Activator.getService(IQtInstallManager.class);
+		manager.addListener(this);
+
 		Preferences settings = getSettings();
 		String installName = settings.get(QTINSTALL_NAME, ""); //$NON-NLS-1$
+		qtInstallSpec = settings.get(QTINSTALL_SPEC, ""); //$NON-NLS-1$
 		if (!installName.isEmpty()) {
-			IQtInstallManager manager = Activator.getService(IQtInstallManager.class);
 			qtInstall = manager.getInstall(Paths.get(installName));
-		} else {
-			qtInstall = null;
+			if (qtInstallSpec.isEmpty()) {
+				// save the spec if it wasn't set
+				settings.put(QTINSTALL_SPEC, qtInstall.getSpec());
+				try {
+					settings.flush();
+				} catch (BackingStoreException e) {
+					Activator.log(e);
+				}
+			}
+		}
+
+		if (getQtInstall() == null) {
+			throw new CoreException(
+					Activator.error(String.format("Qt Install for build configuration %s not found.", name)));
 		}
 
 		launchMode = settings.get(LAUNCH_MODE, null); // $NON-NLS-1$
@@ -75,10 +96,15 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 			String launchMode) throws CoreException {
 		super(config, name, toolChain);
 		this.qtInstall = qtInstall;
+		this.qtInstallSpec = qtInstall.getSpec();
 		this.launchMode = launchMode;
+
+		IQtInstallManager manager = Activator.getService(IQtInstallManager.class);
+		manager.addListener(this);
 
 		Preferences settings = getSettings();
 		settings.put(QTINSTALL_NAME, qtInstall.getQmakePath().toString());
+		settings.put(QTINSTALL_SPEC, qtInstallSpec);
 		if (launchMode != null) {
 			settings.put(LAUNCH_MODE, launchMode);
 		}
@@ -95,7 +121,23 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 	}
 
 	public IQtInstall getQtInstall() {
+		if (qtInstall == null && !qtInstallSpec.isEmpty()) {
+			// find one that matches the spec
+			IQtInstallManager manager = Activator.getService(IQtInstallManager.class);
+			Collection<IQtInstall> candidates = manager.getInstall(qtInstallSpec);
+			if (!candidates.isEmpty()) {
+				qtInstall = candidates.iterator().next();
+			}
+		}
 		return qtInstall;
+	}
+
+	@Override
+	public void installChanged(QtInstallEvent event) {
+		if (event.getType() == QtInstallEvent.REMOVED && event.getInstall().equals(qtInstall)) {
+			// clear the cache so we refetch later
+			qtInstall = null;
+		}
 	}
 
 	@Override
@@ -105,7 +147,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements ICBuild
 
 	@Override
 	public Path getQmakeCommand() {
-		return qtInstall.getQmakePath();
+		return getQtInstall().getQmakePath();
 	}
 
 	@Override

@@ -15,6 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.parser.util.ArrayUtil.appendAt;
+import static org.eclipse.cdt.core.parser.util.ArrayUtil.trim;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -473,7 +479,105 @@ public class ClassTypeHelper {
 		if (scope == null) {
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		}
-		return scope.getConstructors();
+		ICPPConstructor[] constructors = scope.getConstructors();
+		return getAllConstructors(host, constructors, null);
+	}
+
+	/**
+	 * Returns all constructors for a given class type. The returned constructors include the explicitly
+	 * declared, the implicit, and the inherited ones.
+	 *
+	 * @param classType the class to get the constructors for
+	 * @param declaredAndImplicitConstructors the declared and implicit constructors of the class
+	 * @param point the point of template instantiation, if applicable
+	 * @return an array of all class constructors
+	 */
+	public static ICPPConstructor[] getAllConstructors(ICPPClassType classType,
+			ICPPConstructor[] declaredAndImplicitConstructors, IASTNode point) {
+		IType[][] paramTypes = new IType[declaredAndImplicitConstructors.length][];
+		for (int i = 0; i < declaredAndImplicitConstructors.length; i++) {
+			ICPPConstructor ctor = declaredAndImplicitConstructors[i];
+			paramTypes[i] = ctor.getType().getParameterTypes();
+		}
+		ICPPConstructor[] inheritedConstructors = getInheritedConstructors(
+				(ICPPClassScope) classType.getCompositeScope(), getBases(classType, point), paramTypes, point);
+    	return ArrayUtil.addAll(declaredAndImplicitConstructors, inheritedConstructors);
+	}
+
+	/**
+	 * Returns inherited constructors for a given class scope.
+	 *
+	 * @param scope the composite scope of the class to get the constructors for
+	 * @param bases the base class relationships of the class
+	 * @param existingConstructorParamTypes parameter types of the declared and the implicit constructors
+	 * @param point the point of template instantiation, if applicable
+	 * @return an array of all inherited constructors
+	 */
+	public static ICPPConstructor[] getInheritedConstructors(ICPPClassScope scope, ICPPBase[] bases,
+			IType[][] existingConstructorParamTypes, IASTNode point) {
+		ICPPConstructor[] inheritedConstructors = ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+		int n = 0;
+		for (ICPPBase base : bases) {
+			if (!base.isInheritedConstructorsSource())
+				continue;
+			IBinding baseType = base.getBaseClass();
+        	if (!(baseType instanceof ICPPClassType))
+        		continue;
+    		ICPPClassType baseClass = (ICPPClassType) baseType;
+			ICPPConstructor[] ctors = getConstructors(baseClass, point);
+    		for (ICPPConstructor ctor : ctors) {
+    			if (canBeInherited(ctor, baseClass, existingConstructorParamTypes))
+        			inheritedConstructors = appendAt(inheritedConstructors, n++, ctor);
+    		}
+		}
+		return trim(inheritedConstructors, n);
+	}
+
+	private static boolean canBeInherited(ICPPConstructor ctor, ICPPClassType baseClass,
+			IType[][] existingConstructorParamTypes) {
+		ICPPParameter[] params = ctor.getParameters();
+		// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0136r1.html
+		// 7.3.3-4 [Note] If a constructor or assignment operator brought from a base class into a derived
+		// class has the signature of a copy/move constructor or assignment operator for the derived class
+		// (12.8), the using-declaration does not by itself suppress the implicit declaration of the derived
+		// class member; the member from the base class is hidden or overridden by the implicitly-declared
+		// copy/move constructor or assignment operator of the derived class, as described below.
+		for (int k = Math.max(ctor.getRequiredArgumentCount(), 1); k <= params.length; k++) {
+			if (k == 1 && isReferenceToClass(params[0].getType(), baseClass)) {
+				continue;  // Skip the copy constructor.
+			}
+			if (findMatchingSignature(params, k, existingConstructorParamTypes) < 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isReferenceToClass(IType type, IType classType) {
+		type= SemanticUtil.getNestedType(type, TDEF);
+		if (type instanceof ICPPReferenceType && !((ICPPReferenceType) type).isRValueReference()) {
+			type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
+			return classType.isSameType(type);
+		}
+		return false;
+	}
+
+	private static int findMatchingSignature(ICPPParameter[] params, int numParams, IType[][] paramTypes) {
+		for (int i = 0; i < paramTypes.length; i++) {
+			if (doParameterTypesMatch(params, numParams, paramTypes[i]))
+				return i;
+		}
+		return -1;
+	}
+
+	private static boolean doParameterTypesMatch(ICPPParameter[] params, int numParams, IType[] types) {
+		if (numParams != types.length)
+			return false;
+		for (int i = 0; i < numParams; i++) {
+			if (!params[i].getType().isSameType(types[i]))
+				return false;
+		}
+		return true;
 	}
 
 	public static ICPPClassType[] getNestedClasses(ICPPInternalClassTypeMixinHost host) {

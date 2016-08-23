@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.core.parser.util.ArrayUtil.appendAt;
-import static org.eclipse.cdt.core.parser.util.ArrayUtil.trim;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -22,15 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -49,15 +44,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * @see chapter 12 of the ISO specification
  */
 final class ImplicitsAnalysis {
-	private static final IASTParameterDeclaration[][] EMPTY_ARRAY_OF_PARAMETER_ARRAYS = {};
-
 	private final ICPPClassType classType;
 	private final ICPPASTCompositeTypeSpecifier compositeTypeSpecifier;
 	private boolean hasConstructor;
 	private boolean hasCopyConstructor;
 	private boolean hasCopyAssignmentOperator;
 	private boolean hasDestructor;
-	private IASTParameterDeclaration[][] parametersOfNontrivialConstructors = EMPTY_ARRAY_OF_PARAMETER_ARRAYS;
 	private boolean hasNonStaticFields;
 
 	ImplicitsAnalysis(ICPPASTCompositeTypeSpecifier compositeTypeSpecifier, ICPPClassType classType) {
@@ -83,25 +75,6 @@ final class ImplicitsAnalysis {
 	}
 
 	/**
-	 * Returns the types of parameters of user-declared constructors excluding the default and copy
-	 * constructors. Available only when the class has at least one base class.
-	 */
-	public IType[][] getParametersOfNontrivialUserDeclaredConstructors() {
-        IASTParameterDeclaration[][] paramDeclarations = parametersOfNontrivialConstructors;
-        IType[][] paramTypes = new IType[paramDeclarations.length][];
-		for (int i = 0; i < paramDeclarations.length; i++) {
-        	IASTParameterDeclaration[] declarations = paramDeclarations[i];
-			int numParams = declarations.length;
-        	IType[] types = paramTypes[i] = new IType[numParams];
-			for (int j = 0; j < numParams; j++) {
-    			types[j] = CPPVisitor.createType((ICPPASTParameterDeclaration) declarations[j], true);
-        	}
-        }
-
-		return paramTypes;
-	}
-
-	/**
 	 * Returns the number of implicit methods to declare not counting the inherited constructors.
 	 */
 	public int getImplicitsToDeclareCount() {
@@ -112,9 +85,6 @@ final class ImplicitsAnalysis {
 	}
 
 	private void analyzeMembers(ICPPASTCompositeTypeSpecifier compositeTypeSpecifier) {
-		int numNontrivialConstructors = 0;
-		
-		ICPPASTBaseSpecifier[] baseSpecifiers = compositeTypeSpecifier.getBaseSpecifiers();
 		IASTDeclaration[] members = compositeTypeSpecifier.getMembers();
 		char[] name = compositeTypeSpecifier.getName().getLookupKey();
         for (IASTDeclaration member : members) {
@@ -131,50 +101,33 @@ final class ImplicitsAnalysis {
 			    spec = ((IASTFunctionDefinition) member).getDeclSpecifier();
 			}
 
-			if (dcltor instanceof ICPPASTFunctionDeclarator) {
-				IASTName memberName = ASTQueries.findInnermostDeclarator(dcltor).getName();
-				char[] declName = memberName.getLookupKey();
-	
-				if (spec instanceof IASTSimpleDeclSpecifier &&
-						((IASTSimpleDeclSpecifier) spec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
-					if (CharArrayUtils.equals(declName, name)) {
-						hasConstructor = true;
-						IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
-			        	if (params.length != 0) {
-			        		if (hasTypeReferenceToClassType(params[0])) {
-			        			if (parametersHaveInitializers(params, 1)) {
-			        				hasCopyConstructor = true;
-			        			}
-			        			if (params.length > 1) {
-			        				parametersOfNontrivialConstructors =
-			        						appendAt(parametersOfNontrivialConstructors, numNontrivialConstructors++, params);
-			        			}
-			        		} else {
-			        			parametersOfNontrivialConstructors =
-			        					appendAt(parametersOfNontrivialConstructors, numNontrivialConstructors++, params);
-			        		}
-			        	}
-					} if (declName.length != 0 && declName[0] == '~' &&
-							CharArrayUtils.equals(declName, 1, name.length, name)) {
-						hasDestructor = true;
-					}
-				} if (CharArrayUtils.equals(declName, OverloadableOperator.ASSIGN.toCharArray())) {
-					IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
-		        	if (params.length == 1 && hasTypeReferenceToClassType(params[0]))
-		        		hasCopyAssignmentOperator = true;
-				}
-	
-				if (hasCopyConstructor && hasDestructor && hasCopyAssignmentOperator &&	baseSpecifiers.length == 0
-						&& hasNonStaticFields) {
-					break;  // Nothing else to look for.
-				}
-			} else if (dcltor instanceof ICPPASTFieldDeclarator &&
-					spec != null && spec.getStorageClass() != IASTDeclSpecifier.sc_static) {
-				hasNonStaticFields = true;
-			}
-        }
+			if (!(dcltor instanceof ICPPASTFunctionDeclarator))
+				continue;
 
-        parametersOfNontrivialConstructors = trim(parametersOfNontrivialConstructors, numNontrivialConstructors);
+			char[] declName= ASTQueries.findInnermostDeclarator(dcltor).getName().getLookupKey();
+
+			if (spec instanceof IASTSimpleDeclSpecifier &&
+					((IASTSimpleDeclSpecifier) spec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+				if (CharArrayUtils.equals(declName, name)) {
+					hasConstructor = true;
+					IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
+		        	if (params.length != 0 && hasTypeReferenceToClassType(params[0])
+		        			&& parametersHaveInitializers(params, 1)) {
+		        		hasCopyConstructor = true;
+		        	}
+				} else if (declName.length != 0 && declName[0] == '~' &&
+						CharArrayUtils.equals(declName, 1, name.length, name)) {
+					hasDestructor = true;
+				}
+			} else if (CharArrayUtils.equals(declName, OverloadableOperator.ASSIGN.toCharArray())) {
+				IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
+	        	if (params.length == 1 && hasTypeReferenceToClassType(params[0]))
+	        		hasCopyAssignmentOperator = true;
+			}
+
+			if (hasCopyConstructor && hasDestructor && hasCopyAssignmentOperator)
+				break;
+        }
 	}
 
 	private boolean hasTypeReferenceToClassType(IASTParameterDeclaration decl) {

@@ -24,6 +24,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -62,6 +63,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * Base implementation for C++ scopes.
@@ -168,7 +170,13 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 					for (ICPPBase base : bases) {
 						IType baseClass = base.getBaseClassType();
 						if (type.isSameType(baseClass)) {
-							((CPPBaseClause) base).setInheritedConstructorsSource(true);
+							if (base instanceof CPPBaseClause) {
+								((CPPBaseClause) base).setInheritedConstructorsSource(true);
+							} else {
+								CCorePlugin.log(IStatus.ERROR, "Unexpected type of base (" //$NON-NLS-1$
+										+ base.getClass().getSimpleName() + ") for '" //$NON-NLS-1$
+										+ compositeTypeSpec.getRawSignature() + "'"); //$NON-NLS-1$
+							}
 						}
 					}
 				}

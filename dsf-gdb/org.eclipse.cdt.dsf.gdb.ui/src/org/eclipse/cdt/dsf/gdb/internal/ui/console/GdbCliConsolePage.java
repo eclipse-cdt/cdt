@@ -14,17 +14,23 @@ import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
@@ -35,17 +41,21 @@ import org.eclipse.tm.terminal.view.core.interfaces.ITerminalServiceOutputStream
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.Page;
 
 public class GdbCliConsolePage extends Page {
 
 	private DsfSession fSession;
 	private Composite fMainComposite;
-	
+	private MenuManager fMenuManager;
+
+	private GdbConsoleReverseVideoAction fReverseVideoAction;
+
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
 
-	public GdbCliConsolePage(GdbCliConsole gdbConsole) {
+	public GdbCliConsolePage(GdbCliConsole gdbConsole, IViewPart view) {
 		ILaunch launch = gdbConsole.getLaunch();
 		if (launch instanceof GdbLaunch) {
 			fSession = ((GdbLaunch)launch).getSession();
@@ -58,6 +68,7 @@ public class GdbCliConsolePage extends Page {
 	public void dispose() {
 		super.dispose();
 		fTerminalControl.disposeTerminal();
+		fMenuManager.dispose();
 	}
 	
 	@Override
@@ -66,6 +77,28 @@ public class GdbCliConsolePage extends Page {
 		fMainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fMainComposite.setLayout(new FillLayout());
 
+		createTerminalControl();
+		
+		fMenuManager = new MenuManager();
+		fMenuManager.setRemoveAllWhenShown(true);
+		fMenuManager.addMenuListener(new IMenuListener() {
+			@Override
+			public void menuAboutToShow(IMenuManager m) {
+				contextMenuAboutToShow(m);
+			}
+		});
+		Menu menu = fMenuManager.createContextMenu(fTerminalControl.getControl());
+		fTerminalControl.getControl().setMenu(menu);
+		
+		createActions();
+
+		getSite().registerContextMenu(null, fMenuManager, getSite().getSelectionProvider());
+
+		// Hook the terminal control to the GDB process
+		attachTerminalToGdbProcess();
+	}
+
+	private void createTerminalControl() {
 		// Create the terminal control that will be used to interact with GDB
 		fTerminalControl = TerminalViewControlFactory.makeControl(
 				new ITerminalListener() {
@@ -81,9 +114,19 @@ public class GdbCliConsolePage extends Page {
 		} catch (UnsupportedEncodingException e) {
 		}
 		
-		// Hook the terminal control to the GDB process
-		attachTerminalToGdbProcess();
+		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+		boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_REVERSE_VIDEO);
+		fTerminalControl.setInvertedColors(enabled);
+		
 	}
+
+	protected void contextMenuAboutToShow(IMenuManager menuManager) {
+		menuManager.add(fReverseVideoAction);
+	}
+	
+    private void createActions() {
+		fReverseVideoAction = new GdbConsoleReverseVideoAction();
+    }
 
 	@Override
 	public Control getControl() {
@@ -159,5 +202,9 @@ public class GdbCliConsolePage extends Page {
 		properties.put(ITerminalsConnectorConstants.PROP_STDERR_LISTENERS, 
 				new ITerminalServiceOutputStreamMonitorListener[0]);
 		return properties;
+	}
+	
+	void setReverseVideo(boolean enable) {
+		fTerminalControl.setInvertedColors(enable);
 	}
 }

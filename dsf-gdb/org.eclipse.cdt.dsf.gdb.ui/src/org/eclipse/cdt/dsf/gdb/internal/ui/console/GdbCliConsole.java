@@ -25,6 +25,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class GdbCliConsole extends AbstractConsole {
 	private final ILaunch fLaunch;
 	private String fLabel;
+	private GdbCliConsolePage fConsolePage;
 	
 	public GdbCliConsole(ILaunch launch, String label) {
 		super(label, null);
@@ -81,12 +82,19 @@ public class GdbCliConsole extends AbstractConsole {
 	 */
 	public IPageBookViewPage createPage(GdbConsoleView view) {
 		view.setFocus();
-		return new GdbCliConsolePage(this);
+		fConsolePage = new GdbCliConsolePage(this, view);
+		return fConsolePage;
     }
 	
 	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
 		// This console is not handled by the console view
 		return null;
+	}
+	
+	public void setReverseVideo(boolean enable) {
+		if(fConsolePage != null) {
+			fConsolePage.setReverseVideo(enable);
+		}
 	}
 }

@@ -172,5 +172,11 @@ public interface IGdbDebugPreferenceConstants {
 	 */
 	public static final String PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE = "UseProcessorTrace"; //$NON-NLS-1$
 
+	/**
+	 * Boolean preference indicating if reverse video should be used for the GDB console. Default is <code>false</code>. 
+	 * @since 5.1
+	 */
+	public static final String PREF_CONSOLE_REVERSE_VIDEO = PREFIX + "consoleReverseVideo"; //$NON-NLS-1$
+
 }
 

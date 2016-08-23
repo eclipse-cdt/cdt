@@ -281,12 +281,15 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	public ICPPConstructor[] getConstructors(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getConstructors(point);
+			ICPPConstructor[] constructors = ((ICPPClassSpecializationScope) scope).getConstructors(point);
+	    	return ClassTypeHelper.getAllConstructors(this, constructors, point);
 		}
+
 		try {
 			PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
-			return visitor.getConstructors();
+			ICPPConstructor[] constructors = visitor.getConstructors();
+	    	return ClassTypeHelper.getAllConstructors(this, constructors, point);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;

@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope.createInheritedConsructors;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -285,8 +283,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 				}
 				existingConstructorParamTypes[i] = types;
 			}
-			ICPPMethod[] constructors = createInheritedConsructors(this, specialClass.getNameCharArray(),
-					getBases(point), existingConstructorParamTypes, point);
+			ICPPMethod[] constructors = ClassTypeHelper.getInheritedConstructors(this, getBases(point),
+					existingConstructorParamTypes, point);
 			ownInheritedConstructors = constructors;
 		}
 		return ownInheritedConstructors;

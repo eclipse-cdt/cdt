@@ -14,8 +14,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.25.0</tycho-version>
-		<tycho-extras-version>0.25.0</tycho-extras-version>
+		<tycho-version>0.26.0</tycho-version>
+		<tycho-extras-version>0.26.0</tycho-extras-version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -40,7 +40,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.6milestones/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.6/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -50,17 +50,17 @@
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/S20160501200945/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>cdt</id>
-			<url>http://download.eclipse.org/tools/cdt/builds/neon/milestones/</url>
+			<url>http://download.eclipse.org/tools/cdt/releases/9.0</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>remote</id>
-			<url>http://download.eclipse.org/tools/ptp/builds/remote/neon/milestones/</url>
+			<url>http://download.eclipse.org/tools/ptp/updates/remote/neon/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

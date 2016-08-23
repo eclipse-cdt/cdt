@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -51,8 +53,6 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.TestSuite;
 
 /**
  * For testing PDOM binding CPP language resolution
@@ -1862,6 +1862,27 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	  foo(1);
 	//	}
 	public void testInheritedConstructorFromUnknownClass() {
+		checkBindings();
+	}
+
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	struct B {
+	//	  template <typename T>
+	//	  B(const A<T>&, int i = 3);
+	//	};
+	//
+	//	struct C : public B {
+	//	  using B::B;
+	//	};
+
+	//	void foo(C);
+	//
+	//	void test(A<int> a) {
+	//	  foo(a);
+	//	}
+	public void testInheritedTemplateConstructor() {
 		checkBindings();
 	}
 

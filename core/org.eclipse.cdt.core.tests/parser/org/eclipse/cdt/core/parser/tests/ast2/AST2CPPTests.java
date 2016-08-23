@@ -30,6 +30,8 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -154,8 +156,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import junit.framework.TestSuite;
 
 public class AST2CPPTests extends AST2TestBase {
 
@@ -1470,7 +1470,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void test(A<int> a) {
 	//	  foo(a);
 	//	}
-	public void _testInheritedTemplateConstructor() throws Exception {
+	public void testInheritedTemplateConstructor() throws Exception {
 		parseAndCheckBindings();
 	}
 	

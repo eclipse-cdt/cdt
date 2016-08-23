@@ -94,7 +94,7 @@ public class ClassTypeHelper {
 				if (backup != null)
 					return backup.getFriends();
 				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+				IASTNode node = (declarations != null && declarations.length != 0) ? declarations[0] : null;
 				return new IBinding[] { new ProblemBinding(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 			}
 		}
@@ -135,6 +135,7 @@ public class ClassTypeHelper {
 	/**
 	 * Checks if a binding is a friend of a class. Only classes and functions can be friends of a class.
 	 * A class is considered a friend of itself.
+	 *
 	 * @param binding a binding.
 	 * @param classType a class.
 	 * @return {@code true} if {@code binding} is a friend of {@code classType}.
@@ -281,6 +282,7 @@ public class ClassTypeHelper {
 
 	/**
 	 * Returns all direct and indirect base classes.
+	 *
 	 * @param classType a class
 	 * @return An array of base classes in arbitrary order.
 	 */
@@ -306,7 +308,8 @@ public class ClassTypeHelper {
 	}
 	
 	/**
-	 * Returns all (direct or indirect) virtual base classes of 'classType'.
+	 * Returns all (direct or indirect) virtual base classes of {@code classType}.
+	 * 
 	 * @param point the point of instantiation for name lookups
 	 */
 	public static ICPPClassType[] getVirtualBases(ICPPClassType classType, IASTNode point) {
@@ -318,7 +321,7 @@ public class ClassTypeHelper {
 	}
 
 	/**
-	 * Helper function for #getVirtualBases(classType, point).
+	 * Helper function for {@link #getVirtualBases(ICPPClassType, IASTNode)}.
 	 */
 	private static void getVirtualBases(ICPPClassType classType, Set<ICPPClassType> virtualBases,
 			Set<ICPPClassType> nonvirtualBases, IASTNode point) {
@@ -343,6 +346,7 @@ public class ClassTypeHelper {
 	
 	/**
 	 * Checks inheritance relationship between two classes.
+	 *
 	 * @return {@code true} if {@code subclass} is a subclass of {@code superclass}.
 	 */
 	public static boolean isSubclass(ICPPClassType subclass, ICPPClassType superclass, IASTNode point) {
@@ -461,8 +465,8 @@ public class ClassTypeHelper {
 		return ArrayUtil.trim(result);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
+	/**
+	 * @see ICPPClassType#getConstructors()
 	 */
 	public static ICPPConstructor[] getConstructors(ICPPInternalClassTypeMixinHost host) {
 		ICPPClassScope scope = host.getCompositeScope();
@@ -653,8 +657,7 @@ public class ClassTypeHelper {
 	private static boolean findOverridden(ICPPClassType classType, IASTNode point, char[] methodName,
 			ICPPFunctionType methodType, Map<ICPPClassType, Boolean> virtualInClass,
 			List<ICPPMethod> result, int maxdepth) {
-		// Prevent recursion due to a hierarchy of unbounded depth,
-		// e.g. A<I> deriving from A<I - 1>.
+		// Prevent recursion due to a hierarchy of unbounded depth, e.g. A<I> deriving from A<I - 1>.
 		if (maxdepth <= 0)
 			return false;
 		
@@ -698,7 +701,6 @@ public class ClassTypeHelper {
 
 	/**
 	 * Returns all methods found in the index, that override the given {@code method}.
-	 * @throws CoreException
 	 */
 	public static ICPPMethod[] findOverriders(IIndex index, ICPPMethod method) throws CoreException {
 		if (!isVirtual(method))

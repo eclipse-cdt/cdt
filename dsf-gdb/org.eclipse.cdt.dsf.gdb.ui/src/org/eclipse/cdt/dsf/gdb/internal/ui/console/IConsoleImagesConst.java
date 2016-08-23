@@ -16,4 +16,5 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 public interface IConsoleImagesConst {
 	public static final String IMG_SAVE_CONSOLE = "icons/full/obj16/save_console.gif"; //$NON-NLS-1$
 	public static final String IMG_GDB_CONSOLE = "icons/full/obj16/gdb_console.gif"; //$NON-NLS-1$
+	public static final String IMG_CONSOLE_INVERT_COLORS = "icons/full/obj16/console_invert_colors.gif"; //$NON-NLS-1$
 }

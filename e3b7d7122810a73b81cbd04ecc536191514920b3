@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_e2113ae0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ClassTypeHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 514,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-08-24T06:34:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_02070e26",
+      "revId": "e3b7d7122810a73b81cbd04ecc536191514920b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_c276f67c",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ClassTypeHelper.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-08-24T01:16:27Z",
       "side": 1,
       "message": "This wording is removed by P0136R1; should we be referencing it?",
+      "revId": "e3b7d7122810a73b81cbd04ecc536191514920b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_c210b6de",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ClassTypeHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-08-24T06:34:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_c276f67c",
       "revId": "e3b7d7122810a73b81cbd04ecc536191514920b3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

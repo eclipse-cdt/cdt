@@ -127,9 +127,9 @@ public class ASTManager implements IDisposable {
     
     // TODO(sprigogin): Replace fSharedAST and fTranslationUnits with CRefactoringContext.
 	private IASTTranslationUnit fSharedAST;
-    private Map<IFile, IASTTranslationUnit> fTranslationUnits= new HashMap<>();
-    private Set<String> fProblemUnits= new HashSet<>();
-    private CRefactoringArgument fArgument;
+    private final Map<IFile, IASTTranslationUnit> fTranslationUnits= new HashMap<>();
+    private final Set<String> fProblemUnits= new HashSet<>();
+    private final CRefactoringArgument fArgument;
     private IBinding[] fValidBindings;
     private String fRenameTo;
     private HashMap<IBinding, Integer> fKnownBindings;
@@ -356,8 +356,6 @@ public class ASTManager implements IDisposable {
         if (s1.getKind() == EScopeKind.eGlobal && s2.getKind() == EScopeKind.eGlobal)
         	return TRUE;
 
-        String name1= getName(s1);
-        String name2= getName(s2);
         
         if (s1 instanceof ICPPBlockScope) {
             if (s2 instanceof ICPPBlockScope) {
@@ -365,6 +363,9 @@ public class ASTManager implements IDisposable {
             }
             return FALSE;
         }
+
+        String name1= getName(s1);
+        String name2= getName(s2);
         if (s1 instanceof ICPPNamespaceScope) {
             if (s2 instanceof ICPPNamespaceScope) {
                 ICPPNamespaceScope n1= (ICPPNamespaceScope) s1;
@@ -381,7 +382,7 @@ public class ASTManager implements IDisposable {
             return FALSE;
         }
 
-        if (!name1.equals(name2)) {
+        if (name1 != null && name2 != null && !name1.equals(name2)) {
             return FALSE;
         }
 
@@ -392,6 +393,7 @@ public class ASTManager implements IDisposable {
             }
             return FALSE;
         }
+        // Functions.
         if (s1 instanceof ICPPFunctionScope) {
             if (s2 instanceof ICPPFunctionScope) {
                 return hasSameLocation(node1, node2, true);
@@ -410,40 +412,40 @@ public class ASTManager implements IDisposable {
         return isSameScope(s1.getParent(), s2.getParent(), fileStatic);
     }
 
-    public static String getName(IScope s1) {
+    public static String getName(IScope scope) {
         String name= null;
-        if (s1 instanceof IIndexScope) {
-			IIndexScope indexScope= (IIndexScope) s1;
+        if (scope instanceof IIndexScope) {
+			IIndexScope indexScope= (IIndexScope) scope;
 			final IIndexName scopeName = indexScope.getScopeName();
 			if (scopeName != null) {
 				name= scopeName.toString();
 			}
 		} else {
-			name= getNameOrNull(ASTInternal.getPhysicalNodeOfScope(s1));
+			name= getNameOrNull(ASTInternal.getPhysicalNodeOfScope(scope));
 		}
-        return name == null ? s1.toString() : name;
+        return name;
     }
 
-    public static int hasSameSignature(IFunction b1, IFunction b2) throws DOMException {
-    	if (b1.takesVarArgs() != b2.takesVarArgs())
+    public static int hasSameSignature(IFunction f1, IFunction f2) throws DOMException {
+    	if (f1.takesVarArgs() != f2.takesVarArgs())
     		return FALSE;
 
-        if (b1 instanceof ICPPMethod != b2 instanceof ICPPMethod) 
+        if (f1 instanceof ICPPMethod != f2 instanceof ICPPMethod) 
         	return FALSE;
 
-        return hasSameSignature(b1.getType(), b2.getType());
+        return hasSameSignature(f1.getType(), f2.getType());
     }
 
-    public static int hasSameSignature(IFunctionType b1, IFunctionType b2) throws DOMException {
-    	if (b1 instanceof ICPPFunctionType && b2 instanceof ICPPFunctionType) {
-    		ICPPFunctionType cppb1= (ICPPFunctionType) b1;
-    		ICPPFunctionType cppb2= (ICPPFunctionType) b2;
-    		if (cppb1.isConst() != cppb2.isConst())
+    public static int hasSameSignature(IFunctionType t1, IFunctionType t2) throws DOMException {
+    	if (t1 instanceof ICPPFunctionType && t2 instanceof ICPPFunctionType) {
+    		ICPPFunctionType cppt1= (ICPPFunctionType) t1;
+    		ICPPFunctionType cppt2= (ICPPFunctionType) t2;
+    		if (cppt1.isConst() != cppt2.isConst())
     			return FALSE;
-    		if (cppb1.isVolatile() != cppb2.isVolatile())
+    		if (cppt1.isVolatile() != cppt2.isVolatile())
     			return FALSE;
     	}
-        return isSameParameterList(b1.getParameterTypes(), b2.getParameterTypes());
+        return isSameParameterList(t1.getParameterTypes(), t2.getParameterTypes());
     }        
 
     private static int isSameParameterList(IType[] p1, IType[] p2) throws DOMException {

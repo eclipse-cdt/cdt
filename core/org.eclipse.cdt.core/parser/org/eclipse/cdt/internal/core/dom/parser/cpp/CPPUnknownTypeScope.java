@@ -219,5 +219,4 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
 
 	@Override
 	public void removeNestedFromCache(IASTNode container) {}
-
 }

@@ -216,16 +216,19 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 		}
 	}
 	
+	/** @since 8.1 */
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		// Ignore
 	}
 
+	/** @since 8.1 */
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		// Ignore
 	}
 
+	/** @since 8.1 */
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		for (Iterator<TestingSession> iterator = sessions.iterator(); iterator.hasNext();) {

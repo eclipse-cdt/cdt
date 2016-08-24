@@ -11,29 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_assign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryAndAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryOrAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryXorAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_divideAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_equals;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_greaterEqual;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_greaterThan;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_lessEqual;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_lessThan;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_logicalAnd;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_logicalOr;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_minus;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_minusAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_moduloAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_multiplyAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_notequals;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_plus;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_plusAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_pmarrow;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_pmdot;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftLeftAssign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftRightAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.*;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
@@ -44,6 +22,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -68,6 +47,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * Performs evaluation of an expression.
@@ -144,8 +124,13 @@ public class EvalBinary extends CPPDependentEvaluation {
 		if (overload != null) {
 			ICPPFunctionType functionType = overload.getType();
 			IType[] parameterTypes = functionType.getParameterTypes();
-			arg1 = maybeApplyConversion(fArg1, parameterTypes[0], point);
-			arg2 = maybeApplyConversion(fArg2, parameterTypes[1], point);
+			if (parameterTypes.length >= 2) {
+				arg1 = maybeApplyConversion(fArg1, parameterTypes[0], point);
+				arg2 = maybeApplyConversion(fArg2, parameterTypes[1], point);
+			} else {
+				CCorePlugin.log(IStatus.ERROR, "Unexpected overload for binary operator " + fOperator //$NON-NLS-1$
+						+ ": '" + overload.getName() + "'");  //$NON-NLS-1$//$NON-NLS-2$
+			}
 
 			if (!(overload instanceof CPPImplicitFunction)) {
 				if (!overload.isConstexpr())

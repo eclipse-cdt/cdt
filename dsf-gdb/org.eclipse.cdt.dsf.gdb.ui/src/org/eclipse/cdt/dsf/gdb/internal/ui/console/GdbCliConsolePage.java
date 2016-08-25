@@ -53,7 +53,7 @@ public class GdbCliConsolePage extends Page {
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
 
-	public GdbCliConsolePage(GdbCliConsole gdbConsole) {
+	public GdbCliConsolePage(GdbFullCliConsole gdbConsole) {
 		ILaunch launch = gdbConsole.getLaunch();
 		if (launch instanceof GdbLaunch) {
 			fSession = ((GdbLaunch)launch).getSession();

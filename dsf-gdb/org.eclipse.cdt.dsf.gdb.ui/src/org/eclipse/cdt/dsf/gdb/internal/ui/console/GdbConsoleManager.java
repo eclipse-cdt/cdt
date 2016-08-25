@@ -16,13 +16,14 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlInitializedDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.ITracedLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
-import org.eclipse.cdt.dsf.mi.service.IMIBackend;
-import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -103,7 +105,7 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 	private int fTracingMinNumCharacters = fTracingMaxNumCharacters - NUMBER_OF_CHARS_TO_DELETE;
 	
 	/** A list of all known GDB consoles */
-	private List<GdbCliConsole> fGdbConsoleList = new ArrayList<>();
+	private List<IGdbConsole> fGdbConsoleList = new ArrayList<>();
 	
 	/** A list of listeners registered for notifications of changes to GDB consoles */
 	private ListenerList<IConsoleListener> fConsoleListeners = new ListenerList<>();
@@ -178,6 +180,27 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 
     @Override
 	public void launchesChanged(ILaunch[] launches) {
+		for (ILaunch launch : launches) {
+			if (launch instanceof GdbLaunch) {
+		        IProcess[] processes = launch.getProcesses();
+		        for (int i= 0; i < processes.length; i++) {
+		        	if (processes[i] instanceof GDBProcess) {
+		        		IGdbConsole console = getCliConsole(launch);
+		        		if (console instanceof GdbBasicCliConsole &&
+		        				((GdbBasicCliConsole)console).getProcess().equals(processes[i])) {
+		        			// Ignore processes for which we already have a console
+		        			continue;
+		        		}
+		        		// Create a simple text console for the cli.
+		        		console = new GdbBasicCliConsole(launch, "khouz", processes[i]);
+		        		addCliConsole(console);
+		        		// Make sure the GDB Console view is visible
+		        		showGdbConsoleView(console);
+		        	}
+		        }
+			}
+		}
+
 	}
 
     @Override
@@ -244,7 +267,7 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 	}
 
 	protected void removeCliConsole(ILaunch launch) {
-		GdbCliConsole console = getCliConsole(launch);
+		IGdbConsole console = getCliConsole(launch);
 		if (console != null) {
 			removeCliConsole(console);
 		}
@@ -258,7 +281,7 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 	}
 
 	protected void renameCliConsole(ILaunch launch) {
-		GdbCliConsole console = getCliConsole(launch);
+		IGdbConsole console = getCliConsole(launch);
 		if (console != null) {
 			console.resetName();
 		}		
@@ -284,9 +307,9 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 		return null;
 	}
 	
-	private GdbCliConsole getCliConsole(ILaunch launch) {
-		GdbCliConsole[] consoles = getCliConsoles();
-		for (GdbCliConsole console : consoles) {
+	private IGdbConsole getCliConsole(ILaunch launch) {
+		IGdbConsole[] consoles = getCliConsoles();
+		for (IGdbConsole console : consoles) {
 			if (console.getLaunch().equals(launch)) {
 				return console;
 			}
@@ -325,7 +348,7 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 		}
 	}
 	
-	private void addCliConsole(GdbCliConsole console) {
+	private void addCliConsole(IGdbConsole console) {
 	    synchronized (fGdbConsoleList) {
 	    	fGdbConsoleList.add(console);
 	    }
@@ -334,7 +357,7 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 		}
 	}
 	
-	private void removeCliConsole(GdbCliConsole console) {
+	private void removeCliConsole(IGdbConsole console) {
 	    synchronized (fGdbConsoleList) {
 	    	fGdbConsoleList.remove(console);
 	    }
@@ -343,9 +366,9 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 		}
 	}
 	
-	public GdbCliConsole[] getCliConsoles() {
+	public IGdbConsole[] getCliConsoles() {
 	    synchronized (fGdbConsoleList) {
-	    	return fGdbConsoleList.toArray(new GdbCliConsole[fGdbConsoleList.size()]);
+	    	return fGdbConsoleList.toArray(new IGdbConsole[fGdbConsoleList.size()]);
 	    }
 	}
 	
@@ -411,7 +434,8 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 	/**
 	 * Class that determines if a GdbCliConsole should be created for
 	 * this particular Gdblaunch.  It figures this out by asking the
-	 * Backend service.
+	 * Backend service.  It then either create the GdbCliConsole or
+	 * a standard text console for gdb.
 	 */
 	private class GdbCliConsoleCreator {
 		private GdbLaunch fLaunch;
@@ -430,15 +454,18 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 		        		// Look for backend service right away.  It probably 
 		        		// won't be available yet but we must make sure.
 		            	DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fSession.getId());
+		            	IGDBControl control = tracker.getService(IGDBControl.class);
 		            	IGDBBackend backend = tracker.getService(IGDBBackend.class);
 		            	tracker.dispose();
 		            	
-		            	if (backend != null) {
-		            		// Backend service already available, us it!
-		            		verifyAndCreateCliConsole(backend);
+		            	// If we use the old console we not only need the backend service but
+		            	// also the control service.  For simplicity, always wait for both.
+		            	if (backend != null && control != null) {
+		            		// Backend and Control services already available, we can start!
+		            		verifyAndCreateCliConsole();
 		            	} else {
-		            		// Backend service not available yet, let's wait for it to start.
-		            		fSession.addServiceEventListener(new GdbBackendStartedListener(GdbCliConsoleCreator.this, fSession), null);
+		            		// Backend service or Control service not available yet, let's wait for them to start.
+		            		fSession.addServiceEventListener(new GdbServiceStartedListener(GdbCliConsoleCreator.this, fSession), null);
 		            	}
 		        	}
 		        });
@@ -447,61 +474,55 @@ public class GdbConsoleManager implements ILaunchesListener2, IPropertyChangeLis
 		}
 		
 		@ConfinedToDsfExecutor("fSession.getExecutor()")
-		private void verifyAndCreateCliConsole(IGDBBackend backend) {
-			if (backend != null && backend.isFullGdbConsoleSupported()) {
-				// Create an new Cli console .
-				String gdbVersion;
-				try {
-					gdbVersion = fLaunch.getGDBVersion();
-				} catch (CoreException e) {
-					assert false : "Should not happen since the gdb version is cached"; //$NON-NLS-1$
-					gdbVersion = "???"; //$NON-NLS-1$
-				}
-				String consoleTitle = fLaunch.getGDBPath().toOSString().trim() + " (" + gdbVersion +")"; //$NON-NLS-1$ //$NON-NLS-2$
+		private void verifyAndCreateCliConsole() {
+			String gdbVersion;
+			try {
+				gdbVersion = fLaunch.getGDBVersion();
+			} catch (CoreException e) {
+				gdbVersion = "???"; //$NON-NLS-1$
+				assert false : "Should not happen since the gdb version is cached"; //$NON-NLS-1$
+			}
+			String consoleTitle = fLaunch.getGDBPath().toOSString().trim() + " (" + gdbVersion +")"; //$NON-NLS-1$ //$NON-NLS-2$
 
-				GdbCliConsole console = new GdbCliConsole(fLaunch, consoleTitle);
-    			addCliConsole(console);
-
-    			// Make sure the GDB Console view is visible
-    			showGdbConsoleView(console);
-    		}
-    		// Else, not the right type of backend service, or
-    		// the service said not to start a GdbCliConsole
-		}
-		
-		@ConfinedToDsfExecutor("fSession.getExecutor()")
-		private void backendStarted() {
         	DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fSession.getId());
+        	IGDBControl control = tracker.getService(IGDBControl.class);
         	IGDBBackend backend = tracker.getService(IGDBBackend.class);
         	tracker.dispose();
 
-    		verifyAndCreateCliConsole(backend);
+        	IGdbConsole console;
+			if (backend != null && backend.isFullGdbConsoleSupported()) {
+				// Create a full GDB cli console
+				console = new GdbFullCliConsole(fLaunch, consoleTitle);
+				addCliConsole(console);
+				// Make sure the GDB Console view is visible
+				showGdbConsoleView(console);
+			}
+			
 		}
 	}
 	
+	
+	
 	/**
-	 * Class used to listen for Backend started event which indicate
-	 * the DSF-GDB backend service can be used.
+	 * Class used to listen for started events for the services we need.
 	 * This class must be public to receive the event.
 	 */
-	public class GdbBackendStartedListener {
+	public class GdbServiceStartedListener {
 		private DsfSession fSession;
 		private GdbCliConsoleCreator fCreator;
 		
-		public GdbBackendStartedListener(GdbCliConsoleCreator creator, DsfSession session) {
-			fCreator = creator;
+		public GdbServiceStartedListener(GdbCliConsoleCreator creator, DsfSession session) {
+	 		fCreator = creator;
 			fSession = session;
 		}
 		
 		@DsfServiceEventHandler
-	    public void eventDispatched(BackendStateChangedEvent event) {
-	        if (event.getState() == IMIBackend.State.STARTED &&
-	        		event.getSessionId().equals(fSession.getId())) 
-	        {
-	        	fCreator.backendStarted();
-	        	// No longer need to receive events.
-	        	fSession.removeServiceEventListener(this);
-	        }
-	    }
+		public final void eventDispatched(ICommandControlInitializedDMEvent event) {
+			// With the commandControl service started, we know the backend service
+			// is also started.  So we are good to go.
+			fCreator.verifyAndCreateCliConsole();
+			// No longer need to receive events.
+			fSession.removeServiceEventListener(this);
+		}
 	}
 }

@@ -41,8 +41,8 @@ public class GdbConsoleInvertColorsAction extends Action {
 
 		IDebuggerConsoleManager manager = CDebugUIPlugin.getDebuggerConsoleManager();
 		for (IDebuggerConsole console : manager.getConsoles()) {
-			if (console instanceof GdbCliConsole) {
-				((GdbCliConsole)console).setInvertedColors(!enabled);
+			if (console instanceof GdbFullCliConsole) {
+				((GdbFullCliConsole)console).setInvertedColors(!enabled);
 			}
 		}
 	}

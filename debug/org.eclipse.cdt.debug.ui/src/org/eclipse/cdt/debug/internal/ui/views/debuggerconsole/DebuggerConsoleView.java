@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleListener;
+import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
@@ -31,7 +32,8 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.part.PageSwitcher;
 
-public class DebuggerConsoleView extends PageBookView implements IDebuggerConsoleView, IConsoleListener, IPropertyChangeListener {
+public class DebuggerConsoleView extends PageBookView 
+implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChangeListener {
 
 	public static final String DEBUGGER_CONSOLE_VIEW_ID = "org.eclipse.cdt.debug.ui.debuggerConsoleView"; //$NON-NLS-1$
 	
@@ -67,7 +69,7 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		DebuggerConsoleWorkbenchPart part = (DebuggerConsoleWorkbenchPart)dummyPart;
 		IDebuggerConsole console = fPartToConsole.get(part);
-		IPageBookViewPage page = console.createPage(this);
+		IPageBookViewPage page = console.createPage((IDebuggerConsoleView)this);
 		initPage(page);
 		page.createControl(getPageBook());
 		console.addPropertyChangeListener(this);
@@ -306,5 +308,77 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 				return super.getCurrentPageIndex();
 			}
 		};
+	}
+
+	@Override
+	public void setAutoScrollLock(boolean scrollLock) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getAutoScrollLock() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void display(IConsole console) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPinned(boolean pin) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pin(IConsole console) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isPinned() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IConsole getConsole() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void warnOfContentChange(IConsole console) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setScrollLock(boolean scrollLock) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getScrollLock() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setWordWrap(boolean wordWrap) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getWordWrap() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

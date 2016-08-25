@@ -24,12 +24,12 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * full-featured CLI interface.  This is only supported with GDB >= 7.12
  * and if IGDBBackend.isFullGdbConsoleSupported() returns true.
  */
-public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
+public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConsole {
 	private final ILaunch fLaunch;
 	private String fLabel;
 	private GdbCliConsolePage fConsolePage;
 	
-	public GdbCliConsole(ILaunch launch, String label) {
+	public GdbFullCliConsole(ILaunch launch, String label) {
 		super(label, null);
 		fLaunch = launch;
         fLabel = label;

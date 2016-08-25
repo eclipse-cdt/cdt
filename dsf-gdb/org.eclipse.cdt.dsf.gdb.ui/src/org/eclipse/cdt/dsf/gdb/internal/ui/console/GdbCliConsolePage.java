@@ -63,7 +63,7 @@ public class GdbCliConsolePage extends Page implements IDebugContextListener {
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
 
-	public GdbCliConsolePage(GdbCliConsole gdbConsole, IDebuggerConsoleView view) {
+	public GdbCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view) {
 		fConsole = gdbConsole;
 		fView = view;
 		fLaunch = gdbConsole.getLaunch();

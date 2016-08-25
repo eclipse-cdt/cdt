@@ -13,7 +13,6 @@ package org.eclipse.cdt.dsf.gdb.launching;
 import java.io.IOException;
 import java.util.Map;
 
-import org.eclipse.cdt.dsf.gdb.service.command.IGDBBackendProcessWithoutIO;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
@@ -55,14 +54,19 @@ public class GDBProcess extends RuntimeProcess {
 		// to figure out how to behave.
 		// We can call getSystemProcess() as it is set earlier
 		// in the constructor then when this method is called.
-		if (getSystemProcess() instanceof IGDBBackendProcessWithoutIO) {
+//		if (getSystemProcess() instanceof IGDBBackendProcessWithoutIO) {
 			// If the GDB process used does not handle I/O, we return a proxy
 			// that ignores the streams.
 			return new NoStreamsProxy();
-		}
-		return super.createStreamsProxy();
+//		}
+//		return super.createStreamsProxy();
 	}
 
+	@Override
+	public Process getSystemProcess() {
+		return super.getSystemProcess();
+	}
+	
 	/** 
 	 * Class that provides a streams proxy that actually
 	 * ignores the I/O streams.  We use this in the case

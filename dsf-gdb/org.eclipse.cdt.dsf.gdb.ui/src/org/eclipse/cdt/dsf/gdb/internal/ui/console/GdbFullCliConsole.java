@@ -24,12 +24,12 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * full-featured CLI interface.  This is only supported with GDB >= 7.12
  * and if IGDBBackend.isFullGdbConsoleSupported() returns true.
  */
-public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
+public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConsole {
 	private final ILaunch fLaunch;
 	private String fLabel;
 	private GdbCliConsolePage fConsolePage;
 	
-	public GdbCliConsole(ILaunch launch, String label) {
+	public GdbFullCliConsole(ILaunch launch, String label) {
 		super(label, null);
 		fLaunch = launch;
         fLabel = label;
@@ -78,16 +78,10 @@ public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
     }
     
 	@Override
-	public IPageBookViewPage createPage(IDebuggerConsoleView view) {
-		view.setFocus();
-		fConsolePage = new GdbCliConsolePage(this, view);
-		return fConsolePage;
-	}
-
-	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
-		// This console is not used in the IConsoleView
-		return null;
+		view.setFocus();
+		fConsolePage = new GdbCliConsolePage(this, (IDebuggerConsoleView)view);
+		return fConsolePage;
 	}
 	
 	public void setInvertedColors(boolean enable) {

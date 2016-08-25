@@ -29,7 +29,7 @@ public interface IDebuggerConsole extends IConsole {
 	 * @param view the view in which the page is to be created
 	 * @return a page book view page representation of this console
 	 */
-	IPageBookViewPage createPage(IDebuggerConsoleView view);
+	IPageBookViewPage createDebuggerPage(IDebuggerConsoleView view);
 	
 	/**
 	 * Request a re-computation of the name of the console.

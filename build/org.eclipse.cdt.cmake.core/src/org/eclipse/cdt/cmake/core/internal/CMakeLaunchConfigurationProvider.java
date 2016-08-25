@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -23,24 +26,45 @@ import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
-public class CMakeLocalLaunchConfigurationProvider extends AbstractLaunchConfigProvider {
+public class CMakeLaunchConfigurationProvider extends AbstractLaunchConfigProvider {
+
+	private final ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
+	private final IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
 
 	private Map<IProject, ILaunchConfiguration> configs = new HashMap<>();
 
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
-		return ILaunchTargetManager.localLaunchTargetTypeId.equals(target.getTypeId());
+		if (ILaunchTargetManager.localLaunchTargetTypeId.equals(target.getTypeId())) {
+			return true;
+		}
+
+		String os = target.getAttribute(ILaunchTarget.ATTR_OS, ""); //$NON-NLS-1$
+		if (os.isEmpty()) {
+			return false;
+		}
+
+		String arch = target.getAttribute(ILaunchTarget.ATTR_ARCH, ""); //$NON-NLS-1$
+		if (arch.isEmpty()) {
+			return false;
+		}
+
+		Map<String, String> properties = new HashMap<>();
+		properties.put(IToolChain.ATTR_OS, os);
+		properties.put(IToolChain.ATTR_ARCH, arch);
+		if (manager.getToolChainsFileMatching(properties).isEmpty()) {
+			return false;
+		}
+
+		return !tcManager.getToolChainsMatching(properties).isEmpty();
 	}
 
 	@Override
 	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager()
-				.getLaunchConfigurationType(CMakeLocalRunLaunchConfigDelegate.TYPE_ID);
+				.getLaunchConfigurationType(CMakeLaunchConfigurationDelegate.TYPE_ID);
 	}
-
-	// TODO the rest here is the same as the Qt provider. Opportunity to create
-	// a common super class
 
 	@Override
 	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)

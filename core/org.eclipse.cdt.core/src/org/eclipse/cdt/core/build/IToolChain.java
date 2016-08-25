@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -242,6 +243,18 @@ public interface IToolChain extends IAdaptable {
 	 */
 	default List<String> stripCommand(List<String> command, IResource[] resources) {
 		return command;
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	default boolean matches(Map<String, String> properties) {
+		for (Map.Entry<String, String> property : properties.entrySet()) {
+			if (!property.getValue().equals(getProperty(property.getKey()))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.eclipse.cdt.cmake.ui.properties;
+package org.eclipse.cdt.cmake.ui.internal;
 
 import org.eclipse.osgi.util.NLS;
 

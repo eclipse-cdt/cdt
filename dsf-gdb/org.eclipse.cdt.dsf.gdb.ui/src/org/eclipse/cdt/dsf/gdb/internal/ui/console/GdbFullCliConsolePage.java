@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Ericsson and others.
+ * Copyright (c) 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,13 +48,13 @@ import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
 import org.eclipse.ui.part.Page;
 
-public class GdbCliConsolePage extends Page implements IDebugContextListener {
+public class GdbFullCliConsolePage extends Page implements IDebugContextListener {
 
-	private DsfSession fSession;
-	private ILaunch fLaunch;
+	private final DsfSession fSession;
+	private final ILaunch fLaunch;
 	private Composite fMainComposite;
-	private IDebuggerConsoleView fView;
-	private IDebuggerConsole fConsole;
+	private final IDebuggerConsoleView fView;
+	private final IDebuggerConsole fConsole;
 	
 	private MenuManager fMenuManager;
 
@@ -63,13 +63,14 @@ public class GdbCliConsolePage extends Page implements IDebugContextListener {
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
 
-	public GdbCliConsolePage(GdbCliConsole gdbConsole, IDebuggerConsoleView view) {
+	public GdbFullCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view) {
 		fConsole = gdbConsole;
 		fView = view;
 		fLaunch = gdbConsole.getLaunch();
 		if (fLaunch instanceof GdbLaunch) {
 			fSession = ((GdbLaunch)fLaunch).getSession();
 		} else {
+			fSession = null;
 			assert false;
 		}
 	}

@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleListener;
+import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
@@ -31,7 +33,16 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.part.PageSwitcher;
 
-public class DebuggerConsoleView extends PageBookView implements IDebuggerConsoleView, IConsoleListener, IPropertyChangeListener {
+/**
+ * The Debugger console view shows different {@link IDebuggerConsole}.
+ * 
+ * This class extends {@link IConsoleView} to allow it to easily display
+ * consoles of type {@link IOConsole}.
+ * 
+ * @see {@link IDebuggerConsoleManager}
+ */
+public class DebuggerConsoleView extends PageBookView 
+implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChangeListener {
 
 	public static final String DEBUGGER_CONSOLE_VIEW_ID = "org.eclipse.cdt.debug.ui.debuggerConsoleView"; //$NON-NLS-1$
 	
@@ -67,7 +78,7 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		DebuggerConsoleWorkbenchPart part = (DebuggerConsoleWorkbenchPart)dummyPart;
 		IDebuggerConsole console = fPartToConsole.get(part);
-		IPageBookViewPage page = console.createPage(this);
+		IPageBookViewPage page = console.createDebuggerPage(this);
 		initPage(page);
 		page.createControl(getPageBook());
 		console.addPropertyChangeListener(this);
@@ -306,5 +317,62 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 				return super.getCurrentPageIndex();
 			}
 		};
+	}
+
+	@Override
+	public void setAutoScrollLock(boolean scrollLock) {
+	}
+
+	@Override
+	public boolean getAutoScrollLock() {
+		return false;
+	}
+
+	@Override
+	public void display(IConsole console) {
+		if (console instanceof IDebuggerConsole) {
+			display((IDebuggerConsole)console);
+		}
+	}
+
+	@Override
+	public void setPinned(boolean pin) {
+	}
+
+	@Override
+	public void pin(IConsole console) {
+	}
+
+	@Override
+	public boolean isPinned() {
+		return false;
+	}
+
+	@Override
+	public IConsole getConsole() {
+		return getCurrentConsole();
+	}
+
+	@Override
+	public void warnOfContentChange(IConsole console) {
+		assert false;
+	}
+
+	@Override
+	public void setScrollLock(boolean scrollLock) {
+	}
+
+	@Override
+	public boolean getScrollLock() {
+		return false;
+	}
+
+	@Override
+	public void setWordWrap(boolean wordWrap) {
+	}
+
+	@Override
+	public boolean getWordWrap() {
+		return false;
 	}
 }

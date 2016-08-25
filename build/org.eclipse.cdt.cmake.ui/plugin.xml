@@ -21,6 +21,14 @@
       </page>
    </extension>
    <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.cdt.cmake.ui.internal.CMakePreferencePage"
+            id="org.eclipse.cdt.cmake.ui.page1"
+            name="%cmake.preferences.name">
+      </page>
+   </extension>
+   <extension
          point="org.eclipse.tools.templates.ui.templates">
       <tag
             id="org.eclipse.cdt.cmake.ui.tag"

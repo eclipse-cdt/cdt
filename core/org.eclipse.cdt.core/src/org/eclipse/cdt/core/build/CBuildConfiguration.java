@@ -620,4 +620,35 @@ public abstract class CBuildConfiguration extends PlatformObject
 		}
 	}
 
+	/**
+	 * Takes a command path and returns either the command path itself if it is
+	 * absolute or the path to the command as it appears in the PATH environment
+	 * variable. Also adjusts the command for Windows's .exe extension.
+	 * 
+	 * @since 6.1
+	 */
+	public static Path getCommandFromPath(Path command) {
+		if (command.isAbsolute()) {
+			return command;
+		}
+
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			if (!command.toString().endsWith(".exe")) { //$NON-NLS-1$
+				command = Paths.get(command.toString() + ".exe"); //$NON-NLS-1$
+			}
+		}
+
+		// Look for it in the path environment var
+		String path = System.getenv("PATH"); //$NON-NLS-1$
+		for (String entry : path.split(File.pathSeparator)) {
+			Path entryPath = Paths.get(entry);
+			Path cmdPath = entryPath.resolve(command);
+			if (Files.isExecutable(cmdPath)) {
+				return cmdPath;
+			}
+		}
+
+		return null;
+	}
+
 }

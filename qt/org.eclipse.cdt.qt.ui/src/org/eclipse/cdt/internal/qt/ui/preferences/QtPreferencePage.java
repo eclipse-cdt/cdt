@@ -103,7 +103,11 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
 					IQtInstall install = wizard.getInstall();
-					installsToAdd.put(install.getQmakePath(), install);
+					if (installsToRemove.containsKey(install.getQmakePath())) {
+						installsToRemove.remove(install.getQmakePath());
+					} else {
+						installsToAdd.put(install.getQmakePath(), install);
+					}
 					updateTable();
 				}
 			}
@@ -117,7 +121,11 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 			if (MessageDialog.openConfirm(getShell(), Messages.QtPreferencePage_5, Messages.QtPreferencePage_6)) {
 				for (TableItem item : installTable.getSelection()) {
 					IQtInstall install = (IQtInstall) item.getData();
-					installsToRemove.put(install.getQmakePath(), install);
+					if (installsToAdd.containsKey(install.getQmakePath())) {
+						installsToAdd.remove(install.getQmakePath());
+					} else {
+						installsToRemove.put(install.getQmakePath(), install);
+					}
 					updateTable();
 				}
 			}
@@ -153,7 +161,10 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		for (IQtInstall install : sorted) {
 			TableItem item = new TableItem(installTable, SWT.NONE);
 			item.setText(0, install.getQmakePath().toString());
-			item.setText(1, install.getSpec());
+			String spec = install.getSpec();
+			if (spec != null) {
+				item.setText(1, install.getSpec());
+			}
 			item.setData(install);
 		}
 	}

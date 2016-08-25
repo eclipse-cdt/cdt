@@ -69,7 +69,7 @@ public class NewQtInstallWizardPage extends WizardPage {
 			FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
 			dialog.setText(Messages.NewQtInstallWizardPage_5);
 			dialog.setFilterExtensions(
-					new String[] { Platform.getOS().equals(Platform.OS_WIN32) ? Messages.NewQtInstallWizardPage_6 : Messages.NewQtInstallWizardPage_7 });
+					new String[] { Platform.getOS().equals(Platform.OS_WIN32) ? "qmake.exe" : "qmake" }); //$NON-NLS-1$ //$NON-NLS-2$
 			String selected = dialog.open();
 			if (selected != null) {
 				locationText.setText(selected);

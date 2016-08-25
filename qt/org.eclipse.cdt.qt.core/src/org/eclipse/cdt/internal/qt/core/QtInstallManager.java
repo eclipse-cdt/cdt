@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -39,7 +39,7 @@ public class QtInstallManager implements IQtInstallManager {
 	private List<IQtInstallListener> listeners = new LinkedList<>();
 
 	private Preferences getPreferences() {
-		return ConfigurationScope.INSTANCE.getNode(Activator.ID).node("qtInstalls"); //$NON-NLS-1$
+		return InstanceScope.INSTANCE.getNode(Activator.ID).node("qtInstalls"); //$NON-NLS-1$
 	}
 
 	private void initInstalls() {

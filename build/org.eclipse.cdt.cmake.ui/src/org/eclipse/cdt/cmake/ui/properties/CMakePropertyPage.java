@@ -12,6 +12,7 @@ package org.eclipse.cdt.cmake.ui.properties;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.cmake.ui.internal.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -35,13 +36,11 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 public class CMakePropertyPage extends PropertyPage {
 
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL);
-		data.grabExcessHorizontalSpace = true;
-		composite.setLayoutData(data);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		composite.setLayout(new GridLayout());
 
 		Button b = new Button(composite, SWT.NONE);
 		b.setText(Messages.CMakePropertyPage_LaunchCMakeGui);

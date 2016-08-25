@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.core.internal;
 
+import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -18,11 +19,14 @@ public class Activator extends Plugin {
 
 	private static Activator plugin;
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		Activator.plugin = this;
+		bundleContext.registerService(ICMakeToolChainManager.class, new CMakeToolChainManager(), null);
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
 		Activator.plugin = null;

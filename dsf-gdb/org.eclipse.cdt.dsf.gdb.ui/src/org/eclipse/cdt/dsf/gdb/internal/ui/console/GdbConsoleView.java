@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleListener;
+import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
@@ -40,7 +41,8 @@ import org.eclipse.ui.part.PageSwitcher;
  * For cases where the GdbCliConsole is not supported, a standard console is shown in the 
  * platform's standard Console view.
  */
-public class GdbConsoleView extends PageBookView implements IConsoleListener, IDebugContextListener, IPropertyChangeListener {
+public class GdbConsoleView extends PageBookView 
+	implements IConsoleView, IConsoleListener, IDebugContextListener, IPropertyChangeListener {
 
 	public static final String GDB_CONSOLE_VIEW_ID = "org.eclipse.cdt.dsf.gdb.ui.console.gdbconsoleview"; //$NON-NLS-1$
 	
@@ -152,15 +154,19 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		GdbConsoleWorkbenchPart part = (GdbConsoleWorkbenchPart)dummyPart;
 		IConsole console = fPartToConsole.get(part);
-		if (console instanceof GdbCliConsole) {
-			final IPageBookViewPage page = ((GdbCliConsole)console).createPage(this);
+		IPageBookViewPage page = null;
+		if (console instanceof GdbFullCliConsole) {
+			 page = ((GdbFullCliConsole)console).createPage(this);
+		} else if (console instanceof GdbBasicCliConsole) {
+			 page = ((GdbBasicCliConsole)console).createPage(this);
+		}
+		if (page != null) {
 			initPage(page);
 			page.createControl(getPageBook());
 			console.addPropertyChangeListener(this);
 
 			return new PageRec(dummyPart, page);
 		}
-		assert false;
 		return null;
 	}
 
@@ -316,12 +322,12 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 
 			@Override
 			public ImageDescriptor getImageDescriptor(Object page) {
-				return ((GdbCliConsole) page).getImageDescriptor();
+				return ((IConsole) page).getImageDescriptor();
 			}
 
 			@Override
 			public String getName(Object page) {
-				return ((GdbCliConsole) page).getName();
+				return ((IConsole) page).getName();
 			}
 
 			@Override
@@ -346,8 +352,8 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 	private void displayConsoleForLaunch(ILaunch launch) {
 		if (launch != null) {
 			for (IConsole console : getConsoles()) {
-				if (console instanceof GdbCliConsole) {
-					if (launch.equals(((GdbCliConsole)console).getLaunch())) {
+				if (console instanceof IGdbConsole) {
+					if (launch.equals(((IGdbConsole)console).getLaunch())) {
 						display(console);
 						break;
 					}
@@ -376,5 +382,71 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 			// selected debug session
 			displayConsoleForLaunch(getCurrentLaunch());
 		}
+	}
+
+	@Override
+	public void setAutoScrollLock(boolean scrollLock) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getAutoScrollLock() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setPinned(boolean pin) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pin(IConsole console) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isPinned() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IConsole getConsole() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void warnOfContentChange(IConsole console) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setScrollLock(boolean scrollLock) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getScrollLock() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setWordWrap(boolean wordWrap) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getWordWrap() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

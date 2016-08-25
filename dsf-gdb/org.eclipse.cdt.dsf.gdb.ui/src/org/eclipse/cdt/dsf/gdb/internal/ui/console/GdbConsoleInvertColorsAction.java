@@ -38,7 +38,7 @@ public class GdbConsoleInvertColorsAction extends Action {
 		}
 
 		GdbConsoleManager manager = GdbUIPlugin.getGdbConsoleManager();
-		for (GdbCliConsole console : manager.getCliConsoles()) {
+		for (IGdbConsole console : manager.getCliConsoles()) {
 			console.setInvertedColors(!enabled);
 		}
 	}

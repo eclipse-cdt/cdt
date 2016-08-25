@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "27af2791_d99b44c8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-08-25T16:51:21Z",
+      "side": 1,
+      "message": "I noticed a problem with this patch: if a MIStackSelectFrame command is being sent to GDB, for a frame context of a thread different than the current one, we need to switch thread. The current patch would prevent that, causing the frame switch to happen potentially on the wrong thread.",
+      "revId": "293e2021313d725298d005a4aed143ee840346a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_016f3eef",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 1

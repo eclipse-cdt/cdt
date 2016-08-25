@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Ericsson and others.
+ * Copyright (c) 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,12 +24,12 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * full-featured CLI interface.  This is only supported with GDB >= 7.12
  * and if IGDBBackend.isFullGdbConsoleSupported() returns true.
  */
-public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
+public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConsole, IGdbCliConsole {
 	private final ILaunch fLaunch;
-	private String fLabel;
-	private GdbCliConsolePage fConsolePage;
+	private final String fLabel;
+	private GdbFullCliConsolePage fConsolePage;
 	
-	public GdbCliConsole(ILaunch launch, String label) {
+	public GdbFullCliConsole(ILaunch launch, String label) {
 		super(label, null);
 		fLaunch = launch;
         fLabel = label;
@@ -50,6 +50,10 @@ public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
     }
 	
     protected String computeName() {
+    	if (fLaunch == null) {
+    		return ""; //$NON-NLS-1$
+    	}
+    	
         String label = fLabel;
 
         ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
@@ -78,18 +82,19 @@ public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
     }
     
 	@Override
-	public IPageBookViewPage createPage(IDebuggerConsoleView view) {
+	public IPageBookViewPage createPage(IConsoleView view) {
+		// This console is not meant for the standard console view
+		return null;
+	}
+	
+	@Override
+	public IPageBookViewPage createDebuggerPage(IDebuggerConsoleView view) {
 		view.setFocus();
-		fConsolePage = new GdbCliConsolePage(this, view);
+		fConsolePage = new GdbFullCliConsolePage(this, view);
 		return fConsolePage;
 	}
 
 	@Override
-	public IPageBookViewPage createPage(IConsoleView view) {
-		// This console is not used in the IConsoleView
-		return null;
-	}
-	
 	public void setInvertedColors(boolean enable) {
 		if (fConsolePage != null) {
 			fConsolePage.setInvertedColors(enable);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 QNX Software Systems and others.
+// * Copyright (c) 2015, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
+import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -28,17 +32,52 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 import com.google.gson.Gson;
 
 public class CMakeBuildConfiguration extends CBuildConfiguration {
 
+	private static final String TOOLCHAIN_FILE = "cdt.cmake.toolchainfile"; //$NON-NLS-1$
+
+	private ICMakeToolChainFile toolChainFile;
+
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
+
+		Preferences settings = getSettings();
+		String pathStr = settings.get(TOOLCHAIN_FILE, ""); //$NON-NLS-1$
+		if (!pathStr.isEmpty()) {
+			Path path = Paths.get(pathStr);
+			ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
+			toolChainFile = manager.getToolChainFile(path);
+		}
 	}
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
+		this(config, name, toolChain, null);
+	}
+
+	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
+			ICMakeToolChainFile toolChainFile) {
 		super(config, name, toolChain);
+		this.toolChainFile = toolChainFile;
+
+		if (toolChainFile != null) {
+			Preferences settings = getSettings();
+			settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());
+			try {
+				settings.flush();
+			} catch (BackingStoreException e) {
+				Activator.log(e);
+			}
+		}
+	}
+
+	public ICMakeToolChainFile getToolChainFile() {
+		return toolChainFile;
 	}
 
 	@Override
@@ -52,12 +91,35 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			Path buildDir = getBuildDirectory();
 
+			outStream.write(String.format("Building in: %s\n", buildDir.toString()));
+
 			if (!Files.exists(buildDir.resolve("Makefile"))) { //$NON-NLS-1$
-				// TODO assuming cmake is in the path here, probably need a
-				// preference in case it isn't.
-				List<String> command = Arrays.asList("/usr/local/bin/cmake", //$NON-NLS-1$
-						"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", new File(project.getLocationURI()).getAbsolutePath()); //$NON-NLS-1$
+				List<String> command = new ArrayList<>();
+
+				// TODO assuming cmake is in the path here, probably need a preference in case it isn't.
+				Path cmakePath = CBuildConfiguration.getCommandFromPath(Paths.get("cmake")); //$NON-NLS-1$
+				if (cmakePath == null) {
+					if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+						cmakePath = Paths.get("/usr/local/bin/cmake"); //$NON-NLS-1$
+					} else {
+						cmakePath = Paths.get("cmake"); //$NON-NLS-1$
+					}
+				}
+				command.add(cmakePath.toString());
+
+				command.add("-G"); //$NON-NLS-1$
+				// TODO ninja?
+				command.add("Unix Makefiles"); //$NON-NLS-1$
+
+				if (toolChainFile != null) {
+					command.add("-DCMAKE_TOOLCHAIN_FILE=" + toolChainFile.getPath().toString()); //$NON-NLS-1$
+				}
+
+				command.add("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"); //$NON-NLS-1$
+				command.add(new File(project.getLocationURI()).getAbsolutePath());
+
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
+				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 				watchProcess(process, new IConsoleParser[0], console);
@@ -68,6 +130,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				// TODO need to figure out which builder to call. Hardcoding to make for now.
 				List<String> command = Arrays.asList("make"); //$NON-NLS-1$
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
+				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 				watchProcess(process, new IConsoleParser[] { epm }, console);

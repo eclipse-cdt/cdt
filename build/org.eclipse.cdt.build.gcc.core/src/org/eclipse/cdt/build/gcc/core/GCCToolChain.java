@@ -378,7 +378,8 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		}
 
 		// Look for it in the path environment var
-		String path = System.getenv("PATH"); //$NON-NLS-1$
+		IEnvironmentVariable myPath = getVariable("PATH"); //$NON-NLS-1$
+		String path = myPath != null ? myPath.getValue() : System.getenv("PATH"); //$NON-NLS-1$
 		for (String entry : path.split(File.pathSeparator)) {
 			Path entryPath = Paths.get(entry);
 			Path cmdPath = entryPath.resolve(command);

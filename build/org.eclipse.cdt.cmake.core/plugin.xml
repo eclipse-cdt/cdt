@@ -28,7 +28,7 @@
          </enablement>
       </descriptorType>
       <configProvider
-            class="org.eclipse.cdt.cmake.core.internal.CMakeLocalLaunchConfigurationProvider"
+            class="org.eclipse.cdt.cmake.core.internal.CMakeLaunchConfigurationProvider"
             descriptorType="org.eclipse.cdt.cmake.core.descriptorType"
             priority="10">
       </configProvider>
@@ -36,10 +36,10 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.eclipse.cdt.cmake.core.internal.CMakeLocalRunLaunchConfigDelegate"
-            id="org.eclipse.cdt.cmake.core.localLunchConfigurationType"
+            delegate="org.eclipse.cdt.cmake.core.internal.CMakeLaunchConfigurationDelegate"
+            id="org.eclipse.cdt.cmake.core.launchConfigurationType"
             modes="run"
-            name="CMake Local Application"
+            name="CMake Application"
             public="true">
       </launchConfigurationType>
    </extension>

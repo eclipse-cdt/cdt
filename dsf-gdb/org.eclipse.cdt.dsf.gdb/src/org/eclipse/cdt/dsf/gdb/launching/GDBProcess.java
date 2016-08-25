@@ -13,7 +13,6 @@ package org.eclipse.cdt.dsf.gdb.launching;
 import java.io.IOException;
 import java.util.Map;
 
-import org.eclipse.cdt.dsf.gdb.service.command.IGDBBackendProcessWithoutIO;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
@@ -22,9 +21,8 @@ import org.eclipse.debug.core.model.RuntimeProcess;
 /**
  * A process for the gdb backend to differentiate it from the inferior.
  * 
- * This process disables the base class handling of IO streams if we
- * are using the full GDB console, which is handled by the
- * GdbConsoleManager instead.
+ * This process disables the base class handling of IO streams since
+ * all IO is handled by the different specialized {@link IDebuggerConsole}
  * 
  * @since 3.0
  */
@@ -37,37 +35,32 @@ public class GDBProcess extends RuntimeProcess {
 
 	@Override
 	public IStreamsProxy getStreamsProxy() {
-		IStreamsProxy proxy = super.getStreamsProxy();
-		// If our proxy is the one that ignores the streams,
-		// this method should return null.
-		// Returning null insures that there will not be a
-		// text console automatically created for this process
-		// see ProcessConsoleManager#launchChanged()
-		return proxy instanceof NoStreamsProxy ? null : proxy;
+		/**
+		 * Returning null insures that there will not be a
+		 * text console automatically created for this process
+		 * in the standard console view.
+		 * 
+		 * @see {@link ProcessConsoleManager#launchChanged}
+		 */
+		return null;
 	}
 
 	@Override
 	protected IStreamsProxy createStreamsProxy() {
-		// TRICKY.  This method is called by the constructor of
-		// the super class.  This means we don't have time to
-		// set any fields in this class by then.  Therefore,
-		// we can only use what was set by the base class constructor
-		// to figure out how to behave.
-		// We can call getSystemProcess() as it is set earlier
-		// in the constructor then when this method is called.
-		if (getSystemProcess() instanceof IGDBBackendProcessWithoutIO) {
-			// If the GDB process used does not handle I/O, we return a proxy
-			// that ignores the streams.
-			return new NoStreamsProxy();
-		}
-		return super.createStreamsProxy();
+		/**
+		 * The I/O handling does not go through this RuntimeProcess.
+		 * Instead, the different consoles will connect directly to
+		 * the process to obtain the input, output and error streams.
+		 * 
+		 * @see {@link GdbFullCliConsolePage} and {@link GdbBasicCliConsole}
+		 */
+		return new NoStreamsProxy();
 	}
 
 	/** 
 	 * Class that provides a streams proxy that actually
-	 * ignores the I/O streams.  We use this in the case
-	 * of the full GDB console where the GDB CLI is used directly,
-	 * without us needing to do anything with the I/O ourselves.
+	 * ignores the I/O streams.  We use this because the I/O
+	 * is handled directly by the different {@link IDebuggerConsole}.
 	 * 
 	 * This is different than NullStreamsProxy which would
 	 * still read but discard the IO, which is not what we want.

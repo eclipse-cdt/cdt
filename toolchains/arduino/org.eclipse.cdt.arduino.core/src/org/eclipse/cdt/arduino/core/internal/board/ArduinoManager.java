@@ -272,7 +272,19 @@ public class ArduinoManager {
 	public static List<ArduinoPlatform> getSortedPlatforms(Collection<ArduinoPlatform> platforms) {
 		List<ArduinoPlatform> result = new ArrayList<>(platforms);
 		Collections.sort(result, (plat1, plat2) -> {
-			int c1 = plat1.getPackage().getName().compareToIgnoreCase(plat2.getPackage().getName());
+			int c1;
+			String p1 = plat1.getPackage().getName();
+			String p2 = plat2.getPackage().getName();
+			if (p1.equals(p2)) {
+				c1 = 0;
+			} else if (p1.equals("arduino")) {
+				c1 = -1;
+			} else if (p2.equals("arduino")) {
+				c1 = 1;
+			} else {
+				c1 = plat1.getPackage().getName().compareToIgnoreCase(plat2.getPackage().getName());
+			}
+			
 			if (c1 > 0) {
 				return 1;
 			} else if (c1 < 0) {

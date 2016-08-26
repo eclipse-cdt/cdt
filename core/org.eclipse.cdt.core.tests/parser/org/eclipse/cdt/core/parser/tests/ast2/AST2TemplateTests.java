@@ -6239,6 +6239,29 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testTemplateIDAmbiguity_445177() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <bool, typename>
+	//	struct EnableIf;
+	//
+	//	template <typename T>
+	//	struct EnableIf<true, T> {
+	//	    typedef T type;
+	//	};
+	//
+	//	template <typename...> struct Tuple;
+	//
+	//	template <typename> struct TupleSize;
+	//
+	//	template<typename... E>
+	//	struct TupleSize<Tuple<E...>> { 
+	//	  static constexpr int value = sizeof...(E);
+	//	};
+	//
+	//	template<int I>
+	//	using W = typename EnableIf<(I < TupleSize<Tuple<int>>::value), int>::type;
+	public void testTemplateIDAmbiguity_497668() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T> void foo(T);
 	//	template <typename T> void foo(T, typename T::type* = 0);

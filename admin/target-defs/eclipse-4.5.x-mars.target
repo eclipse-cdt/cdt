@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Terminals Eclipse 4.5.x (Mars)" sequenceNumber="93">
+<?pde version="3.8"?><target name="Terminals Eclipse 4.5.x (Mars)" sequenceNumber="95">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
@@ -15,14 +15,14 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.test.feature.group" version="3.7.0.v20150428-2048"/>
-<unit id="org.eclipse.sdk.ide" version="4.5.0.I20150603-2000"/>
+<unit id="org.eclipse.sdk.ide" version="4.5.2.M20160212-1500"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.5"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.jgit.feature.group" version="4.0.0.201506090130-r"/>
-<unit id="org.eclipse.egit.feature.group" version="4.0.0.201506090130-r"/>
-<unit id="org.eclipse.cdt.sdk.feature.group" version="8.7.0.201506070905"/>
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>
+<unit id="org.eclipse.jgit.feature.group" version="4.1.1.201511131810-r"/>
+<unit id="org.eclipse.egit.feature.group" version="4.1.1.201511131810-r"/>
+<unit id="org.eclipse.cdt.sdk.feature.group" version="8.8.1.201602051005"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.2.v20160208-0841"/>
 <repository location="http://download.eclipse.org/releases/mars"/>
 </location>
 </locations>

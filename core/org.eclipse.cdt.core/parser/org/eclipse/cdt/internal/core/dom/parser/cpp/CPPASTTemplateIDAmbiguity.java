@@ -114,7 +114,12 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 		int count= 0;
 		for (IASTName templateName : templateNames) {
 			if (templateName.getTranslationUnit() != null) {
-				IBinding b= templateName.resolveBinding();
+				// It's sufficient to perform the first phase of binding resolution here,
+				// because template names should never resolve to two-phase bindings.
+				// The second phase of binding resolution, when performed for an incorrect
+				// variant, can cause incorrect bindings to be cached in places where they
+				// are hard to clear.
+				IBinding b= templateName.resolvePreBinding();
 				if (b instanceof IProblemBinding) {
 					if (!containsFunctionTemplate(((IProblemBinding) b).getCandidateBindings())) 
 						return -1;

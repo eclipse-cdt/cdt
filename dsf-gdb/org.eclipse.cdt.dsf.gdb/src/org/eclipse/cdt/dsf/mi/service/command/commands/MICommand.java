@@ -10,12 +10,16 @@
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson 		  	- Modified for additional features in DSF Reference implementation and bug 219920
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
+ *     Ingenico				- Sysroot with spaces (Bug 497693)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -34,6 +38,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     List<Adjustable> fOptions = new ArrayList<>();
     List<Adjustable> fParameters = new ArrayList<>();
     String fOperation = ""; //$NON-NLS-1$
+    Function<String, Adjustable> fParamToAdjustable;
     IDMContext fCtx;
 
     /*
@@ -49,12 +54,21 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     }
 
     public MICommand(IDMContext ctx, String operation, String[] options, String[] params) {
-    	assert(ctx != null && DMContexts.getAncestorOfType(ctx, MIControlDMContext.class) != null);
-    	fCtx = ctx;
-        fOperation = operation;
-        fOptions = optionsToAdjustables(options);
-        fParameters = parametersToAdjustables(params);
+    	this(ctx, operation, options, params, null);
     }
+
+    /**
+	 * @since 5.2
+	 */
+	public MICommand(IDMContext ctx, String operation, String[] options, String[] params,
+			Function<String, Adjustable> paramToAdjustable) {
+		assert (ctx != null && DMContexts.getAncestorOfType(ctx, MIControlDMContext.class) != null);
+		fCtx = ctx;
+		fOperation = operation;
+		fOptions = optionsToAdjustables(options);
+		fParamToAdjustable = paramToAdjustable == null ? x -> new MIStandardParameterAdjustable(x) : paramToAdjustable;
+		fParameters = parametersToAdjustables(params);
+	}
 
 	private final List<Adjustable> optionsToAdjustables(String[] options) {
 		List<Adjustable> result = new ArrayList<>();
@@ -67,13 +81,8 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 	}
 
 	private final List<Adjustable> parametersToAdjustables(String[] parameters) {
-		List<Adjustable> result = new ArrayList<>();
-		if (parameters != null) {
-			for (String parameter : parameters) {
-				result.add(new MIStandardParameterAdjustable(parameter));
-			}
-		}
-		return result;
+		return parameters != null ? Arrays.stream(parameters).map(fParamToAdjustable).collect(Collectors.toList())
+				: Collections.emptyList();
 	}
 
     public String getCommandControlFilter() {
@@ -349,6 +358,23 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 //			}
 //
 			return builder.toString();
+		}
+	}
+
+	/**
+	 * This adjustable makes sure that the condition parameter will not get surrounded
+	 * by double quotes.  We simply send the condition exactly as specified
+	 * @since 5.2
+	 */
+	public static class MINoChangeAdjustable extends MICommandAdjustable {
+
+		public MINoChangeAdjustable(String param) {
+			super(param);
+		}
+
+		@Override
+		public String getAdjustedValue() {
+			return getValue();
 		}
 	}
 

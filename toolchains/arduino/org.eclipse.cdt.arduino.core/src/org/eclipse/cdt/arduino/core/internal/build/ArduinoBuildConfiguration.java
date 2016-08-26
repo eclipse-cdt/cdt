@@ -498,7 +498,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 			}
 		}
 
-		ArduinoTool uploadTool = platform.getPackage().getLatestTool(toolName);
+		ArduinoTool uploadTool = platform.getTool(toolName);
 		if (uploadTool != null) {
 			properties.putAll(uploadTool.getToolProperties());
 		}

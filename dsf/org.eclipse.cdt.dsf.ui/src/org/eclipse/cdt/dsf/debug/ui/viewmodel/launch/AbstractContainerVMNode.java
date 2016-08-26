@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
@@ -306,6 +307,10 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
             (((FullStackRefreshEvent)e).getTriggeringEvent() instanceof IContainerSuspendedDMEvent)) {
             return IModelDelta.CONTENT;
         }	    
+	    else if (e instanceof IResumedDMEvent) {
+        	return IModelDelta.STATE;
+        }
+	    
 	    return IModelDelta.NO_CHANGE;
 	}
 
@@ -406,6 +411,11 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
                 return;
             }
 	    }
+        else if (e instanceof IResumedDMEvent) {
+        	// update the  container node label
+        	IContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+        	parentDelta.addNode(createVMContext(containerCtx), IModelDelta.STATE);
+        }
 	
 		requestMonitor.done();
 	 }

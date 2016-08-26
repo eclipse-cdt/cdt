@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Ericsson AB and others.
+ * Copyright (c) 2014, 2016 Ericsson AB and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.gdb.tests;
 
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIBreakInsertCommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMICommandConstructCommand;
+import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIGDBSetSysroot;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStringHandlerTests;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadTests;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({MIThreadTests.class, 
     TestMIBreakInsertCommand.class,
     TestMICommandConstructCommand.class,
+    TestMIGDBSetSysroot.class,
     LaunchUtilsTest.class,
     MIStringHandlerTests.class,
     ProcStatParserTest.class,

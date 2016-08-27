@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_eea59933",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFieldSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_d07c4c5e",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_90f5647b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFieldTemplatePartialSpecialization.java",
         "patchSetId": 3
@@ -519,6 +537,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_4e1f65eb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1278,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_1029543b",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_704c581d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
         "patchSetId": 3
@@ -849,6 +885,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_6e9189d3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_2c7d148e",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_6c771cac",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -860,6 +914,24 @@
       "writtenOn": "2016-05-12T06:50:52Z",
       "side": 1,
       "message": "This can be type-dependent if \"type\" is dependent, or if \"arguments\" are type-dependent. Compare EvalTypeId.isTypeDependent().",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_ae872198",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_6c771cac",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -883,6 +955,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_ce0b75b3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_8cf9c890",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_acfcc47e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -894,6 +984,24 @@
       "writtenOn": "2016-05-12T06:50:52Z",
       "side": 1,
       "message": "Why not \"type\"?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_8e8a5da1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_acfcc47e",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -934,6 +1042,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_8e25fd37",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "I renamed the two variables to \u0027callSiteRecord\u0027 and \u0027localRecord\u0027.",
+      "parentUuid": "a7e957d1_dc7bcd97",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_bc7e0189",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -945,6 +1071,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "Any reason we can\u0027t just use \"constructedObject\" as the evaluation representing the implicit this? That would get us one step closer to not needing the invented AST node.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_ee375967",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_bc7e0189",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -968,6 +1112,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_ae22c12a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_1cf9b58e",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_9c0ce54a",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -979,6 +1141,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "Throughout this function, pass \"context.getPoint()\" instead of \"null\" for IASTNode parameters.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_ce329579",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_9c0ce54a",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1070,6 +1250,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_6e1c29f6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_5c36dd0d",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_0c0db844",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -1087,6 +1285,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_ee1039de",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_0c0db844",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_2c08b432",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -1098,6 +1314,24 @@
       "writtenOn": "2016-05-12T06:50:52Z",
       "side": 1,
       "message": "Likewise.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_0e12cde3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_2c08b432",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1678,6 +1912,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_4e94c5c5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalReference.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_dcde6dd5",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_9cfb053b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalReference.java",
         "patchSetId": 3
@@ -1740,6 +1992,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "Since we\u0027re not using \"args\", let\u0027s do this check before computing \"args\".",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_2e9cf1ee",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_1c3a9583",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -2141,6 +2411,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "Does this \"continue\" do anything (different from just reaching the end of the loop body)?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_0e972dcd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecDo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 76438
+      },
+      "writtenOn": "2016-08-27T18:10:36Z",
+      "side": 1,
+      "message": "You\u0027re right. This doesn\u0027t do anything. I\u0027ll remove it.",
+      "parentUuid": "a7e957d1_dcd82d9b",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

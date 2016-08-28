@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.llvm.dsf.lldb.core.internal;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -46,5 +50,81 @@ public class LLDBCorePlugin extends Plugin {
 	 */
 	public static LLDBCorePlugin getDefault() {
 		return plugin;
+	}
+
+	/**
+	 * Creates an IStatus for this plug-in using a message.
+	 *
+	 * @param msg
+	 *            the message
+	 * @return an IStatus
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static IStatus createStatus(String msg) {
+		return createStatus(msg, null);
+	}
+
+	/**
+	 * Creates an IStatus for this plug-in using a message and exception.
+	 *
+	 * @param msg
+	 *            the message
+	 * @param e
+	 *            the exception
+	 * @return an IStatus
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static IStatus createStatus(String msg, Throwable e) {
+		return new Status(IStatus.ERROR, PLUGIN_ID, msg, e);
+	}
+
+	/**
+	 * Logs an IStatus
+	 *
+	 * @param status the IStatus
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
+	/**
+	 * Logs a messages with exception.
+	 *
+	 * @param message
+	 *            the message
+	 * @param e
+	 *            the exception
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(String message, Throwable e) {
+		Throwable nestedException;
+		if (e instanceof CModelException && (nestedException = ((CModelException) e).getException()) != null) {
+			e = nestedException;
+		}
+		log(createStatus(message, e));
+	}
+
+	/**
+	 * Logs an exception.
+	 *
+	 * @param e
+	 *            the exception
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(Throwable e) {
+		if (e instanceof CoreException) {
+			log(((CoreException) e).getStatus());
+		} else {
+			String msg = e.getMessage();
+			if (msg == null) {
+				log("Error", e); //$NON-NLS-1$
+			} else {
+				log("Error: " + msg, e); //$NON-NLS-1$
+			}
+		}
 	}
 }

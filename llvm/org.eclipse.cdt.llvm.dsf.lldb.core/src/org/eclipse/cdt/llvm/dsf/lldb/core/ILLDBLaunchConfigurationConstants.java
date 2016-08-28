@@ -8,6 +8,7 @@
 
 package org.eclipse.cdt.llvm.dsf.lldb.core;
 
+import org.eclipse.cdt.llvm.dsf.lldb.core.internal.ILLDBConstants;
 import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBCorePlugin;
 
 /**
@@ -27,5 +28,5 @@ public class ILLDBLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */
-	public static final String DEBUGGER_DEBUG_NAME_DEFAULT = "lldb-mi"; //$NON-NLS-1$
+	public static final String DEBUGGER_DEBUG_NAME_DEFAULT = ILLDBConstants.LLDB_MI_EXECUTABLE_NAME;
 }

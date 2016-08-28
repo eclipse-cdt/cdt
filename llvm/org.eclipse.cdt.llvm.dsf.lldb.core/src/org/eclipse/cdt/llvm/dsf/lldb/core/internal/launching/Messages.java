@@ -16,6 +16,7 @@ import org.eclipse.osgi.util.NLS;
 @SuppressWarnings("javadoc")
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.llvm.dsf.lldb.core.internal.launching.messages"; //$NON-NLS-1$
+	public static String LLDBLaunch_minimum_version_error;
 	public static String LLDBLaunchDelegate_mimicking_gdb;
 	static {
 		// initialize resource bundle

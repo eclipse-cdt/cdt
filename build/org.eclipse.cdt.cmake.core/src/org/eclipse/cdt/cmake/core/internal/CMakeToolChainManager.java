@@ -125,7 +125,7 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 	}
 
 	@Override
-	public Collection<ICMakeToolChainFile> getToolChainsFileMatching(Map<String, String> properties) {
+	public Collection<ICMakeToolChainFile> getToolChainFilesMatching(Map<String, String> properties) {
 		List<ICMakeToolChainFile> matches = new ArrayList<>();
 		for (ICMakeToolChainFile file : getToolChainFiles()) {
 			boolean match = true;

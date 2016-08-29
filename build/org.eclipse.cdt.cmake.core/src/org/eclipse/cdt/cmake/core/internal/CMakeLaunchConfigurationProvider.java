@@ -52,7 +52,7 @@ public class CMakeLaunchConfigurationProvider extends AbstractLaunchConfigProvid
 		Map<String, String> properties = new HashMap<>();
 		properties.put(IToolChain.ATTR_OS, os);
 		properties.put(IToolChain.ATTR_ARCH, arch);
-		if (manager.getToolChainsFileMatching(properties).isEmpty()) {
+		if (manager.getToolChainFilesMatching(properties).isEmpty()) {
 			return false;
 		}
 

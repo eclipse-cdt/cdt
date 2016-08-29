@@ -26,7 +26,7 @@ public interface ICMakeToolChainManager {
 
 	ICMakeToolChainFile getToolChainFile(Path path);
 
-	Collection<ICMakeToolChainFile> getToolChainsFileMatching(Map<String, String> properties);
+	Collection<ICMakeToolChainFile> getToolChainFilesMatching(Map<String, String> properties);
 
 	Collection<ICMakeToolChainFile> getToolChainFiles();
 

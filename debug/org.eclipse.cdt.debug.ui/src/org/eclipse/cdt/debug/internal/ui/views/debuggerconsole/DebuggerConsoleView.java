@@ -15,13 +15,19 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
+import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
+import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.part.IPage;
@@ -45,6 +51,7 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 	private Map<DebuggerConsoleWorkbenchPart, IDebuggerConsole> fPartToConsole = new HashMap<>();
 
 	private DebuggerConsoleDropDownAction fDisplayConsoleAction;
+	private TerminateCommandAction fTerminateCommandAction;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -77,10 +84,25 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 
 	protected void createActions() {
 		fDisplayConsoleAction = new DebuggerConsoleDropDownAction(this);
+		fTerminateCommandAction = new TerminateCommandAction();
+		Object dView = getDebugView();
+		if (dView instanceof AbstractDebugView) {
+			fTerminateCommandAction.init((AbstractDebugView) dView);
+		}
+	}
+	
+	private IViewPart getDebugView() {
+		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		if (activePage == null) {
+			return null;
+		}
+
+		return activePage.findView(IDebugUIConstants.ID_DEBUG_VIEW);
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(fDisplayConsoleAction);
+		mgr.add(fTerminateCommandAction);
 	}
 
 	@Override
@@ -91,6 +113,11 @@ public class DebuggerConsoleView extends PageBookView implements IDebuggerConsol
 		if (fDisplayConsoleAction != null) {
 			fDisplayConsoleAction.dispose();
 			fDisplayConsoleAction = null;
+		}
+		
+		if (fTerminateCommandAction != null) {
+			fTerminateCommandAction.dispose();
+			fTerminateCommandAction = null;
 		}
 	}
 

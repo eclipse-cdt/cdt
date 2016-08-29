@@ -14,7 +14,10 @@ import java.util.Set;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IToolBarManager;
@@ -23,7 +26,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.part.IPage;
@@ -54,6 +60,8 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 	private Map<GdbConsoleWorkbenchPart, IConsole> fPartToConsole = new HashMap<>();
 
 	private GdbConsoleDropDownAction fDisplayConsoleAction;
+	
+	private TerminateCommandAction fTerminateCommandAction;
 
 	public GdbConsoleView() {
 		super();
@@ -68,6 +76,11 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 		if (fDisplayConsoleAction != null) {
 			fDisplayConsoleAction.dispose();
 			fDisplayConsoleAction = null;
+		}
+		
+		if (fTerminateCommandAction != null) {
+			fTerminateCommandAction.dispose();
+			fTerminateCommandAction = null;
 		}
 	}
 
@@ -238,10 +251,25 @@ public class GdbConsoleView extends PageBookView implements IConsoleListener, ID
 
 	protected void createActions() {
 		fDisplayConsoleAction = new GdbConsoleDropDownAction(this);
+		fTerminateCommandAction = new TerminateCommandAction();
+		Object dView = getDebugView();
+		if (dView instanceof AbstractDebugView) {
+			fTerminateCommandAction.init((AbstractDebugView) dView);
+		}
 	}
 
+	public IViewPart getDebugView() {
+		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		if (activePage == null) {
+			return null;
+		}
+
+		return activePage.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+	}
+	
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(fDisplayConsoleAction);
+		mgr.add(fTerminateCommandAction);
 	}
 
 	/**

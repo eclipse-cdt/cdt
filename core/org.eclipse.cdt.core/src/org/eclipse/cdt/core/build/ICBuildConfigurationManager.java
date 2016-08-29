@@ -43,6 +43,23 @@ public interface ICBuildConfigurationManager {
 			String configName, IProgressMonitor monitor) throws CoreException;
 
 	/**
+	 * Create a new build configuration for a given project using a given
+	 * toolchain and builds for a given launch mode.
+	 * 
+	 * @param project
+	 *            project for the config
+	 * @param toolChain
+	 *            toolchain the build config will use
+	 * @param launchMode
+	 *            launch mode the buld config will build for
+	 * @return new build configuration
+	 * @throws CoreException
+	 * @since 6.1
+	 */
+	ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+			IProgressMonitor monitor) throws CoreException;
+
+	/**
 	 * Called by providers to add new build configurations as they are created.
 	 * 
 	 * @param buildConfig

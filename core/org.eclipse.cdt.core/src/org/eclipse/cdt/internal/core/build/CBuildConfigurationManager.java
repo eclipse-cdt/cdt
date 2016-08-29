@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
@@ -210,6 +211,17 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 					return null;
 				}
 			}
+		}
+	}
+
+	@Override
+	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain,
+			String launchMode, IProgressMonitor monitor) throws CoreException {
+		ICBuildConfigurationProvider provider = getProvider(project);
+		if (provider != null) {
+			return provider.createBuildConfiguration(project, toolChain, launchMode, monitor);
+		} else {
+			return null;
 		}
 	}
 

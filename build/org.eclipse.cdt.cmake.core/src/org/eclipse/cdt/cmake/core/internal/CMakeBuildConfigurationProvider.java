@@ -71,31 +71,38 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		}
 	}
 
-	public CMakeBuildConfiguration getCBuildConfiguration(IProject project, Map<String, String> properties,
-			String launchMode, IProgressMonitor monitor) throws CoreException {
+	@Override
+	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+			IProgressMonitor monitor) throws CoreException {
+		// See if there is one already
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
 			ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
 			if (cconfig != null) {
 				CMakeBuildConfiguration cmakeConfig = cconfig.getAdapter(CMakeBuildConfiguration.class);
-				if (cmakeConfig != null && cmakeConfig.getToolChain().matches(properties)) {
-					return cmakeConfig;
+				if (cmakeConfig != null && cmakeConfig.getToolChain().equals(toolChain)) {
+					return cconfig;
 				}
 			}
 		}
 
-		Collection<IToolChain> tcs = tcManager.getToolChainsMatching(properties);
-		if (tcs.isEmpty()) {
-			return null;
+		// get matching toolchain file if any
+		Map<String, String> properties = new HashMap<>();
+		String os = toolChain.getProperty(IToolChain.ATTR_OS);
+		if (os != null && !os.isEmpty()) {
+			properties.put(IToolChain.ATTR_OS, os);
 		}
-		IToolChain toolChain = tcs.iterator().next();
-
+		String arch = toolChain.getProperty(IToolChain.ATTR_ARCH);
+		if (!arch.isEmpty()) {
+			properties.put(IToolChain.ATTR_ARCH, arch);
+		}
 		ICMakeToolChainFile file = null;
-		Collection<ICMakeToolChainFile> files = manager.getToolChainsFileMatching(properties);
+		Collection<ICMakeToolChainFile> files = manager.getToolChainFilesMatching(properties);
 		if (!files.isEmpty()) {
 			file = files.iterator().next();
 		}
 
-		String configName = "cmake." + toolChain.getId(); //$NON-NLS-1$
+		// create config
+		String configName = "cmake." + launchMode + '.' + toolChain.getId(); //$NON-NLS-1$
 		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName, monitor);
 		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, configName, toolChain, file);
 		configManager.addBuildConfiguration(config, cmakeConfig);

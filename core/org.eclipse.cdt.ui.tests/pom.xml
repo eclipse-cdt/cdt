@@ -16,7 +16,8 @@
 	<packaging>eclipse-test-plugin</packaging>
 
 	<properties>
-		<extra.vmargs></extra.vmargs>
+		<extra.vmargs.indexer.timeout></extra.vmargs.indexer.timeout>
+		<extra.vmargs.displayhelper.timeoutmultipler></extra.vmargs.displayhelper.timeoutmultipler>
 	</properties>
 
 	<!-- Uncommenting this is useful when the repo is built first then you want to run tests on this plugin only -->
@@ -37,7 +38,18 @@
 				</property>
 			</activation>
 			<properties>
-				<extra.vmargs>-Dindexer.timeout=${indexer.timeout}</extra.vmargs>
+				<extra.vmargs.indexer.timeout>-Dindexer.timeout=${indexer.timeout}</extra.vmargs.indexer.timeout>
+			</properties>
+		</profile>
+		<profile>
+			<id>display-timeout-multiplier-set</id>
+			<activation>
+				<property>
+					<name>org.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER</name>
+				</property>
+			</activation>
+			<properties>
+				<extra.vmargs.displayhelper.timeoutmultipler>-Dorg.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER=${org.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER}</extra.vmargs.displayhelper.timeoutmultipler>
 			</properties>
 		</profile>
 	</profiles>
@@ -50,7 +62,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs}</argLine>
+					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs.indexer.timeout} ${extra.vmargs.displayhelper.timeoutmultipler}</argLine>
 					<includes>
 						<include>**/AutomatedSuite.*</include>
 					</includes>

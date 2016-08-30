@@ -23,6 +23,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.cmake.ui.internal.CMakePreferencePage"
             id="org.eclipse.cdt.cmake.ui.page1"
             name="%cmake.preferences.name">

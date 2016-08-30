@@ -73,7 +73,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		this.version = version;
 		this.name = id + " - " + version; //$NON-NLS-1$
 		this.path = path;
-		this.prefix = prefix;
+		this.prefix = prefix != null ? prefix : "";
 
 		if (path != null) {
 			StringBuilder pathString = new StringBuilder();
@@ -393,15 +393,15 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	@Override
 	public String[] getCompileCommands() {
-		return new String[] { "gcc", "g++", "clang", "clang++", "cc", "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		return new String[] { prefix + "gcc", prefix + "g++", prefix + "clang", prefix + "clang++", prefix + "cc", prefix + "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 
 	@Override
 	public String[] getCompileCommands(ILanguage language) {
 		if (GPPLanguage.ID.equals(language.getId())) {
-			return new String[] { "g++", "clang++", "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return new String[] { prefix + "g++", prefix + "clang++", prefix + "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else if (GCCLanguage.ID.equals(language.getId())) {
-			return new String[] { "gcc", "clang", "cc" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return new String[] { prefix + "gcc", prefix + "clang", prefix + "cc" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
 			return new String[0];
 		}

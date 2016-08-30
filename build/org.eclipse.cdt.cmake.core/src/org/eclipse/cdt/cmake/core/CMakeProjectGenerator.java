@@ -22,7 +22,9 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.tools.templates.freemarker.FMProjectGenerator;
 import org.eclipse.tools.templates.freemarker.SourceRoot;
 import org.osgi.framework.Bundle;
@@ -68,6 +70,9 @@ public class CMakeProjectGenerator extends FMProjectGenerator {
 		} else {
 			entries.add(CoreModel.newSourceEntry(getProject().getFullPath()));
 		}
+
+		entries.add(CoreModel.newOutputEntry(getProject().getFolder("build").getFullPath(),
+				new IPath[] { new Path("**/CMakeFiles/**") }));
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 	}

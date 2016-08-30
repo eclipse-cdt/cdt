@@ -55,7 +55,7 @@ public class CMakeLaunchConfigurationDelegate extends LaunchConfigurationTargete
 			IToolChain toolChain = tcs.iterator().next();
 
 			IProject project = getProject(configuration);
-			ICBuildConfiguration config = configManager.createBuildConfiguration(project, toolChain, "run", monitor); //$NON-NLS-1$
+			ICBuildConfiguration config = configManager.getBuildConfiguration(project, toolChain, "run", monitor); //$NON-NLS-1$
 
 			if (config != null) {
 				IProjectDescription desc = project.getDescription();

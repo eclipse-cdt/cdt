@@ -28,35 +28,11 @@ import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 public class CMakeLaunchConfigurationProvider extends AbstractLaunchConfigProvider {
 
-	private final ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
-	private final IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
-
 	private Map<IProject, ILaunchConfiguration> configs = new HashMap<>();
 
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
-		if (ILaunchTargetManager.localLaunchTargetTypeId.equals(target.getTypeId())) {
-			return true;
-		}
-
-		String os = target.getAttribute(ILaunchTarget.ATTR_OS, ""); //$NON-NLS-1$
-		if (os.isEmpty()) {
-			return false;
-		}
-
-		String arch = target.getAttribute(ILaunchTarget.ATTR_ARCH, ""); //$NON-NLS-1$
-		if (arch.isEmpty()) {
-			return false;
-		}
-
-		Map<String, String> properties = new HashMap<>();
-		properties.put(IToolChain.ATTR_OS, os);
-		properties.put(IToolChain.ATTR_ARCH, arch);
-		if (manager.getToolChainFilesMatching(properties).isEmpty()) {
-			return false;
-		}
-
-		return !tcManager.getToolChainsMatching(properties).isEmpty();
+		return ILaunchTargetManager.localLaunchTargetTypeId.equals(target.getTypeId());
 	}
 
 	@Override

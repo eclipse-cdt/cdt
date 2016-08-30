@@ -184,6 +184,9 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 			manager.removeToolChainFile(file);
 		}
 
+		filesToAdd.clear();
+		filesToRemove.clear();
+		
 		return true;
 	}
 

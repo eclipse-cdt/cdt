@@ -1,5 +1,5 @@
 /*******************************************************************************
-// * Copyright (c) 2015, 2016 QNX Software Systems and others.
+ * Copyright (c) 2015, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,13 @@ import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -96,7 +99,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			if (!Files.exists(buildDir.resolve("Makefile"))) { //$NON-NLS-1$
 				List<String> command = new ArrayList<>();
 
-				// TODO assuming cmake is in the path here, probably need a preference in case it isn't.
+				// TODO assuming cmake is in the path here, probably need a
+				// preference in case it isn't.
 				Path cmakePath = CBuildConfiguration.getCommandFromPath(Paths.get("cmake")); //$NON-NLS-1$
 				if (cmakePath == null) {
 					if (!Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -127,7 +131,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
-				// TODO need to figure out which builder to call. Hardcoding to make for now.
+				// TODO need to figure out which builder to call. Hardcoding to
+				// make for now.
 				List<String> command = Arrays.asList("make"); //$NON-NLS-1$
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 				setBuildEnvironment(processBuilder.environment());

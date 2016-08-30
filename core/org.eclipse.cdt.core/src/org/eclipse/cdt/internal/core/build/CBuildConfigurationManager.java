@@ -215,7 +215,7 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	}
 
 	@Override
-	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain,
+	public ICBuildConfiguration getBuildConfiguration(IProject project, IToolChain toolChain,
 			String launchMode, IProgressMonitor monitor) throws CoreException {
 		ICBuildConfigurationProvider provider = getProvider(project);
 		if (provider != null) {

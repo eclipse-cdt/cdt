@@ -30,4 +30,8 @@ public interface ICMakeToolChainManager {
 
 	Collection<ICMakeToolChainFile> getToolChainFiles();
 
+	void addListener(ICMakeToolChainListener listener);
+
+	void removeListener(ICMakeToolChainListener listener);
+
 }

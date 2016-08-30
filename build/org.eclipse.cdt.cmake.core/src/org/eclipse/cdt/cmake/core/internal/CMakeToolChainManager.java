@@ -13,12 +13,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.cmake.core.CMakeToolChainEvent;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
+import org.eclipse.cdt.cmake.core.ICMakeToolChainListener;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.cmake.core.ICMakeToolChainProvider;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -29,6 +39,8 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 
 	private static final String N = "n"; //$NON-NLS-1$
 	private static final String PATH = "__path"; //$NON-NLS-1$
+
+	private final List<ICMakeToolChainListener> listeners = new LinkedList<>();
 
 	private Preferences getPreferences() {
 		return InstanceScope.INSTANCE.getNode(Activator.getId()).node("cmakeToolchains"); //$NON-NLS-1$
@@ -57,6 +69,19 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 			}
 
 			// TODO discovery
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.getId(),
+					"toolChainProvider"); //$NON-NLS-1$
+			for (IConfigurationElement element : point.getConfigurationElements()) {
+				if (element.getName().equals("provider")) { //$NON-NLS-1$
+					try {
+						ICMakeToolChainProvider provider = (ICMakeToolChainProvider) element
+								.createExecutableExtension("class"); //$NON-NLS-1$
+						provider.init(this);
+					} catch (ClassCastException | CoreException e) {
+						Activator.log(e);
+					}
+				}
+			}
 		}
 	}
 
@@ -92,11 +117,14 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 		} catch (BackingStoreException e) {
 			Activator.log(e);
 		}
+
+		fireEvent(new CMakeToolChainEvent(CMakeToolChainEvent.ADDED, file));
 	}
 
 	@Override
 	public void removeToolChainFile(ICMakeToolChainFile file) {
 		init();
+		fireEvent(new CMakeToolChainEvent(CMakeToolChainEvent.REMOVED, file));
 		files.remove(file.getPath());
 
 		String n = ((CMakeToolChainFile) file).n;
@@ -141,6 +169,32 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 			}
 		}
 		return matches;
+	}
+
+	@Override
+	public void addListener(ICMakeToolChainListener listener) {
+		listeners.add(listener);
+	}
+
+	@Override
+	public void removeListener(ICMakeToolChainListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void fireEvent(CMakeToolChainEvent event) {
+		for (ICMakeToolChainListener listener : listeners) {
+			SafeRunner.run(new ISafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					listener.handleCMakeToolChainEvent(event);
+				}
+
+				@Override
+				public void handleException(Throwable exception) {
+					Activator.log(exception);
+				}
+			});
+		}
 	}
 
 }

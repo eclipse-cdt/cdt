@@ -56,7 +56,7 @@ public interface ICBuildConfigurationManager {
 	 * @throws CoreException
 	 * @since 6.1
 	 */
-	ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+	ICBuildConfiguration getBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
 			IProgressMonitor monitor) throws CoreException;
 
 	/**

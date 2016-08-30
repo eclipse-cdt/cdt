@@ -33,6 +33,12 @@ import org.eclipse.swt.widgets.Display;
  * @since 4.0
  */
 public abstract class DisplayHelper {
+	private static final long TIMEOUT_MULTIPLIER;
+	static
+	{
+		TIMEOUT_MULTIPLIER = Integer.parseInt(System.getProperty("org.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER", "1"));
+	}
+
 	/**
 	 * Creates a new instance.
 	 */
@@ -74,7 +80,7 @@ public abstract class DisplayHelper {
 
 		// repeatedly sleep until condition becomes true or timeout elapses
 		DisplayWaiter waiter= new DisplayWaiter(display);
-		DisplayWaiter.Timeout timeoutState= waiter.start(timeout);
+		DisplayWaiter.Timeout timeoutState= waiter.start(timeout * TIMEOUT_MULTIPLIER);
 		boolean condition;
 		try {
 			do {
@@ -210,7 +216,7 @@ public abstract class DisplayHelper {
 		// repeatedly sleep until condition becomes true or timeout elapses
 		DisplayWaiter waiter= new DisplayWaiter(display, true);
 		long currentTimeMillis= System.currentTimeMillis();
-		long finalTimeout= timeout + currentTimeMillis;
+		long finalTimeout= timeout * TIMEOUT_MULTIPLIER + currentTimeMillis;
 		if (finalTimeout < currentTimeMillis)
 			finalTimeout= Long.MAX_VALUE;
 		boolean condition;

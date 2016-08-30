@@ -10,6 +10,7 @@ package org.eclipse.cdt.core.build;
 import java.util.Map;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IBuildConfiguration;
@@ -58,5 +59,14 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor) throws CoreException;
 
 	void clean(IConsole console, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * @return build output IContainer
+	 * @throws CoreException
+	 * @since 6.1
+	 */
+	default IBinary[] getBuildOutput() throws CoreException {
+		return null;
+	}
 
 }

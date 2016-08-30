@@ -36,6 +36,8 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
@@ -58,6 +60,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -174,15 +177,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 		}
 		IFolder buildFolder = buildRootFolder.getFolder(name);
 		if (!buildFolder.exists()) {
-			buildFolder.create(true, true, new NullProgressMonitor());
-			buildFolder.setDerived(true, null);
-			ICProject cproject = CoreModel.getDefault().create(getProject());
-			IOutputEntry output = CoreModel.newOutputEntry(buildFolder.getFullPath());
-			IPathEntry[] oldEntries = cproject.getRawPathEntries();
-			IPathEntry[] newEntries = new IPathEntry[oldEntries.length + 1];
-			System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
-			newEntries[oldEntries.length] = output;
-			cproject.setRawPathEntries(newEntries, null);
+			buildFolder.create(IResource.FORCE | IResource.DERIVED, true, new NullProgressMonitor());
 		}
 
 		return buildFolder;
@@ -198,6 +193,20 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	public void setBuildEnvironment(Map<String, String> env) {
 		CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(env, config, true);
+	}
+
+	@Override
+	public IBinary[] getBuildOutput() throws CoreException {
+		ICProject cproject = CoreModel.getDefault().create(config.getProject());
+		IBinaryContainer binaries = cproject.getBinaryContainer();
+		IPath outputPath = getBuildContainer().getFullPath();
+		List<IBinary> outputs = new ArrayList<>();
+		for (IBinary binary : binaries.getBinaries()) {
+			if (binary.isExecutable() && outputPath.isPrefixOf(binary.getPath())) {
+				outputs.add(binary);
+			}
+		}
+		return outputs.toArray(new IBinary[outputs.size()]);
 	}
 
 	public void setActive(IProgressMonitor monitor) throws CoreException {

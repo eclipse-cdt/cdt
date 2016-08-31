@@ -43,7 +43,7 @@
       </connectionTypeService>
       <connectionTypeService
             connectionTypeId="org.eclipse.remote.JSch"
-            factory="org.eclipse.remote.internal.jsch.ui.JSchUIFileService$Factory"
+            factory="org.eclipse.remote.ui.RemoteUIFileService$Factory"
             service="org.eclipse.remote.ui.IRemoteUIFileService">
       </connectionTypeService>
       <connectionService

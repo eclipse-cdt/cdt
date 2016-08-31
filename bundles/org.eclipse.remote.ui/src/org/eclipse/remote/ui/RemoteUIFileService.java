@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.remote.internal.jsch.ui;
+package org.eclipse.remote.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +18,19 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionType.Service;
-import org.eclipse.remote.ui.IRemoteUIFileService;
 import org.eclipse.remote.ui.dialogs.RemoteResourceBrowser;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
-public class JSchUIFileService implements IRemoteUIFileService {
+/**
+ * @since 2.1
+ */
+public class RemoteUIFileService implements IRemoteUIFileService {
 	private final IRemoteConnectionType connectionType;
 	private IRemoteConnection connection = null;
 	private boolean showConnections = false;
 
-	public JSchUIFileService(IRemoteConnectionType connectionType) {
+	public RemoteUIFileService(IRemoteConnectionType connectionType) {
 		this.connectionType = connectionType;
 	}
 
@@ -37,7 +39,7 @@ public class JSchUIFileService implements IRemoteUIFileService {
 		@Override
 		public <T extends Service> T getService(IRemoteConnectionType connectionType, Class<T> service) {
 			if (IRemoteUIFileService.class.equals(service)) {
-				return (T) new JSchUIFileService(connectionType);
+				return (T) new RemoteUIFileService(connectionType);
 			}
 			return null;
 		}

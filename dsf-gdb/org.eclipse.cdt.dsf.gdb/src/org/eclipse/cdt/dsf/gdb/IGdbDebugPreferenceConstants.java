@@ -172,5 +172,10 @@ public interface IGdbDebugPreferenceConstants {
 	 */
 	public static final String PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE = "UseProcessorTrace"; //$NON-NLS-1$
 
+	/**
+	 * Boolean preference indicating if the GDB console should be shown using inverted colors. Default is <code>false</code>. 
+	 * @since 5.1
+	 */
+	public static final String PREF_CONSOLE_INVERTED_COLORS = PREFIX + "consoleInvertedColors"; //$NON-NLS-1$
 }
 

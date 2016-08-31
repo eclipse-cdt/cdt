@@ -25,6 +25,9 @@ public class ConsoleMessages extends NLS {
 	public static String ConsoleMessages_save_info_io_error_title;
 	public static String ConsoleMessages_save_info_io_error_desc;
 	
+	public static String ConsoleInvertColorsAction_name;
+	public static String ConsoleInvertColorsAction_description;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(ConsoleMessages.class.getName(), ConsoleMessages.class);

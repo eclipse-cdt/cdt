@@ -27,6 +27,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
 	private final ILaunch fLaunch;
 	private String fLabel;
+	private GdbCliConsolePage fConsolePage;
 	
 	public GdbCliConsole(ILaunch launch, String label) {
 		super(label, null);
@@ -79,12 +80,19 @@ public class GdbCliConsole extends AbstractConsole implements IDebuggerConsole {
 	@Override
 	public IPageBookViewPage createPage(IDebuggerConsoleView view) {
 		view.setFocus();
-		return new GdbCliConsolePage(this, view);
+		fConsolePage = new GdbCliConsolePage(this, view);
+		return fConsolePage;
 	}
 
 	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
 		// This console is not used in the IConsoleView
 		return null;
+	}
+	
+	public void setInvertedColors(boolean enable) {
+		if (fConsolePage != null) {
+			fConsolePage.setInvertedColors(enable);
+		}
 	}
 }

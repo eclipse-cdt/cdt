@@ -16,6 +16,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -26,11 +27,15 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
@@ -51,6 +56,10 @@ public class GdbCliConsolePage extends Page implements IDebugContextListener {
 	private IDebuggerConsoleView fView;
 	private IDebuggerConsole fConsole;
 	
+	private MenuManager fMenuManager;
+
+	private GdbConsoleInvertColorsAction fInvertColorsAction;
+
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
 
@@ -70,6 +79,7 @@ public class GdbCliConsolePage extends Page implements IDebugContextListener {
 		super.dispose();
 		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		fTerminalControl.disposeTerminal();
+		fMenuManager.dispose();
 	}
 	
 	@Override
@@ -80,6 +90,14 @@ public class GdbCliConsolePage extends Page implements IDebugContextListener {
 
 		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
 
+		createTerminalControl();
+		createContextMenu();
+		
+		// Hook the terminal control to the GDB process
+		attachTerminalToGdbProcess();
+	}
+
+	private void createTerminalControl() {
 		// Create the terminal control that will be used to interact with GDB
 		fTerminalControl = TerminalViewControlFactory.makeControl(
 				new ITerminalListener() {
@@ -94,9 +112,31 @@ public class GdbCliConsolePage extends Page implements IDebugContextListener {
 			fTerminalControl.setEncoding(Charset.defaultCharset().name());
 		} catch (UnsupportedEncodingException e) {
 		}
-		
-		// Hook the terminal control to the GDB process
-		attachTerminalToGdbProcess();
+	
+		// Set the inverted colors option based on the stored preference
+		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+		boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS);
+		setInvertedColors(enabled);
+	}
+
+	protected void createContextMenu() {
+		fMenuManager = new MenuManager();
+		fMenuManager.setRemoveAllWhenShown(true);
+		fMenuManager.addMenuListener((menuManager) -> { contextMenuAboutToShow(menuManager); });
+		Menu menu = fMenuManager.createContextMenu(fTerminalControl.getControl());
+		fTerminalControl.getControl().setMenu(menu);
+
+		createActions();
+
+		getSite().registerContextMenu(null, fMenuManager, getSite().getSelectionProvider());
+	}
+
+	protected void createActions() {
+		fInvertColorsAction = new GdbConsoleInvertColorsAction();
+    }
+
+	protected void contextMenuAboutToShow(IMenuManager menuManager) {
+		menuManager.add(fInvertColorsAction);
 	}
 
 	@Override
@@ -197,5 +237,9 @@ public class GdbCliConsolePage extends Page implements IDebugContextListener {
 				fView.display(fConsole);
 			}
 		}
+	}
+
+	public void setInvertedColors(boolean enable) {
+		fTerminalControl.setInvertedColors(enable);
 	}
 }

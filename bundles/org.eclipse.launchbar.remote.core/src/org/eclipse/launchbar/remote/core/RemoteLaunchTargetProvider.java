@@ -29,6 +29,10 @@ public abstract class RemoteLaunchTargetProvider implements ILaunchTargetProvide
 
 	protected abstract String getTypeId();
 
+	protected void initLaunchTarget(ILaunchTarget target) {
+		// default nothing
+	}
+
 	@Override
 	public void init(ILaunchTargetManager targetManager) {
 		this.targetManager = targetManager;
@@ -49,7 +53,7 @@ public abstract class RemoteLaunchTargetProvider implements ILaunchTargetProvide
 		for (IRemoteConnection remote : remoteType.getConnections()) {
 			String id = remote.getName();
 			if (targetManager.getLaunchTarget(typeId, id) == null) {
-				targetManager.addLaunchTarget(typeId, id);
+				initLaunchTarget(targetManager.addLaunchTarget(typeId, id));
 			}
 		}
 
@@ -75,7 +79,7 @@ public abstract class RemoteLaunchTargetProvider implements ILaunchTargetProvide
 		if (connection.getConnectionType().getId().equals(getTypeId())) {
 			switch (event.getType()) {
 			case RemoteConnectionChangeEvent.CONNECTION_ADDED:
-				targetManager.addLaunchTarget(getTypeId(), connection.getName());
+				initLaunchTarget(targetManager.addLaunchTarget(getTypeId(), connection.getName()));
 				break;
 			case RemoteConnectionChangeEvent.CONNECTION_REMOVED:
 				ILaunchTarget target = targetManager.getLaunchTarget(getTypeId(), connection.getName());
@@ -91,11 +95,10 @@ public abstract class RemoteLaunchTargetProvider implements ILaunchTargetProvide
 					if (target != null ) {
 						targetManager.removeLaunchTarget(target);
 					}
-					targetManager.addLaunchTarget(getTypeId(), wc.getName());
+					initLaunchTarget(targetManager.addLaunchTarget(getTypeId(), wc.getName()));
 				}
 				break;
 			}
-			
 		}
 	}
 

@@ -35,6 +35,7 @@ public class DebuggerConsoleDropDownAction extends Action implements IMenuCreato
 
 	public DebuggerConsoleDropDownAction(DebuggerConsoleView view) {
 		fView = view;
+		setId(DebuggerConsoleView.DROP_DOWN_ACTION_ID);
 		setText(ConsoleMessages.ConsoleDropDownAction_name);
 		setToolTipText(ConsoleMessages.ConsoleDropDownAction_description);
 		setImageDescriptor(CDebugImages.DESC_OBJS_DEBUGGER_CONSOLE_SELECT);

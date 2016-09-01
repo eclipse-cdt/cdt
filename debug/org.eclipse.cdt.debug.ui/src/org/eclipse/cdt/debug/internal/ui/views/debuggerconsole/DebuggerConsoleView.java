@@ -45,6 +45,8 @@ public class DebuggerConsoleView extends PageBookView
 implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChangeListener {
 
 	public static final String DEBUGGER_CONSOLE_VIEW_ID = "org.eclipse.cdt.debug.ui.debuggerConsoleView"; //$NON-NLS-1$
+	public static final String DROP_DOWN_ACTION_ID = DEBUGGER_CONSOLE_VIEW_ID  + ".DebuggerConsoleDropDownAction"; //$NON-NLS-1$
+
 	
 	/** The console being displayed, or <code>null</code> if none */
 	private IDebuggerConsole fActiveConsole;

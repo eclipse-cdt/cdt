@@ -28,6 +28,9 @@ public class ConsoleMessages extends NLS {
 	public static String ConsoleInvertColorsAction_name;
 	public static String ConsoleInvertColorsAction_description;
 	
+	public static String ConsoleTerminateLaunchAction_name;
+	public static String ConsoleTerminateLaunchAction_description;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(ConsoleMessages.class.getName(), ConsoleMessages.class);

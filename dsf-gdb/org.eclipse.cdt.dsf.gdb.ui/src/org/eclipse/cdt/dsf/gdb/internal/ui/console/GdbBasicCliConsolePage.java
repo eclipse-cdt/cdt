@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
+import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
@@ -27,6 +28,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	private IDebuggerConsole fConsole;
 	
 	private GdbConsoleInvertColorsAction fInvertColorsAction;
+	private GdbConsoleTerminateLaunchAction fTerminateLaunchAction;
 
 	public GdbBasicCliConsolePage(GdbBasicCliConsole gdbConsole, IConsoleView view) {
 		super(gdbConsole, view);
@@ -49,16 +51,18 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 
 	@Override
 	protected void configureToolBar(IToolBarManager mgr) {
-		// Don't do anything
+		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fTerminateLaunchAction);
 	}
 
 	@Override
 	protected void createActions() {
 		fInvertColorsAction = new GdbConsoleInvertColorsAction();
+		fTerminateLaunchAction = new GdbConsoleTerminateLaunchAction(fLaunch);
 	}
 
 	@Override
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
+		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(fInvertColorsAction);
 	}
 	

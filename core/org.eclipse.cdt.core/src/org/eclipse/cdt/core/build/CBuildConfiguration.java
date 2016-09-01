@@ -41,8 +41,6 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IOutputEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
@@ -191,10 +189,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 		return Paths.get(getBuildDirectoryURI());
 	}
 
+	@Override
 	public void setBuildEnvironment(Map<String, String> env) {
 		CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(env, config, true);
 	}
 
+	/**
+	 * @since 6.1
+	 */
 	@Override
 	public IBinary[] getBuildOutput() throws CoreException {
 		ICProject cproject = CoreModel.getDefault().create(config.getProject());

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -28,6 +29,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -59,6 +61,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	private MenuManager fMenuManager;
 
 	private GdbConsoleInvertColorsAction fInvertColorsAction;
+	private GdbConsoleTerminateLaunchAction fTerminateLaunchAction;
 
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
@@ -129,11 +132,18 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		createActions();
 
 		getSite().registerContextMenu(null, fMenuManager, getSite().getSelectionProvider());
+		configureToolBar(getSite().getActionBars().getToolBarManager());
 	}
 
 	protected void createActions() {
 		fInvertColorsAction = new GdbConsoleInvertColorsAction();
+		fTerminateLaunchAction = new GdbConsoleTerminateLaunchAction(fLaunch);
     }
+
+	protected void configureToolBar(IToolBarManager mgr) {
+		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fTerminateLaunchAction);
+		mgr.add(fInvertColorsAction);
+	}
 
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
 		menuManager.add(fInvertColorsAction);

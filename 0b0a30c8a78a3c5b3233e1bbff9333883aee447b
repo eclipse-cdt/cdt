@@ -1,0 +1,197 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_f93b8f4e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "All these instance variables can be \"final\"",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_19392357",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "The two streams above are not closed, \nwe are missing a dispose() api.",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 1
+      },
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_59e2bb4b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "If process is null, we are using it later on in the class, \nwe could add an \"assert\" for not null as a minimum.",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_79e3ff4d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "getProcess is not used",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_99e8d32a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsolePage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "The instance variables above can all be \"final\"",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_b9d03772",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "typo, change \"determines if a what time\" for \"determines what time\"",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_f9d62f6b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "fLabel can be \"final\"",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_19d4c361",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "Add null check for fLaunch as it\u0027s done in GdbBasicCLIConsole,",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5909dba1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "The two instance variables above can be \"final\"\n\nfSession needs initialization to null if fLaunch is not an instance of GdbLaunch, right before the assert.",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_79fa1fea",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "The two instance variables above can be \"final\"",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_99fff3d7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GDBProcess.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-02T17:52:29Z",
+      "side": 1,
+      "message": "No need to override as it\u0027s simply calling super.",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

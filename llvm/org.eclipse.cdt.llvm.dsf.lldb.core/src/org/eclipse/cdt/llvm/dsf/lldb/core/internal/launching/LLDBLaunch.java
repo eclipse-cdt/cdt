@@ -46,8 +46,8 @@ public class LLDBLaunch extends GdbLaunch {
 	private static final String XCODE_HINT = "(Xcode 7.3.1)"; //$NON-NLS-1$
 	private static final IntegerTuple LLDB_MINIMUM_REVISION = new IntegerTuple(350, 0, 21, 9);
 	private static final IntegerTuple LLDB_MINIMUM_VERSION = new IntegerTuple(3, 8, 0);
-	private static final Pattern LLDB_VERSION_PATTERN = Pattern.compile("lldb\\s*version\\s*(\\d+)\\.(\\d+)\\.(\\d+).*"); //$NON-NLS-1$ ;
-	private static final Pattern LLDB_REVISION_PATTERN = Pattern.compile("lldb-(\\d+)\\.(\\d+)\\.(\\d+)(\\.(\\d)+)?"); //$NON-NLS-1$
+	private static final Pattern LLDB_VERSION_PATTERN = Pattern.compile("lldb\\s*version\\s*(\\d+)\\.(\\d+)\\.(\\d+).*", Pattern.DOTALL); //$NON-NLS-1$ ;
+	private static final Pattern LLDB_REVISION_PATTERN = Pattern.compile("lldb-(\\d+)\\.(\\d+)\\.(\\d+)(\\.(\\d)+)?.*", Pattern.DOTALL); //$NON-NLS-1$
 
 	private IntegerTuple fLldbVersion;
 	private IntegerTuple fLldbRevision;
@@ -298,7 +298,7 @@ public class LLDBLaunch extends GdbLaunch {
 		// LLVM build: lldb-360.99.0
 
 		Matcher matcher = LLDB_REVISION_PATTERN.matcher(versionOutput);
-		if (!matcher.find()) {
+		if (!matcher.matches()) {
 			return null;
 		}
 
@@ -306,9 +306,13 @@ public class LLDBLaunch extends GdbLaunch {
 			Integer major = Integer.valueOf(matcher.group(1));
 			Integer minor = Integer.valueOf(matcher.group(2));
 			Integer micro = Integer.valueOf(matcher.group(3));
-			Integer patch = matcher.groupCount() < 5 ? null : Integer.valueOf(matcher.group(5));
-			IntegerTuple revision = new IntegerTuple(major, minor, micro, patch);
-			return revision;
+			String patchGroup = matcher.group(5);
+			if (patchGroup != null) {
+				Integer patch = Integer.valueOf(patchGroup);
+				return new IntegerTuple(major, minor, micro, patch);
+			} else {
+				return new IntegerTuple(major, minor, micro);
+			}
 		} catch (NumberFormatException e) {
 			LLDBCorePlugin.log(e);
 		}

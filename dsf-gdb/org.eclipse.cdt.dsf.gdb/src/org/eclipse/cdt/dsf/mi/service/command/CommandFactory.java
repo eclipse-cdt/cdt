@@ -114,6 +114,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUncall;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileExecFile;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileListSharedLibraries;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileSymbolFile;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBExit;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSet;
@@ -211,6 +212,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterValuesInf
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIFIleListSharedLibrariesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBVersionInfo;
@@ -712,6 +714,13 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createMIFileExecFile(ICommandControlDMContext dmc) {
 		return new MIFileExecFile(dmc);
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public ICommand<MIFIleListSharedLibrariesInfo> createMIFileListSharedLibraries(ISymbolDMContext dmc) {
+		return new MIFileListSharedLibraries(dmc);
 	}
 
 	public ICommand<MIInfo> createMIFileSymbolFile(ICommandControlDMContext dmc, String file) {

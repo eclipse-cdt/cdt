@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_d9a6cb0a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-09-02T18:04:16Z",
+      "side": 1,
+      "message": "I noticed that, for the other half of this split (TracingConsole), you removed \"tracing\" from the name of most methods. ex: \"addConsole(), removeConsole(), renameConsole(), etc\". I though the same could be done for this class, for consistency.",
+      "revId": "9d89d40a8922954071a691683709c68eb62d8470",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

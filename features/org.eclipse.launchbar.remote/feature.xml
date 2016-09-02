@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.launchbar.remote"
-      label="Remote Launch Targets"
+      label="%featureName"
       version="1.0.1.qualifier"
-      provider-name="Eclipse CDT"
+      provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 

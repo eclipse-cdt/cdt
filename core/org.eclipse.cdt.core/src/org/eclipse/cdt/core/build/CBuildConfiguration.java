@@ -195,6 +195,9 @@ public abstract class CBuildConfiguration extends PlatformObject
 		CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(env, config, true);
 	}
 
+	/**
+	 * @since 6.1
+	 */
 	@Override
 	public IBinary[] getBuildOutput() throws CoreException {
 		ICProject cproject = CoreModel.getDefault().create(config.getProject());

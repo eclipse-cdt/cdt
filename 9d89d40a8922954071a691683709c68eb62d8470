@@ -16,6 +16,23 @@
       "revId": "9d89d40a8922954071a691683709c68eb62d8470",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_8eede802",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-04T00:42:59Z",
+      "side": 1,
+      "message": "Actually, TracingConsole.java is not changed in this patch (except for one line), so the name of the methods\nwas like that before.  But I agree GdbCliConsoleManager.java should follow the same pattern.\nI\u0027ve actually already made this change in review 79771 which comes after this change.\nIt would be better to make such a change in this patch, but because it will cause us to manually\nneed to rebase all the patches we have after this one, I suggest we just wait for this name change\nto come in from review 79771.  Ok?",
+      "revId": "9d89d40a8922954071a691683709c68eb62d8470",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

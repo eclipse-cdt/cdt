@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_aec38c7d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPDeferredFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "(Since I wrote this comment, CPPDeferredConstructor was introduced, so while CPPDeferredFunction no longer needs an override like this, CPPDeferredConstructor still does.)",
+      "parentUuid": "e7dfcf21_d0d8cc1d",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_d07c4c5e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFieldSpecialization.java",
         "patchSetId": 3
@@ -211,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_ce152071",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 788,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_b0a7c091",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_d0aa8c59",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionSpecialization.java",
         "patchSetId": 3
@@ -222,6 +258,24 @@
       "writtenOn": "2016-05-11T07:29:21Z",
       "side": 1,
       "message": "Doesn\u0027t the execution need to be instantiated, the way the return expression\u0027s evaluation is in getReturnExpression()?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_6e62540a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "Things worked because the execution was being instantiated in EvalFunctionCall.evaluateFunctionBody(). However, I believe it\u0027s better to do the instantiation in CPPFunctionSpecialization.getFunctionBodyExecution() and PDOMCPPFunctionSpecialization.getFunctionBodyExecution(), so I moved it there.",
+      "parentUuid": "e7dfcf21_d0aa8c59",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -245,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_8e6a48df",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "I left this one as a TODO, since instantiation for constructor chain executions isn\u0027t implemented yet to begin with.",
+      "parentUuid": "e7dfcf21_f0b068c7",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_10acf472",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPImplicitConstructor.java",
         "patchSetId": 3
@@ -262,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_0b046a8a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPImplicitConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "I tried this, but found that calling TypeTraits.isLiteralClass() in some of the places where a CPPImplicitConstructor is constructed (CPPClassScope.createImplicitMembers()) is too early (not enough stuff is resolved yet). So this is fine as is.",
+      "parentUuid": "e7dfcf21_10acf472",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_908724ef",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateParameterMap.java",
         "patchSetId": 3
@@ -273,6 +363,24 @@
       "writtenOn": "2016-05-11T07:29:21Z",
       "side": 1,
       "message": "Few comments about this:\n\n  - Please add a comment saying what is being mapped\n    (looks like function parameters).\n\n  - Since the objects being mapped are function parameters,\n    I don\u0027t think this belongs in the template parameter map.\n    InstantiationContext would be a better place.\n\n  - Since this is only used in a fairly specific situation,\n    you may want to implement an optimization where the\n    HashMap object is only created the first time you\n    call putBinding().",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_2e5cdc50",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateParameterMap.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_908724ef",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -366,6 +474,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_ae1c6c9e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "I think the desired logic is:\n\n  - If we know what constructor call we\u0027ll be expanding\n    the arguments into, use the two-argument form that\n    takes the constructor.\n\n  - Otherwise, use the one-argument form.\n\nAccordingly, I\u0027ve adjusted the call site in CPPFunction.getConstructorChainExecution(IASTNode) to use the two-argument form.\n\nThat said, I think there are a number of bugs in our handling of initializer lists that may require us to re-think this part of the code. However, that can be left as a follow-up.",
+      "parentUuid": "e7dfcf21_706ff8a5",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_90ce445b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPComputableFunction.java",
         "patchSetId": 3
@@ -377,6 +503,24 @@
       "writtenOn": "2016-05-11T07:29:21Z",
       "side": 1,
       "message": "It may be worth introducing an ICPPComputableConstructor interface inheriting from ICPPComputableFunction, and declaring this method in ICPPComputableConstructor. (And then, for example, only CPPConstructor would implement ICPPComputableConstructor, not CPPFunction).",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_8ec6c88e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPComputableFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "I ended up moving the method to ICPPConstructor itself, since all implementations of ICPPConstructor would have implemented ICPPComputableConstructor as well.\n\nIt turned out to be a bit more annoying than I initially envisioned, because of the way our hierarchies work: e.g. PDOMCPPConstructor and PDOMCPPConstructorTemplate have a common base class that implements ICPPComputableFunction (that being PDOMCPPFunction), but not one that implements ICPPConstructor; as a result, I had to duplicate some implementations of the method. However, I think it was worth it for the index size reduction (not storing an empty constructor execution field for function records that are not constructors).",
+      "parentUuid": "e7dfcf21_90ce445b",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -2289,6 +2433,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "It\u0027s probably a mistake to ever try to instantiate this (the constructor should be instantiated instead, and the constructor chain of the constructor specialization queried). Can we throw UnsupportedOperationException here?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_ae670c16",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecConstructorChain.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-04T06:47:19Z",
+      "side": 1,
+      "message": "Looking at this again, my suggestion doesn\u0027t make sense. When you query the constructor chain of the constructor specialization, the constructor specialization takes the original constructor\u0027s chain and instantiates it (at least, that\u0027s what it\u0027s supposed to do; that\u0027s currently not implemented, as commented elsewhere).\n\nSo the actual instantiation work does happen here, and this needs to be implemented. So, instead of throwing an UnsupportedOperationException, I just added a TODO comment.",
+      "parentUuid": "a7e957d1_dc266d42",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

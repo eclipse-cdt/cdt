@@ -60,6 +60,23 @@
     },
     {
       "key": {
+        "uuid": "27af2791_aee46ccb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-05T18:16:11Z",
+      "side": 1,
+      "message": "Woops.  Good catch.\nThere was a whole \u0027lifecycle\u0027 handling missing.\nI\u0027ve added it in patchset 11",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_59e2bb4b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
         "patchSetId": 7
@@ -194,6 +211,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "27af2791_b9d03772",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_8ee7a8cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-05T18:16:11Z",
+      "side": 1,
+      "message": "Actually should be \"determines what type\" :-)\nDone",
+      "parentUuid": "27af2791_f9c8efbb",
       "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -368,6 +403,24 @@
       "writtenOn": "2016-09-02T18:02:16Z",
       "side": 1,
       "message": "Done",
+      "parentUuid": "27af2791_99fff3d7",
+      "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_6eefb4aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GDBProcess.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-05T18:16:11Z",
+      "side": 1,
+      "message": "I had overridden it to make it public instead of protected.  However, in a later version I no longer needed it it seems.  thanks for noticing.",
       "parentUuid": "27af2791_99fff3d7",
       "revId": "0b0a30c8a78a3c5b3233e1bbff9333883aee447b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

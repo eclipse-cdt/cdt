@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27af2791_3abed24e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-06T12:56:31Z",
+      "side": 1,
+      "message": "We are not keeping a reference to this object, isn\u0027t this object available for garbage collection then ?",
+      "revId": "1b5aecbe359135c61d1687ce224a3dd9fd341d18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_baa90215",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-06T12:56:31Z",
+      "side": 1,
+      "message": "I am also wondering if we need this new listener, \nThe GDBCliConsoleManager has the api\u0027s to add / remove consoles, can we add the console close before returning from \"removeConsole\" ?",
+      "revId": "1b5aecbe359135c61d1687ce224a3dd9fd341d18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

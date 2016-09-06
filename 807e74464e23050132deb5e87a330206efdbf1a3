@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "27af2791_96c89620",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-06T20:13:13Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "807e74464e23050132deb5e87a330206efdbf1a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_f699d24e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
         "patchSetId": 4
@@ -36,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "27af2791_76c30204",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-06T20:13:13Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "807e74464e23050132deb5e87a330206efdbf1a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_56ca7e92",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
         "patchSetId": 4
@@ -47,6 +81,23 @@
       "writtenOn": "2016-09-06T20:11:23Z",
       "side": 1,
       "message": "No big deal, but if you modify anyway, you can add a break here.",
+      "revId": "807e74464e23050132deb5e87a330206efdbf1a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_b6c91a24",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-06T20:13:13Z",
+      "side": 1,
+      "message": "Done",
       "revId": "807e74464e23050132deb5e87a330206efdbf1a3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "27af2791_16fba63a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-06T20:28:23Z",
+      "side": 1,
+      "message": "The GdbConsoleLifecycleListener() passes itself\tto the console manager, so it won\u0027t be garbage collected right away.",
+      "revId": "1b5aecbe359135c61d1687ce224a3dd9fd341d18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_baa90215",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
         "patchSetId": 11
@@ -30,6 +47,23 @@
       "writtenOn": "2016-09-06T12:56:31Z",
       "side": 1,
       "message": "I am also wondering if we need this new listener, \nThe GDBCliConsoleManager has the api\u0027s to add / remove consoles, can we add the console close before returning from \"removeConsole\" ?",
+      "revId": "1b5aecbe359135c61d1687ce224a3dd9fd341d18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_d6204e5a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-06T20:28:23Z",
+      "side": 1,
+      "message": "That was what I first tried to do :-)\nThe problem is that the init() and dispose() methods are part of AbstractConsole, but that\nGdbCliConsoleManager can handle any IConsole.  We\u0027d have to do an instanceof check to see if\nthe console was an AbstractConsole first; but then if we used another console type later on\nwe\u0027d need to also add that.  It didn\u0027t feel like a good design.  So, I copied what was done\nfor the normal console, which seemed more elegant :-)",
       "revId": "1b5aecbe359135c61d1687ce224a3dd9fd341d18",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

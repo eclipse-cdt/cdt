@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_b596731b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-06T14:13:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_a1cd5ddd",
+      "revId": "32f17e81e5fdd70a5f1d5fe12be83fe05e900275",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_0104498a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_d58f6701",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-06T14:13:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27af2791_0104498a",
+      "revId": "32f17e81e5fdd70a5f1d5fe12be83fe05e900275",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_01afe9ed",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2016-09-05T14:01:53Z",
       "side": 1,
       "message": "If the launch terminates on its own, this action does not get disabled.\nFor example, if the inferior runs to completion and the launch terminates,\nthe terminate action stays enabled.\nI recommend this class implement ILaunchesListener2 and upon a launchesTerminated()\ncall, we disable this action.\nNote that this would also take care of disabling the action when run() above\nis called.\n\nThere maybe a race condition at the start, where this action could be created\nenabled, but the launch is already terminated.  For this, in the constructor\nwe should check fLaunch.isTerminated() to determine if this action should be\nenabled or not.",
+      "revId": "32f17e81e5fdd70a5f1d5fe12be83fe05e900275",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_3576e37d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleTerminateLaunchAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-06T14:13:16Z",
+      "side": 1,
+      "message": "Done, \nYes,  I missed that, thanks !",
+      "parentUuid": "27af2791_01afe9ed",
       "revId": "32f17e81e5fdd70a5f1d5fe12be83fe05e900275",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

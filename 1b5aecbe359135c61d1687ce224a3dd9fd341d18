@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_56c6fead",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-06T21:34:24Z",
+      "side": 1,
+      "message": "Right, I see it now, then the listener removes itself as well, once the associated console has been removed.",
+      "parentUuid": "27af2791_16fba63a",
+      "revId": "1b5aecbe359135c61d1687ce224a3dd9fd341d18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_baa90215",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
         "patchSetId": 11
@@ -64,6 +82,24 @@
       "writtenOn": "2016-09-06T20:28:23Z",
       "side": 1,
       "message": "That was what I first tried to do :-)\nThe problem is that the init() and dispose() methods are part of AbstractConsole, but that\nGdbCliConsoleManager can handle any IConsole.  We\u0027d have to do an instanceof check to see if\nthe console was an AbstractConsole first; but then if we used another console type later on\nwe\u0027d need to also add that.  It didn\u0027t feel like a good design.  So, I copied what was done\nfor the normal console, which seemed more elegant :-)",
+      "revId": "1b5aecbe359135c61d1687ce224a3dd9fd341d18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_7696a2a3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-06T21:34:24Z",
+      "side": 1,
+      "message": "It\u0027s good to keep it more generic, \nThanks for the explanation !",
+      "parentUuid": "27af2791_d6204e5a",
       "revId": "1b5aecbe359135c61d1687ce224a3dd9fd341d18",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

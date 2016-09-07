@@ -33,6 +33,24 @@
       "revId": "9d89d40a8922954071a691683709c68eb62d8470",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_dc630f33",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-09-07T11:19:11Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "27af2791_8eede802",
+      "revId": "9d89d40a8922954071a691683709c68eb62d8470",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

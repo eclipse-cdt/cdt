@@ -24,7 +24,9 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -50,8 +52,11 @@ import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnecto
 import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class GdbFullCliConsolePage extends Page implements IDebugContextListener {
+
+	private static final String ECLIPSE_DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
 
 	private final DsfSession fSession;
 	private final ILaunch fLaunch;
@@ -126,9 +131,22 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		} catch (UnsupportedEncodingException e) {
 		}
 	
+		setDefaultPreferences();
+	}
+
+	private void setDefaultPreferences() {
 		// Set the inverted colors option based on the stored preference
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		setInvertedColors(store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS));
+		
+		IPreferenceStore consolePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, ECLIPSE_DEBUG_UI); //$NON-NLS-1$
+		boolean limited = consolePreferenceStore.getBoolean(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT);
+
+		// Set the terminal to unlimited buffer as specified in the console preferences
+		if (!limited) {
+			int unlimited = -1;
+			fTerminalControl.setBufferLineLimit(unlimited);
+		}
 	}
 
 	protected void createContextMenu() {

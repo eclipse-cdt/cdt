@@ -189,6 +189,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_fd8ebf05",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/debuggerconsole/IDebuggerConsoleManager.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-07T19:13:20Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "81ec27139b6daf157db4583dbba19fc8eb2d5dc3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_3c3c0b48",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/debuggerconsole/IDebuggerConsoleView.java",
         "patchSetId": 18
@@ -200,6 +217,23 @@
       "writtenOn": "2016-09-07T11:15:27Z",
       "side": 1,
       "message": "is the pin comment still applicable?",
+      "revId": "81ec27139b6daf157db4583dbba19fc8eb2d5dc3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_9d97831a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/debuggerconsole/IDebuggerConsoleView.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-07T19:13:20Z",
+      "side": 1,
+      "message": "Good catch.\nDone",
       "revId": "81ec27139b6daf157db4583dbba19fc8eb2d5dc3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +257,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_7d838fe1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-07T19:13:20Z",
+      "side": 1,
+      "message": "What is shown is whatever the user put as the gdb to use in their launch.  So if they leave it alone, it will only show \u0027gdb\u0027.\nIf they specifically choose, say, /usr/bin/gdb.7.12, then that is what would be shown.  So, the most common case should be ok.\nBTW, this is the same string that was being used in the old console",
+      "revId": "81ec27139b6daf157db4583dbba19fc8eb2d5dc3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_9c86f769",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsolePage.java",
         "patchSetId": 18
@@ -240,6 +291,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_fd695f9a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsolePage.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-07T19:13:20Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "81ec27139b6daf157db4583dbba19fc8eb2d5dc3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27af2791_bc873b65",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsolePage.java",
         "patchSetId": 18
@@ -251,6 +319,23 @@
       "writtenOn": "2016-09-07T11:15:27Z",
       "side": 1,
       "message": "split on 2 lines?",
+      "revId": "81ec27139b6daf157db4583dbba19fc8eb2d5dc3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_dd6c9bad",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsolePage.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-07T19:13:20Z",
+      "side": 1,
+      "message": "Done",
       "revId": "81ec27139b6daf157db4583dbba19fc8eb2d5dc3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

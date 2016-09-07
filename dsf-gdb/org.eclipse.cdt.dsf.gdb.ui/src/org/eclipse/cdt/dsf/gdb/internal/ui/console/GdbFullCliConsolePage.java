@@ -24,8 +24,12 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -33,6 +37,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -50,6 +56,7 @@ import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnecto
 import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class GdbFullCliConsolePage extends Page implements IDebugContextListener {
 
@@ -71,6 +78,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	private GdbConsolePasteAction fPasteAction;
 	private GdbConsoleScrollLockAction fScrollLockAction;
 	private GdbConsoleSelectAllAction fSelectAllAction;
+	private IPropertyChangeListener fConsolePropertyChangeListener;
 
 	public GdbFullCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view) {
 		fConsole = gdbConsole;
@@ -82,8 +90,44 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 			fSession = null;
 			assert false;
 		}
+
+		fConsolePropertyChangeListener = new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT)
+						|| event.getProperty()
+								.equals(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK)) {
+					updateBufferSizePreferences();
+				}
+			}
+		};
+
+        DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fConsolePropertyChangeListener);
 	}
 
+	private void updateBufferSizePreferences() {
+		IPreferenceStore consolePreferenceStore = new ScopedPreferenceStore(
+				InstanceScope.INSTANCE, IDebugUIConstants.PLUGIN_ID); // $NON-NLS-1$
+		
+		boolean limited = consolePreferenceStore
+				.getBoolean(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT);
+
+		// Set the terminal to unlimited buffer as specified in the console preferences
+		if (limited) {
+			int bufferChars = consolePreferenceStore
+					.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
+			// Converting from number of characters to an approximate number of equivalent lines
+			// with a minimum if one line buffer
+			int bufferLines = (bufferChars / 80) > 0 ? (bufferChars / 80) : 1;
+
+			fTerminalControl.setBufferLineLimit(bufferLines);
+		} else {
+			int unlimited = -1;
+			fTerminalControl.setBufferLineLimit(unlimited);
+		}
+	}
+	
+	
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -91,8 +135,9 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 				getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		fTerminalControl.disposeTerminal();
 		fMenuManager.dispose();
+		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fConsolePropertyChangeListener);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		fMainComposite = new Composite(parent, SWT.NONE);
@@ -126,9 +171,15 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		} catch (UnsupportedEncodingException e) {
 		}
 	
+		setDefaultPreferences();
+	}
+
+	private void setDefaultPreferences() {
 		// Set the inverted colors option based on the stored preference
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		setInvertedColors(store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS));
+		
+		updateBufferSizePreferences();
 	}
 
 	protected void createContextMenu() {

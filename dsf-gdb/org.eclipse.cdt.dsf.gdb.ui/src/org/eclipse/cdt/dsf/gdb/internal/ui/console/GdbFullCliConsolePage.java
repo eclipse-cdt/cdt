@@ -31,6 +31,7 @@ import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -65,6 +66,11 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
+	private GdbConsoleClearAction fClearAction;
+	private GdbConsoleCopyAction fCopyAction;
+	private GdbConsolePasteAction fPasteAction;
+	private GdbConsoleScrollLockAction fScrollLockAction;
+	private GdbConsoleSelectAllAction fSelectAllAction;
 
 	public GdbFullCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view) {
 		fConsole = gdbConsole;
@@ -140,13 +146,31 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	protected void createActions() {
 		fInvertColorsAction = new GdbConsoleInvertColorsAction();
 		fTerminateLaunchAction = new GdbConsoleTerminateLaunchAction(fLaunch);
-    }
+		fClearAction = new GdbConsoleClearAction(fTerminalControl);
+		fCopyAction = new GdbConsoleCopyAction(fTerminalControl);
+		fPasteAction = new GdbConsolePasteAction(fTerminalControl);
+		fScrollLockAction = new GdbConsoleScrollLockAction(fTerminalControl);
+		fSelectAllAction = new GdbConsoleSelectAllAction(fTerminalControl);
+	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fTerminateLaunchAction);
+		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fClearAction);
+		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fScrollLockAction);
 	}
 
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
+		menuManager.add(fCopyAction);
+		menuManager.add(fPasteAction);
+		menuManager.add(fSelectAllAction);
+		menuManager.add(new Separator());
+
+		menuManager.add(fClearAction);
+		menuManager.add(new Separator());
+		
+		menuManager.add(fScrollLockAction);
+		menuManager.add(new Separator());
+		
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(fInvertColorsAction);
 	}

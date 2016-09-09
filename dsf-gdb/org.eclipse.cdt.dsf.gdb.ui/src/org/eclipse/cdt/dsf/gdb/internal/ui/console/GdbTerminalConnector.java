@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -26,15 +27,18 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
  */
 public class GdbTerminalConnector extends PlatformObject implements ITerminalConnector {
 
+    private int fTerminalWidth, fTerminalHeight;
     private ITerminalControl fControl;
     private final Process fProcess;
+    private final PTY fPty;
 
-    public GdbTerminalConnector(Process process) {
+    public GdbTerminalConnector(Process process, PTY pty) {
     	if (process == null) {
     		throw new IllegalArgumentException("Invalid Process"); //$NON-NLS-1$
     	}
 
     	fProcess = process;
+    	fPty = pty;
 	}
 	
     @Override
@@ -71,6 +75,13 @@ public class GdbTerminalConnector extends PlatformObject implements ITerminalCon
 
     @Override
     public void setTerminalSize(int newWidth, int newHeight) {
+    	if (newWidth != fTerminalWidth || newHeight != fTerminalHeight) {
+    		fTerminalWidth = newWidth;
+    		fTerminalHeight = newHeight;
+    		if (fPty != null) {
+    			fPty.setTerminalSize(newWidth, newHeight);
+    		}
+    	}
     }
 
     @Override

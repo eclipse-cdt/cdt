@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_b949b23a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-09T12:16:19Z",
+      "side": 1,
+      "message": "Please see comment in previous patchset",
+      "revId": "7b40f8d74976bf6812f8b87c8d586e43ed5bd1af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

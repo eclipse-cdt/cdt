@@ -9,8 +9,6 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView;
@@ -44,10 +42,6 @@ import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalServiceOutputStreamMonitorListener;
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
-import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
 import org.eclipse.ui.part.Page;
 
 public class GdbFullCliConsolePage extends Page implements IDebugContextListener {
@@ -186,12 +180,8 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
     }
 	
 	protected void attachTerminal(Process process) {
-		ILauncherDelegate delegate = 
-				LauncherDelegateManager.getInstance().getLauncherDelegate("org.eclipse.tm.terminal.connector.streams.launcher.streams", false); //$NON-NLS-1$
-		if (delegate != null) {
-			Map<String, Object> properties = createNewSettings(process);
+			ITerminalConnector connector = new GdbTerminalConnector(process);
 			
-			ITerminalConnector connector = delegate.createTerminalConnector(properties);
 			fTerminalControl.setConnector(connector);
 			if (fTerminalControl instanceof ITerminalControl) {
 				((ITerminalControl)fTerminalControl).setConnectOnEnterIfClosed(false);
@@ -209,22 +199,6 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 					}
 				}
 			});
-		}
-	}
-	
-	protected Map<String, Object> createNewSettings(Process process) {
-		
-		// Create the terminal connector
-		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put(ITerminalsConnectorConstants.PROP_LOCAL_ECHO, Boolean.FALSE);
-		properties.put(ITerminalsConnectorConstants.PROP_STREAMS_STDIN, process.getOutputStream());
-		properties.put(ITerminalsConnectorConstants.PROP_STREAMS_STDOUT, process.getInputStream());
-		properties.put(ITerminalsConnectorConstants.PROP_STREAMS_STDERR, process.getErrorStream());
-		properties.put(ITerminalsConnectorConstants.PROP_STDOUT_LISTENERS, 
-				new ITerminalServiceOutputStreamMonitorListener[0]);
-		properties.put(ITerminalsConnectorConstants.PROP_STDERR_LISTENERS, 
-				new ITerminalServiceOutputStreamMonitorListener[0]);
-		return properties;
 	}
 	
 	/**

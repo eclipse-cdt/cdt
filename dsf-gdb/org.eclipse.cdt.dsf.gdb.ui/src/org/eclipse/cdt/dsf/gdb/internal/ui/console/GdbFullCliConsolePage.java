@@ -21,6 +21,7 @@ import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.ui.DebugUITools;
@@ -48,6 +49,8 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 	private final DsfSession fSession;
 	private final ILaunch fLaunch;
+	private PTY fGdbPty;
+
 	private Composite fMainComposite;
 	private final IDebuggerConsoleView fView;
 	private final IDebuggerConsole fConsole;
@@ -170,6 +173,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 	            	if (backend != null) {
 	            		if (backend.getProcess() != null) {
+	            			fGdbPty = backend.getProcessPty();
 	            			attachTerminal(backend.getProcess());
 	            		}
 	            	}
@@ -180,7 +184,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
     }
 	
 	protected void attachTerminal(Process process) {
-			fTerminalControl.setConnector(new GdbTerminalConnector(process));
+			fTerminalControl.setConnector(new GdbTerminalConnector(process, fGdbPty));
 			if (fTerminalControl instanceof ITerminalControl) {
 				((ITerminalControl)fTerminalControl).setConnectOnEnterIfClosed(false);
 				((ITerminalControl)fTerminalControl).setVT100LineWrapping(true);

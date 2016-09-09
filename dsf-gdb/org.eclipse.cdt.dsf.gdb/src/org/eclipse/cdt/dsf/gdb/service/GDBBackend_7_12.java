@@ -40,8 +40,11 @@ import org.eclipse.osgi.util.NLS;
  */
 public class GDBBackend_7_12 extends GDBBackend {
 
-	/** The PTY that is used to enable the full GDB console */
-	private PTY fPty;
+	/** The PTY that is used to create the MI channel */
+	private PTY fMIPty;
+	/** The PTY that is used to create the GDB process in CLI mode */
+	private PTY fCLIPty;
+	
 	/** Indicate that we failed to create a PTY. */
 	private boolean fPtyFailure;
 	
@@ -68,8 +71,8 @@ public class GDBBackend_7_12 extends GDBBackend {
 		}
 		
 		try {
-			fPty = new PTY();
-			fPty.validateSlaveName();
+			fMIPty = new PTY();
+			fMIPty.validateSlaveName();
 
 			// With the PTY the stderr is redirected to the PTY's output stream.
 			// Therefore, return a dummy stream for the error stream.
@@ -80,7 +83,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 				}
 			};
 		} catch (IOException e) {
-			fPty = null;
+			fMIPty = null;
 			fPtyFailure = true;
 			GdbPlugin.log(new Status(
 							IStatus.INFO, GdbPlugin.PLUGIN_ID, 
@@ -90,23 +93,23 @@ public class GDBBackend_7_12 extends GDBBackend {
 	
 	@Override
 	public OutputStream getMIOutputStream() {
-		if (fPty == null) {
+		if (fMIPty == null) {
 			return super.getMIOutputStream();
 		}
-		return fPty.getOutputStream();
+		return fMIPty.getOutputStream();
 	};
 
 	@Override
 	public InputStream getMIInputStream() {
-		if (fPty == null) {
+		if (fMIPty == null) {
 			return super.getMIInputStream();
 		}
-		return fPty.getInputStream();
+		return fMIPty.getInputStream();
 	};
 
 	@Override
 	public InputStream getMIErrorStream() {
-		if (fPty == null) {
+		if (fMIPty == null) {
 			return super.getMIErrorStream();
 		}
 		return fDummyErrorStream;
@@ -154,7 +157,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 				"--interpreter", "console", //$NON-NLS-1$ //$NON-NLS-2$
 				
 				// Now trigger the new console towards our PTY.
-				"-ex", "new-ui mi " + fPty.getSlaveName(), //$NON-NLS-1$ //$NON-NLS-2$
+				"-ex", "new-ui mi " + fMIPty.getSlaveName(), //$NON-NLS-1$ //$NON-NLS-2$
 								
 				// Now print the version so the user gets that familiar output
 				"-ex", "show version"  //$NON-NLS-1$ //$NON-NLS-2$
@@ -180,17 +183,23 @@ public class GDBBackend_7_12 extends GDBBackend {
 		Process proc = null;
 		String[] commandLine = getDebuggerCommandLine();
 		try {
+			fCLIPty = new PTY(Mode.TERMINAL);
 			IPath path = getGDBWorkingDirectory();
 			proc = ProcessFactory.getFactory().exec(
 					commandLine, 
 					getGDBLaunch().getLaunchEnvironment(),
 					new File(path != null ? path.toOSString() : ""), //$NON-NLS-1$
-					new PTY(Mode.TERMINAL));
+					fCLIPty);
 		} catch (IOException e) {
 			String message = "Error while launching command: " + StringUtil.join(commandLine, " "); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
 		}
 
 		return proc;
+	}
+	
+	@Override
+	public PTY getProcessPty() {
+		return fCLIPty;
 	}
 }

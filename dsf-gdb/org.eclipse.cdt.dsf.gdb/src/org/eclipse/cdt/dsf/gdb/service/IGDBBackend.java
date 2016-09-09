@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -172,5 +173,14 @@ public interface IGDBBackend extends IMIBackend {
 	 */
 	default Process getProcess() {
 		throw new RuntimeException();
+	}
+	
+	/**
+	 * Returns the PTY used when starting the GDB process.
+	 * Can be null if no PTY was used.
+	 * @since 5.1
+	 */
+	default PTY getProcessPty() {
+		return null;
 	}
 }

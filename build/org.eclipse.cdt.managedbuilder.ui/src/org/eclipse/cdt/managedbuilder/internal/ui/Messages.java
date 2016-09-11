@@ -57,6 +57,7 @@ public class Messages extends NLS {
 	public static String BuildToolSettingsPage_tool_advancedSettings;
 	public static String BuildToolSettingsPage_tool_command;
 	public static String BuildToolSettingsPage_tool_commandLinePattern;
+	public static String BuildToolSettingsPage_info_managedBuildDisabled;
 	public static String BuiltinSpecsDetectorOptionPage_AllocateConsole;
 	public static String BuiltinSpecsDetectorOptionPage_Browse;
 	public static String BuiltinSpecsDetectorOptionPage_ChooseFile;

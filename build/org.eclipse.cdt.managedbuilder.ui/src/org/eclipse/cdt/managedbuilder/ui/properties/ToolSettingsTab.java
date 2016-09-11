@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
@@ -37,6 +38,8 @@ import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -101,6 +104,8 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 		private boolean isIndexerAffected;
 
+		private StatusMessageLine fStatusLine;
+
 		@Override
 		public void createControls(Composite par)  {
 			super.createControls(par);
@@ -135,8 +140,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					specificResize();
 				}});
 
+			fStatusLine = new StatusMessageLine(usercomp, SWT.LEFT, 2);
+
 			propertyObject = page.getElement();
 			setValues();
+			updateStatusLine();
 			specificResize();
 		}
 
@@ -522,6 +530,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 			fInfo = getResCfg(getResDesc());
 			setValues();
+			updateStatusLine();
 			handleOptionSelection();
 		}
 
@@ -732,6 +741,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	public void updateData(ICResourceDescription cfgd) {
 		fInfo = getResCfg(cfgd);
 		setValues();
+		updateStatusLine();
 		specificResize();
 		handleOptionSelection();
 	}
@@ -877,13 +887,29 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	public void updateMessage() {}
 	@Override
 	public void updateTitle() {}
+	
+	/**
+	 *  Displays info message when managed build is disabled.
+	 */
+	private void updateStatusLine() {
+		IConfiguration cfg = getCfg();
+		IStatus status = null;
+		
+		if (cfg != null) {
+			boolean isManagedBuildOn;
+			isManagedBuildOn = (cfg instanceof MultiConfiguration) ? ((MultiConfiguration)cfg).isManagedBuildOn() : cfg.getBuilder().isManagedBuildOn();
+			if (!isManagedBuildOn) {
+				status = new Status(IStatus.INFO, ManagedBuilderUIPlugin.getUniqueIdentifier(), Messages.BuildToolSettingsPage_info_managedBuildDisabled);
+			}
+		}
+
+		fStatusLine.setErrorStatus(status);
+	}
+
 
 	@Override
 	public boolean canBeVisible() {
-		IConfiguration cfg = getCfg();
-		if (cfg instanceof MultiConfiguration)
-			return ((MultiConfiguration)cfg).isManagedBuildOn();
-		else
-			return cfg.getBuilder().isManagedBuildOn();
+		// remain visible even if managed build is disabled to allow configuration changes for symbols and paths discovery
+		return page.isForProject() || page.isForPrefs();
 	}
 }

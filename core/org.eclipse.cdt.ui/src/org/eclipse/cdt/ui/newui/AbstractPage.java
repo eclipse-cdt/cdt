@@ -396,10 +396,20 @@ implements
 	private void updateSelectedTab() {
 		ICPropertyTab newTab = (ICPropertyTab)folder.getSelection()[0].getData();
 		if (newTab != null && currentTab != newTab) {
+			// This method can be triggered on invisible page (e.g. by removing tabs).
+			// Don't bother switch tabs visibility if page is not visible.
+			Control pageControl = getControl();
+			boolean isVisible = false;
+			isVisible = (pageControl != null) ? pageControl.isVisible() : false;
 			recentTabs.put(getClass(), newTab.getClass());
-			if (currentTab != null) currentTab.handleTabEvent(ICPropertyTab.VISIBLE, null);
-			currentTab = newTab;
-			currentTab.handleTabEvent(ICPropertyTab.VISIBLE, NOT_NULL);
+			if (isVisible) {
+				if (currentTab != null) currentTab.handleTabEvent(ICPropertyTab.VISIBLE, null);
+				currentTab = newTab;
+				currentTab.handleTabEvent(ICPropertyTab.VISIBLE, NOT_NULL);
+			}
+			else {
+				currentTab = newTab;
+			}
 		}
 	}
 	/**
@@ -1239,16 +1249,20 @@ implements
 					for (int j=0; j<ts.length; j++)
 						if (ts[j] != null && !ts[j].isDisposed())
 							ts[j].dispose();
-					TabItem ti = null;
+					int tidx = -1;
 					for (int i=0; i<itabs.size(); i++) {
 						InternalTab itab = itabs.get(i);
 						if (itab.tab.canBeVisible()) {
-							TabItem currTI = itab.createOn(folder);
+							itab.createOn(folder);
 							if (currHeader != null && currHeader.equals(itab.text))
-								ti = currTI;
+								tidx = i;
 						}
 					}
-					if (ti != null) folder.setSelection(ti);
+					if (tidx != -1) {
+						// setSelection doesn't trigger updateSelectedTab
+						folder.setSelection(tidx);
+						updateSelectedTab();
+					}
 				}
 				break;
 		}

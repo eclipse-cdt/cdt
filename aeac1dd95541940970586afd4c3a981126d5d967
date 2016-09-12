@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_0c1a59fa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "Add \u0026 before the \u0027r\u0027 to provide a keyboard shortcut to the menu",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_8c358963",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "\u0026 before S",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0c8fb9b5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "Missing \"the\" before \"associated\"\t\nI would also remove the word \"page\" since I don\u0027t believe we expose the user to it usually.",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_cc2f8111",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "\u0026 before C",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ec4365c6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "\u0026 before P",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0c4179be",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "\u0026 before A",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_2c8c7dbe",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "Should use the word \u0027console\u0027 instead of \u0027terminal\u0027 like all the toher actions",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_8cb2e94f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IConsoleImagesConst.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "I\u0027m not sure why we have a new clcl16 directory instead of using dlcl16 which exists",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_6c0915bc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IConsoleImagesConst.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "I believe the two files for the above two constants are reversed",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0cbed91a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IConsoleImagesConst.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "I\u0027m not sure why we have a new etool16 directory instead of using elcl16 which exists",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_acb7ad3f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IConsoleImagesConst.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "I\u0027m not sure why we have a new etool16 directory instead of using elcl16 which exists",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ccbce126",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IConsoleImagesConst.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-12T20:38:52Z",
+      "side": 1,
+      "message": "I\u0027m not sure why we have a new clcl16 directory instead of using dlcl16 which exists",
+      "revId": "aeac1dd95541940970586afd4c3a981126d5d967",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

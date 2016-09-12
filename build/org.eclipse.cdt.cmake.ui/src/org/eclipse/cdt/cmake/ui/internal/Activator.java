@@ -10,6 +10,7 @@ package org.eclipse.cdt.cmake.ui.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -17,6 +18,10 @@ import org.osgi.framework.ServiceReference;
 public class Activator extends AbstractUIPlugin {
 
 	private static Activator plugin;
+
+	public static final String PLUGIN_ID = "org.eclipse.cdt.cmake.ui"; //$NON-NLS-1$
+
+	public static final String IMG_CMAKE_LOGO = PLUGIN_ID + ".cmakeLogo"; //$NON-NLS-1$
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -34,12 +39,14 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public static String getId() {
-		return plugin.getBundle().getSymbolicName();
+	@Override
+	protected void initializeImageRegistry(ImageRegistry registry) {
+		super.initializeImageRegistry(registry);
+		registry.put(IMG_CMAKE_LOGO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cmake_logo-main.png")); //$NON-NLS-1$
 	}
 
 	public static IStatus errorStatus(String message, Throwable cause) {
-		return new Status(IStatus.ERROR, getId(), message, cause);
+		return new Status(IStatus.ERROR, PLUGIN_ID, message, cause);
 	}
 
 	public static void log(Exception e) {

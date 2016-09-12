@@ -1,38 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.debug.internal.core.launch;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.cdt.cmake.core.CMakeNature;
+import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
+import org.eclipse.launchbar.core.internal.Activator;
 
-public class CMakeLaunchDescriptorType implements ILaunchDescriptorType {
-
-	private Map<IProject, CMakeLaunchDescriptor> descriptors = new HashMap<>();
+/**
+ * The launch descriptor type for launch objects built with the Core Build System.
+ */
+public class CoreBuildLaunchDescriptorType implements ILaunchDescriptorType {
 
 	@Override
 	public ILaunchDescriptor getDescriptor(Object launchObject) throws CoreException {
 		if (launchObject instanceof IProject) {
+			// Make sure it's a new style build
 			IProject project = (IProject) launchObject;
-			if (project.hasNature(CMakeNature.ID)) {
-				CMakeLaunchDescriptor desc = descriptors.get(project);
-				if (desc == null) {
-					desc = new CMakeLaunchDescriptor(this, project);
-					descriptors.put(project, desc);
-				}
-				return desc;
+			if (Activator.getService(ICBuildConfigurationManager.class).supports(project)) {
+				return new CoreBuildProjectLaunchDescriptor(this, project);
 			}
 		}
+		// TODO IBinary
 		return null;
 	}
 

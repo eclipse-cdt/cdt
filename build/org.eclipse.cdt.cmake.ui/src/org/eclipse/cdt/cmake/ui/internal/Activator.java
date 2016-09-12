@@ -18,6 +18,8 @@ public class Activator extends AbstractUIPlugin {
 
 	private static Activator plugin;
 
+	public static final String PLUGIN_ID = "org.eclipse.cdt.cmake.ui"; //$NON-NLS-1$
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -34,12 +36,8 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public static String getId() {
-		return plugin.getBundle().getSymbolicName();
-	}
-
 	public static IStatus errorStatus(String message, Throwable cause) {
-		return new Status(IStatus.ERROR, getId(), message, cause);
+		return new Status(IStatus.ERROR, PLUGIN_ID, message, cause);
 	}
 
 	public static void log(Exception e) {

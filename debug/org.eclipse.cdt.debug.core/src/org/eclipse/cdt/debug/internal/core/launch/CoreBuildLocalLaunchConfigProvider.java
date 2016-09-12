@@ -1,19 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.debug.internal.core.launch;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
-import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +23,9 @@ import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
-public class CMakeLaunchConfigurationProvider extends AbstractLaunchConfigProvider {
+public class CoreBuildLocalLaunchConfigProvider extends AbstractLaunchConfigProvider {
+
+	private static final String TYPE_ID = "org.eclipse.cdt.debug.core.localLaunchConfigurationType"; //$NON-NLS-1$
 
 	private Map<IProject, ILaunchConfiguration> configs = new HashMap<>();
 
@@ -38,8 +37,7 @@ public class CMakeLaunchConfigurationProvider extends AbstractLaunchConfigProvid
 	@Override
 	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
-		return DebugPlugin.getDefault().getLaunchManager()
-				.getLaunchConfigurationType(CMakeLaunchConfigurationDelegate.TYPE_ID);
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(TYPE_ID);
 	}
 
 	@Override
@@ -64,8 +62,8 @@ public class CMakeLaunchConfigurationProvider extends AbstractLaunchConfigProvid
 		super.populateLaunchConfiguration(descriptor, target, workingCopy);
 
 		// Set the project and the connection
-		CMakeLaunchDescriptor qtDesc = (CMakeLaunchDescriptor) descriptor;
-		workingCopy.setMappedResources(new IResource[] { qtDesc.getProject() });
+		IProject project = descriptor.getAdapter(IProject.class);
+		workingCopy.setMappedResources(new IResource[] { project });
 	}
 
 	@Override

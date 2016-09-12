@@ -461,4 +461,26 @@
             type="org.eclipse.cdt.debug.core.cFunctionTracepointMarker">
       </importParticipant>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLocalRunLaunchDelegate"
+            id="org.eclipse.cdt.debug.core.localLaunchConfigurationType"
+            modes="run"
+            name="%localApplicationLaunch.name">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchBarContributions">
+      <descriptorType
+            class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLaunchDescriptorType"
+            id="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+            priority="20">
+      </descriptorType>
+      <configProvider
+            class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLocalLaunchConfigProvider"
+            descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+            priority="10">
+      </configProvider>
+   </extension>
 </plugin>

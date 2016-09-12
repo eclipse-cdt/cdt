@@ -117,10 +117,9 @@ public class ScannerInfoCache {
 				// we're already there
 				return;
 			}
-		} else {
-			command.resourcePaths.add(resource.getLocation().toOSString());
-			resourceMap.put(resourcePath, command);
 		}
+		command.resourcePaths.add(resource.getLocation().toOSString());
+		resourceMap.put(resourcePath, command);
 	}
 
 }

@@ -46,6 +46,7 @@ import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * The plugin class for C/C++ debug core.
@@ -239,6 +240,15 @@ public class CDebugCorePlugin extends Plugin {
 		super.stop(context);
 	}
 
+	/**
+	 * @since 8.1
+	 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
+	}
+
 	private void createCommandAdapterFactory() {
         IAdapterManager manager= Platform.getAdapterManager();
         CCommandAdapterFactory actionFactory = new CCommandAdapterFactory();
@@ -319,7 +329,7 @@ public class CDebugCorePlugin extends Plugin {
 		// Set the default launch delegates as early as possible, and do it only once (Bug 312997) 
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
 
-		HashSet<String> debugSet = new HashSet<String>();
+		HashSet<String> debugSet = new HashSet<>();
 		debugSet.add(ILaunchManager.DEBUG_MODE);
 
 		ILaunchConfigurationType localCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
@@ -378,7 +388,7 @@ public class CDebugCorePlugin extends Plugin {
 		} catch (CoreException e) {
 		}
 
-		HashSet<String> runSet = new HashSet<String>();
+		HashSet<String> runSet = new HashSet<>();
 		runSet.add(ILaunchManager.RUN_MODE);
 
 		try {

@@ -2560,5 +2560,12 @@
            type="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext">
      </propertyTester>
   </extension>
+  <extension
+        point="org.eclipse.launchbar.ui.launchBarUIContributions">
+     <descriptorUI
+           descriptorTypeId="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+           labelProvider="org.eclipse.cdt.debug.internal.ui.launch.coreBuild.CoreBuildLaunchLabelProvider">
+     </descriptorUI>
+  </extension>
     
 </plugin>

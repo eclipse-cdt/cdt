@@ -28,13 +28,10 @@ import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IBuildConfiguration;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -50,11 +47,11 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
 
+		ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
 		Preferences settings = getSettings();
 		String pathStr = settings.get(TOOLCHAIN_FILE, ""); //$NON-NLS-1$
 		if (!pathStr.isEmpty()) {
 			Path path = Paths.get(pathStr);
-			ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
 			toolChainFile = manager.getToolChainFile(path);
 		}
 	}

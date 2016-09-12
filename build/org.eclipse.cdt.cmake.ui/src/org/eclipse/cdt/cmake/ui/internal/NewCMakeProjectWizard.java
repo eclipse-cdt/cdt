@@ -29,8 +29,8 @@ public class NewCMakeProjectWizard extends TemplateWizard {
 				Dialog.applyDialogFont(getControl());
 			}
 		};
-		mainPage.setTitle("New Arduino Project"); //$NON-NLS-1$
-		mainPage.setDescription("Specify properties of new Arduino project."); //$NON-NLS-1$
+		mainPage.setTitle("New CMake Project"); //$NON-NLS-1$
+		mainPage.setDescription("Specify properties of new CMake project."); //$NON-NLS-1$
 		this.addPage(mainPage);
 	}
 

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_eabd0a1f",
+        "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T20:10:49Z",
+      "side": 1,
+      "message": "I suggest putting this new tab after the Main tab intead of before.",
+      "revId": "cd40044b45ea264e62c328b775498029448b9088",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0acb1eb8",
+        "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T20:10:49Z",
+      "side": 1,
+      "message": "I suggest putting this new tab after the Main tab intead of before.",
+      "revId": "cd40044b45ea264e62c328b775498029448b9088",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_2ac8e2b8",
+        "filename": "cross/org.eclipse.cdt.launch.remote/plugin.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T20:10:49Z",
+      "side": 1,
+      "message": "Wrong id here.  Must use the id returned by getId() of the class implementing the tab\ninstead of the id used in this file.",
+      "revId": "cd40044b45ea264e62c328b775498029448b9088",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -74,6 +75,8 @@ public class DebuggerConsoleView extends PageBookView
 	private Map<DebuggerConsoleWorkbenchPart, IDebuggerConsole> fPartToConsole = new HashMap<>();
 
 	private DebuggerConsoleDropDownAction fDisplayConsoleAction;
+	
+	private LaunchBinarylessSessionAction fLaunchNewGdb;
 
 	// Code for page participants borrowed from
 	// org.eclipse.ui.internal.console.ConsoleView
@@ -92,7 +95,8 @@ public class DebuggerConsoleView extends PageBookView
 		super.createPartControl(parent);
 		createActions();
 		configureToolBar(getViewSite().getActionBars().getToolBarManager());
-
+		configureViewMenu(getViewSite().getActionBars().getMenuManager());
+		
 		// create pages for existing consoles
 		IConsole[] consoles = getConsoleManager().getConsoles();
 		consolesAdded(consoles);
@@ -140,6 +144,7 @@ public class DebuggerConsoleView extends PageBookView
 
 	protected void createActions() {
 		fDisplayConsoleAction = new DebuggerConsoleDropDownAction(this);
+		fLaunchNewGdb = new LaunchBinarylessSessionAction(this);
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
@@ -147,6 +152,11 @@ public class DebuggerConsoleView extends PageBookView
 		mgr.add(new Separator(IConsoleConstants.OUTPUT_GROUP));
 		mgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
 		mgr.add(fDisplayConsoleAction);
+		mgr.add(fLaunchNewGdb);
+	}
+	
+	protected void configureViewMenu(IMenuManager mgr) {
+		mgr.add(fLaunchNewGdb);
 	}
 
 	@Override
@@ -157,6 +167,10 @@ public class DebuggerConsoleView extends PageBookView
 		if (fDisplayConsoleAction != null) {
 			fDisplayConsoleAction.dispose();
 			fDisplayConsoleAction = null;
+		}
+		if (fLaunchNewGdb != null) {
+			fLaunchNewGdb.dispose();
+			fLaunchNewGdb = null;
 		}
 	}
 

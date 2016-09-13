@@ -338,33 +338,39 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSourceGDBInitFile(final RequestMonitor requestMonitor) {
-		try {
-			String gdbinitFile = fGDBBackend.getGDBInitFile();
+		// let it up to the user if they want to source .gdbinit, for FLUID sessions
+		if (fGDBBackend.getSessionType() != SessionType.FLUID) {
+			try {
+				String gdbinitFile = fGDBBackend.getGDBInitFile();
 
-			if (gdbinitFile != null && !gdbinitFile.isEmpty()) {
-				String projectName = (String) fAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME);
-				final String expandedGDBInitFile = new DebugStringVariableSubstitutor(projectName).performStringSubstitution(gdbinitFile);
+				if (gdbinitFile != null && !gdbinitFile.isEmpty()) {
+					String projectName = (String) fAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME);
+					final String expandedGDBInitFile = new DebugStringVariableSubstitutor(projectName).performStringSubstitution(gdbinitFile);
 
-				fCommandControl.queueCommand(
-						fCommandFactory.createCLISource(fCommandControl.getContext(), expandedGDBInitFile), 
-						new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-							@Override
-							protected void handleCompleted() {
-								// If the gdbinitFile is the default, then it may not exist and we
-								// should not consider this an error.
-								// If it is not the default, then the user must have specified it and
-								// we want to warn the user if we can't find it.
-								if (!expandedGDBInitFile.equals(IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT)) {
-									requestMonitor.setStatus(getStatus());
+					fCommandControl.queueCommand(
+							fCommandFactory.createCLISource(fCommandControl.getContext(), expandedGDBInitFile), 
+							new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+								@Override
+								protected void handleCompleted() {
+									// If the gdbinitFile is the default, then it may not exist and we
+									// should not consider this an error.
+									// If it is not the default, then the user must have specified it and
+									// we want to warn the user if we can't find it.
+									if (!expandedGDBInitFile.equals(IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT)) {
+										requestMonitor.setStatus(getStatus());
+									}
+									requestMonitor.done();
 								}
-								requestMonitor.done();
-							}
-						});
-			} else {
+							});
+				} else {
+					requestMonitor.done();
+				}
+			} catch (CoreException e) {
+				requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get gdbinit option", e)); //$NON-NLS-1$
 				requestMonitor.done();
 			}
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get gdbinit option", e)); //$NON-NLS-1$
+		}
+		else {
 			requestMonitor.done();
 		}
 	}

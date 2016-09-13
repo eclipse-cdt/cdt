@@ -315,6 +315,15 @@ public interface ICDTLaunchConfigurationConstants {
 	 */
 	public static String DEBUGGER_MODE_CORE = "core"; //$NON-NLS-1$
 
+	/**
+	 * Launch configuration attribute value. The key is
+	 * ATTR_DEBUGGER_START_MODE. Startup debugger in no specific mode. 
+	 * later the debugger can be made to adopt any of the available
+	 * modes.
+	 * @since 8.1
+	 */
+	public static String DEBUGGER_MODE_FLUID = "fluid"; //$NON-NLS-1$
+
 	/**  
 	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
 	 * Indicates a core file.

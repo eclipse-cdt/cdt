@@ -220,6 +220,23 @@
       "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_589ec7ec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-13T17:31:33Z",
+      "side": 1,
+      "message": "Done in patch set 3 - You are right, we don\u0027t know when the listener will receive the first call, it\u0027s best to protect it.",
+      "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

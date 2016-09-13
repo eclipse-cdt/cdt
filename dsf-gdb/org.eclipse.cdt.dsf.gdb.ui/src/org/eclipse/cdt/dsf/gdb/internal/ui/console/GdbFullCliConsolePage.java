@@ -33,6 +33,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -66,11 +68,16 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 	/** The control for the terminal widget embedded in the console */
 	private ITerminalViewControl fTerminalControl;
+
 	private GdbConsoleClearAction fClearAction;
 	private GdbConsoleCopyAction fCopyAction;
 	private GdbConsolePasteAction fPasteAction;
 	private GdbConsoleScrollLockAction fScrollLockAction;
 	private GdbConsoleSelectAllAction fSelectAllAction;
+	private GdbAutoTerminateAction fAutoTerminateAction;
+
+	private IPropertyChangeListener fConsolePropertyChangeListener;
+
 
 	public GdbFullCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view) {
 		fConsole = gdbConsole;
@@ -82,6 +89,19 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 			fSession = null;
 			assert false;
 		}
+
+		fConsolePropertyChangeListener = new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB)) {
+					String terminateStr = event.getNewValue().toString();
+					boolean terminate = terminateStr.equals(Boolean.FALSE.toString()) ? false : true;
+					fAutoTerminateAction.setChecked(terminate);
+				}
+			}
+		};
+
+		GdbUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fConsolePropertyChangeListener);
 	}
 
 	@Override
@@ -91,6 +111,8 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 				getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		fTerminalControl.disposeTerminal();
 		fMenuManager.dispose();
+
+		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fConsolePropertyChangeListener);
 	}
 	
 	@Override
@@ -151,6 +173,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		fPasteAction = new GdbConsolePasteAction(fTerminalControl);
 		fScrollLockAction = new GdbConsoleScrollLockAction(fTerminalControl);
 		fSelectAllAction = new GdbConsoleSelectAllAction(fTerminalControl);
+		fAutoTerminateAction = new GdbAutoTerminateAction();
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
@@ -173,6 +196,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(fInvertColorsAction);
+		menuManager.add(fAutoTerminateAction);
 	}
 
 	@Override

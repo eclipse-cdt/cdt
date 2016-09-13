@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_fd6f8d1e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T15:42:01Z",
+      "side": 1,
+      "message": "I\u0027d put more details in the description",
+      "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_b8b603f2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbAutoTerminateAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T15:42:01Z",
+      "side": 1,
+      "message": "Not needed when specified in the constructor",
+      "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_b829a3bf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbAutoTerminateAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T15:42:01Z",
+      "side": 1,
+      "message": "How about using Platform.getPreferencesService().getBoolean() when it\u0027s just to read the preference?",
+      "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_d84f378c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbAutoTerminateAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T15:42:01Z",
+      "side": 1,
+      "message": "I don\u0027t think we need to call setChecked() here because it is done automatically\nfor a checkbox.\tNotice that we don\u0027t call it in GdbConsoleScrollLockAction",
+      "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_58b1672c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T15:42:01Z",
+      "side": 1,
+      "message": "Typo.",
+      "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_187c4f90",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T15:42:01Z",
+      "side": 1,
+      "message": "I think we can use boolean instead of Boolean to avoid unecessary auto-boxing",
+      "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_985f7f45",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-13T15:42:01Z",
+      "side": 1,
+      "message": "I wonder if there could be a race condition here where the actions is not yet created\nwhen we get this call back.  How about checking for null for the action?",
+      "revId": "1480c8f14a6d11a05a11a015abca5ceae10effc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

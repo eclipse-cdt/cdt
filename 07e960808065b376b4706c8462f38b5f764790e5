@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_78938b61",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-13T15:34:41Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "07e960808065b376b4706c8462f38b5f764790e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_f8f31bd7",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
         "patchSetId": 2
@@ -30,6 +47,23 @@
       "writtenOn": "2016-09-13T15:26:52Z",
       "side": 1,
       "message": "Add an IllegalArgumentException to fail-fast when the process is null",
+      "revId": "07e960808065b376b4706c8462f38b5f764790e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_98885f30",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-13T15:34:41Z",
+      "side": 1,
+      "message": "Done",
       "revId": "07e960808065b376b4706c8462f38b5f764790e5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_b88d2340",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-13T15:34:41Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "07e960808065b376b4706c8462f38b5f764790e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_583c07ef",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
         "patchSetId": 2
@@ -64,6 +115,23 @@
       "writtenOn": "2016-09-13T15:26:52Z",
       "side": 1,
       "message": "Add an IllegalArgumentException to fail-fast when the control is null",
+      "revId": "07e960808065b376b4706c8462f38b5f764790e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_d881f708",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-13T15:34:41Z",
+      "side": 1,
+      "message": "Done",
       "revId": "07e960808065b376b4706c8462f38b5f764790e5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

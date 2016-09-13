@@ -463,7 +463,11 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepStartExecution(final RequestMonitor rm) {
-		if (fBackend.getSessionType() != SessionType.CORE) {
+		boolean sessionIsCore = fBackend.getSessionType().equals(SessionType.CORE);
+		boolean sessionIsFluid = fBackend.getSessionType().equals(SessionType.FLUID);
+		
+		// skip starting execution if we are in a core or fluid session
+		if (!sessionIsCore && !sessionIsFluid) {
 			// Overwrite the program name to use the binary name that was specified.
 			// This is important for multi-process
 			// Bug 342351

@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -58,13 +59,16 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 	private Map<DebuggerConsoleWorkbenchPart, IDebuggerConsole> fPartToConsole = new HashMap<>();
 
 	private DebuggerConsoleDropDownAction fDisplayConsoleAction;
+	
+	private LaunchBinarylessSessionAction fLaunchNewGdb;
 
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		createActions();
 		configureToolBar(getViewSite().getActionBars().getToolBarManager());
-
+		configureViewMenu(getViewSite().getActionBars().getMenuManager());
+		
 		// create pages for existing consoles
 		IConsole[] consoles = getConsoleManager().getConsoles();
 		consolesAdded(consoles);
@@ -90,10 +94,16 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 
 	protected void createActions() {
 		fDisplayConsoleAction = new DebuggerConsoleDropDownAction(this);
+		fLaunchNewGdb = new LaunchBinarylessSessionAction(this);
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(fDisplayConsoleAction);
+		mgr.add(fLaunchNewGdb);
+	}
+	
+	protected void configureViewMenu(IMenuManager mgr) {
+		mgr.add(fLaunchNewGdb);
 	}
 
 	@Override
@@ -104,6 +114,10 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 		if (fDisplayConsoleAction != null) {
 			fDisplayConsoleAction.dispose();
 			fDisplayConsoleAction = null;
+		}
+		if (fLaunchNewGdb != null) {
+			fLaunchNewGdb.dispose();
+			fLaunchNewGdb = null;
 		}
 	}
 

@@ -120,6 +120,8 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
             monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.1") );  //$NON-NLS-1$
         } else if (sessionType == SessionType.CORE) {
             monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.2") );  //$NON-NLS-1$
+        } else if (sessionType == SessionType.FLUID) {
+        	monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.4") );  //$NON-NLS-1$
         } else {
         	assert sessionType == SessionType.LOCAL : "Unexpected session type: " + sessionType.toString(); //$NON-NLS-1$
             monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.3") );  //$NON-NLS-1$
@@ -133,7 +135,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         //   the path of any executable we can attach to.
         // - In local single process, GDB has the ability to find the executable
         //   automatically.
-        if (!attach) {
+        if (!attach && sessionType != SessionType.FLUID) {
         	checkBinaryDetails(config);
         }
     	

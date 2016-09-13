@@ -313,6 +313,21 @@
       </perspectiveExtension>
    </extension>
    <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="true"
+               relationship="right"
+               id="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
        point="org.eclipse.ui.commands">
       <command
           description="%command.nextTraceRecord.description"

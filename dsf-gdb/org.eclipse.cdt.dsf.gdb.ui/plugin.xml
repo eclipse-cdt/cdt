@@ -313,6 +313,26 @@
       </perspectiveExtension>
    </extension>
    <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+			<!-- The debugger console view is not present in the debug perspective by default
+				this allow integrators to add their specific console view implementation as needed.
+				Dsf-gdb relies on the default console implementation which can now be associated to the perspective without
+				interfering from integrations separated from dsf-gdb
+			-->
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
        point="org.eclipse.ui.commands">
       <command
           description="%command.nextTraceRecord.description"

@@ -39,13 +39,17 @@ public class Application implements IApplication {
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
+		System.out.println("Application.start");
 		Display display = PlatformUI.createDisplay();
 		try {
+			System.out.println("Application.start 2");
 			if (!setupWorkspaceLocation(display)) {
 				return IApplication.EXIT_OK;
 			}
+			System.out.println("Application.start 3");
 			
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+			System.out.println("Application.start 4");
 			if (returnCode == PlatformUI.RETURN_RESTART)
 				return IApplication.EXIT_RESTART;
 			else

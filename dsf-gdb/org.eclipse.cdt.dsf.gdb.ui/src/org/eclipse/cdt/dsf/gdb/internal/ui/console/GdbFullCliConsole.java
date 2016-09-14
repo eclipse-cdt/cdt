@@ -103,4 +103,18 @@ public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConso
 			fConsolePage.setInvertedColors(enable);
 		}
 	}
+
+	@Override
+	public void setAutoTerminateGDB(boolean autoTerminate) {
+		if (fConsolePage != null) {
+			fConsolePage.setAutoTerminateGDB(autoTerminate);
+		}
+	}
+
+	@Override
+	public void setBufferLineLimit(int bufferLines) {
+		if (fConsolePage != null) {
+			fConsolePage.setBufferLineLimit(bufferLines);
+		}
+	}
 }

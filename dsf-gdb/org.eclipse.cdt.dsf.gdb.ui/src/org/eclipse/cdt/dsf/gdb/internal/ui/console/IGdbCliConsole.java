@@ -14,4 +14,14 @@ public interface IGdbCliConsole extends IConsole {
 	 * Enable or disable the inverted color option of the console.
 	 */
     void setInvertedColors(boolean enable);
+    
+    /**
+     * Reflect this preference in the console UI
+     */
+    void setAutoTerminateGDB(boolean autoTerminate);
+    
+    /**
+     * Update the console to hold the specified number of lines in the buffer
+     */
+    void setBufferLineLimit(int bufferLines);
 }

@@ -37,7 +37,13 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * towards GDB.  It is used whenever {@link IGDBBackend#isFullGdbConsoleSupported()}
  * returns false.
  */
-public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, IGdbCliConsole {
+public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole {
+
+	/**
+	 * A conversion factor used to resolve number of characters from number of lines 
+	 */
+	private final static int CHARS_PER_LINE_AVG = 80;
+	private final static int HIGH_WATERMARK_OFFSET_BYTES = 100;
 
 	private final ILaunch fLaunch;
 	private final String fLabel;
@@ -45,6 +51,24 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
 	private final IOConsoleOutputStream fOutputStream;
 	private final IOConsoleOutputStream fErrorStream;
 	
+	private GdbAbstractConsolePreferenceListener fPreferenceListener = new GdbAbstractConsolePreferenceListener() {
+
+		@Override
+		protected void handleAutoTerminatePref(boolean enabled) {
+			// Nothing to do for this class
+		}
+
+		@Override
+		protected void handleInvertColorsPref(boolean enabled) {
+			setInvertedColors(enabled);
+		}
+
+		@Override
+		protected void handleBufferLinesPref(int bufferLines) {
+			setBufferLineLimit(bufferLines);
+		}
+	};
+
 	public GdbBasicCliConsole(ILaunch launch, String label, Process process) {
 		super("", null, null, false); //$NON-NLS-1$
 		fLaunch = launch;
@@ -58,8 +82,10 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
         // Create a lifecycle listener to call init() and dispose()
         new GdbConsoleLifecycleListener(this);
         
+		GdbUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
+
         resetName();
-        setColors();
+        setDefaults();
         
 		new InputReadJob().schedule();
 		new OutputReadJob().schedule();
@@ -77,19 +103,22 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
 		} catch (IOException e) {
 		}
 
+		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
+
 		super.dispose();
 	}
 	
-	private void setColors() {
-		// Set the inverted colors option based on the stored preference
+	private void setDefaults() {
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS);
+		int bufferLines = store.getInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES);
 
 		Display.getDefault().asyncExec(() -> {
 			getInputStream().setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
         	fErrorStream.setColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 
     		setInvertedColors(enabled);
+    		setBufferLineLimit(bufferLines);
         });
 	}
 
@@ -152,8 +181,7 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
 		return null;
 	}
 	
-	@Override
-	public void setInvertedColors(boolean enable) {
+	private void setInvertedColors(boolean enable) {
 		if (enable) {
 			setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 			fOutputStream.setColor(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
@@ -163,6 +191,14 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
 		}
 	}
 
+	private void setBufferLineLimit(int bufferLines) {
+		int chars = bufferLines * CHARS_PER_LINE_AVG;
+		// The buffer will be allowed to grow up-to the high watermark. 
+		// When high watermark is passed, it will be trimmed-down to the low watermark.
+		// So here just add a small extra buffer for high watermark.
+		setWaterMarks(chars, chars + HIGH_WATERMARK_OFFSET_BYTES);
+	}
+	
     private class InputReadJob extends Job {
     	{
     		setSystem(true); 

@@ -119,6 +119,18 @@ public interface IGdbDebugPreferenceConstants {
 	public static final int COMMAND_TIMEOUT_VALUE_DEFAULT = 10000;
 
 	/**
+	 * Default preference value for the colors used by GDB CLI consoles
+	 * @since 5.2
+	 */
+	public static final Boolean CONSOLE_INVERTED_COLORS = false;
+
+	/**
+	 * Default preference value for the number of buffered lines used by GDB CLI consoles
+	 * @since 5.2
+	 */
+	public static final int CONSOLE_BUFFERLINES = 1000;
+
+	/**
 	 * Boolean preference whether to use RTTI for MI variables type
 	 * determination. Default is <code>true</code>.
 	 * 
@@ -173,9 +185,14 @@ public interface IGdbDebugPreferenceConstants {
 	public static final String PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE = "UseProcessorTrace"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference indicating if the GDB console should be shown using inverted colors. Default is <code>false</code>. 
+	 * Preference key controlling the coloring of GDB CLI consoles
 	 * @since 5.2
 	 */
 	public static final String PREF_CONSOLE_INVERTED_COLORS = PREFIX + "consoleInvertedColors"; //$NON-NLS-1$
-}
 
+	/**
+	 * Preference key controlling the number of buffered lines used by GDB CLI consoles
+	 * @since 5.2
+	 */
+	public static final String PREF_CONSOLE_BUFFERLINES = PREFIX + "bufferLines"; //$NON-NLS-1$
+}

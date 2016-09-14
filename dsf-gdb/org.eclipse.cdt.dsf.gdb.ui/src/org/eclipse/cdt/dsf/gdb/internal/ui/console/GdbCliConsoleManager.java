@@ -16,6 +16,8 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlInitializedDMEvent;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -25,9 +27,13 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * A console manager for GDB sessions which adds and removes
@@ -43,6 +49,65 @@ import org.eclipse.debug.core.ILaunchesListener2;
  */
 public class GdbCliConsoleManager implements ILaunchesListener2 {
 
+	private final IPropertyChangeListener fConsolePropertyChangeListener;
+
+	public GdbCliConsoleManager() {
+		fConsolePropertyChangeListener = new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB)) {
+					String terminateStr = event.getNewValue().toString();
+					final boolean terminate = terminateStr.equals(Boolean.FALSE.toString()) ? false : true;
+
+					Display.getCurrent().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							// Update the "auto terminate GDB" setting of all the GDB consoles
+							IDebuggerConsoleManager manager = CDebugUIPlugin.getDebuggerConsoleManager();
+							for (IDebuggerConsole console : manager.getConsoles()) {
+								if (console instanceof IGdbCliConsole) {
+									((IGdbCliConsole)console).setAutoTerminateGDB(terminate);
+								}
+							}
+						}
+					});
+				} else if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS)) {
+					Display.getCurrent().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							boolean enabled = Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID, IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS, IGdbDebugPreferenceConstants.CONSOLE_INVERTED_COLORS, null);
+
+							// Invert the color setting of all the GDB consoles
+							IDebuggerConsoleManager manager = CDebugUIPlugin.getDebuggerConsoleManager();
+							for (IDebuggerConsole console : manager.getConsoles()) {
+								if (console instanceof IGdbCliConsole) {
+									((IGdbCliConsole)console).setInvertedColors(enabled);
+								}
+							}
+						}
+					});
+				} else if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES)) {
+					int bufferLines = Platform.getPreferencesService().getInt(GdbPlugin.PLUGIN_ID, IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES, IGdbDebugPreferenceConstants.CONSOLE_BUFFERLINES, null);
+					
+					Display.getCurrent().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							// set the buffer lines limit of all the GDB consoles
+							IDebuggerConsoleManager manager = CDebugUIPlugin.getDebuggerConsoleManager();
+							for (IDebuggerConsole console : manager.getConsoles()) {
+								if (console instanceof IGdbCliConsole) {
+									((IGdbCliConsole)console).setBufferLineLimit(bufferLines);
+								}
+							}
+						}
+					});
+				}
+			}
+		};
+
+		GdbUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fConsolePropertyChangeListener);
+	}
+
 	/**
 	 * Start the tracing console.  We don't do this in a constructor, because
 	 * we need to use <code>this</code>.
@@ -54,6 +119,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 
 	public void shutdown() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fConsolePropertyChangeListener);
 	}
 
     @Override

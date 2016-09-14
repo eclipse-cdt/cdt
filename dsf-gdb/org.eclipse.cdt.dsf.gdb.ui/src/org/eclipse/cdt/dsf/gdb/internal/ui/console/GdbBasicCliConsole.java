@@ -39,6 +39,17 @@ import org.eclipse.ui.part.IPageBookViewPage;
  */
 public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, IGdbCliConsole {
 
+	/**
+	 * A conversion factor used to resolve number of characters from number of lines 
+	 */
+	private final static int CHARS_PER_LINE_AVG = 80;
+	private final static int LOW_TO_HIGH_BUFFER_LINES_OFFSET = 100;
+	private final static int MIN_LOW_LINES_WATER_MARK = 13; /* no less than 1000 chars */
+	/**
+	 * The offset of characters to use to set the buffer water marks
+	 */
+	private final static int LOW_TO_HIGH_BUFFER_CHARS_OFFSET = LOW_TO_HIGH_BUFFER_LINES_OFFSET * CHARS_PER_LINE_AVG; 
+
 	private final ILaunch fLaunch;
 	private final String fLabel;
 	private final Process fProcess;
@@ -59,7 +70,7 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
         new GdbConsoleLifecycleListener(this);
         
         resetName();
-        setColors();
+        setDefaults();
         
 		new InputReadJob().schedule();
 		new OutputReadJob().schedule();
@@ -80,16 +91,19 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
 		super.dispose();
 	}
 	
-	private void setColors() {
+	private void setDefaults() {
 		// Set the inverted colors option based on the stored preference
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
-		boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS);
+		final boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS);
+		final int bufferLines = store.getInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES);
 
 		Display.getDefault().asyncExec(() -> {
 			getInputStream().setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
         	fErrorStream.setColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 
     		setInvertedColors(enabled);
+    		// Apply the buffer size preference
+    		setBufferLineLimit(bufferLines);
         });
 	}
 
@@ -240,4 +254,17 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
             return Status.OK_STATUS;
         }
     }
+
+	@Override
+	public void setAutoTerminateGDB(boolean autoTerminate) {
+		// To be implemented when the UI can reflect this option for this type of console
+	}
+
+	@Override
+	public void setBufferLineLimit(int bufferLines) {
+		if (bufferLines >= MIN_LOW_LINES_WATER_MARK) {
+			int chars = bufferLines * CHARS_PER_LINE_AVG;
+			setWaterMarks(chars, chars + LOW_TO_HIGH_BUFFER_CHARS_OFFSET);
+		}
+	}
 }

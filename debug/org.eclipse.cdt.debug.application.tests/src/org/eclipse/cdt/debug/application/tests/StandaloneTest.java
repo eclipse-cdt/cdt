@@ -14,6 +14,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.swtbot.eclipse.finder.matchers.WithTitle;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
@@ -40,20 +41,23 @@ public abstract class StandaloneTest {
 		fLogger.removeAllAppenders();
 		fLogger.addAppender(new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT));
 
+		SWTBotUtils.initialize();
+
 		bot = new SWTBot();
 		Utilities.getDefault().buildProject(projectName);
 		final IPath executablePath = Utilities.getDefault().getProjectPath(projectName).append("a.out"); //$NON-NLS-1$
 		bot.waitUntil(new WaitForFileCondition(executablePath));
 
-		bot.waitUntil(Conditions.shellIsActive(DEBUG_NEW_EXECUTABLE_TITLE));
 		SWTBotShell executableShell = bot.shell(DEBUG_NEW_EXECUTABLE_TITLE);
 		executableShell.setFocus();
+		bot.waitUntil(Conditions.shellIsActive(DEBUG_NEW_EXECUTABLE_TITLE));
 
 		executableShell.bot().textWithLabel("Binary: ").typeText(executablePath.toOSString());
 		executableShell.bot().button("OK").click();
 
-		bot.waitUntil(Conditions.shellIsActive(C_C_STAND_ALONE_DEBUGGER_TITLE));
 		mainShell = bot.shell(C_C_STAND_ALONE_DEBUGGER_TITLE);
+		mainShell.setFocus();
+		bot.waitUntil(Conditions.shellIsActive(C_C_STAND_ALONE_DEBUGGER_TITLE));
 	}
 
 	@After

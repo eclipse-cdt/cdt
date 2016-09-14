@@ -31,6 +31,9 @@
         <configuration>
           <useUIHarness>true</useUIHarness>
           <useUIThread>false</useUIThread>
+          <environmentVariables>
+            <SWT_GTK3>0</SWT_GTK3>
+          </environmentVariables>
           <product>org.eclipse.cdt.debug.application.product</product>
           <application>org.eclipse.cdt.debug.application.app</application>
           <argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>

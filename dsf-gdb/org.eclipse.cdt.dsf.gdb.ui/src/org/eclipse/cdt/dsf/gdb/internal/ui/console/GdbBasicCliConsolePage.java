@@ -28,7 +28,6 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	private final IConsoleView fView;
 	private final IDebuggerConsole fConsole;
 	
-	private GdbConsoleInvertColorsAction fInvertColorsAction;
 	private GdbConsoleTerminateLaunchAction fTerminateLaunchAction;
 	private GdbConsoleShowPreferencesAction fShowPreferencePageAction;
 
@@ -58,7 +57,6 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 
 	@Override
 	protected void createActions() {
-		fInvertColorsAction = new GdbConsoleInvertColorsAction();
 		fTerminateLaunchAction = new GdbConsoleTerminateLaunchAction(fLaunch);
 		fShowPreferencePageAction = new GdbConsoleShowPreferencesAction(getSite().getShell());
 	}
@@ -66,7 +64,6 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	@Override
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
 		menuManager.add(fTerminateLaunchAction);
-		menuManager.add(fInvertColorsAction);
 		menuManager.add(new Separator());
 		menuManager.add(fShowPreferencePageAction);
 	}

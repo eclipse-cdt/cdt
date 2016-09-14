@@ -49,6 +49,8 @@ public class ConsoleMessages extends NLS {
 	public static String ConsoleAutoTerminateAction_name;
 	public static String ConsoleAutoTerminateAction_description;
 
+	public static String GdbConsolePreferences_name;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(ConsoleMessages.class.getName(), ConsoleMessages.class);

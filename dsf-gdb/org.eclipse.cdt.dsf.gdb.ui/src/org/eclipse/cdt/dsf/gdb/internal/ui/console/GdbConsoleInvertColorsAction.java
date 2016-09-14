@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
-import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
@@ -37,13 +34,6 @@ public class GdbConsoleInvertColorsAction extends Action {
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {
-		}
-
-		IDebuggerConsoleManager manager = CDebugUIPlugin.getDebuggerConsoleManager();
-		for (IDebuggerConsole console : manager.getConsoles()) {
-			if (console instanceof IGdbCliConsole) {
-				((IGdbCliConsole)console).setInvertedColors(!enabled);
-			}
 		}
 	}
 }

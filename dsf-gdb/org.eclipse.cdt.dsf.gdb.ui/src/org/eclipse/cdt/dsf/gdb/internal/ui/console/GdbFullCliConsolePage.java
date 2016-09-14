@@ -12,10 +12,13 @@ import java.nio.charset.Charset;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
+import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -23,6 +26,7 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -39,6 +43,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
@@ -74,6 +79,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	private GdbAutoTerminateAction fAutoTerminateAction;
 
 	private IPropertyChangeListener fConsolePropertyChangeListener;
+	private ConsoleShowPreferencesAction fShowPreferencePageAction;
 
 
 	public GdbFullCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view) {
@@ -94,6 +100,24 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 					String terminateStr = event.getNewValue().toString();
 					boolean terminate = terminateStr.equals(Boolean.FALSE.toString()) ? false : true;
 					fAutoTerminateAction.setChecked(terminate);
+				} else if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS)) {
+					Display.getCurrent().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							boolean enabled = Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID, IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS, IGdbDebugPreferenceConstants.CONSOLE_INVERTED_COLORS, null);
+
+							// Invert the color setting of all the GDB consoles
+							IDebuggerConsoleManager manager = CDebugUIPlugin.getDebuggerConsoleManager();
+							for (IDebuggerConsole console : manager.getConsoles()) {
+								if (console instanceof IGdbCliConsole) {
+									((IGdbCliConsole)console).setInvertedColors(enabled);
+								}
+							}
+						}
+					});
+				} else if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES) && fTerminalControl != null) {
+					int bufferLines = Platform.getPreferencesService().getInt(GdbPlugin.PLUGIN_ID, IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES, IGdbDebugPreferenceConstants.CONSOLE_BUFFERLINES, null);
+					fTerminalControl.setBufferLineLimit(bufferLines);
 				}
 			}
 		};
@@ -124,13 +148,25 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		createTerminalControl();
 		createContextMenu();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
-		
+
 		// Hook the terminal control to the GDB process
 		attachTerminalToGdbProcess();
 	}
 
+	private void setDefaults() {
+		// Apply the inverted color preference
+		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+		setInvertedColors(store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS));
+
+		// Apply the buffer size preference
+		int bufferSize = store.getInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES);
+		fTerminalControl.setBufferLineLimit(bufferSize);
+	}
+
 	private void createTerminalControl() {
 		// Create the terminal control that will be used to interact with GDB
+		// Don't use common terminal preferences as GDB consoles are having its own
+		boolean useCommonPrefs = false;
 		fTerminalControl = TerminalViewControlFactory.makeControl(
 				new ITerminalListener() {
 					@Override public void setState(TerminalState state) {}
@@ -138,16 +174,12 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		        },
 				fMainComposite,
 				new ITerminalConnector[] {}, 
-				true);
+				useCommonPrefs);
 		
 		try {
 			fTerminalControl.setEncoding(Charset.defaultCharset().name());
 		} catch (UnsupportedEncodingException e) {
 		}
-	
-		// Set the inverted colors option based on the stored preference
-		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
-		setInvertedColors(store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS));
 	}
 
 	protected void createContextMenu() {
@@ -171,6 +203,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		fScrollLockAction = new GdbConsoleScrollLockAction(fTerminalControl);
 		fSelectAllAction = new GdbConsoleSelectAllAction(fTerminalControl);
 		fAutoTerminateAction = new GdbAutoTerminateAction();
+		fShowPreferencePageAction = new ConsoleShowPreferencesAction();
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
@@ -194,6 +227,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(fInvertColorsAction);
 		menuManager.add(fAutoTerminateAction);
+		menuManager.add(fShowPreferencePageAction);
 	}
 
 	@Override
@@ -246,6 +280,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 					if (fTerminalControl != null && !fTerminalControl.isDisposed()) {
 						fTerminalControl.clearTerminal();
 						fTerminalControl.connectTerminal();
+		        		setDefaults();
 					}
 				}
 			});

@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.cdt.debug.application,
  org.eclipse.swtbot.go,
  org.eclipse.swtbot.junit4_x,
  org.junit,
- org.eclipse.cdt.core.native
+ org.eclipse.cdt.core.native,
+ com.google.guava
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Import-Package: org.eclipse.cdt.utils.pty,

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_d2fc73e7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-14T15:01:01Z",
+      "side": 1,
+      "message": "Any reason you put this here instead of in o.e.cdt.debug.ui where the view is defined?\nI\u0027m actually thinking it is a good idea because if someone does not use dsf.gdb and\nprovides their own debugger integration that does not use the Debugger Console,\nthen it makes sense that we shoulnd\u0027t show it.  If they do want to use the Debugger console,\nthey\u0027ll have to add it to the perspective like you are doing here.\nIf that was your idea as well, maybe a comment above to explain this train of thought?",
+      "revId": "9deaeb8b97f431545bef130ccc3e72f92bdb0709",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_52cb03b7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-14T15:01:01Z",
+      "side": 1,
+      "message": "I\u0027m hesitant about putting it on its own.  Maybe we should just \u0027stack\u0027 it?\nPeople that want to use the console will of course need to move it, but\nthat is easy for them to understand; on the other hand, anyone that just uses\neclipse and does not care about the GDB console will loose space because we\nwould force it to be on its own.",
+      "revId": "9deaeb8b97f431545bef130ccc3e72f92bdb0709",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -65,7 +65,6 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	
 	private MenuManager fMenuManager;
 
-	private GdbConsoleInvertColorsAction fInvertColorsAction;
 	private GdbConsoleTerminateLaunchAction fTerminateLaunchAction;
 
 	/** The control for the terminal widget embedded in the console */
@@ -195,7 +194,6 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	}
 
 	protected void createActions() {
-		fInvertColorsAction = new GdbConsoleInvertColorsAction();
 		fTerminateLaunchAction = new GdbConsoleTerminateLaunchAction(fLaunch);
 		fClearAction = new GdbConsoleClearAction(fTerminalControl);
 		fCopyAction = new GdbConsoleCopyAction(fTerminalControl);
@@ -225,7 +223,6 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		menuManager.add(new Separator());
 		
 		menuManager.add(fTerminateLaunchAction);
-		menuManager.add(fInvertColorsAction);
 		menuManager.add(fAutoTerminateAction);
 		menuManager.add(fShowPreferencePageAction);
 	}

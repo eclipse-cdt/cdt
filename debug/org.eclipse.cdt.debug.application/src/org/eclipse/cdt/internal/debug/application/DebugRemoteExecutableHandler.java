@@ -24,13 +24,14 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 public class DebugRemoteExecutableHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-
-		RemoteExecutableDialog dialog = new RemoteExecutableDialog(new Shell());
+		Shell parentShell = HandlerUtil.getActiveShellChecked(event);
+		RemoteExecutableDialog dialog = new RemoteExecutableDialog(parentShell);
 
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			RemoteExecutableInfo info = dialog.getExecutableInfo();

@@ -22,7 +22,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void initialize(IWorkbenchConfigurer configurer) {
 		super.initialize(configurer);
+		System.out.println("ApplicationWorkbenchAdvisor.initialize");
 		configurer.setSaveAndRestore(false);
+		System.out.println("ApplicationWorkbenchAdvisor.initialize 2");
 	}
 	
     @Override

@@ -39,6 +39,12 @@ import org.eclipse.ui.part.IPageBookViewPage;
  */
 public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, IGdbCliConsole {
 
+	/**
+	 * A conversion factor used to resolve number of characters from number of lines 
+	 */
+	private final static int CHARS_PER_LINE_AVG = 80;
+	private final static int HIGH_WATERMARK_OFFSET_BYTES = 100;
+
 	private final ILaunch fLaunch;
 	private final String fLabel;
 	private final Process fProcess;
@@ -59,7 +65,7 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
         new GdbConsoleLifecycleListener(this);
         
         resetName();
-        setColors();
+        setDefaults();
         
 		new InputReadJob().schedule();
 		new OutputReadJob().schedule();
@@ -80,16 +86,19 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
 		super.dispose();
 	}
 	
-	private void setColors() {
+	private void setDefaults() {
 		// Set the inverted colors option based on the stored preference
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
-		boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS);
+		final boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS);
+		final int bufferLines = store.getInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES);
 
 		Display.getDefault().asyncExec(() -> {
 			getInputStream().setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
         	fErrorStream.setColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 
     		setInvertedColors(enabled);
+    		// Apply the buffer size preference
+    		setBufferLineLimit(bufferLines);
         });
 	}
 
@@ -240,4 +249,18 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
             return Status.OK_STATUS;
         }
     }
+
+	@Override
+	public void setAutoTerminateGDB(boolean autoTerminate) {
+		// To be implemented when the UI can reflect this option for this type of console
+	}
+
+	@Override
+	public void setBufferLineLimit(int bufferLines) {
+		int chars = bufferLines * CHARS_PER_LINE_AVG;
+		// the buffer will be allowed to grow up-to the high watermark. 
+		// when high watermark is passed, it will be trimmed-down to low watermark.
+		// So here just add a small extra buffer for high watermark.
+		setWaterMarks(chars, chars + HIGH_WATERMARK_OFFSET_BYTES);
+	}
 }

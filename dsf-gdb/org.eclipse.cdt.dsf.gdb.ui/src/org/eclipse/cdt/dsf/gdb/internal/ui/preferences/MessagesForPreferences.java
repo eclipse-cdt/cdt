@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Ericsson and others.
+ * Copyright (c) 2009, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,9 @@ class MessagesForPreferences extends NLS {
 	public static String ReverseDebugPreferencePage_BranchTrace;
 	public static String ReverseDebugPreferencePage_ProcessorTrace;
 
+	public static String GdbConsolePreferencePage_InvertColors;
+	public static String GdbConsolePreferencePage_BufferLines;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(MessagesForPreferences.class.getName(), MessagesForPreferences.class);

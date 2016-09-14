@@ -523,7 +523,13 @@
             class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.ReverseDebugPreferencePage"
             id="org.eclipse.cdt.dsf.gdb.ui.preferences.reversedebugpreferences"
             name="%reverseDebugPreferences.name">
-      </page> 
+      </page>
+      <page
+            category="org.eclipse.cdt.dsf.gdb.ui.preferences"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.GdbConsolePreferencePage"
+            id="org.eclipse.cdt.dsf.gdb.ui.preferences.console.GdbConsolePreferencePage"
+            name="%console.preferences.name">
+      </page>
    </extension>
     <extension
          point="org.eclipse.ui.console.consolePageParticipants">

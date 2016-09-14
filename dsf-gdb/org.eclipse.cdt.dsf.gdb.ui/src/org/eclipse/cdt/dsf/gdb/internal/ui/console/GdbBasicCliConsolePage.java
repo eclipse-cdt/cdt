@@ -16,6 +16,7 @@ import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.internal.console.IOConsolePage;
@@ -29,6 +30,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	
 	private GdbConsoleInvertColorsAction fInvertColorsAction;
 	private GdbConsoleTerminateLaunchAction fTerminateLaunchAction;
+	private GdbConsoleShowPreferencesAction fShowPreferencePageAction;
 
 	public GdbBasicCliConsolePage(GdbBasicCliConsole gdbConsole, IConsoleView view) {
 		super(gdbConsole, view);
@@ -58,12 +60,15 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	protected void createActions() {
 		fInvertColorsAction = new GdbConsoleInvertColorsAction();
 		fTerminateLaunchAction = new GdbConsoleTerminateLaunchAction(fLaunch);
+		fShowPreferencePageAction = new GdbConsoleShowPreferencesAction(getSite().getShell());
 	}
 
 	@Override
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(fInvertColorsAction);
+		menuManager.add(new Separator());
+		menuManager.add(fShowPreferencePageAction);
 	}
 	
 	/**

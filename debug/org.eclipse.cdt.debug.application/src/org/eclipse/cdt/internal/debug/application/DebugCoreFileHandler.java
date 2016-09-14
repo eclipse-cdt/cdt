@@ -25,13 +25,14 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 public class DebugCoreFileHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		CoreFileDialog dialog = new CoreFileDialog(new Shell());
+		Shell parentShell = HandlerUtil.getActiveShellChecked(event);
+		CoreFileDialog dialog = new CoreFileDialog(parentShell);
 		
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			CoreFileInfo info = dialog.getCoreFileInfo();

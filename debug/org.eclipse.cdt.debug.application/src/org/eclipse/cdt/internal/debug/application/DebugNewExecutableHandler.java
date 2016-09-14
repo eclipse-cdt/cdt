@@ -33,13 +33,14 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 public class DebugNewExecutableHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		NewExecutableDialog dialog = new NewExecutableDialog(new Shell());
+		Shell parentShell = HandlerUtil.getActiveShellChecked(event);
+		NewExecutableDialog dialog = new NewExecutableDialog(parentShell);
 		
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			NewExecutableInfo info = dialog.getExecutableInfo();

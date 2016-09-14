@@ -135,6 +135,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
+			System.out.println("PostWindowCreateRunnable 1");
 			monitor.beginTask(Messages.InitializingDebugger, 10);
 			boolean attachExecutable = false;
 			String executable = null;
@@ -362,6 +363,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				} else if (executable != null && executable.length() > 0) {
 					config = DebugExecutable.importAndCreateLaunchConfig(monitor, executable, buildLog, arguments, true);
 				} else {
+					System.out.println("PostWindowCreateRunnable 2");
 					// No executable specified, look for last launch
 					// and offer that to the end-user.
 					monitor.subTask(Messages.RestorePreviousLaunch);
@@ -382,13 +384,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					final String executablePath = oldExecutable;
 					final String executableArgs = oldArguments;
 					final String buildLogPath = oldBuildLog;
+					System.out.println("PostWindowCreateRunnable 3");
 					// Bring up New Executable dialog with values from
 					// the last launch.
 					Display.getDefault().syncExec(new Runnable() {
 
 						@Override
 						public void run() {
-
+							System.out.println("PostWindowCreateRunnable 4");
 							NewExecutableDialog dialog = new NewExecutableDialog(getWindowConfigurer().getWindow().getShell(),
 									0, executablePath, buildLogPath, executableArgs);
 							dialog.setBlockOnOpen(true);
@@ -404,6 +407,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							}
 						}
 					});
+					System.out.println("PostWindowCreateRunnable 5");
 					// Check and see if we failed above and if so, quit
 					if (info.getHostPath().isEmpty()) {
 						monitor.done();
@@ -426,6 +430,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 								ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
 								arguments);
 					config = wc.doSave();
+					System.out.println("PostWindowCreateRunnable 6");
 
 					monitor.worked(7);
 				}

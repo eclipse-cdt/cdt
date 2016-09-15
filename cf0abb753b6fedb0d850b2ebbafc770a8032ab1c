@@ -579,6 +579,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_1ff4a07c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Now that I\u0027ve but fBindingsMap (renamed to fInstantiatedLocals) into InstantiationContext, merging createVariableSpecialization() into createSpecialization() would require either propagating InstantiationContext through createSpecialization(), or getting rid of fInstantiatedLocals (which I plan to do anyways). Added a TODO.",
+      "parentUuid": "e7dfcf21_500cbcf5",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_703a9884",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 3
@@ -590,6 +608,24 @@
       "writtenOn": "2016-05-11T07:29:21Z",
       "side": 1,
       "message": "What if the value changes while the type remains the same?\n\nFor example:\n\n  template \u003cint N\u003e\n  void foo()\n  {\n    int var \u003d N;\n  }\n\nHere, the type of the variable specialization is the same as the type of the original variable, but the initial value is different.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5fea989b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 973,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_703a9884",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -613,6 +649,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_7f8bdc29",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 978,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "It turns out we don\u0027t need a CPPVariableTemplateSpecialization, because variable templates cannot occur at local scope.",
+      "parentUuid": "e7dfcf21_903d647c",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_b0342095",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 3
@@ -624,6 +678,24 @@
       "writtenOn": "2016-05-11T07:29:21Z",
       "side": 1,
       "message": "What about local classes? (We can handle those in a follow-up, but please add a TODO comment about it.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_9fe7d0cf",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_b0342095",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -647,6 +719,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_bfe494cb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1086,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_d037ec95",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_f02dc849",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 3
@@ -658,6 +748,24 @@
       "writtenOn": "2016-05-11T07:29:21Z",
       "side": 1,
       "message": "This declaration was split across two lines on purpose, to respect the 110-character width limit. Please preserve it, here and elsewhere.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_dfddc801",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1125,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_f02dc849",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -745,6 +853,24 @@
       "writtenOn": "2016-05-11T07:29:21Z",
       "side": 1,
       "message": "We should cache the overload evaluation, similar to how the overload itself is cached.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5f4e1844",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_b0c180cb",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -873,6 +999,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_1f582005",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "EvalCompositeAccess is definitely used for composite values other than arrays, such as structures. However, perhaps we don\u0027t need an extra check here because it\u0027s only wrapped into an EvalPointer in the context of a pointer to an array? I\u0027m not sure; I added a TODO comment for now.",
+      "parentUuid": "e7dfcf21_50559c95",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7dfcf21_ac3f64e1",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompositeAccess.java",
         "patchSetId": 3
@@ -884,6 +1028,24 @@
       "writtenOn": "2016-05-12T06:50:52Z",
       "side": 1,
       "message": "Please add a comment describing what sorts of \"composites\" this is used for.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_bf96541b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompositeAccess.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_ac3f64e1",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1006,6 +1168,24 @@
       "writtenOn": "2016-05-12T06:50:52Z",
       "side": 1,
       "message": "Now that we can represent statement executions, this evaluation should store the executions of the statements that come before the last one in the statement-expression. Feel free to leave this for later and just add a TODO comment about it.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5fa53888",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompoundStatementExpression.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_6c455c68",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1169,6 +1349,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_39f41d47",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Yes, it looks like an EvalConstructor is never used to directly represent the evaluation of an expression in the source code (i.e. the return value of IASTExpression.getEvaluation() is never an EvalConstructor). Rather, EvalConstructors are created while evaluating other evaluations like EvalTypeId.",
+      "parentUuid": "e7dfcf21_ec06cc28",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_dc7bcd97",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -1326,6 +1524,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_192d9947",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_9c3305fa",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_dcdf4df8",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -1337,6 +1553,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "EvalFunctionCall.computeForFunctionCall():\n\n  - evaluates the arguments again\n  - creates yet another activation record (inside \n    evaluateFunctionBody())\n\nIs either of these necessary?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_b96d8d7c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "I added a TODO comment asking this question. Toni, if you know the answer, please feel free to edit as appropriate.",
+      "parentUuid": "a7e957d1_dcdf4df8",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1360,6 +1594,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_191cb9f4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_7c8d593d",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_bc4c4199",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
         "patchSetId": 3
@@ -1371,6 +1623,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "After you modify CPPFunctionSpecialization.getConstructorChainExecution() to instantiate the execution as suggested in a previous comment, instantiating it here will no longer be necessary.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_5922b12d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_bc4c4199",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1499,6 +1769,24 @@
     },
     {
       "key": {
+        "uuid": "27af2791_7932157b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_ec1dec6c",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_bce281bd",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
         "patchSetId": 3
@@ -1510,6 +1798,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "This function will become unnecessary if you instantiate in CPPFunctionSpecialization.getFunctionBodyExecution().",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27af2791_9937e968",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_bce281bd",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1533,6 +1839,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_e027f864",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "The convention seems to be that if a function exits by returning, ExecCompoundStatement.executeForFunctionCall() returns the ExecReturn, which then has to be executed separately. This seems a bit strange to me, but I guess it\u0027s fine.",
+      "parentUuid": "a7e957d1_fcdc0906",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_1c9d3547",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
         "patchSetId": 3
@@ -1550,6 +1874,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_c02af42f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_1c9d3547",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_5ca7bd92",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
         "patchSetId": 3
@@ -1561,6 +1903,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "Why do this at all? Why do it for EvalBindings only? (I realize that either not doing it at all, or doing it for all evaluation types, breaks tests, but I don\u0027t understand why. A comment would be helpful.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_20657094",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "I still don\u0027t understand this. I left a TODO comment about it. Toni, if you know the answer please explain.",
+      "parentUuid": "a7e957d1_5ca7bd92",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1724,6 +2084,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_80747c44",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalPointer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_bcf8c13e",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_dcf58d45",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalPointer.java",
         "patchSetId": 3
@@ -1811,6 +2189,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_e08298a1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalPointer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_bc0361c6",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_9c06a5d7",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalPointer.java",
         "patchSetId": 3
@@ -1875,6 +2271,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "I find it strange that the value of a pointer is considered to be its offset into the array it points into.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_00806c97",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalPointer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Added a TODO to investigate this later.",
+      "parentUuid": "a7e957d1_3f2f43c6",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -2091,6 +2505,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_604688fc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalReference.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Added TODO about this. Again, Toni, if you know the answer please explain",
+      "parentUuid": "a7e957d1_9cfb053b",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_7ce719a2",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalReference.java",
         "patchSetId": 3
@@ -2108,6 +2540,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_804b9c01",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalReference.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Added a TODO about this",
+      "parentUuid": "a7e957d1_7ce719a2",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_fc0de9f2",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 3
@@ -2119,6 +2569,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "Don\u0027t character types also value-initialize to zero?",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_a05fc0ba",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Yes. I see we have a test case for this, IntegralValueTests.testCharDefaultValue(). I think it\u0027s wrong - gcc and clang both accept that code, and give the variable the value 0.",
+      "parentUuid": "a7e957d1_fc0de9f2",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -2422,6 +2890,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_68b818ac",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7dfcf21_f0aa2808",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_dc266d42",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecConstructorChain.java",
         "patchSetId": 3
@@ -2719,6 +3205,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_c05cb4c8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecRangeBasedFor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7e957d1_1f2a87b5",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7e957d1_bff353d8",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecRangeBasedFor.java",
         "patchSetId": 3
@@ -2800,6 +3304,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "This is not the correct way to instantiate the begin and end functions. The reason is that, if the range type is dependent, argument-dependent lookup may find different begin and end functions to call after instantiation.\n\nHere\u0027s an outline of how to do it correctly:\n\n  - Construct EvalFunctionCall evaluations representing the\n    invocations of the begin and end functions with the\n    range as the argument.\n\n  - Instantiate the EvalFunctionCalls. This will perform the\n    ADL, if appropriate, in EvalFunctionSet.resolveFunction().\n\n  - Query the instantiated function bindings from the\n    instantiated EvalFunctionCalls.\n\nFeel free to leave implementing this for later and just add a TODO comment.\n\n(An alternative way to implement range-based for loops is to \"lower\" them to the form described in the standard, built using the appropriate evaluations and executions. Then the above instantiations will fall out from that automatically.)",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_40bc2456",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecRangeBasedFor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Added a TODO for now",
+      "parentUuid": "a7e957d1_3f082367",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -2940,6 +3462,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "This third property is not being checked.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_c0a7543e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TypeTraits.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "Added a TODO about it",
+      "parentUuid": "a7e957d1_bf1a73a0",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -3132,6 +3672,24 @@
       "writtenOn": "2016-05-13T05:21:09Z",
       "side": 1,
       "message": "We may want to consider optimizing this, so that we don\u0027t take up 12 bytes of space in every function including non-constexpr ones. We can leave that for a follow-up.",
+      "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_609848fd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPFunction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-09-15T02:54:23Z",
+      "side": 1,
+      "message": "I\u0027ve moved constructor chains to be in constructor records only. I also think we can remove RETURN_EXPRESSION as a folow-up, since FUNCTION_BODY supersedes it. I think that\u0027s good enough in terms of space optimization.",
+      "parentUuid": "a7e957d1_1f3c47ee",
       "revId": "cf0abb753b6fedb0d850b2ebbafc770a8032ab1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

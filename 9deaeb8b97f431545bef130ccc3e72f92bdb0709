@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_487d14d4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-15T11:51:11Z",
+      "side": 1,
+      "message": "That was the thinking,  I have placed a comment on patch set 3",
+      "revId": "9deaeb8b97f431545bef130ccc3e72f92bdb0709",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_52cb03b7",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
         "patchSetId": 2
@@ -30,6 +47,23 @@
       "writtenOn": "2016-09-14T15:01:01Z",
       "side": 1,
       "message": "I\u0027m hesitant about putting it on its own.  Maybe we should just \u0027stack\u0027 it?\nPeople that want to use the console will of course need to move it, but\nthat is easy for them to understand; on the other hand, anyone that just uses\neclipse and does not care about the GDB console will loose space because we\nwould force it to be on its own.",
+      "revId": "9deaeb8b97f431545bef130ccc3e72f92bdb0709",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_687ad8dd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-09-15T11:51:11Z",
+      "side": 1,
+      "message": "Not too sure on this one either, but lets try your suggestion, we can adjust it later if needed",
       "revId": "9deaeb8b97f431545bef130ccc3e72f92bdb0709",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -423,7 +423,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			if (srcPath.isAbsolute()) {
 				uri = srcPath.toUri();
 			} else {
-				uri = buildDirectoryURI.resolve(arg);
+				try {
+					uri = buildDirectoryURI.resolve(arg);
+				} catch (IllegalArgumentException e) {
+					// Bad URI
+					continue;
+				}
 			}
 
 			for (IFile resource : root.findFilesForLocationURI(uri)) {

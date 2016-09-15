@@ -2142,6 +2142,7 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_CORRECTION_INDICATION, false);
 		store.setDefault(EDITOR_SHOW_SEGMENTS, false);
 		store.setDefault(PREF_SHOW_CU_CHILDREN, true);
+		store.setDefault(OUTLINE_LINK_TO_EDITOR, true);
 
 		// This option has to be turned on for the spelling checker too work.
 		store.setDefault(EDITOR_EVALUATE_TEMPORARY_PROBLEMS, true);

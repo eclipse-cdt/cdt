@@ -59,7 +59,7 @@ import org.junit.runners.Parameterized;
 public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 	final static private String EXEC_NAME = "ConsoleSyncTestApp.exe";
 
-	final static private int DEFAULT_TIMEOUT = 1000;
+	final static private int DEFAULT_TIMEOUT = TestsPlugin.massageTimeout(1000);
 	final static private TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
 	final static private String NEW_VAR_VALUE = "0x12345678";
 	final static private int NEW_VAR_SIZE = 4; // The number of bytes of NEW_VAR_VALUE

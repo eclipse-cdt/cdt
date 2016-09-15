@@ -534,7 +534,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		fExpService.getExecutor().submit(writeQuery);
 		writeQuery.get();
 
-		IExpressionChangedDMEvent event = eventWaitor.waitForEvent(1000);
+		IExpressionChangedDMEvent event = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
 		assertThat(event.getDMContext(), is(exprDmc));
 
 		// Read the new value in decimal and check that it is what we expected
@@ -3539,7 +3539,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
     	};
     	
         fSession.getExecutor().execute(query);
-        String value = query.get(500, TimeUnit.MILLISECONDS);
+        String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals("65", value);
 	    
 		final IExpressionDMContext[] castChildren = getChildren(castExprDmc, new String[] {"*((char*)(int_ptr))"});
@@ -3557,7 +3557,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 			}
     	};        
     	fSession.getExecutor().execute(query);
-        value = query.get(500, TimeUnit.MILLISECONDS);
+        value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals("65 'A'", value);
 		
 		// Now check that the casted type still remembers what its original type is
@@ -3606,7 +3606,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	    	};
 
 	    	fSession.getExecutor().execute(query);
-	    	String value = query.get(500, TimeUnit.MILLISECONDS);
+	    	String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
 	    }
 	    
@@ -3664,7 +3664,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	    	};
 
 	    	fSession.getExecutor().execute(query);
-	    	String value = query.get(500, TimeUnit.MILLISECONDS);
+	    	String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
 	    }
 	    
@@ -3722,7 +3722,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	    	};
 
 	    	fSession.getExecutor().execute(query);
-	    	String value = query.get(500, TimeUnit.MILLISECONDS);
+	    	String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i-4], value);
 	    }
 	    
@@ -3787,7 +3787,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	    	};
 
 	    	fSession.getExecutor().execute(query);
-	    	String value = query.get(500, TimeUnit.MILLISECONDS);
+	    	String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
 	    }	    
 		
@@ -3858,7 +3858,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	    	};
 
 	    	fSession.getExecutor().execute(query);
-	    	String value = query.get(500, TimeUnit.MILLISECONDS);
+	    	String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
 	    }	    
 		
@@ -3927,7 +3927,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	    	};
 
 	    	fSession.getExecutor().execute(query);
-	    	String value = query.get(500, TimeUnit.MILLISECONDS);
+	    	String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	    	assertEquals(expectedValues[i], value);
 	    }	    
 		
@@ -3969,7 +3969,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 			}
 		};
 		fSession.getExecutor().execute(query);
-		IExpressionDMData data = query.get(500, TimeUnit.MILLISECONDS);
+		IExpressionDMData data = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals("testSimpleReturn() returned", data.getName());
 
 		// Now check the actual value using the expression service
@@ -4019,7 +4019,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 			}
 		};
 		fSession.getExecutor().execute(query);
-		IExpressionDMData data = query.get(500, TimeUnit.MILLISECONDS);
+		IExpressionDMData data = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals("testComplexReturn() returned", data.getName());
 
 		// Now check the content of the complex return expression
@@ -4088,7 +4088,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
     	};
     	
         fSession.getExecutor().execute(query);
-        String value = query.get(500, TimeUnit.MILLISECONDS);
+        String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals("8", value);
 
     	// Now fetch the child through its parent
@@ -4135,7 +4135,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
     	};
     	
         fSession.getExecutor().execute(query);
-        value = query.get(500, TimeUnit.MILLISECONDS);
+        value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals("8", value);
     }
 
@@ -4199,7 +4199,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
     	};
     	
         fSession.getExecutor().execute(query);
-        String value = query.get(500, TimeUnit.MILLISECONDS);
+        String value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals("8", value);
 
     	// Now access the child directly
@@ -4219,7 +4219,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
     	};
     	
         fSession.getExecutor().execute(query);
-        value = query.get(500, TimeUnit.MILLISECONDS);
+        value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals("8", value);
     }
 
@@ -4257,7 +4257,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
     	};
     	
         fSession.getExecutor().execute(query);
-        String type = query.get(500, TimeUnit.MILLISECONDS);
+        String type = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertEquals(expectedType, type);
 		return type;
     }

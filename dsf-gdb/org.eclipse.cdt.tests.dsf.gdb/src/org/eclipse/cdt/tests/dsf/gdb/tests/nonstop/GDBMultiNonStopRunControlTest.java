@@ -125,7 +125,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
     	V result = null;
     	try {
     		fMultiRun.getExecutor().execute(query);
-    		result = query.get(500, TimeUnit.MILLISECONDS);
+    		result = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -343,8 +343,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
@@ -443,12 +443,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
@@ -547,12 +547,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -661,7 +661,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100); // Wait for confirmation thread resumed
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation thread resumed
 
 		// Also confirm that all threads are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -722,8 +722,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
@@ -737,7 +737,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation that one thread resumed
 
 		// Also confirm that only one threads is running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -756,7 +756,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 
 		// Make sure no other running event arrives
 		try {
-			eventWaitorRunning.waitForEvent(500);
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500));
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -777,8 +777,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
@@ -792,8 +792,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation first thread resumed
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation second thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation first thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation second thread resumed
 
 		// Also confirm that all threads are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -818,12 +818,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
@@ -838,7 +838,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread resumed
 
 		// Also confirm that all threads are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -849,7 +849,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no threads to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -869,12 +869,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -901,7 +901,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no threads to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -964,7 +964,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100);  // Thread should interrupt
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // Thread should interrupt
 
 		// Confirm that all threads are suspended
 		result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -988,8 +988,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
@@ -1024,12 +1024,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected two threads but got " + threads.length, threads.length == 2);
@@ -1041,7 +1041,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread stopped
 
 		// Also confirm that all threads are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -1066,12 +1066,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -1086,7 +1086,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm one thread was suspended
 
 		// Also confirm that some but not all threads are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -1103,7 +1103,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected that not all threads are suspended, but they are", result);
 
 		try {
-			eventWaitor.waitForEvent(500); // Make sure no other stopped event arrives
+			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other stopped event arrives
 			fail("Got an unexpected stopped event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -1124,12 +1124,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -1143,8 +1143,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
-		eventWaitor.waitForEvent(100);  // confirm the other thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm one thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm the other thread was suspended
 
 		// Also confirm that all threads are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -1378,8 +1378,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IContainerDMContext[] processes =
 				new IContainerDMContext[] { SyncUtil.getContainerContext() };
@@ -1478,12 +1478,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IContainerDMContext[] processes =
 				new IContainerDMContext[] { SyncUtil.getContainerContext() };
@@ -1582,12 +1582,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -1885,8 +1885,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
@@ -1989,12 +1989,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
@@ -2097,12 +2097,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
@@ -2205,12 +2205,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -2322,8 +2322,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
@@ -2426,12 +2426,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 2);
@@ -2534,12 +2534,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -2651,7 +2651,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100); // Wait for confirmation process resumed
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation process resumed
 
 		// Also confirm that process is running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -2712,8 +2712,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
@@ -2727,8 +2727,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that one thread resumed
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that second thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation that one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation that second thread resumed
 
 		// Also confirm that all processes are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -2753,12 +2753,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
@@ -2773,7 +2773,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread resumed
 
 		// Also confirm that all threads are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -2784,7 +2784,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no process to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -2804,12 +2804,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -2836,7 +2836,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no threads to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -2910,7 +2910,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100);  // Thread should interrupt
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // Thread should interrupt
 
 		// Confirm that all threads are suspended
 		result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -2934,8 +2934,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
@@ -2981,12 +2981,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IExecutionDMContext[] processes = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext() };
@@ -3001,7 +3001,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread stopped
 
 		// Also confirm that all processes are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3034,12 +3034,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -3056,8 +3056,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
-		eventWaitor.waitForEvent(100);  // confirm the other thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm one thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm the other thread was suspended
 
 		// Also confirm that all processes are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3122,7 +3122,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100); // Wait for confirmation process resumed
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation process resumed
 
 		// Also confirm that process is running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3133,7 +3133,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no contexts to be suspended, but found some", result);
 
 		try {
-			eventWaitor.waitForEvent(500); // Make sure no running events arrive
+			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3179,7 +3179,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no contexts to be suspended, but found some", result);
 
 		try {
-			eventWaitor.waitForEvent(500); // Make sure no running events arrive
+			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3201,8 +3201,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
@@ -3216,8 +3216,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that one thread resumed
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that second thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation that one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation that second thread resumed
 
 		// Also confirm that all processes are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3228,7 +3228,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no process to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3250,12 +3250,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
@@ -3270,7 +3270,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread resumed
 
 		// Also confirm that all threads are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3281,7 +3281,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no process to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3303,12 +3303,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(1) };
@@ -3323,7 +3323,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread resumed
 
 		// Also confirm that all threads are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3334,7 +3334,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no process to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3355,12 +3355,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -3387,7 +3387,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no threads to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3463,7 +3463,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100);  // Thread should interrupt
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // Thread should interrupt
 
 		// Confirm that all threads are suspended
 		result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3488,8 +3488,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
@@ -3536,12 +3536,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
@@ -3556,7 +3556,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread stopped
 
 		// Also confirm that all processes are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3590,12 +3590,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(1) };
@@ -3610,7 +3610,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread stopped
 
 		// Also confirm that all processes are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3644,12 +3644,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -3666,8 +3666,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
-		eventWaitor.waitForEvent(100);  // confirm the other thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm one thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm the other thread was suspended
 
 		// Also confirm that all processes are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3730,8 +3730,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
@@ -3745,8 +3745,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that one thread resumed
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation that second thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation that one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation that second thread resumed
 
 		// Also confirm that all processes are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3757,7 +3757,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no process to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3779,12 +3779,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
@@ -3799,7 +3799,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorRunning.waitForEvent(100); // Wait for confirmation one thread resumed
+		eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread resumed
 
 		// Also confirm that all threads are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3810,7 +3810,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no process to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no other running event arrives
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3831,12 +3831,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -3863,7 +3863,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		assertFalse("expected no threads to be suspended, but found some", result);
 
 		try {
-			eventWaitorRunning.waitForEvent(500); // Make sure no running events arrive
+			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
 			// Timeout expected.  Success.
@@ -3888,8 +3888,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-		eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-		eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
@@ -3936,12 +3936,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitorStopped.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitorStopped.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] {
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0), SyncUtil.getExecutionContext(1) };
@@ -3956,7 +3956,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitorStopped.waitForEvent(100); // Wait for confirmation one thread stopped
+		eventWaitorStopped.waitForEvent(TestsPlugin.massageTimeout(100)); // Wait for confirmation one thread stopped
 
 		// Also confirm that all processes are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {
@@ -3990,12 +3990,12 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
                 new ServiceEventWaitor<MIStoppedEvent>(fMultiRun.getSession(), MIStoppedEvent.class);
 
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
-        eventWaitor.waitForEvent(2000); // Wait for second thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
 
 		// Now resume program again and wait for one of the two threads to stop
 		SyncUtil.resumeAll();
-        eventWaitor.waitForEvent(2000); // Wait for first thread to stop
+        eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
 
 		// Now resume the thread again to have both running
 		SyncUtil.resumeAll();
@@ -4012,8 +4012,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(100);  // confirm one thread was suspended
-		eventWaitor.waitForEvent(100);  // confirm the other thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm one thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100));  // confirm the other thread was suspended
 
 		// Also confirm that all processes are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {

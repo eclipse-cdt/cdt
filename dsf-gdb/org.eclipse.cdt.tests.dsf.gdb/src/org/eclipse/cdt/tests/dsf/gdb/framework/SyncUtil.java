@@ -54,8 +54,8 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
-import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
+import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
@@ -74,7 +74,6 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil.DefaultTimeouts.ETimeout;
@@ -134,28 +133,20 @@ public class SyncUtil {
 		return retVal;
 	}
 
-	public static MIStoppedEvent step(final StepType stepType, int numSteps, int timeout) throws Throwable {
-	    MIStoppedEvent retVal = null;
-		for (int i=0; i<numSteps; i++) {
-		    retVal = step(stepType, timeout);
-		}
-		return retVal;
-	}
-
 	public static MIStoppedEvent step(StepType stepType) throws Throwable {
 		return step(stepType, DefaultTimeouts.get(ETimeout.step));
 	}
 
-	public static MIStoppedEvent step(StepType stepType, int timeout) throws Throwable {
+	public static MIStoppedEvent step(StepType stepType, int massagedTimeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		return step(containerDmc, stepType, timeout);
+		return step(containerDmc, stepType, massagedTimeout);
 	}
 	
 	public static MIStoppedEvent step(IExecutionDMContext dmc, StepType stepType) throws Throwable {
 		return step(dmc, stepType, DefaultTimeouts.get(ETimeout.step));		
 	}
 	
-	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, int timeout) throws Throwable {
+	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, int massagedTimeout) throws Throwable {
 		
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
 			new ServiceEventWaitor<MIStoppedEvent>(
@@ -184,22 +175,22 @@ public class SyncUtil {
 		});
 
 		// Wait for the execution to suspend after the step
-		return eventWaitor.waitForEvent(timeout);
+		return eventWaitor.waitForEvent(massagedTimeout);
 	}
 
 	public static String addBreakpoint(String location) throws Throwable {
 		return addBreakpoint(location, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
 
-	public static String addBreakpoint(String location, int timeout) throws Throwable {
-		return addBreakpoint(location, true, timeout);
+	public static String addBreakpoint(String location, int massagedTimeout) throws Throwable {
+		return addBreakpoint(location, true, massagedTimeout);
 	}
 
 	public static String addBreakpoint(String location, boolean temporary) throws Throwable {
 		return addBreakpoint(location, temporary, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
 	
-	public static String addBreakpoint(final String location, final boolean temporary, int timeout)
+	private static String addBreakpoint(final String location, final boolean temporary, int massagedTimeout)
 							throws Throwable {
 
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
@@ -215,7 +206,7 @@ public class SyncUtil {
 		};
 		
 		fGdbControl.getExecutor().execute(query);
-		MIBreakInsertInfo info = query.get(timeout, TimeUnit.MILLISECONDS);
+		MIBreakInsertInfo info = query.get(massagedTimeout, TimeUnit.MILLISECONDS);
         return info.getMIBreakpoints()[0].getNumber();
 	}
 
@@ -232,7 +223,7 @@ public class SyncUtil {
 		};
 		
 		fGdbControl.getExecutor().execute(query);
-		MIBreakListInfo info = query.get(timeout, TimeUnit.MILLISECONDS);
+		MIBreakListInfo info = query.get(TestsPlugin.massageTimeout(timeout), TimeUnit.MILLISECONDS);
 		MIBreakpoint[] breakpoints = info.getMIBreakpoints();
 		
 		String[] result = new String[breakpoints.length];
@@ -241,30 +232,8 @@ public class SyncUtil {
 		}
 		return result;
 	}
-	
-	public static void deleteBreakpoint(String breakpointIndex, int timeout) throws Throwable {
-		deleteBreakpoint(new String[] {breakpointIndex}, timeout);
-	}
-	
-	public static void deleteBreakpoint(final String[] breakpointIndices, int timeout) throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-        final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
 
-        Query<MIInfo> query = new Query<MIInfo>() {
-			@Override
-			protected void execute(DataRequestMonitor<MIInfo> rm) {
-				fGdbControl.queueCommand(
-						fCommandFactory.createMIBreakDelete(bpTargetDmc, breakpointIndices),
-						rm);
-			}
-		};
-		
-		fGdbControl.getExecutor().execute(query);
-		query.get(timeout, TimeUnit.MILLISECONDS);
-	}
-
-	
-	public static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc, int timeout) throws Throwable {
+	private static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
             new ServiceEventWaitor<MIStoppedEvent>(
                     fSession,
@@ -282,19 +251,21 @@ public class SyncUtil {
 		});
 
 		// Wait for the execution to suspend after the step
-		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(timeout));
+		return eventWaitor.waitForEvent(massagedTimeout);
 	}
 
 	public static MIStoppedEvent resumeUntilStopped() throws Throwable {
-		return resumeUntilStopped(DefaultTimeouts.get(ETimeout.resumeUntilStopped));
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        // Don't call resumeUtilStopped(int timeout) as this will duplicate the timeout massage 
+		return resumeUntilStopped(containerDmc, DefaultTimeouts.get(ETimeout.resumeUntilStopped));
 	}
 
 	public static MIStoppedEvent resumeUntilStopped(int timeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		return resumeUntilStopped(containerDmc, timeout);
+		return resumeUntilStopped(containerDmc, TestsPlugin.massageTimeout(timeout));
 	}
 
-	public static MIRunningEvent resume(final IExecutionDMContext dmc, int timeout) throws Throwable {
+	public static MIRunningEvent resume(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
         final ServiceEventWaitor<MIRunningEvent> eventWaitor =
             new ServiceEventWaitor<MIRunningEvent>(
                     fSession,
@@ -312,7 +283,7 @@ public class SyncUtil {
 		});
 
 		// Wait for the execution to start after the step
-    	return eventWaitor.waitForEvent(timeout);			
+    	return eventWaitor.waitForEvent(massagedTimeout);
 	}
 
 	public static boolean canResume(final IExecutionDMContext execDmc) throws Throwable {	
@@ -330,7 +301,7 @@ public class SyncUtil {
         };
 
         fRunControl.getExecutor().execute(query);
-        boolean canResume = query.get(500, TimeUnit.MILLISECONDS);
+        boolean canResume = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
         return canResume;
 	}
 
@@ -338,32 +309,33 @@ public class SyncUtil {
 		return resume(DefaultTimeouts.get(ETimeout.resume));
 	}
 
-	public static MIRunningEvent resume(int timeout) throws Throwable {
+	public static MIRunningEvent resume(int massagedTimeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		return resume(containerDmc, timeout);
+		return resume(containerDmc, massagedTimeout);
 	}
 
 	public static void resumeAll() throws Throwable {
 		resumeAll(DefaultTimeouts.get(ETimeout.resume));
 	}
 
-	public static void resumeAll(int timeout) throws Throwable {
+	public static void resumeAll(int massagedTimeout) throws Throwable {
         IMIExecutionDMContext[] threadDmcs = SyncUtil.getExecutionContexts();
         for (IMIExecutionDMContext thread : threadDmcs) {
         	if (canResume(thread)) {
-        		resume(thread, timeout);
+        		resume(thread, massagedTimeout);
         	}
         }
 	}
 
 	public static MIStoppedEvent waitForStop() throws Throwable {
-		return waitForStop(DefaultTimeouts.get(ETimeout.waitForStop));
+		// Use a direct value to avoid double call to TestsPlugin.massageTimeout
+		return waitForStop(10000);
 	}
 	
 	// This method is risky.  If the command to resume/step execution
 	// is sent and the stopped event is received before we call this method
 	// here, then we will miss the stopped event.
-	// Normally, one shoudl initialize the ServiveEventWaitor before
+	// Normally, one should initialize the ServiveEventWaitor before
 	// triggering the resume to make sure not to miss the stopped event.
 	// However, in some case this method will still work, for instance
 	// if there is a sleep in the code between the resume and the time
@@ -387,7 +359,9 @@ public class SyncUtil {
 		// Note that if there were other breakpoints set ahead of this one,
 		// they will stop execution earlier than planned
 		addBreakpoint(location, true, timeout);
-		return resumeUntilStopped(timeout);
+		// Don't provide a timeout so we use the resume default timeout for this step 
+		// if a timeout value is provided via DefaultTimeouts the value will be massaged twice
+		return resumeUntilStopped();
 	}
 	
     public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Exception {
@@ -408,7 +382,7 @@ public class SyncUtil {
 		};
 
 		fSession.getExecutor().execute(query);
-		return query.get(500, TimeUnit.MILLISECONDS);
+		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     }
 	
     /**
@@ -432,7 +406,7 @@ public class SyncUtil {
         };
 
         fSession.getExecutor().execute(query);
-        return query.get(500, TimeUnit.MILLISECONDS);
+        return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     }
 
     public static IFrameDMData getFrameData(final IExecutionDMContext execCtx, final int level) throws Throwable {
@@ -452,7 +426,7 @@ public class SyncUtil {
     	};
 
     	fSession.getExecutor().execute(query);
-    	return query.get(500, TimeUnit.MILLISECONDS);
+    	return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     }
     
     public static IFrameDMData getFrameData(final int threadId, final int level) throws Throwable {
@@ -476,7 +450,7 @@ public class SyncUtil {
 		};
 
 		fSession.getExecutor().execute(query);
-		return query.get(500, TimeUnit.MILLISECONDS);
+		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
     public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
@@ -740,7 +714,7 @@ public class SyncUtil {
         };
 
         fGdbControl.getExecutor().execute(query);
-        boolean canRestart = query.get(500, TimeUnit.MILLISECONDS);
+        boolean canRestart = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
         return canRestart;
 	}
 
@@ -775,7 +749,7 @@ public class SyncUtil {
         };
 
         fGdbControl.getExecutor().execute(query2);
-        query2.get(500, TimeUnit.MILLISECONDS);
+        query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
         
         
  		MIStoppedEvent event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
@@ -823,7 +797,7 @@ public class SyncUtil {
     	};
 
     	fSession.getExecutor().execute(query);
-    	IVariableDMData[] result = query.get(500, TimeUnit.MILLISECONDS);
+    	IVariableDMData[] result = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	return result;
     }
 

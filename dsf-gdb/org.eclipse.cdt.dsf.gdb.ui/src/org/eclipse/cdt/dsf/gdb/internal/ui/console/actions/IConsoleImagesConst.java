@@ -8,7 +8,7 @@
  * Contributors:
  * Marc-Andre Laperle - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.console;
+package org.eclipse.cdt.dsf.gdb.internal.ui.console.actions;
 
 /**
  * @since 2.1

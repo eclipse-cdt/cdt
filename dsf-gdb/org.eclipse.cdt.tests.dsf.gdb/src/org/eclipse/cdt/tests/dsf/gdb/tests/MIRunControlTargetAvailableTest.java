@@ -129,7 +129,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -184,7 +184,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -246,7 +246,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -317,7 +317,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -383,7 +383,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -462,7 +462,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         boolean caughtError = false;
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -526,7 +526,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -601,7 +601,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -670,7 +670,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -744,7 +744,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -811,7 +811,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -883,7 +883,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
         };
     	try {
     		fRunCtrl.getExecutor().execute(query);
-    		query.get(500, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {

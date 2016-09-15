@@ -339,7 +339,7 @@ public class Conversions {
 	static Cost listInitializationSequenceHelper(EvalInitList arg, IType target, UDCMode udc, boolean isDirect, IASTNode point) throws DOMException {
 		IType listType= getInitListType(target);
 		if (listType == null && target instanceof IArrayType) {
-			Long arraySize = ((IArrayType) target).getSize().numericalValue();
+			Number arraySize = ((IArrayType) target).getSize().numberValue();
 			if (arraySize != null) {
 				IType elementType = ((IArrayType) target).getType();
 				// TODO(nathanridge): If there are fewer initializer clauses than the array size,
@@ -608,7 +608,7 @@ public class Conversions {
 		ICPPConstructor[] filteredConstructors = constructors;
 		if (expandedArgs.length == 1) {
 			filteredConstructors= new ICPPConstructor[constructors.length];
-			int j=0;
+			int j= 0;
 			for (ICPPConstructor ctor : constructors) {
 				if (ctor.getRequiredArgumentCount() < 2) {
 					IType[] ptypes= ctor.getType().getParameterTypes();
@@ -633,6 +633,11 @@ public class Conversions {
 		} else {
 			c= Cost.NO_CONVERSION;
 		}
+		// This cost came from listInitializationSequence() with an std::initializer_list
+		// type as the list initialization target. From the point of view of the caller,
+		// however, the target is the class type, not std::initializer_list, so update it
+		// accordingly.
+		c.setListInitializationTarget(t);
 		return c;
 	}
 

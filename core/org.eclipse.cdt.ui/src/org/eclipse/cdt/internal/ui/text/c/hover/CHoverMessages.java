@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ public final class CHoverMessages extends NLS {
 	public static String AbstractAnnotationHover_message_singleQuickFix;
 	public static String AbstractAnnotationHover_message_multipleQuickFix;
 
+	public static String CExpandHover_tooltip_noBreakpoint;
 	public static String CMacroExpansionControl_exploreMacroExpansion;
 	public static String CMacroExpansionControl_statusText;
 

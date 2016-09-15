@@ -178,10 +178,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -221,6 +221,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
@@ -1990,9 +1991,9 @@ public class CPPVisitor extends ASTQueries {
 	        		IASTInitializerClause clause = ((IASTEqualsInitializer) initializer).getInitializerClause();
 	        		if (clause instanceof IASTInitializerList) {
 	        			IASTInitializerClause[] clauses = ((IASTInitializerList) clause).getClauses();
-	        			sizeValue = Value.create(clauses.length);
+	        			sizeValue = IntegralValue.create(clauses.length);
 	        		} else if (clause instanceof ICPPASTLiteralExpression) {
-	        			ICPPEvaluation value = ((ICPPASTLiteralExpression) clause).getEvaluation();
+	        			ICPPEvaluation value = ((ICPPEvaluationOwner) clause).getEvaluation();
 	        			IType valueType = value.getType(clause);
 	        			if (valueType instanceof IArrayType) {
 	        				sizeValue = ((IArrayType) valueType).getSize();
@@ -2028,9 +2029,14 @@ public class CPPVisitor extends ASTQueries {
 			throw new IllegalArgumentException();
 		}
 
-		if (declSpec instanceof ICPPASTSimpleDeclSpecifier &&
-				((ICPPASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
-			return createAutoType(declSpec, declarator);
+		if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
+			ICPPASTSimpleDeclSpecifier simpleDeclSpecifier = (ICPPASTSimpleDeclSpecifier) declSpec;
+			int declSpecifierType = simpleDeclSpecifier.getType();
+			if (declSpecifierType == IASTSimpleDeclSpecifier.t_auto) {
+				return createAutoType(declSpec, declarator);
+			} else if (declSpecifierType == IASTSimpleDeclSpecifier.t_decltype_auto) {
+				return createDecltypeAutoType(declarator, simpleDeclSpecifier);
+			}
 		}
 
 		IType type = createType(declSpec);
@@ -2047,7 +2053,7 @@ public class CPPVisitor extends ASTQueries {
 			if (t instanceof IArrayType) {
 				IArrayType at= (IArrayType) t;
 				if (at.getSize() == null) {
-					type= new CPPArrayType(at.getType(), Value.create(((IASTInitializerList) initClause).getSize()));
+					type= new CPPArrayType(at.getType(), IntegralValue.create(((IASTInitializerList) initClause).getSize()));
 				}
 			}
 		}
@@ -2056,6 +2062,41 @@ public class CPPVisitor extends ASTQueries {
 			type= new CPPParameterPackType(type);
 		}
 		return type;
+	}
+
+	private static IType createDecltypeAutoType(IASTDeclarator declarator, ICPPASTSimpleDeclSpecifier simpleDeclSpecifier) {
+		IASTInitializerClause initializerClause = getInitializerClauseForDecltypeAuto(declarator);
+		if (initializerClause instanceof IASTExpression) {
+			return getDeclType((IASTExpression) initializerClause);
+		}
+		return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE);
+	}
+
+	private static IASTInitializerClause getInitializerClauseForDecltypeAuto(IASTDeclarator declarator) {
+		IASTInitializer initializer = declarator.getInitializer();
+		if (initializer == null) {
+			ICPPASTNewExpression newExpression = CPPVisitor.findAncestorWithType(declarator, ICPPASTNewExpression.class);
+			if (newExpression != null) {
+				initializer = newExpression.getInitializer();
+			}
+		}
+		if (initializer instanceof IASTEqualsInitializer) {
+			return ((IASTEqualsInitializer) initializer).getInitializerClause();
+		} else if (initializer instanceof ICPPASTConstructorInitializer) {
+			ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
+			IASTInitializerClause[] arguments = constructorInitializer.getArguments();
+			if (arguments.length == 1) {
+				return arguments[0];
+			}
+		} else if (initializer instanceof IASTInitializerList) {
+			IASTInitializerList initializerList = (IASTInitializerList) initializer;
+			IASTInitializerClause[] clauses = initializerList.getClauses();
+			if (clauses.length == 1) {
+				return clauses[0];
+			}
+		}
+
+		return null;
 	}
 
 	private static IType createAutoType(final IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
@@ -2157,7 +2198,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		}
 		type = decorateType(type, declSpec, declarator);
-		final ICPPEvaluation evaluation = initClause.getEvaluation();
+		final ICPPEvaluation evaluation = ((ICPPEvaluationOwner)initClause).getEvaluation();
 		initType= evaluation.getType(declarator);
 		valueCat= evaluation.getValueCategory(declarator);
 		if (initType == null || initType instanceof ISemanticProblem) {
@@ -2281,41 +2322,48 @@ public class CPPVisitor extends ASTQueries {
 	 */
 	private static IType getDeclType(ICPPASTSimpleDeclSpecifier spec) {
 		IASTExpression expr = spec.getDeclTypeExpression();
-		if (expr == null)
+		if (expr == null) {
 			return null;
+		}
+		int specifierType = spec.getType();
+		if (specifierType == IASTSimpleDeclSpecifier.t_decltype) {
+			return getDeclType(expr);
+		}
+		return expr.getExpressionType();
+	}
 
-		if (spec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
-			IASTName namedEntity= null;
-			if (expr instanceof IASTIdExpression) {
-				namedEntity= ((IASTIdExpression) expr).getName();
-			} else if (expr instanceof IASTFieldReference) {
-				namedEntity= ((IASTFieldReference) expr).getFieldName();
+	/**
+	 * Computes the type for an expression in decltype(expr) context.
+	 */
+	private static IType getDeclType(IASTExpression expr) {
+		IASTName namedEntity= null;
+		if (expr instanceof IASTIdExpression) {
+			namedEntity= ((IASTIdExpression) expr).getName();
+		} else if (expr instanceof IASTFieldReference) {
+			namedEntity= ((IASTFieldReference) expr).getFieldName();
+		}
+		if (namedEntity != null) {
+			IBinding b= namedEntity.resolvePreBinding();
+			if (b instanceof IType) {
+				return (IType) b;
 			}
-			if (namedEntity != null) {
-				IBinding b= namedEntity.resolvePreBinding();
-				if (b instanceof IType) {
-					return (IType) b;
-				}
-				if (b instanceof IVariable) {
-					return ((IVariable) b).getType();
-				}
-				if (b instanceof IFunction) {
-					return ((IFunction) b).getType();
-				}
+			if (b instanceof IVariable) {
+				return ((IVariable) b).getType();
+			}
+			if (b instanceof IFunction) {
+				return ((IFunction) b).getType();
 			}
 		}
 		IType type = expr.getExpressionType();
-		if (spec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
-			switch (expr.getValueCategory()) {
-			case XVALUE:
-				type= new CPPReferenceType(type, true);
-				break;
-			case LVALUE:
-				type= new CPPReferenceType(type, false);
-				break;
-			case PRVALUE:
-				break;
-			}
+		switch (expr.getValueCategory()) {
+		case XVALUE:
+			type= new CPPReferenceType(type, true);
+			break;
+		case LVALUE:
+			type= new CPPReferenceType(type, false);
+			break;
+		case PRVALUE:
+			break;
 		}
 		return type;
 	}

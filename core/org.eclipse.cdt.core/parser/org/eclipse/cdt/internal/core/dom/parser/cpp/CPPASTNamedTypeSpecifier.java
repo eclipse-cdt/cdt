@@ -92,7 +92,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
         if (name != null && !name.accept(action))
         	return false;
         
-        if (action.shouldVisitDeclSpecifiers ){
+        if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT:
 	            	return false;

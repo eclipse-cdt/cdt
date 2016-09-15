@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -921,7 +921,7 @@ public class MachO64 {
 			return null;
 		}
 		
-		int ndx = Arrays.binarySearch(lines, new Long(value));
+		int ndx = Arrays.binarySearch(lines, Long.valueOf(value));
 		if (ndx >= 0 )
 			return lines[ndx];
 		if (ndx == -1 ) {
@@ -1347,7 +1347,7 @@ public class MachO64 {
 //	}
 	
 	private String getCStr() throws IOException {
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		while(true ) {
 			byte tmp = efile.readByte();
 			if (tmp == 0)
@@ -1360,7 +1360,7 @@ public class MachO64 {
 	private String getLCStr(int len) throws IOException {
 		if (len == 0)
 			return EMPTY_STRING;
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		for (; len > 0; len--) {
 			byte tmp = efile.readByte();
 			if (tmp == 0)
@@ -1727,7 +1727,7 @@ public class MachO64 {
 			return null;
 		}
 
-		int ndx = Arrays.binarySearch(symbols, new Long(vma), symbol_comparator);
+		int ndx = Arrays.binarySearch(symbols, Long.valueOf(vma), symbol_comparator);
 		if (ndx > 0 )
 			return symbols[ndx];
 		if (ndx == -1 ) {

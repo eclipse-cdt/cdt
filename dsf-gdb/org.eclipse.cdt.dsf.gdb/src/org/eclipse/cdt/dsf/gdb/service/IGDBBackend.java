@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -156,4 +157,30 @@ public interface IGDBBackend extends IMIBackend {
 	 * @since 3.0
 	 */
 	public boolean getUpdateThreadListOnSuspend() throws CoreException;
+	
+	/**
+	 * @return True if the full GDB console should be used.  False otherwise.
+	 * 
+	 * @since 5.1
+	 */
+	default boolean isFullGdbConsoleSupported() {
+		return false;
+	}
+	
+	/**
+	 * @return The real GDB process that was started for the debug session
+	 * @since 5.1
+	 */
+	default Process getProcess() {
+		throw new RuntimeException();
+	}
+	
+	/**
+	 * Returns the PTY used when starting the GDB process.
+	 * Can be null if no PTY was used.
+	 * @since 5.1
+	 */
+	default PTY getProcessPty() {
+		return null;
+	}
 }

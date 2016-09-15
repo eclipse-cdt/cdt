@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,8 +88,8 @@ public class NewBuildConfigurationDialog extends Dialog {
 		des = prjd;
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 
-		newName = new String();
-		newDescription = new String();
+		newName = ""; //$NON-NLS-1$
+		newDescription = ""; //$NON-NLS-1$
 
 		parentConfig = null;
 		// The default behaviour is to clone the settings
@@ -110,9 +110,9 @@ public class NewBuildConfigurationDialog extends Dialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
-			String description = new String();
-			String nameAndDescription = new String();
-			String baseConfigNameAndDescription = new String();
+			String description = ""; //$NON-NLS-1$
+			String nameAndDescription = ""; //$NON-NLS-1$
+			String baseConfigNameAndDescription = ""; //$NON-NLS-1$
 
 			newName = configName.getText().trim();
 			newDescription = configDescription.getText().trim();
@@ -122,7 +122,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 				for (int i = 0; i < definedCfgds.length; i++) {
 					description = definedCfgds[i].getDescription();
 
-					if( (description == null) || (description.equals("")) ){	//$NON-NLS-1$
+					if( (description == null) || (description.isEmpty()) ){
 						nameAndDescription = definedCfgds[i].getName();
 					} else {
 						nameAndDescription = definedCfgds[i].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
@@ -138,7 +138,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 				for (int i = 0; i < defaultCfgds.length; i++) {
 					description = defaultCfgds[i].getDescription();
 
-					if( (description == null) || (description.equals("")) ) {	//$NON-NLS-1$
+					if( (description == null) || (description.isEmpty()) ) {
 						nameAndDescription = defaultCfgds[i].getName();
 					} else {
 						nameAndDescription = defaultCfgds[i].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
@@ -330,7 +330,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		if(defaultCfgds.length != 0){
 			String namesAndDescriptions[] = new String[defaultCfgds.length];
 			for (int i = 0; i < defaultCfgds.length; ++i) {
-				if ( (defaultCfgds[i].getDescription() == null) || defaultCfgds[i].getDescription().equals(""))	//$NON-NLS-1$
+				if ( (defaultCfgds[i].getDescription() == null) || defaultCfgds[i].getDescription().isEmpty())
 					namesAndDescriptions[i] = defaultCfgds[i].getName();
 				else
 					namesAndDescriptions[i] = defaultCfgds[i].getName() + "( " + defaultCfgds[i].getDescription() + " )";	//$NON-NLS-1$	//$NON-NLS-2$
@@ -362,7 +362,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 	private String [] getDefinedConfigNamesAndDescriptions() {
 		String [] namesAndDescriptions = new String[definedCfgds.length];
 		for (int i = 0; i < definedCfgds.length; ++i) {
-			if ( (definedCfgds[i].getDescription() == null) || definedCfgds[i].getDescription().equals(""))	//$NON-NLS-1$
+			if ( (definedCfgds[i].getDescription() == null) || definedCfgds[i].getDescription().isEmpty())
 				namesAndDescriptions[i] = definedCfgds[i].getName();
 			else
 				namesAndDescriptions[i] = definedCfgds[i].getName() + "( " + definedCfgds[i].getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$

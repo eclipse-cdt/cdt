@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,7 @@ public class AutotoolsUIPluginImages {
 	public static final String IMG_OBJS_WHILE= NAME_PREFIX + "while_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ACMACRO= NAME_PREFIX + "acmacro_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_AMMACRO= NAME_PREFIX + "ammacro_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_ACMACRO_ARG = NAME_PREFIX + "acmacro_arg_obj.gif"; // $NON-NLS-1$
+	public static final String IMG_OBJS_ACMACRO_ARG = NAME_PREFIX + "acmacro_arg_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_BUILD_CONFIG = NAME_PREFIX + "build_configs.gif"; //$NON-NLS-1$
 	public static final String IMG_CFG_CATEGORY = NAME_PREFIX + "config_category.gif"; //$NON-NLS-1$
 	public static final String IMG_CFG_TOOL = NAME_PREFIX + "config_tool.gif"; //$NON-NLS-1$
@@ -94,7 +94,7 @@ public class AutotoolsUIPluginImages {
 	}
 	
 	private static URL makeIconFileURL(String prefix, String name) {
-		StringBuffer buffer= new StringBuffer(prefix);
+		StringBuilder buffer= new StringBuilder(prefix);
 		buffer.append(name);
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());

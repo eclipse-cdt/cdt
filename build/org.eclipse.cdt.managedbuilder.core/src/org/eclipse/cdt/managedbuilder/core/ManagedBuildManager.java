@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2014 IBM Corporation and others.
+ *  Copyright (c) 2003, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -938,6 +938,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
 				&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
 				&& option.getValueType() != IOption.UNDEF_MACRO_FILES
+				&& !option.isForScannerDiscovery()
 					)) {
 				return;
 			}
@@ -1914,7 +1915,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 //			throw new CoreException(new Status(IStatus.ERROR,
 //					ManagedBuilderCorePlugin.PLUGIN_ID,
 //					IStatus.ERROR,
-//					new String(),
+//					"", //$NON-NLS-1$
 //					null));
 //		}
 //
@@ -3659,7 +3660,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	static public String calculateChildId(String superId, String suffix){
 		if(suffix == null)
-			suffix = new Integer(getRandomNumber()).toString();
+			suffix = Integer.toString(getRandomNumber());
 
 		String version = getVersionFromIdAndVersion(superId);
         if(version != null)
@@ -3714,7 +3715,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			}
 			if(prefix.segmentCount() > 0){
 				int diff = container.segmentCount() - prefix.segmentCount();
-				StringBuffer buff = new StringBuffer();
+				StringBuilder buff = new StringBuilder();
 				while(diff-- > 0)
 					buff.append("../");	//$NON-NLS-1$
 				path = new Path(buff.toString()).append(contents.removeFirstSegments(prefix.segmentCount()));
@@ -3931,7 +3932,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	public static String fullPathToLocation(String path){
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		return buf.append("${").append("workspace_loc:").append(path).append("}").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 

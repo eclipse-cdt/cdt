@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IResource;
  */
 public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerator {
 
-	private static final String EMPTY_STRING = new String();
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	public final String WHITESPACE = " ";	//$NON-NLS-1$
 
@@ -66,7 +65,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 		 * 	<tool_command> -P -MM -MG <tool_flags> $< >> $(@:%.<out_ext>=%.d)
 		 *
 		 */
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		// Get what we need to create the dependency generation command
 		IConfiguration config = info.getDefaultConfiguration();
@@ -80,7 +79,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 
 		// Work out the build-relative path for the output files
 		IContainer resourceLocation = resource.getParent();
-		String relativePath = new String();
+		String relativePath = ""; //$NON-NLS-1$
 		if (resourceLocation != null) {
 			relativePath += resourceLocation.getProjectRelativePath().toString();
 		}
@@ -96,23 +95,24 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			IManagedBuilderMakefileGenerator.DEP_EXT +
 			")'"; //$NON-NLS-1$
 
+		// Note that X + Y are in-lineable constants by the compiler
 		// Add the rule that will actually create the right format for the dep
-		buffer.append(IManagedBuilderMakefileGenerator.TAB +
-				IManagedBuilderMakefileGenerator.ECHO +
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				"-n" + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				depRule +
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				"$(dir $@)" + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				">" + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				depRule +
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				IManagedBuilderMakefileGenerator.LOGICAL_AND +
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				IManagedBuilderMakefileGenerator.LINEBREAK);
+		buffer.append(IManagedBuilderMakefileGenerator.TAB
+				+ IManagedBuilderMakefileGenerator.ECHO
+				+ IManagedBuilderMakefileGenerator.WHITESPACE
+				+ "-n" //$NON-NLS-1$
+				+ IManagedBuilderMakefileGenerator.WHITESPACE)
+				.append(depRule)
+				.append(IManagedBuilderMakefileGenerator.WHITESPACE
+				+ "$(dir $@)" //$NON-NLS-1$
+				+ IManagedBuilderMakefileGenerator.WHITESPACE
+				+ ">"
+				+ IManagedBuilderMakefileGenerator.WHITESPACE)
+				.append(depRule)
+				.append(IManagedBuilderMakefileGenerator.WHITESPACE
+				+ IManagedBuilderMakefileGenerator.LOGICAL_AND
+				+ IManagedBuilderMakefileGenerator.WHITESPACE
+				+ IManagedBuilderMakefileGenerator.LINEBREAK);
 
 		// Add the line that will do the work to calculate dependencies
 		IManagedCommandLineInfo cmdLInfo = null;
@@ -293,11 +293,12 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
             }
 		}
 
-		buffer.append(IManagedBuilderMakefileGenerator.TAB +
-				buildCmd +
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				">>" +  //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE + depRule );
+		buffer.append(IManagedBuilderMakefileGenerator.TAB)
+				.append(buildCmd)
+				.append(IManagedBuilderMakefileGenerator.WHITESPACE
+				+ ">>" //$NON-NLS-1$
+				+ IManagedBuilderMakefileGenerator.WHITESPACE)
+				.append(depRule);
 
 		return buffer.toString();
 	}

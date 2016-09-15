@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.launch.remote.Activator;
 import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
-import org.eclipse.cdt.launch.remote.RSEHelper;
+import org.eclipse.cdt.launch.remote.RemoteHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,7 +43,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.rse.core.RSECorePlugin;
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
@@ -67,17 +66,6 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			if (monitor == null)
 				monitor = new NullProgressMonitor();
 
-			if (!RSECorePlugin.isInitComplete(RSECorePlugin.INIT_MODEL)) {
-				monitor.subTask(Messages.RemoteRunLaunchDelegate_10);
-				try {
-					RSECorePlugin
-							.waitForInitCompletion(RSECorePlugin.INIT_MODEL);
-				} catch (InterruptedException e) {
-					throw new CoreException(new Status(IStatus.ERROR,
-							getPluginID(), IStatus.OK, e.getLocalizedMessage(),
-							e));
-				}
-			}
 
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
 				monitor.beginTask(Messages.RemoteRunLaunchDelegate_0, 100);
@@ -85,11 +73,11 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				try {
 					// Download the binary to the remote before debugging.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
-					RSEHelper.remoteFileDownload(config, launch, exePath.toString(),
+					RemoteHelper.remoteFileDownload(config, launch, exePath.toString(),
 							remoteExePath, new SubProgressMonitor(monitor, 80));
 					// Use a remote shell to launch the binary.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12);
-					remoteProcess = RSEHelper.remoteShellExec(config, prelaunchCmd,
+					remoteProcess = RemoteHelper.remoteShellExec(config, prelaunchCmd,
 							remoteExePath, arguments, new SubProgressMonitor(
 									monitor, 20));
 					DebugPlugin.newProcess(launch, remoteProcess,

@@ -14,6 +14,7 @@ package org.eclipse.cdt.managedbuilder.gnu.mingw;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.MinGW;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -32,44 +33,10 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 	private static final String BACKSLASH = java.io.File.separator;
 	private static final String PATH_DELIMITER = EnvironmentVariableManager.getDefault().getDefaultDelimiter();
 
-	/**
-	 * @return location of $MINGW_HOME/bin folder on the file-system.
-	 * @deprecated. Deprecated as of CDT 8.2. Note that MinGW root path in general may depend on configuration.
-	 *
-	 * If you use this do not cache results to ensure user preferences are accounted for.
-	 * Please rely on internal caching.
-	 */
-	@Deprecated
-	public static IPath getBinDir() {
-		IPath binDir = null;
-		String minGWHome = MinGW.getMinGWHome();
-		if (minGWHome != null) {
-			binDir = new Path(minGWHome).append("bin"); //$NON-NLS-1$
-		}
-		return binDir;
-	}
-
-	/**
-	 * @return location of $MINGW_HOME/msys/bin folder on the file-system.
-	 * @deprecated. Deprecated as of CDT 8.2. Note that MinGW root path in general may depend on configuration.
-	 *
-	 * If you use this do not cache results to ensure user preferences are accounted for.
-	 * Please rely on internal caching.
-	 */
-	@Deprecated
-	public static IPath getMsysBinDir() {
-		IPath msysBinDir = null;
-		String msysHome = MinGW.getMSysHome();
-		if (msysHome != null) {
-			msysBinDir = new Path(msysHome).append("bin"); //$NON-NLS-1$
-		}
-		return msysBinDir;
-	}
-
 	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration, IEnvironmentVariableProvider provider) {
 		if (variableName.equals(MinGW.ENV_MINGW_HOME)) {
-			IEnvironmentVariable varMinGWHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(MinGW.ENV_MINGW_HOME, null, false);
+			IEnvironmentVariable varMinGWHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(MinGW.ENV_MINGW_HOME, (ICConfigurationDescription) null, false);
 			if (varMinGWHome == null) {
 				// Contribute if the variable does not already come from workspace environment
 				String minGWHome = MinGW.getMinGWHome();
@@ -82,7 +49,7 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 			return null;
 
 		} else if (variableName.equals(MinGW.ENV_MSYS_HOME)) {
-			IEnvironmentVariable varMsysHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(MinGW.ENV_MSYS_HOME, null, false);
+			IEnvironmentVariable varMsysHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(MinGW.ENV_MSYS_HOME, (ICConfigurationDescription) null, false);
 			if (varMsysHome == null) {
 				// Contribute if the variable does not already come from workspace environment
 				String msysHome = MinGW.getMSysHome();
@@ -97,7 +64,8 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 		} else if (variableName.equals(ENV_PATH)) {
 			@SuppressWarnings("nls")
 			String path = "${" + MinGW.ENV_MINGW_HOME + "}" + BACKSLASH + "bin" + PATH_DELIMITER
-					+ "${" + MinGW.ENV_MSYS_HOME + "}" + BACKSLASH + "bin";
+					+ "${" + MinGW.ENV_MSYS_HOME + "}" + BACKSLASH + "bin" + PATH_DELIMITER
+					+ "${" + MinGW.ENV_MSYS_HOME + "}" + BACKSLASH + "usr" + BACKSLASH + "bin";
 			return new BuildEnvVar(ENV_PATH, path, IBuildEnvironmentVariable.ENVVAR_PREPEND);
 		}
 

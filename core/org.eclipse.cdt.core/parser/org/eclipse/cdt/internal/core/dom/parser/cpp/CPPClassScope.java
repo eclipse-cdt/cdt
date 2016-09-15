@@ -20,12 +20,11 @@ import static org.eclipse.cdt.core.parser.util.ArrayUtil.addAll;
 import static org.eclipse.cdt.core.parser.util.ArrayUtil.appendAt;
 import static org.eclipse.cdt.core.parser.util.ArrayUtil.trim;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType.UNSPECIFIED_TYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -56,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -65,9 +63,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.core.runtime.IStatus;
 
 /**
- * Base implementation for c++ scopes.
+ * Base implementation for C++ scopes.
  */
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
     private static final ICPPFunctionType DESTRUCTOR_FUNCTION_TYPE =
@@ -113,15 +112,15 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredConstructor()) {
 			// Default constructor: A(void)
-			boolean isConstexpr = ia.isDefaultConstructorConstexpr();
-			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY, isConstexpr);
+			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY, 
+					compTypeSpec);
 			implicits[i++] = m;
 			addBinding(m);
 		}
 
 		if (!ia.hasUserDeclaredCopyConstructor()) {
 			// Copy constructor: A(const A &)
-			ICPPMethod m = new CPPImplicitConstructor(this, className, params, false);
+			ICPPMethod m = new CPPImplicitConstructor(this, className, params, compTypeSpec);
 			implicits[i++] = m;
 			addBinding(m);
 		}
@@ -145,23 +144,17 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			addBinding(m);
 		}
 
-		ICPPBase[] inheritedConstructorsSources = findInheritedConstructorsSourceBases(compTypeSpec);
-    	ICPPMethod[] inheritedConstructors = createInheritedConsructors(this, className,
-    			inheritedConstructorsSources, ia.getParametersOfNontrivialUserDeclaredConstructors(),
-    			compTypeSpec);
-    	implicits = addAll(implicits, inheritedConstructors);
-    	for (ICPPMethod ctor : inheritedConstructors) {
-    		addBinding(ctor);
-    	}
+		markInheritedConstructorsSourceBases(compTypeSpec);
 	}
 
-	private ICPPBase[] findInheritedConstructorsSourceBases(ICPPASTCompositeTypeSpecifier compositeTypeSpec) {
+	/**
+	 * Marks bases that serve as sources of inherited constructors. 
+	 */
+	private void markInheritedConstructorsSourceBases(ICPPASTCompositeTypeSpecifier compositeTypeSpec) {
 		ICPPBase[] bases = ClassTypeHelper.getBases(getClassType(), compositeTypeSpec);
 		if (bases.length == 0)
-			return bases;
-		ICPPBase[] results = ICPPBase.EMPTY_BASE_ARRAY;
+			return;
 		IASTDeclaration[] members = compositeTypeSpec.getMembers();
-		int n = 0;
         for (IASTDeclaration member : members) {
 			if (member instanceof ICPPASTUsingDeclaration) {
 				IASTName name = ((ICPPASTUsingDeclaration) member).getName();
@@ -177,14 +170,18 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 					for (ICPPBase base : bases) {
 						IType baseClass = base.getBaseClassType();
 						if (type.isSameType(baseClass)) {
-							((CPPBaseClause) base).setInheritedConstructorsSource(true);
-							results = appendAt(results, n++, base);
+							if (base instanceof CPPBaseClause) {
+								((CPPBaseClause) base).setInheritedConstructorsSource(true);
+							} else {
+								CCorePlugin.log(IStatus.ERROR, "Unexpected type of base (" //$NON-NLS-1$
+										+ base.getClass().getSimpleName() + ") for '" //$NON-NLS-1$
+										+ compositeTypeSpec.getRawSignature() + "'"); //$NON-NLS-1$
+							}
 						}
 					}
 				}
 			}
         }
-        return trim(results, n);
 	}
 
 	private static boolean isConstructorNameForType(char[] lastName, IType type) {
@@ -196,74 +193,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			type = ((ITypedef) type).getType();
 		} 
 		return false;
-	}
-	
-	static ICPPMethod[] createInheritedConsructors(ICPPClassScope scope, char[] className,
-			ICPPBase[] bases, IType[][] existingConstructorParamTypes, IASTNode point) {
-		ICPPMethod[] inheritedConstructors = ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-		int n = 0;
-		for (ICPPBase base : bases) {
-			if (!base.isInheritedConstructorsSource())
-				continue;
-			IBinding baseClass = base.getBaseClass();
-        	if (!(baseClass instanceof ICPPClassType))
-        		continue;
-    		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors((ICPPClassType) baseClass, point);
-    		for (ICPPConstructor ctor : ctors) {
-    			ICPPParameter[] prototypeParams = ctor.getParameters();
-    			// 12.9-1 For each non-template constructor of X that has at least one parameter
-    			// with a default argument, the set of constructors that results from omitting
-    			// any ellipsis parameter specification and successively omitting parameters
-    			// with a default argument from the end of the parameter-type-list.
-    			for (int k = Math.max(ctor.getRequiredArgumentCount(), 1); k <= prototypeParams.length; k++) {
-        			if (k == 1 && isReferenceToClass(prototypeParams[0].getType(), (ICPPClassType) baseClass)) {
-        				continue;  // Skip the copy constructor.
-        			}
-        			if (findMatchingSignature(prototypeParams, k, existingConstructorParamTypes) < 0) {
-        				ICPPParameter[] params = deriveParameters(prototypeParams, k);
-        				CPPInheritedConstructor inheritedConstructor =
-        						new CPPInheritedConstructor(scope, className, ctor, params);
-        				inheritedConstructors = appendAt(inheritedConstructors, n++, inheritedConstructor);
-        			}
-    			}
-    		}
-		}
-		return trim(inheritedConstructors, n);
-	}
-
-	private static ICPPParameter[] deriveParameters(ICPPParameter[] prototypes, int count) {
-		ICPPParameter[] params = new ICPPParameter[count];
-		for (int i = 0; i < count; i++) {
-			params[i] = new CPPParameter(prototypes[i].getType(), i);
-		}
-		return params;
-	}
-
-	private static boolean isReferenceToClass(IType type, IType classType) {
-		type= SemanticUtil.getNestedType(type, TDEF);
-		if (type instanceof ICPPReferenceType && !((ICPPReferenceType) type).isRValueReference()) {
-			type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
-			return classType.isSameType(type);
-		}
-		return false;
-	}
-
-	private static int findMatchingSignature(ICPPParameter[] params, int numParams, IType[][] paramTypes) {
-		for (int i = 0; i < paramTypes.length; i++) {
-			if (doParameterTypesMatch(params, numParams, paramTypes[i]))
-				return i;
-		}
-		return -1;
-	}
-
-	private static boolean doParameterTypesMatch(ICPPParameter[] params, int numParams, IType[] types) {
-		if (numParams != types.length)
-			return false;
-		for (int i = 0; i < numParams; i++) {
-			if (!params[i].getType().isSameType(types[i]))
-				return false;
-		}
-		return true;
 	}
 
 	@Override

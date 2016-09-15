@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public class Stabs {
 	}
 
 	String makeString(long offset) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (; offset < stabstrData.length; offset++) {
 			byte b = stabstrData[(int) offset];
 			if (b == 0) {
@@ -188,7 +188,7 @@ public class Stabs {
 			if (stroff > 0) {
 				field = makeString(stroff);
 			} else {
-				field = new String();
+				field = ""; //$NON-NLS-1$
 			}
 			// Check for continuation and if any go to the next stab
 			// until we find a string that is not terminated with a
@@ -754,7 +754,7 @@ public class Stabs {
 	 * @return
 	 */
 	DebugType parseStabCrossRefType(String name, Reader reader) throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		int c = reader.read();
 		if (c == 's') {
 			sb.append("struct "); //$NON-NLS-1$
@@ -794,7 +794,7 @@ public class Stabs {
 						reader.reset();
 					}
 					int c;
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 
 					// get the width
 					//int width = 0;
@@ -854,7 +854,7 @@ public class Stabs {
 			case 'R' :
 				{
 					int c;
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 
 					// get the fp-Type
 					//int fpType = 0;
@@ -895,7 +895,7 @@ public class Stabs {
 					//DebugType type = parseStabType(name, reader);
 					parseStabType(name, reader);
 					int c = reader.read(); // semicolon
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					int nbits = 0;
 					while ((c = reader.read()) != -1) {
 						sb.append((char) c);
@@ -930,7 +930,7 @@ public class Stabs {
 				return null;
 			}
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			while ((c = reader.read()) != -1) {
 				if (c == ';') {
 					break;
@@ -997,7 +997,7 @@ public class Stabs {
 	DebugType parseStabEnumType(String name, Reader reader) throws IOException {
 		List<DebugEnumField> list = new ArrayList<DebugEnumField>();
 		String fieldName = null;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		int c;
 		while ((c = reader.read()) != -1) {
 			if (c == ':') {
@@ -1037,7 +1037,7 @@ public class Stabs {
 	 */
 	DebugType parseStabStructType(String name, TypeNumber typeNumber, boolean union, Reader reader) throws IOException {
 		int c;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while ((c = reader.read()) != -1) {
 			if (!Character.isDigit((char) c)) {
 				reader.reset();
@@ -1064,7 +1064,7 @@ public class Stabs {
 
 	void parseStabStructField(DebugStructType structType, Reader reader) throws IOException {
 		// get the field name.
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		int c;
 		while ((c = reader.read()) != -1) {
 			if (c != ':') {
@@ -1143,7 +1143,7 @@ public class Stabs {
 			return new DebugUnknownType(name);
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// read the lowerBound.
 		while ((c = reader.read()) != -1) {
@@ -1277,7 +1277,7 @@ public class Stabs {
 						DebugType type = parseStabType("", reader); //$NON-NLS-1$
 						c = reader.read();
 						if (c == ',') {
-							StringBuffer sb = new StringBuffer();
+							StringBuilder sb = new StringBuilder();
 							while ((c = reader.read()) != -1) {
 								sb.append((char) c);
 							}
@@ -1297,7 +1297,7 @@ public class Stabs {
 				case 'i' :
 					{
 						int val = 0;
-						StringBuffer sb = new StringBuffer();
+						StringBuilder sb = new StringBuilder();
 						while ((c = reader.read()) != -1) {
 							sb.append((char) c);
 						}
@@ -1319,7 +1319,7 @@ public class Stabs {
 				case 'r' :
 					{
 						double val = 0;
-						StringBuffer sb = new StringBuffer();
+						StringBuilder sb = new StringBuilder();
 						while ((c = reader.read()) != -1) {
 							sb.append((char) c);
 						}

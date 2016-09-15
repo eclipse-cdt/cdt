@@ -19,7 +19,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTPreprocessorPragmaStatement extends IASTPreprocessorStatement {
-	
 	/**
 	 * Returns the pragma message.
 	 */

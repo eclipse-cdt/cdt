@@ -568,6 +568,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * Returns the method stubs to display in the wizard.
      *
      * @return array of method stubs
+     *
+     * @noreference This method is not intended to be referenced by clients.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
      */
     protected IMethodStub[] getDefaultMethodStubs() {
         return new IMethodStub[] {
@@ -717,6 +720,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * Returns the currently selected (checked) method stubs.
      *
      * @return array of <code>IMethodStub</code> or empty array if none selected.
+     *
+     * @noreference This method is not intended to be referenced by clients.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
      */
     protected IMethodStub[] getSelectedMethodStubs() {
         return fMethodStubsDialogField.getCheckedMethodStubs();
@@ -724,8 +730,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Adds a method stub to the method stubs field.
+     *
      * @param methodStub the method stub to add
      * @param selected <code>true</code> if the stub is initially selected (checked)
+     *
+     * @noreference This method is not intended to be referenced by clients.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
      */
     protected void addMethodStub(IMethodStub methodStub, boolean selected) {
         fMethodStubsDialogField.addMethodStub(methodStub, selected);
@@ -735,6 +745,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * Returns the contents of the base classes field.
      *
      * @return array of <code>IBaseClassInfo</code>
+     *
+     * @noreference This method is not intended to be referenced by clients.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
      */
     protected IBaseClassInfo[] getBaseClasses() {
         List<IBaseClassInfo> classesList = fBaseClassesDialogField.getElements();
@@ -748,7 +761,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * @param isVirtual <code>true</code> if the inheritance is virtual
      */
     protected void addBaseClass(ITypeInfo newBaseClass, ASTAccessVisibility access, boolean isVirtual) {
-        // check if already exists
+        // Check if already exists.
         List<IBaseClassInfo> baseClasses = fBaseClassesDialogField.getElements();
         if (baseClasses != null) {
             for (IBaseClassInfo baseClassInfo : baseClasses) {
@@ -771,8 +784,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * Sets the use test file creation checkbox's selection state.
      *
      * @param isSelected the checkbox's selection state
-     * @param canBeModified if <code>true</code> the checkbox is
-     * modifiable; otherwise it is read-only.
+     * @param canBeModified if <code>true</code> the checkbox is modifiable; otherwise it is read-only.
      * @since 5.3
      */
     public void setTestFileSelection(boolean isSelected, boolean canBeModified) {
@@ -1725,6 +1737,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * @param baseClasses an array of base classes
      *
      * @return the status of the validation
+     *
+     * @noreference This method is not intended to be referenced by clients.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
      */
     protected IStatus baseClassesChanged(ICProject project, IPath sourceFolder, IBaseClassInfo[] baseClasses) {
         MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
@@ -2020,9 +2035,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 *
 	 * @param monitor a progress monitor to report progress.
 	 * @throws CoreException Thrown when the creation failed.
-	 * @throws InterruptedException Thrown when the operation was cancelled.
 	 */
-	public void createClass(IProgressMonitor monitor) throws CoreException, InterruptedException {
+	public void createClass(IProgressMonitor monitor) throws CoreException {
 		// Update dialog settings.
 		fDialogSettings.put(KEY_NAMESPACE_SELECTED, fNamespaceSelection.isSelected());
 		fDialogSettings.put(KEY_TEST_FILE_SELECTED, fTestFileSelection.isSelected());
@@ -2075,12 +2089,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * @param methodStubs array of method stubs
      * @param monitor a progress monitor
      * @throws CoreException if the creation failed
-     * @throws InterruptedException if the operation was cancelled
      * @since 5.3
+     *
+     * @noreference This method is not intended to be referenced by clients.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
      */
     protected void createClass(IPath headerPath, IPath sourcePath, IPath testPath, String className,
     		String namespace, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor)
-    		throws CoreException, InterruptedException {
+    		throws CoreException {
         NewClassCodeGenerator generator = new NewClassCodeGenerator(
                 headerPath,
                 sourcePath,
@@ -2098,16 +2114,19 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         fCreatedTestFile = generator.getCreatedTestFile();
     }
 
+    /**
+     * @noreference This method is not intended to be referenced by clients.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     */
     protected void createClass(IPath headerPath, IPath sourcePath, String className, String namespace,
     		IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor)
-    		throws CoreException, InterruptedException {
-    	createClass(headerPath, sourcePath, null, className, namespace, baseClasses, methodStubs,
-    			monitor);
+    		throws CoreException {
+    	createClass(headerPath, sourcePath, null, className, namespace, baseClasses, methodStubs, monitor);
     }
 
 	/**
 	 * Returns the created class. The method only returns a valid class
-	 * after <code>createClass</code> has been called.
+	 * after {@link #createClass} has been called.
 	 *
 	 * @return the created class
 	 * @see #createClass(IProgressMonitor)
@@ -2118,7 +2137,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Returns the created header file. The method only returns a valid file
-     * after <code>createClass</code> has been called.
+     * after {@link #createClass} has been called.
      *
      * @return the created header file
      * @see #createClass(IProgressMonitor)
@@ -2129,7 +2148,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Returns the created source file. The method only returns a valid file
-     * after <code>createClass</code> has been called.
+     * after {@link #createClass} has been called.
      *
      * @return the created source file
      * @see #createClass(IProgressMonitor)
@@ -2140,7 +2159,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Returns the created test file. The method only returns a valid file
-     * after <code>createClass</code> has been called.
+     * after {@link #createClass} has been called.
      *
      * @return the created test file
      * @see #createClass(IProgressMonitor)

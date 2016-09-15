@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -633,7 +633,7 @@ public class CElementDelta implements ICElementDelta {
 	 * @see #toString()
 	 */
 	public String toDebugString(int depth) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i= 0; i < depth; i++) {
 			buffer.append('\t');
 		}
@@ -671,13 +671,13 @@ public class CElementDelta implements ICElementDelta {
 		if ((changeFlags & ICElementDelta.F_MOVED_FROM) != 0) {
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
-			//buffer.append("MOVED_FROM(" + ((CElement)getMovedFromElement()).toStringWithAncestors() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			//buffer.append("MOVED_FROM(").append(((CElement)getMovedFromElement()).toStringWithAncestors().append(')'); //$NON-NLS-1$
 			prev = true;
 		}
 		if ((changeFlags & ICElementDelta.F_MOVED_TO) != 0) {
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
-			//buffer.append("MOVED_TO(" + ((CElement)getMovedToElement()).toStringWithAncestors() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			//buffer.append("MOVED_TO(").append(((CElement)getMovedToElement()).toStringWithAncestors()).append(')'); //$NON-NLS-1$
 			prev = true;
 		}
 		if ((changeFlags & ICElementDelta.F_MODIFIERS) != 0) {

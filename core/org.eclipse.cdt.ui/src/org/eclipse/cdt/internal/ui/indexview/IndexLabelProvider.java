@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 QNX Software Systems and others.
+ * Copyright (c) 2006, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,11 +91,11 @@ public class IndexLabelProvider extends LabelProvider {
 				String result = ((PDOMNamedNode)element).getDBName().getString();
 
 				if (element instanceof ICPPTemplateInstance) {
-					StringBuffer buffer = null;
+					StringBuilder buffer = null;
 					if (element instanceof ICPPDeferredClassInstance) {
-						buffer = new StringBuffer("Dfrd: "); //$NON-NLS-1$
+						buffer = new StringBuilder("Dfrd: "); //$NON-NLS-1$
 					} else {
-						buffer = new StringBuffer("Inst: "); //$NON-NLS-1$	
+						buffer = new StringBuilder("Inst: "); //$NON-NLS-1$
 					}
 					buffer.append(result);
 					buffer.append('<');
@@ -108,7 +108,7 @@ public class IndexLabelProvider extends LabelProvider {
 					buffer.append('>');
 					result = buffer.toString();
 				} else if (element instanceof ICPPClassTemplatePartialSpecialization) {
-					StringBuffer buffer = new StringBuffer("Part: "); //$NON-NLS-1$
+					StringBuilder buffer = new StringBuilder("Part: "); //$NON-NLS-1$
 					buffer.append(result);
 					buffer.append('<');
 					ICPPTemplateArgument[] types = ((ICPPClassTemplatePartialSpecialization) element).getTemplateArguments();
@@ -122,8 +122,8 @@ public class IndexLabelProvider extends LabelProvider {
 				} else if (element instanceof ICPPSpecialization) {
 					ICPPSpecialization spec = (ICPPSpecialization) element;
 					
-					StringBuffer buffer = null;
-					buffer = new StringBuffer("Spec: "); //$NON-NLS-1$
+					StringBuilder buffer = null;
+					buffer = new StringBuilder("Spec: "); //$NON-NLS-1$
 					buffer.append(result);
 					
 					if (!(spec instanceof ICPPTemplateDefinition)

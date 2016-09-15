@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems and others.
+ * Copyright (c) 2007, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 	}
 
 	private String getAddressText(BigInteger address) {
-		StringBuffer buf = new StringBuffer(fNumberOfDigits + 3);
+		StringBuilder buf = new StringBuilder(fNumberOfDigits + 3);
 		if (fRadixPrefix != null) {
 			buf.append(fRadixPrefix);
 		}

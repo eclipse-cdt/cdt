@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Target extends BuildObject implements ITarget {
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private String artifactName;
 	private String binaryParserId;
 	private String cleanCommand;
@@ -103,10 +103,10 @@ public class Target extends BuildObject implements ITarget {
 		defaultExtension = SafeStringInterner.safeIntern(element.getAttribute(DEFAULT_EXTENSION));
 
 		// isAbstract
-		isAbstract = ("true".equals(element.getAttribute(IS_ABSTRACT))); //$NON-NLS-1$
+		isAbstract = Boolean.parseBoolean(element.getAttribute(IS_ABSTRACT));
 
 		// Is this a test target
-		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
+		isTest = Boolean.parseBoolean(element.getAttribute(IS_TEST));
 
 		// Get the clean command
 		cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
@@ -225,11 +225,11 @@ public class Target extends BuildObject implements ITarget {
 			parent = ManagedBuildManager.getTarget(null, parentId);
 
 		// isAbstract
-		if ("true".equals(element.getAttribute(IS_ABSTRACT))) //$NON-NLS-1$
+		if (Boolean.parseBoolean(element.getAttribute(IS_ABSTRACT)))
 			isAbstract = true;
 
 		// Is this a test target
-		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
+		isTest = Boolean.parseBoolean(element.getAttribute(IS_TEST));
 
 		// Get the clean command
 		if (element.hasAttribute(CLEAN_COMMAND)) {
@@ -382,9 +382,9 @@ public class Target extends BuildObject implements ITarget {
 			} else {
 				// User forgot to specify it. Guess based on OS.
 				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					return new String("del"); //$NON-NLS-1$
+					return "del"; //$NON-NLS-1$
 				} else {
-					return new String("rm"); //$NON-NLS-1$
+					return "rm"; //$NON-NLS-1$
 				}
 			}
 		} else {
@@ -512,7 +512,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getMakeArguments();
 			} else {
 				// No parent and no user setting
-				return new String(""); //$NON-NLS-1$
+				return ""; //$NON-NLS-1$
 			}
 		}
 		return makeArguments;
@@ -530,7 +530,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getMakeCommand();
 			} else {
 				// The user has forgotten to specify a command in the plugin manifest
-				return new String("make"); //$NON-NLS-1$
+				return "make"; //$NON-NLS-1$
 			}
 		} else {
 			return makeCommand;
@@ -547,7 +547,7 @@ public class Target extends BuildObject implements ITarget {
 			if (parent != null) {
 				return parent.getName();
 			} else {
-				return new String(""); //$NON-NLS-1$
+				return ""; //$NON-NLS-1$
 			}
 		} else {
 			return name;

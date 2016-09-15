@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,8 +99,8 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls[0], ((IASTStandardFunctionDeclarator) f1.getDeclarators()[0]).getParameters()[0].getDeclarator().getName());
 		assertEquals(decls[1], ((IASTSimpleDeclaration) ((ICASTKnRFunctionDeclarator) f2.getDeclarator()).getParameterDeclarations()[0]).getDeclarators()[0].getName());
 
-		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) ((IASTCompoundStatement) f2.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "f".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) ((IASTCompoundStatement) f2.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
     }
 
     public void testSimpleKRCTest2() throws Exception {
@@ -130,8 +130,8 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls.length, 1);
 		assertEquals(decls[0], ((IASTSimpleDeclaration) ((ICASTKnRFunctionDeclarator) f2.getDeclarator()).getParameterDeclarations()[0]).getDeclarators()[0].getName());
 
-		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) ((IASTCompoundStatement) f2.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "f".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) ((IASTCompoundStatement) f2.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
     }
 
     public void testSimpleKRCTest3() throws Exception {
@@ -198,9 +198,9 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls.length, 1);
 		assertEquals(decls[0], x1.getName());
 
-		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("isroot").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) ((IASTCompoundStatement) isroot_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) ((IASTCompoundStatement) isroot_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "isroot".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) ((IASTCompoundStatement) isroot_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) ((IASTCompoundStatement) isroot_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "y".toCharArray())); //$NON-NLS-1$
     }
 
     public void testKRCWithTypes() throws Exception {
@@ -252,9 +252,9 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls.length, 1);
 		assertEquals(decls[0], x2);
 		
-		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("c").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("isroot").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) ((IASTCompoundStatement) isroot_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "c".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "isroot".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) ((IASTCompoundStatement) isroot_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
     }
 
     public void testKRCProblem1() throws Exception {
@@ -497,10 +497,10 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls.length, 1);
 		assertEquals(decls[0], x2);
 		
-		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_TAG, new String("A_struct").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("A").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-		assertNotNull(((CScope) ((IASTCompoundStatement) f_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_TAG, "A_struct".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "A".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "f".toCharArray())); //$NON-NLS-1$
+		assertNotNull(((CScope) ((IASTCompoundStatement) f_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
     }
     
     public void testKRC_monop_cards2() throws Exception {

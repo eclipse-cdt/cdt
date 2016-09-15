@@ -16,12 +16,24 @@ package org.eclipse.cdt.internal.core.util;
  * @since 5.0
  */
 public interface ICanceler {
-
 	/**
-	 * Set the cancelable object.
+	 * Sets the cancelable object.
 	 * 
 	 * @param cancelable  the cancelable object
 	 */
-	void setCancelable(ICancelable cancelable);
-	
+	public void setCancelable(ICancelable cancelable);
+
+	/**
+	 * Sets the cancel state to the given value. The state will be propagated to the cancelable object
+	 * if it was set.
+	 *
+	 * @param value {@code true} indicates that cancellation has been requested,
+	 *     {@code false} clears this flag
+	 */
+	public void setCanceled(boolean value);
+
+	/**
+	 * Checks if cancellation has been requested.
+	 */
+	public boolean isCanceled();
 }

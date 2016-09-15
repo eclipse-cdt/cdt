@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems and others.
+ * Copyright (c) 2008, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class ErrorLabelText extends LabelText {
             if (status.getChildren().length < 2) {
                 return replaceNewlines(status.getMessage());
             } else {
-                StringBuffer buf = new StringBuffer( status.getMessage() );
+                StringBuilder buf = new StringBuilder( status.getMessage() );
                 for  (IStatus childStatus : status.getChildren()) {
                     buf.append(MessagesForDebugVM.ErrorLabelText_Error_message__text_page_break_delimiter);
                     buf.append( replaceNewlines(childStatus.getMessage()) );

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		Object[] selected = getResult();
 		if (selected != null && selected.length == 1) {
 			IStringVariable variable = (IStringVariable)selected[0];
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("${"); //$NON-NLS-1$
 			buffer.append(variable.getName());
 			if (fArgumentValue != null && fArgumentValue.length() > 0) {

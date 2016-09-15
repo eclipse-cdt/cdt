@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -70,14 +70,16 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                     resource.getProject(), ScannerInfoTypes.UNDISCOVERED_COMPILER_COMMAND);
             if (commands != null && commands.size() > 0) {
         
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 buffer.append("# This is a generated file. Please do not edit."); //$NON-NLS-1$
                 buffer.append(DENDL);
                 buffer.append(".PHONY: all"); //$NON-NLS-1$
                 buffer.append(DENDL);
                 buffer.append("COMMANDS := "); //$NON-NLS-1$
                 for (CCommandDSC cmd : commands) {
-                    buffer.append("\t\\"+ENDL+"\t    scd_cmd_"); //$NON-NLS-1$ //$NON-NLS-2$
+                    buffer.append("\t\\"); //$NON-NLS-1$
+                    buffer.append(ENDL);
+                    buffer.append("\t    scd_cmd_"); //$NON-NLS-1$
                     buffer.append(cmd.getCommandId());
                 }
                 buffer.append(DENDL);
@@ -88,7 +90,9 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                     buffer.append(cmd.getCommandId());
                     buffer.append(':');
                     buffer.append(ENDL);
-                    buffer.append("\t@echo begin generating scanner info for $@"+ENDL+"\t"); //$NON-NLS-1$ //$NON-NLS-2$
+                    buffer.append("\t@echo begin generating scanner info for $@"); //$NON-NLS-1$
+                    buffer.append(ENDL);
+                    buffer.append('\t');
                     buffer.append(cmd.getSCDRunnableCommand(true, true)); // quote includes and defines
                     for (String arg : prepareArguments(buildInfo.isUseDefaultProviderCommand(providerId))) { 
                     	buffer.append(' ');

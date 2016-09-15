@@ -10,24 +10,22 @@ package org.eclipse.cdt.internal.qt.core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.qt.core.IQtInstall;
 
 public class QtInstall implements IQtInstall {
 
-	private final String name;
 	private final Path qmakePath;
 	private String spec;
+	private Map<String, String> properties = new HashMap<>();
 
-	public QtInstall(String name, Path qmakePath) {
-		this.name = name;
+	public QtInstall(Path qmakePath) {
 		this.qmakePath = qmakePath;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -45,13 +43,15 @@ public class QtInstall implements IQtInstall {
 		return qmakePath.resolve("../../qml"); //$NON-NLS-1$
 	}
 
-	public static String getSpec(String qmakePath) throws IOException {
-		Process proc = new ProcessBuilder(qmakePath, "-query", "QMAKE_XSPEC").start(); //$NON-NLS-1$ //$NON-NLS-2$
+	public static String getSpec(Path qmakePath) throws IOException {
+		if (Files.exists(qmakePath)) {
+		Process proc = new ProcessBuilder(qmakePath.toString(), "-query", "QMAKE_XSPEC").start(); //$NON-NLS-1$ //$NON-NLS-2$
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
 			String line = reader.readLine();
 			if (line != null) {
 				return line.trim();
 			}
+		}
 		}
 		return null;
 	}
@@ -60,7 +60,7 @@ public class QtInstall implements IQtInstall {
 	public String getSpec() {
 		if (spec == null) {
 			try {
-				spec = getSpec(getQmakePath().toString());
+				spec = getSpec(getQmakePath());
 			} catch (IOException e) {
 				Activator.log(e);
 			}
@@ -68,4 +68,14 @@ public class QtInstall implements IQtInstall {
 		return spec;
 	}
 
+	@Override
+	public void setProperty(String key, String value) {
+		properties.put(key, value);
+	}
+
+	@Override
+	public Map<String, String> getProperties() {
+		return Collections.unmodifiableMap(properties);
+	}
+	
 }

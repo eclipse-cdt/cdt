@@ -15,7 +15,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class ObjectMap extends ObjectTable<Object> {
+	/**
+	 * An empty immutable {@code ObjectMap}.
+	 */
     public static final ObjectMap EMPTY_MAP = new ObjectMap(0) {
         @Override
 		public Object clone() { return this; }

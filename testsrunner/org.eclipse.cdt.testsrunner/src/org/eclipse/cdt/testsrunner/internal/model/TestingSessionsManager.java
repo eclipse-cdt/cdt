@@ -11,20 +11,23 @@
 package org.eclipse.cdt.testsrunner.internal.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProvidersManager;
 import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProviderInfo;
+import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProvidersManager;
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 
 /**
  * Manages all the testing sessions (creates, activates, stores history).
  */
-public class TestingSessionsManager {
+public class TestingSessionsManager implements ILaunchConfigurationListener {
 	
 	/** Tests Runners Plug-ins Manager. */
 	private TestsRunnerProvidersManager testsRunnersManager;
@@ -43,6 +46,7 @@ public class TestingSessionsManager {
 
 	public TestingSessionsManager(TestsRunnerProvidersManager testsRunnersManager) {
 		this.testsRunnersManager = testsRunnersManager;
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
 	}
 	
 	/**
@@ -212,4 +216,29 @@ public class TestingSessionsManager {
 		}
 	}
 	
+	/** @since 8.1 */
+	@Override
+	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		// Ignore
+	}
+
+	/** @since 8.1 */
+	@Override
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+		// Ignore
+	}
+
+	/** @since 8.1 */
+	@Override
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		for (Iterator<TestingSession> iterator = sessions.iterator(); iterator.hasNext();) {
+			TestingSession session = iterator.next();
+			if (session.getLaunch().getLaunchConfiguration()
+					.equals(configuration)) {
+				iterator.remove();
+			}
+		}
+		truncateHistory();
+	}
+
 }

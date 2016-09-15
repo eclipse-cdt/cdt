@@ -15,6 +15,7 @@ import java.util.Comparator;
 
 /**
  * @author ddaoust
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class HashTable implements Cloneable {
 	// Prime numbers from http://planetmath.org/goodhashtableprimes
@@ -173,17 +174,18 @@ public class HashTable implements Cloneable {
 		return offset;
 	}
 
-	protected void linkIntoHashTable(int i, int hash) {
+	protected final void linkIntoHashTable(int i, int hash) {
 		if (nextTable == null)
 			return;
 
-		if (hashTable[hash] == 0) {
+		int j = hashTable[hash];
+		if (j == 0) {
 			hashTable[hash] = i + 1;
 		} else {
 			// Need to link.
-			int j = hashTable[hash] - 1;
+			j--;
 			int k;
-			while ((k = nextTable[j]) != 0) {
+			while ((k = nextTable[j]) != 0 && k != j + 1) {
 				j = k - 1;
 			}
 			nextTable[j] = i + 1;

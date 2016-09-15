@@ -634,7 +634,6 @@ implements
 		}
 		final ICResourceDescription local_cfgd = lc;
 
-		final boolean rebuildIndex= isIndexerAffected();
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
 			private void sendOK() {
@@ -701,6 +700,7 @@ implements
 			return false;
 		}
 
+		final boolean rebuildIndex= isIndexerAffected();
 		if (rebuildIndex)
 			rebuildIndex();
 		return true;

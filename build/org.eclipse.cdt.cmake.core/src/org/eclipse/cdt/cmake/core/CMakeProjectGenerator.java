@@ -7,67 +7,74 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.core;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.cmake.core.internal.CMakeBuilder;
-import org.eclipse.cdt.cmake.core.internal.CMakeTemplateGenerator;
+import org.eclipse.cdt.cmake.core.internal.Activator;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.build.CBuilder;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.tools.templates.freemarker.FMProjectGenerator;
+import org.eclipse.tools.templates.freemarker.SourceRoot;
+import org.osgi.framework.Bundle;
 
-public class CMakeProjectGenerator {
+public class CMakeProjectGenerator extends FMProjectGenerator {
 
-	private final IProject project;
-
-	public CMakeProjectGenerator(IProject project) {
-		this.project = project;
+	public CMakeProjectGenerator(String manifestFile) {
+		super(manifestFile);
 	}
 
-	public void generate(IProgressMonitor monitor) throws CoreException {
-		// Generate the files
-		IFolder sourceFolder = project.getFolder("src"); //$NON-NLS-1$
-		if (!sourceFolder.exists()) {
-			sourceFolder.create(true, true, monitor);
+	@Override
+	protected void initProjectDescription(IProjectDescription description) {
+		description
+				.setNatureIds(
+						new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, CMakeNature.ID });
+		ICommand command = description.newCommand();
+		CBuilder.setupBuilder(command);
+		description.setBuildSpec(new ICommand[] { command });
+	}
+
+	@Override
+	public Bundle getSourceBundle() {
+		return Activator.getPlugin().getBundle();
+	}
+
+	@Override
+	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
+		super.generate(model, monitor);
+
+		// Create the source folders
+		IProject project = getProject();
+		List<IPathEntry> entries = new ArrayList<>();
+		List<SourceRoot> srcRoots = getManifest().getSrcRoots();
+		if (srcRoots != null && !srcRoots.isEmpty()) {
+			for (SourceRoot srcRoot : srcRoots) {
+				IFolder sourceFolder = project.getFolder(srcRoot.getDir());
+				if (!sourceFolder.exists()) {
+					sourceFolder.create(true, true, monitor);
+				}
+	
+				entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
+			}
+		} else {
+			entries.add(CoreModel.newSourceEntry(getProject().getFullPath()));
 		}
 
-		CMakeTemplateGenerator templateGen = new CMakeTemplateGenerator();
-		Map<String, Object> fmModel = new HashMap<>();
-		fmModel.put("projectName", project.getName()); //$NON-NLS-1$
-
-		IFile sourceFile = sourceFolder.getFile("main.cpp"); //$NON-NLS-1$
-		templateGen.generateFile(fmModel, "simple/main.cpp", sourceFile, monitor); //$NON-NLS-1$
-		sourceFile = project.getFile("CMakeLists.txt"); //$NON-NLS-1$
-		templateGen.generateFile(fmModel, "simple/CMakeLists.txt", sourceFile, monitor); //$NON-NLS-1$
-
-		// Set up the project
-		IProjectDescription projDesc = project.getDescription();
-		String[] oldIds = projDesc.getNatureIds();
-		String[] newIds = new String[oldIds.length + 3];
-		System.arraycopy(oldIds, 0, newIds, 0, oldIds.length);
-		newIds[newIds.length - 3] = CProjectNature.C_NATURE_ID;
-		newIds[newIds.length - 2] = CCProjectNature.CC_NATURE_ID;
-		newIds[newIds.length - 1] = CMakeNature.ID;
-		projDesc.setNatureIds(newIds);
-
-		ICommand command = projDesc.newCommand();
-		command.setBuilderName(CMakeBuilder.ID);
-		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
-		projDesc.setBuildSpec(new ICommand[] { command });
-
-		project.setDescription(projDesc, monitor);
-
-		IPathEntry[] entries = new IPathEntry[] { CoreModel.newOutputEntry(sourceFolder.getFullPath()) };
-		CoreModel.getDefault().create(project).setRawPathEntries(entries, monitor);
+		entries.add(CoreModel.newOutputEntry(getProject().getFolder("build").getFullPath(),
+				new IPath[] { new Path("**/CMakeFiles/**") }));
+		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
+				monitor);
 	}
 
 }

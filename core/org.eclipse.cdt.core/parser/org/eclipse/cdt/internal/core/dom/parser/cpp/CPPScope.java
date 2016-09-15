@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -260,13 +262,22 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	    }
 	    return ArrayUtil.trim(result);
 	}
+	
+	private boolean isInsideClassScope(IScope scope) {
+		try {
+			return scope instanceof ICPPClassScope
+			    || (scope instanceof ICPPEnumScope && scope.getParent() instanceof ICPPClassScope);
+		} catch (DOMException e) {
+			return false;
+		}
+	}
 
 	private IBinding[] addCandidate(Object candidate, ScopeLookupData lookup, IBinding[] result) {
 		final IASTNode point = lookup.getLookupPoint();
 		if (!lookup.isIgnorePointOfDeclaration()) {
 			IASTTranslationUnit tu= point.getTranslationUnit();
 			if (!CPPSemantics.declaredBefore(candidate, point, tu != null && tu.getIndex() != null)) {
-				if (!(this instanceof ICPPClassScope) || !LookupData.checkWholeClassScope(lookup.getLookupName()))
+				if (!isInsideClassScope(this) || !LookupData.checkWholeClassScope(lookup.getLookupName()))
 					return result;
 			}
 		}

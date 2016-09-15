@@ -58,8 +58,8 @@ public class TestMakeTargets extends AbstractTest {
 
 		projectExplorer.bot().tree().getTreeItem(projectName).select();
 		clickContextMenu(projectExplorer.bot().tree().select(projectName),
-				"Make Targets", "Build...");
-		shell = bot.shell("Make Targets");
+				"Build Targets", "Build...");
+		shell = bot.shell("Build Targets");
 		shell.activate();
 		bot.table().getTableItem("info").select();
 		bot.button("Build").click();
@@ -69,8 +69,8 @@ public class TestMakeTargets extends AbstractTest {
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		// Make Targets using right-click on project.
-		clickProjectContextMenu("Make Targets", "Build...");
-		shell = bot.shell("Make Targets");
+		clickProjectContextMenu("Build Targets", "Build...");
+		shell = bot.shell("Build Targets");
 		shell.activate();
 		bot.table().getTableItem("check").select();
 		bot.button("Build").click();

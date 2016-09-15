@@ -446,4 +446,12 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			return EvalFixed.INCOMPLETE;
 		return CPPFunction.getReturnExpression(functionDefinition);
 	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+		if (!isConstexpr()) {
+			return null;
+		}
+		return CPPFunction.computeFunctionBodyExecution(getDefinition());
+	}
 }

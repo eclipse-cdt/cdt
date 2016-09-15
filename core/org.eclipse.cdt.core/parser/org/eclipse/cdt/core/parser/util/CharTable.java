@@ -13,10 +13,12 @@
 package org.eclipse.cdt.core.parser.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author ddaoust
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CharTable extends HashTable {
 	protected char[][] keyTable;
@@ -37,8 +39,7 @@ public class CharTable extends HashTable {
 	@Override
 	public void clear() {
 		super.clear();
-		for (int i = 0; i < capacity(); i++)
-			keyTable[i] = null;
+		Arrays.fill(keyTable, null);
 	}
 
 	@Override
@@ -169,7 +170,7 @@ public class CharTable extends HashTable {
 		if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
 			return i;
 
-		// Follow the next chain
+		// Follow the next chain.
 		for (i = nextTable[i] - 1; i >= 0 && i != nextTable[i] - 1; i = nextTable[i] - 1) {
 			if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
 				return i;

@@ -39,4 +39,9 @@ class CompositeCPPField extends CompositeCPPVariable implements ICPPField {
 		IBinding preresult = ((IField)rbinding).getCompositeTypeOwner();
 		return (ICompositeType) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return ((ICPPField)rbinding).getFieldPosition();
+	}
 }

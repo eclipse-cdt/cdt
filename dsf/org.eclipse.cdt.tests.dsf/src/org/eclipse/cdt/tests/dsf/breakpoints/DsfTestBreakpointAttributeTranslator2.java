@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Wind River Systems and others.
+ * Copyright (c) 2008, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttribu
     {
         Integer num = (Integer)bpAttrs.get(DsfTestBreakpoint.ATTR_NUM_TARGET_BREAKPOINTS);
         if (num == null) {
-            num = new Integer(1); 
+            num = 1; 
         }
         List<Map<String, Object>> subBpsAttrs = new ArrayList<Map<String, Object>>(num);
         for (int i = 0; i < num; i++) {

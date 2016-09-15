@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class MakeRecon extends OutputStream {
 	IProgressMonitor monitor;
 	OutputStream console;
 	MyList log;
-	StringBuffer currentLine;
+	StringBuilder currentLine;
 
 	class MyList extends ArrayList<String> {
 		private static final long serialVersionUID = 1L;
@@ -68,7 +68,7 @@ public class MakeRecon extends OutputStream {
 		directory = workingDirectory;
 		monitor = mon;
 		console = cos;
-		currentLine = new StringBuffer();
+		currentLine = new StringBuilder();
 		log = new MyList();
 
 		// Get the buffer log.

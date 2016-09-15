@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Nokia and others.
+ * Copyright (c) 2007, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,7 +314,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 	private ICProject[] getCProjects() throws CModelException {
 		ICProject cproject[] = CoreModel.getDefault().getCModel()
 				.getCProjects();
-		ArrayList list = new ArrayList(cproject.length);
+		ArrayList<ICProject> list = new ArrayList<>(cproject.length);
 
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
@@ -335,7 +335,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 				list.add(cproject[i]);
 			}
 		}
-		return (ICProject[]) list.toArray(new ICProject[list.size()]);
+		return list.toArray(new ICProject[list.size()]);
 	}
 
 	protected ICProject getExistingCProject() {

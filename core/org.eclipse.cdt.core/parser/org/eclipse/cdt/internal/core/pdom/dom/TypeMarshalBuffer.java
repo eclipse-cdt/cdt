@@ -19,12 +19,16 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.CStringValue;
+import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
+import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -162,16 +166,30 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			eval.marshal(this, includeValues);
 		}
 	}
+	
+	@Override
+	public void marshalExecution(ISerializableExecution exec, boolean includeValue) throws CoreException {
+		if (exec == null) {
+			putShort(NULL_TYPE);
+		} else {
+			exec.marshal(this, includeValue);
+		}	
+	}
 
 	@Override
 	public ISerializableEvaluation unmarshalEvaluation() throws CoreException {
 		return fLinkage.unmarshalEvaluation(this);
 	}
+	
+	@Override
+	public ISerializableExecution unmarshalExecution() throws CoreException {
+		return fLinkage.unmarshalExecution(this);
+	}
 
 	@Override
 	public void marshalValue(IValue value) throws CoreException {
-		if (value instanceof Value) {
-			((Value) value).marshal(this);
+		if(value != null) {
+			value.marshal(this);
 		} else {
 			putShort(NULL_TYPE);
 		}
@@ -179,10 +197,20 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public IValue unmarshalValue() throws CoreException {
-		if (fPos >= fBuffer.length)
-			throw unmarshallingError();
-
-		return Value.unmarshal(this);
+		short firstBytes= getShort();
+		if (firstBytes == TypeMarshalBuffer.NULL_TYPE)
+			return null;
+		switch ((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
+		case ITypeMarshalBuffer.INTEGRAL_VALUE:
+			return IntegralValue.unmarshal(firstBytes, this);
+		case ITypeMarshalBuffer.FLOATING_POINT_VALUE:
+			return FloatingPointValue.unmarshal(firstBytes, this);
+		case ITypeMarshalBuffer.C_STRING_VALUE:
+			return CStringValue.unmarshal(firstBytes, this);
+		case ITypeMarshalBuffer.COMPOSITE_VALUE:
+			return CompositeValue.unmarshal(firstBytes, this);
+		}
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a value, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
 
 	@Override

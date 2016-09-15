@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	 */ 
 	private String processHTMLTag() throws IOException {
 		
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int ch;
 		do {		
 			
@@ -241,7 +241,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	 * A '&' has been read. Process a entity
 	 */ 	
 	private String processEntity() throws IOException {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int ch= nextChar();
 		while (Character.isLetterOrDigit((char)ch) || ch == '#') {
 			buf.append((char) ch);

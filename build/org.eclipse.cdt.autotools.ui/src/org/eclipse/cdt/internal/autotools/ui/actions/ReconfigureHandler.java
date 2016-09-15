@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Red Hat Inc..
+ * Copyright (c) 2009, 2016 Red Hat Inc..
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -51,29 +49,25 @@ public class ReconfigureHandler extends AbstractAutotoolsHandler {
 		// workspace root rule.
 		final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
 
-		Job backgroundJob = new Job("Reconfigure Action") { //$NON-NLS-1$
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) monitor1 -> {
-						IProject project = getSelectedContainer().getProject();
-						AutotoolsNewMakeGenerator m = new AutotoolsNewMakeGenerator();
-						IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-						CUIPlugin.getDefault().startGlobalConsole();
-						m.initialize(project, info, monitor1);
-						try {
-							m.reconfigure();
-						} catch (CoreException e) {
-							// do nothing for now
-						}
-					}, rule, IWorkspace.AVOID_UPDATE, monitor);
-				} catch (CoreException e) {
-					return e.getStatus();
-				}
-				IStatus returnStatus = Status.OK_STATUS;
-				return returnStatus;
+		Job backgroundJob = Job.create("Reconfigure Action", monitor -> {
+			try {
+				ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) monitor1 -> {
+					IProject project = getSelectedContainer().getProject();
+					AutotoolsNewMakeGenerator m = new AutotoolsNewMakeGenerator();
+					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+					CUIPlugin.getDefault().startGlobalConsole();
+					m.initialize(project, info, monitor1);
+					try {
+						m.reconfigure();
+					} catch (CoreException e) {
+						// do nothing for now
+					}
+				}, rule, IWorkspace.AVOID_UPDATE, monitor);
+			} catch (CoreException e) {
+				return e.getStatus();
 			}
-		};
+			return Status.OK_STATUS;
+		});
 
 		backgroundJob.setRule(rule);
 		backgroundJob.schedule();

@@ -14,6 +14,8 @@ package org.eclipse.cdt.dsf.mi.service.command;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -55,6 +57,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MISteppingRangeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIConsoleStreamOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIExecAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -172,6 +175,38 @@ public class MIRunControlEventProcessor
         				fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         			}
     			}
+			} else if (oobr instanceof MIConsoleStreamOutput) {
+				MIConsoleStreamOutput stream = (MIConsoleStreamOutput) oobr;
+				if (stream.getCString().startsWith("Program terminated with signal")) {//$NON-NLS-1$
+
+					/*
+					 * The string should be in the form "Program terminated with signal <signal>, <reason>."
+					 *  For Example:  Program terminated with signal SIGABRT, Aborted.
+					 */
+
+					// Parse the <signal> and the <reason>
+					Pattern pattern = Pattern.compile("Program terminated with signal (.*), (.*)\\..*"); //$NON-NLS-1$
+					Matcher matcher = pattern.matcher(stream.getCString());
+					if (matcher.matches()) {
+						MIExecAsyncOutput exec = new MIExecAsyncOutput();
+
+						MIResult name = new MIResult();
+						name.setVariable("signal-name"); //$NON-NLS-1$
+						MIConst nameValue = new MIConst();
+						nameValue.setCString(matcher.group(1));
+						name.setMIValue(nameValue);
+
+						MIResult meaning = new MIResult();
+						meaning.setVariable("signal-meaning"); //$NON-NLS-1$
+						MIConst meaningValue = new MIConst();
+						meaningValue.setCString(matcher.group(2));
+						meaning.setMIValue(meaningValue);
+
+						exec.setMIResults(new MIResult[] { name, meaning });
+						MIEvent<?> event = createEvent("signal-received", exec); //$NON-NLS-1$
+						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+					}
+				}
     		}
     	}
     	

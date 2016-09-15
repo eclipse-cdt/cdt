@@ -72,6 +72,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	/**
 	 * Checks if the the console is the gdb CLI. We don't rely on the attached 
 	 * process name. Instead we check if the process is an instance of GDBProcess
+     * This gdb CLI console will only be used if the full GDB console is not available.
 	 * 
 	 * @param console The console to check
 	 * @return true if the the console is the gdb CLI
@@ -152,6 +153,10 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         	return null;
         }
 
+        if (context instanceof GDBProcess) {
+            return (GDBProcess)context;
+        }
+        
 		if (context != null) {
 			// Look for the process that this context refers to, so we can select its console
 			IDMContext dmc = context.getAdapter(IDMContext.class);
@@ -187,9 +192,6 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
-	 */
     @Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
@@ -200,3 +202,4 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		}
 	}
 }
+

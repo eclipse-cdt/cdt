@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Red Hat Inc.
+ * Copyright (c) 2007, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,12 +24,12 @@ import org.eclipse.swt.widgets.Text;
 
 public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 
-	public static final String DEFAULT_ACLOCAL = "aclocal"; // $NON-NLS-1$
-	public static final String DEFAULT_AUTOMAKE = "automake"; // $NON-NLS-1$
-	public static final String DEFAULT_AUTOCONF = "autoconf"; // $NON-NLS-1$
-	public static final String DEFAULT_AUTOHEADER = "autoheader"; // $NON-NLS-1$
-	public static final String DEFAULT_AUTORECONF = "autoreconf"; // $NON-NLS-1$
-	public static final String DEFAULT_LIBTOOLIZE = "libtoolize"; // $NON-NLS-1$
+	public static final String DEFAULT_ACLOCAL = "aclocal"; //$NON-NLS-1$
+	public static final String DEFAULT_AUTOMAKE = "automake"; //$NON-NLS-1$
+	public static final String DEFAULT_AUTOCONF = "autoconf"; //$NON-NLS-1$
+	public static final String DEFAULT_AUTOHEADER = "autoheader"; //$NON-NLS-1$
+	public static final String DEFAULT_AUTORECONF = "autoreconf"; //$NON-NLS-1$
+	public static final String DEFAULT_LIBTOOLIZE = "libtoolize"; //$NON-NLS-1$
 	
 	protected Text fAclocalPath;
 	protected Text fAutomakePath;
@@ -73,7 +73,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		
 		/* text window for aclocal path */
 		fAclocalPath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		fAclocalPath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.aclocalPath.tooltip")); // $NON-NLS-1$
+		fAclocalPath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.aclocalPath.tooltip")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fAclocalPath.setLayoutData(gd);
 		
@@ -85,7 +85,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		
 		/* text window for automake path */
 		fAutomakePath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		fAutomakePath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.automakePath.tooltip")); // $NON-NLS-1#
+		fAutomakePath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.automakePath.tooltip")); //$NON-NLS-1#
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fAutomakePath.setLayoutData(gd);
 		
@@ -97,7 +97,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		
 		/* text window for autoconf path */
 		fAutoconfPath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		fAutoconfPath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.autoconfPath.tooltip")); // $NON-NLS-1$
+		fAutoconfPath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.autoconfPath.tooltip")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fAutoconfPath.setLayoutData(gd);
 
@@ -109,7 +109,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		
 		/* text window for autoheader path */
 		fAutoheaderPath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		fAutoheaderPath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.autoheaderPath.tooltip")); // $NON-NLS-1$
+		fAutoheaderPath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.autoheaderPath.tooltip")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fAutoheaderPath.setLayoutData(gd);
 
@@ -121,7 +121,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		
 		/* text window for autoreconf path */
 		fAutoreconfPath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		fAutoreconfPath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.autoreconfPath.tooltip")); // $NON-NLS-1$
+		fAutoreconfPath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.autoreconfPath.tooltip")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fAutoreconfPath.setLayoutData(gd);
 
@@ -133,7 +133,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		
 		/* text window for libtoolize path */
 		fLibtoolizePath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		fLibtoolizePath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.libtoolizePath.tooltip")); // $NON-NLS-1$
+		fLibtoolizePath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.libtoolizePath.tooltip")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fLibtoolizePath.setLayoutData(gd);
 

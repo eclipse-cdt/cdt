@@ -56,9 +56,9 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //	public void testBug39676_tough() { // is this C99?
 //		try {
 //			super.testBug39676_tough();
-//		} catch(AssertionFailedError _) {
+//		} catch(AssertionFailedError expectedException) {
 //			return;
-//		} catch(Exception _) {
+//		} catch(Exception expectedException) {
 //			return;
 //		}
 //		fail();
@@ -68,14 +68,14 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		try {
 //			super.testPredefinedSymbol_bug70928_infinite_loop_test1();
 //			fail();
-//		} catch(AssertionError _) { }
+//		} catch(AssertionError expectedException) { }
 //	}
 //	
 //	public void testPredefinedSymbol_bug70928_infinite_loop_test2() throws Exception { // gcc extension
 //		try {
 //			super.testPredefinedSymbol_bug70928_infinite_loop_test2();
 //			fail();
-//		} catch(AssertionError _) { }
+//		} catch(AssertionError expectedException) { }
 //	}
 
 	
@@ -84,7 +84,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		try {
 //			super.testBug102376();
 //			fail();
-//		} catch(AssertionFailedError _) { }
+//		} catch(AssertionFailedError expectedException) { }
 //	}
 
 //	@Override
@@ -92,7 +92,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		try {
 //			super.test158192_declspec_in_declarator();
 //			fail();
-//		} catch(AssertionFailedError _) { }
+//		} catch(AssertionFailedError expectedException) { }
 //	}
 //
 //	@Override
@@ -100,7 +100,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		try {
 //			super.test158192_declspec_on_class();
 //			fail();
-//		} catch(AssertionFailedError _) { }
+//		} catch(AssertionFailedError expectedException) { }
 //	}
 //
 //	@Override
@@ -108,7 +108,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		try {
 //			super.test158192_declspec_on_variable();
 //			fail();
-//		} catch(AssertionFailedError _) { }
+//		} catch(AssertionFailedError expectedException) { }
 //	}
 //	
 //	@Override
@@ -116,7 +116,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		try {
 //			super.testPredefinedSymbol_bug70928();
 //			fail();
-//		} catch(AssertionFailedError _) { }
+//		} catch(AssertionFailedError expectedException) { }
 //	}
 	
 	@Override
@@ -124,7 +124,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 		try {
 			//super.testBug64010();
 			//fail();
-		} catch(AssertionFailedError _) { }
+		} catch(AssertionFailedError expectedException) { }
 	}
 	
 //	
@@ -133,8 +133,8 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		try {
 //			super.testGNUASMExtension();
 //			fail();
-//		} catch(AssertionFailedError _) { 
-//		} catch(AssertionError _) {
+//		} catch(AssertionFailedError expectedException) { 
+//		} catch(AssertionError expectedException) {
 //		}		
 //	}
 //
@@ -143,7 +143,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		try {
 //			super.testBug39551B();
 //			fail();
-//		} catch(AssertionFailedError _) { }
+//		} catch(AssertionFailedError expectedException) { }
 //	}
 //	
 //	

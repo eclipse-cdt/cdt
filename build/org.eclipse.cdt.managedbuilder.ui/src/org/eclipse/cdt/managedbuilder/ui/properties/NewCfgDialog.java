@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -413,8 +413,8 @@ public class NewCfgDialog implements INewCfgDialog {
 	/**
 	 */
 	public NewCfgDialog() {
-		newName = new String();
-		newDescription = new String();
+		newName = ""; //$NON-NLS-1$
+		newDescription = ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -481,7 +481,7 @@ public class NewCfgDialog implements INewCfgDialog {
 	private String getNameAndDescription(IConfiguration cfg) {
 		String name = cfg.getName();
 		if (name == null) name = NULL;
-		if ( (cfg.getDescription() == null) || cfg.getDescription().equals(""))	//$NON-NLS-1$
+		if ( (cfg.getDescription() == null) || cfg.getDescription().isEmpty())
 			return name;
 		else
 			return name + "( " + cfg.getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$

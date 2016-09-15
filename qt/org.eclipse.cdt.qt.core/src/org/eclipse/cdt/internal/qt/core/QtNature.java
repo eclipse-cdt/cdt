@@ -13,18 +13,17 @@ package org.eclipse.cdt.internal.qt.core;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.build.CBuilder;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
-import org.eclipse.cdt.internal.qt.core.build.QtBuilder;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -59,13 +58,16 @@ public class QtNature implements IProjectNature {
 		}
 	}
 
+	public static void setupBuilder(IProjectDescription projDesc) {
+		ICommand command = projDesc.newCommand();
+		CBuilder.setupBuilder(command);
+		projDesc.setBuildSpec(new ICommand[] { command });
+	}
+
 	@Override
 	public void configure() throws CoreException {
 		IProjectDescription projDesc = project.getDescription();
-		ICommand command = projDesc.newCommand();
-		command.setBuilderName(QtBuilder.ID);
-		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
-		projDesc.setBuildSpec(new ICommand[] { command });
+		setupBuilder(projDesc);
 		project.setDescription(projDesc, new NullProgressMonitor());
 	}
 

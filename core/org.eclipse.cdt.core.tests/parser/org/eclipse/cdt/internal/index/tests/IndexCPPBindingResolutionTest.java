@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -51,8 +53,6 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.TestSuite;
 
 /**
  * For testing PDOM binding CPP language resolution
@@ -175,7 +175,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	private void asserValueEquals(IValue initialValue, long i) {
 		assertNotNull(initialValue);
-		final Long numericalValue = initialValue.numericalValue();
+		final Number numericalValue = initialValue.numberValue();
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.longValue());
 	}
@@ -1476,7 +1476,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		v= (IVariable) getBindingFromASTName("b;", 1);
 		asserValueEquals(v.getInitialValue(), 0);
 		v= (IVariable) getBindingFromASTName("c;", 1);
-		assertNull(v.getInitialValue().numericalValue());
+		assertNull(v.getInitialValue().numberValue());
 
 		IEnumerator e= (IEnumerator) getBindingFromASTName("e0", 2);
 		asserValueEquals(e.getValue(), 0);
@@ -1865,6 +1865,27 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		checkBindings();
 	}
 
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	struct B {
+	//	  template <typename T>
+	//	  B(const A<T>&, int i = 3);
+	//	};
+	//
+	//	struct C : public B {
+	//	  using B::B;
+	//	};
+
+	//	void foo(C);
+	//
+	//	void test(A<int> a) {
+	//	  foo(a);
+	//	}
+	public void testInheritedTemplateConstructor() {
+		checkBindings();
+	}
+
 	//	constexpr int foo(int a = 42) {
 	//		return a;
 	//	}
@@ -1872,7 +1893,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	constexpr int waldo = foo();
 	public void testNameLookupInDefaultArgument_432701() {
 		IVariable waldo = getBindingFromASTName("waldo", 5);
-		assertEquals(42, waldo.getInitialValue().numericalValue().longValue());
+		assertEquals(42, waldo.getInitialValue().numberValue().longValue());
 	}
 
 	//	struct function {

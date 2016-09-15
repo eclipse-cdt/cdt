@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -230,7 +230,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     
     public void testBug91086() throws Exception {
         IFile inclusion = importFile( "file.h", "#define FOUND 666\n" ); //$NON-NLS-1$ //$NON-NLS-2$
-        StringBuffer buffer = new StringBuffer( "#include \"" ); //$NON-NLS-1$
+        StringBuilder buffer = new StringBuilder( "#include \"" ); //$NON-NLS-1$
         buffer.append( inclusion.getLocation().toOSString() );
         buffer.append( "\"\n"); //$NON-NLS-1$
         buffer.append( "int var = FOUND;\n"); //$NON-NLS-1$
@@ -251,7 +251,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     
     public void testBug156990() throws Exception {
         IFile inclusion = importFile( "file.h", "ok" ); 
-        StringBuffer buffer = new StringBuffer( "#include \"file.h\"" );
+        StringBuilder buffer = new StringBuilder( "#include \"file.h\"" );
     	IFile base = importFile( "base.cpp", buffer.toString() ); //$NON-NLS-1$
 
     	FileContent reader= FileContent.create(base);

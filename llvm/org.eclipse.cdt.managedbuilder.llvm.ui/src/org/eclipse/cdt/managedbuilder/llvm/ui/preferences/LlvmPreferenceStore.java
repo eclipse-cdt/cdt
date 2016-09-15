@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013 Nokia Siemens Networks Oyj, Finland.
+ * Copyright (c) 2010, 2016 Nokia Siemens Networks Oyj, Finland.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,7 +165,7 @@ public class LlvmPreferenceStore {
 	 * @param value the string-valued preference
 	 */
 	public static void appendValue(String name, String value) {
-		StringBuffer sB = new StringBuffer();
+		StringBuilder sB = new StringBuilder();
 		String paths = null;
 		//get existing paths
 		paths = getExistingPaths(name);
@@ -233,7 +233,7 @@ public class LlvmPreferenceStore {
 	 * @param value Value to remove from the preference store
 	 */
 	public static void removeValue(String name, String value) {
-		StringBuffer sB = new StringBuffer();
+		StringBuilder sB = new StringBuilder();
 		String existingValues = null;
 		String newValue = null;
 		//get existing values
@@ -250,7 +250,7 @@ public class LlvmPreferenceStore {
 					exValArray = LlvmToolOptionPathUtil.removePathFromExistingPathList(exValArray, value);
 					//if the array isn't empty
 					if (exValArray.length > 0) {
-						//append all values to the StringBuffer excluding the removed one
+						//append all values to the StringBuilder excluding the removed one
 						for (String val : exValArray) {
 							//append a value
 							sB.append(val);

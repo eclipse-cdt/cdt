@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Red Hat Inc.
+ * Copyright (c) 2010, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,15 +193,11 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 	 * @return
 	 */
 	private int getErrorConfigLineNumber(String name) {
-		LineNumberReader reader = null;
-		try {
-			File file = new File(buildDir + "/config.log");
-			// If the log file is not present there is nothing we can do.
-			if (!file.exists())
-				return -1;
-
-			reader = new LineNumberReader(new FileReader(file));
-
+		File file = new File(buildDir + "/config.log");
+		// If the log file is not present there is nothing we can do.
+		if (!file.exists())
+			return -1;
+		try (LineNumberReader reader = new LineNumberReader(new FileReader(file))) {
 			Pattern errorPattern =
 					Pattern.compile("configure:(\\d+): checking for " + name); //$NON-NLS-1$
 			String line;
@@ -213,14 +209,6 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 			}
 		} catch (IOException e) {
 			return -1;
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// Ignore.
-				}
-			}
 		}
 		return -1;
 	}

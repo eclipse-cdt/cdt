@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -373,7 +373,7 @@ public class DOMLocationTests extends AST2TestBase {
 
     public void testSimplePreprocessorStatements() throws Exception
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( "#ifndef _APPLE_H_\n"); //$NON-NLS-1$
         buffer.append( "#define _APPLE_H_\n"); //$NON-NLS-1$
         buffer.append( "#undef _APPLE_H_\n"); //$NON-NLS-1$
@@ -397,7 +397,7 @@ public class DOMLocationTests extends AST2TestBase {
     }
     
     public void testBug162180() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( "#include <notfound.h>\n"); //$NON-NLS-1$
         buffer.append( "int x;\n"); //$NON-NLS-1$
         String code = buffer.toString();
@@ -422,7 +422,7 @@ public class DOMLocationTests extends AST2TestBase {
 	}
 
     public void testBug162180_0() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( "#include <notfound.h>\n"); //$NON-NLS-1$
         buffer.append( "#include <notfound1.h> \r\n"); //$NON-NLS-1$
         buffer.append( "#include <notfound2.h>  // more stuff \n"); //$NON-NLS-1$
@@ -445,7 +445,7 @@ public class DOMLocationTests extends AST2TestBase {
     }
 
     public void test162180_1() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( "#define xxx(!) int a\n"); // [0-20]
         buffer.append( "int x;\n"); 			  // [21-27]
         buffer.append( "int x\\i;\n"); 			  // [28-36]
@@ -468,7 +468,7 @@ public class DOMLocationTests extends AST2TestBase {
     }
 
     public void test162180_2() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( "#define ! x\n"); 
         buffer.append( "int x;\n"); 			  
         String code = buffer.toString();
@@ -486,7 +486,7 @@ public class DOMLocationTests extends AST2TestBase {
     }
 
     public void test162180_3() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( "#define nix(x) x\n"); 
         buffer.append( "nix(y,z);");
         buffer.append( "int x;\n"); 			  
@@ -505,7 +505,7 @@ public class DOMLocationTests extends AST2TestBase {
     }
 
     public void test162180_4() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( "#include \"\"\n"); 
         buffer.append( "#else\n"); 
         buffer.append( "int x;\n"); 			  
@@ -540,7 +540,7 @@ public class DOMLocationTests extends AST2TestBase {
 	}
 	
     public void testBug86698_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
         buffer.append( "struct C;\n"); //$NON-NLS-1$
 		buffer.append( "void no_opt(C*);\n"); //$NON-NLS-1$
 		buffer.append( "struct C {\n"); //$NON-NLS-1$
@@ -558,7 +558,7 @@ public class DOMLocationTests extends AST2TestBase {
 	}
 
     public void testBug86698_2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "int f(int);\n"); //$NON-NLS-1$
 		buffer.append( "class C {\n"); //$NON-NLS-1$
 		buffer.append( "int i;\n"); //$NON-NLS-1$
@@ -583,7 +583,7 @@ public class DOMLocationTests extends AST2TestBase {
 	}
 
     public void testBug157009_1() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#ifndef A\r\n#error X\r\n#else\r\n#error Y\r\n#endif");
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
 
@@ -593,7 +593,7 @@ public class DOMLocationTests extends AST2TestBase {
     }	   
 
     public void testBug157009_2() throws Exception {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#ifndef A\n#error X\n#else\n#error Y\n#endif");
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
 
@@ -604,7 +604,7 @@ public class DOMLocationTests extends AST2TestBase {
 
     public void testBug171520() throws Exception {
     	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=171520
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("int i = sizeof(int);");
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
         IASTDeclaration[] decls= tu.getDeclarations();
@@ -624,7 +624,7 @@ public class DOMLocationTests extends AST2TestBase {
     public void testBug120607() throws Exception {
  	   // C/C++ Indexer rejects valid pre-processor directive
  	   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=120607
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("#import \"include_once.h\"\n");
         buffer.append("#warning \"deprecated include\"\n");
         buffer.append("#line 5\n");

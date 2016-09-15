@@ -23,9 +23,11 @@ public class ArduinoLaunchConfigurationProvider extends ProjectLaunchConfigProvi
 
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
-		IRemoteConnection connection = target.getAdapter(IRemoteConnection.class);
-		if (connection != null) {
-			return connection.getConnectionType().getId().equals(ArduinoRemoteConnection.TYPE_ID);
+		if (target != null) {
+			IRemoteConnection connection = target.getAdapter(IRemoteConnection.class);
+			if (connection != null) {
+				return connection.getConnectionType().getId().equals(ArduinoRemoteConnection.TYPE_ID);
+			}
 		}
 		return false;
 	}

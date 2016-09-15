@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,11 +38,11 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
     private static final String CP_ACCESS = "access"; //$NON-NLS-1$
     private static final String CP_VIRTUAL = "virtual"; //$NON-NLS-1$
     private static final String CP_INLINE = "inline"; //$NON-NLS-1$
-    static final Integer INDEX_YES = new Integer(0);
-    static final Integer INDEX_NO = new Integer(1);
-    static final Integer INDEX_PUBLIC = new Integer(0);
-    static final Integer INDEX_PROTECTED = new Integer(1);
-    static final Integer INDEX_PRIVATE = new Integer(2);
+    static final Integer INDEX_YES = 0;
+    static final Integer INDEX_NO = 1;
+    static final Integer INDEX_PUBLIC = 0;
+    static final Integer INDEX_PROTECTED = 1;
+    static final Integer INDEX_PRIVATE = 2;
     
     private final class CellHandler implements ICellModifier {
         @Override

@@ -150,22 +150,29 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
     @Override
     public void setRequestedSourceHandle(String fileName) throws CoreException {
         setAttribute( ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, fileName );
+        setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
     }
     
     @Override
     public synchronized int decrementInstallCount() throws CoreException {
         int count = super.decrementInstallCount();
+
         if (count == 0) {
-            resetInstalledLocation();
+            if (Boolean.TRUE.equals(this.getMarker().getAttribute(RESET_INSTALLED_LOCATION))) {
+                resetInstalledLocation();
+                setAttribute(RESET_INSTALLED_LOCATION, Boolean.FALSE);
+            }
         }
+
         return count;
     }
-    
+
     @Override
     public void setInstalledLineNumber(int line) throws CoreException {
         int existingValue = ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
         if (line != existingValue) {
             setAttribute(IMarker.LINE_NUMBER, line);
+            setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
             setAttribute( IMarker.MESSAGE, getMarkerMessage() );
         }
     }
@@ -175,6 +182,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
         int existingValue = ensureMarker().getAttribute(IMarker.CHAR_START, -1);
         if (charStart != existingValue) {
             setAttribute(IMarker.CHAR_START, charStart);
+            setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
             setAttribute( IMarker.MESSAGE, getMarkerMessage() );
         }
     }
@@ -184,6 +192,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
         int existingValue = ensureMarker().getAttribute(IMarker.CHAR_END, -1);
         if (charEnd != existingValue) {
             setAttribute(IMarker.CHAR_END, charEnd);
+            setAttribute(RESET_INSTALLED_LOCATION, Boolean.TRUE);
             setAttribute( IMarker.MESSAGE, getMarkerMessage() );
         }
     }

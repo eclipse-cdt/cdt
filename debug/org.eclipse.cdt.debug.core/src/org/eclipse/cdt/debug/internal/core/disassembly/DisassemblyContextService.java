@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ARM Limited and others.
+ * Copyright (c) 2008, 2016 ARM Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,56 +20,44 @@ import org.eclipse.core.runtime.ListenerList;
 
 public class DisassemblyContextService implements IDisassemblyContextService {
 
-    private ListenerList fListeners;
+    private ListenerList<IDisassemblyContextListener> fListeners;
     private Set<Object> fContexts;
 
     public DisassemblyContextService() {
         fContexts = new CopyOnWriteArraySet<Object>();
-        fListeners = new ListenerList();
+        fListeners = new ListenerList<>();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService#addDisassemblyContextListener(org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextListener)
-     */
     @Override
 	public void addDisassemblyContextListener( IDisassemblyContextListener listener ) {
         fListeners.add( listener );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService#removeDisassemblyContextListener(org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextListener)
-     */
     @Override
 	public void removeDisassemblyContextListener( IDisassemblyContextListener listener ) {
         fListeners.remove( listener );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService#register(java.lang.Object)
-     */
     @Override
 	public void register( Object context ) {
         fContexts.add( context );
-        for( Object listener : fListeners.getListeners() ) {
-            ((IDisassemblyContextListener)listener).contextAdded( context );
+        for( IDisassemblyContextListener listener : fListeners) {
+            listener.contextAdded( context );
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService#unregister(java.lang.Object)
-     */
     @Override
 	public void unregister( Object context ) {
         fContexts.remove( context );
-        for( Object listener : fListeners.getListeners() ) {
-            ((IDisassemblyContextListener)listener).contextRemoved( context );
+        for( IDisassemblyContextListener listener : fListeners) {
+            listener.contextRemoved( context );
         }
     }
 
     public void dispose() {
         for( Object context : fContexts ) {
-            for( Object listener : fListeners.getListeners() ) {
-                ((IDisassemblyContextListener)listener).contextRemoved( context );
+            for( IDisassemblyContextListener listener : fListeners) {
+                listener.contextRemoved( context );
             }
         }
         fListeners.clear();

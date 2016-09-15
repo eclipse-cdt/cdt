@@ -130,8 +130,8 @@ public class StorableEnvironment {
 	 * @param element
 	 */
 	public void serialize(ICStorageElement element){
-		element.setAttribute(ATTRIBUTE_APPEND, Boolean.valueOf(fAppend).toString());
-		element.setAttribute(ATTRIBUTE_APPEND_CONTRIBUTED, Boolean.valueOf(fAppendContributedEnv).toString());
+		element.setAttribute(ATTRIBUTE_APPEND, String.valueOf(fAppend));
+		element.setAttribute(ATTRIBUTE_APPEND_CONTRIBUTED, String.valueOf(fAppendContributedEnv));
 		if(fVariables != null){
 			Iterator<IEnvironmentVariable> iter = fVariables.values().iterator();
 			while(iter.hasNext()){

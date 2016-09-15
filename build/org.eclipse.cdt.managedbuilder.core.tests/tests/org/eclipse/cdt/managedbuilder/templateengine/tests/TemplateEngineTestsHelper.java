@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Symbian Software Limited and others.
+ * Copyright (c) 2010, 2016 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,7 +131,7 @@ public class TemplateEngineTestsHelper {
 			IProjectType type = allProjectTypes[index];
 			if (!type.isAbstract() && !type.isTestProjectType()) {
 				
-				if (!type.getConvertToId().equals("")) //$NON-NLS-1$
+				if (!type.getConvertToId().isEmpty())
 					continue;
 				
 				if (type.isSupported()) {

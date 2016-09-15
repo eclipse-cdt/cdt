@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -630,10 +630,10 @@ public final class PathSettingsContainer {
 
 	@Override
 	public String toString() {
-		return contributeToString(new StringBuffer(), 0).toString();
+		return contributeToString(new StringBuilder(), 0).toString();
 	}
 
-	private StringBuffer contributeToString(StringBuffer buf, int depth){
+	private StringBuilder contributeToString(StringBuilder buf, int depth){
 		for (int i= 0; i < depth; i++) {
 			buf.append('\t');
 		}

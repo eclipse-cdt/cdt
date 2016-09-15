@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.source"
       label="%featureName"
-      version="9.0.0.qualifier"
+      version="9.1.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -98,16 +98,6 @@
          os="qnx"
          ws="photon"
          arch="x86"
-         download-size="0"
-         install-size="0"
-         version="5.0.0.qualifier"
-         fragment="true"/>
-
-   <plugin
-         id="org.eclipse.cdt.source.solaris.motif.sparc"
-         os="solaris"
-         ws="motif"
-         arch="sparc"
          download-size="0"
          install-size="0"
          version="5.0.0.qualifier"

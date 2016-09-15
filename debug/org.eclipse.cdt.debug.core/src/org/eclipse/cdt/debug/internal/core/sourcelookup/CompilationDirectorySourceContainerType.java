@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Google, Inc and others.
+ * Copyright (c) 2010, 2016 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class CompilationDirectorySourceContainerType extends AbstractSourceConta
 					abort(InternalSourceLookupMessages.CompilationDirectorySourceContainerType_0, null);
 				}
 				String nest = element.getAttribute("nest"); //$NON-NLS-1$
-				boolean nested = "true".equals(nest); //$NON-NLS-1$
+				boolean nested = Boolean.parseBoolean(nest);
 				return new CompilationDirectorySourceContainer(new Path(path), nested);
 			}
 			abort(InternalSourceLookupMessages.CompilationDirectorySourceContainerType_1, null);

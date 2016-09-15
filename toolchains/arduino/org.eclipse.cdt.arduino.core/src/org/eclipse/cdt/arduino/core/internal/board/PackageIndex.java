@@ -7,29 +7,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import java.util.Collection;
 import java.util.List;
 
 public class PackageIndex {
 
 	private List<ArduinoPackage> packages;
 
-	public List<ArduinoPackage> getPackages() {
+	public Collection<ArduinoPackage> getPackages() {
 		return packages;
-	}
-
-	public ArduinoPackage getPackage(String packageName) {
-		for (ArduinoPackage pkg : packages) {
-			if (pkg.getName().equals(packageName)) {
-				return pkg;
-			}
-		}
-		return null;
-	}
-
-	void setOwners(ArduinoManager manager) {
-		for (ArduinoPackage pkg : packages) {
-			pkg.setOwner(manager);
-		}
 	}
 
 }

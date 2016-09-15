@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -328,7 +328,7 @@ public class CElementBaseLabels {
 		
 		if (element instanceof IBinary) {
 			IBinary bin = (IBinary)element;
-			buf.append(" - [" + bin.getCPU() + "/" + (bin.isLittleEndian() ? "le" : "be") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			buf.append(" - [").append(bin.getCPU()).append('/').append(bin.isLittleEndian() ? "le" : "be").append(']'); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 	}

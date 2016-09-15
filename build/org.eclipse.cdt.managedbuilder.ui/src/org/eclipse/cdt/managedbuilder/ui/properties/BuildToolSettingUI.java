@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -264,7 +264,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		// boolean,string and enumerated
 		List<String> optionsList = new ArrayList<String>();
 		// additional options buffer
-		StringBuffer addnOptions = new StringBuffer();
+		StringBuilder addnOptions = new StringBuilder();
 		// split all build options string
 		Vector<String> optionsArr = getOptionVector(alloptions);
 		for (String optionValue : optionsArr) {
@@ -314,7 +314,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 										optionValueExist = true;
 									}
 								}
-								if (!enumeration.equals("")) //$NON-NLS-1$
+								if (!enumeration.isEmpty())
 											setOption(opt, enumeration);
 								break;
 							case IOption.TREE :
@@ -328,7 +328,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 										optionValueExist = true;
 									}
 								}
-								if (!selectedID.equals("")) //$NON-NLS-1$
+								if (!selectedID.isEmpty())
 											setOption(opt, selectedID);
 								break;
 							case IOption.STRING_LIST :
@@ -361,7 +361,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			// If the parsed string does not match with any previous option
 			// values then consider this option as a additional build option
 			if (!optionValueExist) {
-				addnOptions.append(optionValue + ITool.WHITE_SPACE);
+				addnOptions.append(optionValue).append(ITool.WHITE_SPACE);
 			}
 		}
 		// check whether some of the "STRING" option value or "OBJECTS" type
@@ -374,11 +374,11 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 				Object key = iterator.next();
 				String val = stringOptionsMap.get(key);
 				if (alloptions.indexOf(val) == -1) {
-					StringBuffer buf = new StringBuffer();
+					StringBuilder buf = new StringBuilder();
 					String[] vals = val.split(WHITESPACE);
 					for (int t = 0; t < vals.length; t++) {
 						if (alloptions.indexOf(vals[t]) != -1)
-							buf.append(vals[t] + ITool.WHITE_SPACE);
+							buf.append(vals[t]).append(ITool.WHITE_SPACE);
 					}
 					setOption(((IOption) key),
 							buf.toString().trim());

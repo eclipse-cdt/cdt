@@ -57,7 +57,7 @@ public class CPPASTDecltypeSpecifier extends ASTNode
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(Keywords.cDECLTYPE);
 			buffer.append(Keywords.cpLPAREN);
-			buffer.append(fDecltypeExpression.getEvaluation().getSignature());
+			buffer.append(((ICPPEvaluationOwner)fDecltypeExpression).getEvaluation().getSignature());
 			buffer.append(Keywords.cpRPAREN);
 			final int len = buffer.length();
 			fSignature = new char[len];

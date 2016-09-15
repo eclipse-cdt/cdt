@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * Represents a specialization of a class-template
+ * Represents a specialization of a class-template.
  */
 public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		implements ICPPClassTemplate, ICPPInternalClassTemplate {

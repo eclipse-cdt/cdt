@@ -11,11 +11,20 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 
 public class CPPConstructorTemplate extends CPPMethodTemplate implements ICPPConstructor {
 
 	public CPPConstructorTemplate(IASTName name) {
 		super(name);
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		if (!isConstexpr()) {
+			return null;
+		}
+		return CPPConstructor.computeConstructorChainExecution(getDefinition());
 	}
 }

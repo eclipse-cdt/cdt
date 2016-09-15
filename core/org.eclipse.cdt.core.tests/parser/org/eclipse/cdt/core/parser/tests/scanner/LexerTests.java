@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -691,7 +691,7 @@ public class LexerTests extends BaseTestCase {
 		
 		for (int splices=0; splices<9; splices++) {
 			for (int trigraphs= 0; trigraphs<6; trigraphs++) {
-				StringBuffer buf= new StringBuffer();
+				StringBuilder buf= new StringBuilder();
 				String input= useTrigraphs(ops.toCharArray(), trigraphs);
 				init(instertLineSplices(input, splices)); 
 				for (int token2 : tokens) {
@@ -727,7 +727,7 @@ public class LexerTests extends BaseTestCase {
 		int m1= splices%3;
 		int m2= (splices-m1)/3;
 		char[] c= input.toCharArray();
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 		for (int i = 0; i < c.length; i++) {
 			result.append(c[i]);
 			if (c[i]=='?' && i+2 < c.length && c[i+1] == '?' && TRIGRAPH_CHARS.indexOf(c[i+2]) >= 0) {
@@ -760,7 +760,7 @@ public class LexerTests extends BaseTestCase {
 		}
 
 		boolean yes= mode > 1;
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 		for (char c : input) {
 			int idx= TRIGRAPH_REPLACES_CHARS.indexOf(c);
 			if (idx > 0) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2016 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class ProjectTypeEWizardPage extends MBSCustomPage
 	@Override
 	public String getName()
 	{
-		return new String("Project Type E WizardPage");
+		return "Project Type E WizardPage";
 	}
 
 	@Override
@@ -68,13 +68,13 @@ public class ProjectTypeEWizardPage extends MBSCustomPage
 	@Override
 	public String getDescription()
 	{
-		return new String("My description");
+		return "My description";
 	}
 
 	@Override
 	public String getErrorMessage()
 	{
-		return new String("My error msg");
+		return "My error msg";
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class ProjectTypeEWizardPage extends MBSCustomPage
 	@Override
 	public String getTitle()
 	{
-		return new String("My Title");
+		return "My Title";
 	}
 
 	@Override

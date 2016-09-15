@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 		fIsReadOnly = isReadOnly;
 		if(el != null){
 			if(el.getAttribute(ATTR_CONFIG_RELATIONS) != null)
-				fConfigRelations = new Integer(CDataUtil.getInteger(el, ATTR_CONFIG_RELATIONS, DEFAULT_RELATIONS));
+				fConfigRelations = Integer.valueOf(CDataUtil.getInteger(el, ATTR_CONFIG_RELATIONS, DEFAULT_RELATIONS));
 		}
 
 		this.fSuperPreference = superPreference;
@@ -77,7 +77,7 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 		if(fConfigRelations != null && fConfigRelations.intValue() == status)
 			return;
 
-		fConfigRelations = new Integer(status);
+		fConfigRelations = Integer.valueOf(status);
 		fIsModified = true;
 	}
 

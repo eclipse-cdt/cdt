@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Wind River Systems and others.
+ * Copyright (c) 2012, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,9 @@ import org.eclipse.debug.core.model.IDebugModelProvider;
  * Debug model provider returns additional model ID to use with 
  * GDB event breakpoints.
  */
-@SuppressWarnings("rawtypes")
 public class DebugModelProvider implements IDebugModelProvider, IAdapterFactory {
 
-    private final static Class[] ADAPTER_LIST = new Class[] { IDebugModelProvider.class };
+    private final static Class<?>[] ADAPTER_LIST = new Class[] { IDebugModelProvider.class };
     private final static String GDB_MODEL_ID = "org.eclipse.cdt.gdb"; //$NON-NLS-1$
     private final static String[] MODEL_IDS = new String[] { CDIDebugModel.getPluginIdentifier(), GDB_MODEL_ID }; 
     
@@ -31,16 +30,17 @@ public class DebugModelProvider implements IDebugModelProvider, IAdapterFactory 
         return MODEL_IDS;
     }
     
-    @Override
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+    @SuppressWarnings("unchecked")
+	@Override
+    public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
         if ( adaptableObject instanceof ICDebugElement && IDebugModelProvider.class.equals(adapterType) ) {
-            return this;
+            return (T) this;
         }
         return null;
     }
     
     @Override
-    public Class[] getAdapterList() {
+    public Class<?>[] getAdapterList() {
         return ADAPTER_LIST;
     }
     

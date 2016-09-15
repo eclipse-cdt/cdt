@@ -19,10 +19,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
@@ -51,6 +47,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ManagedProject30MakefileTests extends TestCase {
 	public static final String MBS_TEMP_DIR = "MBSTemp";
@@ -87,7 +87,8 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("CDTFortranTest2"));
 		suite.addTest(new ManagedProject30MakefileTests("TestATO"));
 		suite.addTest(new ManagedProject30MakefileTests("testMacroSupportInBuildDefinitions"));
-		suite.addTest(new ManagedProject30MakefileTests("testSpaces"));
+		// Turning off since this is specific to a gcc version
+		// suite.addTest(new ManagedProject30MakefileTests("testSpaces"));
 		if(File.separatorChar == '\\'){
 			//the test is valid for windows because it is using windows-specific paths with devices and assumes they are absolute
 			//FIXME: make the test run on linux
@@ -97,7 +98,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	}
 
 	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){
-		ArrayList<IProject> projectList = new ArrayList<IProject>();
+		ArrayList<IProject> projectList = new ArrayList<>();
 		if (containsZip) {
 			File testDir = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/" + projName));
 			if(testDir == null) {
@@ -114,7 +115,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 				}
 			});
 
-			projectList = new ArrayList<IProject>(projectZips.length);
+			projectList = new ArrayList<>(projectZips.length);
 			for(int i = 0; i < projectZips.length; i++){
 				try{
 					String projectName = projectZips[i].getName();
@@ -139,7 +140,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 			try{
 				IProject project = ManagedBuildTestHelper.createProject(projName, null, location, projectTypeId);
 				if(project != null)
-					projectList = new ArrayList<IProject>(1);
+					projectList = new ArrayList<>(1);
 					projectList.add(project);
 			} catch(Exception e){
 			}
@@ -396,7 +397,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 
 		IProject[] projects = createProjects("deleteFile", null, null, true);
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		ArrayList<IFile> resourceList = new ArrayList<IFile>(1);
+		ArrayList<IFile> resourceList = new ArrayList<>(1);
 		IProject project = projects[0];
 		IFile projfile = project.getFile("filetobedeleted.cxx");
 		resourceList.add(projfile);

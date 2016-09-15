@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class ProcessLauncher {
 	 * Returns command line in a single string
 	 */
 	public String getCommandLine() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (cmd != null) {
 			for (int i = 0; i < cmd.length; i++) {
 				buf.append(cmd[i]);

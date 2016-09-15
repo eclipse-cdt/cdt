@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.preferences;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.eclipse.cdt.qt.core.IQtInstall;
@@ -17,7 +18,7 @@ public class NewQtInstallWizard extends Wizard {
 	private final NewQtInstallWizardPage page;
 	private IQtInstall install;
 
-	public NewQtInstallWizard(Map<String, IQtInstall> existing) {
+	public NewQtInstallWizard(Map<Path, IQtInstall> existing) {
 		page = new NewQtInstallWizardPage(existing);
 	}
 

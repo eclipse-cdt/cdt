@@ -615,7 +615,8 @@
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
             name="%GCCBuiltinCompilerSettings.name"
-            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;">
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;"
+            prefer-non-shared="true">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>
@@ -623,7 +624,8 @@
             class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
             name="%GCCBuiltinCompilerSettingsCygwin.name"
-            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;">
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;"
+            prefer-non-shared="true">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>
@@ -631,7 +633,8 @@
             class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorMinGW"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorMinGW"
             name="%GCCBuiltinCompilerSettingsMinGW.name"
-            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;">
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;"
+            prefer-non-shared="true">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>

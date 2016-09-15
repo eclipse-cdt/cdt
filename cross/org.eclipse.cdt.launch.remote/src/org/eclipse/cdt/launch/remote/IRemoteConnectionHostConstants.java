@@ -26,7 +26,7 @@ package org.eclipse.cdt.launch.remote;
  */
 public interface IRemoteConnectionHostConstants {
 
-	public static final String PI_REMOTE_CDT = "org.eclipse.rse.remotecdt"; //$NON-NLS-1$
+	public static final String PI_REMOTE_CDT = "org.eclipse.cdt.launch.remote.attr"; //$NON-NLS-1$
 
 	public static final String REMOTE_WS_ROOT = "remoteWsRoot"; //$NON-NLS-1$
 	public static final String DEFAULT_SKIP_DOWNLOAD = "defaultSkipDownload"; //$NON-NLS-1$

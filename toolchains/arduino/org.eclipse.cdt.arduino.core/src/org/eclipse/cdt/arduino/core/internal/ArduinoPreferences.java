@@ -7,9 +7,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
@@ -32,10 +38,32 @@ public class ArduinoPreferences {
 		return Paths.get(getPrefs().get(ARDUINO_HOME, defaultHome));
 	}
 
+	public static void setArduinoHome(Path home) {
+		IEclipsePreferences prefs = getPrefs();
+		prefs.put(ARDUINO_HOME, home.toString());
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
+	}
+	
 	public static String getBoardUrls() {
 		return getPrefs().get(BOARD_URLS, defaultBoardUrls);
 	}
 
+	public static URL[] getBoardUrlList() throws CoreException {
+		List<URL> urlList = new ArrayList<>();
+		for (String url : getBoardUrls().split("\n")) { //$NON-NLS-1$
+			try {
+				urlList.add(new URL(url.trim()));
+			} catch (MalformedURLException e) {
+				throw Activator.coreException(e);
+			}
+		}
+		return urlList.toArray(new URL[urlList.size()]);
+	}
+	
 	public static void setBoardUrls(String boardUrls) {
 		IEclipsePreferences prefs = getPrefs();
 		prefs.put(BOARD_URLS, boardUrls);
@@ -44,6 +72,22 @@ public class ArduinoPreferences {
 		} catch (BackingStoreException e) {
 			Activator.log(e);
 		}
+	}
+
+	public static void setBoardUrlList(URL[] urls) {
+		StringBuilder str = new StringBuilder();
+		for (int i = 0; i < urls.length - 1; ++i) {
+			str.append(urls[i].toString());
+			str.append('\n');
+		}
+		if (urls.length > 0) {
+			str.append(urls[urls.length - 1].toString());
+		}
+		setBoardUrls(str.toString());
+	}
+
+	public static String getDefaultArduinoHome() {
+		return defaultHome;
 	}
 
 	public static String getDefaultBoardUrls() {

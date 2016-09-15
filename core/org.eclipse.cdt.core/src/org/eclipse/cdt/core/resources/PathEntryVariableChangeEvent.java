@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class PathEntryVariableChangeEvent extends EventObject {
 	@Override
 	public String toString() {
 		String[] typeStrings = {"VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		StringBuffer sb = new StringBuffer(getClass().getName());
+		StringBuilder sb = new StringBuilder(getClass().getName());
 		sb.append("[variable = "); //$NON-NLS-1$
 		sb.append(variableName);
 		sb.append(", type = "); //$NON-NLS-1$

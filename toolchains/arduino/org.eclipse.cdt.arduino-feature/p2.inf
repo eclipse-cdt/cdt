@@ -1,0 +1,3 @@
+instructions.configure=\
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/tools/cdt/arduino/neon/,type:0,name:Arduino Neon,enabled:true); \
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/tools/cdt/arduino/neon/,type:1,name:Arduino Neon,enabled:true); 

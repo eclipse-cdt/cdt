@@ -16,7 +16,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -27,7 +26,6 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableDialog;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
@@ -53,20 +51,19 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 	private class PromptJob extends UIJob {
 
 		private DataRequestMonitor<NewExecutableInfo> fRequestMonitor;
-		private boolean fRemote = false;
+		final private SessionType fSessionType;
 	
-		private PromptJob( boolean remote, DataRequestMonitor<NewExecutableInfo> rm ) {
+		private PromptJob( SessionType sessionType, DataRequestMonitor<NewExecutableInfo> rm ) {
 			super( Messages.GdbDebugNewExecutableCommand_New_Executable_Prompt_Job );
-			fRemote = remote;
+			fSessionType = sessionType;
 			fRequestMonitor = rm;
 		}
 
 		@Override
 		public IStatus runInUIThread( IProgressMonitor monitor ) {
-			int flags = ( fRemote ) ? NewExecutableDialog.REMOTE : 0;
-			NewExecutableDialog dialog = new NewExecutableDialog( GdbUIPlugin.getShell(), flags );
+			final NewExecutableInfo info = new NewExecutableInfo(fSessionType);
+			NewExecutableDialog dialog = new NewExecutableDialog(GdbUIPlugin.getShell(), info);
 			final boolean canceled = dialog.open() == Window.CANCEL;
-			final NewExecutableInfo info = dialog.getExecutableInfo();
 			fExecutor.execute( new DsfRunnable() {
 				
 				@Override
@@ -134,7 +131,7 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 		}
 
 		PromptJob job = new PromptJob( 
-			backend.getSessionType() == SessionType.REMOTE,
+			backend.getSessionType(),
 			new DataRequestMonitor<NewExecutableInfo>( fExecutor, rm ){
 				
 				@Override
@@ -147,8 +144,7 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 				protected void handleSuccess() {
 					try {
 						Map<String, Object> attributes = getLaunchConfiguration().getAttributes();
-						attributes.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, getData().getTargetPath() );
-						attributes.put( ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getData().getArguments() );
+						attributes.putAll(getData().getAttributes());
 						procService.debugNewProcess(
 								commandControl.getContext(), 
 								getData().getHostPath(), 

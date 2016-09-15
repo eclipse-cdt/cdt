@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
             scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
             scannerInfo.put(ScannerInfoTypes.QUOTE_INCLUDE_PATHS, quoteIncludes);
             scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
-            fCollector.contributeToScannerConfig(new Integer(commandId), scannerInfo);
+            fCollector.contributeToScannerConfig(Integer.valueOf(commandId), scannerInfo);
             commandId = -1;
             rc = true;
         }

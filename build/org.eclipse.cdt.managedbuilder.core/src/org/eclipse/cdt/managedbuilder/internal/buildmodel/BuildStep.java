@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -262,7 +262,7 @@ public class BuildStep implements IBuildStep {
 				IBuildResource[] generated = fBuildDescription.getResources(true);
 
 				if(generated.length != 0){
-					StringBuffer buf = new StringBuffer();
+					StringBuilder buf = new StringBuilder();
 					for(int i = 0; i < generated.length; i++){
 						buf.append(' ');
 
@@ -383,7 +383,7 @@ public class BuildStep implements IBuildStep {
 		char prev = 0;
 //		int start = 0;
 		List<String> list = new ArrayList<String>();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for(int i = 0; i < arr.length; i++){
 			char ch = arr[i];
 			switch(ch){
@@ -521,9 +521,9 @@ public class BuildStep implements IBuildStep {
 
 	private String listToString(String[] list, String delimiter){
 		if(list == null || list.length == 0)
-			return new String();
+			return ""; //$NON-NLS-1$
 
-		StringBuffer buf = new StringBuffer(list[0]);
+		StringBuilder buf = new StringBuilder(list[0]);
 
 		for(int i = 1; i < list.length; i++){
 			buf.append(delimiter).append(list[i]);

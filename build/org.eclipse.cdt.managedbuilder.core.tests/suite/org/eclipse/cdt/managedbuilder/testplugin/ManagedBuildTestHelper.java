@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,12 +73,12 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 public class ManagedBuildTestHelper {
-	private static final String rcbsToolId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs");	//$NON-NLS-1$
-	private static final String rcbsToolName = new String("Resource Custom Build Step");	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype");	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeName = new String("Resource Custom Build Step Input Type");	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
+	private static final String rcbsToolId = "org.eclipse.cdt.managedbuilder.ui.rcbs";	//$NON-NLS-1$
+	private static final String rcbsToolName = "Resource Custom Build Step";	//$NON-NLS-1$
+	private static final String rcbsToolInputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype";	//$NON-NLS-1$
+	private static final String rcbsToolInputTypeName = "Resource Custom Build Step Input Type";	//$NON-NLS-1$
+	private static final String rcbsToolOutputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype";	//$NON-NLS-1$
+	private static final String rcbsToolOutputTypeName = "Resource Custom Build Step Output Type";	//$NON-NLS-1$
 
 
 	/* (non-Javadoc)
@@ -463,10 +463,10 @@ public class ManagedBuildTestHelper {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("File ").append(testFileLocation.lastSegment()).append(" does not match its benchmark.\n ");
 				buffer.append("expected:\n ");
-				buffer.append("\"").append(benchmarkBuffer).append("\"");
+				buffer.append('"').append(benchmarkBuffer).append('"');
 				buffer.append("\n\n ");
 				buffer.append("but was:\n ");
-				buffer.append("\"").append(testBuffer).append("\"");
+				buffer.append('"').append(testBuffer).append('"');
 				buffer.append("\n\n ");
 
 				buffer.append(">>>>>>>>>>>>>>>start diff: \n");
@@ -787,10 +787,10 @@ public class ManagedBuildTestHelper {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("File ").append(tFile.getName()).append(" does not match its benchmark.\n ");
 			buffer.append("expected:\n ");
-			buffer.append("\"").append(benchmarkBuffer).append("\"");
+			buffer.append('"').append(benchmarkBuffer).append('"');
 			buffer.append("\n\n ");
 			buffer.append("but was:\n ");
-			buffer.append("\"").append(testBuffer).append("\"");
+			buffer.append('"').append(testBuffer).append('"');
 			buffer.append("\n\n ");
 
 			buffer.append(">>>>>>>>>>>>>>>start diff: \n");
@@ -1071,7 +1071,7 @@ public class ManagedBuildTestHelper {
 			rcbsTool = rcConfig.createTool(null,rcbsToolId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolName,false);	//$NON-NLS-1$
 			rcbsTool.setCustomBuildStep(true);
 			IInputType rcbsToolInputType = rcbsTool.createInputType(null,rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolInputTypeName,false);	//$NON-NLS-1$
-			IAdditionalInput rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(new String());
+			IAdditionalInput rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(""); //$NON-NLS-1$
 			rcbsToolInputTypeAdditionalInput.setKind(IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY);
 			rcbsTool.createOutputType(null,rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolOutputTypeName,false);	//$NON-NLS-1$
 		}

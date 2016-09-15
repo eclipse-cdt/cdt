@@ -48,7 +48,7 @@ import junit.framework.Test;
  * Tests the behavior of the IIndex API when dealing with multiple projects
  */
 public class IndexCompositeTests extends BaseTestCase {
-	Set<IProject> createdProjects = new HashSet<IProject>();
+	Set<IProject> createdProjects = new HashSet<>();
 
 	/*
 	 * Convenience class for setting up projects.
@@ -56,8 +56,8 @@ public class IndexCompositeTests extends BaseTestCase {
 	private class ProjectBuilder {
 		private final String name;
 		private final boolean cpp;
-		private List<IProject> dependencies = new ArrayList<IProject>();
-		private Map<String, String> path2content = new HashMap<String, String>();
+		private List<IProject> dependencies = new ArrayList<>();
+		private Map<String, String> path2content = new HashMap<>();
 
 		ProjectBuilder(String name, boolean cpp) {
 			this.name = name;

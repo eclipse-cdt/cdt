@@ -12,6 +12,7 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.GdbCliConsoleManager;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.TracingConsoleManager;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
@@ -46,6 +47,7 @@ public class GdbUIPlugin extends AbstractUIPlugin {
     private static BundleContext fgBundleContext; 
 
     private static TracingConsoleManager fTracingConsoleManager;
+    private static GdbCliConsoleManager fGdbConsoleManager;
     
     private static IPreferenceStore fCorePreferenceStore;
     
@@ -67,6 +69,9 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		
 		fTracingConsoleManager = new TracingConsoleManager();
 		fTracingConsoleManager.startup();
+		
+		fGdbConsoleManager = new GdbCliConsoleManager();
+		fGdbConsoleManager.startup();
 	}
 
 	/*
@@ -76,6 +81,7 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 	@Override
     public void stop(BundleContext context) throws Exception {
 		fTracingConsoleManager.shutdown();
+		fGdbConsoleManager.shutdown();
 
 		disposeAdapterSets();
 		plugin = null;
@@ -83,6 +89,10 @@ public class GdbUIPlugin extends AbstractUIPlugin {
         fgBundleContext = null;
 	}
 
+	public static GdbCliConsoleManager getCliConsoleManager() {
+		return fGdbConsoleManager;
+	}
+	
 	/**
 	 * Dispose adapter sets for all launches.
 	 */

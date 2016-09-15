@@ -115,7 +115,7 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 			// 1- post-mortem and non-attach remote sessions don't support creating a new process
 			// 2- commands that were part of the .gdbinit file will affect the initial process, which is what the user expects,
 			//    but would not affect a new process we created instead.
-			setContainerContext(fProcService.createContainerContextFromGroupId(fGdbControl.getContext(), "i1")); //$NON-NLS-1$
+			setContainerContext(fProcService.createContainerContextFromGroupId(fGdbControl.getContext(), GDBProcesses_7_2.INITIAL_THREAD_GROUP_ID));
 			rm.done();
 			return;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -68,7 +69,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setUseDefaultBuildCmd(boolean on) throws CoreException {
-			putString(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
+			putString(USE_DEFAULT_BUILD_CMD, String.valueOf(on));
 		}
 
 		@Override
@@ -212,7 +213,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setStopOnError(boolean enabled) throws CoreException {
-			putString(STOP_ON_ERROR, new Boolean(enabled).toString());
+			putString(STOP_ON_ERROR, String.valueOf(enabled));
 		}
 
 		@Override
@@ -286,7 +287,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setAutoBuildEnable(boolean enabled) throws CoreException {
-			putString(BUILD_AUTO_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_AUTO_ENABLED, String.valueOf(enabled));
 		}
 
 		@Override
@@ -296,7 +297,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setIncrementalBuildEnable(boolean enabled) throws CoreException {
-			putString(BUILD_INCREMENTAL_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_INCREMENTAL_ENABLED, String.valueOf(enabled));
 		}
 
 		@Override
@@ -306,7 +307,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setFullBuildEnable(boolean enabled) throws CoreException {
-			putString(BUILD_FULL_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_FULL_ENABLED, String.valueOf(enabled));
 		}
 
 		@Override
@@ -316,7 +317,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setCleanBuildEnable(boolean enabled) throws CoreException {
-			putString(BUILD_CLEAN_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_CLEAN_ENABLED, String.valueOf(enabled));
 		}
 
 		@Override
@@ -327,9 +328,9 @@ public class BuildInfoFactory {
 		@Override
 		public String[] getErrorParsers() {
 			String parsers = getString(ErrorParserManager.PREF_ERROR_PARSER);
-			if (parsers != null && parsers.length() > 0) {
+			if (parsers != null && !parsers.isEmpty()) {
 				StringTokenizer tok = new StringTokenizer(parsers, ";"); //$NON-NLS-1$
-				List<String> list = new ArrayList<String>(tok.countTokens());
+				List<String> list = new ArrayList<>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -340,7 +341,7 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setErrorParsers(String[] parsers) throws CoreException {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			for (int i = 0; i < parsers.length; i++) {
 				buf.append(parsers[i]).append(';');
 			}
@@ -367,17 +368,17 @@ public class BuildInfoFactory {
 
 		@Override
 		public void setAppendEnvironment(boolean append) throws CoreException {
-			putString(BUILD_APPEND_ENVIRONMENT, new Boolean(append).toString());
+			putString(BUILD_APPEND_ENVIRONMENT, String.valueOf(append));
 		}
 
 		public boolean getBoolean(String property) {
-			return Boolean.valueOf(getString(property)).booleanValue();
+			return Boolean.parseBoolean(getString(property));
 		}
 
 		protected Map<String, String> decodeMap(String value) {
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			if (value != null) {
-				StringBuffer envStr = new StringBuffer(value);
+				StringBuilder envStr = new StringBuilder(value);
 				String escapeChars = "|\\"; //$NON-NLS-1$
 				char escapeChar = '\\';
 				try {
@@ -397,7 +398,7 @@ public class BuildInfoFactory {
 							}
 							ndx++;
 						}
-						StringBuffer line = new StringBuffer(envStr.substring(0, ndx));
+						StringBuilder line = new StringBuilder(envStr.substring(0, ndx));
 						int lndx = 0;
 						while (lndx < line.length()) {
 							if (line.charAt(lndx) == '=') {
@@ -420,7 +421,7 @@ public class BuildInfoFactory {
 		}
 
 		protected String encodeMap(Map<String, String> values) {
-			StringBuffer str = new StringBuffer();
+			StringBuilder str = new StringBuilder();
 			for (Entry<String, String> entry : values.entrySet()) {
 				str.append(escapeChars(entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
 				str.append("="); //$NON-NLS-1$
@@ -431,7 +432,7 @@ public class BuildInfoFactory {
 		}
 
 		protected String escapeChars(String string, String escapeChars, char escapeChar) {
-			StringBuffer str = new StringBuffer(string);
+			StringBuilder str = new StringBuilder(string);
 			for (int i = 0; i < str.length(); i++) {
 				if (escapeChars.indexOf(str.charAt(i)) != -1) {
 					str.insert(i, escapeChar);
@@ -505,9 +506,12 @@ public class BuildInfoFactory {
 			ICProjectDescription cProjectDescription = CoreModel.getDefault().getProjectDescription(project, false);
 			if(cProjectDescription != null) {
 				ICConfigurationDescription cConfigDescription = cProjectDescription.getActiveConfiguration();
-				CBuildData buildData = cConfigDescription.getConfigurationData().getBuildData();
-				if(buildData != null) {
-					builder = buildData.getBuildSpecCommand();
+				CConfigurationData configurationData = cConfigDescription.getConfigurationData();
+				if (configurationData != null) {
+					CBuildData buildData = configurationData.getBuildData();
+					if (buildData != null) {
+						builder = buildData.getBuildSpecCommand();
+					}
 				}
 			}
 

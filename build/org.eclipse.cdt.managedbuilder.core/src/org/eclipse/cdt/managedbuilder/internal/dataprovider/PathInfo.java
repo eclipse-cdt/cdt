@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,7 +100,7 @@ class PathInfo {
 					}
 					String substr = str.substring(indx + 1);
 					String rStr = resolvedMacro == null || resolvedMacro.length() == 0 ?
-							substr : new StringBuffer().append(resolvedMacro).append(subst).toString();
+							substr : new StringBuilder().append(resolvedMacro).append(subst).toString();
 					return isAbsolute(rStr, subst, out);
 				}
 			}

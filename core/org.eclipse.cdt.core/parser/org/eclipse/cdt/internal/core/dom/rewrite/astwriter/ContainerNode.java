@@ -31,9 +31,7 @@ public class ContainerNode extends ASTNode {
 	private final ArrayList<IASTNode> nodes = new ArrayList<IASTNode>();
 	
 	public ContainerNode(IASTNode... nodes) {
-		for (IASTNode each : nodes) {
-			addNode(each);
-		}
+		Collections.addAll(this.nodes, nodes);
 	}
 	
 	@Override

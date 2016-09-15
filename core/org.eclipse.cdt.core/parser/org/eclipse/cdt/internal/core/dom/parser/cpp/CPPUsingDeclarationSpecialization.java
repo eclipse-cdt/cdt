@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 
@@ -21,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 public class CPPUsingDeclarationSpecialization extends CPPSpecialization implements ICPPUsingDeclaration {
 	private final IBinding[] fDelegates;
 
-    public CPPUsingDeclarationSpecialization(ICPPUsingDeclaration specialized, ICPPClassSpecialization owner, 
+    public CPPUsingDeclarationSpecialization(ICPPUsingDeclaration specialized, IBinding owner, 
     		ICPPTemplateParameterMap tpmap, IBinding[] delegates) {
         super(specialized, owner, tpmap);
         fDelegates= delegates;

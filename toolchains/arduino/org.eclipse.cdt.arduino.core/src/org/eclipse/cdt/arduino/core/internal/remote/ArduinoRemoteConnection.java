@@ -17,12 +17,15 @@ import java.util.Map;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.remote.core.IRemoteCommandShellService;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
 import org.eclipse.remote.core.IRemoteConnectionPropertyService;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 import org.eclipse.remote.serial.core.SerialPortCommandShell;
@@ -31,20 +34,54 @@ public class ArduinoRemoteConnection
 		implements IRemoteConnectionPropertyService, IRemoteCommandShellService, IRemoteConnectionChangeListener {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.arduino.core.connectionType"; //$NON-NLS-1$
-	public static final String PORT_NAME = "arduinoPortName"; //$NON-NLS-1$
-	public static final String PACKAGE_NAME = "arduinoPackageName"; //$NON-NLS-1$
-	public static final String PLATFORM_NAME = "arduinoPlatformName"; //$NON-NLS-1$
-	public static final String BOARD_NAME = "arduinoBoardName"; //$NON-NLS-1$
+
+	private static final String PORT_NAME = "arduinoPortName"; //$NON-NLS-1$
+	private static final String PACKAGE_NAME = "arduinoPackageName"; //$NON-NLS-1$
+	private static final String PLATFORM_NAME = "arduinoPlatformName"; //$NON-NLS-1$
+	private static final String BOARD_NAME = "arduinoBoardName"; //$NON-NLS-1$
+	private static final String MENU_QUALIFIER = "menu_"; //$NON-NLS-1$
+	private static final String PROGRAMMER = "programmer"; //$NON-NLS-1$
 
 	private final IRemoteConnection remoteConnection;
 	private SerialPort serialPort;
 	private SerialPortCommandShell commandShell;
+	private ArduinoBoard board;
 
 	private static final Map<IRemoteConnection, ArduinoRemoteConnection> connectionMap = new HashMap<>();
 
 	public ArduinoRemoteConnection(IRemoteConnection remoteConnection) {
 		this.remoteConnection = remoteConnection;
 		remoteConnection.addConnectionChangeListener(this);
+	}
+
+	public static void setBoardId(IRemoteConnectionWorkingCopy workingCopy, ArduinoBoard board) {
+		workingCopy.setAttribute(BOARD_NAME, board.getId());
+
+		ArduinoPlatform platform = board.getPlatform();
+		workingCopy.setAttribute(PLATFORM_NAME, platform.getArchitecture());
+
+		ArduinoPackage pkg = platform.getPackage();
+		workingCopy.setAttribute(PACKAGE_NAME, pkg.getName());
+	}
+
+	public static void setPortName(IRemoteConnectionWorkingCopy workingCopy, String portName) {
+		workingCopy.setAttribute(PORT_NAME, portName);
+	}
+
+	public static void setMenuValue(IRemoteConnectionWorkingCopy workingCopy, String key, String value) {
+		workingCopy.setAttribute(MENU_QUALIFIER + key, value);
+	}
+
+	public static void setProgrammer(IRemoteConnectionWorkingCopy workingCopy, String programmer) {
+		workingCopy.setAttribute(PROGRAMMER, programmer);
+	}
+
+	public String getMenuValue(String key) {
+		return remoteConnection.getAttribute(MENU_QUALIFIER + key);
+	}
+
+	public String getProgrammer() {
+		return remoteConnection.getAttribute(PROGRAMMER);
 	}
 
 	@Override
@@ -95,14 +132,40 @@ public class ArduinoRemoteConnection
 	}
 
 	public ArduinoBoard getBoard() throws CoreException {
-		return Activator.getService(ArduinoManager.class).getBoard(remoteConnection.getAttribute(BOARD_NAME),
-				remoteConnection.getAttribute(PLATFORM_NAME), remoteConnection.getAttribute(PACKAGE_NAME));
+		if (board == null) {
+			String pkgName = remoteConnection.getAttribute(PACKAGE_NAME);
+			String platName = remoteConnection.getAttribute(PLATFORM_NAME);
+			String boardName = remoteConnection.getAttribute(BOARD_NAME);
+			ArduinoManager manager = Activator.getService(ArduinoManager.class);
+			board = manager.getBoard(pkgName, platName, boardName);
+
+			if (board == null) {
+				// Old style board attributes?
+				ArduinoPackage pkg = manager.getPackage(pkgName);
+				if (pkg != null) {
+					for (ArduinoPlatform plat : pkg.getAvailablePlatforms()) {
+						if (plat.getName().equals(platName)) {
+							platName = plat.getArchitecture();
+							for (ArduinoBoard b : plat.getBoards()) {
+								if (b.getName().equals(boardName)) {
+									board = b;
+									return board;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return board;
 	}
 
 	public String getPortName() {
 		return remoteConnection.getAttribute(PORT_NAME);
 	}
 
+	@Override
 	public IRemoteProcess getCommandShell(int flags) throws IOException {
 		if (serialPort != null && serialPort.isOpen()) {
 			// can only have one open at a time

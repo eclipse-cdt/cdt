@@ -23,9 +23,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -70,11 +73,15 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	/** Offset of the return expression for constexpr functions. */
 	private static final int RETURN_EXPRESSION = REQUIRED_ARG_COUNT + 2; // Database.EVALUATION_SIZE
+	
+	/** Offset of the function body execution for constexpr functions. */
+	private static final int FUNCTION_BODY = RETURN_EXPRESSION + Database.EVALUATION_SIZE; // Database.EXECUTION_SIZE
+	
 	/**
 	 * The size in bytes of a PDOMCPPFunctionSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = RETURN_EXPRESSION + Database.EVALUATION_SIZE;
+	protected static final int RECORD_SIZE = FUNCTION_BODY + Database.EXECUTION_SIZE;
 
 	private static final short ANNOT_PARAMETER_PACK = 8;
 	private static final short ANNOT_IS_DELETED = 9;
@@ -130,7 +137,10 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			typelist = PDOMCPPTypeList.putTypes(this, astFunction.getExceptionSpecification());
 		}
 		db.putRecPtr(record + EXCEPTION_SPEC, typelist);
-		linkage.new ConfigureFunctionSpecialization(astFunction, this, point);
+		if (!(astFunction instanceof ICPPTemplateInstance)
+				|| ((ICPPTemplateInstance) astFunction).isExplicitSpecialization()) {
+			linkage.new ConfigureFunctionSpecialization(astFunction, this, point);
+		}
 	}
 
 	private short getAnnotation(ICPPFunction astFunction) {
@@ -151,11 +161,12 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		super(linkage, bindingRecord);
 	}
 	
-	public void initData(ICPPEvaluation returnExpression) {
-		if (returnExpression == null)
+	public void initData(ICPPEvaluation returnExpression, ICPPExecution functionBody) {
+		if (returnExpression == null && functionBody == null)
 			return;
 		try {
 			getLinkage().storeEvaluation(record + RETURN_EXPRESSION, returnExpression);
+			getLinkage().storeExecution(record + FUNCTION_BODY, functionBody);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -336,6 +347,23 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 		try {
 			return (ICPPEvaluation) getLinkage().loadEvaluation(record + RETURN_EXPRESSION);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+		if (!isConstexpr())
+			return null;
+
+		try {
+			ICPPExecution exec = (ICPPExecution) getLinkage().loadExecution(record + FUNCTION_BODY);
+			if (exec == null) {
+				exec = CPPTemplates.instantiateFunctionBody(this, point);
+			}
+			return exec;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

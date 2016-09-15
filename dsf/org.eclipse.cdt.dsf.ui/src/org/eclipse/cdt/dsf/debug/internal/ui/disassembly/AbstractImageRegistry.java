@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public abstract class AbstractImageRegistry {
 	 *   key.
 	 */
 	protected void localImage(String key, String dir, String name) {
-		if (dir== null || dir.equals(""))//$NON-NLS-1$
+		if (dir== null || dir.isEmpty())
 			fLocations.put(key, new String[] {"icons/" + name}); //$NON-NLS-1$
 		else
 			fLocations.put(key, new String[] {"icons/" + dir + "/" + name}); //$NON-NLS-1$ //$NON-NLS-2$
@@ -72,7 +72,7 @@ public abstract class AbstractImageRegistry {
     	String[] locations = new String[dirs.length];
     	for (int i = 0; i < dirs.length; i++) {
 			String dir = dirs[i];
-			if (dir== null || dir.equals(""))//$NON-NLS-1$
+			if (dir== null || dir.isEmpty())
 				locations[i] = "icons/" + name; //$NON-NLS-1$
 			else
 				locations[i] = "icons/" + dir + "/" + name; //$NON-NLS-1$ //$NON-NLS-2$

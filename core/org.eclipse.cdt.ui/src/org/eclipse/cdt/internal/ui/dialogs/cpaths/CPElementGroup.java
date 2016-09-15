@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@ public class CPElementGroup {
 	public void setChildren(CPElement[] elements) {
 		if (elements.length > 0) {
 			if (childrenListMap != null) {
-				childrenListMap.put(new Integer(elements[0].getEntryKind()), new ArrayList<CPElement>(Arrays.asList(elements)));
+				childrenListMap.put(Integer.valueOf(elements[0].getEntryKind()), new ArrayList<CPElement>(Arrays.asList(elements)));
 			} else {
 				childrenList = new ArrayList<CPElement>(Arrays.asList(elements));
 			}
@@ -194,10 +194,10 @@ public class CPElementGroup {
 		if (childrenList != null) {
 			children = childrenList;
 		} else {
-			children = childrenListMap.get(new Integer(kind));
+			children = childrenListMap.get(Integer.valueOf(kind));
 			if (children == null && create) {
 				children = new ArrayList<CPElement>();
-				childrenListMap.put(new Integer(kind), children);
+				childrenListMap.put(Integer.valueOf(kind), children);
 			}
 		}
 		return children;

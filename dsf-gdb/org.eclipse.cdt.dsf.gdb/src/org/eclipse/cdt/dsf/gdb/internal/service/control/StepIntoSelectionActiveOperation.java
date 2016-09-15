@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson AB and others.
+ * Copyright (c) 2013, 2016 Ericsson AB and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class StepIntoSelectionActiveOperation {
 				StringBuilder sb = null;
 				sb = new StringBuilder();
 				if (fTargetFunction.getParent() != null) {
-					sb.append(fTargetFunction.getParent().getElementName() + StepIntoSelectionUtils.cppSep);
+					sb.append(fTargetFunction.getParent().getElementName()).append(StepIntoSelectionUtils.cppSep);
 				}
 
 				sb.append(fTargetFunction.getElementName());

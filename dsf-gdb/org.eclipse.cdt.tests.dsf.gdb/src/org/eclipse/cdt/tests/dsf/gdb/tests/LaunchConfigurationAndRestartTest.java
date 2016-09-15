@@ -12,10 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.HashMap;
@@ -228,7 +230,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     @Test
 
     public void testSourceGdbInit() throws Throwable {
-    	assumeGdbVersionAtLeast("7.2");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
         setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
                            "data/launch/src/launchConfigTestGdbinit");
         doLaunch();
@@ -287,7 +289,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
      */
     @Test
     public void testSourceGdbInitRestart() throws Throwable {
-    	assumeGdbVersionAtLeast("7.2");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
     	fRestart = true;
     	testSourceGdbInit();
     }
@@ -755,7 +757,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
      */
     @Test
     public void testExitCodeSet() throws Throwable {
-    	assumeGdbVersionAtLeast("7.3");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_3);
     	doLaunch();
     	
         ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
@@ -808,7 +810,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	 */
     @Test
     public void testPendingBreakpointSetting() throws Throwable {
-    	assumeGdbVersionAtLeast("7.0");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_0);
         doLaunch();
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 
@@ -863,7 +865,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
      */
     @Test
     public void testStopAtMainWithReverse() throws Throwable {
-    	assumeGdbVersionAtLeast("7.2");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
     	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, true);
@@ -928,7 +930,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
      */
     @Test
     public void testStopAtMainWithReverseRestart() throws Throwable {
-    	assumeGdbVersionAtLeast("7.2");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
     	fRestart = true;
     	testStopAtMainWithReverse();
     }
@@ -945,7 +947,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
      */
 	@Test
     public void testStopAtOtherWithReverse() throws Throwable {
-		assumeGdbVersionAtLeast("7.2");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "stopAtOther");
     	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, true);
@@ -1005,7 +1007,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     @Test
     @Ignore("Fails. Investigate what it needs to wait for.")
     public void testStopAtOtherWithReverseRestart() throws Throwable {
-    	assumeGdbVersionAtLeast("7.2");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
     	fRestart = true;
     	testStopAtOtherWithReverse();
     }
@@ -1019,7 +1021,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	@Test
 	@Ignore("TODO: this is not working because it does not insert the breakpoint propertly")
     public void testNoStopAtMainWithReverse() throws Throwable {
-    	assumeGdbVersionAtLeast("7.2");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
     	// Set this one as well to make sure it gets ignored
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
@@ -1089,7 +1091,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     @Test
     @Ignore
     public void testNoStopAtMainWithReverseRestart() throws Throwable {
-    	assumeGdbVersionAtLeast("7.2");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
     	fRestart = true;
     	testNoStopAtMainWithReverse();
     }

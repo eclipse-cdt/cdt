@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class ModuleProperties {
 		}
 	}
 
-	private ArrayList fProperties;
+	private ArrayList<Property> fProperties;
 
 	private boolean fIsDirty = false;
 
@@ -72,7 +72,7 @@ public class ModuleProperties {
 	 * Constructor for ModuleProperties. 
 	 */
 	private ModuleProperties( ICModule module ) {
-		fProperties = new ArrayList( 10 );
+		fProperties = new ArrayList<>( 10 );
 		fProperties.add( new Property( TYPE, Integer.valueOf(module.getType()) ) );
 		fProperties.add( new Property( CPU, module.getCPU() ) );
 		fProperties.add( new Property( BASE_ADDRESS, module.getBaseAddress() ) );
@@ -82,7 +82,7 @@ public class ModuleProperties {
 	}
 
 	public Property[] getProperties() {
-		return (Property[])fProperties.toArray( new Property[fProperties.size()] );
+		return fProperties.toArray( new Property[fProperties.size()] );
 	}
 
 	public Object getProperty( String key ) {
@@ -110,9 +110,9 @@ public class ModuleProperties {
 	}
 
 	private Property find( String key ) {
-		Iterator it = fProperties.iterator();
+		Iterator<Property> it = fProperties.iterator();
 		while( it.hasNext() ) {
-			Property p = (Property)it.next();
+			Property p = it.next();
 			if ( p.getKey().equals( key ) ) {
 				return p;
 			}

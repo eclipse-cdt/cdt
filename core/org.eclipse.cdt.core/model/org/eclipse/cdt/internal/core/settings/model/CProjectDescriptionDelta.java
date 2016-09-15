@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 	@SuppressWarnings("nls")
 	private static String flagsToString(int flags) {
 		StringBuilder str = new StringBuilder();
-		str.append(", flags=0x" + Integer.toHexString(flags));
+		str.append(", flags=0x").append(Integer.toHexString(flags));
 
 		str.append(":");
 		if ((flags&ACTIVE_CFG)!=0) str.append("ACTIVE_CFG|");
@@ -197,10 +197,10 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		StringBuilder str = new StringBuilder();
 
 		String type = fSetting.getClass().getSimpleName();
-		str.append("[" + type + "]");
+		str.append('[').append(type).append(']');
 
 		int kind = getDeltaKind();
-		str.append(", kind="+kind);
+		str.append(", kind=").append(kind);
 		switch (kind) {
 		case ADDED: str.append(":ADDED");break;
 		case REMOVED: str.append(":REMOVED");break;
@@ -214,7 +214,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		if (children==null) {
 			str.append(", no children");
 		} else {
-			str.append(", " + getChildren().length + " children");
+			str.append(", ").append(getChildren().length).append(" children");
 		}
 
 		return str.toString();

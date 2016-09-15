@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -290,9 +290,9 @@ public class CDIDebugModel {
     public static void setLineBreakpointAttributes(Map<String, Object> attributes, String sourceHandle, Integer type,
         int lineNumber, boolean enabled, int ignoreCount, String condition) {
         attributes.put(IBreakpoint.ID, getPluginIdentifier());
-        attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+        attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(lineNumber));
         attributes.put(IBreakpoint.ENABLED, Boolean.valueOf(enabled));
-        attributes.put(ICBreakpoint.IGNORE_COUNT, new Integer(ignoreCount));
+        attributes.put(ICBreakpoint.IGNORE_COUNT, Integer.valueOf(ignoreCount));
         attributes.put(ICBreakpoint.CONDITION, condition);
         attributes.put(ICBreakpoint.SOURCE_HANDLE, sourceHandle);
         attributes.put(ICBreakpointType.TYPE, type);
@@ -302,7 +302,7 @@ public class CDIDebugModel {
             attributes.put(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, sourceHandle);
         }
         if (!attributes.containsKey(ICLineBreakpoint2.REQUESTED_LINE)) {
-            attributes.put(ICLineBreakpoint2.REQUESTED_LINE, new Integer(lineNumber));
+            attributes.put(ICLineBreakpoint2.REQUESTED_LINE, Integer.valueOf(lineNumber));
         }
         if (attributes.containsKey(IMarker.CHAR_START)
             && !attributes.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_START)) {
@@ -537,8 +537,8 @@ public class CDIDebugModel {
         String sourceHandle, int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount,
         String condition) {
         setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
-        attributes.put(IMarker.CHAR_START, new Integer(-1));
-        attributes.put(IMarker.CHAR_END, new Integer(-1));
+        attributes.put(IMarker.CHAR_START, Integer.valueOf(-1));
+        attributes.put(IMarker.CHAR_END, Integer.valueOf(-1));
         attributes.put(ICLineBreakpoint.ADDRESS, address.toHexAddressString());
         attributes.put(ICBreakpoint.MODULE, module);
     }
@@ -700,9 +700,9 @@ public class CDIDebugModel {
         HashMap<String, Object> attributes = new HashMap<String, Object>(10);
         setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace,
             range, enabled, ignoreCount, condition);
-        attributes.put(IMarker.CHAR_START, new Integer(charStart));
-        attributes.put(IMarker.CHAR_END, new Integer(charEnd));
-        attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+        attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
+        attributes.put(IMarker.CHAR_END, Integer.valueOf(charEnd));
+        attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(lineNumber));
         return new CWatchpoint(resource, attributes, register);
     }
 
@@ -789,7 +789,7 @@ public class CDIDebugModel {
         boolean enabled, int ignoreCount, String condition) {
         attributes.put(IBreakpoint.ID, getPluginIdentifier());
         attributes.put(IBreakpoint.ENABLED, Boolean.valueOf(enabled));
-        attributes.put(ICBreakpoint.IGNORE_COUNT, new Integer(ignoreCount));
+        attributes.put(ICBreakpoint.IGNORE_COUNT, Integer.valueOf(ignoreCount));
         attributes.put(ICBreakpoint.CONDITION, condition);
         attributes.put(ICBreakpoint.SOURCE_HANDLE, sourceHandle);
         attributes.put(ICWatchpoint.EXPRESSION, expression);
@@ -1091,8 +1091,8 @@ public class CDIDebugModel {
     public static void setFunctionBreakpointAttributes(Map<String, Object> attributes, String sourceHandle, int type,
         String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount, String condition) {
         setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
-        attributes.put(IMarker.CHAR_START, new Integer(charStart));
-        attributes.put(IMarker.CHAR_END, new Integer(charEnd));
+        attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
+        attributes.put(IMarker.CHAR_END, Integer.valueOf(charEnd));
         attributes.put(ICLineBreakpoint.FUNCTION, function);
     }
 

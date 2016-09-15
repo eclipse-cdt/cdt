@@ -315,29 +315,29 @@ public class AST2Tests extends AST2TestBase {
 
 			// // test clearBindings
 			// assertNotNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "f".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) body_f.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "z".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) body_f.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "y".toCharArray()));
 			// //$NON-NLS-1$
 			// CVisitor.clearBindings(tu);
 			// assertNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "f".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) body_f.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "z".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) body_f.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "y".toCharArray()));
 			// //$NON-NLS-1$
 
 			tu = validateCopy(tu);
@@ -883,29 +883,29 @@ public class AST2Tests extends AST2TestBase {
 			assertEquals(decls[0], declaration2.getDeclarators()[0].getName());
 
 			// assertNotNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_TAG, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "f".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) compound.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNotNull(((ICScope) compound.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "i".toCharArray()));
 			// //$NON-NLS-1$
 			// CVisitor.clearBindings(tu);
 			// assertNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_TAG, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) tu.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "f".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) compound.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "x".toCharArray()));
 			// //$NON-NLS-1$
 			// assertNull(((ICScope) compound.getScope()).getBinding(
-			// ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()));
+			// ICScope.NAMESPACE_TYPE_OTHER, "i".toCharArray()));
 			// //$NON-NLS-1$
 
 			tu = validateCopy(tu);
@@ -3847,9 +3847,9 @@ public class AST2Tests extends AST2TestBase {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define M0 1\n");
 		for (int i = 1; i < depth; i++) {
-			buffer.append("#define M" + i + " (M" + (i-1) + "+1)\n");
+			buffer.append("#define M").append(i).append(" (M").append(i-1).append("+1)\n");
 		}
-		buffer.append("int a= M" + (depth-1) + ";\n");
+		buffer.append("int a= M").append(depth-1).append(";\n");
 		long time= System.currentTimeMillis();
 		parse(buffer.toString(), CPP);
 		parse(buffer.toString(), C);
@@ -5752,7 +5752,7 @@ public class AST2Tests extends AST2TestBase {
 			v= (IVariable) bh.assertNonProblem("b=", 1);
 			checkValue(v.getInitialValue(), 0);
 			v= (IVariable) bh.assertNonProblem("c=", 1);
-			assertNull(v.getInitialValue().numericalValue());
+			assertNull(v.getInitialValue().numberValue());
 
 			IEnumerator e= (IEnumerator) bh.assertNonProblem("e0", 2);
 			checkValue(e.getValue(), 0);
@@ -5769,7 +5769,7 @@ public class AST2Tests extends AST2TestBase {
 
 	private void checkValue(IValue initialValue, int i) {
 		assertNotNull(initialValue);
-		final Long numericalValue = initialValue.numericalValue();
+		final Number numericalValue = initialValue.numberValue();
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.intValue());
 	}
@@ -6976,10 +6976,10 @@ public class AST2Tests extends AST2TestBase {
             IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier)((IASTSimpleDeclaration) tu.getDeclarations()[0]).getDeclSpecifier();
             IEnumerator enumeratorBinding = (IEnumerator) enumSpec.getEnumerators()[0].getName().resolveBinding();
             IValue value = enumeratorBinding.getValue();
-            assertEquals(2, value.numericalValue().longValue());
+            assertEquals(2, value.numberValue().longValue());
             IEnumerator enumeratorBinding2 = (IEnumerator) enumSpec.getEnumerators()[1].getName().resolveBinding();
             IValue value2 = enumeratorBinding2.getValue();
-            assertEquals(1, value2.numericalValue().longValue());
+            assertEquals(1, value2.numberValue().longValue());
 	    }
 	}
 
@@ -7413,7 +7413,8 @@ public class AST2Tests extends AST2TestBase {
 			ITypedef tdef= (ITypedef) sdecl.getDeclarators()[0].getName().resolveBinding();
 			IArrayType at= (IArrayType) tdef.getType();
 			IValue v= at.getSize();
-			assertTrue(v.numericalValue() == 4);
+			assertNotNull(v.numberValue());
+			assertTrue(v.numberValue().longValue() == 4);
 		}
 	}
 
@@ -7500,7 +7501,7 @@ public class AST2Tests extends AST2TestBase {
 		BindingAssertionHelper helper = new BindingAssertionHelper(code, true);
 		ICPPTemplateInstance f = helper.assertNonProblem("f(STRINGIFY", "f");
 		// 7 characters for "foobar" + the null terminator.
-		assertEquals(7, f.getTemplateArguments()[0].getNonTypeValue().numericalValue().longValue());
+		assertEquals(7, f.getTemplateArguments()[0].getNonTypeValue().numberValue().longValue());
 	}
 
 	//	typedef unsigned char u8;

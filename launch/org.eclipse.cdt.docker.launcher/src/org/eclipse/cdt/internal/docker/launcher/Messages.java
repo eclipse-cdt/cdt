@@ -38,12 +38,14 @@ public class Messages extends NLS {
 	public static String ContainerTab_Remove_Button;
 	public static String ContainerTab_Keep_Label;
 	public static String ContainerTab_Stdin_Support_Label;
+	public static String ContainerTab_Privileged_Mode_Label;
 	public static String ContainerTab_Error_Reading_Configuration;
 	public static String ContainerTab_Connection_Selector_Label;
 	public static String ContainerTab_Image_Selector_Label;
 	public static String ContainerTab_Error_No_Connections;
 	public static String ContainerTab_Error_No_Images;
 	public static String ContainerTab_Warning_Connection_Not_Found;
+	public static String ContainerTab_Warning_Image_Not_Found;
 
 	public static String Remote_GDB_Debugger_Options;
 	public static String Gdbserver_Settings_Tab_Name;

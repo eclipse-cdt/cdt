@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -307,7 +307,7 @@ public class BinaryTests extends TestCase {
         IBinary myBinary;
         String name;
         myBinary=CProjectHelper.findBinary(testProject, "test_g");
-        assertTrue(myBinary.getSoname().equals(""));
+        assertTrue(myBinary.getSoname().isEmpty());
         
         myBinary=CProjectHelper.findBinary(testProject, "libtestlib_g.so");
         name=myBinary.getSoname();

@@ -3365,10 +3365,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					}
 
 					// Otherwise we have a simple-decl-specifier.
-					simpleType= IASTSimpleDeclSpecifier.t_decltype;
 					consume(IToken.t_decltype);
 					consume(IToken.tLPAREN);
-					typeofExpression= expression();
+					if (LT(1) == IToken.t_auto) {
+						simpleType= IASTSimpleDeclSpecifier.t_decltype_auto;
+						consume(IToken.t_auto);
+					} else {
+						simpleType= IASTSimpleDeclSpecifier.t_decltype;
+						typeofExpression= expression();
+					}
 					endOffset= consumeOrEOC(IToken.tRPAREN).getEndOffset();
 
 					encounteredTypename= true;

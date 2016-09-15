@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 QNX Software Systems and others.
+ * Copyright (c) 2002, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -286,14 +286,14 @@ public class BuildConsolePartitioner
 		/** Identifier of the stream written to. */
 		private BuildConsoleStreamDecorator fStream;
 		/** The text written */
-		private StringBuffer fText = null;
+		private StringBuilder fText = null;
 		/** Problem marker corresponding to the line of text */
 		private ProblemMarkerInfo fMarker;
 		/** Type of event **/
 		private int eventType;
 
 		public StreamEntry(String text, BuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
-			fText = new StringBuffer(text);
+			fText = new StringBuilder(text);
 			fStream = stream;
 			fMarker = marker;
 			eventType = EVENT_APPEND;

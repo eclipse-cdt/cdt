@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2012, 2016 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,7 +285,7 @@ public class BuildRunnerHelper implements Closeable {
 
 			isCancelled = monitor.isCanceled();
 			if (!isCancelled && project != null) {
-				project.setSessionProperty(progressPropertyName, new Integer(streamProgressMonitor.getWorkDone()));
+				project.setSessionProperty(progressPropertyName, Integer.valueOf(streamProgressMonitor.getWorkDone()));
 			}
 		} catch (Exception e) {
 			CCorePlugin.log(e);
@@ -485,7 +485,7 @@ public class BuildRunnerHelper implements Closeable {
 	 * Compose command line that presumably will be run by launcher.
 	 */
 	private static String guessCommandLine(String command, String[] args) {
-		StringBuffer buf = new StringBuffer(command + ' ');
+		StringBuilder buf = new StringBuilder(command + ' ');
 		if (args != null) {
 			for (String arg : args) {
 				buf.append(arg);

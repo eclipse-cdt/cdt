@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -287,8 +287,8 @@ public class MakeTargetDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (useBuilderCommandCheckBox.getSelection() == true) {
-					StringBuffer cmd = new StringBuffer(builderCommand.toString());
-					if (builderArguments != null && !builderArguments.equals("")) { //$NON-NLS-1$
+					StringBuilder cmd = new StringBuilder(builderCommand.toString());
+					if (builderArguments != null && !builderArguments.isEmpty()) {
 						cmd.append(" "); //$NON-NLS-1$
 						cmd.append(builderArguments);
 					}
@@ -398,8 +398,8 @@ public class MakeTargetDialog extends Dialog {
 		}
 		targetNameText.selectAll();
 		if (targetBuildCommand != null) {
-			StringBuffer cmd = new StringBuffer(targetBuildCommand.toOSString());
-			if (targetBuildArguments != null && !targetBuildArguments.equals("")) { //$NON-NLS-1$
+			StringBuilder cmd = new StringBuilder(targetBuildCommand.toOSString());
+			if (targetBuildArguments != null && !targetBuildArguments.isEmpty()) {
 				cmd.append(" "); //$NON-NLS-1$
 				cmd.append(targetBuildArguments);
 			}
@@ -433,7 +433,7 @@ public class MakeTargetDialog extends Dialog {
 			return true;
 		}
 		if (!isUsingBuilderCommand) {
-			StringBuffer cmd = new StringBuffer(targetBuildCommand.toOSString()).append(targetBuildArguments);
+			StringBuilder cmd = new StringBuilder(targetBuildCommand.toOSString()).append(targetBuildArguments);
 			if (!getBuildLine().equals(cmd.toString())) {
 				return true;
 			}

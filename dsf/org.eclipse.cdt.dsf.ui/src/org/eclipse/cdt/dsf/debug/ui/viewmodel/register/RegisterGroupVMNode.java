@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         public String createWatchExpression(Object element) throws CoreException {
             IRegisterGroupDMData groupData = getSyncRegisterDataAccess().getRegisterGroupDMData(element);
             if (groupData != null) {
-                StringBuffer exprBuf = new StringBuffer();
+                StringBuilder exprBuf = new StringBuilder();
                 exprBuf.append("GRP( "); //$NON-NLS-1$
                 exprBuf.append(groupData.getName());
                 exprBuf.append(" )"); //$NON-NLS-1$

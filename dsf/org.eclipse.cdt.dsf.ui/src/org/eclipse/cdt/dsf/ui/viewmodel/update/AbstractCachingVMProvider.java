@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems and others.
+ * Copyright (c) 2007, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedList
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -80,7 +81,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     static boolean DEBUG_CACHE = false;
 
     static {
-        DEBUG_CACHE = DsfUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+        DEBUG_CACHE = DsfUIPlugin.DEBUG && Boolean.parseBoolean(
          Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/cache")); //$NON-NLS-1$
     }   
 
@@ -815,13 +816,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     // interface in platform, but it is more generic than the public TreeModelViewer.
     // Using ITreeModelViewer will allow us to write unit tests using the 
     // VirtualTreeModelViewer.
-    @SuppressWarnings("restriction") 
     private class ViewUpdateFinishedListener implements IViewerUpdateListener, IModelChangedListener {
-        private final org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer fViewer;
+        private final ITreeModelViewer fViewer;
         private boolean fViewerChangeStarted = false;
         private RequestMonitor fRm;
         
-        ViewUpdateFinishedListener(org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer viewer) {
+        ViewUpdateFinishedListener(ITreeModelViewer viewer) {
             fViewer = viewer;
         }
 
@@ -891,9 +891,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                         // If we need to wait for the view to finish updating, then before posting the delta to the 
                         // viewer install a listener, which will in turn call rm.done().
                         if (fDelayEventHandleForViewUpdate) {
-                            @SuppressWarnings("restriction")
-                            org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer viewer = 
-                                (org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer) proxyStrategy.getViewer();
+                            ITreeModelViewer viewer = (ITreeModelViewer) proxyStrategy.getViewer();
                             new ViewUpdateFinishedListener(viewer).start(rm);
                         }
                         
@@ -1379,14 +1377,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         str.append(DsfPlugin.getDebugTime());
         str.append(' ');
         if (action == EventHandlerAction.skipped || action == EventHandlerAction.canceled) {
-            str.append(LoggingUtils.toString(this) + " " + action.toString() + " event " + LoggingUtils.toString(skippedOrCanceledEvent) + " because of event " + LoggingUtils.toString(event)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$          
+            str.append(LoggingUtils.toString(this)).append(' ').append(action).append(" event ").append(LoggingUtils.toString(skippedOrCanceledEvent)).append(" because of event ").append(LoggingUtils.toString(event)); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else {
-            str.append(LoggingUtils.toString(this) + " " + action.toString() + " event " + LoggingUtils.toString(event)); //$NON-NLS-1$ //$NON-NLS-2$
+            str.append(LoggingUtils.toString(this)).append(' ').append(action).append(" event ").append(LoggingUtils.toString(event)); //$NON-NLS-1$
         }
         
         if (action != EventHandlerAction.received) {
-            str.append(" for proxy " + LoggingUtils.toString(proxy) + ", whose root is " + LoggingUtils.toString(proxy.getRootElement())); //$NON-NLS-1$ //$NON-NLS-2$
+            str.append(" for proxy ").append(LoggingUtils.toString(proxy)).append( ", whose root is ").append(LoggingUtils.toString(proxy.getRootElement())); //$NON-NLS-1$ //$NON-NLS-2$
         }
         DsfUIPlugin.debug(str.toString());
     }

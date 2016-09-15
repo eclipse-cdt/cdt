@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ public final class SteppingController {
 	 */
     public final static int MAX_STEP_DELAY= 5000;
 
-    private final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/stepping")); //$NON-NLS-1$ //$NON-NLS-2$
+    private final static boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/stepping")); //$NON-NLS-1$
 
     /**
      * Indicates that the given context has been stepping for some time, 

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Devin Steffler (IBM) - Initial API and implementation
- *    Emanuel Graf IFS - Fix for #198259
- *    Markus Schorn (Wind River Systems)
+ *     Devin Steffler (IBM) - Initial API and implementation
+ *     Emanuel Graf IFS - Fix for #198259
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,10 +23,10 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * Implementation of conversion function ids
+ * Implementation of conversion function ids.
  */
 public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConversionName {
-	private IASTTypeId typeId = null;
+	private IASTTypeId typeId;
 	private char[] fName;
 	
 	public CPPASTConversionName() {
@@ -56,7 +56,7 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 	@Override
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
-		this.typeId=typeId;
+		this.typeId= typeId;
 		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TYPE_ID);
@@ -76,7 +76,8 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 			}
 		}		
 
-		if(typeId != null )if(! typeId.accept( action )) return false;
+		if (typeId != null && !typeId.accept(action))
+			return false;
 
 		if (action.shouldVisitNames) {
 			switch (action.leave(this)) {

@@ -13,9 +13,9 @@ package org.eclipse.cdt.core.parser.util;
 
 /**
  * @author Doug Schaefer
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CharArrayIntMap extends CharTable {
-
 	private int[] valueTable;
 	public final int undefined;
 

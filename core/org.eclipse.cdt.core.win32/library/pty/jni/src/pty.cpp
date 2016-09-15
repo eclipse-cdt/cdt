@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2013, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,7 +145,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_read0
             if (!ret || amount == 0)
                 amount = -1;
 
-            if (!ret) {
+            if (!ret && fd2pty.find(fd) != fd2pty.end()) {
                 int rc = winpty_get_exit_code(winpty);
                 fd2rc.insert(std::pair<int, int>(fd, rc));
             }
@@ -173,11 +173,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_close0(JNIE
     fd2pty_Iter = fd2pty.find(fd);
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t* winpty = fd2pty_Iter -> second;
+        fd2pty.erase(fd2pty_Iter);
 	    if (winpty != NULL) {
 		    winpty_close(winpty);
 		    winpty = NULL;
 	    }
-        fd2pty.erase(fd2pty_Iter);
     }
 
 	return 0;
@@ -241,11 +241,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_close0(JNI
     fd2pty_Iter = fd2pty.find(fd);
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t* winpty = fd2pty_Iter -> second;
+        fd2pty.erase(fd2pty_Iter);
 	    if (winpty != NULL) {
 		    winpty_close(winpty);
     		winpty = NULL;
     	}
-        fd2pty.erase(fd2pty_Iter);
     }
 
 	return 0;

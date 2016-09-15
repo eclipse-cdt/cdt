@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -294,7 +294,7 @@ public class CommandLauncher implements ICommandLauncher {
 
 	@SuppressWarnings("nls")
 	private String getCommandLineQuoted(String[] commandArgs, boolean quote) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (commandArgs != null) {
 			for (String commandArg : commandArgs) {
 				if (quote && (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\"))) {

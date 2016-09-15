@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2016 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -950,7 +950,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		int result = super.hashCode();
 		result = prime * result + (isConsoleEnabled ? 1231 : 1237);
 		result = prime * result + (isExecuted ? 1231 : 1237);
-		result = prime * result + new Long(envPathHash).hashCode();
+		result = prime * result + Long.valueOf(envPathHash).hashCode();
 		return result;
 	}
 

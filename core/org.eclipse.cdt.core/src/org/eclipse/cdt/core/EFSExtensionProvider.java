@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public abstract class EFSExtensionProvider {
 		Path p = new Path(path);
 		String pathString = p.toString(); // to convert any backslashes to slashes if we are on Windows
 		final int length = pathString.length();
-		StringBuffer pathBuf = new StringBuffer(length + 1);
+		StringBuilder pathBuf = new StringBuilder(length + 1);
 
 		// force the path to be absolute including Windows where URI path is represented as "/C:/path"
 		if (length > 0 && (pathString.charAt(0) != '/')) {

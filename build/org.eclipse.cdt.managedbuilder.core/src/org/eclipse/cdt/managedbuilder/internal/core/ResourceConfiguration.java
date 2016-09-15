@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,8 +42,6 @@ import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Version;
 
 public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
-
-	private static final String EMPTY_STRING = new String();
 
 	//property name for holding the rebuild state
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
@@ -139,8 +137,8 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			setManagedBuildRevision(folderInfo.getParent().getManagedBuildRevision());
 
 		setDirty(false);
-		toolsToInvoke = EMPTY_STRING;
-		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+		toolsToInvoke = ""; //$NON-NLS-1$
+		rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 
 
 		//	Get file extension.
@@ -151,7 +149,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 		// Add the resource specific tools to this resource.
 		ITool tools[] = folderInfo.getFilteredTools();
-		String subId = new String();
+		String subId = ""; //$NON-NLS-1$
 		for (int i = 0; i < tools.length; i++) {
 			if( tools[i].buildsFileType(extString) ) {
 				baseTool = tools[i];
@@ -187,10 +185,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 		//  Copy the remaining attributes
 		if (cloneConfig.toolsToInvoke != null) {
-			toolsToInvoke = new String(cloneConfig.toolsToInvoke);
+			toolsToInvoke = cloneConfig.toolsToInvoke;
 		}
 		if (cloneConfig.rcbsApplicability != null) {
-			rcbsApplicability = new Integer(cloneConfig.rcbsApplicability.intValue());
+			rcbsApplicability = cloneConfig.rcbsApplicability;
 		}
 
 		boolean copyIds = cloneChildren && id.equals(cloneConfig.id);
@@ -316,7 +314,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		//  Copy the remaining attributes
 		toolsToInvoke = baseInfo.toolsToInvoke;
 
-		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+		rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 
 		// Clone the resource configuration's tool children
 		if (baseInfo.toolList != null) {
@@ -354,13 +352,13 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		// rcbsApplicability
 		String rcbsApplicabilityStr = element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY);
 		if (rcbsApplicabilityStr == null || rcbsApplicabilityStr.equals(DISABLE_RCBS_TOOL)) {
-			rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+			rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_BEFORE)) {
-			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_BEFORE);
+			rcbsApplicability = KIND_APPLY_RCBS_TOOL_BEFORE;
 		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AFTER)) {
-			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AFTER);
+			rcbsApplicability = KIND_APPLY_RCBS_TOOL_AFTER;
 		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AS_OVERRIDE)) {
-			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
+			rcbsApplicability = KIND_APPLY_RCBS_TOOL_AS_OVERRIDE;
 		}
 	}
 
@@ -380,13 +378,13 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		if (element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY) != null) {
 			String rcbsApplicabilityStr = element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY);
 			if (rcbsApplicabilityStr == null || rcbsApplicabilityStr.equals(DISABLE_RCBS_TOOL)) {
-				rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+				rcbsApplicability = KIND_DISABLE_RCBS_TOOL;
 			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_BEFORE)) {
-				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_BEFORE);
+				rcbsApplicability = KIND_APPLY_RCBS_TOOL_BEFORE;
 			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AFTER)) {
-				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AFTER);
+				rcbsApplicability = KIND_APPLY_RCBS_TOOL_AFTER;
 			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AS_OVERRIDE)) {
-				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
+				rcbsApplicability = KIND_APPLY_RCBS_TOOL_AS_OVERRIDE;
 			}
 		}
 	}
@@ -554,10 +552,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * An empty string implies treat as if no resource configuration, i.e., use project level tool.
 		 * This getter routine returns an ITool[] to consumers (i.e., the makefile generator).
 		 */
-		String t_ToolsToInvoke = EMPTY_STRING;
+		String t_ToolsToInvoke = ""; //$NON-NLS-1$
 		ITool[] resConfigTools;
 		ITool[] tools;
-		String rcbsToolId = EMPTY_STRING;
+		String rcbsToolId = ""; //$NON-NLS-1$
 		int len;
 		int j;
 		int rcbsToolIdx=-1;
@@ -573,7 +571,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * If no tools are currently defined, return a zero lengh array of ITool.
 		 */
 		if (resConfigTools.length == 0) {
-			toolsToInvoke = EMPTY_STRING;
+			toolsToInvoke = ""; //$NON-NLS-1$
 			tools = new ITool[0];
 			return tools;
 		}
@@ -588,7 +586,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				break;
 			}
 		}
-		if (!rcbsToolId.equals(EMPTY_STRING)){
+		if (!rcbsToolId.isEmpty()){
 			/*
 			 * Here if an rcbs tool is defined.
 			 * Apply the tools according to the current rcbsApplicability setting.
@@ -634,7 +632,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				 */
 				if(resConfigTools.length == 1){
 					tools = new ITool[0];
-					toolsToInvoke = EMPTY_STRING;
+					toolsToInvoke = ""; //$NON-NLS-1$
 					break;
 				}
 				j = 0;
@@ -694,7 +692,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * Choices are before, after, or override other tools, or disable rcbs tool.
 		 */
 		if (rcbsApplicability == null || !(rcbsApplicability.intValue() == newValue)) {
-			rcbsApplicability = new Integer(newValue);
+			rcbsApplicability = newValue;
 			setDirty(true);
 			setRebuildState(true);
 		}

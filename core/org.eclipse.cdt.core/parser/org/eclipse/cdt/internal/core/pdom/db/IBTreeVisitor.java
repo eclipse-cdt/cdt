@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -20,21 +21,34 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IBTreeVisitor {
 	/**
-	 * Compare the record against an internally held key. The comparison must be
-	 * compatible with the one used for the btree.
+	 * Compares the record against an internally held key. The comparison must be
+	 * compatible with the one used for the B-tree.
 	 * Used for visiting.
 	 * 
-	 * @param record
+	 * @param record the offset of the record to compare with the key
 	 * @return -1 if record < key, 0 if record == key, 1 if record > key
-	 * @throws CoreException
 	 */
-	public abstract int compare(long record) throws CoreException;
+	public int compare(long record) throws CoreException;
 
 	/**
-	 * Visit a given record and return whether to continue or not.
-
-	 * @return <code>true</code> to continue the visit, <code>false</code> to abort it.
-	 * @throws CoreException
+	 * Visits a given record and returns whether to continue or not.
+	 *
+	 * @param record the offset of the record being visited
+	 * @return {@code true} to continue the visit, {@code false} to abort it.
 	 */
-	public abstract boolean visit(long record) throws CoreException;	
+	public boolean visit(long record) throws CoreException;	
+
+	/**
+	 * Called before visiting a record.
+	 *
+	 * @param record the offset of the record being visited
+	 */
+	public default void preVisit(long record) throws CoreException {}
+
+	/**
+	 * Called after visiting a record.
+	 *
+	 * @param record the offset of the record being visited
+	 */
+	public default void postVisit(long record) throws CoreException {}
 }

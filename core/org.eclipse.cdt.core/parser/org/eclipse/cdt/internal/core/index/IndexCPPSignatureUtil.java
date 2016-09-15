@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 QNX Software Systems and others.
+ * Copyright (c) 2007, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class IndexCPPSignatureUtil {
 	 */
 	public static Integer getSignatureHash(IBinding binding) throws CoreException, DOMException {
 		String sig = getSignature(binding);
-		return sig.length() == 0 ? null : new Integer(sig.hashCode());
+		return sig.length() == 0 ? null : Integer.valueOf(sig.hashCode());
 	}
 
 	/**

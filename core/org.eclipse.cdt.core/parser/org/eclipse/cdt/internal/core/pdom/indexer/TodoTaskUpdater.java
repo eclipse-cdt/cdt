@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Google, Inc and others.
+ * Copyright (c) 2007, 2016 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,10 +180,10 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 			TASK_MARKER_ATTRIBUTE_NAMES,
 			new Object[] { 
 				description,
-				new Integer(task.getPriority()),
-				new Integer(task.getStart()),
-				new Integer(task.getEnd()),
-				new Integer(task.getLineNumber()),
+				Integer.valueOf(task.getPriority()),
+				Integer.valueOf(task.getStart()),
+				Integer.valueOf(task.getEnd()),
+				Integer.valueOf(task.getLineNumber()),
 				Boolean.FALSE,
 				SOURCE_ID
 			});

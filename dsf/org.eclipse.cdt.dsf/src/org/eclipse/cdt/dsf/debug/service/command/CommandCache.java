@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems and others.
+ * Copyright (c) 2007, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,7 +176,7 @@ public class CommandCache implements ICommandListener
 	private static final String CACHE_TRACE_IDENTIFIER = " [CHE]"; //$NON-NLS-1$
 	private static String BLANK_CACHE_TRACE_IDENTIFIER = ""; //$NON-NLS-1$
 	static {
-        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf/debugCache"));  //$NON-NLS-1$//$NON-NLS-2$
+        DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf/debugCache"));  //$NON-NLS-1$
 		for (int i=0; i<CACHE_TRACE_IDENTIFIER.length(); i++) {
 			BLANK_CACHE_TRACE_IDENTIFIER += " "; //$NON-NLS-1$
 		}

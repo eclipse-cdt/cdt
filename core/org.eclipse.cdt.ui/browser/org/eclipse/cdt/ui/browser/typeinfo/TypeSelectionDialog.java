@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			ITypeInfo info = (ITypeInfo) element;
 			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
 			
-			if (fVisibleTypes != null && !fVisibleTypes.contains(new Integer(info.getCElementType())))
+			if (fVisibleTypes != null && !fVisibleTypes.contains(Integer.valueOf(info.getCElementType())))
 				return false;
 
 			if (!fShowLowLevelTypes && qualifiedName.isLowLevel())
@@ -417,7 +417,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 		// The 'for' loop is here to guarantee that we always create the checkboxes in the same order.
 		for (int i = 0; i < ALL_TYPES.length; ++i) {
-			Integer typeObject = new Integer(ALL_TYPES[i]);
+			Integer typeObject = Integer.valueOf(ALL_TYPES[i]);
 			if (fKnownTypes.contains(typeObject))
 				createTypeCheckbox(upperRow, typeObject);
 		}
@@ -492,16 +492,16 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			section.put(SETTINGS_WIDTH, size.x);
 			section.put(SETTINGS_HEIGHT, size.y);
 		}
-		section.put(SETTINGS_SHOW_NAMESPACES, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_NAMESPACE)));
-		section.put(SETTINGS_SHOW_CLASSES, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_CLASS)));
-		section.put(SETTINGS_SHOW_STRUCTS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_STRUCT)));
-		section.put(SETTINGS_SHOW_TYPEDEFS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_TYPEDEF)));
-		section.put(SETTINGS_SHOW_ENUMS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_ENUMERATION)));
-		section.put(SETTINGS_SHOW_UNIONS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_UNION)));
-		section.put(SETTINGS_SHOW_FUNCTIONS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_FUNCTION)));
-		section.put(SETTINGS_SHOW_VARIABLES, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_VARIABLE)));
-		section.put(SETTINGS_SHOW_ENUMERATORS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_ENUMERATOR)));
-		section.put(SETTINGS_SHOW_MACROS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_MACRO)));
+		section.put(SETTINGS_SHOW_NAMESPACES, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_NAMESPACE)));
+		section.put(SETTINGS_SHOW_CLASSES, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_CLASS)));
+		section.put(SETTINGS_SHOW_STRUCTS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_STRUCT)));
+		section.put(SETTINGS_SHOW_TYPEDEFS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_TYPEDEF)));
+		section.put(SETTINGS_SHOW_ENUMS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_ENUMERATION)));
+		section.put(SETTINGS_SHOW_UNIONS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_UNION)));
+		section.put(SETTINGS_SHOW_FUNCTIONS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_FUNCTION)));
+		section.put(SETTINGS_SHOW_VARIABLES, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_VARIABLE)));
+		section.put(SETTINGS_SHOW_ENUMERATORS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_ENUMERATOR)));
+		section.put(SETTINGS_SHOW_MACROS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_MACRO)));
 		section.put(SETTINGS_SHOW_LOWLEVEL, fFilterMatcher.getShowLowLevelTypes());
 	}
 
@@ -540,52 +540,52 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		}
 
 		if (section.getBoolean(SETTINGS_SHOW_NAMESPACES)) {
-			Integer typeObject = new Integer(ICElement.C_NAMESPACE);
+			Integer typeObject = ICElement.C_NAMESPACE;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_CLASSES)) {
-			Integer typeObject = new Integer(ICElement.C_CLASS);
+			Integer typeObject = ICElement.C_CLASS;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_STRUCTS)) {
-			Integer typeObject = new Integer(ICElement.C_STRUCT);
+			Integer typeObject = ICElement.C_STRUCT;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_TYPEDEFS)) {
-			Integer typeObject = new Integer(ICElement.C_TYPEDEF);
+			Integer typeObject = ICElement.C_TYPEDEF;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_ENUMS)) {
-			Integer typeObject = new Integer(ICElement.C_ENUMERATION);
+			Integer typeObject = ICElement.C_ENUMERATION;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_UNIONS)) {
-			Integer typeObject = new Integer(ICElement.C_UNION);
+			Integer typeObject = ICElement.C_UNION;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_FUNCTIONS)) {
-			Integer typeObject = new Integer(ICElement.C_FUNCTION);
+			Integer typeObject = ICElement.C_FUNCTION;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_VARIABLES)) {
-			Integer typeObject = new Integer(ICElement.C_VARIABLE);
+			Integer typeObject = ICElement.C_VARIABLE;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_ENUMERATORS)) {
-			Integer typeObject = new Integer(ICElement.C_ENUMERATOR);
+			Integer typeObject = ICElement.C_ENUMERATOR;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}
 		if (section.getBoolean(SETTINGS_SHOW_MACROS)) {
-			Integer typeObject = new Integer(ICElement.C_MACRO);
+			Integer typeObject = ICElement.C_MACRO;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}

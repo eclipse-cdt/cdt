@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,6 +126,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CFileTypeDialog_patternLabel;
 	public static String CFileTypeDialog_typeLabel;
 	public static String CEditorPreferencePage_hover_title;
+	public static String CEditorHoverConfigurationBlock_annotationRollover;
 	public static String CEditorHoverConfigurationBlock_hoverPreferences;
 	public static String CEditorHoverConfigurationBlock_keyModifier;
 	public static String CEditorHoverConfigurationBlock_description;
@@ -182,11 +183,13 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_typing_smartTab;
 	public static String CEditorPreferencePage_WorkspaceDefaultLabel;
 
-	public static String SaveActionsPreferencePage_removeTrailingWhitespace;
-	public static String SaveActionsPreferencePage_inEditedLines;
-	public static String SaveActionsPreferencePage_inAllLines;
-	public static String SaveActionsPreferencePage_ensureNewline;
 	public static String SaveActionsPreferencePage_formatSourceCode;
+	public static String SaveActionsPreferencePage_formatAllLines;
+	public static String SaveActionsPreferencePage_formatEditedLines;
+	public static String SaveActionsPreferencePage_removeTrailingWhitespace;
+	public static String SaveActionsPreferencePage_inAllLines;
+	public static String SaveActionsPreferencePage_inEditedLines;
+	public static String SaveActionsPreferencePage_ensureNewline;
 
 	public static String SmartTypingConfigurationBlock_autoclose_title;
 	public static String SmartTypingConfigurationBlock_autoindent_newlines;

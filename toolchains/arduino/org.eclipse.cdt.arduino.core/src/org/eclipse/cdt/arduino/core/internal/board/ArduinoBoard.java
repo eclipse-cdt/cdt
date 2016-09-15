@@ -13,8 +13,6 @@ import org.eclipse.cdt.arduino.core.internal.HierarchicalProperties;
 
 public class ArduinoBoard {
 
-	public static final String MENU_QUALIFIER = "menu_"; //$NON-NLS-1$
-
 	private String name;
 
 	private String id;
@@ -95,4 +93,11 @@ public class ArduinoBoard {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		String arch = getPlatform().getArchitecture();
+		String pkg = getPlatform().getPackage().getName();
+		return pkg + ',' + arch + ',' + id + ',' + name;
+	}
+	
 }

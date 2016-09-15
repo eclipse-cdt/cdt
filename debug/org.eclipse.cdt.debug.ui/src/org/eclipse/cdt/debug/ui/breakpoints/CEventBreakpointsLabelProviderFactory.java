@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 QNX Software Systems and others.
+ * Copyright (c) 2008, 2016 QNX Software Systems and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -116,31 +116,24 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 
 	private static IElementLabelProvider fElementLabelProvider = new BreakpointLabelProvider();
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(IElementLabelProvider.class)) {
 			if (adaptableObject instanceof ICEventBreakpoint) {
-				return fElementLabelProvider;
+				return (T) fElementLabelProvider;
 			}
 		}
 		if (adapterType.equals(ILabelProvider.class)) {
 			if (adaptableObject instanceof ICEventBreakpoint) {
-				return fLabelProvider;
+				return (T) fLabelProvider;
 			}
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IElementLabelProvider.class, ILabelProvider.class };
 	}
 }

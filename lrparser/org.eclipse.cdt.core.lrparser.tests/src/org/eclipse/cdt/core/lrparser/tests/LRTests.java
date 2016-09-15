@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -115,7 +115,7 @@ public class LRTests extends AST2Tests {
     
     
     public void testBug191279() throws Exception {
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	sb.append(" /**/ \n");
     	sb.append("# define YO 99 /**/ \n");
     	sb.append("# undef YO /**/ ");
@@ -126,7 +126,7 @@ public class LRTests extends AST2Tests {
     
     
     public void testBug191324() throws Exception {
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	sb.append("int x$y = 99; \n");
     	sb.append("int $q = 100; \n"); // can use $ as first character in identifier
     	sb.append("#ifndef SS$_INVFILFOROP \n");

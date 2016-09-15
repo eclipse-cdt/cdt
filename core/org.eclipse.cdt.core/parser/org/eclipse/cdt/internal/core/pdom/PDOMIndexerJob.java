@@ -54,12 +54,17 @@ public class PDOMIndexerJob extends Job {
 			}
 			return Status.OK_STATUS;
 		}
+
 		@Override
 		protected void canceling() {
 			// Speed up cancellation by notifying the waiting thread.
-			synchronized(this) {
+			synchronized (this) {
 				fCancelled= true;
 				notify();
+			}
+			synchronized (taskMutex) {
+				if (currentTask != null)
+					currentTask.cancel();
 			}
 		}
 	}
@@ -122,6 +127,7 @@ public class PDOMIndexerJob extends Job {
 					sMonitorDetail= name;
 				}
 			};
+	
 			do {
 				synchronized (taskMutex) {
 					currentTask= null;
@@ -129,7 +135,7 @@ public class PDOMIndexerJob extends Job {
 
 					// User cancel, tell manager and return.
 					if (monitor.isCanceled()) {
-						pdomManager.cancelledIndexerJob(cancelledByManager);
+						pdomManager.indexerJobCanceled(cancelledByManager);
 						return Status.CANCEL_STATUS;
 					}
 
@@ -153,33 +159,30 @@ public class PDOMIndexerJob extends Job {
 						}
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
-					} catch (OperationCanceledException e) {
 					}
 				}
 			} while (currentTask != null);
 			return Status.OK_STATUS;
-		} catch (RuntimeException e) {
-			CCorePlugin.log(e);
-			pdomManager.cancelledIndexerJob(true);
-			synchronized (taskMutex) {
-				currentTask= null;
-				taskMutex.notifyAll();
-			}
+		} catch (OperationCanceledException e) {
+			indexingAborted();
 			throw e;
-		} catch (Error e) {
+		} catch (RuntimeException | Error e) {
 			CCorePlugin.log(e);
-			pdomManager.cancelledIndexerJob(true);
-			synchronized (taskMutex) {
-				currentTask= null;
-				taskMutex.notifyAll();
-			}
+			indexingAborted();
 			throw e;
 		} finally {
 			synchronized (this) {
 				fMonitor= null;
 			}
 			monitorJob.cancel();
-			monitor.done();
+		}
+	}
+
+	private void indexingAborted() {
+		pdomManager.indexerJobCanceled(true);
+		synchronized (taskMutex) {
+			currentTask= null;
+			taskMutex.notifyAll();
 		}
 	}
 

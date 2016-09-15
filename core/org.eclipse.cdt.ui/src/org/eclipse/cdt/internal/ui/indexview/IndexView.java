@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -247,7 +247,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			IPDOM pdom = CCoreInternals.getPDOMManager().getPDOM(cproject);
 			pdom.acquireReadLock();
 			try {
-				fTimestampPerProject.put(cproject.getElementName(), new Long(pdom.getLastWriteAccess()));
+				fTimestampPerProject.put(cproject.getElementName(), Long.valueOf(pdom.getLastWriteAccess()));
 				IPDOMNode[] linkages= pdom.getLinkageImpls();
 				if (linkages.length == 1) {
 					// Skip linkages in hierarchy if there is only one

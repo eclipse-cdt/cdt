@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1107,7 +1107,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testSimpleKRCTest1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
     	buffer.append( "int f(char x);\n" ); //$NON-NLS-1$
     	buffer.append( "int f(x) char x;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
@@ -1126,7 +1126,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testSimpleKRCTest2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "int f();\n" ); //$NON-NLS-1$
 		buffer.append( "int f(x) char x;\n" ); //$NON-NLS-1$
 		buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
@@ -1145,7 +1145,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testSimpleKRCTest3() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "int const *f();\n" ); //$NON-NLS-1$
 		buffer.append( "int const *f(x) char x;\n" ); //$NON-NLS-1$
 		buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
@@ -1164,7 +1164,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testKRC_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "int isroot (x, y) /* comment */ \n" ); //$NON-NLS-1$
 		buffer.append( "int x;\n" ); //$NON-NLS-1$
 		buffer.append( "int y;\n" ); //$NON-NLS-1$
@@ -1184,7 +1184,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testKRCWithTypes() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "typedef char c;\n" ); //$NON-NLS-1$
 		buffer.append( "int isroot (c);\n" ); //$NON-NLS-1$
 		buffer.append( "int isroot (x) \n" ); //$NON-NLS-1$
@@ -1216,7 +1216,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testKRC_monop_cards1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "#ifdef __STDC__\n" ); //$NON-NLS-1$
 		buffer.append( "#define __P(x) x\n" ); //$NON-NLS-1$
 		buffer.append( "#else\n" ); //$NON-NLS-1$
@@ -1265,7 +1265,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testKRC_monop_cards2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "int\n" ); //$NON-NLS-1$
 		buffer.append( "getinp(prompt, list)\n" ); //$NON-NLS-1$
 		buffer.append( "        const char *prompt, *const list[];\n" ); //$NON-NLS-1$
@@ -1298,7 +1298,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	
 	
 	public void testKRC_getParametersOrder() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "int f(a, b) int b,a;{}\n" ); //$NON-NLS-1$
 
 		String code = buffer.toString();
@@ -1315,7 +1315,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testKRC_Ethereal_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "struct symbol {\n" ); //$NON-NLS-1$
 		buffer.append( "int lambda;\n};\n" ); //$NON-NLS-1$
 		buffer.append( "struct lemon {\n" ); //$NON-NLS-1$
@@ -1361,7 +1361,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 
 	public void testBug86698() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append( "struct C;\n"); //$NON-NLS-1$
 		buffer.append( "void no_opt(C*);\n"); //$NON-NLS-1$
 		buffer.append( "struct C {\n"); //$NON-NLS-1$
@@ -1383,7 +1383,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testLittleThings() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int a[3];\r\n"); //$NON-NLS-1$
 		buffer.append("int *b;\r\n"); //$NON-NLS-1$
 		buffer.append("int &c;\r\n"); //$NON-NLS-1$
@@ -1453,7 +1453,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testSimpleWindowsPreprocessorSelections() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define ONE 1\r\n"); //$NON-NLS-1$
 		buffer.append("#ifdef ONE\r\n"); //$NON-NLS-1$
 		buffer.append("int x=0;\r\n"); //$NON-NLS-1$
@@ -1499,7 +1499,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testBug86993() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define _BEGIN_STD_C extern \"C\" {\r\n"); //$NON-NLS-1$
 		buffer.append("#define _END_STD_C  }\r\n"); //$NON-NLS-1$
 		buffer.append("_BEGIN_STD_C\r\n"); //$NON-NLS-1$
@@ -1524,7 +1524,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testBug86870() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#if VERSION == 1\r\n"); //$NON-NLS-1$
 		buffer.append("#define INCFILE \"vers1.h\"\r\n"); //$NON-NLS-1$
 		buffer.append("#elif VERSION == 2\r\n"); //$NON-NLS-1$
@@ -1573,7 +1573,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		
 	public void testBug87179() throws Exception
 	{
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define ONE 1\r\n"); //$NON-NLS-1$
 		buffer.append("#ifdef ONE\r\n"); //$NON-NLS-1$
 		buffer.append("int x=0;\r\n"); //$NON-NLS-1$
@@ -1601,7 +1601,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 	}
 	
 	public void testBug97301() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		// test2.h:
 		buffer.append("#ifndef _WINGDI_H\r\n"); //$NON-NLS-1$
 		buffer.append("#define _WINGDI_H\r\n"); //$NON-NLS-1$
@@ -1621,7 +1621,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		
 	
 		// test1.h:
-		buffer = new StringBuffer();
+		buffer = new StringBuilder();
 		buffer.append("#ifdef RC_INVOKED\r\n"); //$NON-NLS-1$
 		buffer.append("#else\r\n"); //$NON-NLS-1$
 		buffer.append("#if !(defined NOGDI || defined  _WINGDI_H)\r\n"); //$NON-NLS-1$

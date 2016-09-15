@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -321,7 +321,7 @@ public class ElfHelper {
 
 				String full_usage = new String(sections[i].loadSectionData());
 				String usage = getSubUsage(full_usage, file.getName());
-				StringBuffer buffer = new StringBuffer(usage);
+				StringBuilder buffer = new StringBuilder(usage);
 
 				for (int j = 0; j < buffer.length(); j++) {
 					if (buffer.charAt(j) == '%') {
@@ -333,7 +333,7 @@ public class ElfHelper {
 				return buffer.toString();
 			}
 		}
-		return new String(""); //$NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	public Sizes getSizes() throws IOException {

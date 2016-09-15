@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2013, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,7 @@ public class InvalidLaunchableAdapterFactory implements IAdapterFactory {
     private static ArrayList<String> currentTraces = new ArrayList<String>();
     
     @Override
-	@SuppressWarnings("rawtypes")
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+    public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
     	/*
     	 * Calculate the trace to see if we already have seen this one. We only
     	 * want to report new instances of the violation.
@@ -70,8 +69,7 @@ public class InvalidLaunchableAdapterFactory implements IAdapterFactory {
      * Indicates that we are adapting ILaunchable.
      */
     @Override
-	@SuppressWarnings("rawtypes")
-    public Class[] getAdapterList() {
+    public Class<?>[] getAdapterList() {
         return TYPES;
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Red Hat, Inc.
+ * Copyright (c) 2015, 2016 Red Hat, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,63 +10,50 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.application.tests;
 
-import static org.junit.Assert.assertNotNull;
-
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.After;
+import org.junit.AfterClass;
 
 public abstract class StandaloneTest {
 
+	private static final String C_C_STAND_ALONE_DEBUGGER_TITLE = "Eclipse C/C++ Stand-alone Debugger";
+	private static final String DEBUG_NEW_EXECUTABLE_TITLE = "Debug New Executable";
 	protected static SWTBot bot;
 	protected static String projectName;
 	protected static SWTBotShell mainShell;
 	protected static SWTBotView projectExplorer;
+	private static final Logger fLogger = Logger.getRootLogger();
 
 	public static void init(String projectName) throws Exception {
 		SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
+		SWTBotPreferences.TIMEOUT = 20000;
 
-		Utilities.getDefault().buildProject(projectName);
+		fLogger.removeAllAppenders();
+		fLogger.addAppender(new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT));
+
 		bot = new SWTBot();
+		Utilities.getDefault().buildProject(projectName);
+		final IPath executablePath = Utilities.getDefault().getProjectPath(projectName).append("a.out"); //$NON-NLS-1$
+		bot.waitUntil(new WaitForFileCondition(executablePath));
 
-		SWTBotShell executableShell = null;
-		for (int i = 0, attempts = 100; i < attempts; i++) {
-			for (SWTBotShell shell : bot.shells()) {
-				if (shell.getText().contains("Debug New Executable")) {
-					executableShell = shell;
-					shell.setFocus();
-					break;
-				}
-			}
-			if (executableShell != null)
-				break;
-			bot.sleep(10);
-		}
-
-		IPath executablePath = Utilities.getDefault().getProjectPath(projectName).append("a.out"); // $NON-NLS-1$
+		bot.waitUntil(Conditions.shellIsActive(DEBUG_NEW_EXECUTABLE_TITLE));
+		SWTBotShell executableShell = bot.shell(DEBUG_NEW_EXECUTABLE_TITLE);
+		executableShell.setFocus();
 
 		executableShell.bot().textWithLabel("Binary: ").typeText(executablePath.toOSString());
-		bot.sleep(2000);
-
 		executableShell.bot().button("OK").click();
 
-		mainShell = null;
-		for (int i = 0, attempts = 100; i < attempts; i++) {
-			for (SWTBotShell shell : bot.shells()) {
-				if (shell.getText().contains("C/C++ Stand-alone Debugger")) {
-					mainShell = shell;
-					shell.setFocus();
-					break;
-				}
-			}
-			if (mainShell != null)
-				break;
-			bot.sleep(10);
-		}
-		assertNotNull(mainShell);
+		bot.waitUntil(Conditions.shellIsActive(C_C_STAND_ALONE_DEBUGGER_TITLE));
+		mainShell = bot.shell(C_C_STAND_ALONE_DEBUGGER_TITLE);
 	}
 
 	@After
@@ -92,4 +79,29 @@ public abstract class StandaloneTest {
 		//		mainShell.activate();
 	}
 
+	/**
+	 * Test class tear down method.
+	 */
+	@AfterClass
+	public static void tearDown() {
+		fLogger.removeAllAppenders();
+	}
+
+	private static final class WaitForFileCondition extends DefaultCondition {
+		private final IPath executablePath;
+
+		private WaitForFileCondition(IPath executablePath) {
+			this.executablePath = executablePath;
+		}
+
+		@Override
+		public boolean test() throws Exception {
+			return executablePath.toFile().exists();
+		}
+
+		@Override
+		public String getFailureMessage() {
+			return "Could not find executable after build.";
+		}
+	}
 }

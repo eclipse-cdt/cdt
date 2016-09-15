@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Nokia and others.
+ * Copyright (c) 2010, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -399,7 +399,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	/** TODO: Temporarily duplicated from BuilderFactory. Remove when 313927 is addressed */
 	private static String encodeList(List<String> values) {
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		Iterator<String> entries = values.iterator();
 		while (entries.hasNext()) {
 			String entry = entries.next();
@@ -411,7 +411,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	/** TODO: Temporarily duplicated from BuilderFactory. Remove when 313927 is addressed */
 	private static String escapeChars(String string, String escapeChars, char escapeChar) {
-		StringBuffer str = new StringBuffer(string);
+		StringBuilder str = new StringBuilder(string);
 		for (int i = 0; i < str.length(); i++) {
 			if (escapeChars.indexOf(str.charAt(i)) != -1) {
 				str.insert(i, escapeChar);

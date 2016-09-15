@@ -111,10 +111,10 @@ public class ProcessPrompter implements IStatusHandler {
 					
 					String owner = info.getOwner();
 					if (owner != null && !owner.isEmpty()) {
-						text.append(" (" + owner + ")");  //$NON-NLS-1$//$NON-NLS-2$
+						text.append(" (").append(owner).append(")");  //$NON-NLS-1$//$NON-NLS-2$
 					}
 					
-					text.append(" - " + info.getPid()); //$NON-NLS-1$
+					text.append(" - ").append(info.getPid()); //$NON-NLS-1$
 
 					String[] cores = info.getCores();
 					if (cores != null && cores.length > 0) {
@@ -124,10 +124,10 @@ public class ProcessPrompter implements IStatusHandler {
 						} else {
 							coreStr = LaunchUIMessages.getString("ProcessPrompter.Cores");   //$NON-NLS-1$
 						}
-						text.append(" [" + coreStr + ": ");   //$NON-NLS-1$//$NON-NLS-2$
+						text.append(" [").append(coreStr).append(": ");   //$NON-NLS-1$//$NON-NLS-2$
 						
 						for (String core : cores) {
-							text.append(core + ", "); //$NON-NLS-1$
+							text.append(core).append(", "); //$NON-NLS-1$
 						}
 						// Remove the last comma and space
 						text.replace(text.length()-2, text.length(), "]"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Nokia and others.
+ * Copyright (c) 2006, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class StabsReader implements ISymbolReader {
 	}
 
 	private String makeString(long offset) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (; offset < stabstrData.length; offset++) {
 			byte b = stabstrData[(int) offset];
 			if (b == 0) {
@@ -120,7 +120,7 @@ public class StabsReader implements ISymbolReader {
 			char driveLetter = path.charAt(10);
 			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
 
-			StringBuffer buf = new StringBuffer(path);
+			StringBuilder buf = new StringBuilder(path);
 			buf.delete(0, 11);
 			buf.insert(0, driveLetter);
 			buf.insert(1, ':');
@@ -133,7 +133,7 @@ public class StabsReader implements ISymbolReader {
 			char driveLetter = path.charAt(2);
 			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
 
-			StringBuffer buf = new StringBuffer(path);
+			StringBuilder buf = new StringBuilder(path);
 			buf.delete(0, 3);
 			buf.insert(0, driveLetter);
 			buf.insert(1, ':');
@@ -177,7 +177,7 @@ public class StabsReader implements ISymbolReader {
 				if (stroff > 0) {
 					field = makeString(stroff);
 				} else {
-					field = new String();
+					field = ""; //$NON-NLS-1$
 				}
 				// Check for continuation and if any go to the next stab
 				// until we find a string that is not terminated with a

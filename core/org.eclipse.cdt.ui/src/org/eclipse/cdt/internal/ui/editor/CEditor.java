@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,6 +97,8 @@ import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationRulerColumn;
+import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IAnnotationModelExtension2;
@@ -105,11 +107,14 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -136,6 +141,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
@@ -232,6 +238,7 @@ import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.text.TabsToSpacesConverter;
+import org.eclipse.cdt.internal.ui.text.c.hover.CExpandHover;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.util.CUIHelp;
@@ -1319,7 +1326,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * AST reconciling listeners.
 	 * @since 4.0
 	 */
-	private final ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList<ICReconcilingListener> fReconcilingListeners=
+			new ListenerList<ICReconcilingListener>(ListenerList.IDENTITY);
 
 	/**
 	 * Semantic highlighting manager
@@ -1342,7 +1350,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	private final IndexUpdateRequestor fIndexUpdateRequestor = new IndexUpdateRequestor();
 
-	private final ListenerList fPostSaveListeners;
+	private final ListenerList<IPostSaveListener> fPostSaveListeners;
 
 	private static final Set<String> angularIntroducers = new HashSet<>();
 	static {
@@ -1379,7 +1387,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
-		fPostSaveListeners = new ListenerList();
+		fPostSaveListeners = new ListenerList<IPostSaveListener>();
 	}
 
 	@Override
@@ -1545,12 +1553,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Object getAdapter(Class adapterClass) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapterClass) {
 		if (adapterClass.isAssignableFrom(IContentOutlinePage.class)) {
-			return getOutlinePage();
+			return (T) getOutlinePage();
 		} else if (adapterClass.isAssignableFrom(IShowInTargetList.class)) {
-			return new IShowInTargetList() {
+			return (T) new IShowInTargetList() {
 				@Override
 				@SuppressWarnings("deprecation")
 				public String[] getShowInTargetIds() {
@@ -1563,7 +1571,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				ce = null;
 			}
 			final ISelection selection= ce != null ? new StructuredSelection(ce) : null;
-			return new IShowInSource() {
+			return (T) new IShowInSource() {
 				@Override
 				public ShowInContext getShowInContext() {
 					return new ShowInContext(getEditorInput(), selection);
@@ -1571,21 +1579,21 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			};
 		} else if (adapterClass.isAssignableFrom(ProjectionAnnotationModel.class)) {
 			if (fProjectionSupport != null) {
-				Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), adapterClass);
+				T adapter = fProjectionSupport.getAdapter(getSourceViewer(), adapterClass);
 				if (adapter != null)
 					return adapter;
 			}
 		} else if (adapterClass.isAssignableFrom(IContextProvider.class)) {
-			return new CUIHelp.CUIHelpContextProvider(this);
+			return (T) new CUIHelp.CUIHelpContextProvider(this);
 		} else if (adapterClass.isAssignableFrom(IGotoMarker.class)) {
-			return new GotoMarkerAdapter();
+			return (T) new GotoMarkerAdapter();
 		} else if (adapterClass.isAssignableFrom(ITemplatesPage.class)) {
 			if (fTemplatesPage == null) {
 				fTemplatesPage = new CTemplatesPage(this);
 			}
-			return fTemplatesPage;
+			return (T) fTemplatesPage;
 		} else if (adapterClass.isAssignableFrom(ITranslationUnitHolder.class))
-			return this;
+			return (T) this;
 		return super.getAdapter(adapterClass);
 	}
 	
@@ -2346,6 +2354,10 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
         action.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_LAST);
         setAction(StructureSelectionAction.HISTORY, action);
         
+		// add annotation actions for roll-over expand hover
+		action= new CSelectMarkerRulerAction(bundle, "Editor.RulerAnnotationSelection.", this); //$NON-NLS-1$
+		setAction("AnnotationAction", action); //$NON-NLS-1$
+        
         
         // Assorted action groupings
 		fSelectionSearchGroup = createSelectionSearchGroup();
@@ -2485,7 +2497,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		parent.addHelpListener(new HelpListener() {
 			@Override
 			public void helpRequested(HelpEvent e) {
-				IContextProvider provider = (IContextProvider) CEditor.this.getAdapter(IContextProvider.class);
+				IContextProvider provider = CEditor.this.getAdapter(IContextProvider.class);
 				if (provider != null) {
 					IContext context = provider.getContext(CEditor.this);
 					if (context != null) {
@@ -2657,15 +2669,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		if (model == null)
 			return null;
 		
-		@SuppressWarnings("rawtypes")
-		Iterator parent;
+		Iterator<Annotation> parent;
 		if (model instanceof IAnnotationModelExtension2) {
 			parent= ((IAnnotationModelExtension2) model).getAnnotationIterator(offset, length, true, true);
 		} else {
 			parent= model.getAnnotationIterator();
 		}
 
-		@SuppressWarnings("unchecked")
 		Iterator<Annotation> e= new CAnnotationIterator(parent, false);
 		Annotation annotation = null;
 		while (e.hasNext()) {
@@ -3651,5 +3661,40 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 */
 	public void removePostSaveListener(IPostSaveListener listener) {
 		fPostSaveListeners.remove(listener);
+	}
+
+	@Override
+	protected IVerticalRulerColumn createAnnotationRulerColumn(CompositeRuler ruler) {
+		if (!getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER)) {
+			return super.createAnnotationRulerColumn(ruler);
+		}
+
+		AnnotationRulerColumn column= new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess());
+		column.setHover(new CExpandHover(ruler, getAnnotationAccess(), new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				// for now: just invoke ruler double click action
+				triggerAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
+			}
+
+			private void triggerAction(String actionID) {
+				IAction action= getAction(actionID);
+				if (action != null) {
+					if (action instanceof IUpdate)
+						((IUpdate) action).update();
+					// hack to propagate line change
+					if (action instanceof ISelectionListener) {
+						((ISelectionListener)action).selectionChanged(null, null);
+					}
+					if (action.isEnabled()) {
+						action.run();
+					}
+				}
+			}
+
+		}));
+
+		return column;
 	}
 }

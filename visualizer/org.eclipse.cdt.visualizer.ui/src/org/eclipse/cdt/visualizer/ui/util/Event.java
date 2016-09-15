@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2016 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class Event
 	
 	/** Returns string representation of event */
 	public String toString() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(getClass().getSimpleName());
 		result.append("[");
 		if (m_type != UNDEFINED) {

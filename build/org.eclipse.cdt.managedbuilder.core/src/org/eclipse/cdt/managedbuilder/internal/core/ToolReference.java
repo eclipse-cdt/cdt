@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,7 +179,7 @@ public class ToolReference implements IToolReference {
 		outputFlag = tool.getOutputFlag();
 		outputPrefix = tool.getOutputPrefix();
 		String[] extensions = tool.getOutputsAttribute();
-		outputExtensions = new String();
+		outputExtensions = ""; //$NON-NLS-1$
 		if (extensions != null) {
 			for (int index = 0; index < extensions.length; ++index) {
 				if (extensions[index] == null) continue;
@@ -346,7 +346,7 @@ public class ToolReference implements IToolReference {
 	public String getId() {
 		if (parent == null) {
 			// bad reference
-			return new String();
+			return ""; //$NON-NLS-1$
 		}
 		return parent.getId();
 	}
@@ -358,7 +358,7 @@ public class ToolReference implements IToolReference {
 	public String getBaseId() {
 		if (parent == null) {
 			// bad reference
-			return new String();
+			return ""; //$NON-NLS-1$
 		}
 		return parent.getBaseId();
 	}
@@ -383,7 +383,7 @@ public class ToolReference implements IToolReference {
 	public String getName() {
 		if (parent == null) {
 			// bad reference
-			return new String();
+			return ""; //$NON-NLS-1$
 		}
 		return parent.getName();
 	}
@@ -464,10 +464,11 @@ public class ToolReference implements IToolReference {
 	public String getToolCommand() {
 		if (command == null) {
 			// see if the parent has one
-			if (parent != null) {
-				return parent.getToolCommand();
+			if (parent == null) {
+				// bad reference
+				return ""; //$NON-NLS-1$
 			}
-			return new String();	// bad reference
+			return parent.getToolCommand();
 		}
 		return command;
 	}
@@ -478,7 +479,7 @@ public class ToolReference implements IToolReference {
 	@Override
 	public String getToolFlags() throws BuildException {
 		// Get all of the options
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		IOption[] opts = getOptions();
 		for (int index = 0; index < opts.length; index++) {
 			IOption option = opts[index];
@@ -509,21 +510,21 @@ public class ToolReference implements IToolReference {
 							boolCmd = option.getCommandFalse();
 						}
 						if (boolCmd != null && boolCmd.length() > 0) {
-							buf.append(boolCmd + WHITE_SPACE);
+							buf.append(boolCmd).append(WHITE_SPACE);
 						}
 						break;
 
 					case IOption.ENUMERATED :
 						String enumVal = option.getEnumCommand(option.getSelectedEnum());
 						if (enumVal.length() > 0) {
-							buf.append(enumVal + WHITE_SPACE);
+							buf.append(enumVal).append(WHITE_SPACE);
 						}
 						break;
 
 					case IOption.TREE :
 						String treeVal = option.getCommand(option.getStringValue());
 						if (treeVal.length() > 0) {
-							buf.append(treeVal + WHITE_SPACE);
+							buf.append(treeVal).append(WHITE_SPACE);
 						}
 						break;
 
@@ -532,7 +533,7 @@ public class ToolReference implements IToolReference {
 						String val = option.getStringValue();
 						if (val.length() > 0) {
 							if (strCmd != null) buf.append(strCmd);
-							buf.append(val + WHITE_SPACE);
+							buf.append(val).append(WHITE_SPACE);
 						}
 						break;
 
@@ -542,7 +543,7 @@ public class ToolReference implements IToolReference {
 						for (int j = 0; j < list.length; j++) {
 							String temp = list[j];
 							if (cmd != null) buf.append(cmd);
-							buf.append(temp + WHITE_SPACE);
+							buf.append(temp).append(WHITE_SPACE);
 						}
 						break;
 
@@ -551,7 +552,7 @@ public class ToolReference implements IToolReference {
 						String[] paths = option.getIncludePaths();
 						for (int j = 0; j < paths.length; j++) {
 							String temp = paths[j];
-							buf.append(incCmd + temp + WHITE_SPACE);
+							buf.append(incCmd).append(temp).append(WHITE_SPACE);
 						}
 						break;
 
@@ -560,7 +561,7 @@ public class ToolReference implements IToolReference {
 						String[] symbols = option.getDefinedSymbols();
 						for (int j = 0; j < symbols.length; j++) {
 							String temp = symbols[j];
-							buf.append(defCmd + temp + WHITE_SPACE);
+							buf.append(defCmd).append(temp).append(WHITE_SPACE);
 						}
 						break;
 
@@ -672,7 +673,7 @@ public class ToolReference implements IToolReference {
 	public String getOutputExtension(String inputExtension) {
 		if (parent == null) {
 			// bad reference
-			return new String();
+			return ""; //$NON-NLS-1$
 		}
 		return parent.getOutputExtension(inputExtension);
 	}
@@ -687,7 +688,7 @@ public class ToolReference implements IToolReference {
 				return parent.getOutputFlag();
 			} else {
 				// We never should be here
-				return new String();
+				return ""; //$NON-NLS-1$
 			}
 		}
 		return outputFlag;
@@ -702,7 +703,7 @@ public class ToolReference implements IToolReference {
 			if (parent != null) {
 				return parent.getOutputPrefix();
 			}
-			return new String();	// bad reference
+			return "";	// bad reference //$NON-NLS-1$
 		}
 		return outputPrefix;
 	}
@@ -864,7 +865,7 @@ public class ToolReference implements IToolReference {
 	 */
 	@Override
 	public String getCommandLinePattern() {
-		if( parent == null ) return new String();
+		if( parent == null ) return ""; //$NON-NLS-1$
 		return parent.getCommandLinePattern();
 	}
 
@@ -917,7 +918,7 @@ public class ToolReference implements IToolReference {
 	 */
 	@Override
 	public String toString() {
-		String answer = new String();
+		String answer = ""; //$NON-NLS-1$
 		if (parent != null) {
 			answer += "Reference to " + parent.getName();	//$NON-NLS-1$
 		}
@@ -1281,7 +1282,7 @@ public class ToolReference implements IToolReference {
 			if (parent != null) {
 				return parent.getConvertToId();
 			} else {
-				return new String();
+				return ""; //$NON-NLS-1$
 			}
 		}
 		return convertToId;
@@ -1310,7 +1311,7 @@ public class ToolReference implements IToolReference {
 			if (parent != null) {
 				return parent.getVersionsSupported();
 			} else {
-				return new String();
+				return ""; //$NON-NLS-1$
 			}
 		}
 		return versionsSupported;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2016 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -373,7 +373,7 @@ public class ProcessArgument {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer b = new StringBuffer(name);
+		StringBuilder b = new StringBuilder(name);
 		b.append(":"); //$NON-NLS-1$
 		switch (type) {
 			case ProcessParameter.SIMPLE:

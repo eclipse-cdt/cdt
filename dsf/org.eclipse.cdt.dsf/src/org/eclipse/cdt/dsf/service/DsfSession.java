@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,13 +90,13 @@ public class DsfSession
     private static final boolean DEBUG_SESSION_MODELADAPTERS;
 
     static {
-    	DEBUG_SESSION = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+    	DEBUG_SESSION = DsfPlugin.DEBUG && Boolean.parseBoolean(
                 Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session")); //$NON-NLS-1$
-    	DEBUG_SESSION_LISTENERS = DEBUG_SESSION && "true".equals( //$NON-NLS-1$
+    	DEBUG_SESSION_LISTENERS = DEBUG_SESSION && Boolean.parseBoolean(
             Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/listeners")); //$NON-NLS-1$
-    	DEBUG_SESSION_DISPATCHES = DEBUG_SESSION && "true".equals( //$NON-NLS-1$
+    	DEBUG_SESSION_DISPATCHES = DEBUG_SESSION && Boolean.parseBoolean(
                 Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/dispatches")); //$NON-NLS-1$
-    	DEBUG_SESSION_MODELADAPTERS = DEBUG_SESSION && "true".equals( //$NON-NLS-1$     	
+    	DEBUG_SESSION_MODELADAPTERS = DEBUG_SESSION && Boolean.parseBoolean(
     	        Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/modelAdapters")); //$NON-NLS-1$
     }  
 	

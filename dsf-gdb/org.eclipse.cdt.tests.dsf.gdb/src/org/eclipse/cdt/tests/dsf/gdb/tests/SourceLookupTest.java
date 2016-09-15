@@ -42,11 +42,14 @@ import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContaine
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -79,6 +82,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
+import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,12 +90,12 @@ import org.junit.runners.Parameterized;
 
 /**
  * Tests that interaction with source lookups works as expected.
- *
+ * <p>
  * All of these tests use one of SourceLookup*.exe that was built from a file
  * that was "moved" since build time. At build time the SourceLookup.cc file was
  * located in the {@link #BUILD_PATH} directory, but it is now located in the
  * {@link BaseTestCase#SOURCE_PATH} directory.
- *
+ * <p>
  * The wild card in SourceLookup*.exe can be one of the following to cover the
  * different effective types of source lookups that need to be done depending on
  * how the program was compiled. Each of these options produces different debug
@@ -110,13 +114,13 @@ import org.junit.runners.Parameterized;
  * </ul>
  * In addition, there can also be a <b>Dwarf2</b> in the name. That means it is
  * designed to run with GDB <= 7.4, see comment in Makefile for OLDDWARFFLAGS.
- *
+ * <p>
  * The result of the variations on compilation arguments means that some of the
  * tests are parameterised.
- *
+ * <p>
  * Some of the CDT source lookup features require newer versions of GDB than
- * others, therefore the relevant tests are ignored as needed in the subclasses
- * of {@link SourceLookupTest}.
+ * others, therefore the relevant tests use assumeGdbVersion* methods to be
+ * skipped when appropriate.
  */
 @RunWith(Parameterized.class)
 public class SourceLookupTest extends BaseParametrizedTestCase {
@@ -145,7 +149,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	protected void setExeNames() {
 		String gdbVersion = getGdbVersion();
 		// has to be strictly lower
-		boolean isLower = LaunchUtils.compareVersions("7.5", gdbVersion) > 0;
+		boolean isLower = LaunchUtils.compareVersions(ITestConstants.SUFFIX_GDB_7_5, gdbVersion) > 0;
 		if (isLower) {
 			EXEC_AC_NAME = "SourceLookupDwarf2AC.exe"; //$NON-NLS-1$
 			EXEC_AN_NAME = "SourceLookupDwarf2AN.exe"; //$NON-NLS-1$
@@ -460,12 +464,43 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	}
 
 	/**
+	 * Tests that GDB >= 7.6 because DSF is using the full path name to pass to
+	 * the {@link ISourceContainer#findSourceElements(String)}. In versions
+	 * prior to 7.6 the fullname field was not returned from GDB if the file was
+	 * not found by GDB. See
+	 * <a href= "https://sourceware.org/ml/gdb-patches/2012-12/msg00557.html">
+	 * the mailing list</a> and associated <a href=
+	 * "https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff;h=ec83d2110de6831ac2ed0e5a56dc33c60a477eb6">
+	 * gdb/NEWS item</a> (although you have to dig quite deep on these changes.)
+	 * 
+	 * Therefore in version < 7.6 the MI frame info has file="SourceLookup.cc"
+	 * and no fullname field. This means there is no path to source map against.
+	 * 
+	 * In version >= 7.6 the MI frame info has file="SourceLookup.cc",fullname=
+	 * "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build/SourceLookup.cc"
+	 * fields, so there is a path to do the mapping against. Recall that the
+	 * test maps
+	 * "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build"
+	 * to "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src"
+	 */
+	protected void assumeGdbVersionFullnameWorking() {
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
+	}
+
+	/**
+	 * Inverse of {@link #assumeGdbVersionFullnameWorking()}
+	 */
+	protected void assumeGdbVersionFullnameNotWorking() {
+		assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_7_6);
+	}
+
+	/**
 	 * Test source mappings with executable built with an Absolute and Canonical
 	 * build path
 	 */
 	@Test
 	public void sourceMappingAC() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionFullnameWorking();
 		sourceMapping(EXEC_AC_NAME, false);
 	}
 
@@ -484,7 +519,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingAN() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionFullnameWorking();
 		sourceMapping(EXEC_AN_NAME, false);
 	}
 
@@ -495,11 +530,11 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	@Test
 	public void sourceSubstituteAN() throws Throwable {
 		/*
-		 * GDB < 6.8 does not work correctly with substitute-paths with .. in the
-		 * build path when the build path is an absolute path. GDB 6.8 and above
-		 * works fine in this case.
+		 * GDB < 6.8 does not work correctly with substitute-paths with .. in
+		 * the build path when the build path is an absolute path. GDB 6.8 and
+		 * above works fine in this case.
 		 */
-		assumeGdbVersionAtLeast("6.8");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
 		sourceMapping(EXEC_AN_NAME, true);
 	}
 
@@ -509,7 +544,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingRC() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionFullnameWorking();
 		sourceMapping(EXEC_RC_NAME, false);
 	}
 
@@ -528,7 +563,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingRN() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionFullnameWorking();
 		sourceMapping(EXEC_RN_NAME, false);
 	}
 
@@ -539,11 +574,11 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	@Test
 	public void sourceSubstituteRN() throws Throwable {
 		/*
-		 * GDB < 7.6 does not work correctly with substitute-paths with .. in the
-		 * build path when the build path is a relative path. GDB 7.6 and above
-		 * works fine in this case.
+		 * GDB < 7.6 does not work correctly with substitute-paths with .. in
+		 * the build path when the build path is a relative path. GDB 7.6 and
+		 * above works fine in this case.
 		 */
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMapping(EXEC_RN_NAME, true);
 	}
 
@@ -553,7 +588,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsAC() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionFullnameWorking();
 		sourceMappingBreakpoints(EXEC_AC_NAME, false);
 	}
 
@@ -583,11 +618,11 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	@Test
 	public void sourceSubstituteBreakpointsAN() throws Throwable {
 		/*
-		 * GDB < 6.8 does not work correctly with substitute-paths with .. in the
-		 * build path when the build path is an absolute path. GDB 6.8 and above
-		 * works fine in this case.
+		 * GDB < 6.8 does not work correctly with substitute-paths with .. in
+		 * the build path when the build path is an absolute path. GDB 6.8 and
+		 * above works fine in this case.
 		 */
-		assumeGdbVersionAtLeast("6.8");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
 		sourceMappingBreakpoints(EXEC_AN_NAME, true);
 	}
 
@@ -597,7 +632,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void sourceMappingBreakpointsRC() throws Throwable {
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionFullnameWorking();
 		sourceMappingBreakpoints(EXEC_RC_NAME, false);
 	}
 
@@ -627,11 +662,11 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	@Test
 	public void sourceSubstituteBreakpointsRN() throws Throwable {
 		/*
-		 * GDB < 7.6 does not work correctly with substitute-paths with .. in the
-		 * build path when the build path is a relative path. GDB 7.6 and above
-		 * works fine in this case.
+		 * GDB < 7.6 does not work correctly with substitute-paths with .. in
+		 * the build path when the build path is a relative path. GDB 7.6 and
+		 * above works fine in this case.
 		 */
-		assumeGdbVersionAtLeast("7.6");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
 		sourceMappingBreakpoints(EXEC_RN_NAME, true);
 	}
 
@@ -765,7 +800,11 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void directorySource() throws Throwable {
-		assumeGdbVersionLowerThen("7.6");
+		/*
+		 * DirectorySourceContainer only works if there is no fullname coming
+		 * from GDB
+		 */
+		assumeGdbVersionFullnameNotWorking();
 		DirectorySourceContainer container = new DirectorySourceContainer(new Path(SOURCE_ABSPATH), false);
 		setSourceContainer(container);
 		doLaunch(EXEC_PATH + EXEC_RC_NAME);
@@ -1015,7 +1054,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		assertSourceFoundByDirectorOnly();
 		assertInsertBreakpointSuccessful();
 	}
-	
+
 	/**
 	 * Test verifies interaction between director that has two mappers, one with
 	 * backend enabled and one without, with the first being the only valid one,
@@ -1029,28 +1068,95 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		substituteContainer.addMapEntry(fMapEntrySourceContainerC);
 		AbstractSourceLookupDirector director = setSourceContainer(substituteContainer);
 
-		// Because of the above valid mapping substitution, GDB will provide the proper path
-		// to the source and it will be found no matter what the below mapping is set to.
-		// On the other hand, when setting a breakpoint, we have to make sure that the below
-		// mapping does not change the path to something GDB does not know.
-		// Therefore, we set the below mapping from an invalid compilation path to the proper source path.
-		// This is so that if the below mapping is triggered it will cause us to try to set a breakpoint
-		// in GDB on an invalid path, thus failing the test.
-		// This allows to verify that the first mapping is used once it is found to be valid
-		// and does not fallback to the next mapping.
+		/*
+		 * Because of the above valid mapping substitution, GDB will provide the
+		 * proper path to the source and it will be found no matter what the
+		 * below mapping is set to. On the other hand, when setting a
+		 * breakpoint, we have to make sure that the below mapping does not
+		 * change the path to something GDB does not know. Therefore, we set the
+		 * below mapping from an invalid compilation path to the proper source
+		 * path. This is so that if the below mapping is triggered it will cause
+		 * us to try to set a breakpoint in GDB on an invalid path, thus failing
+		 * the test. This allows to verify that the first mapping is used once
+		 * it is found to be valid and does not fallback to the next mapping.
+		 */
 		MappingSourceContainer mapContainer = new MappingSourceContainer("Mappings");
 		mapContainer.setIsMappingWithBackendEnabled(false);
-		mapContainer
-				.addMapEntry(new MapEntrySourceContainer("/from_invalid", new Path(SOURCE_ABSPATH)));
+		mapContainer.addMapEntry(new MapEntrySourceContainer("/from_invalid", new Path(SOURCE_ABSPATH)));
 		addSourceContainer(director, mapContainer);
 
 		doLaunch(EXEC_PATH + EXEC_AC_NAME);
 
 		/*
-		 * because the backend substitution applies, we should be able to find the
-		 * source with the director or without it.
+		 * because the backend substitution applies, we should be able to find
+		 * the source with the director or without it.
 		 */
 		assertSourceFound();
 		assertInsertBreakpointSuccessful();
+	}
+
+	/**
+	 * Terminate the session on the executor thread without blocking.
+	 * 
+	 * This models the way DsfTerminateCommand terminates the launches.
+	 */
+	protected void terminateAsync(DsfSession session) throws Exception {
+		DsfExecutor executor = session.getExecutor();
+		executor.execute(() -> {
+			DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+			IGDBControl commandControl = tracker.getService(IGDBControl.class);
+			tracker.dispose();
+			commandControl.terminate(new RequestMonitor(executor, null));
+		});
+	}
+
+	/**
+	 * Test that two launches can be launched and terminated without becoming
+	 * interlocked.
+	 * 
+	 * This is a regression test for Bug 494650.
+	 * 
+	 * XXX: If this test fails as it did for the reason of Bug 494650, there is
+	 * deadlock and the JVM does not recover, causing this test to timeout and
+	 * all subsequent tests not to work.
+	 */
+	@Test
+	public void twoLaunchesTerminate() throws Throwable {
+		Assume.assumeFalse("Test framework only supports multiple launches for non-remote", remote);
+		// Launch first session
+		doLaunch(EXEC_PATH + EXEC_NAME);
+		GdbLaunch launch1 = getGDBLaunch();
+		// Launch additional session with same launch configuration
+		GdbLaunch launch2 = doLaunchInner();
+
+		/*
+		 * Bug 494650 affects when two launches are terminated too close
+		 * together. In normal operation that means that the two terminates is
+		 * sufficient. However, it can happen that the first one terminates
+		 * progresses sufficiently far that the deadlock does not happen on the
+		 * second.
+		 * 
+		 * NOTE: Can't use launch.terminate() here because it terminates
+		 * synchronously when adapters are not installed. Instead we need to
+		 * issue the terminates in a non-blocking way on both the the executor
+		 * threads, the way that terminate works when adapters are installed.
+		 */
+		terminateAsync(launch1.getSession());
+		terminateAsync(launch2.getSession());
+
+		/*
+		 * In Bug 494650 the UI locks up because the executor thread of both
+		 * sessions is waiting on each other and the UI thread is waiting on the
+		 * executor thread. The UI thread is waiting by using a Query, and
+		 * before the bug fix the two executor threads were waiting on each
+		 * other using a Query too.
+		 * 
+		 * This test does not use the UI thread (aka main), but instead the
+		 * JUnit test thread. We determine success if both launches terminate,
+		 * because if they both terminate they have stayed responsive and
+		 * successfully completed the entire shutdown sequences without
+		 * deadlocking.
+		 */
+		waitUntil("Timeout waiting for launches to terminate", () -> launch1.isTerminated() && launch2.isTerminated());
 	}
 }

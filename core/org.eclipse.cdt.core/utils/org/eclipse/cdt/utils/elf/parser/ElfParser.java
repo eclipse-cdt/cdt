@@ -10,7 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
- 
+
 import java.io.EOFException;
 import java.io.IOException;
 
@@ -54,26 +54,26 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 						// continue, the array was to small.
 					}
 				}
-	
+
 				//Take a second run at it if the data array failed.
 	 			if(attribute == null) {
 					attribute = Elf.getAttributes(path.toOSString());
 	 			}
-	
+
 				if (attribute != null) {
 					switch (attribute.getType()) {
 						case Attribute.ELF_TYPE_EXE :
 							binary = createBinaryExecutable(path);
 							break;
-	
+
 						case Attribute.ELF_TYPE_SHLIB :
 							binary = createBinaryShared(path);
 							break;
-	
+
 						case Attribute.ELF_TYPE_OBJ :
 							binary = createBinaryObject(path);
 							break;
-	
+
 						case Attribute.ELF_TYPE_CORE :
 							binary = createBinaryCore(path);
 							break;
@@ -84,7 +84,12 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 				}
 			} catch (IOException e) {
 				if (hints == null) {
-					binary = createBinaryArchive(path);
+					try {
+						binary = createBinaryArchive(path);
+					} catch (IOException e2) {
+						CCorePlugin.log(e); // log original exception
+						throw e2;
+					}
 				}
 			}
 		}

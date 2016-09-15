@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -24,37 +24,21 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 /**
  * Gnu-extension: ({ ... })
  */
-public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
+public class CPPASTCompoundStatementExpression extends ASTNode
+		implements IGNUASTCompoundStatementExpression, ICPPASTExpression, ICPPEvaluationOwner {
     private IASTCompoundStatement fStatement;
     private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
     
     public CPPASTCompoundStatementExpression() {
 	}
-
-	@Override
-	public ICPPEvaluation getEvaluation() {
-		if (fEval == null) {
-			IASTCompoundStatement compound = getCompoundStatement();
-			IASTStatement[] statements = compound.getStatements();
-			if (statements.length > 0) {
-				IASTStatement st = statements[statements.length - 1];
-				if (st instanceof IASTExpressionStatement) {
-					fEval= new EvalCompound(((ICPPASTExpression) ((IASTExpressionStatement) st).getExpression()).getEvaluation(), this);
-				}
-			}
-			if (fEval == null)
-				fEval= EvalFixed.INCOMPLETE;
-		}
-		return fEval;
-	}
-
+    
 	public CPPASTCompoundStatementExpression(IASTCompoundStatement statement) {
 		setCompoundStatement(statement);
 	}
@@ -63,11 +47,11 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 	public CPPASTCompoundStatementExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTCompoundStatementExpression copy(CopyStyle style) {
-		CPPASTCompoundStatementExpression copy = new CPPASTCompoundStatementExpression();
-		copy.setCompoundStatement(fStatement == null ? null : fStatement.copy(style));
+		CPPASTCompoundStatementExpression copy =
+				new CPPASTCompoundStatementExpression(fStatement == null ? null : fStatement.copy(style));
 		return copy(copy, style);
 	}
 
@@ -87,6 +71,26 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
     }
 
 	@Override
+	public ICPPEvaluation getEvaluation() {
+		if (fEval == null) {
+			if (fStatement != null) {
+				IASTStatement[] statements = fStatement.getStatements();
+				if (statements.length > 0) {
+					IASTStatement st = statements[statements.length - 1];
+					if (st instanceof IASTExpressionStatement) {
+						IASTExpressionStatement exprStmt = (IASTExpressionStatement)st;
+						ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)exprStmt.getExpression();
+						fEval= new EvalCompoundStatementExpression(evalOwner.getEvaluation(), this);
+					}
+				}
+			}
+			if (fEval == null)
+				fEval= EvalFixed.INCOMPLETE;
+		}
+		return fEval;
+	}
+
+	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
 			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
@@ -104,9 +108,10 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 	            default: break;
 	        }
 		}
-        
-        if (fStatement != null && !fStatement.accept(action)) return false;
-   
+
+        if (fStatement != null && !fStatement.accept(action))
+        	return false;
+
         if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
@@ -119,12 +124,12 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
         }
         return true;
     }
-    
+
     @Override
 	public IType getExpressionType() {
     	return getEvaluation().getType(this);
 	}
-    
+
 	@Override
 	public boolean isLValue() {
 		return false;

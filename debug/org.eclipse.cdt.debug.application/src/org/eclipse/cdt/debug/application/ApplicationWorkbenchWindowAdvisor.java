@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Red Hat, Inc.
+ * Copyright (c) 2013, 2016 Red Hat, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,7 +195,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						if (i < args.length)
 							executable = findExecutable(args[i]);
 						++i;
-						StringBuffer argBuffer = new StringBuffer();
+						StringBuilder argBuffer = new StringBuilder();
 						// Remaining values are arguments to the executable
 						if (i < args.length)
 							argBuffer.append(args[i++]);
@@ -242,7 +242,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							}
 						});
 						// Check and see if we failed above and if so, quit
-						if (info.getHostPath().equals("")) { //$NON-NLS-1$
+						if (info.getHostPath().isEmpty()) {
 							monitor.done();
 							// throw internal exception which will be caught below
 							throw new StartupException(errorStatus.getMessage());
@@ -342,7 +342,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							}
 						});
 						// Check and see if we failed above and if so, quit
-						if (info.getHostPath().equals("")) { //$NON-NLS-1$
+						if (info.getHostPath().isEmpty()) {
 							monitor.done();
 							// throw internal exception which will be caught below
 							throw new StartupException(errorStatus.getMessage());
@@ -405,7 +405,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						}
 					});
 					// Check and see if we failed above and if so, quit
-					if (info.getHostPath().equals("")) { //$NON-NLS-1$
+					if (info.getHostPath().isEmpty()) {
 						monitor.done();
 						// throw internal exception which will be caught below
 						throw new StartupException(errorStatus.getMessage());

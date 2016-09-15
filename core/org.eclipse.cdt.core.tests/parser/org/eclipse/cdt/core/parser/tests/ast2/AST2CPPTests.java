@@ -30,6 +30,8 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -154,8 +156,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import junit.framework.TestSuite;
 
 public class AST2CPPTests extends AST2TestBase {
 
@@ -1470,7 +1470,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void test(A<int> a) {
 	//	  foo(a);
 	//	}
-	public void _testInheritedTemplateConstructor() throws Exception {
+	public void testInheritedTemplateConstructor() throws Exception {
 		parseAndCheckBindings();
 	}
 	
@@ -7789,11 +7789,11 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testCastInEnumeratorValue_446380() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		IEnumerator i2 = ba.assertNonProblem("i2", IEnumerator.class);
-		Long v2 = i2.getValue().numericalValue();
+		Number v2 = i2.getValue().numberValue();
 		assertNotNull(v2);
 		assertEquals(1, v2.intValue());
 		IEnumerator i3 = ba.assertNonProblem("i3", IEnumerator.class);
-		Long v3 = i3.getValue().numericalValue();
+		Number v3 = i3.getValue().numberValue();
 		assertNotNull(v3);
 		assertEquals(2, v3.intValue());
 		ICPPFunction f = ba.assertNonProblemOnFirstIdentifier("f(i3)",ICPPFunction.class);
@@ -8882,7 +8882,51 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testListInitialization_458679() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}
-	
+
+	//	namespace std {	template<typename T> class initializer_list; }
+	//
+	//	struct A {
+	//	  A(const char* s);
+	//	};
+	//
+	//	void waldo(A p);
+	//	void waldo(std::initializer_list<A> p);
+	//
+	//	void test() {
+	//	  waldo({""});
+	//	}
+	public void testListInitialization_491842() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct A {
+	//	  A();
+	//	  A(int);
+	//	  A(int, int);
+	//	};
+	//
+	//	void test() {
+	//	  A{};
+	//	  A{1};
+	//	  A{1, 2};
+	//	}
+	public void testListInitializer_495227() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper ah = getAssertionHelper();
+		IASTImplicitName name = ah.findImplicitName("A{}", 1);
+		IBinding binding = name.resolveBinding();
+		assertTrue(binding instanceof ICPPConstructor);
+		assertEquals(0, ((ICPPConstructor) binding).getType().getParameterTypes().length);
+		name = ah.findImplicitName("A{1}", 1);
+		binding = name.resolveBinding();
+		assertTrue(binding instanceof ICPPConstructor);
+		assertEquals(1, ((ICPPConstructor) binding).getType().getParameterTypes().length);
+		name = ah.findImplicitName("A{1, 2}", 1);
+		binding = name.resolveBinding();
+		assertTrue(binding instanceof ICPPConstructor);
+		assertEquals(2, ((ICPPConstructor) binding).getType().getParameterTypes().length);
+	}
+
 	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}
@@ -10834,6 +10878,15 @@ public class AST2CPPTests extends AST2TestBase {
 		helper.assertNonProblemOnFirstIdentifier("fint({vchar");
 	}
 
+	//	void waldo(char x);
+	//
+	//	void test() {
+	//	  waldo({1});
+	//	}
+	public void testNarrowingConversionInListInitialization_491748() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	namespace std {
 	//		struct string {};
 	//	 	struct exception {};
@@ -11249,7 +11302,7 @@ public class AST2CPPTests extends AST2TestBase {
 		// to its end, the IDE would appear to hang.
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable waldo = helper.assertNonProblem("waldo");
-		assertNull(waldo.getInitialValue().numericalValue());
+		assertNull(waldo.getInitialValue().numberValue());
 	}
 	
 	//	constexpr int foo(int a = 42) {
@@ -11732,6 +11785,14 @@ public class AST2CPPTests extends AST2TestBase {
 		assertTrue(test.getType() instanceof IProblemType); // resolution is ambiguous
 	}
 	
+	//	double waldo1 = 02.968;
+	//	double waldo2 = 09.268;
+	//	double waldo3 = 02e2;
+	//	double waldo4 = 09e2;
+	public void testFloatLiteralWithLeadingZero_498434() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+	
 	//	char foo() {
 	//		return '*';
 	//	}
@@ -11882,6 +11943,124 @@ public class AST2CPPTests extends AST2TestBase {
 	//	    auto size = sizeof(Waldo::x);
 	//	}
 	public void testShadowingAliasDeclaration_484200() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	struct S {
+	//	    void foo() {
+	//	        bar(E::A);       // ERROR: Symbol 'A' could not be resolved
+	//	    }
+	//	    enum class E { A };
+	//	    void bar(E);
+	//	};
+	public void testEnumDeclaredLaterInClass_491747() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	class S {
+	//	    static S waldo;
+	//	};
+	//	void foo(const S& = S());
+	public void testValueRepresentationOfClassWithStaticMemberOfOwnType_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
+	}
+	
+	//	class S {
+	//		S waldo;  // invalid
+	//	};
+	//	void foo(const S& = S());
+	public void testClassDirectlyAggregatingItself_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
+	}
+	
+	//	class T;
+	//	class S {
+	//		T waldo;  // invalid
+	//	};
+	//	class T {
+	//		S waldo;
+	//	};
+	//	void foo(const T& = T());
+	public void testClassIndirectlyAggregatingItself_490475() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction foo = helper.assertNonProblem("foo");
+		// Trigger computation of value representation of S().
+		foo.getParameters()[0].getDefaultValue();
+  }
+
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct A {};
+	//	A&& foo();
+	//	A a;
+	//	decltype(auto) b = a; // decltype(b) is A
+	//	decltype(auto) c(a); // decltype(c) is A
+	//	decltype(auto) d = (a); // decltype(d) is A &
+	//	decltype(auto) e = foo(); // decltype(e) is A &&
+	//	static decltype(auto) f = 0.0; // decltype(f) is double
+	//	decltype(auto) g = &a, h = &b; // decltype(g) and decltype(h) are A *
+	//	decltype(auto) i = { 'a', 'b' }; // Error - cannot deduce decltype(auto) from initializer list.
+	//	decltype(auto) j{42}; // Valid since C++17: decltype(j) is int
+	//	decltype(auto) k = new decltype(auto)(1L); // decltype(j) is long int *
+	//	decltype(auto) l; // Error - missing initializer.
+	public void testDecltypeAutoVariableTypes_482225() throws Exception {
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		ICPPVariable b = bh.assertNonProblem("b =", 1);
+		assertEquals("A", ASTTypeUtil.getType(b.getType()));
+
+		ICPPVariable c = bh.assertNonProblem("c(a)", 1);
+		assertEquals("A", ASTTypeUtil.getType(c.getType()));
+
+		ICPPVariable d = bh.assertNonProblem("d =", 1);
+		assertEquals("A &", ASTTypeUtil.getType(d.getType()));
+
+		ICPPVariable e = bh.assertNonProblem("e =", 1);
+		assertEquals("A &&", ASTTypeUtil.getType(e.getType()));
+
+		ICPPVariable f = bh.assertNonProblem("f =", 1);
+		assertEquals("double", ASTTypeUtil.getType(f.getType()));
+
+		ICPPVariable g = bh.assertNonProblem("g =", 1);
+		assertEquals("A *", ASTTypeUtil.getType(g.getType()));
+
+		ICPPVariable h = bh.assertNonProblem("h =", 1);
+		assertEquals("A *", ASTTypeUtil.getType(h.getType()));
+
+		ICPPVariable i = bh.assertNonProblem("i =", 1);
+		IProblemType iType = (IProblemType) i.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, iType.getID());
+
+		ICPPVariable j = bh.assertNonProblem("j{42}", 1);
+		assertEquals("int", ASTTypeUtil.getType(j.getType()));
+
+		ICPPVariable k = bh.assertNonProblem("k =", 1);
+		assertEquals("long int *", ASTTypeUtil.getType(k.getType()));
+
+		ICPPVariable l = bh.assertNonProblem("l;", 1);
+		IProblemType lType = (IProblemType) l.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, lType.getID());
+	}
+
+	//	auto foo() -> decltype(auto) {
+	//		return 23.0;
+	//	}
+	public void testDecltypeAutoTrailingReturnType_482225() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	decltype(auto) foo() {
+	//		return 23.0;
+	//	}
+	public void testDecltypeAutoReturnType_482225() throws Exception {
 		parseAndCheckBindings();
 	}
 }

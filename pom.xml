@@ -10,19 +10,20 @@
 
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>cdt-parent</artifactId>
-	<version>9.0.0-SNAPSHOT</version>
+	<version>9.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>CDT Parent</name>
 
 	<properties>
-		<tycho-version>0.24.0</tycho-version>
-		<tycho-extras-version>0.24.0</tycho-extras-version>
+		<tycho-version>0.26.0</tycho-version>
+		<tycho-extras-version>0.26.0</tycho-extras-version>
+		<cbi-plugins.version>1.1.3</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://hudson.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.java.source>1.7</sonar.java.source>
+		<sonar.java.source>1.8</sonar.java.source>
 		<target-platform>cdt</target-platform>
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.5</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
@@ -54,15 +55,12 @@
 		<module>core/org.eclipse.cdt.core.win32.x86_64</module>
 		<module>core/org.eclipse.cdt.core.macosx</module>
 		<module>core/org.eclipse.cdt.core.aix</module>
-		<module>core/org.eclipse.cdt.core.solaris</module>
 		<module>native/org.eclipse.cdt.native.serial</module>
 		<module>releng/org.eclipse.cdt.native-feature</module>
 		<module>releng/org.eclipse.cdt.native.source-feature</module>
 
 		<module>releng/org.eclipse.cdt</module>
 		<module>core/org.eclipse.cdt.core</module>
-		<module>build/org.eclipse.cdt.build.core</module>
-		<module>build/org.eclipse.cdt.build.ui</module>
 		<module>codan/org.eclipse.cdt.codan.core</module>
 		<module>codan/org.eclipse.cdt.codan.ui</module>
 		<module>codan/org.eclipse.cdt.codan.core.cxx</module>
@@ -207,7 +205,10 @@
 
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm.ui</module>		
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm-feature</module>
-		
+		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.core</module>
+		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.ui</module>
+		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb-feature</module>
+
 		<module>qt/org.eclipse.cdt.qt.core</module>
 		<module>qt/org.eclipse.cdt.qt.ui</module>
 		<!--module>qt/org.eclipse.cdt.qt.core.tests</module-->
@@ -314,7 +315,7 @@
 					<plugin>
 						<groupId>org.eclipse.cbi.maven.plugins</groupId>
 						<artifactId>eclipse-jarsigner-plugin</artifactId>
-						<version>1.1.2</version>
+						<version>${cbi-plugins.version}</version>
 						<executions>
 							<execution>
 								<id>sign</id>
@@ -417,11 +418,6 @@
 									<arch>ppc</arch>
 								</environment>
 								<environment>
-									<os>solaris</os>
-									<ws>gtk</ws>
-									<arch>sparc</arch>
-								</environment>
-								<environment>
 									<os>linux</os>
 									<ws>gtk</ws>
 									<arch>ppc64le</arch>
@@ -484,11 +480,6 @@
 							<ws>gtk</ws>
 							<arch>ppc</arch>
 						</environment>
-						<environment>
-							<os>solaris</os>
-							<ws>gtk</ws>
-							<arch>sparc</arch>
-						</environment>
 					</environments>
 					<target>
 						<artifact>
@@ -519,7 +510,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.4.201502262128</version>
+				<version>0.7.7.201606060606</version>
 				<executions>
 					<execution>
 						<id>pre-test</id>
@@ -583,7 +574,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.7</version>
+					<version>3.0.1</version>
 					<configuration>
 						<encoding>ISO-8859-1</encoding>
 					</configuration>
@@ -596,7 +587,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>findbugs-maven-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.0.4</version>
 					<configuration>
 						<xmlOutput>true</xmlOutput>
 						<excludeFilterFile>releng/findbugs-exclude.xml</excludeFilterFile>
@@ -613,11 +604,11 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.4</version>
+					<version>3.6</version>
 					<configuration>
 						<sourceEncoding>utf-8</sourceEncoding>
 						<minimumTokens>100</minimumTokens>
-						<targetJdk>1.7</targetJdk>
+						<targetJdk>1.8</targetJdk>
 						<format>xml</format>
 						<failOnViolation>false</failOnViolation>
 					</configuration>

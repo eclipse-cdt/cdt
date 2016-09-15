@@ -182,7 +182,7 @@ public class CCorePreferenceConstants {
 	/**
 	 * Preference key for the regular expression pattern that, when appears in a comment on the same
 	 * line as include statement, indicates that the included header file is exported.
-	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
 	 *
 	 * @since 5.5
 	 */
@@ -197,7 +197,7 @@ public class CCorePreferenceConstants {
 	/**
 	 * Preference key for the regular expression pattern that, when appears in a comment, marks
 	 * the beginning of a sequence of include statements that export the included header files.
-	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
 	 *
 	 * @since 5.5
 	 */
@@ -212,7 +212,7 @@ public class CCorePreferenceConstants {
 	/**
 	 * Preference key for the regular expression pattern that, when appears in a comment, marks
 	 * the end of a sequence of include statements that export the included header files.
-	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
 	 *
 	 * @since 5.5
 	 */
@@ -228,7 +228,7 @@ public class CCorePreferenceConstants {
 	 * Preference key for the regular expression pattern that, when appears in a comment on the same
 	 * line as include statement, indicates that the included header file is private and that
 	 * another header file should be included instead.
-	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
 	 *
 	 * @since 5.7
 	 */
@@ -244,7 +244,7 @@ public class CCorePreferenceConstants {
 	 * Preference key for the regular expression pattern that, when appears in a comment on the same
 	 * line as include statement, indicates that the include statement should be preserved when
 	 * organizing includes.
-	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
 	 *
 	 * @since 5.9
 	 */

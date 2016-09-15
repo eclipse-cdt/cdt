@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.ui.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -231,7 +232,7 @@ public class TestToolActions extends AbstractTest {
 		consoleView.setFocus();
 		// Verify we got some help output to the console
 		Pattern p = Pattern.compile(".*Invoking libtoolize in.*" + projectName
-				+ ".*libtoolize --help.*Usage: libtoolize.*", Pattern.DOTALL);
+				+ ".*libtoolize --help.*Usage: .*libtoolize.*", Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 

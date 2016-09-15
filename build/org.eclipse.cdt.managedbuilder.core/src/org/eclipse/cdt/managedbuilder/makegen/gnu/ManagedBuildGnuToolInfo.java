@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1013,17 +1013,15 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		if (outExtensionName != null) {
 		    OptDotExt = DOT + outExtensionName;
 		} else
-			if (!tool.getOutputExtension(srcExtensionName).equals("")) //$NON-NLS-1$
+			if (!tool.getOutputExtension(srcExtensionName).isEmpty())
 				OptDotExt = DOT + tool.getOutputExtension(srcExtensionName);
 
 		// create rule of the form
 		// OBJS = $(macroName1: ../%.input1=%.output1) ... $(macroNameN: ../%.inputN=%.outputN)
-		StringBuffer objectsBuffer = new StringBuffer();
-		objectsBuffer.append(IManagedBuilderMakefileGenerator.WHITESPACE + "$(" + macroName + 					//$NON-NLS-1$
+		 return IManagedBuilderMakefileGenerator.WHITESPACE + "$(" + macroName + 					//$NON-NLS-1$
 			IManagedBuilderMakefileGenerator.COLON + IManagedBuilderMakefileGenerator.ROOT +
 			IManagedBuilderMakefileGenerator.SEPARATOR + IManagedBuilderMakefileGenerator.WILDCARD +
-				DOT + srcExtensionName + "=" + wildcard + OptDotExt + ")" );	//$NON-NLS-1$ //$NON-NLS-2$
-        return objectsBuffer.toString();
+				DOT + srcExtensionName + "=" + wildcard + OptDotExt + ")";	//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

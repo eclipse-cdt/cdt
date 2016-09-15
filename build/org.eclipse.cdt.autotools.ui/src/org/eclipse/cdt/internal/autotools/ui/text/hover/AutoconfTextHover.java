@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Red Hat, Inc.
+ * Copyright (c) 2006, 2016 Red Hat, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -288,24 +288,27 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	}
 
 	private static String getIndexedInfoFromDocument(String name, Document document) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		if (document != null && name != null) {
 			Element elem = document.getElementById(name);
 			if (null != elem) {
 				int prototypeCount = 0;
-				buffer.append("<B>Macro:</B> " + name);
+				buffer.append("<B>Macro:</B> ").append(name);
 				NodeList nl = elem.getChildNodes();
 				for (int i = 0; i < nl.getLength(); ++i) {
 					Node n = nl.item(i);
 					String nodeName = n.getNodeName();
 					if (nodeName.equals("prototype")) { //$NON-NLS-1$
-						StringBuffer prototype = new StringBuffer();
+						StringBuilder prototype = new StringBuilder();
 						++prototypeCount;
 						if (prototypeCount == 1) {
 							buffer.append(" (");
-						} else
-							buffer.append("    <B>or</B> " + name + " (<I>"); //$NON-NLS-2$
+						} else {
+							buffer.append("    <B>or</B> "); //$NON-NLS-2$
+							buffer.append(name);
+							buffer.append(" (<I>"); //$NON-NLS-2$
+						}
 						NodeList varList = n.getChildNodes();
 						for (int j = 0; j < varList.getLength(); ++j) {
 							Node v = varList.item(j);
@@ -314,13 +317,13 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 								NamedNodeMap parms = v.getAttributes();
 								Node parmNode = parms.item(0);
 								String parm = parmNode.getNodeValue();
-								if (prototype.toString().equals(""))
+								if (prototype.length() == 0)
 									prototype.append(parm);
 								else
-									prototype.append(", " + parm);
+									prototype.append(", ").append(parm);
 							}
 						}
-						buffer.append(prototype.toString() + "</I>)<br>"); //$NON-NLS-1$
+						buffer.append(prototype).append("</I>)<br>"); //$NON-NLS-1$
 					}
 					if (nodeName.equals("synopsis")) {  //$NON-NLS-1$
 						Node textNode = n.getLastChild();
@@ -364,7 +367,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 					Node n2 = macroAttrs.getNamedItem("id"); //$NON-NLS-1$
 					if (n2 != null) {
 						String name = n2.getNodeValue();
-						StringBuffer parms = new StringBuffer();
+						StringBuilder parms = new StringBuilder();
 						NodeList macroChildren = macro.getChildNodes();
 						for (int j = 0; j < macroChildren.getLength(); ++j) {
 							Node x = macroChildren.item(j);
@@ -540,7 +543,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 				try {
 					styleSheetURL= FileLocator.toFileURL(styleSheetURL);
 					try (BufferedReader reader= new BufferedReader(new InputStreamReader(styleSheetURL.openStream()))) {
-						StringBuffer buffer= new StringBuffer(200);
+						StringBuilder buffer= new StringBuilder(200);
 						String line= reader.readLine();
 						while (line != null) {
 							buffer.append(line);

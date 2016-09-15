@@ -8,9 +8,13 @@
 package org.eclipse.cdt.cmake.core;
 
 import org.eclipse.cdt.cmake.core.internal.Activator;
+import org.eclipse.cdt.core.build.CBuilder;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class CMakeNature implements IProjectNature {
 
@@ -18,17 +22,17 @@ public class CMakeNature implements IProjectNature {
 
 	private IProject project;
 
-	public static boolean hasNature(IProject project) {
-		try {
-			return project.hasNature(ID);
-		} catch (CoreException e) {
-			Activator.log(e);
-			return false;
-		}
+	public static void setupBuilder(IProjectDescription projDesc) throws CoreException {
+		ICommand command = projDesc.newCommand();
+		CBuilder.setupBuilder(command);
+		projDesc.setBuildSpec(new ICommand[] { command });
 	}
-
+	
 	@Override
 	public void configure() throws CoreException {
+		IProjectDescription projDesc = project.getDescription();
+		setupBuilder(projDesc);
+		project.setDescription(projDesc, new NullProgressMonitor());
 	}
 
 	@Override

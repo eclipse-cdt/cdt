@@ -457,7 +457,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void atDoubleMethodStopAtBreakpointFunctionEntry() throws Throwable {
-		assumeGdbVersionAtLeast("7.4");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
 		atDoubleMethodStopAtBreakpointCommon(FOO_LINE);
 	}
 
@@ -497,7 +497,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void atDoubleMethodSkipBreakpointFunctionEntry() throws Throwable {
-		assumeGdbVersionAtLeast("7.4");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
 		atDoubleMethodSkipBreakpointCommon(FOO_LINE);
 	}
 

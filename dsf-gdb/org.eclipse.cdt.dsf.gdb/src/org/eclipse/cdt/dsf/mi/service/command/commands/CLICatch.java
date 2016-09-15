@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Freescale Semiconductor and others.
+ * Copyright (c) 2010, 2016 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,9 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 public class CLICatch extends CLICommand<CLICatchInfo> {
 
 	private static String formOperation(String event, String[] args) {
-		StringBuilder oper = new StringBuilder("catch " + event); //$NON-NLS-1$
+		StringBuilder oper = new StringBuilder("catch ").append(event); //$NON-NLS-1$
 		for (String arg : args) {
-			oper.append(" " + arg);  //$NON-NLS-1$
+			oper.append(' ').append(arg);
 		}
 		return oper.toString();
 	}

@@ -8,12 +8,14 @@
 package org.eclipse.cdt.internal.qt.core.launch;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.internal.qt.core.Activator;
-import org.eclipse.cdt.qt.core.QtBuildConfiguration;
+import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.QtLaunchConfigurationDelegate;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,17 +35,17 @@ public class QtLocalRunLaunchConfigDelegate extends QtLaunchConfigurationDelegat
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
 		ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
-		QtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
+		IQtBuildConfiguration qtBuildConfig = getQtBuildConfiguration(configuration, mode, target, monitor);
 
-		// get the executable
-		Path exeFile = qtBuildConfig.getProgramPath();
-
-		ProcessBuilder builder = new ProcessBuilder(exeFile.toString())
-				.directory(qtBuildConfig.getProject().getLocation().toFile());
-
-		// set up the environment
-		Map<String, String> env = builder.environment();
-		qtBuildConfig.setProgramEnvironment(env);
+		IBuildConfiguration buildConfig = qtBuildConfig.getBuildConfiguration();
+		ProcessBuilder processBuilder = new ProcessBuilder(qtBuildConfig.getProgramPath().toString())
+				.directory(buildConfig.getProject().getLocation().toFile());
+		
+		Map<String, String> env = processBuilder.environment();
+		for (IEnvironmentVariable var : CCorePlugin.getDefault().getBuildEnvironmentManager()
+				.getVariables(qtBuildConfig.getBuildConfiguration(), true)) {
+			env.put(var.getName(), var.getValue());
+		}
 
 		Map<String, String> configEnv = configuration.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,
 				(Map<String, String>) null);
@@ -54,10 +56,10 @@ public class QtLocalRunLaunchConfigDelegate extends QtLaunchConfigurationDelegat
 		}
 
 		try {
-			Process process = builder.start();
-			DebugPlugin.newProcess(launch, process, "main");
+			Process process = processBuilder.start();
+			DebugPlugin.newProcess(launch, process, qtBuildConfig.getProgramPath().toString());
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Failed to start", e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, "Launching", e));
 		}
 	}
 

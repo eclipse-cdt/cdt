@@ -29,7 +29,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -39,7 +40,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateId, IASTAmbiguityParent {
 	private IASTName templateName;
-    private IASTNode[] templateArguments;
+    private IASTNode[] templateArguments = IASTNode.EMPTY_NODE_ARRAY;
 
     public CPPASTTemplateId() {
 	}
@@ -91,7 +92,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     
     private void internalAddTemplateArgument(IASTNode node) {
 		assertNotFrozen();
-	    templateArguments = ArrayUtil.append(IASTNode.class, templateArguments, node);
+	    templateArguments = ArrayUtil.append(templateArguments, node);
 	    if (node != null) {
 	    	node.setParent(this);
 	    	node.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
@@ -115,9 +116,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 
     @Override
 	public IASTNode[] getTemplateArguments() {
-        if (templateArguments == null)
-        	return ICPPASTTemplateId.EMPTY_ARG_ARRAY;
-        return ArrayUtil.trim(IASTNode.class, templateArguments);
+        return ArrayUtil.trim(templateArguments);
     }
 
     @Override
@@ -144,8 +143,8 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     			buf.append(arg.getRawSignature());
     			cleanupWhitespace= true;
     		} else if (arg instanceof IASTExpression) {
-    			IValue value= Value.create((IASTExpression) arg);
-    			if (value != Value.UNKNOWN && !Value.isDependentValue(value)) {
+    			IValue value= ValueFactory.create((IASTExpression) arg);
+    			if (value != IntegralValue.UNKNOWN && !IntegralValue.isDependentValue(value)) {
         			buf.append(value.getSignature());
     			} else {
     				buf.append(arg.getRawSignature());
@@ -193,16 +192,6 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 		}
         return true;
     }
-
-	@Override
-	public boolean isDeclaration() {
-		return false; //for now this seems to be true
-	}
-
-	@Override
-	public boolean isReference() {
-		return true; //for now this seems to be true
-	}
 
 	@Override
 	public int getRoleForName(IASTName n) {

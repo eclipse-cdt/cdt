@@ -69,7 +69,7 @@ import org.eclipse.text.edits.TextEditGroup;
 
 public class ChangeGenerator extends ASTVisitor {
 	private final Map<IASTNode, Map<ModificationKind, List<ASTModification>>> classifiedModifications =
-			new HashMap<IASTNode, Map<ModificationKind, List<ASTModification>>>();
+			new HashMap<>();
 	private int processedOffset;
 	private MultiTextEdit rootEdit;
 	private CompositeChange change;
@@ -130,13 +130,13 @@ public class ChangeGenerator extends ASTVisitor {
 			for (ASTModification modification : modifications) {
 				Map<ModificationKind, List<ASTModification>> map = classifiedModifications.get(node);
 				if (map == null) {
-					map = new TreeMap<ModificationKind, List<ASTModification>>();
+					map = new TreeMap<>();
 					classifiedModifications.put(node, map);
 				}
 				ModificationKind kind = modification.getKind();
 				List<ASTModification> list = map.get(kind);
 				if (list == null) {
-					list = new ArrayList<ASTModification>(2);
+					list = new ArrayList<>(2);
 					map.put(kind, list);
 				}
 				list.add(modification);

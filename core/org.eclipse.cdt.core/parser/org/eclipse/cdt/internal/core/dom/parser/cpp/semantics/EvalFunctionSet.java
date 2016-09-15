@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -32,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -57,6 +58,8 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	// by asking the first function in the set for its name.)
 	// Exactly one of fFunctionSet and fName should be non-null.
 	private final char[] fName;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalFunctionSet(CPPFunctionSet set, boolean qualified, boolean addressOf, IType impliedObjectType,
 			IASTNode pointOfDefinition) {
@@ -139,6 +142,14 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		if (fFunctionSet == null)
 			return false;
 		for (ICPPFunction f : fFunctionSet.getBindings()) {
@@ -156,7 +167,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.UNKNOWN;
+		return IntegralValue.UNKNOWN;
 	}
 
 	@Override
@@ -239,7 +250,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		ICPPTemplateArgument[] originalArguments = fFunctionSet.getTemplateArguments();
 		ICPPTemplateArgument[] arguments = originalArguments;
 		if (originalArguments != null)
-			arguments = instantiateArguments(originalArguments, context);
+			arguments = instantiateArguments(originalArguments, context, true);
 
 		IBinding originalOwner = fFunctionSet.getOwner();
 		IBinding owner = originalOwner;
@@ -270,8 +281,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		return this;
 	}
 
@@ -330,6 +340,8 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 
 			// Perform template instantiation and overload resolution.
 			IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
+			if (binding == null || binding instanceof IProblemBinding)
+				return EvalFixed.INCOMPLETE;
 			if (binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding))
 				return new EvalBinding(binding, null, getTemplateDefinition());
 		} catch (DOMException e) {

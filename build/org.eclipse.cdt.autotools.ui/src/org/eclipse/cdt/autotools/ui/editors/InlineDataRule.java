@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Red Hat, Inc.
+ * Copyright (c) 2006, 2016 Red Hat, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class InlineDataRule implements IRule {
 	protected static final int UNDEFINED = -1;
 
 	/** Buffer used for pattern detection */
-	private StringBuffer fBuffer = new StringBuffer();
+	private StringBuilder fBuffer = new StringBuilder();
 
 	private String fStartingSequence = "<<";
 
@@ -45,7 +45,7 @@ public class InlineDataRule implements IRule {
 	// Confirm an EOL delimeter after already matching first delimeter character.
 	protected boolean confirmDelimeter(ICharacterScanner scanner, char[] delimeter) {
 		int c = scanner.read();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append((char)c);
 		for (int i = 1; i < delimeter.length; ++i) {
 			if (c == delimeter[i]) {
@@ -76,7 +76,7 @@ public class InlineDataRule implements IRule {
 		}
 
 		char[][] lineDelimeters = scanner.getLegalLineDelimiters();
-		StringBuffer endMarkerBuffer = new StringBuffer();
+		StringBuilder endMarkerBuffer = new StringBuilder();
 		if (c == '-') {
 			fBuffer.append((char)c);
 			c = scanner.read();

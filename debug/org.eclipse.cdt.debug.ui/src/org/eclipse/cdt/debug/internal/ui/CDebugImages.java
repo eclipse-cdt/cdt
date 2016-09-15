@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,6 +112,7 @@ public class CDebugImages {
 	public static final String IMG_OBJS_PATH_MAP_ENTRY = NAME_PREFIX + "mapentry_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_COMMON_TAB = NAME_PREFIX + "common_tab.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ARRAY_PARTITION = NAME_PREFIX + "arraypartition_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_C_APP = NAME_PREFIX + "c_app.gif"; //$NON-NLS-1$
 
 	public static final String IMG_LCL_TYPE_NAMES = NAME_PREFIX + "tnames_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_CHANGE_REGISTER_VALUE = NAME_PREFIX + "change_reg_value_co.gif";	//$NON-NLS-1$
@@ -133,6 +134,8 @@ public class CDebugImages {
 	public static final String IMG_WIZBAN_ADD_SOURCE = NAME_PREFIX + "addsrcloc_wiz.gif";	//$NON-NLS-1$
 	public static final String IMG_WIZBAN_PATH_MAPPING = NAME_PREFIX + "mapping_wiz.gif";	//$NON-NLS-1$
 	public static final String IMG_WIZBAN_PATH_MAP_ENTRY = NAME_PREFIX + "mapentry_wiz.gif";	//$NON-NLS-1$
+
+	public static final String IMG_DEBUGGER_CONSOLE_SELECT = NAME_PREFIX + "debugger_console_select.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -203,6 +206,8 @@ public class CDebugImages {
     public static final ImageDescriptor DESC_OBJS_PATH_MAP_ENTRY = createManaged(T_OBJ, IMG_OBJS_PATH_MAP_ENTRY);
     public static final ImageDescriptor DESC_OBJS_COMMON_TAB = createManaged(T_OBJ, IMG_OBJS_COMMON_TAB);
     public static final ImageDescriptor DESC_OBJS_ARRAY_PARTITION = createManaged(T_OBJ, IMG_OBJS_ARRAY_PARTITION);
+    public static final ImageDescriptor DESC_OBJS_DEBUGGER_CONSOLE_SELECT = createManaged(T_OBJ, IMG_DEBUGGER_CONSOLE_SELECT);
+	public static final ImageDescriptor DESC_OBJS_C_APP = createManaged(T_OBJ, IMG_OBJS_C_APP);
 	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE = createManaged(T_WIZBAN, IMG_WIZBAN_ADD_SOURCE);
 	public static final ImageDescriptor DESC_WIZBAN_PATH_MAPPING = createManaged(T_WIZBAN, IMG_WIZBAN_PATH_MAPPING);
 	public static final ImageDescriptor DESC_WIZBAN_PATH_MAP_ENTRY = createManaged(T_WIZBAN, IMG_WIZBAN_PATH_MAP_ENTRY);
@@ -286,7 +291,7 @@ public class CDebugImages {
 		try {
 			ImageDescriptor result = ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
 			if (fgAvoidSWTErrorMap == null) {
-				fgAvoidSWTErrorMap = new HashMap<String, ImageDescriptor>();
+				fgAvoidSWTErrorMap = new HashMap<>();
 			}
 			fgAvoidSWTErrorMap.put(name, result);
 			if (fgImageRegistry != null) {
@@ -312,7 +317,7 @@ public class CDebugImages {
 		if (fgIconBaseURL == null)
 			throw new MalformedURLException();
 
-		StringBuffer buffer = new StringBuffer(prefix);
+		StringBuilder buffer = new StringBuilder(prefix);
 		buffer.append('/');
 		buffer.append(name);
 		return new URL(fgIconBaseURL, buffer.toString());

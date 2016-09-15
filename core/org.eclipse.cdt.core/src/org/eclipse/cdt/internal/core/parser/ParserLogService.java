@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,46 +17,46 @@ import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.internal.core.model.DebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.util.Canceler;
 import org.eclipse.cdt.internal.core.util.ICancelable;
 import org.eclipse.cdt.internal.core.util.ICanceler;
 import org.eclipse.core.runtime.Platform;
 
 /**
  * @author jcamelon
- *
  */
 public class ParserLogService extends AbstractParserLogService implements ICanceler {
-
 	private final DebugLogConstants topic;
 	private final boolean fIsTracing;
 	private final boolean fIsTracingExceptions;
 	private final ICanceler fCanceler;
 
 	public ParserLogService(DebugLogConstants constant) {
-		this(constant, null);
+		this(constant, new Canceler());
 	}
 
 	public ParserLogService(DebugLogConstants constant, ICanceler canceler) {
+		if (canceler == null)
+			throw new NullPointerException();
 		topic = constant;
 		if (CCorePlugin.getDefault() == null) {
-			fIsTracing= fIsTracingExceptions= false;
-		}
-		else {
+			fIsTracingExceptions= false;
+			fIsTracing= false;
+		} else {
 			fIsTracingExceptions= Util.PARSER_EXCEPTIONS;
 			fIsTracing= Util.isActive(topic);
 		}
 		fCanceler= canceler;
 	}
 
-
 	@Override
 	public void traceLog(String message) {
-		Util.debugLog( message, topic );
+		Util.debugLog(message, topic);
 	}
 
 	@Override
 	public boolean isTracing(String option) {
-		return "true".equals(Platform.getDebugOption(option)); //$NON-NLS-1$
+		return Boolean.parseBoolean(Platform.getDebugOption(option));
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 
 	@Override
 	public void errorLog(String message) {
-		Util.log( message, ICLogConstants.CDT );
+		Util.log(message, ICLogConstants.CDT);
 	}
 
 	@Override
@@ -80,13 +80,18 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 		return fIsTracingExceptions;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.util.ICanceler#setCancelable(org.eclipse.cdt.internal.core.util.ICancelable)
-	 */
 	@Override
 	public void setCancelable(ICancelable cancelable) {
-		if (fCanceler != null) {
-			fCanceler.setCancelable(cancelable);
-		}
+		fCanceler.setCancelable(cancelable);
+	}
+
+	@Override
+	public void setCanceled(boolean value) {
+		fCanceler.setCanceled(value);
+	}
+
+	@Override
+	public boolean isCanceled() {
+		return fCanceler.isCanceled();
 	}
 }

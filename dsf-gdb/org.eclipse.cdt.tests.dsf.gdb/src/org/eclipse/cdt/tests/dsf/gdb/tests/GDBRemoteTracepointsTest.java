@@ -1134,7 +1134,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 	protected boolean acceptsFastTpOnFourBytes() {
 		String gdbVersion = getGdbVersion();
-		boolean isLower = LaunchUtils.compareVersions("7.4", gdbVersion) > 0;
+		boolean isLower = LaunchUtils.compareVersions(ITestConstants.SUFFIX_GDB_7_4, gdbVersion) > 0;
 		if (isLower) return false;
 		// With GDB 7.4, fast tracepoints only need an
 		// instruction of 4 bytes or more when on a 32bit architecture, instead of 5.
@@ -1149,7 +1149,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void tracepointActionsWithCollectStrings() throws Throwable {
-		assumeGdbVersionAtLeast("7.4");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
 		TracepointActionManager tracepointActionMgr = TracepointActionManager.getInstance();
 
 		CollectAction action1 = new CollectAction();

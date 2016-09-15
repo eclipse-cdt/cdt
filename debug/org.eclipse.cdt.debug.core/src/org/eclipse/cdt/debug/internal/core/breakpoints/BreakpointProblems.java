@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Nokia and others.
+ * Copyright (c) 2007, 2016 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class BreakpointProblems {
 	public static final String BREAKPOINT_CONTEXT_ID = "bp_context_id"; //$NON-NLS-1$
 
 	public static IMarker reportBreakpointMoved(ICBreakpoint breakpoint, int oldLineNumber, int newLineNumber, String contextName, String contextID) throws CoreException {
-		String message = MessageFormat.format(BreakpointMessages.getString("BreakpointProblems_Moved"), new Object[] { new Integer(oldLineNumber), new Integer(newLineNumber) }); //$NON-NLS-1$
+		String message = MessageFormat.format(BreakpointMessages.getString("BreakpointProblems_Moved"), new Object[] { Integer.valueOf(oldLineNumber), Integer.valueOf(newLineNumber) }); //$NON-NLS-1$
 		IMarker marker = BreakpointProblems.reportBreakpointProblem(breakpoint, message, IMarker.SEVERITY_INFO, MOVED, true, false, contextName, contextID);
 		return marker;
 	}

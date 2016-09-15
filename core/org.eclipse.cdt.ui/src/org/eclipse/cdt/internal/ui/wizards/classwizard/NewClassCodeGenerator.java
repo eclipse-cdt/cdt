@@ -29,10 +29,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -181,19 +180,13 @@ public class NewClassCodeGenerator {
     /**
      * Creates the new class.
      * 
-     * @param monitor
-     *            a progress monitor to report progress.
-     * @throws CoreException
-     *             Thrown when the creation failed.
-     * @throws InterruptedException
-     *             Thrown when the operation was cancelled.
+     * @param monitor a progress monitor to report progress
+     * @throws CoreException if the creation failed
      */
-    public ICElement createClass(IProgressMonitor monitor)
-    		throws CodeGeneratorException, CoreException, InterruptedException {
-        if (monitor == null)
-            monitor = new NullProgressMonitor();
-
-        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_mainTask, 400); 
+    public ICElement createClass(IProgressMonitor monitor) throws CoreException {
+        SubMonitor progress = SubMonitor.convert(monitor,
+        		NewClassWizardMessages.NewClassCodeGeneration_createType_mainTask, 
+        		(fHeaderPath != null ? 3 : 0) + (fSourcePath != null ? 3 : 0)+ (fTestPath != null ? 3 : 0)); 
 
 	    ITranslationUnit headerTU = null;
         ITranslationUnit sourceTU = null;
@@ -205,26 +198,25 @@ public class NewClassCodeGenerator {
         IWorkingCopy testWorkingCopy = null;
         try {
             if (fHeaderPath != null) {
-                // Get method stubs
+                // Get method stubs.
                 List<IMethodStub> publicMethods = getStubs(ASTAccessVisibility.PUBLIC, false);
                 List<IMethodStub> protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, false);
                 List<IMethodStub> privateMethods = getStubs(ASTAccessVisibility.PRIVATE, false);
                 
-	            IFile headerFile = NewSourceFileGenerator.createHeaderFile(fHeaderPath, true,
-	            		new SubProgressMonitor(monitor, 50));
+	            IFile headerFile =
+	            		NewSourceFileGenerator.createHeaderFile(fHeaderPath, true, progress.split(1));
 	            if (headerFile != null) {
 	                headerTU = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
 	                if (headerTU == null) {
 	                    throw new CodeGeneratorException("Failed to create " + headerFile); //$NON-NLS-1$
 	                }
 	
-	                // Create a working copy with a new owner
+	                // Create a working copy with a new owner.
 	                headerWorkingCopy = headerTU.getWorkingCopy();
-	                // headerWorkingCopy = headerTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
 
 	                String headerContent = constructHeaderFileContent(headerTU, publicMethods,
 	                		protectedMethods, privateMethods, headerWorkingCopy.getBuffer().getContents(),
-	                		new SubProgressMonitor(monitor, 100));
+	                		progress.split(1));
 	                if (headerContent != null) {
 		                headerContent= formatSource(headerContent, headerTU);	
 	                } else {
@@ -232,13 +224,8 @@ public class NewClassCodeGenerator {
 	                }
 	                headerWorkingCopy.getBuffer().setContents(headerContent);
 
-	                if (monitor.isCanceled()) {
-	                	throw new InterruptedException();
-	                }
-
 	                headerWorkingCopy.reconcile();
-	                headerWorkingCopy.commit(true, monitor);
-	                monitor.worked(50);
+	                headerWorkingCopy.commit(true, progress.split(1));
 
 	                createdClass = headerWorkingCopy.getElement(fFullyQualifiedClassName);
 	            }
@@ -247,30 +234,27 @@ public class NewClassCodeGenerator {
             }
 
             if (fSourcePath != null) {
-                // Get method stubs
+                // Get method stubs.
                 List<IMethodStub> publicMethods = getStubs(ASTAccessVisibility.PUBLIC, true);
                 List<IMethodStub> protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, true);
                 List<IMethodStub> privateMethods = getStubs(ASTAccessVisibility.PRIVATE, true);
                 
-                if (!fForceSourceFileCreation && publicMethods.isEmpty() &&
-                		protectedMethods.isEmpty() && privateMethods.isEmpty()) {
-                    monitor.worked(100);
-                } else {
-		            IFile sourceFile = NewSourceFileGenerator.createSourceFile(fSourcePath, true,
-		            		new SubProgressMonitor(monitor, 50));
+                if (fForceSourceFileCreation || !publicMethods.isEmpty() ||
+                		!protectedMethods.isEmpty() || !privateMethods.isEmpty()) {
+		            IFile sourceFile =
+		            		NewSourceFileGenerator.createSourceFile(fSourcePath, true, progress.split(1));
 		            if (sourceFile != null) {
 		                sourceTU = (ITranslationUnit) CoreModel.getDefault().create(sourceFile);
 		                if (sourceTU == null) {
 		                    throw new CodeGeneratorException("Failed to create " + sourceFile); //$NON-NLS-1$
 		                }
-		                monitor.worked(50);
 
-		                // Create a working copy with a new owner
+		                // Create a working copy with a new owner.
 		                sourceWorkingCopy = sourceTU.getWorkingCopy();
 
 		                String sourceContent = constructSourceFileContent(sourceTU, headerTU,
 		                		publicMethods, protectedMethods, privateMethods,
-		                		sourceWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
+		                		sourceWorkingCopy.getBuffer().getContents(), progress.split(1));
 		                if (sourceContent != null) {
 			                sourceContent = formatSource(sourceContent, sourceTU);	
 		                } else {
@@ -278,13 +262,8 @@ public class NewClassCodeGenerator {
 		                }
 		                sourceWorkingCopy.getBuffer().setContents(sourceContent);
 
-		                if (monitor.isCanceled()) {
-		                	throw new InterruptedException();
-		                }
-
 		                sourceWorkingCopy.reconcile();
-		                sourceWorkingCopy.commit(true, monitor);
-		                monitor.worked(50);
+		                sourceWorkingCopy.commit(true, progress.split(1));
 		            }
 		
 		            fCreatedSourceTU = sourceTU;
@@ -292,30 +271,23 @@ public class NewClassCodeGenerator {
             }
 
             if (fTestPath != null) {
-	            IFile testFile = NewSourceFileGenerator.createTestFile(fTestPath, true,
-	            		new SubProgressMonitor(monitor, 50));
+	            IFile testFile = NewSourceFileGenerator.createTestFile(fTestPath, true, progress.split(1));
 	            if (testFile != null) {
 	                testTU = (ITranslationUnit) CoreModel.getDefault().create(testFile);
 	                if (testTU == null) {
 	                    throw new CodeGeneratorException("Failed to create " + testFile); //$NON-NLS-1$
 	                }
-	                monitor.worked(50);
 
 	                // Create a working copy with a new owner
 	                testWorkingCopy = testTU.getWorkingCopy();
 
 	                String testContent = constructTestFileContent(testTU, headerTU,
-	                		testWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
+	                		testWorkingCopy.getBuffer().getContents(), progress.split(1));
 	                testContent= formatSource(testContent, testTU);
 	                testWorkingCopy.getBuffer().setContents(testContent);
 
-	                if (monitor.isCanceled()) {
-	                	throw new InterruptedException();
-	                }
-
 	                testWorkingCopy.reconcile();
-	                testWorkingCopy.commit(true, monitor);
-	                monitor.worked(50);
+	                testWorkingCopy.commit(true, progress.split(1));
 	            }
 	
 	            fCreatedTestTU = testTU;
@@ -332,7 +304,6 @@ public class NewClassCodeGenerator {
             if (testWorkingCopy != null) {
                 testWorkingCopy.destroy();
             }
-            monitor.done();
         }
 
         return fCreatedClass;
@@ -382,7 +353,8 @@ public class NewClassCodeGenerator {
 	public String constructHeaderFileContent(ITranslationUnit headerTU, List<IMethodStub> publicMethods,
 			List<IMethodStub> protectedMethods, List<IMethodStub> privateMethods, String oldContents,
 			IProgressMonitor monitor) throws CoreException {
-        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_header, 100); 
+		SubMonitor progress = SubMonitor.convert(monitor,
+				NewClassWizardMessages.NewClassCodeGeneration_createType_task_header, 1); 
         
         String lineDelimiter= StubUtility.getLineDelimiterUsed(headerTU);
 
@@ -394,13 +366,12 @@ public class NewClassCodeGenerator {
         		privateMethods, lineDelimiter);
 
         String includes = null;
-        if (fBaseClasses != null && fBaseClasses.length > 0) {
-            includes = constructBaseClassIncludes(headerTU, lineDelimiter,
-            		new SubProgressMonitor(monitor, 50));
+        if (fBaseClasses != null && fBaseClasses.length != 0) {
+            includes = constructBaseClassIncludes(headerTU, lineDelimiter, progress.split(1));
         }
 
         if (oldContents != null) {
-        	if (oldContents.length() == 0) {
+        	if (oldContents.isEmpty()) {
         		oldContents = null;
         	} else if (!oldContents.endsWith(lineDelimiter)) {
         		oldContents += lineDelimiter;
@@ -466,8 +437,6 @@ public class NewClassCodeGenerator {
         			namespaceEnd, namespaceName, classComment, classDefinition, fClassName,
         			lineDelimiter);
         }
-
-        monitor.done();
         return fileContent;
     }
 
@@ -710,7 +679,8 @@ public class NewClassCodeGenerator {
 
     private String constructBaseClassIncludes(ITranslationUnit headerTU, String lineDelimiter,
     		IProgressMonitor monitor) throws CodeGeneratorException {
-        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_header_includePaths, 100); 
+    	SubMonitor progress = SubMonitor.convert(monitor,
+    			NewClassWizardMessages.NewClassCodeGeneration_createType_task_header_includePaths, 1); 
         
         ICProject cProject = headerTU.getCProject();
         IProject project = cProject.getProject();
@@ -723,7 +693,7 @@ public class NewClassCodeGenerator {
         if (createIncludePaths()) {
 	        List<IPath> newIncludePaths = getMissingIncludePaths(projectLocation, includePaths, baseClassPaths);
 	        if (!newIncludePaths.isEmpty()) {
-			    addIncludePaths(cProject, newIncludePaths, monitor);
+			    addIncludePaths(cProject, newIncludePaths, progress.split(1));
 	        }
         }
 
@@ -749,8 +719,6 @@ public class NewClassCodeGenerator {
 		    text.append(lineDelimiter);
 		    previousStyle = style;
 		}
-
-        monitor.done();
         return text.toString();
     }
     
@@ -772,8 +740,10 @@ public class NewClassCodeGenerator {
         return NewClassWizardPrefs.createIncludePaths();
     }
 
-    private void addIncludePaths(ICProject cProject, List<IPath> newIncludePaths, IProgressMonitor monitor) throws CodeGeneratorException {
-        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_header_addIncludePaths, 100); 
+    private void addIncludePaths(ICProject cProject, List<IPath> newIncludePaths, IProgressMonitor monitor)
+    		throws CodeGeneratorException {
+        SubMonitor progress = SubMonitor.convert(monitor,
+        		NewClassWizardMessages.NewClassCodeGeneration_createType_task_header_addIncludePaths, 1); 
 
         //TODO prefs option whether to add to project or parent source folder?
         IPath addToResourcePath = cProject.getPath();
@@ -802,18 +772,19 @@ public class NewClassCodeGenerator {
                 if (includeProject != null) {
                     // Make sure that the include is made the same way that build properties for
                 	// projects makes them, so .contains below is a valid check
-                    IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, new Path(includeProject.getProject().getLocationURI().getPath()), true);
+                    IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null,
+                    		new Path(includeProject.getProject().getLocationURI().getPath()), true);
                     
-                    if (!checkEntryList.contains(entry)) // if the path already exists in the #includes then don't add it
+                	// If the path already exists in the #includes then don't add it.
+                    if (!checkEntryList.contains(entry))
                     	pathEntryList.add(entry);
                 }
             }
             pathEntries = pathEntryList.toArray(new IPathEntry[pathEntryList.size()]);
-            cProject.setRawPathEntries(pathEntries, new SubProgressMonitor(monitor, 80));
+            cProject.setRawPathEntries(pathEntries, progress.split(1));
         } catch (CModelException e) {
             throw new CodeGeneratorException(e);
         }
-        monitor.done();
     }
 
 	private ICProject toCProject(IProject enclosingProject) {
@@ -925,12 +896,13 @@ public class NewClassCodeGenerator {
     public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU,
     		List<IMethodStub> publicMethods, List<IMethodStub> protectedMethods,
     		List<IMethodStub> privateMethods, String oldContents, IProgressMonitor monitor) throws CoreException {
-        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_source, 150); 
+    	SubMonitor progress = SubMonitor.convert(monitor,
+    			NewClassWizardMessages.NewClassCodeGeneration_createType_task_source, 2); 
         
         String lineDelimiter= StubUtility.getLineDelimiterUsed(sourceTU);
         String includeString = null;
         if (headerTU != null) {
-            includeString = getHeaderIncludeString(sourceTU, headerTU, new SubProgressMonitor(monitor, 50));
+            includeString = getHeaderIncludeString(sourceTU, headerTU, progress.split(1));
 	        if (includeString != null) {
 	            // Check if file already has the include.
 	            if (oldContents != null && hasInclude(oldContents, includeString)) {
@@ -944,7 +916,7 @@ public class NewClassCodeGenerator {
         if (!publicMethods.isEmpty() || !protectedMethods.isEmpty() || !privateMethods.isEmpty()) {
             // TODO sort methods (e.g. constructor always first?)
             methodBodies = constructMethodBodies(sourceTU, publicMethods, protectedMethods,
-            		privateMethods, lineDelimiter, new SubProgressMonitor(monitor, 50));
+            		privateMethods, lineDelimiter, progress.split(1));
         }
 
     	String namespaceBegin = fNamespace == null ?
@@ -1007,19 +979,19 @@ public class NewClassCodeGenerator {
         	fileContent= CodeGeneration.getBodyFileContent(sourceTU, includeString, namespaceBegin,
         			namespaceEnd, namespaceName, null, methodBodies, fClassName, lineDelimiter);
         }
-        monitor.done();
         return fileContent;
     }
     
     public String constructTestFileContent(ITranslationUnit testTU, ITranslationUnit headerTU,
     		String oldContents, IProgressMonitor monitor) throws CoreException {
-        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_source, 150); 
+    	SubMonitor progress = SubMonitor.convert(monitor,
+    			NewClassWizardMessages.NewClassCodeGeneration_createType_task_source, 1); 
         
         String lineDelimiter= StubUtility.getLineDelimiterUsed(testTU);
 
         String includeString = null;
         if (headerTU != null) {
-            includeString = getHeaderIncludeString(testTU, headerTU, new SubProgressMonitor(monitor, 50));
+            includeString = getHeaderIncludeString(testTU, headerTU, progress.split(1));
 	        if (includeString != null) {
 	            // Check if file already has the include.
 	            if (oldContents != null && hasInclude(oldContents, includeString)) {
@@ -1071,7 +1043,6 @@ public class NewClassCodeGenerator {
         	fileContent= CodeGeneration.getTestFileContent(testTU, includeString, namespaceBegin,
         			namespaceEnd, namespaceName, null, fClassName, lineDelimiter);
         }
-        monitor.done();
         return fileContent;
     }
     

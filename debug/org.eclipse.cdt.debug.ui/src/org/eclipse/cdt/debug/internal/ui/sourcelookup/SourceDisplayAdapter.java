@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 ARM Limited and others.
+ * Copyright (c) 2008, 2016 ARM Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,13 +136,11 @@ public class SourceDisplayAdapter implements ISourceDisplay {
             return fDelegate.getModelIdentifier();
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-         */
-        @Override
-		public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+        @SuppressWarnings("unchecked")
+		@Override
+		public <T> T getAdapter(Class<T> adapter) {
             if (ICStackFrame.class.equals(adapter))
-                return fDelegate;
+                return (T) fDelegate;
             return fDelegate.getAdapter(adapter);
         }
 

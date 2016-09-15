@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Properties;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,13 +29,6 @@ public class ArduinoTool {
 
 	private transient ArduinoPackage pkg;
 
-	public void setOwner(ArduinoPackage pkg) {
-		this.pkg = pkg;
-		for (ArduinoToolSystem system : systems) {
-			system.setOwner(this);
-		}
-	}
-
 	public ArduinoPackage getPackage() {
 		return pkg;
 	}
@@ -44,60 +38,50 @@ public class ArduinoTool {
 	}
 
 	public String getVersion() {
-		return version;
+		return version.replace('+', '_');
 	}
 
 	public List<ArduinoToolSystem> getSystems() {
 		return systems;
 	}
 
-	public Path getInstallPath() {
-		// TODO remove migration in Neon
-		Path oldPath = ArduinoPreferences.getArduinoHome().resolve("tools").resolve(pkg.getName()).resolve(name) //$NON-NLS-1$
-				.resolve(version);
-		Path newPath = getPackage().getInstallPath().resolve("tools").resolve(name).resolve(version); //$NON-NLS-1$
-		if (Files.exists(oldPath)) {
-			try {
-				Files.createDirectories(newPath.getParent());
-				Files.move(oldPath, newPath);
-				for (Path parent = oldPath.getParent(); parent != null; parent = parent.getParent()) {
-					if (Files.newDirectoryStream(parent).iterator().hasNext()) {
-						break;
-					} else {
-						Files.delete(parent);
-					}
-				}
-			} catch (IOException e) {
-				Activator.log(e);
-			}
+	void init(ArduinoPackage pkg) {
+		this.pkg = pkg;
+		for (ArduinoToolSystem system : systems) {
+			system.setOwner(this);
 		}
-		return newPath;
+	}
+
+	public Path getInstallPath() {
+		return getPackage().getInstallPath().resolve("tools").resolve(getName()).resolve(getVersion()); //$NON-NLS-1$
 	}
 
 	public boolean isInstalled() {
 		return getInstallPath().toFile().exists();
 	}
 
-	public IStatus install(IProgressMonitor monitor) {
+	public void install(IProgressMonitor monitor) throws CoreException {
 		if (isInstalled()) {
-			return Status.OK_STATUS;
+			return;
 		}
 
 		for (ArduinoToolSystem system : systems) {
 			if (system.isApplicable()) {
-				return system.install(monitor);
+				system.install(monitor);
+				return;
 			}
 		}
 
 		// No valid system
-		return new Status(IStatus.ERROR, Activator.getId(), "No valid system found for " + name); //$NON-NLS-1$
+		throw new CoreException(
+				new Status(IStatus.ERROR, Activator.getId(), String.format("No valid system found for %s", name))); //$NON-NLS-1$
 	}
 
 	public Properties getToolProperties() {
 		Properties properties = new Properties();
-		properties.put("runtime.tools." + name + ".path", ArduinoBuildConfiguration.pathString(getInstallPath())); // $NON-NLS-1$ //$NON-NLS-1$//$NON-NLS-2$
+		properties.put("runtime.tools." + name + ".path", ArduinoBuildConfiguration.pathString(getInstallPath())); //$NON-NLS-1$//$NON-NLS-2$
 		properties.put("runtime.tools." + name + '-' + version + ".path", //$NON-NLS-1$//$NON-NLS-2$
-				ArduinoBuildConfiguration.pathString(getInstallPath())); // $NON-NLS-1$
+				ArduinoBuildConfiguration.pathString(getInstallPath())); //$NON-NLS-1$
 		return properties;
 	}
 

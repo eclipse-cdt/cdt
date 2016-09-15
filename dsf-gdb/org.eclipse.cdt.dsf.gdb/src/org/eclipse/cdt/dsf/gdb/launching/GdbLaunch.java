@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,6 +33,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -62,13 +64,13 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlockRetrievalManager;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -111,6 +113,8 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	private IMemoryBlockRetrievalManager fMemRetrievalManager;
 	private IDsfDebugServicesFactory fServiceFactory;
 	private ILaunchTarget fLaunchTarget;
+	
+	private String fGdbVersion;
 
 	public GdbLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
@@ -131,7 +135,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		return fServiceFactory;
 	}
 
-	public void initialize() {
+	public void initialize() throws DebugException {
 		/*
 		 * Registering the launch as an adapter. This ensures that this launch
 		 * will be associated with all DMContexts from this session. We do this
@@ -156,11 +160,11 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		try {
 			fExecutor.submit(initRunnable).get();
 		} catch (InterruptedException e) {
-			new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
-					"Error initializing launch", e); //$NON-NLS-1$
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Error initializing launch", e)); //$NON-NLS-1$
 		} catch (ExecutionException e) {
-			new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
-					"Error initializing launch", e); //$NON-NLS-1$
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Error initializing launch", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -197,13 +201,13 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	@ThreadSafeAndProhibitedFromDsfExecutor("getDsfExecutor()")
 	public void addCLIProcess(String label) throws CoreException {
 		try {
-			// Add the CLI process object to the launch.
-			AbstractCLIProcess cliProc = getDsfExecutor().submit(new Callable<AbstractCLIProcess>() {
+			// Add the GDB process object to the launch.
+			Process gdbProc = getDsfExecutor().submit(new Callable<Process>() {
 				@Override
-				public AbstractCLIProcess call() throws CoreException {
+				public Process call() throws CoreException {
 					IGDBControl gdb = fTracker.getService(IGDBControl.class);
 					if (gdb != null) {
-						return gdb.getCLIProcess();
+						return gdb.getGDBBackendProcess();
 					}
 					return null;
 				}
@@ -216,7 +220,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			Map<String, String> attributes = new HashMap<String, String>();
 			attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 					IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE);
-			DebugPlugin.newProcess(this, cliProc, label, attributes);
+			DebugPlugin.newProcess(this, gdbProc, label, attributes);
 		} catch (InterruptedException e) {
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0,
 					"Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
@@ -497,14 +501,17 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * This method actually launches 'gdb --version' to determine the version of
-	 * the GDB that is being used. This method should ideally be called only
-	 * once per session and the resulting version string stored for future uses.
+	 * the GDB that is being used. The result is then cached for any future requests.
 	 * 
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 * 
 	 * @since 5.0
 	 */
 	public String getGDBVersion() throws CoreException {
+		if (fGdbVersion != null) {
+			return fGdbVersion;
+		}
+		
 		String cmd = getGDBPath().toOSString() + " --version"; //$NON-NLS-1$
 
 		// Parse cmd to properly handle spaces and such things (bug 458499)
@@ -556,7 +563,8 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 						"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
 						detailedException));
 			}
-			return gdbVersion;
+			fGdbVersion = gdbVersion;
+			return fGdbVersion;
 		} catch (IOException e) {
 			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
 					"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
@@ -616,27 +624,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 * @since 5.0
 	 */
 	public String[] getLaunchEnvironment() throws CoreException {
-		// Get the project
-		String projectName = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				(String) null);
-		IProject project = null;
-		if (projectName == null) {
-			IResource[] resources = getLaunchConfiguration().getMappedResources();
-			if (resources != null && resources.length > 0 && resources[0] instanceof IProject) {
-				project = (IProject) resources[0];
-			}
-		} else {
-			projectName = projectName.trim();
-			if (projectName.length() == 0) {
-				return null;
-			}
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		}
-
-		if (project == null || !project.isAccessible()) {
-			// No project
-			return null;
-		}
+		IProject project = getProject();
 
 		HashMap<String, String> envMap = new HashMap<String, String>();
 		ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
@@ -660,19 +648,17 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			}
 
 			// Add variables from build info
-			ICdtVariable[] buildVars = CCorePlugin.getDefault().getCdtVariableManager().getVariables(cfg);
+			ICdtVariableManager manager = CCorePlugin.getDefault().getCdtVariableManager();
+			ICdtVariable[] buildVars = manager.getVariables(cfg);
 			for (ICdtVariable var : buildVars) {
 				try {
 					// The project_classpath variable contributed by JDT is
-					// useless
-					// for running C/C++
-					// binaries, but it can be lethal if it has a very large
-					// value
-					// that exceeds shell
-					// limit. See
+					// useless for running C/C++ binaries, but it can be lethal
+					// if it has a very large value that exceeds shell limit. See
 					// http://bugs.eclipse.org/bugs/show_bug.cgi?id=408522
 					if (!"project_classpath".equals(var.getName())) {//$NON-NLS-1$
-						envMap.put(var.getName(), var.getStringValue());
+						String value = manager.resolveValue(var.getStringValue(), "", File.pathSeparator, cfg); //$NON-NLS-1$
+						envMap.put(var.getName(), value);
 					}
 				} catch (CdtVariableException e) {
 					// Some Eclipse dynamic variables can't be resolved
@@ -684,12 +670,36 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		// Turn it into an envp format
 		List<String> strings = new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
-			StringBuffer buffer = new StringBuffer(entry.getKey());
+			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}
 
 		return strings.toArray(new String[strings.size()]);
+	}
+
+	private IProject getProject() throws CoreException {
+		String projectName = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+				(String) null);
+		IProject project = null;
+		if (projectName == null) {
+			IResource[] resources = getLaunchConfiguration().getMappedResources();
+			if (resources != null && resources.length > 0 && resources[0] instanceof IProject) {
+				project = (IProject) resources[0];
+			}
+		} else {
+			projectName = projectName.trim();
+			if (projectName.length() == 0) {
+				return null;
+			}
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		}
+
+		if (project == null || !project.isAccessible()) {
+			// No project
+			return null;
+		}
+		return project;
 	}
 
 	/**
@@ -798,12 +808,60 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 * @since 5.0
 	 */
 	public String getProgramPath() throws CoreException {
-		String programPath = getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
-		if (programPath == null) {
-			programPath = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+		String programName = getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
+		if (programName == null) {
+			programName = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
 					(String) null);
 		}
-		return programPath;
+		if (programName == null) {
+			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+		}
+		programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+		IPath programPath = new Path(programName);
+		if (programPath.isEmpty()) {
+			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+		}
+
+		if (!programPath.isAbsolute()) {
+			IProject project = getProject();
+			ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
+			if (cproject != null) {
+				// Find the specified program within the specified project
+				IFile wsProgramPath = cproject.getProject().getFile(programPath);
+				programPath = wsProgramPath.getLocation();
+			}
+		}
+		if (!programPath.toFile().exists()) {
+			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
+					  new FileNotFoundException(
+							  LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found",  //$NON-NLS-1$ 
+							                                    programPath.toOSString())),
+					  ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+		}
+
+		return programPath.toOSString();
+	}
+
+	/**
+	 * Throws a core exception with an error status object built from the given
+	 * message, lower level exception, and error code.
+	 * 
+	 * @param message
+	 *            the status message
+	 * @param exception
+	 *            lower level exception associated with the error, or
+	 *            <code>null</code> if none
+	 * @param code
+	 *            error code
+	 */
+	private static void throwException(String message, Throwable exception, int code) throws CoreException {
+		MultiStatus status = new MultiStatus(GdbPlugin.PLUGIN_ID, code, message, exception);
+		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code, 
+				              exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+				              exception));
+		throw new CoreException(status);
 	}
 
 	/**

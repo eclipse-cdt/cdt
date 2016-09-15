@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,7 +132,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     protected static String DEBUG_EXECUTOR_NAME = ""; //$NON-NLS-1$
     protected static boolean ASSERTIONS_ENABLED = false;
     static {
-        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+        DEBUG_EXECUTOR = DsfPlugin.DEBUG && Boolean.parseBoolean(
             Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
         DEBUG_EXECUTOR_NAME = DsfPlugin.DEBUG 
             ? Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executorName") : ""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -259,7 +259,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 final String refstr = LoggingUtils.toString(executable, false);
                 String tostr = LoggingUtils.trimTrailingNewlines(executable.toString());
                 traceBuilder.append("\n\t\t"); //$NON-NLS-1$
-                traceBuilder.append("instance = " + refstr); //$NON-NLS-1$
+                traceBuilder.append("instance = ").append(refstr); //$NON-NLS-1$
                 if (!tostr.equals(refstr)) {
                 	traceBuilder.append(" ["); //$NON-NLS-1$
                 	traceBuilder.append(tostr);

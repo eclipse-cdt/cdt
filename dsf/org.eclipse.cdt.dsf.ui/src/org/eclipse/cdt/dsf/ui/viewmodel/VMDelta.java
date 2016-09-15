@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -280,14 +280,14 @@ public class VMDelta extends ModelDelta {
 	}
 	
 	private void appendDetail(StringBuilder buf, VMDelta delta, int depth) {
-		String indent = new String();
+		String indent = ""; //$NON-NLS-1$
 		for (int i = 0; i < depth; i++) {
 			indent += '\t';
 		}
-        buf.append(indent + "\tElement: "); //$NON-NLS-1$
+        buf.append(indent).append("\tElement: "); //$NON-NLS-1$
         buf.append(delta.getElement());
         buf.append('\n');
-        buf.append(indent + "\t\tFlags: "); //$NON-NLS-1$
+        buf.append(indent).append("\t\tFlags: "); //$NON-NLS-1$
         int flags = delta.getFlags();
         if (flags == 0) {
             buf.append("NO_CHANGE"); //$NON-NLS-1$
@@ -325,9 +325,15 @@ public class VMDelta extends ModelDelta {
             if ((flags & IModelDelta.UNINSTALL) > 0) {
                 buf.append("UNINSTALL | "); //$NON-NLS-1$
             }
+            if ((flags & IModelDelta.REVEAL) > 0) {
+                buf.append("REVEAL | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.FORCE) > 0) {
+                buf.append("FORCE | "); //$NON-NLS-1$
+            }
         }
         buf.append('\n');
-        buf.append(indent + "\t\tIndex: "); //$NON-NLS-1$
+        buf.append(indent).append("\t\tIndex: "); //$NON-NLS-1$
         buf.append(delta.fIndex);
         buf.append(" Child Count: "); //$NON-NLS-1$
         buf.append(delta.fChildCount);

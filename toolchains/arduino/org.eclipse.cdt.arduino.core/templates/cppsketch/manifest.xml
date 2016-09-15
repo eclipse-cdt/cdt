@@ -1,0 +1,5 @@
+<templateManifest>
+	<file open="true"
+		src="/templates/cppsketch/arduino.cpp"
+		dest="/${projectName}/${projectName}.cpp"/>
+</templateManifest>

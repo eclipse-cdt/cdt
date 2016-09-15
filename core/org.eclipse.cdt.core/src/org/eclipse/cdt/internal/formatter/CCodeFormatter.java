@@ -103,7 +103,7 @@ public class CCodeFormatter extends CodeFormatter {
 		if (tabs == 0 && spaces == 0) {
 			return EMPTY_STRING;
 		}
-		StringBuffer buffer= new StringBuffer(tabs + spaces);
+		StringBuilder buffer= new StringBuilder(tabs + spaces);
 		for (int i= 0; i < tabs; i++) {
 			buffer.append('\t');
 		}

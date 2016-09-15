@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -283,7 +283,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	 */
 	private void handleFailure() {
 		IDialogTestPass test = _dialogTests[TEST_TYPE];
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 		String label = test.label();
 		label = label.substring(0, label.indexOf("&")) +
 		        label.substring(label.indexOf("&") + 1);

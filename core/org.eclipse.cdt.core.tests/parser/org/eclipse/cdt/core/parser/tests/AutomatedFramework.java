@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2012 IBM Corporation and others.
+ * Copyright (c) 2001, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,7 +120,7 @@ public abstract class AutomatedFramework extends TestCase {
 			suite.addTest( newTest( "propertiesFailed") ); //$NON-NLS-1$
 		}
 		
-		if( outputFile != null && !outputFile.equals("") ){ //$NON-NLS-1$
+		if( outputFile != null && !outputFile.isEmpty() ){
 			try{
 				
 				File output = new File( outputFile );

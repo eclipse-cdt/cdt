@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,13 +30,13 @@ public abstract class SubstitutionTextReader extends SingleCharReader {
 	private int fCharAfterWhiteSpace;
 	
 	private boolean fReadFromBuffer;
-	private StringBuffer fBuffer;
+	private StringBuilder fBuffer;
 	private int fIndex;
 
 
 	protected SubstitutionTextReader(Reader reader) {
 		fReader= reader;
-		fBuffer= new StringBuffer();
+		fBuffer= new StringBuilder();
 		fIndex= 0;
 		fReadFromBuffer= false;
 		fCharAfterWhiteSpace= -1;

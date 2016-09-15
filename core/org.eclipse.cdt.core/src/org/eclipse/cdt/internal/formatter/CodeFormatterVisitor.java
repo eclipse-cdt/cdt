@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,7 +171,7 @@ import org.eclipse.text.edits.TextEdit;
  * @since 4.0
  */
 public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, ICASTVisitor {
-	private static boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/formatter")); //$NON-NLS-1$ //$NON-NLS-2$
+	private static boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.core/debug/formatter")); //$NON-NLS-1$
 
 	private static class ASTProblemException extends RuntimeException {
 		ASTProblemException(IASTProblem problem) {

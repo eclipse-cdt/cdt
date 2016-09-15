@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -852,7 +852,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 					CPathEntryMessages.IncludeSymbolEntryPage_addSymbol_message, "",  //$NON-NLS-1$
 					null);
 		} else {
-			StringBuffer initialValue = new StringBuffer();
+			StringBuilder initialValue = new StringBuilder();
 			initialValue.append((String)existing.getAttribute(CPElement.MACRO_NAME));
 			initialValue.append('=');
 			initialValue.append((String)existing.getAttribute(CPElement.MACRO_VALUE));
@@ -910,7 +910,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		String newItem = null;
 		if (dialog.open() == Window.OK) {
 			newItem = dialog.getValue();
-			if (newItem != null && !newItem.equals("")) { //$NON-NLS-1$
+			if (newItem != null && !newItem.isEmpty()) {
 				if (existing == null) {
 					CPElementGroup group = getSelectedGroup();
 					CPElement newPath = new CPElement(fCurrCProject, IPathEntry.CDT_INCLUDE, group.getResource().getFullPath(),

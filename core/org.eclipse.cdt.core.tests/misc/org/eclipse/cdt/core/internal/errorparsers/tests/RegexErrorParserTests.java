@@ -92,7 +92,7 @@ public class RegexErrorParserTests extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		ResourceHelper.cleanUp(getName());
 		fProject = null;
 
 		ErrorParserManager.setUserDefinedErrorParsers(null);

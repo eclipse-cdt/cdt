@@ -86,7 +86,7 @@ public enum BaudRate {
 	}
 
 	public static BaudRate getDefault() {
-		return B9600;
+		return B115200;
 	}
 
 }

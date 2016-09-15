@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Ericsson and others.
+ * Copyright (c) 2010, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class TracepointActionManager {
 	}
 
 	public void saveActionData() {
-		String actionData = new String(""); //$NON-NLS-1$
+		String actionData = ""; //$NON-NLS-1$
 
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = null;

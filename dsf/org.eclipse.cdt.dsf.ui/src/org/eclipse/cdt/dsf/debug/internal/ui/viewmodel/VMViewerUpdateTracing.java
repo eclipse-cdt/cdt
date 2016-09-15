@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009 Freescale Semiconductors and others.
+ *  Copyright (c) 2009, 2016 Freescale Semiconductors and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public final class VMViewerUpdateTracing {
 	 * Has the "debug/vmUpdates/properties" tracing option been turned on? Requires
 	 * "debug/vmUpdates" to also be turned on.
 	 */
-    public static final boolean DEBUG_VMUPDATES = DsfUIPlugin.DEBUG  && "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/updates"));  //$NON-NLS-1$//$NON-NLS-2$
+    public static final boolean DEBUG_VMUPDATES = DsfUIPlugin.DEBUG  && Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/updates"));  //$NON-NLS-1$
 
 	/**
 	 * Looks at the optional filter (regular expression) set in the tracing

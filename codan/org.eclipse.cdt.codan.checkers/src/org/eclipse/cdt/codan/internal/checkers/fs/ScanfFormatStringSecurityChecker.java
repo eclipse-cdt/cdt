@@ -165,7 +165,7 @@ public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 					IType expressionType = idExpression.getExpressionType();
 					if (expressionType instanceof IArrayType) {
 						IArrayType arrayExpressionType = (IArrayType) expressionType;
-						long arraySize = arrayExpressionType.getSize().numericalValue().longValue();
+						long arraySize = arrayExpressionType.getSize().numberValue().longValue();
 						if (argumentSize > arraySize) {
 							reportProblem(ER_ID, idExpression, idExpression.getRawSignature());
 						}

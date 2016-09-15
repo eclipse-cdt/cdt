@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 QNX Software Systems and others.
+ * Copyright (c) 2009, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,9 +46,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * This Process implementation tracks the process the GDB process.  This 
- * process object is displayed in Debug view and is used to
- * accept CLI commands and to write their output to the console.   
+ * This Process implementation tracks the GDB process.  This 
+ * process object is displayed in the Debug view and is used to
+ * accept CLI commands and to write their output to the console.
+ * 
+ * Starting with GDB 7.12, as long as a PTY is available,
+ * this process is no longer used.  Instead, the real GDB process,
+ * along with its console will be used directly.  A second PTY
+ * will be used to communicate using MI.
  * 
  * @see org.eclipse.debug.core.model.IProcess 
  */
@@ -64,7 +69,7 @@ public abstract class AbstractCLIProcess extends Process
 
     private final DsfSession fSession;
     private final ICommandControlService fCommandControl;
-	private final OutputStream fOutputStream = new CLIOutputStream();
+	private OutputStream fOutputStream;
     
     // Client process console stream.
     private PipedInputStream fMIInConsolePipe;
@@ -103,33 +108,41 @@ public abstract class AbstractCLIProcess extends Process
         fSession = commandControl.getSession();
         fCommandControl = commandControl;
         
-        commandControl.addEventListener(this);
-        commandControl.addCommandListener(this);
+        if (handleIO()) {
+        	fOutputStream = new CLIOutputStream();
 
-        PipedInputStream miInConsolePipe = null;
-        PipedOutputStream miOutConsolePipe = null;
-        PipedInputStream miInLogPipe = null;
-        PipedOutputStream miOutLogPipe = null;
-        
-        try {
-        	// Using a LargePipedInputStream see https://bugs.eclipse.org/bugs/show_bug.cgi?id=223154
-            miOutConsolePipe = new PipedOutputStream();
-            miInConsolePipe = new LargePipedInputStream(miOutConsolePipe);
-            miOutLogPipe = new PipedOutputStream();
-            miInLogPipe = new LargePipedInputStream(miOutLogPipe);
-        } catch (IOException e) {
-            ILog log = GdbPlugin.getDefault().getLog();
-            if (log != null) {
-                log.log(new Status(
-                    IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Error when creating log pipes", e)); //$NON-NLS-1$
-            }                   
+        	commandControl.addEventListener(this);
+        	commandControl.addCommandListener(this);
+
+        	PipedInputStream miInConsolePipe = null;
+        	PipedOutputStream miOutConsolePipe = null;
+        	PipedInputStream miInLogPipe = null;
+        	PipedOutputStream miOutLogPipe = null;
+
+        	try {
+        		// Using a LargePipedInputStream see https://bugs.eclipse.org/bugs/show_bug.cgi?id=223154
+        		miOutConsolePipe = new PipedOutputStream();
+        		miInConsolePipe = new LargePipedInputStream(miOutConsolePipe);
+        		miOutLogPipe = new PipedOutputStream();
+        		miInLogPipe = new LargePipedInputStream(miOutLogPipe);
+        	} catch (IOException e) {
+        		ILog log = GdbPlugin.getDefault().getLog();
+        		if (log != null) {
+        			log.log(new Status(
+        					IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Error when creating log pipes", e)); //$NON-NLS-1$
+        		}                   
+        	}
+        	fMIOutConsolePipe = miOutConsolePipe;
+        	fMIInConsolePipe = miInConsolePipe;
+        	fMIOutLogPipe = miOutLogPipe;
+        	fMIInLogPipe = miInLogPipe;
         }
-        // Must initialize these outside of the try block because they are final.
-        fMIOutConsolePipe = miOutConsolePipe;
-        fMIInConsolePipe = miInConsolePipe;
-        fMIOutLogPipe = miOutLogPipe;
-        fMIInLogPipe = miInLogPipe; 
 	}
+    
+    /**
+	 * @since 5.1
+	 */
+    protected boolean handleIO() { return true; }
     
     protected DsfSession getSession() { return fSession; }
 
@@ -165,18 +178,26 @@ public abstract class AbstractCLIProcess extends Process
     }
     
     private void closeIO() {
-        try {
-            fMIOutConsolePipe.close();
-        } catch (IOException e) {}
-        try {
-            fMIInConsolePipe.close();
-        } catch (IOException e) {}
-        try {
-            fMIOutLogPipe.close();
-        } catch (IOException e) {}
-        try {
-            fMIInLogPipe.close();
-        } catch (IOException e) {}
+    	if (fMIOutConsolePipe != null) {
+    		try {
+    			fMIOutConsolePipe.close();
+    		} catch (IOException e) {}
+    	}
+    	if (fMIInConsolePipe != null) {
+    		try {
+    			fMIInConsolePipe.close();
+    		} catch (IOException e) {}
+    	}
+    	if (fMIOutLogPipe != null) {
+    		try {
+    			fMIOutLogPipe.close();
+    		} catch (IOException e) {}
+    	}
+    	if (fMIInLogPipe != null) {
+    		try {
+    			fMIInLogPipe.close();
+    		} catch (IOException e) {}
+    	}
         
     }
     
@@ -400,7 +421,7 @@ public abstract class AbstractCLIProcess extends Process
     }
 
     private class CLIOutputStream extends OutputStream {
-        private final StringBuffer buf = new StringBuffer();
+        private final StringBuilder buf = new StringBuilder();
         
         @Override
         public void write(int b) throws IOException {

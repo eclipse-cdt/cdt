@@ -22,15 +22,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 /**
  * Binding for a specialization of a field.
  */
-public class CPPFieldSpecialization extends CPPSpecialization implements ICPPField {
-	private final IType type;
-	private final IValue value;
-
+public class CPPFieldSpecialization extends CPPVariableSpecialization implements ICPPField {
 	public CPPFieldSpecialization(IBinding orig, ICPPClassType owner, ICPPTemplateParameterMap tpmap,
 			IType type, IValue value) {
-		super(orig, owner, tpmap);
-		this.type= type;
-		this.value= value;
+		super(orig, owner, tpmap, type, value);
 	}
 
 	private ICPPField getField() {
@@ -48,47 +43,12 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 	}
 
 	@Override
-	public IType getType() {
-		return type;
-	}
-
-	@Override
-	public boolean isStatic() {
-		return getField().isStatic();
-	}
-
-    @Override
-	public boolean isExtern() {
-        return getField().isExtern();
-    }
-
-    @Override
-	public boolean isAuto() {
-        return getField().isAuto();
-    }
-
-    @Override
-	public boolean isRegister() {
-        return getField().isRegister();
-    }
-
-    @Override
-	public boolean isMutable() {
-        return getField().isMutable();
-    }
-
-    @Override
-	public boolean isExternC() {
-    	return false;
-    }
-
-	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}
 
 	@Override
-	public IValue getInitialValue() {
-		return value;
+	public byte getFieldPosition() {
+		return getField().getFieldPosition();
 	}
 }

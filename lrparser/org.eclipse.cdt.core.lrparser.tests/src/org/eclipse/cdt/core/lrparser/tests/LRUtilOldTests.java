@@ -51,6 +51,6 @@ public class LRUtilOldTests extends AST2UtilOldTests {
     	try {
     		super.testCastExpression();
     		fail();
-    	} catch(AssertionFailedError _) {}
+    	} catch(AssertionFailedError expectedException) {}
     }
 }

@@ -43,4 +43,9 @@ public class CPPFieldTemplatePartialSpecialization extends CPPVariableTemplatePa
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		return scope.getClassType();
 	}
+
+	@Override
+	public byte getFieldPosition() {
+		return ((ICPPFieldTemplate) getPrimaryTemplate()).getFieldPosition();
+	}
 }

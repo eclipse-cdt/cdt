@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,10 +79,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         if (!DsfUIPlugin.DEBUG || "".equals(DEBUG_PRESENTATION_ID)) { //$NON-NLS-1$
             DEBUG_PRESENTATION_ID = null;
         }
-        DEBUG_CONTENT_PROVIDER = DsfUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+        DEBUG_CONTENT_PROVIDER = DsfUIPlugin.DEBUG && Boolean.parseBoolean(
          Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/contentProvider")); //$NON-NLS-1$
 
-        DEBUG_DELTA = DsfUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+        DEBUG_DELTA = DsfUIPlugin.DEBUG && Boolean.parseBoolean(
             Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/delta")); //$NON-NLS-1$
     }   
 
@@ -827,14 +827,14 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         str.append(DsfPlugin.getDebugTime());
         str.append(' ');
         if (action == EventHandlerAction.skipped || action == EventHandlerAction.canceled) {
-	        str.append(LoggingUtils.toString(this) + " " + action.toString() + " event " + LoggingUtils.toString(skippedOrCanceledEvent) + " because of event " + LoggingUtils.toString(event)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$        	
+	        str.append(LoggingUtils.toString(this)).append(' ').append(action).append(" event ").append(LoggingUtils.toString(skippedOrCanceledEvent)).append(" because of event ").append(LoggingUtils.toString(event)); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else {
-	        str.append(LoggingUtils.toString(this) + " " + action.toString() + " event " + LoggingUtils.toString(event)); //$NON-NLS-1$ //$NON-NLS-2$
+	        str.append(LoggingUtils.toString(this)).append(' ').append(action).append(" event ").append(LoggingUtils.toString(event)); //$NON-NLS-1$
         }
         
         if (action != EventHandlerAction.received) {
-        	str.append(" for proxy " + LoggingUtils.toString(proxy) + ", whose root is " + LoggingUtils.toString(proxy.getRootElement())); //$NON-NLS-1$ //$NON-NLS-2$
+        	str.append(" for proxy ").append(LoggingUtils.toString(proxy)).append(", whose root is ").append(LoggingUtils.toString(proxy.getRootElement())); //$NON-NLS-1$ //$NON-NLS-2$
         }
         DsfUIPlugin.debug(str.toString());
     }

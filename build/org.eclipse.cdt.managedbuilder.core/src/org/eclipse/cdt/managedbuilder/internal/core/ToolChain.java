@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 Intel Corporation and others.
+ * Copyright (c) 2004, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ import org.osgi.framework.Version;
 
 public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProvider<ToolChain>, IRealBuildObjectAssociation {
 
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
 
@@ -302,7 +302,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		setSuperClassInternal(toolChain.getSuperClass());
 		if (getSuperClass() != null) {
 			if (toolChain.superClassId != null) {
-				superClassId = new String(toolChain.superClassId);
+				superClassId = toolChain.superClassId;
 			}
 		}
 		setId(Id);
@@ -316,17 +316,17 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 		//  Copy the remaining attributes
 		if(toolChain.versionsSupported != null) {
-			versionsSupported = new String(toolChain.versionsSupported);
+			versionsSupported = toolChain.versionsSupported;
 		}
 		if(toolChain.convertToId != null) {
-			convertToId = new String(toolChain.convertToId);
+			convertToId = toolChain.convertToId;
 		}
 
 		if (toolChain.unusedChildren != null) {
-			unusedChildren = new String(toolChain.unusedChildren);
+			unusedChildren = toolChain.unusedChildren;
 		}
 		if (toolChain.errorParserIds != null) {
-			errorParserIds = new String(toolChain.errorParserIds);
+			errorParserIds = toolChain.errorParserIds;
 		}
 		if (toolChain.osList != null) {
 			osList = new ArrayList<String>(toolChain.osList);
@@ -335,16 +335,16 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			archList = new ArrayList<String>(toolChain.archList);
 		}
 		if (toolChain.targetToolIds != null) {
-			targetToolIds = new String(toolChain.targetToolIds);
+			targetToolIds = toolChain.targetToolIds;
 		}
 		if (toolChain.secondaryOutputIds != null) {
-			secondaryOutputIds = new String(toolChain.secondaryOutputIds);
+			secondaryOutputIds = toolChain.secondaryOutputIds;
 		}
 		if (toolChain.isAbstract != null) {
-			isAbstract = new Boolean(toolChain.isAbstract.booleanValue());
+			isAbstract = toolChain.isAbstract;
 		}
 		if (toolChain.scannerConfigDiscoveryProfileId != null) {
-			scannerConfigDiscoveryProfileId = new String(toolChain.scannerConfigDiscoveryProfileId);
+			scannerConfigDiscoveryProfileId = toolChain.scannerConfigDiscoveryProfileId;
 		}
 
 		isRcTypeBasedDiscovery = toolChain.isRcTypeBasedDiscovery;
@@ -545,7 +545,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		// isAbstract
 		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 		if (isAbs != null){
-			isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+			isAbstract = Boolean.parseBoolean(isAbs);
 		}
 
 		// Get the semicolon separated list of IDs of the error parsers
@@ -665,7 +665,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
-				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+				isAbstract = Boolean.parseBoolean(isAbs);
 			}
 		}
 
@@ -1390,7 +1390,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 	@Override
 	public void setIsAbstract(boolean b) {
-		isAbstract = new Boolean(b);
+		isAbstract = b;
 		setDirty(true);
 	}
 
@@ -1894,7 +1894,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 					String versionsSupported = toolChainElement.getVersionsSupported();
 
 					if ((versionsSupported != null)
-							&& (!versionsSupported.equals(""))) { //$NON-NLS-1$
+							&& (!versionsSupported.isEmpty())) {
 						String[] tmpVersions = versionsSupported.split(","); //$NON-NLS-1$
 
 						for (int j = 0; j < tmpVersions.length; j++) {
@@ -1927,7 +1927,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			// If 'getSuperClass()' is not null, look for 'convertToId' attribute in plugin
 			// manifest file for this toolchain.
 			String convertToId = getSuperClass().getConvertToId();
-			if ((convertToId == null) || (convertToId.equals(""))) { //$NON-NLS-1$
+			if ((convertToId == null) || (convertToId.isEmpty())) {
 				// It means there is no 'convertToId' attribute available and
 				// the version is still actively
 				// supported by the tool integrator. So do nothing, just return
@@ -2289,7 +2289,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		String name = getName();
 		String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 		if(version != null && version.length() != 0){
-			return new StringBuffer().append(name).append(" (").append(version).append("").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+			return new StringBuilder().append(name).append(" (").append(version).append("").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return name;
 	}
@@ -2500,7 +2500,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		} else if(ids.length == 0){
 			errorParserIds = EMPTY_STRING;
 		} else {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
 				buf.append(";").append(ids[i]); //$NON-NLS-1$
@@ -2517,7 +2517,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		} else {
 			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 			if(version != null){
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append(name);
 				buf.append(" (v").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				name = buf.toString();

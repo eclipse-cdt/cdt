@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Red Hat, Inc. and others.
+ * Copyright (c) 2007, 2016 Red Hat, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -952,7 +952,7 @@ public class AutoconfParser {
 		// track the exact tokens forming the start and end of an argument, defaulting
 		// to the borders of the parentheses and commas if no text is included.
 		
-		StringBuffer argBuffer = new StringBuffer();
+		StringBuilder argBuffer = new StringBuilder();
 		AutoconfMacroArgumentElement arg = new AutoconfMacroArgumentElement();
 
 		while (true) {

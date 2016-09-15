@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2016 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,11 +80,11 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_TUNIT_RESOURCE = "icons/obj16/c_resource_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT_RESOURCE_H = "icons/obj16/ch_resource_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT_RESOURCE_A = "icons/obj16/asm_resource_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_SOURCE_ROOT = "icons/obj16/sroot_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
-	public static final String IMG_OBJS_SOURCE2_ROOT = "icons/obj16/sroot2_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
-	public static final String IMG_OBJS_FOLDER = "icons/obj16/fldr_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
-	public static final String IMG_OBJS_CFOLDER = "icons/obj16/cfolder_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
-	public static final String IMG_OBJS_CONFIG = "icons/obj16/config.gif"; // $NON-NLS-1$  //$NON-NLS-1$
+	public static final String IMG_OBJS_SOURCE_ROOT = "icons/obj16/sroot_obj.gif"; //$NON-NLS-1$  //$NON-NLS-1$
+	public static final String IMG_OBJS_SOURCE2_ROOT = "icons/obj16/sroot2_obj.gif"; //$NON-NLS-1$  //$NON-NLS-1$
+	public static final String IMG_OBJS_FOLDER = "icons/obj16/fldr_obj.gif"; //$NON-NLS-1$  //$NON-NLS-1$
+	public static final String IMG_OBJS_CFOLDER = "icons/obj16/cfolder_obj.gif"; //$NON-NLS-1$  //$NON-NLS-1$
+	public static final String IMG_OBJS_CONFIG = "icons/obj16/config.gif"; //$NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_ARCHIVE = "icons/obj16/ar_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BINARY = "icons/obj16/bin_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SHLIB = "icons/obj16/shlib_obj.gif"; //$NON-NLS-1$
@@ -106,7 +106,7 @@ public class CDTSharedImages {
 	/** @since 5.4 */
 	public static final String IMG_OBJS_FRAMEWORKS_FOLDER = "icons/obj16/frameworks.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_MACROS_FILE= "icons/obj16/macros_file.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_LIBRARY_FOLDER=  "icons/obj16/fldr_lib_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
+	public static final String IMG_OBJS_LIBRARY_FOLDER=  "icons/obj16/fldr_lib_obj.gif"; //$NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_ORDER = "icons/obj16/cp_order_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXCLUSION_FILTER_ATTRIB = "icons/obj16/exclusion_filter_attrib.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SOURCE_ATTACH_ATTRIB = "icons/obj16/source_attach_attrib.gif"; //$NON-NLS-1$

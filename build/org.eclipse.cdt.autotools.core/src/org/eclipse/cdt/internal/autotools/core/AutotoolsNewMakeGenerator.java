@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Red Hat Inc.and others.
+ * Copyright (c) 2009, 2016 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -351,7 +351,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		// status = new MultiStatus (
 		// ManagedBuilderCorePlugin.getUniqueIdentifier(),
 		// IStatus.WARNING,
-		// new String(),
+		// "",
 		// null);
 		// // Add a new status for each of the bad folders
 		// iter = getInvalidDirList().iterator();
@@ -367,7 +367,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		// status = new MultiStatus(
 		// ManagedBuilderCorePlugin.getUniqueIdentifier(),
 		// IStatus.OK,
-		// new String(),
+		// "",
 		// null);
 		// }
 
@@ -410,7 +410,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					if (target == null)
 						target = AutotoolsPropertyConstants.CLEAN_MAKE_TARGET_DEFAULT;
 					String args = builder.getBuildArguments();
-					if (args != null && !(args = args.trim()).equals("")) { //$NON-NLS-1$
+					if (args != null && !(args = args.trim()).isEmpty()) {
 						String[] newArgs = makeArray(args);
 						makeargs = new String[newArgs.length + 1];
 						System.arraycopy(newArgs, 0, makeargs, 0, newArgs.length);
@@ -460,7 +460,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 							if (target == null)
 								target = AutotoolsPropertyConstants.CLEAN_MAKE_TARGET_DEFAULT;
 							String args = builder.getBuildArguments();
-							if (args != null && !(args = args.trim()).equals("")) { //$NON-NLS-1$
+							if (args != null && !(args = args.trim()).isEmpty()) {
 								String[] newArgs = makeArray(args);
 								makeargs = new String[newArgs.length + 1];
 								System.arraycopy(newArgs, 0, makeargs, 0, newArgs.length);
@@ -777,7 +777,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	protected IPath getConfigurePath(List<String> envVars, List<String> cmdParms) {
 		IPath configPath;
 		IConfigureOption configOption = toolsCfg.getOption(CONFIGURE_TOOL_ID);
-		String command = "configure"; // $NON-NLS-1$
+		String command = "configure"; //$NON-NLS-1$
 		if (configOption != null)
 			command = stripEnvVars(configOption.getValue().trim(), envVars);
 			
@@ -809,7 +809,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	protected IPath getAutogenPath(List<String> envVars, List<String> cmdParms) {
 		IPath autogenPath;
 		IConfigureOption autogenOption = toolsCfg.getOption(AUTOGEN_TOOL_ID);
-		String command = "autogen.sh"; // $NON-NLS-1$
+		String command = "autogen.sh"; //$NON-NLS-1$
 		if (autogenOption != null)
 			command = stripEnvVars(autogenOption.getValue().trim(), envVars);
 
@@ -872,7 +872,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				"MakeGenerator.make.message", msgs)); //$NON-NLS-1$
 
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		// Launch command - main invocation
 		if (consoleStart)
@@ -968,7 +968,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 
 				// Report either the success or failure of our mission
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 				if (errMsg != null && errMsg.length() > 0) {
 					String errorDesc = AutotoolsPlugin.getResourceString("MakeGenerator.generation.error"); //$NON-NLS-1$
 					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
@@ -1172,7 +1172,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				"MakeGenerator.make.message", msgs)); //$NON-NLS-1$
 
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		// Launch command - main invocation
 		if (consoleStart)
@@ -1219,14 +1219,14 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					// For Windows/Mac, check for PWD environment variable being passed.
 					// Remove it for now as it is causing errors in configuration.
 					// Fix for bug #343879
-					if (!removePWD || !variables[i].getName().equals("PWD")) { // $NON-NLS-1$
+					if (!removePWD || !variables[i].getName().equals("PWD")) { //$NON-NLS-1$
 						String value = variables[i].getValue();
 						// The following is a work-around for bug #407580.  Configure doesn't recognize
 						// a directory with a trailing separator at the end is equivalent to the same
 						// directory without that trailing separator.  This problem can cause
 						// configure to try and link a file to itself (e.g. projects with a GnuMakefile) and
 						// obliterate the contents.  Thus, we remove the trailing separator to be safe.
-						if (variables[i].getName().equals("PWD")) { // $NON-NLS-1$
+						if (variables[i].getName().equals("PWD")) { //$NON-NLS-1$
 							if (value.charAt(value.length()-1) == IPath.SEPARATOR)
 								value = value.substring(0, value.length() - 1);	
 						}
@@ -1302,7 +1302,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 
 				// Report either the success or failure of our mission
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 				if (errMsg != null && errMsg.length() > 0) {
 					String errorDesc = AutotoolsPlugin.getResourceString("MakeGenerator.generation.error"); //$NON-NLS-1$
 					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
@@ -1371,13 +1371,13 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		}
 
 		elem = targetElem.createChild(TARGET_STOP_ON_ERROR);
-		elem.setValue(Boolean.valueOf(target.isStopOnError()).toString());
+		elem.setValue(String.valueOf(target.isStopOnError()));
 
 		elem = targetElem.createChild(TARGET_USE_DEFAULT_CMD);
-		elem.setValue(Boolean.valueOf(target.isDefaultBuildCmd()).toString());
+		elem.setValue(String.valueOf(target.isDefaultBuildCmd()));
 
 		elem = targetElem.createChild(TARGET_RUN_ALL_BUILDERS);
-		elem.setValue(Boolean.valueOf(target.runAllBuilders()).toString());
+		elem.setValue(String.valueOf(target.runAllBuilders()));
 
 		return targetElem;
 	}

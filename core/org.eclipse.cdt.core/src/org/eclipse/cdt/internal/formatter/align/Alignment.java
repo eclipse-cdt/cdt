@@ -463,13 +463,13 @@ public class Alignment {
 		}
 	}
 
-	public void toFragmentsString(StringBuffer buffer) {
+	public void toFragmentsString(StringBuilder buffer) {
 		// default implementation
 	}
 	
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer(10);
+		StringBuilder buffer = new StringBuilder(10);
 		buffer
 			.append(getClass().getName())
 			.append(':')

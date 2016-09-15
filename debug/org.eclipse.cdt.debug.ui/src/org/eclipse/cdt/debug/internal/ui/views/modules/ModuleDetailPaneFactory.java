@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,9 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 		return new ModuleDetailPane();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDetailsTypes(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
-	public Set getDetailPaneTypes(IStructuredSelection selection) {
-		Set possibleIDs = new HashSet(1);
+	public Set<String> getDetailPaneTypes(IStructuredSelection selection) {
+		Set<String> possibleIDs = new HashSet<>(1);
 		possibleIDs.add(ModuleDetailPane.ID);
 		return possibleIDs;
 	}

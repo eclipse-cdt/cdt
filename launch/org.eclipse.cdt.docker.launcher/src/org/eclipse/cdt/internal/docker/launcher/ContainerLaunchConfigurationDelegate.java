@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Red Hat.
+ * Copyright (c) 2015, 2016 Red Hat and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.docker.launcher;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,11 +119,18 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 
 		IPath commandPath = getCommandPath(configuration);
 		if (commandPath != null) {
+			// create some labels to allow user to filter out such Containers if
+			// kept
+			HashMap<String, String> labels = new HashMap<>();
+			labels.put("org.eclipse.cdt.container-launch", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			String projectName = configuration.getAttribute(
+					ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+			labels.put("org.eclipse.cdt.project-name", projectName); //$NON-NLS-1$
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
 				String commandDir = commandPath.removeLastSegments(1)
 						.toString();
 
-				StringBuffer b = new StringBuffer();
+				StringBuilder b = new StringBuilder();
 				b.append(commandPath.toString().trim());
 
 				String arguments = getProgramArguments(configuration);
@@ -161,11 +169,15 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 				boolean supportStdin = configuration.getAttribute(
 						ILaunchConstants.ATTR_STDIN_SUPPORT, false);
 
+				boolean privilegedMode = configuration.getAttribute(
+						ILaunchConstants.ATTR_PRIVILEGED_MODE, false);
+
 				launcher.launch(DockerLaunchUIPlugin.PLUGIN_ID, null,
 						connectionUri,
 						image, command,
 						commandDir, workingDir, additionalDirs, origEnv,
-						envMap, null, keepContainer, supportStdin);
+						envMap, null, keepContainer, supportStdin,
+						privilegedMode, labels);
 			} else if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 				String gdbserverPortNumber = configuration.getAttribute(
 						ILaunchConstants.ATTR_GDBSERVER_PORT,
@@ -181,9 +193,9 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 				String commandDir = commandPath.removeLastSegments(1)
 						.toString();
 
-				StringBuffer b = new StringBuffer();
+				StringBuilder b = new StringBuilder();
 
-				b.append(gdbserverCommand + " " + commandArguments); //$NON-NLS-1$
+				b.append(gdbserverCommand).append(' ').append(commandArguments); //$NON-NLS-1$
 
 				String arguments = getProgramArguments(configuration);
 				if (arguments.trim().length() > 0) {
@@ -220,6 +232,9 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 				boolean supportStdin = configuration.getAttribute(
 						ILaunchConstants.ATTR_STDIN_SUPPORT, false);
 
+				boolean privilegedMode = configuration.getAttribute(
+						ILaunchConstants.ATTR_PRIVILEGED_MODE, false);
+
 				StartGdbServerJob job = new StartGdbServerJob(
 						Messages.Gdbserver_start);
 				job.schedule();
@@ -227,7 +242,8 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						connectionUri,
 						image, command,
 						commandDir, workingDir, additionalDirs, origEnv,
-						envMap, ports, keepContainer, supportStdin);
+						envMap, ports, keepContainer, supportStdin,
+						privilegedMode, labels);
 
 				// wait until gdbserver is started successfully and we have its
 				// ip address or

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class XLCBuildOutputParserUtility {
     }
     public static IPath convertCygpath(IPath path) {
     	if (path.segmentCount() > 1 && path.segment(0).equals("cygdrive")) { //$NON-NLS-1$
-            StringBuffer buf = new StringBuffer(2);
+            StringBuilder buf = new StringBuilder(2);
             buf.append(Character.toUpperCase(path.segment(1).charAt(0)));
             buf.append(':');
             path = path.removeFirstSegments(2);
@@ -480,7 +480,7 @@ public class XLCBuildOutputParserUtility {
 		if (column > 0) {
 			char driveLetter = path.charAt(column - 1);
 			if (Character.isLowerCase(driveLetter)) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				if (column - 1 > 0) {
 					sb.append(path.substring(0, column-1));
 				}
@@ -493,9 +493,9 @@ public class XLCBuildOutputParserUtility {
 			return (new Path(path)).toString();	// convert separators to '/'
 		}
 		// lose "./" segments since they confuse the Path normalization
-		StringBuffer buf = new StringBuffer(path);
+		StringBuilder buf = new StringBuilder(path);
 		int len = buf.length();
-		StringBuffer newBuf = new StringBuffer(buf.length());
+		StringBuilder newBuf = new StringBuilder(buf.length());
 		int scp = 0; // starting copy point
 		int ssp = 0;	// starting search point
 		int sdot;

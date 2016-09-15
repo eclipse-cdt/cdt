@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class ProjectBuildState implements IProjectBuildState {
 		String name = props.getProperty(id);
 		if(name == null){
 			if(op == OP_CREATE){
-				name = new Integer(CDataUtil.genRandomNumber()).toString();
+				name = Integer.toString(CDataUtil.genRandomNumber());
 				props.setProperty(id, name);
 				fIsMapInfoDirty = true;
 	//			saveMapFile();

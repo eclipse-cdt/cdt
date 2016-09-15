@@ -82,7 +82,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 
     @Override
     public void doBeforeTest() throws Exception {
-    	assumeGdbVersionAtLeast("7.6");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_6);
     	super.doBeforeTest();
 
     	fSession = getGDBLaunch().getSession();

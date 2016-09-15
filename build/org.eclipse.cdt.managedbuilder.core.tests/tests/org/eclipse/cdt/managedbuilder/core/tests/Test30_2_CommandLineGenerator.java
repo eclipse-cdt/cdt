@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,17 +58,17 @@ public class Test30_2_CommandLineGenerator implements
 			String commandLinePattern) {
 		ManagedBuildCommandLineInfo info = new ManagedBuildCommandLineInfo();
 		//  We are only going to change the "flags" to remove the "test30_2.tar-list.filename" option
-		info.commandName = new String(commandName);
-		info.commandOutputFlag = new String(outputFlag);
-		info.commandOutputPrefix = new String(outputPrefix);
-		info.commandOutput = new String(outputName);
-		info.commandLinePattern = new String(commandLinePattern);
-		info.commandInputs = new String();
+		info.commandName = commandName;
+		info.commandOutputFlag = outputFlag;
+		info.commandOutputPrefix = outputPrefix;
+		info.commandOutput = outputName;
+		info.commandLinePattern = commandLinePattern;
+		info.commandInputs = ""; //$NON-NLS-1$
 		for (int i = 0; i < inputResources.length; i++) {
 			if (i > 0) info.commandInputs += " ";
 			info.commandInputs += inputResources[i];
 		}
-		info.commandFlags = new String();
+		info.commandFlags = ""; //$NON-NLS-1$
 		IOption opt = tool.getOptionBySuperClassId("test30_2.tar-list.filename");
 		String optVal = "";
 		try {
@@ -83,7 +83,7 @@ public class Test30_2_CommandLineGenerator implements
 		//  Generate the command line
 		int start =  0;
 		int stop = 0;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while( (start = commandLinePattern.indexOf( VAR_FIRST_CHAR, start )) >= 0 ) {
 			if( commandLinePattern.charAt( start + 1 ) != VAR_SECOND_CHAR  ) {
 				sb.append(VAR_FIRST_CHAR);
@@ -102,7 +102,7 @@ public class Test30_2_CommandLineGenerator implements
 				else if( varName.compareToIgnoreCase( OUTPUT_PREFIX_PRM_NAME ) == 0 ) sb.append( info.commandOutputPrefix.trim() );
 				else if( varName.compareToIgnoreCase( OUTPUT_PRM_NAME ) == 0 ) sb.append( info.commandOutput.trim() );
 				else if( varName.compareToIgnoreCase( INPUTS_PRM_NAME ) == 0 ) sb.append( info.commandInputs );
-				else sb.append( VAR_FIRST_CHAR + VAR_SECOND_CHAR + varName + VAR_FINAL_CHAR );
+				else sb.append(VAR_FIRST_CHAR).append(VAR_SECOND_CHAR).append(varName).append(VAR_FINAL_CHAR);
 			} catch( Exception ex ) {
 				// 	do nothing for a while
 			}

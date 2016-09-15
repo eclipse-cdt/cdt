@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui; singleton:=true
-Bundle-Version: 8.0.0.qualifier
+Bundle-Version: 8.1.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.ui.CDebugUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -26,6 +26,7 @@ Export-Package:
  org.eclipse.cdt.debug.internal.ui.propertypages;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.sourcelookup;x-friends:="org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.debug.internal.ui.views;x-internal:=true,
+ org.eclipse.cdt.debug.internal.ui.views.debuggerconsole;x-friends:="org.eclipse.cdt.dsf.gdb.ui",
  org.eclipse.cdt.debug.internal.ui.views.executables;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.views.memory;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.views.modules;x-internal:=true,
@@ -33,6 +34,7 @@ Export-Package:
  org.eclipse.cdt.debug.ui,
  org.eclipse.cdt.debug.ui.breakpointactions,
  org.eclipse.cdt.debug.ui.breakpoints,
+ org.eclipse.cdt.debug.ui.debuggerconsole,
  org.eclipse.cdt.debug.ui.disassembly,
  org.eclipse.cdt.debug.ui.disassembly.rulers,
  org.eclipse.cdt.debug.ui.editors,
@@ -48,14 +50,16 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.debug.ui;bundle-version="[3.7.0,4.0.0)",
  org.eclipse.debug.core;bundle-version="[3.7.0,4.0.0)",
- org.eclipse.cdt.debug.core;bundle-version="[7.0.0,8.1.0)",
+ org.eclipse.cdt.debug.core;bundle-version="[7.0.0,9.0.0)",
  org.eclipse.cdt.ui;bundle-version="[6.0.0,7.0.0)",
  org.eclipse.cdt.core;bundle-version="[5.0.0,7.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.console;bundle-version="[3.1.100,4.0.0)",
  org.eclipse.ui.views;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.filesystem,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.launchbar.core;bundle-version="2.0.0",
+ org.eclipse.launchbar.ui;bundle-version="2.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.ibm.icu.text

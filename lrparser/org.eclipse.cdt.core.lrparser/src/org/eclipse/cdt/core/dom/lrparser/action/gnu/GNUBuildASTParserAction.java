@@ -12,8 +12,6 @@ package org.eclipse.cdt.core.dom.lrparser.action.gnu;
 
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -24,6 +22,8 @@ import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.internal.core.dom.lrparser.gcc.GCCParsersym;
+
+import lpg.lpgjavaruntime.IToken;
 
 public class GNUBuildASTParserAction extends AbstractParserAction {
 
@@ -83,7 +83,6 @@ public class GNUBuildASTParserAction extends AbstractParserAction {
 		setOffsetAndLength(asm);
 		astStack.push(asm);
 	}
-
 
 	/**
 	 * primary_expression

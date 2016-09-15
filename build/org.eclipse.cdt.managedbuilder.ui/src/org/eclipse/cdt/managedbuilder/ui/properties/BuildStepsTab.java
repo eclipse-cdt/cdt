@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,12 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private static final String label1 = Messages.BuildStepsTab_0;
 	private static final String label2 = Messages.BuildStepsTab_1;
 	private static final String PATH_SEPERATOR = ";";	//$NON-NLS-1$
-	private static final String rcbsToolId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs");	//$NON-NLS-1$
-	private static final String rcbsToolName = new String("Resource Custom Build Step");	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype");	//$NON-NLS-1$
-	private static final String rcbsToolInputTypeName = new String("Resource Custom Build Step Input Type");	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
-	private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
+	private static final String rcbsToolId = "org.eclipse.cdt.managedbuilder.ui.rcbs";	//$NON-NLS-1$
+	private static final String rcbsToolName = "Resource Custom Build Step";	//$NON-NLS-1$
+	private static final String rcbsToolInputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype";	//$NON-NLS-1$
+	private static final String rcbsToolInputTypeName = "Resource Custom Build Step Input Type";	//$NON-NLS-1$
+	private static final String rcbsToolOutputTypeId = "org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype";	//$NON-NLS-1$
+	private static final String rcbsToolOutputTypeName = "Resource Custom Build Step Output Type";	//$NON-NLS-1$
 
 	private enum FIELD {PRECMD, PREANN, PSTCMD, PSTANN}
 	private Set<String> set1 = new TreeSet<String>();
@@ -75,10 +75,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private Set<String> set4 = new TreeSet<String>();
 
 	private static final String[] rcbsApplicabilityRules = {
-		new String(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override),
-//		new String(ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_before")),
-//		new String(ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_after")),
-		new String(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable),
+		Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override,
+//		ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_before"),
+//		ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_after"),
+		Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable,
 	};
 
 
@@ -273,7 +273,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			rcbsTool = rcConfig.createTool(null,rcbsToolId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolName,false);	//$NON-NLS-1$
 			rcbsTool.setCustomBuildStep(true);
 			IInputType rcbsToolInputType = rcbsTool.createInputType(null,rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolInputTypeName,false);	//$NON-NLS-1$
-			IAdditionalInput rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(new String());
+			IAdditionalInput rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(""); //$NON-NLS-1$
 			rcbsToolInputTypeAdditionalInput.setKind(IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY);
 			rcbsTool.createOutputType(null,rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolOutputTypeName,false);	//$NON-NLS-1$
 		}
@@ -298,9 +298,9 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 
 	private String createList(String[] items) {
 		if(items == null)
-			return new String();
+			return ""; //$NON-NLS-1$
 
-		StringBuffer path = new StringBuffer(EMPTY_STR);
+		StringBuilder path = new StringBuilder(EMPTY_STR);
 
 		for (int i = 0; i < items.length; i++) {
 			path.append(items[i]);

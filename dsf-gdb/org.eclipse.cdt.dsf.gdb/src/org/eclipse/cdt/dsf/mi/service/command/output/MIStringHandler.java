@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Mathias Kunter and others.
+ * Copyright (c) 2012, 2016 Mathias Kunter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,8 +199,8 @@ public class MIStringHandler {
      * @return The parsed string.
      */
     public static String parseString(String str, EnumSet<ParseFlags> parseFlags) {
-        StringBuffer buffer = new StringBuffer();
-        StringBuffer escapeBuffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
+        StringBuilder escapeBuffer = new StringBuilder();
         EscapeStatus escStatus = EscapeStatus.NONE;
         
         for (int i = 0; i < str.length(); i++) {
@@ -394,7 +394,7 @@ public class MIStringHandler {
      * @return The escaped string.
      */
     public static String escapeString(String str, boolean escapePrintableSpecialChars) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         
         for (int i = 0; i < str.length(); i++) {
             // Get the current character code point. Note that using the Java "char" data type isn't

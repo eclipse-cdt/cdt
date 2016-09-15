@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            delegate="org.eclipse.cdt.llvm.dsf.lldb.core.internal.launching.LLDBLaunchDelegate"
+            delegateDescription="%launchDelegate.localApplication.description"
+            id="org.eclipse.cdt.llvm.dsf.lldb.launch.localCLaunch"
+            modes="debug"
+            name="%launchDelegate.localApplication.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            type="org.eclipse.cdt.launch.applicationLaunchType">
+      </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.cdt.llvm.dsf.lldb.launch.attachCLaunch"
+            type="org.eclipse.cdt.launch.attachLaunchType"
+            modes="debug"
+            delegate="org.eclipse.cdt.llvm.dsf.lldb.core.internal.launching.LLDBAttachLaunchDelegate"
+            name="%launchDelegate.attach.name"
+            delegateDescription="%launchDelegate.attach.description"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBPreferenceInitializer">
+      </initializer>
+   </extension>
+</plugin>

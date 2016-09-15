@@ -458,6 +458,20 @@
              %Cproject.desc
          </description>
       </wizard>
+       <wizard
+             canFinishEarly="false"
+             category="org.eclipse.cdt.ui.newCWizards"
+             class="org.eclipse.cdt.internal.ui.wizards.project.NewCDTProjectWizard"
+             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+             hasPages="true"
+             icon="icons/elcl16/newmngc_app.gif"
+             id="org.eclipse.cdt.ui.wizard.project"
+             name="%CDTproject"
+             project="true">
+          <description>
+             %CDTproject.desc
+          </description>
+       </wizard>
    </extension>
 
 <!-- Define the document setup participant for the C/C++ and Assembly Editors -->
@@ -2289,25 +2303,25 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"      
-            sequence="CTRL+SHIFT+ARROW_UP"
+            sequence="CTRL+SHIFT+PAGE_UP"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.enclosing"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"      
-            sequence="CTRL+SHIFT+ARROW_RIGHT"
+            sequence="CTRL+SHIFT+END"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.next"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"      
-            sequence="CTRL+SHIFT+ARROW_LEFT"
+            sequence="CTRL+SHIFT+HOME"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.previous"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"      
-            sequence="CTRL+SHIFT+ARROW_DOWN"
+            sequence="CTRL+SHIFT+PAGE_DOWN"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.last"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
@@ -2341,6 +2355,11 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.ui.edit.text.shiftLeft"/>      
+     <key
+            sequence="M1+7"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.toggle.comment"/>
      <key
             sequence="M1+/"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -3488,6 +3507,11 @@
                <and>
                   <test property="org.eclipse.core.resources.projectNature"
                         value="org.eclipse.cdt.core.cnature"/>
+                  <not>
+                     <test
+                           property="org.eclipse.cdt.core.build.isSupported">
+                     </test>
+                  </not>
                   <test property="org.eclipse.cdt.ui.checkPreference"
                         value="org.eclipse.cdt.core/language.settings.providers.disabled=false"/>
                </and>
@@ -4932,6 +4956,37 @@
              refid="org.eclipse.e4.ui.css.theme.e4_dark">
        </themeid>
     </stylesheet>
+ </extension>
+ <extension
+       point="org.eclipse.tools.templates.ui.templates">
+    <tag
+          id="org.eclipse.cdt.ui.cdtTag"
+          label="C/C++">
+    </tag>
+    <template
+          icon="icons/cdt_logo_48.png"
+          id="org.eclipse.cdt.ui.managed.c"
+          label="C Managed Build"
+          wizard="org.eclipse.cdt.internal.ui.wizards.CProjectWizard2">
+       <description>
+          A C Project build using the CDT&apos;s managed build system.
+       </description>
+       <tagReference
+             id="org.eclipse.cdt.ui.cdtTag">
+       </tagReference>
+    </template>
+    <template
+          icon="icons/cdt_logo_48.png"
+          id="org.eclipse.cdt.ui.managed.cpp"
+          label="C++ Managed Build"
+          wizard="org.eclipse.cdt.internal.ui.wizards.CCProjectWizard2">
+       <description>
+          A C++ Project build using the CDT&apos;s managed build system.
+       </description>
+       <tagReference
+             id="org.eclipse.cdt.ui.cdtTag">
+       </tagReference>
+    </template>
  </extension>
 
 </plugin>

@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.ui.CUIPlugin;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import java.util.TreeMap;
  * 
  * ex:
  * char[] key = "one two three".toCharArray();
- * map.put(key, 4, 3, new Integer(99));
+ * map.put(key, 4, 3, Integer.valueOf(99));
  * map.get(key, 4, 3); // returns 99
  * map.get("two".toCharArray()); // returns 99
  * 

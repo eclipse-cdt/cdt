@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -287,7 +287,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
 			throws BuildException {
-		return setOption(parent, option, new Boolean(value), MODE_BOOL);
+		return setOption(parent, option, Boolean.valueOf(value), MODE_BOOL);
 	}
 
 	/* (non-Javadoc)

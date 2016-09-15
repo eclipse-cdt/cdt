@@ -19,8 +19,6 @@ public class Messages extends NLS {
 	public static String NewQtInstallWizardPage_3;
 	public static String NewQtInstallWizardPage_4;
 	public static String NewQtInstallWizardPage_5;
-	public static String NewQtInstallWizardPage_6;
-	public static String NewQtInstallWizardPage_7;
 	public static String NewQtInstallWizardPage_8;
 	public static String NewQtInstallWizardPage_9;
 	public static String QtPreferencePage_0;

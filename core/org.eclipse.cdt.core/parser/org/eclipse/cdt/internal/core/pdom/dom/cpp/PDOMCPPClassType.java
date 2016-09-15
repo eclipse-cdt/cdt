@@ -330,7 +330,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
 		try {
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
-			return visitor.getConstructors();
+			ICPPConstructor[] constructors = visitor.getConstructors();
+	    	return ClassTypeHelper.getAllConstructors(this, constructors, null);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;

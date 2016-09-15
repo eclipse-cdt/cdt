@@ -11,7 +11,9 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Models a value of a variable, enumerator or expression.
@@ -22,13 +24,44 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
  */
 public interface IValue {
 	/**
-	 * Returns the value as a number, or {@code null} if it is not possible.
+	 * Returns the value as a Long number, or {@code null} if it is not possible.
+	 * @deprecated Use numberValue() instead. 
 	 */
+	@Deprecated
 	Long numericalValue();
 
 	/**
-	 * Returns the evaluation object if this value is dependent, or {@code null} otherwise.
-	 * If {@link #numericalValue()} returns {@code null}, {@link #getEvaluation()} returns
+	 * Returns the value as a number, or {@code null} if it is not possible.
+	 * @since 6.0
+	 */
+	Number numberValue();
+	
+	/**
+	 * If this value consists of sub-values, returns the number of these sub-values. Otherwise returns 1.
+	 * @since 6.0
+	 */
+	int numberOfSubValues();
+	
+	/**
+	 * If this value consists of sub-values, returns the sub-value at the given index.
+	 * Otherwise, returns this value (represented as an ICPPEvaluation) if the index 0 is passed.
+	 * EvalFixed.INCOMPLETE is returned if the given index is out of bounds.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	ICPPEvaluation getSubValue(int index);
+	
+	/**
+	 * If this value consists of sub-values, returns an array containing all of them.
+	 * Otherwise, returns an array containing 1 element representing this value.
+	 * Not all implementations implement this; some may return {@code null}. 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	ICPPEvaluation[] getAllSubValues();
+	
+	/**
+	 * Returns the evaluation object if this value cannot be represented as a single numerical value, or
+	 * {@code null} otherwise. This cam happen if the value is dependent, or it's a composite value.
+	 * If {@link #numberValue()} returns {@code null}, {@link #getEvaluation()} returns
 	 * not {@code null} and vice versa.
 	 * @noreference This method is not intended to be referenced by clients. 
 	 */
@@ -53,4 +86,24 @@ public interface IValue {
 	 */
 	@Deprecated
 	IBinding[] getUnknownBindings();
+
+	/**
+	 * If this value consists of sub-values, set the sub-value at the given position to the given new value.
+	 * Otherwise, set this value to the given new value.
+	 * Not all implementations implement this; for some, a call to this may have no effect. 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	void setSubValue(int position, ICPPEvaluation newValue);
+	
+	/**
+	 * Make a deep copy of this value.
+	 * @since 6.0
+	 */
+	IValue clone();
+	
+	/**
+	 * Serialize this value to the given type marhsal buffer.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	void marshal(ITypeMarshalBuffer buffer) throws CoreException;
 }

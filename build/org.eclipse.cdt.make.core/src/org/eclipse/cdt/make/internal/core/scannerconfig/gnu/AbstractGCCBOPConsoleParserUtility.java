@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
 
     public static IPath convertCygpath(IPath path) {
     	if (path.segmentCount() > 1 && path.segment(0).equals("cygdrive")) { //$NON-NLS-1$
-            StringBuffer buf = new StringBuffer(2);
+            StringBuilder buf = new StringBuilder(2);
             buf.append(Character.toUpperCase(path.segment(1).charAt(0)));
             buf.append(':');
             path = path.removeFirstSegments(2);

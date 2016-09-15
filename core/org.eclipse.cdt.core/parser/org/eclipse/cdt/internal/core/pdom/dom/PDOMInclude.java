@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 QNX Software Systems and others.
+ * Copyright (c) 2006, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,15 +322,15 @@ public class PDOMInclude implements IIndexFragmentInclude {
 			buf.append(isSystem ? '>' : '"');
 			IIndexFile includedBy = getIncludedBy();
 			if (includedBy != null)
-				buf.append(" in " + includedBy); //$NON-NLS-1$
+				buf.append(" in ").append(includedBy); //$NON-NLS-1$
 			IIndexFragmentFile includes = getIncludes();
 			if (includes != null) {
-				buf.append(" resolved to " + includes); //$NON-NLS-1$
+				buf.append(" resolved to ").append(includes); //$NON-NLS-1$
 			} else {
 				buf.append(" unresolved"); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
-			buf.append(" (incomplete due to " + e.getClass().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			buf.append(" (incomplete due to ").append(e.getClass().getName()).append(')'); //$NON-NLS-1$
 			e.printStackTrace();
 		}
 		return buf.toString();

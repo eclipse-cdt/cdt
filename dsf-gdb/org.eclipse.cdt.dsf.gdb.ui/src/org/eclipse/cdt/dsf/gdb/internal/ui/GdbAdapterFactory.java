@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,17 +40,22 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
  * for the launch object.  But it also manages the creation and destruction
  * of the session-based adapters which are returned by the
  * IDMContext.getAdapter() methods.
+ * 
+ * When extending the GdbAdapterFactory, it is important to register all the
+ * types declaratively (in the plugin.xml) that the factory can adapt the
+ * extended launch to.
+ * 
+ * See the plugin.xml that references GdbAdapterFactory for the current list,
+ * and it should match {@link #getAdapterList()}.
  */
 @ThreadSafe
-public class GdbAdapterFactory
-    implements IAdapterFactory, ILaunchesListener2
-{
+public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
     /**
      * Active adapter sets.  They are accessed using the launch instance 
      * which owns the debug services session. 
      */
     private static Map<GdbLaunch, GdbSessionAdapters> fgLaunchAdapterSets =
-        Collections.synchronizedMap(new HashMap<GdbLaunch, GdbSessionAdapters>());
+        Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Map of launches for which adapter sets have already been disposed.
@@ -67,12 +72,12 @@ public class GdbAdapterFactory
     private static Map<ILaunch, GdbSessionAdapters> fgDisposedLaunchAdapterSets = new WeakHashMap<>();
 
     static void disposeAdapterSet(ILaunch launch) {
-	synchronized(fgLaunchAdapterSets) {
-	    if ( fgLaunchAdapterSets.containsKey(launch) ) {
-		fgLaunchAdapterSets.remove(launch).dispose();
-		fgDisposedLaunchAdapterSets.put(launch, null);
-	    }
-	}
+    	synchronized(fgLaunchAdapterSets) {
+    		if (fgLaunchAdapterSets.containsKey(launch)) {
+    			fgLaunchAdapterSets.remove(launch).dispose();
+    			fgDisposedLaunchAdapterSets.put(launch, null);
+    		}
+    	}
     }
 
     public GdbAdapterFactory() {
@@ -128,6 +133,9 @@ public class GdbAdapterFactory
         return adapterSet.getLaunchAdapter(adapterType);
     }
 
+    /**
+     * This list must match the list in the plugin.xml. See class comment.
+     */
     @Override
     public Class<?>[] getAdapterList() {
         return new Class<?>[] {

@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<version>9.0.0-SNAPSHOT</version>
+	<version>9.1.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.debug.application.product</artifactId>
 	<packaging>eclipse-repository</packaging>
 	<name>Stand-Alone C/C++ Debugger Product</name>
@@ -12,13 +12,15 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>9.0.0-SNAPSHOT</version>
+		<version>9.1.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<properties>
 		<productId>org.eclipse.cdt.debug.application.product</productId>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+		<archiveFileName>cdt-stand-alone-debugger-${unqualifiedVersion}-${build.timestamp}</archiveFileName>
+		<rootFolder>cdt-stand-alone-debugger</rootFolder>
 	</properties>
 
 	<build>
@@ -42,6 +44,7 @@
 						<configuration>
 							<formats>
 								<linux>tar.gz</linux>
+								<macosx>tar.gz</macosx>
 							</formats>
 						</configuration>
 					</execution>
@@ -49,9 +52,9 @@
 				<configuration>
 					<products>
 						<product>
-							<archiveFileName>cdt-stand-alone-debugger-${unqualifiedVersion}-${build.timestamp}</archiveFileName>
+							<archiveFileName>${archiveFileName}</archiveFileName>
 							<id>${productId}</id>
-							<rootFolder>cdt-stand-alone-debugger</rootFolder>
+							<rootFolder>${rootFolder}</rootFolder>
 						</product>
 					</products>
 					<source>repository</source>
@@ -85,6 +88,11 @@
 							<ws>win32</ws>
 							<arch>x86_64</arch>
 						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
 					</environments>
 				</configuration>
 			</plugin>
@@ -101,6 +109,59 @@
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-p2-director-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<executions>
+							<execution>
+								<id>materialize-products</id>
+								<goals>
+									<goal>materialize-products</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>archive-products</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>archive-products</goal>
+								</goals>
+								<configuration>
+									<formats>
+										<linux>tar.gz</linux>
+										<macosx>tar.gz</macosx>
+									</formats>
+								</configuration>
+							</execution>
+						</executions>
+						<configuration>
+							<products>
+								<product>
+									<archiveFileName>${archiveFileName}</archiveFileName>
+									<id>${productId}</id>
+									<rootFolder>${rootFolder}</rootFolder>
+								</product>
+							</products>
+							<source>repository</source>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.cbi.maven.plugins</groupId>
+						<artifactId>eclipse-macsigner-plugin</artifactId>
+						<version>${cbi-plugins.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<signFiles>
+										<signFile>${project.build.directory}/products/${productId}/macosx/cocoa/x86_64/${rootFolder}.app</signFile>
+									</signFiles>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -354,7 +354,7 @@ public class PathEntryUtil {
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
-				StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+				StringBuilder errMesg = new StringBuilder(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
 				cmodelStatus[i] = new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 			}
 			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
@@ -365,7 +365,7 @@ public class PathEntryUtil {
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
-				StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+				StringBuilder errMesg = new StringBuilder(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
 				cmodelStatus[i] = new CModelStatus(ICModelStatusConstants.NAME_COLLISION, errMesg.toString());
 			}
 			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
@@ -392,15 +392,15 @@ public class PathEntryUtil {
 								&& !CoreModelUtil.isExcluded(entryPath.append("*"), exclusionPatterns)) { //$NON-NLS-1$
 
 							if (CoreModelUtil.isExcluded(entryPath, exclusionPatterns)) {
-								StringBuffer errMesg = new StringBuffer(
+								StringBuilder errMesg = new StringBuilder(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 							} else if (otherKind == IPathEntry.CDT_SOURCE) {
-								StringBuffer errMesg = new StringBuffer(
+								StringBuilder errMesg = new StringBuilder(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 							} else {
-								StringBuffer errMesg = new StringBuffer(
+								StringBuilder errMesg = new StringBuilder(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString()); 
 							}
@@ -570,7 +570,7 @@ public class PathEntryUtil {
 		try {
 			IMarker marker = project.createMarker(ICModelMarker.PATHENTRY_PROBLEM_MARKER);
 			marker.setAttributes(new String[]{IMarker.MESSAGE, IMarker.SEVERITY, IMarker.LOCATION,
-					ICModelMarker.PATHENTRY_FILE_FORMAT,}, new Object[]{status.getMessage(), new Integer(severity), "pathentry",//$NON-NLS-1$
+					ICModelMarker.PATHENTRY_FILE_FORMAT,}, new Object[]{status.getMessage(), Integer.valueOf(severity), "pathentry",//$NON-NLS-1$
 					"false",//$NON-NLS-1$
 			});
 		} catch (CoreException e) {

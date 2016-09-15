@@ -12,16 +12,21 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public class Activator extends AbstractUIPlugin {
 
 	private static Activator plugin;
 
+	public static final String PLUGIN_ID = "org.eclipse.cdt.cmake.ui"; //$NON-NLS-1$
+
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -31,12 +36,8 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public static String getId() {
-		return plugin.getBundle().getSymbolicName();
-	}
-
 	public static IStatus errorStatus(String message, Throwable cause) {
-		return new Status(IStatus.ERROR, getId(), message, cause);
+		return new Status(IStatus.ERROR, PLUGIN_ID, message, cause);
 	}
 
 	public static void log(Exception e) {
@@ -45,6 +46,12 @@ public class Activator extends AbstractUIPlugin {
 		} else {
 			plugin.getLog().log(errorStatus(e.getLocalizedMessage(), e));
 		}
+	}
+
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
 	}
 
 }

@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.eclipse.cdt</groupId>
     <artifactId>cdt-parent</artifactId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>9.1.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -33,7 +33,7 @@
           <useUIThread>false</useUIThread>
           <product>org.eclipse.cdt.debug.application.product</product>
           <application>org.eclipse.cdt.debug.application.app</application>
-          <argLine>${base.ui.test.vmargs}</argLine>
+          <argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
           <includes>
              <include>**/AllTests.*</include>
           </includes>

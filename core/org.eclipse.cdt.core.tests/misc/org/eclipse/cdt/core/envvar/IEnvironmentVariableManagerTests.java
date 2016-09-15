@@ -66,7 +66,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		ResourceHelper.cleanUp(getName());
 	}
 
 	public static Test suite() {
@@ -508,7 +508,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		// Save the project description
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
-		ResourceHelper.cleanUp();
+		ResourceHelper.cleanUp(getName());
 		assertFalse(project.exists());
 		ResourceHelper.createCDTProjectWithConfig("envProject");
 		assertTrue(project.exists());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik 
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -92,7 +92,7 @@ public class CommentTests extends AST2TestBase {
 	}
 
 	private String getHSource() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifndef CPPCLASS_H_\n");
 		buffer.append("#define CPPCLASS_H_\n");
 		buffer.append("/* A very cool class\n");
@@ -119,7 +119,7 @@ public class CommentTests extends AST2TestBase {
 	}	
 	
 	private String getCppSource() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void CppClass()\n");
 		buffer.append("{\n");
 		buffer.append("   // Comment in cpp\n");
@@ -168,7 +168,7 @@ public class CommentTests extends AST2TestBase {
 	}
 	
 	private String getCSource() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("//A little input/output programm\n");
 		buffer.append("int main(void){\n");
 		buffer.append("	int number = -1;\n");

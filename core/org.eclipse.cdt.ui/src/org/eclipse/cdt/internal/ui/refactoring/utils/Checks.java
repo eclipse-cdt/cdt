@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class Checks {
 	public static boolean startsWithUpperCase(String s) {
 		if (s == null) {
 			return false;
-		} else if ("".equals(s)) { //$NON-NLS-1$
+		} else if (s.isEmpty()) {
 			return false;
 		} else {
 			// Workaround for JDK bug (see 26529)
@@ -62,7 +62,7 @@ public class Checks {
 	public static boolean startsWithLowerCase(String s){
 		if (s == null) {
 			return false;
-		} else if ("".equals(s)) { //$NON-NLS-1$
+		} else if (s.isEmpty()) {
 			return false;
 	    } else {
 			// Workaround for JDK bug (see 26529)

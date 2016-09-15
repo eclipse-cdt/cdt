@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Ericsson and others.
+ * Copyright (c) 2007, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class ServiceEventWaitor<V> {
     /**
      * Trace option for wait metrics
      */
-    private static final boolean LOG = TestsPlugin.DEBUG && "true".equals(Platform.getDebugOption("org.eclipse.cdt.tests.dsf.gdb/debug/waitMetrics"));  //$NON-NLS-1$//$NON-NLS-2$
+    private static final boolean LOG = TestsPlugin.DEBUG && Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.tests.dsf.gdb/debug/waitMetrics"));  //$NON-NLS-1$
 
 	/**
 	 * Constructor

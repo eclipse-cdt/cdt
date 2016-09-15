@@ -6,7 +6,7 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
+            objectClass="org.eclipse.core.resources.IContainer"
             adaptable="true"
             id="org.eclipse.cdt.make.ui.popupMenu.NavigatorContribution">
          <action
@@ -49,6 +49,30 @@
                  value="org.eclipse.cdt.make.core.makeNature"/>
             </or>
          </visibility>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.make.internal.ui.MakeTargetsContainer"
+            adaptable="false"
+            id="org.eclipse.cdt.make.ui.popupMenu.NavigatorContribution2">
+         <action
+               label="%LastTargetBuild.name"
+               class="org.eclipse.cdt.make.ui.actions.BuildLastTargetAction"
+               id="org.eclipse.cdt.make.ui.NavigatorBuildLastTargetAction2"
+               enablesFor="1"
+               definitionId="org.eclipse.cdt.make.ui.targetBuildLastCommand">
+         </action>   
+         <action
+               label="%ActionMakeBuildTarget.label"
+               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.NavigatorBuildTargetAction2">
+         </action>
+         <action
+               label="%ActionMakeCreateTarget.label"
+               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction2">
+         </action>
       </objectContribution>
       <viewerContribution
             targetID="#MakefileRulerContext"
@@ -550,4 +574,59 @@
        </description>
     </transfer>
    </extension>
+ <extension
+       point="org.eclipse.ui.navigator.navigatorContent">
+    <navigatorContent
+          activeByDefault="true"
+          contentProvider="org.eclipse.cdt.make.internal.ui.MakeNavContentProvider"
+          id="org.eclipse.cdt.make.ui.makeTargets.content"
+          labelProvider="org.eclipse.cdt.make.internal.ui.MakeNavLabelProvider"
+          name="Build Targets">
+       <triggerPoints>
+          <or>
+             <and>
+                <instanceof
+                      value="org.eclipse.core.resources.IContainer">
+                </instanceof>
+                <test
+                      property="org.eclipse.core.resources.projectNature"
+                      value="org.eclipse.cdt.core.cnature">
+                </test>
+             </and>
+             <instanceof
+                   value="org.eclipse.cdt.core.model.ICContainer">
+             </instanceof>
+          </or>
+       </triggerPoints>
+    </navigatorContent>
+    <actionProvider
+          class="org.eclipse.cdt.make.internal.ui.MakeTargetActionProvider"
+          id="org.eclipse.cdt.make.ui.makeTargets.actions">
+       <enablement>
+          <instanceof
+                value="org.eclipse.cdt.make.core.IMakeTarget">
+          </instanceof>
+       </enablement>
+    </actionProvider>
+ </extension>
+ <extension
+       point="org.eclipse.ui.navigator.viewer">
+    <viewerContentBinding
+          viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+       <includes>
+          <contentExtension
+                isRoot="false"
+                pattern="org.eclipse.cdt.make.ui.makeTargets.*">
+          </contentExtension>
+       </includes>
+    </viewerContentBinding>
+    <viewerActionBinding
+          viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+       <includes>
+          <actionExtension
+                pattern="org.eclipse.cdt.make.ui.makeTargets.*">
+          </actionExtension>
+       </includes>
+    </viewerActionBinding>
+ </extension>
 </plugin>

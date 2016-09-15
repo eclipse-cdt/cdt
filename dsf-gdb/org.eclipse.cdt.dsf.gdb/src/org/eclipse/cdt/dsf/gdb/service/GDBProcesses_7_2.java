@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
@@ -36,6 +37,8 @@ import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMultiDetach;
 import org.eclipse.cdt.dsf.debug.service.IMultiTerminate;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.ICreatedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
@@ -51,6 +54,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupAddedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -132,6 +136,26 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	}
 
 	/**
+	 * Event indicating that a container (gdb inferior) has been created, but is not yet running.
+	 * @since 5.1
+	 */
+	protected static class ContainerCreatedDMEvent extends AbstractDMEvent<IExecutionDMContext>
+		implements ICreatedDMEvent
+	{
+		public ContainerCreatedDMEvent(IContainerDMContext context) {
+			super(context);
+		}
+	}
+
+	/** 
+	 * The first thread-group id used by GDB.
+	 * GDB starts up with certain things already setup, and we need
+	 * to prepare some things using this id.
+	 * @since 5.1
+	 */
+	public static final String INITIAL_THREAD_GROUP_ID = "i1"; //$NON-NLS-1$
+	
+	/**
      * The id of the single thread to be used during event visualization. 
      * @since 4.1 
      */
@@ -191,6 +215,12 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
     	fBackend = getServicesTracker().getService(IGDBBackend.class);
     	
+    	// We know we missed the very first =thread-group-added event
+		// because GDB sends it as soon as it starts, but we are not
+		// ready to receive it at that time.  We send it now instead.
+		IMIContainerDMContext initialContainer = createContainerContextFromGroupId(fCommandControl.getContext(), INITIAL_THREAD_GROUP_ID);
+        getSession().dispatchEvent(new ContainerCreatedDMEvent(initialContainer), getProperties());
+
     	requestMonitor.done();
 	}
 
@@ -307,7 +337,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		                    	if (isInitialProcess()) {
 		                    		// If it is the first inferior, GDB has already created it for us
 		                    		// We really should get the id from GDB instead of hard-coding it
-		        					fContainerDmc = createContainerContext(procCtx, "i1"); //$NON-NLS-1$
+		        					fContainerDmc = createContainerContext(procCtx, INITIAL_THREAD_GROUP_ID);
 		                    		rm.done();
 		                    		return;
 		                    	}
@@ -659,6 +689,16 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		});
 	}
 	
+    /**
+	 * @since 5.1
+	 */
+    @DsfServiceEventHandler
+    public void eventDispatched(MIThreadGroupAddedEvent e) {
+    	IProcessDMContext procDmc = e.getDMContext();
+        IMIContainerDMContext containerDmc = e.getGroupId() != null ? createContainerContext(procDmc, e.getGroupId()) : null;
+        getSession().dispatchEvent(new ContainerCreatedDMEvent(containerDmc), getProperties());
+    }
+    
     /** @since 4.0 */
     @DsfServiceEventHandler
     @Override

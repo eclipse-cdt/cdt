@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,7 +91,7 @@ public class CCommandDSC {
 	}
 	
     public Integer getCommandIdAsInteger() {
-        return new Integer(getCommandId());
+        return Integer.valueOf(getCommandId());
     }
     /**
      * @return Returns the commandId.
@@ -108,7 +108,7 @@ public class CCommandDSC {
     
 	@Override
 	public String toString() {
-		String commandAsString = new String();
+		String commandAsString = ""; //$NON-NLS-1$
 		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = i.next();
 			String value = optionPair.getValue();
@@ -128,7 +128,7 @@ public class CCommandDSC {
 	 * @return the command line to run the scanner discovery.
 	 */
 	public String getSCDRunnableCommand(boolean quoteIncludePaths, boolean quoteDefines) {
-		String commandAsString = new String();
+		String commandAsString = ""; //$NON-NLS-1$
 		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = i.next();
             if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND.toString())) {
@@ -167,7 +167,7 @@ public class CCommandDSC {
 	 * @return the compiler command
 	 */
 	public String getCompilerName() {
-		String compiler = new String();
+		String compiler = ""; //$NON-NLS-1$
 		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = i.next();
             if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND.toString())) {

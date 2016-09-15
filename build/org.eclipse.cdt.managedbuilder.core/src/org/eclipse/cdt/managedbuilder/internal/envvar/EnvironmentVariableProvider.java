@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 
 		@Override
 		public String[] resolveBuildPaths(int pathType, String variableName, String variableValue, IConfiguration configuration) {
-			if (fDelimiter == null || "".equals(fDelimiter)) //$NON-NLS-1$
+			if (fDelimiter == null || fDelimiter.isEmpty())
 				return new String[]{variableValue};
 
 			List<String> list = EnvVarOperationProcessor.convertToList(variableValue,fDelimiter);
@@ -89,7 +89,7 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 
 	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, Object level, boolean includeParentLevels, boolean resolveMacros) {
-		if (variableName == null || "".equals(variableName)) //$NON-NLS-1$
+		if (variableName == null || variableName.isEmpty())
 			return null;
 
 		if (level instanceof IConfiguration) {

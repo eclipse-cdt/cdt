@@ -77,6 +77,10 @@ public class ExternalToolInvoker {
 			throws CoreException, InvocationFailure {
 		monitor.beginTask("Launching " + toolName, 100);
 		IConsole c = CCorePlugin.getDefault().getConsole(null, DEFAULT_CONTEXT_MENU_ID, toolName, null);
+		
+		// Start Build Console so we can get the OutputStream and ErrorStream properly.
+		c.start(project);
+		
 		ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(c.getOutputStream(), c.getErrorStream(), parsers);
 		final OutputStream out = sniffer.getOutputStream();
 		final OutputStream err = sniffer.getErrorStream();

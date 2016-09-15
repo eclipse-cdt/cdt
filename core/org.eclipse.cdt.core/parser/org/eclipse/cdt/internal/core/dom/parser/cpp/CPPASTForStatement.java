@@ -21,22 +21,24 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecFor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
 
 /**
  * For statement in C++
  */
-public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTForStatement {
+public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTForStatement, ICPPExecutionOwner {
     private IScope fScope;
-    
+
     private IASTStatement fInit;
     private IASTExpression fCondition;
     private IASTDeclaration fCondDeclaration;
     private IASTExpression fIterationExpression;
     private IASTStatement fBody;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-    
+
     public CPPASTForStatement() {
 	}
 
@@ -60,7 +62,7 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 	public CPPASTForStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CPPASTForStatement copy(CopyStyle style) {
 		CPPASTForStatement copy = new CPPASTForStatement();
@@ -164,7 +166,7 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 		}
         return true;
     }
-    
+
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (fBody == child) {
@@ -223,4 +225,17 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 	public IASTDeclaration getConditionDeclaration() {
         return fCondDeclaration;
     }
+
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPExecution initializerExec = EvalUtil.getExecutionFromStatement(getInitializerStatement());
+		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner)getConditionExpression();
+		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner)getConditionDeclaration();
+		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration)conditionDecl.getExecution() : null;
+		ICPPEvaluationOwner iterationExpr = (ICPPEvaluationOwner)getIterationExpression();
+		ICPPEvaluation iterationEval = iterationExpr != null ? iterationExpr.getEvaluation() : null;
+		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
+		return new ExecFor(initializerExec, conditionExprEval, conditionDeclExec, iterationEval, bodyExec);
+	}
 }

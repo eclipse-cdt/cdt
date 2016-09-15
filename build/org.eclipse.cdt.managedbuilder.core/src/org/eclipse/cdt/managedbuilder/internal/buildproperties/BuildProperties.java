@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class BuildProperties implements IBuildProperties {
 		if(fInexistentProperties != null){
 			String inexistentProps = CDataUtil.arrayToString(fInexistentProperties.toArray(new String[fInexistentProperties.size()]), BuildPropertyManager.PROPERTIES_SEPARATOR);
 			if(props.length() != 0){
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append(props).append(BuildPropertyManager.PROPERTIES_SEPARATOR).append(inexistentProps);
 			} else {
 				props = inexistentProps;
@@ -123,7 +123,7 @@ public class BuildProperties implements IBuildProperties {
 		else if(size == 1)
 			return fPropertiesMap.values().iterator().next().toString();
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		Iterator<IBuildProperty> iter = fPropertiesMap.values().iterator();
 		buf.append(iter.next().toString());
 		for(;iter.hasNext();){

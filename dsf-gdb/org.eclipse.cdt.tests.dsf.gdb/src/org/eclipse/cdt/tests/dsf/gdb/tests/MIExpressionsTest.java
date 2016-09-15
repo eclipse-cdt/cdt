@@ -311,7 +311,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
      */
     @Test
     public void testChildren() throws Throwable {
-      	assumeGdbVersionAtLeast("6.7");
+      	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_7);
 
     	// Get the children of some variables
         MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testChildren");
@@ -1829,8 +1829,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
      */
     @Test
     public void testDeleteChildren() throws Throwable {
-    	assumeGdbVersionAtLeast("6.7");
-    	assumeGdbVersionLowerThen("7.3");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_7);
+    	assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_7_3);
     	
         SyncUtil.runToLocation("testDeleteChildren");
         MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
@@ -2886,7 +2886,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
      */
     @Test
     public void testCanWriteLValue() throws Throwable {
-    	assumeGdbVersionAtLeast("6.8");
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
     	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testCanWrite");  // Re-use test
     	final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -3463,8 +3463,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
      */
     @Test
     public void testRTTI() throws Throwable {
-    	assumeGdbVersionNot("6.7"); // crashing
-    	assumeGdbVersionLowerThen("7.5");
+    	assumeGdbVersionNot(ITestConstants.SUFFIX_GDB_6_7); // crashing
+    	assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_7_5);
     	SyncUtil.runToLocation("testRTTI");    	
     	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
@@ -4267,7 +4267,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	// Bug 320277
 	@Test
 	public void testDeleteChildren_7_3() throws Throwable {
-		assumeGdbVersionAtLeast("7.3");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_3);
 		SyncUtil.runToLocation("testDeleteChildren");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
@@ -4410,7 +4410,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testRTTI_7_5() throws Throwable {
-		assumeGdbVersionAtLeast("7.5");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_5);
 		SyncUtil.runToLocation("testRTTI");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);

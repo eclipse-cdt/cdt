@@ -1823,7 +1823,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Verify the state of the breakpoint
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)",
-				breakpoint2.getCondition().equals(""));
+				breakpoint2.getCondition().isEmpty());
 	}
 
 	// ------------------------------------------------------------------------
@@ -2010,7 +2010,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Verify the state of the watchpoint
 		MIBreakpointDMData watchpoint2 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)",
-				watchpoint2.getCondition().equals(""));
+				watchpoint2.getCondition().isEmpty());
 	}
 
 	// ------------------------------------------------------------------------
@@ -3246,7 +3246,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(""));
+				breakpoint1.getFileName().isEmpty());
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
 				breakpoint1.getLineNumber() == -1);
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
@@ -3297,9 +3297,9 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(""));
+				breakpoint1.getFileName().isEmpty());
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong function)",
-				breakpoint1.getFunctionName().equals(""));
+				breakpoint1.getFunctionName().isEmpty());
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",

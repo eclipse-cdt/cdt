@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.launch.remote"
       label="%featureName"
-      version="9.0.0.qualifier"
+      version="9.1.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -20,7 +20,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.rse" version="0.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.remote" version="0.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

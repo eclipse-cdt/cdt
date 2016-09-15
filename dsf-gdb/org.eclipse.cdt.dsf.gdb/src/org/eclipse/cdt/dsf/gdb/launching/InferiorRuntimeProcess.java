@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Ericsson and others.
+ * Copyright (c) 2011, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public class InferiorRuntimeProcess extends RuntimeProcess {
 			} catch (CoreException e) {
 				type = null;
 			}
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(config.getName());
 			if (type != null) {
 				buffer.append(" ["); //$NON-NLS-1$

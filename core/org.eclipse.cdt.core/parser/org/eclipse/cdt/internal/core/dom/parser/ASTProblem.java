@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,73 +30,73 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     protected static final Map<Integer, String> errorMessages;
     static {
     	errorMessages = new HashMap<Integer, String>();
-    	errorMessages.put(new Integer(PREPROCESSOR_POUND_ERROR), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_POUND_ERROR),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.error")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_POUND_WARNING), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_POUND_WARNING),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.warning")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_INCLUSION_NOT_FOUND), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_INCLUSION_NOT_FOUND),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.inclusionNotFound")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_DEFINITION_NOT_FOUND),
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_DEFINITION_NOT_FOUND),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.definitionNotFound")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_INVALID_MACRO_DEFN), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_INVALID_MACRO_DEFN),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidMacroDefn")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_INVALID_MACRO_REDEFN),
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_INVALID_MACRO_REDEFN),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidMacroRedefn")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_UNBALANCE_CONDITION), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_UNBALANCE_CONDITION),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.unbalancedConditional")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_CONDITIONAL_EVAL_ERROR),
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_CONDITIONAL_EVAL_ERROR),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.conditionalEval")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_MACRO_USAGE_ERROR), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_MACRO_USAGE_ERROR),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.macroUsage")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_CIRCULAR_INCLUSION), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_CIRCULAR_INCLUSION),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.circularInclusion")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_INVALID_DIRECTIVE), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_INVALID_DIRECTIVE),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidDirective")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_MACRO_PASTING_ERROR), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_MACRO_PASTING_ERROR),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.macroPasting")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_MISSING_RPAREN_PARMLIST),
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_MISSING_RPAREN_PARMLIST),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.missingRParen")); //$NON-NLS-1$       
-    	errorMessages.put(new Integer(PREPROCESSOR_INVALID_VA_ARGS), 
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_INVALID_VA_ARGS),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidVaArgs")); //$NON-NLS-1$   
-    	errorMessages.put(new Integer(SCANNER_INVALID_ESCAPECHAR), 
+    	errorMessages.put(Integer.valueOf(SCANNER_INVALID_ESCAPECHAR),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.invalidEscapeChar")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_UNBOUNDED_STRING), 
+    	errorMessages.put(Integer.valueOf(SCANNER_UNBOUNDED_STRING),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.unboundedString")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_BAD_FLOATING_POINT), 
+    	errorMessages.put(Integer.valueOf(SCANNER_BAD_FLOATING_POINT),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badFloatingPoint")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_BAD_BINARY_FORMAT), 
+    	errorMessages.put(Integer.valueOf(SCANNER_BAD_BINARY_FORMAT),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badBinaryFormat")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_BAD_HEX_FORMAT), 
+    	errorMessages.put(Integer.valueOf(SCANNER_BAD_HEX_FORMAT),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badHexFormat")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_BAD_OCTAL_FORMAT), 
+    	errorMessages.put(Integer.valueOf(SCANNER_BAD_OCTAL_FORMAT),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badOctalFormat")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_BAD_DECIMAL_FORMAT), 
+    	errorMessages.put(Integer.valueOf(SCANNER_BAD_DECIMAL_FORMAT),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badDecimalFormat")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_ASSIGNMENT_NOT_ALLOWED), 
+    	errorMessages.put(Integer.valueOf(SCANNER_ASSIGNMENT_NOT_ALLOWED),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.assignmentNotAllowed")); //$NON-NLS-1$        
-    	errorMessages.put(new Integer(SCANNER_DIVIDE_BY_ZERO), 
+    	errorMessages.put(Integer.valueOf(SCANNER_DIVIDE_BY_ZERO),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.divideByZero")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_MISSING_R_PAREN), 
+    	errorMessages.put(Integer.valueOf(SCANNER_MISSING_R_PAREN),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.missingRParen")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_EXPRESSION_SYNTAX_ERROR), 
+    	errorMessages.put(Integer.valueOf(SCANNER_EXPRESSION_SYNTAX_ERROR),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.expressionSyntaxError")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_ILLEGAL_IDENTIFIER), 
+    	errorMessages.put(Integer.valueOf(SCANNER_ILLEGAL_IDENTIFIER),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.illegalIdentifier")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_BAD_CONDITIONAL_EXPRESSION),
+    	errorMessages.put(Integer.valueOf(SCANNER_BAD_CONDITIONAL_EXPRESSION),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badConditionalExpression")); //$NON-NLS-1$        
-    	errorMessages.put(new Integer(SCANNER_UNEXPECTED_EOF), 
+    	errorMessages.put(Integer.valueOf(SCANNER_UNEXPECTED_EOF),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.unexpectedEOF")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_BAD_CHARACTER), 
+    	errorMessages.put(Integer.valueOf(SCANNER_BAD_CHARACTER),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badCharacter")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_CONSTANT_WITH_BAD_SUFFIX),
+    	errorMessages.put(Integer.valueOf(SCANNER_CONSTANT_WITH_BAD_SUFFIX),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.constantWithBadSuffix")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_FLOAT_WITH_BAD_PREFIX),
+    	errorMessages.put(Integer.valueOf(SCANNER_FLOAT_WITH_BAD_PREFIX),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.floatWithBadPrefix")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION),
+    	errorMessages.put(Integer.valueOf(PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.multipleUserDefinedLiteralSuffixesOnStringLiteral")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SYNTAX_ERROR), 
+    	errorMessages.put(Integer.valueOf(SYNTAX_ERROR),
     			ParserMessages.getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(MISSING_SEMICOLON), 
+    	errorMessages.put(Integer.valueOf(MISSING_SEMICOLON),
     			ParserMessages.getString("ParserProblemFactory.error.syntax.missingSemicolon")); //$NON-NLS-1$
 	}
 
@@ -154,12 +154,12 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 
         char[] file= getOriginatingFileName();
         int line= getSourceLineNumber();
-        Object[] args = new Object[] { msg, new String(file), new Integer(line) };
+        Object[] args = new Object[] { msg, new String(file), Integer.valueOf(line) };
         return ParserMessages.getFormattedString("BaseProblemFactory.problemPattern", args); //$NON-NLS-1$
     }
 
     public static String getMessage(int id, String arg) {
-        String msg = errorMessages.get(new Integer(id));
+        String msg = errorMessages.get(Integer.valueOf(id));
         if (msg == null)
             msg = ""; //$NON-NLS-1$
 

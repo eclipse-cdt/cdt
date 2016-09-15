@@ -6,29 +6,26 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ * 	   QNX - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.dom;
 
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
 public interface IPDOMVisitor {
-
 	/**
-	 * Walk the nodes in a PDOM. Return true to visit the children of
-	 * this node, or false to skip to the next sibling of this node.
+	 * Walks the nodes in a PDOM. Returns true to visit the children of
+	 * the node, or false to skip to the next sibling of this node.
 	 * Throw CoreException to stop the visit.
 	 *  
 	 * @param node being visited
 	 * @return whether to visit children
 	 */
 	public boolean visit(IPDOMNode node) throws CoreException;
-	
+
 	/**
 	 * All children have been visited, about to go back to the parent.
 	 * 
@@ -36,5 +33,4 @@ public interface IPDOMVisitor {
 	 * @throws CoreException
 	 */
 	public void leave(IPDOMNode node) throws CoreException;
-	
 }

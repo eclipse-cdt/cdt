@@ -556,6 +556,19 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * <pre>
+	 * FORMATTER / Option to control whether line comments on subsequent lines on unindented code should be treated as block comment
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.line_up_line_comment_in_blocks_on_first_column"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           FALSE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 * @since 6.1
+	 */
+	public final static String FORMATTER_COMMENT_LINE_UP_LINE_COMMENT_IN_BLOCKS_ON_FIRST_COLUMN = CCorePlugin.PLUGIN_ID + ".formatter.comment.line_up_line_comment_in_blocks_on_first_column"; //$NON-NLS-1$
+
+	/**
+	 * <pre>
 	 * FORMATTER / Option to control whether comments starting from the beginning of line should stay that way and never be indented. 
 	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.never_indent_line_comments_on_first_column"
 	 *     - possible values:   { TRUE, FALSE }

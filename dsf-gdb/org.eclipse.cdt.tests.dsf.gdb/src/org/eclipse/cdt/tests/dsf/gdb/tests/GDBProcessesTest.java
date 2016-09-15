@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +122,7 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void getThreadData() throws Throwable {
-		assumeGdbVersionAtLeast("7.3");
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_3);
 		// Start the threads one by one to make sure they are discovered by gdb in the right
 		// order.
 		for (int i = 0; i < 5; i++) {

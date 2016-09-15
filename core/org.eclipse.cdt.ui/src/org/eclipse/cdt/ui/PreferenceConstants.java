@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -990,11 +990,20 @@ public class PreferenceConstants {
 	public final static String REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES = "removeTrailingWhitespaceEditedLines"; //$NON-NLS-1$
 
 	/**
-	 * Style format code on save
+	 * Preference key for whether to format code when saving.
 	 *
 	 * @since 5.9
 	 */
 	public final static String FORMAT_SOURCE_CODE = "formatSourceCode"; //$NON-NLS-1$
+
+	/**
+	 * Preference key controlling how FORMAT_SOURCE_CODE option is applied.
+	 * If FORMAT_SOURCE_CODE is enabled, this option limits the scope of formatting
+	 * to edited lines only. This option has no effect if FORMAT_SOURCE_CODE is disabled.
+	 *
+	 * @since 6.0
+	 */
+	public final static String FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES = "formatSourceCodeEditedLines"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
@@ -2105,6 +2114,17 @@ public class PreferenceConstants {
 	public static final String INCLUDE_STYLE_MATCHING_PATTERN = "includeStyle.matchingPattern"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether annotation roll over is used or not.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> the annotation ruler column
+	 * uses a roll over to display multiple annotations
+	 * </p>
+	 *
+	 * @since 6.1
+	 */
+	public static final String EDITOR_ANNOTATION_ROLL_OVER= "editor_annotation_roll_over"; //$NON-NLS-1$
+	
+	/**
 	 * Returns the CDT-UI preference store.
 	 *
 	 * @return the CDT-UI preference store
@@ -2132,6 +2152,8 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifier); //$NON-NLS-1$
 
 		store.setDefault(EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT, true);
+
+		store.setDefault(EDITOR_ANNOTATION_ROLL_OVER, true);
 
 		// Syntax highlighting
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);
@@ -2205,7 +2227,8 @@ public class PreferenceConstants {
 		store.setDefault(REMOVE_TRAILING_WHITESPACE, true);
 		store.setDefault(REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, true);
 		store.setDefault(ENSURE_NEWLINE_AT_EOF, true);
-		store.setDefault(PreferenceConstants.FORMAT_SOURCE_CODE, false);
+		store.setDefault(FORMAT_SOURCE_CODE, false);
+		store.setDefault(FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES, true);
 
 		// Formatter profile
 		store.setDefault(FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);

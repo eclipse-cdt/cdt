@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.preferences;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.qt.ui.Messages;
 import org.eclipse.cdt.internal.qt.ui.Activator;
+import org.eclipse.cdt.internal.qt.ui.Messages;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -47,8 +48,8 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	private Table installTable;
 	private Button removeButton;
 
-	private Map<String, IQtInstall> installsToAdd = new HashMap<>();
-	private Map<String, IQtInstall> installsToRemove = new HashMap<>();
+	private Map<Path, IQtInstall> installsToAdd = new HashMap<>();
+	private Map<Path, IQtInstall> installsToRemove = new HashMap<>();
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -84,8 +85,8 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		locationColumn.setText(Messages.QtPreferencePage_2);
 
 		TableColumnLayout tableLayout = new TableColumnLayout();
-		tableLayout.setColumnData(nameColumn, new ColumnWeightData(25, 50, true));
-		tableLayout.setColumnData(locationColumn, new ColumnWeightData(75, 150, true));
+		tableLayout.setColumnData(nameColumn, new ColumnWeightData(75, 350, true));
+		tableLayout.setColumnData(locationColumn, new ColumnWeightData(25, 100, true));
 		installTableComp.setLayout(tableLayout);
 
 		Composite buttonsComp = new Composite(installsGroup, SWT.NONE);
@@ -102,7 +103,11 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
 					IQtInstall install = wizard.getInstall();
-					installsToAdd.put(install.getName(), install);
+					if (installsToRemove.containsKey(install.getQmakePath())) {
+						installsToRemove.remove(install.getQmakePath());
+					} else {
+						installsToAdd.put(install.getQmakePath(), install);
+					}
 					updateTable();
 				}
 			}
@@ -116,7 +121,11 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 			if (MessageDialog.openConfirm(getShell(), Messages.QtPreferencePage_5, Messages.QtPreferencePage_6)) {
 				for (TableItem item : installTable.getSelection()) {
 					IQtInstall install = (IQtInstall) item.getData();
-					installsToRemove.put(install.getName(), install);
+					if (installsToAdd.containsKey(install.getQmakePath())) {
+						installsToAdd.remove(install.getQmakePath());
+					} else {
+						installsToRemove.put(install.getQmakePath(), install);
+					}
 					updateTable();
 				}
 			}
@@ -127,18 +136,18 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		return control;
 	}
 
-	private Map<String, IQtInstall> getInstalls() {
-		Map<String, IQtInstall> installs = new HashMap<>();
+	private Map<Path, IQtInstall> getInstalls() {
+		Map<Path, IQtInstall> installs = new HashMap<>();
 		for (IQtInstall install : manager.getInstalls()) {
-			installs.put(install.getName(), install);
+			installs.put(install.getQmakePath(), install);
 		}
 
 		for (IQtInstall install : installsToAdd.values()) {
-			installs.put(install.getName(), install);
+			installs.put(install.getQmakePath(), install);
 		}
 
 		for (IQtInstall install : installsToRemove.values()) {
-			installs.remove(install.getName());
+			installs.remove(install.getQmakePath());
 		}
 
 		return installs;
@@ -146,13 +155,16 @@ public class QtPreferencePage extends PreferencePage implements IWorkbenchPrefer
 
 	private void updateTable() {
 		List<IQtInstall> sorted = new ArrayList<>(getInstalls().values());
-		Collections.sort(sorted, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+		Collections.sort(sorted, (o1, o2) -> o1.getQmakePath().toString().compareToIgnoreCase(o2.getQmakePath().toString()));
 
 		installTable.removeAll();
 		for (IQtInstall install : sorted) {
 			TableItem item = new TableItem(installTable, SWT.NONE);
-			item.setText(0, install.getName());
-			item.setText(1, install.getQmakePath().toString());
+			item.setText(0, install.getQmakePath().toString());
+			String spec = install.getSpec();
+			if (spec != null) {
+				item.setText(1, install.getSpec());
+			}
 			item.setData(install);
 		}
 	}

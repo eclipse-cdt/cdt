@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,10 +81,10 @@ public class DsfExecutable {
 
     static {
         assert (ASSERTIONS_ENABLED = true) == true;
-        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+        DEBUG_EXECUTOR = DsfPlugin.DEBUG && Boolean.parseBoolean(
                 Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
         
-        DEBUG_MONITORS = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+        DEBUG_MONITORS = DsfPlugin.DEBUG && Boolean.parseBoolean(
                 Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$          
     }
 
@@ -200,7 +200,7 @@ public class DsfExecutable {
 //            traceBuilder.append(' ');
 //            
 //            final String refstr = LoggingUtils.toString(this, false);
-//            traceBuilder.append("DSF executable was never executed: " + refstr); //$NON-NLS-1$
+//            traceBuilder.append("DSF executable was never executed: ").append(refstr); //$NON-NLS-1$
 //            final String tostr = LoggingUtils.trimTrailingNewlines(this.toString());
 //            if (!tostr.equals(refstr)) {
 //            	traceBuilder.append(" ["); //$NON-NLS-1$

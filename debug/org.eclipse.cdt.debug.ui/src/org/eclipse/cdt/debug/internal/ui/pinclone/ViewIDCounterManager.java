@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2010, 2012 Texas Instruments and others
+ * Copyright (c) 2010, 2016 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,7 +187,7 @@ public final class ViewIDCounterManager {
 			if (secondaryId != null) {
 				Set<Integer> secondaryIdSet = viewIdToNextCounterMap.get(viewId);
 				if (secondaryIdSet != null) {	
-					secondaryIdSet.remove(new Integer(PinCloneUtils.decodeClonedPartSecondaryId(secondaryId)));
+					secondaryIdSet.remove(Integer.valueOf(PinCloneUtils.decodeClonedPartSecondaryId(secondaryId)));
 				}
 			}
 		}
@@ -201,7 +201,7 @@ public final class ViewIDCounterManager {
 		}
 		
 		for (int i = 1; i < Integer.MAX_VALUE; ++i) {
-			Integer next = new Integer(i);
+			Integer next = Integer.valueOf(i);
 			if (!secondaryIdSet.contains(next)) {
 				secondaryIdSet.add(next);
 				return next;

@@ -2,29 +2,54 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.cmake.ui.internal.NewCMakeProjectWizard"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            icon="icons/newcc_app.gif"
-            id="org.eclipse.cdt.cmake.ui.newProjectWizard"
-            name="CMake Project"
-            project="true">
-      </wizard>
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="org.eclipse.cdt.cmake.ui.properties.CMakePropertyPage"
             id="org.eclipse.cdt.cmake.ui.properties.cmakePropertyPage"
             name="CMake">
          <enabledWhen>
-            <instanceof
-                  value="org.eclipse.core.resources.IProject">
-            </instanceof>
+            <and>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="org.eclipse.cdt.cmake.core.cmakeNature">
+               </test>
+            </and>
          </enabledWhen>
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.cmake.ui.internal.CMakePreferencePage"
+            id="org.eclipse.cdt.cmake.ui.page1"
+            name="%cmake.preferences.name">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.tools.templates.ui.templates">
+      <tag
+            id="org.eclipse.cdt.cmake.ui.tag"
+            label="CMake">
+      </tag>
+      <template
+            icon="icons/cmake_logo-main.png"
+            id="org.eclipse.cdt.cmake.ui.emptyProjectTemplate"
+            label="CMake Project"
+            wizard="org.eclipse.cdt.cmake.ui.internal.NewCMakeProjectWizard">
+         <description>
+            A CMake project with a Hello World executable to get started.
+         </description>
+         <tagReference
+               id="org.eclipse.cdt.ui.cdtTag">
+         </tagReference>
+         <tagReference
+               id="org.eclipse.cdt.cmake.ui.tag">
+         </tagReference>
+      </template>
    </extension>
 
 </plugin>

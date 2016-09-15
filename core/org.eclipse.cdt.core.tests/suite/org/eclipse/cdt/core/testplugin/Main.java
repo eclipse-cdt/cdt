@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,13 +178,13 @@ public class Main {
 	 * @param prop the initial comma-separated string
 	 */
 	private String[] getArrayFromList(String prop) {
-		if (prop == null || prop.trim().equals(""))
+		if (prop == null || prop.trim().isEmpty())
 			return new String[0];
 		List<String> list = new ArrayList<>();
 		StringTokenizer tokens = new StringTokenizer(prop, ",");
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken().trim();
-			if (!token.equals(""))
+			if (!token.isEmpty())
 				list.add(token);
 		}
 		return list.toArray(new String[list.size()]);

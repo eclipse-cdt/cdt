@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Ericsson and others.
+ * Copyright (c) 2007, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,12 +235,13 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
       	// The ordering of the contexts is not deterministic
     	LinkedList<Integer> ids = new LinkedList<Integer>(Arrays.asList(new Integer[] {1}));
       	if (sProgramIsCygwin) {
-      		ids.add(new Integer(2));
+      		ids.add(2);
       	}
 
-    	assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)ctxts[0]).getThreadId())));
+	// Note that List.remove(int) and List.remove(Integer) have different effects so this should stay remove(Integer)
+    	assertTrue(ids.remove(Integer.valueOf(((IMIExecutionDMContext)ctxts[0]).getThreadId())));
       	if (sProgramIsCygwin) {
-      		assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)ctxts[1]).getThreadId())));
+      		assertTrue(ids.remove(Integer.valueOf(((IMIExecutionDMContext)ctxts[1]).getThreadId())));
       	}
 		
 		wait.waitReset();
@@ -312,13 +313,13 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
       	// The ordering of the contexts is not deterministic
     	LinkedList<Integer> ids = new LinkedList<Integer>(Arrays.asList(new Integer[] {1,2}));
       	if (sProgramIsCygwin) {
-      		ids.add(new Integer(3));
+      		ids.add(3);
       	}
 
-    	assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)data[0]).getThreadId())));
-    	assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)data[1]).getThreadId())));
+    	assertTrue(ids.remove(Integer.valueOf(((IMIExecutionDMContext)data[0]).getThreadId())));
+    	assertTrue(ids.remove(Integer.valueOf(((IMIExecutionDMContext)data[1]).getThreadId())));
       	if (sProgramIsCygwin) {
-      		assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)data[2]).getThreadId())));
+      		assertTrue(ids.remove(Integer.valueOf(((IMIExecutionDMContext)data[2]).getThreadId())));
       	}
      } 
 

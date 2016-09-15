@@ -189,3 +189,10 @@ class Base
 class TestClass final : public Base
 {
 };
+//!decltype(auto)
+//%CPP
+decltype(auto) function()
+{
+    decltype(auto) a = new decltype(auto)(5);
+    return a;
+}

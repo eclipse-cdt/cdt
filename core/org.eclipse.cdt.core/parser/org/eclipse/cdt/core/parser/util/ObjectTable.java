@@ -18,6 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {
 	protected T[] keyTable;
 
@@ -58,8 +61,7 @@ public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {
 	@Override
 	public void clear() {
 		super.clear();
-	    for (int i = 0; i < keyTable.length; i++)
-	        keyTable[i] = null;
+		Arrays.fill(keyTable, null);
 	}
 
 	@Override
@@ -117,7 +119,7 @@ public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {
 			if (buffer.equals(keyTable[i]))
 				return i;
 
-			// Follow the next chain
+			// Follow the next chain.
 			for (i = nextTable[i] - 1; i >= 0 && i != nextTable[i] - 1; i = nextTable[i] - 1) {
 				if (buffer.equals(keyTable[i]))
 					return i;

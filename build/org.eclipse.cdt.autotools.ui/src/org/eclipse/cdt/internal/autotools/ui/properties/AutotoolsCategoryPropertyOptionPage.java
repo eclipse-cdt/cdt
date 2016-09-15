@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Red Hat Inc.
+ * Copyright (c) 2009, 2016 Red Hat Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,7 @@ public class AutotoolsCategoryPropertyOptionPage extends
 
 		@Override
 		protected String createList(String[] arg0) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for (String item : arg0) {
 				sb.append(item);
 				sb.append("\\s"); //$NON-NLS-1$

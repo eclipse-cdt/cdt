@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Wind River Systems and others.
+ * Copyright (c) 2009, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -197,13 +197,13 @@ public class ViewerUpdatesListener
             childrenIndexes = new TreeSet<Integer>();
             fChildrenUpdatesScheduled.put(path, childrenIndexes);
         }
-        childrenIndexes.add(new Integer(index));
+        childrenIndexes.add(index);
     }
 
     public void removeChildrenUpdate(TreePath path, int index) {
         Set<Integer> childrenIndexes = fChildrenUpdatesScheduled.get(path);
         if (childrenIndexes != null) {
-            childrenIndexes.remove(new Integer(index));
+            childrenIndexes.remove(Integer.valueOf(index));
             if (childrenIndexes.isEmpty()) {
                 fChildrenUpdatesScheduled.remove(path);
             }
@@ -368,7 +368,7 @@ public class ViewerUpdatesListener
                 Set<Integer> childrenIndexes = fChildrenUpdatesScheduled.get(update.getElementPath());
                 if (childrenIndexes != null) {
                     for (int i = start; i < end; i++) {
-                        childrenIndexes.remove(new Integer(i));
+                        childrenIndexes.remove(Integer.valueOf(i));
                     }
                     if (childrenIndexes.isEmpty()) {
                         fChildrenUpdatesScheduled.remove(update.getElementPath());
@@ -481,7 +481,7 @@ public class ViewerUpdatesListener
     }
     
     private String toString(int flags) {
-        StringBuffer buf = new StringBuffer("Viewer Update Listener");
+        StringBuilder buf = new StringBuilder("Viewer Update Listener");
 
         if (fFailOnRedundantUpdates) {
             buf.append("\n\t");
@@ -490,19 +490,19 @@ public class ViewerUpdatesListener
         }
         if (fFailOnMultipleLabelUpdateSequences) {
             buf.append("\n\t");
-            buf.append("fMultipleLabelUpdateSequencesObserved = " + fMultipleLabelUpdateSequencesObserved);
+            buf.append("fMultipleLabelUpdateSequencesObserved = ").append(fMultipleLabelUpdateSequencesObserved);
         }
         if (fFailOnMultipleModelUpdateSequences) {
             buf.append("\n\t");
-            buf.append("fMultipleModelUpdateSequencesObserved = " + fMultipleModelUpdateSequencesObserved);
+            buf.append("fMultipleModelUpdateSequencesObserved = ").append(fMultipleModelUpdateSequencesObserved);
         }
         if ( (flags & LABEL_SEQUENCE_COMPLETE) != 0) {
             buf.append("\n\t");
-            buf.append("fLabelSequenceComplete = " + fLabelSequenceComplete);
+            buf.append("fLabelSequenceComplete = ").append(fLabelSequenceComplete);
         }
         if ( (flags & LABEL_UPDATES_RUNNING) != 0) {
             buf.append("\n\t");
-            buf.append("fLabelUpdatesRunning = " + fLabelUpdatesCounter);
+            buf.append("fLabelUpdatesRunning = ").append(fLabelUpdatesCounter);
         }
         if ( (flags & LABEL_SEQUENCE_STARTED) != 0) {
             buf.append("\n\t");
@@ -519,11 +519,11 @@ public class ViewerUpdatesListener
         }
         if ( (flags & CONTENT_SEQUENCE_COMPLETE) != 0) {
             buf.append("\n\t");
-            buf.append("fContentSequenceComplete = " + fContentSequenceComplete);
+            buf.append("fContentSequenceComplete = ").append(fContentSequenceComplete);
         }
         if ( (flags & VIEWER_UPDATES_RUNNING) != 0) {
             buf.append("\n\t");
-            buf.append("fContentUpdatesCounter = " + fContentUpdatesCounter);
+            buf.append("fContentUpdatesCounter = ").append(fContentUpdatesCounter);
         }
         if ( (flags & HAS_CHILDREN_UPDATES_STARTED) != 0) {
             buf.append("\n\t");
@@ -566,26 +566,26 @@ public class ViewerUpdatesListener
         }
         if ( (flags & MODEL_CHANGED_COMPLETE) != 0) {
             buf.append("\n\t");
-            buf.append("fModelChangedComplete = " + fModelChangedComplete);
+            buf.append("fModelChangedComplete = ").append(fModelChangedComplete);
         }
         if ( (flags & STATE_SAVE_COMPLETE) != 0) {
             buf.append("\n\t");
-            buf.append("fStateSaveComplete = " + fStateSaveComplete);
+            buf.append("fStateSaveComplete = ").append(fStateSaveComplete);
         }
         if ( (flags & STATE_RESTORE_COMPLETE) != 0) {
             buf.append("\n\t");
-            buf.append("fStateRestoreComplete = " + fStateRestoreComplete);
+            buf.append("fStateRestoreComplete = ").append(fStateRestoreComplete);
         }
 //        if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
 //            buf.append("\n\t");
-//            buf.append("fProxyModels = " + fProxyModels);
+//            buf.append("fProxyModels = ").append(fProxyModels);
 //        }
         if ( (flags & PROPERTY_UPDATES_STARTED) != 0) {
             buf.append("\n\t");
             buf.append("fPropertiesUpdatesRunning = ");
             buf.append(toStringViewerUpdatesSet(fPropertiesUpdatesRunning));
             buf.append("\n\t");
-            buf.append("fPropertiesUpdatesCompleted = " + fPropertiesUpdatesCompleted);
+            buf.append("fPropertiesUpdatesCompleted = ").append(fPropertiesUpdatesCompleted);
         }
         if ( (flags & PROPERTY_UPDATES) != 0) {
             buf.append("\n\t");
@@ -594,7 +594,7 @@ public class ViewerUpdatesListener
         }
         if (fTimeoutInterval > 0) {
             buf.append("\n\t");
-            buf.append("fTimeoutInterval = " + fTimeoutInterval);
+            buf.append("fTimeoutInterval = ").append(fTimeoutInterval);
         }
         return buf.toString();
     }
@@ -603,7 +603,7 @@ public class ViewerUpdatesListener
         if (set.isEmpty()) {
             return "(EMPTY)";
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Iterator<TreePath> itr = set.iterator(); itr.hasNext(); ) {
             buf.append("\n\t\t");
             buf.append(toStringTreePath(itr.next()));
@@ -615,7 +615,7 @@ public class ViewerUpdatesListener
         if (set.isEmpty()) {
             return "(EMPTY)";
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Iterator<IViewerUpdate> itr = set.iterator(); itr.hasNext(); ) {
             buf.append("\n\t\t");
             buf.append(toStringTreePath((itr.next()).getElementPath()));
@@ -627,7 +627,7 @@ public class ViewerUpdatesListener
         if (map.isEmpty()) {
             return "(EMPTY)";
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Iterator<TreePath> itr = map.keySet().iterator(); itr.hasNext(); ) {
             buf.append("\n\t\t");
             TreePath path = itr.next();
@@ -643,7 +643,7 @@ public class ViewerUpdatesListener
         if (path.getSegmentCount() == 0) {
             return "/";
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < path.getSegmentCount(); i++) {
             buf.append("/");
             buf.append(path.getSegment(i));

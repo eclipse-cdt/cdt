@@ -62,4 +62,8 @@ public class TraditionalRenderingPreferenceConstants {
 	 */
 	public static final String MEM_MEMORY_SPACE_ID_PREFIX = MEM_COLOR_BACKGROUND + "MemorySpace-";
 
+	/**
+	 * @since 1.4
+	 */
+	public static final String MEM_CROSS_REFERENCE_INFO = "memCrossReferenceInfo";
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2016 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	public UITextWidget(UIAttributes uiAttribute) {
 		super(uiAttribute);
-		this.textValue = new String();
+		this.textValue = ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -221,7 +221,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 			return;
 
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
-		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && textValue.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && textValue.isEmpty()) { //$NON-NLS-1$
 			return;
 		}
 
@@ -264,7 +264,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
 
 		if (((mandatory != null) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)))
-				&& ((textValue == null) || (textValue.equals("")) || //$NON-NLS-1$
+				&& ((textValue == null) || (textValue.isEmpty()) ||
 				(textValue.trim().length() < 1))) {
 
 			retVal = false;

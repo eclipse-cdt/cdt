@@ -8,8 +8,11 @@
  * Contributors:
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import java.util.Objects;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -73,5 +76,22 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (!getClass().equals(obj.getClass()))
+			return false;
+		CPPFunctionTemplateSpecialization other = (CPPFunctionTemplateSpecialization) obj;
+		return Objects.equals(getSpecializedBinding(), other.getSpecializedBinding())
+				&& Objects.equals(getOwner(), other.getOwner())
+				&& Objects.equals(getTemplateParameterMap(), other.getTemplateParameterMap());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getSpecializedBinding(), getOwner(), getTemplateParameterMap());
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,15 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval.IMemoryBlockAddressInfoItem;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -36,6 +39,7 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -155,6 +159,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public final static int UPDATE_ON_BREAKPOINT = 2;
     public final static int UPDATE_MANUAL = 3;
     public int fUpdateMode = UPDATE_ALWAYS;
+
+    /**
+     * Maintains the subset of items visible in the current view address range.
+     * This information is refreshed when the associated Panes are about to be redrawn
+     * @since 1.4
+     */
+    protected final Map<BigInteger, List<IMemoryBlockAddressInfoItem>> fMapStartAddrToInfoItems = Collections
+            .synchronizedMap(new HashMap<BigInteger, List<IMemoryBlockAddressInfoItem>>());
 
     public Rendering(Composite parent, TraditionalRendering renderingParent)
     {
@@ -351,7 +363,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         fViewportAddress = fViewportAddress.add(BigInteger
                 .valueOf(getAddressableCellsPerRow()));
             ensureViewportAddressDisplayable();
-            redrawPanes();    	
+            redrawPanes();
     }
     
     protected void handleUpArrow()
@@ -435,7 +447,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         if(fAddressPane.isPaneVisible())
                         {
                             fAddressPane.redraw();
-                        }                        
+                        }
                         redrawPanes();
                     	break;
                 }
@@ -1184,6 +1196,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
             fViewportCache.dispose();
             fViewportCache = null;
         }
+
+        fMapStartAddrToInfoItems.clear();
         super.dispose();
     }
 
@@ -1551,7 +1565,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     public String getAddressString(BigInteger address)
     {
-        StringBuffer addressString = new StringBuffer(address.toString(16)
+        StringBuilder addressString = new StringBuilder(address.toString(16)
             .toUpperCase());
         for(int chars = getAddressBytes() * 2 - addressString.length(); chars > 0; chars--)
         {
@@ -1625,7 +1639,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     ((AbstractPane) panes[i]).getRowCount());
         }
 
-        return rowCount;
+        // Add an extra row of information as we can present part of the information on 
+        // the remaining space of the canvas
+        int extra = 1;
+        return rowCount + extra;
     }
 
     public int getBytesPerColumn()
@@ -2138,7 +2155,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        StringBuffer errorText = new StringBuffer();
+        StringBuilder errorText = new StringBuilder();
         for(int i = getRadixCharacterCount(radix, bytes.length); i > 0; i--)
             errorText.append(getPaddingCharacter());
 
@@ -2220,7 +2237,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         // if any bytes are not readable, return ?'s
         if(!readable)
         {
-            StringBuffer errorText = new StringBuffer();
+            StringBuilder errorText = new StringBuilder();
             for(int i = memoryBytes.length; i > 0; i--)
                 errorText.append(getPaddingCharacter());
             return errorText.toString();
@@ -2272,7 +2289,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         try
     	{
         	// convert bytes to string using desired character set
-    		StringBuffer buf = new StringBuffer(new String(bytes, this.getCharacterSet(textMode)));
+    		StringBuilder buf = new StringBuilder(new String(bytes, this.getCharacterSet(textMode)));
     		
     		// pad string to (byte count - string length) with spaces
     		for(int i = 0; i < memoryBytes.length - buf.length(); i++)
@@ -2282,7 +2299,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	catch(Exception e)
     	{
     		// return ?s the length of byte count
-    		StringBuffer buf = new StringBuffer();
+    		StringBuilder buf = new StringBuilder();
     		for(int i = 0; i < memoryBytes.length - buf.length(); i++)
     			buf.append(getPaddingCharacter());
     		return buf.toString();
@@ -2293,4 +2310,52 @@ public class Rendering extends Composite implements IDebugEventSetListener
         final List<AbstractPane> panes = Arrays.asList(getRenderingPanes());
         return panes.get((panes.indexOf(currentPane) + offset) % panes.size());
     }
+
+    /**
+     * Indicates if additional address information is available to display in the current visible range
+     */
+    boolean hasVisibleRangeInfo() {
+        return false;
+    }
+
+    /**
+     * @return True if the given address has additional information to display e.g. variables, registers, etc.
+     */
+    boolean hasAddressInfo(BigInteger address) {
+        return false;
+    }
+
+    /**
+     * @return The items that would be visible in the current viewable area if the rows were to use a single
+     *         height
+     */
+    Map<BigInteger, List<IMemoryBlockAddressInfoItem>> getVisibleValueToAddressInfoItems() {
+        return fMapStartAddrToInfoItems;
+    }
+
+    /**
+     * Provides a string with the information relevant to a given address, the separator helps to format it
+     * e.g. Separated items by comma, new line, etc.
+     * 
+     * @param addTypeHeaders
+     *            Indicates if the string shall include a data type name before each list of items of the same
+     *            type e.g. Variables, Registers, etc.
+     */
+    String buildAddressInfoString(BigInteger address, String separator, boolean addTypeHeaders) {
+        return "";
+    }
+
+    /**
+     * Returns Dynamic context menu actions to this render, No actions by default
+     * @since 1.4
+     */
+    Action[] getDynamicActions() {
+        return new Action[0];
+    }
+    
+    /**
+     * Trigger the resolution of additional address information - No action by default
+     */
+    void resolveAddressInfoForCurrentSelection() {}
+
 }

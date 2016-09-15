@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Mentor Graphics and others.
+ * Copyright (c) 2011, 2016 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 	 * @deprecated The DEBUG flag is replaced with the GdbDebugOptions.DEBUG_COMMAND_TIMEOUTS
 	 */
 	@Deprecated
-	public final static boolean DEBUG = "true".equals( Platform.getDebugOption( "org.eclipse.cdt.dsf.gdb/debug/timeouts" ) ); //$NON-NLS-1$//$NON-NLS-2$
+	public final static boolean DEBUG = Boolean.parseBoolean( Platform.getDebugOption( "org.eclipse.cdt.dsf.gdb/debug/timeouts" ) ); //$NON-NLS-1$
 	
 	private class QueueEntry {
 		private long fTimestamp;

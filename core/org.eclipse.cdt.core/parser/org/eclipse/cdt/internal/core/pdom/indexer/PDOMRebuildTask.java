@@ -137,4 +137,10 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	public synchronized boolean acceptUrgentTask(IPDOMIndexerTask task) {
 		return fDelegate != null && fDelegate.acceptUrgentTask(task);
 	}
+
+	@Override
+	public void cancel() {
+		if (fDelegate != null)
+			fDelegate.cancel();
+	}
 }

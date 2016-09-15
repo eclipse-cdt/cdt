@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Red Hat Inc.. and others
+ * Copyright (c) 2008, 2016 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	/**
 	 * @since 1.3
 	 */
-	public static final String REMOTE_BUILDER_ID = "org.eclipse.ptp.rdt.sync.cdt.core.SyncBuilder"; // $NON-NLS-1$
+	public static final String REMOTE_BUILDER_ID = "org.eclipse.ptp.rdt.sync.cdt.core.SyncBuilder"; //$NON-NLS-1$
 	public static final String OLD_AUTOTOOLS_BUILDER_ID = "org.eclipse.linuxtools.cdt.autotools.genmakebuilder"; //$NON-NLS-1$
 
 	private IProject project;

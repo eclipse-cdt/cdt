@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -86,10 +86,10 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 			return getLinkage().loadValue(record + VALUE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return Value.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		}
 	}
-
+	
 	@Override
 	public boolean isAuto() {
 		return getField().isAuto();
@@ -128,5 +128,10 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 	@Override
 	public boolean isMutable() {
 		return getField().isMutable();
+	}
+
+	@Override
+	public byte getFieldPosition() {
+		return getField().getFieldPosition();
 	}
 }

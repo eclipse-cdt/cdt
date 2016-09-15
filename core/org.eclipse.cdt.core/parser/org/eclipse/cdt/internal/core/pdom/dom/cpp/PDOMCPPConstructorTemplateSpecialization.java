@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -23,19 +27,33 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpecialization
 		implements ICPPConstructor {
+	/** Offset of the constructor chain execution for constexpr constructors. */
+	private static final int CONSTRUCTOR_CHAIN = PDOMCPPMethodTemplateSpecialization.RECORD_SIZE + 0; // Database.EXECUTION_SIZE
+	
 	/** The size in bytes of a PDOMCPPConstructorTemplateSpecialization record in the database. */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPMethodTemplateSpecialization.RECORD_SIZE + 0;
+	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
 
 	public PDOMCPPConstructorTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
 			ICPPConstructor constructor, PDOMBinding specialized, IASTNode point) throws CoreException {
 		super(linkage, parent, constructor, specialized, point);
+		linkage.new ConfigureConstructorTemplateSpecialization(constructor, this, point);
 	}
 
 	public PDOMCPPConstructorTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
+	public void initData(ICPPExecution constructorChain) {
+		if (constructorChain == null)
+			return;
+		try {
+			getLinkage().storeExecution(record + CONSTRUCTOR_CHAIN, constructorChain);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+	
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -44,5 +62,22 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION;
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		if (!isConstexpr())
+			return null;
+
+		try {
+			ICPPExecution exec = (ICPPExecution) getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
+			if (exec == null) {
+				exec = CPPTemplates.instantiateConstructorChain(this, point);
+			}
+			return exec;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 }

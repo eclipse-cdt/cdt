@@ -118,8 +118,9 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 				// Optimization (bug 363609): if during the previous alternative, a name was parsed as a
 				// template-id with multiple template arguments, it's not going to be parsed differently in
 				// a subsequent alternative, so keep it as a template-id.
-				// Of course, this optimization is only sound if the previous alternative was parsed
+				// Of course, this optimization is only possible if the previous alternative was parsed
 				// successfully (bug 445177).
+				// TODO: This optimization is invalid since it triggers bug 497931.
 				if (previousAlternativeFailedToParse || nameLen == 0 || !hasMultipleArgs(names[--nameLen])) {
 					fSimpleIDs.clear(bp+1, Integer.MAX_VALUE);
 					fSimpleIDs.set(bp);

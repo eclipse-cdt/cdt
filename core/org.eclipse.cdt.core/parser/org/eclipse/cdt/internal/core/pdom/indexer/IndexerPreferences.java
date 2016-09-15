@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,7 +182,7 @@ public class IndexerPreferences {
 	private static void migrateProperties(Properties props) {
 		if (props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG) == null) {
 			// backward compatibility
-			if ("true".equals(props.get(KEY_INDEX_ALL_FILES))) { //$NON-NLS-1$
+			if (Boolean.parseBoolean((String) props.get(KEY_INDEX_ALL_FILES))) {
 				props.put(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true"); //$NON-NLS-1$
 			}
 		}
@@ -427,18 +427,18 @@ public class IndexerPreferences {
 	public static boolean preferDefaultLanguage(IProject project) {
 		IPreferencesService prefService = Platform.getPreferencesService();
 		Preferences[] prefs= IndexerPreferences.getPreferences(project);
-		if ("true".equals(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, null, prefs)) && //$NON-NLS-1$
-				"true".equals(prefService.get(KEY_INDEX_ALL_FILES, null, prefs)) && //$NON-NLS-1$
-				!"true".equals(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, null, prefs))) { //$NON-NLS-1$
+		if (Boolean.parseBoolean(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, null, prefs)) &&
+				Boolean.parseBoolean(prefService.get(KEY_INDEX_ALL_FILES, null, prefs)) &&
+				!Boolean.parseBoolean(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, null, prefs))) {
 			return false;
 		}
 		return true;
 	}
 
 	public static boolean preferDefaultLanguage(Properties props) {
-		if ("true".equals(props.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)) && //$NON-NLS-1$
-				"true".equals(props.get(KEY_INDEX_ALL_FILES)) && //$NON-NLS-1$
-				!"true".equals(props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))) { //$NON-NLS-1$
+		if (Boolean.parseBoolean((String) props.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)) &&
+				Boolean.parseBoolean((String) props.get(KEY_INDEX_ALL_FILES)) &&
+				!Boolean.parseBoolean((String) props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))) {
 			return false;
 		}
 		return true;

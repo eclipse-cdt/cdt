@@ -12,8 +12,6 @@ package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
- *
  */
-public class DefaultLogService extends AbstractParserLogService
-{
+public class DefaultLogService extends AbstractParserLogService {
 }

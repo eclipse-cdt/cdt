@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="consoleService" name="Arduino Launch Console Service" schema="schema/consoleService.exsd"/>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
@@ -38,7 +37,7 @@
       <descriptorType
             class="org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchDescriptorType"
             id="org.eclipse.cdt.arduino.core.descriptorType"
-            priority="5">
+            priority="20">
          <enablement>
             <instanceof
                   value="org.eclipse.core.resources.IProject">
@@ -75,39 +74,8 @@
          </run>
       </runtime>
       <builder
-            id="org.eclipse.cdt.arduino.core.arduinoBuilder">
+            id="com.qnx.tools.ide.qde.core.cbuilder">
       </builder>
-   </extension>
-   <extension
-         id="arduinoBuilder"
-         name="%ArduinoBuilder.name"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="true"
-            hasNature="true"
-            isConfigurable="true"
-            supportsConfigurations="true">
-         <run
-               class="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuilder">
-         </run>
-      </builder>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.ScannerInfoProvider2">
-      <provider
-            builder="org.eclipse.cdt.arduino.core.arduinoBuilder"
-            class="org.eclipse.cdt.arduino.core.internal.ArduinoScannerInfoProvider">
-      </provider>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.core.resources.IBuildConfiguration"
-            class="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration$Factory">
-         <adapter
-               type="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration">
-         </adapter>
-      </factory>
    </extension>
    <extension
          point="org.eclipse.launchbar.core.launchTargetTypes">
@@ -115,5 +83,20 @@
             id="org.eclipse.cdt.arduino.core.connectionType"
             provider="org.eclipse.cdt.arduino.core.internal.remote.ArduinoLaunchTargetProvider">
       </launchTargetType>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.buildConfigProvider">
+      <provider
+            class="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfigurationProvider"
+            id="org.eclipse.cdt.arduino.core.provider"
+            natureId="org.eclipse.cdt.arduino.core.arduinoNature">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.toolChainProvider">
+      <provider
+            class="org.eclipse.cdt.arduino.core.internal.build.ArduinoToolChainProvider"
+            id="org.eclipse.cdt.arduino.core.toolChainProvider">
+      </provider>
    </extension>
 </plugin>

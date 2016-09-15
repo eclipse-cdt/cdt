@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Norbert Ploett and others.
+ * Copyright (c) 2006, 2016 Norbert Ploett and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class ProposalFilterPreferencesTest extends TestCase {
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		String filterComboStateString = store.getString(ContentAssistPreference.PROPOSALS_FILTER);
 		ProposalFilterPreferencesUtil.ComboState state = ProposalFilterPreferencesUtil.getComboState(filterComboStateString);
-		StringBuffer newStateText = new StringBuffer();
+		StringBuilder newStateText = new StringBuilder();
 		newStateText.append(index + 1); // First entry is always the <Default Filter>, index+1 must be selected
 		for (int i = 0; i < state.items.length; i++) {
 			String item = state.items[i];

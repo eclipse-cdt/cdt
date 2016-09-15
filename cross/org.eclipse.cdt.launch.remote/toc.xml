@@ -10,7 +10,7 @@ http://www.eclipse.org/legal/epl-v10.html
 Contributors: 
 Martin Oberhuber (Wind River) - initial API and implementation  
 -->
-<toc link_to="../org.eclipse.rse.doc.user/toc.xml#rse_user_extensions"
+<toc link_to="../org.eclipse.cdt.doc.user/toc.xml#cdt_Tasks_Anchor"
 	 label="Launching Remote C/C++ Applications"> 
 	<topic label="Launching Remote C/C++ Applications" href="remotecdt.html"/>
 </toc>

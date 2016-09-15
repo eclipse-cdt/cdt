@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class CountingRequestMonitor extends RequestMonitor {
         super.setStatus(new DsfMultiStatus(DsfPlugin.PLUGIN_ID, 0, "", null) { //$NON-NLS-1$
             @Override
             public String getMessage() {
-                StringBuffer message = new StringBuffer();
+                StringBuilder message = new StringBuilder();
                 IStatus[] children = getChildren();
                 for (int i = 0; i < children.length; i++) {
                     message.append(children[i].getMessage());

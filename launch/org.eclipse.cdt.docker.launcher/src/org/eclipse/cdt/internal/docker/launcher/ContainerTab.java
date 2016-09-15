@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Red Hat.
+ * Copyright (c) 2015, 2016 Red Hat and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,9 +55,10 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	private List directoriesList;
 	private String imageName;
 	private String connectionName;
-	private String connectionUri;
+	private String connectionUri = "";
 	private Boolean keepValue;
 	private Boolean stdinValue;
+	private Boolean privilegedValue;
 	private IDockerConnection connection;
 	private IDockerConnection[] connections;
 	private IDockerImageListener containerTab;
@@ -66,6 +67,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	private Button removeButton;
 	private Button keepButton;
 	private Button stdinButton;
+	private Button privilegedButton;
 	private Combo imageCombo;
 	private Combo connectionSelector;
 
@@ -77,11 +79,12 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			if (connection != null)
 				connection.removeImageListener(containerTab);
 			connection = connections[index];
-			if (!connectionName.equals(connection.getName()))
-				updateLaunchConfigurationDialog();
-			connectionName = connection.getName();
 			connectionUri = connection.getUri();
-			connection.addImageListener(containerTab);
+			if (!connectionName.equals(connection.getName())) {
+				updateLaunchConfigurationDialog();
+				initializeImageCombo();
+			}
+			connectionName = connection.getName();
 		}
 
 	};
@@ -262,6 +265,24 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			}
 
 		});
+		privilegedButton = createCheckButton(group,
+				Messages.ContainerTab_Privileged_Mode_Label);
+		privilegedButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		privilegedValue = false;
+		privilegedButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!privilegedValue.equals(privilegedButton.getSelection()))
+					updateLaunchConfigurationDialog();
+				privilegedValue = privilegedButton.getSelection();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
+		});
 	}
 
 	private Composite createComposite(Composite parent, int columns, int hspan,
@@ -321,15 +342,13 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 				defaultIndex = i;
 		}
 		if (defaultIndex < 0) {
-			setWarningMessage(Messages.bind(
-					Messages.ContainerTab_Warning_Connection_Not_Found,
-					connectionUri, connections[0].getName()));
 			defaultIndex = 0;
 		}
 		connectionSelector.setItems(connectionNames);
 		if (connections.length > 0) {
 			connectionSelector.setText(connectionNames[defaultIndex]);
 			connection = connections[defaultIndex];
+			connectionName = connection.getName();
 			connectionUri = connection.getUri();
 		}
 	}
@@ -362,7 +381,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	public void addControlAccessibleListener(Control control, String controlName) {
 		// Strip mnemonic (&)
 		String[] strs = controlName.split("&"); //$NON-NLS-1$
-		StringBuffer stripped = new StringBuffer();
+		StringBuilder stripped = new StringBuilder();
 		for (int i = 0; i < strs.length; i++) {
 			stripped.append(strs[i]);
 		}
@@ -414,7 +433,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			connections = DockerConnectionManager.getInstance()
 					.getConnections();
 			if (connections.length > 0) {
-				if (!connectionUri.equals("")) { //$NON-NLS-1$
+				if (!connectionUri.isEmpty()) {
 					String[] connectionNames = new String[connections.length];
 					for (int i = 0; i < connections.length; ++i) {
 						connectionNames[i] = connections[i].getName();
@@ -435,6 +454,9 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			stdinValue = configuration.getAttribute(
 					ILaunchConstants.ATTR_STDIN_SUPPORT, false);
 			stdinButton.setSelection(stdinValue);
+			privilegedValue = configuration
+					.getAttribute(ILaunchConstants.ATTR_PRIVILEGED_MODE, false);
+			privilegedButton.setSelection(privilegedValue);
 		} catch (CoreException e) {
 			setErrorMessage(Messages.bind(
 					Messages.ContainerTab_Error_Reading_Configuration, e
@@ -456,16 +478,33 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 				keepButton.getSelection());
 		configuration.setAttribute(ILaunchConstants.ATTR_STDIN_SUPPORT,
 				stdinButton.getSelection());
+		configuration.setAttribute(ILaunchConstants.ATTR_PRIVILEGED_MODE,
+				privilegedButton.getSelection());
 	}
 
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		try {
-			return launchConfig.getAttribute(ILaunchConstants.ATTR_IMAGE,
-					(String) null) != null;
+			String image = launchConfig
+					.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
+			if (image == null)
+				return false;
+			int index = image.lastIndexOf(':'); //$NON-NLS-1$
+			if (index <= 0)
+				return false;
+			if (connection.hasImage(image.substring(0, index),
+					image.substring(index + 1))) {
+				setWarningMessage(null);
+				return true;
+			} else {
+				setWarningMessage(Messages.bind(
+						Messages.ContainerTab_Warning_Image_Not_Found,
+						image, connections[0].getName()));
+			}
 		} catch (CoreException e) {
 			return false;
 		}
+		return false;
 	}
 
 	@Override

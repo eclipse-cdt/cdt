@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -873,98 +873,98 @@ public class SimpleScanner {
 	}
 
 	static {
-        fgKeywords.put("and", new Integer(Token.t_and)); //$NON-NLS-1$
-        fgKeywords.put("and_eq", new Integer(Token.t_and_eq)); //$NON-NLS-1$
-        fgKeywords.put("asm", new Integer(Token.t_asm)); //$NON-NLS-1$
-        fgKeywords.put("auto", new Integer(Token.t_auto)); //$NON-NLS-1$
-        fgKeywords.put("bitand", new Integer(Token.t_bitand)); //$NON-NLS-1$
-        fgKeywords.put("bitor", new Integer(Token.t_bitor)); //$NON-NLS-1$
-        fgKeywords.put("bool", new Integer(Token.t_bool)); //$NON-NLS-1$
-        fgKeywords.put("break", new Integer(Token.t_break)); //$NON-NLS-1$
-        fgKeywords.put("case", new Integer(Token.t_case)); //$NON-NLS-1$
-        fgKeywords.put("catch", new Integer(Token.t_catch)); //$NON-NLS-1$
-        fgKeywords.put("char", new Integer(Token.t_char)); //$NON-NLS-1$
-        fgKeywords.put("class", new Integer(Token.t_class)); //$NON-NLS-1$
-        fgKeywords.put("compl", new Integer(Token.t_compl)); //$NON-NLS-1$
-        fgKeywords.put("const", new Integer(Token.t_const)); //$NON-NLS-1$
-        fgKeywords.put("const_cast", new Integer(Token.t_const_cast)); //$NON-NLS-1$
-        fgKeywords.put("continue", new Integer(Token.t_continue)); //$NON-NLS-1$
-        fgKeywords.put("default", new Integer(Token.t_default)); //$NON-NLS-1$
-        fgKeywords.put("delete", new Integer(Token.t_delete)); //$NON-NLS-1$
-        fgKeywords.put("do", new Integer(Token.t_do)); //$NON-NLS-1$
-        fgKeywords.put("double", new Integer(Token.t_double)); //$NON-NLS-1$
-        fgKeywords.put("dynamic_cast", new Integer(Token.t_dynamic_cast)); //$NON-NLS-1$
-        fgKeywords.put("else", new Integer(Token.t_else)); //$NON-NLS-1$
-        fgKeywords.put("enum", new Integer(Token.t_enum)); //$NON-NLS-1$
-        fgKeywords.put("explicit", new Integer(Token.t_explicit)); //$NON-NLS-1$
-        fgKeywords.put("export", new Integer(Token.t_export)); //$NON-NLS-1$
-        fgKeywords.put("extern", new Integer(Token.t_extern)); //$NON-NLS-1$
-        fgKeywords.put("false", new Integer(Token.t_false)); //$NON-NLS-1$
-        fgKeywords.put("float", new Integer(Token.t_float)); //$NON-NLS-1$
-        fgKeywords.put("for", new Integer(Token.t_for)); //$NON-NLS-1$
-        fgKeywords.put("friend", new Integer(Token.t_friend)); //$NON-NLS-1$
-        fgKeywords.put("goto", new Integer(Token.t_goto)); //$NON-NLS-1$
-        fgKeywords.put("if", new Integer(Token.t_if)); //$NON-NLS-1$
-        fgKeywords.put("inline", new Integer(Token.t_inline)); //$NON-NLS-1$
-        fgKeywords.put("int", new Integer(Token.t_int)); //$NON-NLS-1$
-        fgKeywords.put("long", new Integer(Token.t_long)); //$NON-NLS-1$
-        fgKeywords.put("mutable", new Integer(Token.t_mutable)); //$NON-NLS-1$
-        fgKeywords.put("namespace", new Integer(Token.t_namespace)); //$NON-NLS-1$
-        fgKeywords.put("new", new Integer(Token.t_new)); //$NON-NLS-1$
-        fgKeywords.put("not", new Integer(Token.t_not)); //$NON-NLS-1$
-        fgKeywords.put("not_eq", new Integer(Token.t_not_eq)); //$NON-NLS-1$
-        fgKeywords.put("operator", new Integer(Token.t_operator)); //$NON-NLS-1$
-        fgKeywords.put("or", new Integer(Token.t_or)); //$NON-NLS-1$
-        fgKeywords.put("or_eq", new Integer(Token.t_or_eq)); //$NON-NLS-1$
-        fgKeywords.put("private", new Integer(Token.t_private)); //$NON-NLS-1$
-        fgKeywords.put("protected", new Integer(Token.t_protected)); //$NON-NLS-1$
-        fgKeywords.put("public", new Integer(Token.t_public)); //$NON-NLS-1$
-        fgKeywords.put("register", new Integer(Token.t_register)); //$NON-NLS-1$
-        fgKeywords.put("reinterpret_cast", new Integer(Token.t_reinterpret_cast)); //$NON-NLS-1$
-        fgKeywords.put("return", new Integer(Token.t_return)); //$NON-NLS-1$
-        fgKeywords.put("short", new Integer(Token.t_short)); //$NON-NLS-1$
-        fgKeywords.put("signed", new Integer(Token.t_signed)); //$NON-NLS-1$
-        fgKeywords.put("sizeof", new Integer(Token.t_sizeof)); //$NON-NLS-1$
-        fgKeywords.put("static", new Integer(Token.t_static)); //$NON-NLS-1$
-        fgKeywords.put("static_cast", new Integer(Token.t_static_cast)); //$NON-NLS-1$
-        fgKeywords.put("struct", new Integer(Token.t_struct)); //$NON-NLS-1$
-        fgKeywords.put("switch", new Integer(Token.t_switch)); //$NON-NLS-1$
-        fgKeywords.put("template", new Integer(Token.t_template)); //$NON-NLS-1$
-        fgKeywords.put("this", new Integer(Token.t_this)); //$NON-NLS-1$
-        fgKeywords.put("throw", new Integer(Token.t_throw)); //$NON-NLS-1$
-        fgKeywords.put("true", new Integer(Token.t_true)); //$NON-NLS-1$
-        fgKeywords.put("try", new Integer(Token.t_try)); //$NON-NLS-1$
-        fgKeywords.put("typedef", new Integer(Token.t_typedef)); //$NON-NLS-1$
-        fgKeywords.put("typeid", new Integer(Token.t_typeid)); //$NON-NLS-1$
-        fgKeywords.put("typename", new Integer(Token.t_typename)); //$NON-NLS-1$
-        fgKeywords.put("union", new Integer(Token.t_union)); //$NON-NLS-1$
-        fgKeywords.put("unsigned", new Integer(Token.t_unsigned)); //$NON-NLS-1$
-        fgKeywords.put("using", new Integer(Token.t_using)); //$NON-NLS-1$
-        fgKeywords.put("virtual", new Integer(Token.t_virtual)); //$NON-NLS-1$
-        fgKeywords.put("void", new Integer(Token.t_void)); //$NON-NLS-1$
-        fgKeywords.put("volatile", new Integer(Token.t_volatile)); //$NON-NLS-1$
-        fgKeywords.put("wchar_t", new Integer(Token.t_wchar_t)); //$NON-NLS-1$
-        fgKeywords.put("while", new Integer(Token.t_while)); //$NON-NLS-1$
-        fgKeywords.put("xor", new Integer(Token.t_xor)); //$NON-NLS-1$
-        fgKeywords.put("xor_eq", new Integer(Token.t_xor_eq)); //$NON-NLS-1$
+        fgKeywords.put("and", Integer.valueOf(Token.t_and)); //$NON-NLS-1$
+        fgKeywords.put("and_eq", Integer.valueOf(Token.t_and_eq)); //$NON-NLS-1$
+        fgKeywords.put("asm", Integer.valueOf(Token.t_asm)); //$NON-NLS-1$
+        fgKeywords.put("auto", Integer.valueOf(Token.t_auto)); //$NON-NLS-1$
+        fgKeywords.put("bitand", Integer.valueOf(Token.t_bitand)); //$NON-NLS-1$
+        fgKeywords.put("bitor", Integer.valueOf(Token.t_bitor)); //$NON-NLS-1$
+        fgKeywords.put("bool", Integer.valueOf(Token.t_bool)); //$NON-NLS-1$
+        fgKeywords.put("break", Integer.valueOf(Token.t_break)); //$NON-NLS-1$
+        fgKeywords.put("case", Integer.valueOf(Token.t_case)); //$NON-NLS-1$
+        fgKeywords.put("catch", Integer.valueOf(Token.t_catch)); //$NON-NLS-1$
+        fgKeywords.put("char", Integer.valueOf(Token.t_char)); //$NON-NLS-1$
+        fgKeywords.put("class", Integer.valueOf(Token.t_class)); //$NON-NLS-1$
+        fgKeywords.put("compl", Integer.valueOf(Token.t_compl)); //$NON-NLS-1$
+        fgKeywords.put("const", Integer.valueOf(Token.t_const)); //$NON-NLS-1$
+        fgKeywords.put("const_cast", Integer.valueOf(Token.t_const_cast)); //$NON-NLS-1$
+        fgKeywords.put("continue", Integer.valueOf(Token.t_continue)); //$NON-NLS-1$
+        fgKeywords.put("default", Integer.valueOf(Token.t_default)); //$NON-NLS-1$
+        fgKeywords.put("delete", Integer.valueOf(Token.t_delete)); //$NON-NLS-1$
+        fgKeywords.put("do", Integer.valueOf(Token.t_do)); //$NON-NLS-1$
+        fgKeywords.put("double", Integer.valueOf(Token.t_double)); //$NON-NLS-1$
+        fgKeywords.put("dynamic_cast", Integer.valueOf(Token.t_dynamic_cast)); //$NON-NLS-1$
+        fgKeywords.put("else", Integer.valueOf(Token.t_else)); //$NON-NLS-1$
+        fgKeywords.put("enum", Integer.valueOf(Token.t_enum)); //$NON-NLS-1$
+        fgKeywords.put("explicit", Integer.valueOf(Token.t_explicit)); //$NON-NLS-1$
+        fgKeywords.put("export", Integer.valueOf(Token.t_export)); //$NON-NLS-1$
+        fgKeywords.put("extern", Integer.valueOf(Token.t_extern)); //$NON-NLS-1$
+        fgKeywords.put("false", Integer.valueOf(Token.t_false)); //$NON-NLS-1$
+        fgKeywords.put("float", Integer.valueOf(Token.t_float)); //$NON-NLS-1$
+        fgKeywords.put("for", Integer.valueOf(Token.t_for)); //$NON-NLS-1$
+        fgKeywords.put("friend", Integer.valueOf(Token.t_friend)); //$NON-NLS-1$
+        fgKeywords.put("goto", Integer.valueOf(Token.t_goto)); //$NON-NLS-1$
+        fgKeywords.put("if", Integer.valueOf(Token.t_if)); //$NON-NLS-1$
+        fgKeywords.put("inline", Integer.valueOf(Token.t_inline)); //$NON-NLS-1$
+        fgKeywords.put("int", Integer.valueOf(Token.t_int)); //$NON-NLS-1$
+        fgKeywords.put("long", Integer.valueOf(Token.t_long)); //$NON-NLS-1$
+        fgKeywords.put("mutable", Integer.valueOf(Token.t_mutable)); //$NON-NLS-1$
+        fgKeywords.put("namespace", Integer.valueOf(Token.t_namespace)); //$NON-NLS-1$
+        fgKeywords.put("new", Integer.valueOf(Token.t_new)); //$NON-NLS-1$
+        fgKeywords.put("not", Integer.valueOf(Token.t_not)); //$NON-NLS-1$
+        fgKeywords.put("not_eq", Integer.valueOf(Token.t_not_eq)); //$NON-NLS-1$
+        fgKeywords.put("operator", Integer.valueOf(Token.t_operator)); //$NON-NLS-1$
+        fgKeywords.put("or", Integer.valueOf(Token.t_or)); //$NON-NLS-1$
+        fgKeywords.put("or_eq", Integer.valueOf(Token.t_or_eq)); //$NON-NLS-1$
+        fgKeywords.put("private", Integer.valueOf(Token.t_private)); //$NON-NLS-1$
+        fgKeywords.put("protected", Integer.valueOf(Token.t_protected)); //$NON-NLS-1$
+        fgKeywords.put("public", Integer.valueOf(Token.t_public)); //$NON-NLS-1$
+        fgKeywords.put("register", Integer.valueOf(Token.t_register)); //$NON-NLS-1$
+        fgKeywords.put("reinterpret_cast", Integer.valueOf(Token.t_reinterpret_cast)); //$NON-NLS-1$
+        fgKeywords.put("return", Integer.valueOf(Token.t_return)); //$NON-NLS-1$
+        fgKeywords.put("short", Integer.valueOf(Token.t_short)); //$NON-NLS-1$
+        fgKeywords.put("signed", Integer.valueOf(Token.t_signed)); //$NON-NLS-1$
+        fgKeywords.put("sizeof", Integer.valueOf(Token.t_sizeof)); //$NON-NLS-1$
+        fgKeywords.put("static", Integer.valueOf(Token.t_static)); //$NON-NLS-1$
+        fgKeywords.put("static_cast", Integer.valueOf(Token.t_static_cast)); //$NON-NLS-1$
+        fgKeywords.put("struct", Integer.valueOf(Token.t_struct)); //$NON-NLS-1$
+        fgKeywords.put("switch", Integer.valueOf(Token.t_switch)); //$NON-NLS-1$
+        fgKeywords.put("template", Integer.valueOf(Token.t_template)); //$NON-NLS-1$
+        fgKeywords.put("this", Integer.valueOf(Token.t_this)); //$NON-NLS-1$
+        fgKeywords.put("throw", Integer.valueOf(Token.t_throw)); //$NON-NLS-1$
+        fgKeywords.put("true", Integer.valueOf(Token.t_true)); //$NON-NLS-1$
+        fgKeywords.put("try", Integer.valueOf(Token.t_try)); //$NON-NLS-1$
+        fgKeywords.put("typedef", Integer.valueOf(Token.t_typedef)); //$NON-NLS-1$
+        fgKeywords.put("typeid", Integer.valueOf(Token.t_typeid)); //$NON-NLS-1$
+        fgKeywords.put("typename", Integer.valueOf(Token.t_typename)); //$NON-NLS-1$
+        fgKeywords.put("union", Integer.valueOf(Token.t_union)); //$NON-NLS-1$
+        fgKeywords.put("unsigned", Integer.valueOf(Token.t_unsigned)); //$NON-NLS-1$
+        fgKeywords.put("using", Integer.valueOf(Token.t_using)); //$NON-NLS-1$
+        fgKeywords.put("virtual", Integer.valueOf(Token.t_virtual)); //$NON-NLS-1$
+        fgKeywords.put("void", Integer.valueOf(Token.t_void)); //$NON-NLS-1$
+        fgKeywords.put("volatile", Integer.valueOf(Token.t_volatile)); //$NON-NLS-1$
+        fgKeywords.put("wchar_t", Integer.valueOf(Token.t_wchar_t)); //$NON-NLS-1$
+        fgKeywords.put("while", Integer.valueOf(Token.t_while)); //$NON-NLS-1$
+        fgKeywords.put("xor", Integer.valueOf(Token.t_xor)); //$NON-NLS-1$
+        fgKeywords.put("xor_eq", Integer.valueOf(Token.t_xor_eq)); //$NON-NLS-1$
 
         // additional java keywords
-        fgKeywords.put("abstract", new Integer(Token.t_abstract)); //$NON-NLS-1$
-        fgKeywords.put("boolean", new Integer(Token.t_boolean)); //$NON-NLS-1$
-        fgKeywords.put("byte", new Integer(Token.t_byte)); //$NON-NLS-1$
-        fgKeywords.put("extends", new Integer(Token.t_extends)); //$NON-NLS-1$
-        fgKeywords.put("final", new Integer(Token.t_final)); //$NON-NLS-1$
-        fgKeywords.put("finally", new Integer(Token.t_finally)); //$NON-NLS-1$
-        fgKeywords.put("implements", new Integer(Token.t_implements)); //$NON-NLS-1$
-        fgKeywords.put("import", new Integer(Token.t_import)); //$NON-NLS-1$
-        fgKeywords.put("interface", new Integer(Token.t_interface)); //$NON-NLS-1$
-        fgKeywords.put("instanceof", new Integer(Token.t_instanceof)); //$NON-NLS-1$
-        fgKeywords.put("native", new Integer(Token.t_native)); //$NON-NLS-1$
-        fgKeywords.put("null", new Integer(Token.t_null)); //$NON-NLS-1$
-        fgKeywords.put("package", new Integer(Token.t_package)); //$NON-NLS-1$
-        fgKeywords.put("super", new Integer(Token.t_super)); //$NON-NLS-1$
-        fgKeywords.put("synchronized", new Integer(Token.t_synchronized)); //$NON-NLS-1$
-        fgKeywords.put("throws", new Integer(Token.t_throws)); //$NON-NLS-1$
-        fgKeywords.put("transient", new Integer(Token.t_transient)); //$NON-NLS-1$
+        fgKeywords.put("abstract", Integer.valueOf(Token.t_abstract)); //$NON-NLS-1$
+        fgKeywords.put("boolean", Integer.valueOf(Token.t_boolean)); //$NON-NLS-1$
+        fgKeywords.put("byte", Integer.valueOf(Token.t_byte)); //$NON-NLS-1$
+        fgKeywords.put("extends", Integer.valueOf(Token.t_extends)); //$NON-NLS-1$
+        fgKeywords.put("final", Integer.valueOf(Token.t_final)); //$NON-NLS-1$
+        fgKeywords.put("finally", Integer.valueOf(Token.t_finally)); //$NON-NLS-1$
+        fgKeywords.put("implements", Integer.valueOf(Token.t_implements)); //$NON-NLS-1$
+        fgKeywords.put("import", Integer.valueOf(Token.t_import)); //$NON-NLS-1$
+        fgKeywords.put("interface", Integer.valueOf(Token.t_interface)); //$NON-NLS-1$
+        fgKeywords.put("instanceof", Integer.valueOf(Token.t_instanceof)); //$NON-NLS-1$
+        fgKeywords.put("native", Integer.valueOf(Token.t_native)); //$NON-NLS-1$
+        fgKeywords.put("null", Integer.valueOf(Token.t_null)); //$NON-NLS-1$
+        fgKeywords.put("package", Integer.valueOf(Token.t_package)); //$NON-NLS-1$
+        fgKeywords.put("super", Integer.valueOf(Token.t_super)); //$NON-NLS-1$
+        fgKeywords.put("synchronized", Integer.valueOf(Token.t_synchronized)); //$NON-NLS-1$
+        fgKeywords.put("throws", Integer.valueOf(Token.t_throws)); //$NON-NLS-1$
+        fgKeywords.put("transient", Integer.valueOf(Token.t_transient)); //$NON-NLS-1$
     }
 }

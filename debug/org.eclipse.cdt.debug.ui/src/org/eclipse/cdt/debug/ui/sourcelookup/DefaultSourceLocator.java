@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 		setLaunchConfiguration(configuration);
 		OldDefaultSourceLocator old = new OldDefaultSourceLocator();
 		old.initializeFromMemento(memento);
-		ICSourceLocator csl = (ICSourceLocator)old.getAdapter(ICSourceLocator.class);
+		ICSourceLocator csl = old.getAdapter(ICSourceLocator.class);
 		setFindDuplicates(csl.searchForDuplicateFiles());
 		ICSourceLocation[] locations = csl.getSourceLocations();
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,8 +40,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -125,13 +123,10 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	public ResourceLookupTree() {
 		fRootNode= new Node(null, CharArrayUtils.EMPTY, false, false) {};
 		fFileExtensions= new HashMap<>();
-		fUnrefJob= new Job("Timer") { //$NON-NLS-1$
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				unrefNodeMap();
-				return Status.OK_STATUS;
-			}
-		};
+		fUnrefJob = Job.create("Timer", monitor -> {
+			unrefNodeMap();
+			return Status.OK_STATUS;
+		});
 		fUnrefJob.setSystem(true);
 	}
 

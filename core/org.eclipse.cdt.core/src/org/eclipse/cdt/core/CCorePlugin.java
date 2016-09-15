@@ -24,6 +24,9 @@ import java.util.HashSet;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
+import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -50,6 +53,8 @@ import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CdtVarPathEntryVariableManager;
 import org.eclipse.cdt.internal.core.ICConsole;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
+import org.eclipse.cdt.internal.core.build.CBuildConfigurationManager;
+import org.eclipse.cdt.internal.core.build.ToolChainManager;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.UserVarSupplier;
 import org.eclipse.cdt.internal.core.dom.ast.tag.TagService;
@@ -62,6 +67,7 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -88,6 +94,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -229,6 +236,8 @@ public class CCorePlugin extends Plugin {
 	private ITagService tagService = new TagService();
 
 	private CdtVarPathEntryVariableManager fPathEntryVariableManager;
+	
+	private CBuildConfigurationManager buildConfigManager;
 
 	private final class NullConsole implements IConsole {
 		private ConsoleOutputStream nullStream = new ConsoleOutputStream() {
@@ -348,6 +357,9 @@ public class CCorePlugin extends Plugin {
 
 			fNewCProjectDescriptionManager.shutdown();
 			ResourceLookup.shutdown();
+			
+			buildConfigManager.dispose();
+			buildConfigManager = null;
 
 			savePluginPreferences();
 		} finally {
@@ -367,6 +379,12 @@ public class CCorePlugin extends Plugin {
 		configurePluginDebugOptions();
 		PositionTrackerManager.getInstance().install();
 		ResourceLookup.startup();
+
+		ToolChainManager toolChainManager = new ToolChainManager();
+		context.registerService(IToolChainManager.class, toolChainManager, null);
+		
+		buildConfigManager = new CBuildConfigurationManager();
+		context.registerService(ICBuildConfigurationManager.class, buildConfigManager, null);
 
 		// new project model needs to register the resource listener first.
 		CProjectDescriptionManager descManager = CProjectDescriptionManager.getInstance();
@@ -421,7 +439,7 @@ public class CCorePlugin extends Plugin {
 	 * @see #setOptions
 	 */
 	public static HashMap<String, String> getDefaultOptions() {
-		HashMap<String, String> defaultOptions = new HashMap<String, String>(10);
+		HashMap<String, String> defaultOptions = new HashMap<>(10);
 
 		// see #initializeDefaultPluginPreferences() for changing default
 		// settings
@@ -484,7 +502,7 @@ public class CCorePlugin extends Plugin {
 	 * @see CCorePlugin#getDefaultOptions
 	 */
 	public static HashMap<String, String> getOptions() {
-		HashMap<String, String> options = new HashMap<String, String>(10);
+		HashMap<String, String> options = new HashMap<>(10);
 
 		// see #initializeDefaultPluginPreferences() for changing default
 		// settings
@@ -710,7 +728,7 @@ public class CCorePlugin extends Plugin {
 				ICDescriptor cdesc = getCProjectDescription(project, false);
 				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
 				if (cextensions.length > 0) {
-					ArrayList<IBinaryParser> list = new ArrayList<IBinaryParser>(cextensions.length);
+					ArrayList<IBinaryParser> list = new ArrayList<>(cextensions.length);
 					for (ICExtensionReference ref : cextensions) {
 						IBinaryParser parser = null;
 						try {
@@ -763,6 +781,33 @@ public class CCorePlugin extends Plugin {
 		return parser;
 	}
 
+	/**
+	 * Returns the binary parser with the given id.
+	 *
+	 * @param id id of binary parser
+	 * @return binary parser
+	 * @throws CoreException
+	 * @since 6.0
+	 */
+	public IBinaryParser getBinaryParser(String id) throws CoreException {
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint(CCorePlugin.PLUGIN_ID, BINARY_PARSER_SIMPLE_ID);
+		IExtension extension = extensionPoint.getExtension(id);
+		if (extension != null) {
+			IConfigurationElement element[] = extension.getConfigurationElements();
+			for (IConfigurationElement element2 : element) {
+				if (element2.getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+					return (IBinaryParser) element2.createExecutableExtension("run"); //$NON-NLS-1$
+				}
+			}
+		} else {
+			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					CCorePlugin.getResourceString("CCorePlugin.exception.noBinaryFormat"), null); //$NON-NLS-1$
+			throw new CoreException(s);
+		}
+		return null;
+	}
+	
 	public CoreModel getCoreModel() {
 		return fCoreModel;
 	}
@@ -1099,6 +1144,13 @@ public class CCorePlugin extends Plugin {
 			// Next search the extension registry to see if a provider is
 			// registered with a build command
 			provider = getExtensionScannerInfoProvider2(project);
+			
+			// If we are new style build configurations, get the provider there
+			IBuildConfiguration activeConfig = project.getActiveBuildConfig();
+			ICBuildConfiguration cconfig = activeConfig.getAdapter(ICBuildConfiguration.class);
+			if (cconfig != null) {
+				return cconfig;
+			}
 
 			// Regular usage is where Language Settings Providers are employed
 			if (provider == null && ScannerDiscoveryLegacySupport
@@ -1510,11 +1562,15 @@ public class CCorePlugin extends Plugin {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static void log(Throwable e) {
-		String msg = e.getMessage();
-		if (msg == null) {
-			log("Error", e); //$NON-NLS-1$
+		if (e instanceof CoreException) {
+			log(((CoreException) e).getStatus());
 		} else {
-			log("Error: " + msg, e); //$NON-NLS-1$
+			String msg = e.getMessage();
+			if (msg == null) {
+				log("Error", e); //$NON-NLS-1$
+			} else {
+				log("Error: " + msg, e); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -1571,5 +1627,18 @@ public class CCorePlugin extends Plugin {
 	public static boolean showSourceRootsAtTopOfProject() {
 		return InstanceScope.INSTANCE.getNode(PLUGIN_ID)
 				.getBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
+	}
+
+	/**
+	 * Return the given OSGi service.
+	 * 
+	 * @param service service class
+	 * @return service
+	 * @since 6.0
+	 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = fgCPlugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
 	}
 }

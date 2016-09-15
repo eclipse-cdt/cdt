@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     private HashMap<String, Object> fOriginalValues = new HashMap<String, Object>();
     private boolean fIsDirty = false; 
     private boolean fIsCanceled = false;
-    private ListenerList fListeners;
+    private ListenerList<IPropertyChangeListener> fListeners;
     private final CBreakpointContext fContext;
     
     public CBreakpointPreferenceStore() {
@@ -70,7 +70,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     }
 
     public CBreakpointPreferenceStore(CBreakpointContext context, Map<String, Object> attributes) {
-        fListeners = new ListenerList(org.eclipse.core.runtime.ListenerList.IDENTITY);
+        fListeners = new ListenerList<>(org.eclipse.core.runtime.ListenerList.IDENTITY);
         fContext = context;
         
         fOriginalValues.clear();
@@ -200,10 +200,13 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 						}
 						else if ( property.equals( IMarker.LINE_NUMBER ) ) {
 							if (breakpoint instanceof ICLineBreakpoint2) {
-								// Must set the REQUESTED_LINE attribute first, or else the breakpoint
-								// message will be refreshed improperly
+								// refresh message and line number
+								// Note there are no API methods to set the line number of a Line Breakpoint, so we
+								// replicate what is done in CDIDebugModel.setLineBreakpointAttributes()
+								// to set the line number fields properly and then refresh the message if possible
 								((ICLineBreakpoint2)breakpoint).setRequestedLine(getInt(IMarker.LINE_NUMBER));
-								((ICLineBreakpoint2)breakpoint).setInstalledLineNumber(getInt(IMarker.LINE_NUMBER));
+								breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, getInt(IMarker.LINE_NUMBER));
+								((ICBreakpoint2)breakpoint).refreshMessage();
 							} else {
 								// already workspace runnable, setting markers are safe
 								breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, getInt(IMarker.LINE_NUMBER));
@@ -351,18 +354,18 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     public void setValue(String name, boolean value) {
         boolean oldValue = getBoolean(name);
         if (oldValue != value) {
-            fProperties.put( name, new Boolean(value) );
+            fProperties.put( name, Boolean.valueOf(value) );
             setDirty(true);
-            firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value) );
+            firePropertyChangeEvent(name, Boolean.valueOf(oldValue), Boolean.valueOf(value) );
         }
     }
 
     public void setValue(String name, int value) {
         int oldValue = getInt(name);
         if (oldValue != value) {
-            fProperties.put( name, new Integer(value) );
+            fProperties.put( name, Integer.valueOf(value) );
             setDirty(true);
-            firePropertyChangeEvent(name, new Integer(oldValue), new Integer(value) );
+            firePropertyChangeEvent(name, Integer.valueOf(oldValue), Integer.valueOf(value) );
         }
     }
 

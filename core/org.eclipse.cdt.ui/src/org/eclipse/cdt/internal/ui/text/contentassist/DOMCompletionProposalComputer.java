@@ -696,7 +696,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		IASTTranslationUnit ast = node.getTranslationUnit();
 		IASTName name = ast.getASTNodeFactory().newName(token.getCharImage());
 		((ASTNode) name).setOffsetAndLength(token.getOffset(), 0);
-		name.setParent(completionStatement.getParent());
+		name.setParent(completionStatement);
 		IBinding[] bindings = findBindingsForContextAssist(name, ast);
 
 		if (bindings.length == 0)

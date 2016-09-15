@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.native.source"
       label="%featureName"
-      version="9.0.0.qualifier"
+      version="9.1.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -47,16 +47,6 @@
    <plugin
          id="org.eclipse.cdt.core.macosx.source"
          os="macosx"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.cdt.core.solaris.source"
-         os="solaris"
-         arch="sparc"
          download-size="0"
          install-size="0"
          version="0.0.0"

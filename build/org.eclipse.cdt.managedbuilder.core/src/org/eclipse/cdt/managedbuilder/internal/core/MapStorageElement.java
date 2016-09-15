@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -190,7 +190,7 @@ public class MapStorageElement implements ICStorageElement {
 		char escapeChar = '\\';
 
 		for(int i = 0; i < list.size(); i++){
-			StringBuffer line = new StringBuffer(list.get(i));
+			StringBuilder line = new StringBuilder(list.get(i));
 			int lndx = 0;
 			while (lndx < line.length()) {
 				if (line.charAt(lndx) == '=') {
@@ -213,7 +213,7 @@ public class MapStorageElement implements ICStorageElement {
 	public static List<String> decodeList(String value) {
 		List<String> list = new ArrayList<String>();
 		if (value != null) {
-			StringBuffer envStr = new StringBuffer(value);
+			StringBuilder envStr = new StringBuilder(value);
 			String escapeChars = "|\\"; //$NON-NLS-1$
 			char escapeChar = '\\';
 			try {
@@ -233,7 +233,7 @@ public class MapStorageElement implements ICStorageElement {
 						}
 						ndx++;
 					}
-					StringBuffer line = new StringBuffer(envStr.substring(0, ndx));
+					StringBuilder line = new StringBuilder(envStr.substring(0, ndx));
 /*					int lndx = 0;
 					while (lndx < line.length()) {
 						if (line.charAt(lndx) == '=') {
@@ -258,7 +258,7 @@ public class MapStorageElement implements ICStorageElement {
 
 	public static String encodeMap(Map<String, String> values) {
 		Iterator<Entry<String, String>> entries = values.entrySet().iterator();
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		while (entries.hasNext()) {
 			Entry<String, String> entry = entries.next();
 			str.append(escapeChars(entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
@@ -270,7 +270,7 @@ public class MapStorageElement implements ICStorageElement {
 	}
 
 	public static String encodeList(List<String> values) {
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		Iterator<String> entries = values.iterator();
 		while (entries.hasNext()) {
 			String entry = entries.next();
@@ -281,7 +281,7 @@ public class MapStorageElement implements ICStorageElement {
 	}
 
 	public static String escapeChars(String string, String escapeChars, char escapeChar) {
-		StringBuffer str = new StringBuffer(string);
+		StringBuilder str = new StringBuilder(string);
 		for (int i = 0; i < str.length(); i++) {
 			if (escapeChars.indexOf(str.charAt(i)) != -1) {
 				str.insert(i, escapeChar);

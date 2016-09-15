@@ -36,18 +36,6 @@
         </completionProposalComputer>
     </extension>
     <extension
-          point="org.eclipse.ui.newWizards">
-       <wizard
-             category="org.eclipse.cdt.ui.newCWizards"
-             class="org.eclipse.cdt.internal.qt.ui.wizards.NewQtProjectWizard"
-             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-             icon="icons/qt16.png"
-             id="org.eclipse.cdt.qt.ui.newProject"
-             name="%newProject.name"
-             project="true">
-       </wizard>
-    </extension>
-    <extension
           point="org.eclipse.ui.editors">
        <editor
              class="org.eclipse.cdt.internal.qt.ui.editor.QMLEditor"
@@ -68,7 +56,7 @@
           point="org.eclipse.core.filebuffers.documentSetup">
        <participant
              class="org.eclipse.cdt.internal.qt.ui.editor.QMLDocumentSetupParticipant"
-             contentTypeId="qmlFile"
+             contentTypeId="org.eclipse.cdt.qt.core.qmlFile"
              extensions="qml">
        </participant>
     </extension>
@@ -131,16 +119,19 @@
              label="Qt">
        </tag>
        <template
-             icon="icons/HelloWorld48.png"
+             icon="icons/qt_logo.png"
              id="org.eclipse.cdt.qt.ui.template.helloWorld"
-             label="C++/QML HelloWorld"
+             label="Qt C++/QML Application"
              wizard="org.eclipse.cdt.internal.qt.ui.wizards.HelloWorldWizard">
+          <description>
+             A simple Hello World Qt Application with main function in C++ and the UI in QML.
+          </description>
           <tagReference
                 id="org.eclipse.cdt.qt.ui.tag">
           </tagReference>
-          <description>
-             A simple Hello World App with main function in C++ and the UI in QML.
-          </description>
+          <tagReference
+                id="org.eclipse.cdt.ui.cdtTag">
+          </tagReference>
        </template>
     </extension>
     <extension
@@ -149,5 +140,13 @@
              descriptorTypeId="org.eclipse.cdt.qt.core.launchDescriptorType"
              labelProvider="org.eclipse.cdt.internal.qt.ui.launch.QtLaunchDescriptorLabelProvider">
        </descriptorUI>
+    </extension>
+    <extension
+          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+       <launchConfigurationTypeImage
+             configTypeID="org.eclipse.cdt.qt.core.launchConfigurationType"
+             icon="icons/qt16.png"
+             id="org.eclipse.cdt.qt.core.launchConfigurationType.image">
+       </launchConfigurationTypeImage>
     </extension>
 </plugin>

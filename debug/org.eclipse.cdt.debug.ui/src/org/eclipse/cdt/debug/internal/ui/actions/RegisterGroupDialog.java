@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,15 +147,12 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 		getButton( IDialogConstants.OK_ID ).setEnabled( name.length() > 0 );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		super.okPressed();
 		fName = fNameField.getText().trim();
-		List elements = fListField.getCheckedElements();
-		fDescriptors = (IRegisterDescriptor[])elements.toArray( new IRegisterDescriptor[elements.size()] );
+		List<IRegisterDescriptor> elements = fListField.getCheckedElements();
+		fDescriptors = elements.toArray( new IRegisterDescriptor[elements.size()] );
 	}
 
 	public String getName() {

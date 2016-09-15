@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Red Hat.
+ * Copyright (c) 2014, 2016 Red Hat and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class SWTImagesFactory {
 	}
 
 	private static URL makeIconFileURL(String prefix, String name) {
-		StringBuffer buffer = new StringBuffer(prefix);
+		StringBuilder buffer = new StringBuilder(prefix);
 		buffer.append(name);
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());

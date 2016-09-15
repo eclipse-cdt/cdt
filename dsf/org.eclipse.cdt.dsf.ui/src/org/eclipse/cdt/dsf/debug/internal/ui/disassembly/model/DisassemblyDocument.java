@@ -908,9 +908,9 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		if (DEBUG) {
 			String escapedText = null;
 			if (text != null) {
-				escapedText = text.replace(new StringBuffer("\n"), new StringBuffer("\\n")); //$NON-NLS-1$ //$NON-NLS-2$
-				escapedText = escapedText.replace(new StringBuffer("\r"), new StringBuffer("\\r")); //$NON-NLS-1$ //$NON-NLS-2$
-				escapedText = escapedText.replace(new StringBuffer("\t"), new StringBuffer("\\t")); //$NON-NLS-1$ //$NON-NLS-2$
+				escapedText = text.replace(new StringBuilder("\n"), new StringBuilder("\\n")); //$NON-NLS-1$ //$NON-NLS-2$
+				escapedText = escapedText.replace(new StringBuilder("\r"), new StringBuilder("\\r")); //$NON-NLS-1$ //$NON-NLS-2$
+				escapedText = escapedText.replace(new StringBuilder("\t"), new StringBuilder("\\t")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			System.out.println("Calling AbstractDocument.replace("+insertPos.offset+','+replaceLength+",\""+escapedText+"\")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
@@ -1037,7 +1037,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @param instruction
 	 */
 	private String buildDisassemblyLine(BigInteger address, String functionOffset, String instruction) {
-		StringBuffer buf = new StringBuffer(40);
+		StringBuilder buf = new StringBuilder(40);
 		if (fShowAddresses) {
 			if (fRadixPrefix != null) {
 				buf.append(fRadixPrefix);

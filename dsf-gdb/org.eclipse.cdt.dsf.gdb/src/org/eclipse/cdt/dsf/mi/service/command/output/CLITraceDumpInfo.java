@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Ericsson and others
+ * Copyright (c) 2011, 2016 Ericsson and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public class CLITraceDumpInfo extends MIInfo {
 	 */
 	private void parse(boolean keepHeader) {
 		final Pattern RESULT_PATTERN_UNWRAPRECORD = Pattern.compile("~\"(.*)\"",  Pattern.CANON_EQ); //$NON-NLS-1$
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		String unwrapped;
 		if (isDone()) {
 			MIOutput out = getMIOutput();

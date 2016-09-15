@@ -205,7 +205,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		String pattern = template
 				.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
 				.replace("${EXTENSIONS_PATTERN}", getPatternFileExtensions())
-				.replace("${COMPILER_GROUPS+1}", new Integer(countGroups(getCompilerPatternExtended()) + 1).toString());
+				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(getCompilerPatternExtended()) + 1));
 		return pattern;
 	}
 

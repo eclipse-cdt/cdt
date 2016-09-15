@@ -11,12 +11,8 @@
 package org.eclipse.cdt.arduino.core.internal;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
-import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -46,11 +42,13 @@ public class Activator extends Plugin {
 		}
 	}
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		plugin = this;
 		bundleContext.registerService(ArduinoManager.class, new ArduinoManager(), null);
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		plugin = null;
 	}
@@ -61,10 +59,17 @@ public class Activator extends Plugin {
 		return ref != null ? context.getService(ref) : null;
 	}
 
-	public static ArduinoConsoleService getConsoleService() throws CoreException {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.getId(), "consoleService"); //$NON-NLS-1$
-		IExtension extension = point.getExtensions()[0]; // should only be one
-		return (ArduinoConsoleService) extension.getConfigurationElements()[0].createExecutableExtension("class"); //$NON-NLS-1$
+	public static CoreException coreException(Throwable e) {
+		if (e instanceof RuntimeException && e.getCause() instanceof CoreException) {
+			return (CoreException) e.getCause();
+		} else if (e instanceof CoreException) {
+			return (CoreException) e;
+		}
+		return new CoreException(new Status(IStatus.ERROR, getId(), e.getLocalizedMessage(), e));
+	}
+
+	public static CoreException coreException(String message, Throwable e) {
+		return new CoreException(new Status(IStatus.ERROR, getId(), message, e));
 	}
 
 }

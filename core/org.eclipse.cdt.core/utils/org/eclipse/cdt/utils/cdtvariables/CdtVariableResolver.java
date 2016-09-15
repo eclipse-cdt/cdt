@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class CdtVariableResolver {
 		if(value == null || value.length == 0)
 			return EMPTY_STRING;
 		
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for(int i = 0; i < value.length; i++){
 			buffer.append(value[i]);
 			if(listDelimiter != null && !EMPTY_STRING.equals(listDelimiter) && i < value.length -1 )
@@ -113,7 +113,7 @@ public class CdtVariableResolver {
 
 		final Pattern pattern = Pattern.compile(".*?("+RE_BSLASH+"*)("+RE_VPREFIX+"("+RE_VNAME+")"+RE_VSUFFIX+").*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
-		StringBuffer buffer = new StringBuffer(string);
+		StringBuilder buffer = new StringBuilder(string);
 		int limit=string.length();
 		for (Matcher matcher = pattern.matcher(buffer);matcher.matches();matcher = pattern.matcher(buffer)) {
 			String bSlashes=matcher.group(1);
@@ -223,7 +223,7 @@ public class CdtVariableResolver {
 	static public String[] resolveToStringList(String string, IVariableSubstitutor substitutor)
 			throws CdtVariableException{
 		
-		StringBuffer buffer = new StringBuffer(string);
+		StringBuilder buffer = new StringBuilder(string);
 		final Pattern pattern = Pattern.compile("^"+RE_VPREFIX+"("+RE_VNAME+")"+RE_VSUFFIX+"$"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		Matcher matcher = pattern.matcher(buffer);
 		if (matcher.matches()) {

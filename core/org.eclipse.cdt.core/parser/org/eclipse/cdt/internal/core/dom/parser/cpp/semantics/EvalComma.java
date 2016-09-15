@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
@@ -36,9 +36,11 @@ public class EvalComma extends CPPDependentEvaluation {
 	private ICPPFunction[] fOverloads;
 
 	private IType fType;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalComma(ICPPEvaluation[] evals, IASTNode pointOfDefinition) {
-		this(evals, findEnclosingTemplate(pointOfDefinition));		
+		this(evals, findEnclosingTemplate(pointOfDefinition));
 	}
 
 	public EvalComma(ICPPEvaluation[] evals, IBinding templateDefinition) {
@@ -72,9 +74,17 @@ public class EvalComma extends CPPDependentEvaluation {
 	public boolean isValueDependent() {
 		return containsDependentValue(fArguments);
 	}
-	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		if (!areAllConstantExpressions(fArguments, point)) {
 			return false;
 		}
@@ -109,7 +119,7 @@ public class EvalComma extends CPPDependentEvaluation {
 				e1= e2;
 			} else {
 				overloads[i - 1] = overload;
-				e1= new EvalFixed(typeFromFunctionCall(overload), valueCategoryFromFunctionCall(overload), Value.UNKNOWN);
+				e1= new EvalFixed(typeFromFunctionCall(overload), valueCategoryFromFunctionCall(overload), IntegralValue.UNKNOWN);
 				if (e1.getType(point) instanceof ISemanticProblem) {
 					e1= e2;
 				}
@@ -145,7 +155,7 @@ public class EvalComma extends CPPDependentEvaluation {
 		ICPPFunction[] overloads = getOverloads(point);
 		if (overloads.length > 0) {
 			// TODO(sprigogin): Simulate execution of a function call.
-			return Value.create(this);
+			return IntegralValue.create(this);
 		}
 
 		return fArguments[fArguments.length - 1].getValue(point);
@@ -202,11 +212,10 @@ public class EvalComma extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
-			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, context.recordStep());
+			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(record, context.recordStep());
 			if (arg != fArguments[i]) {
 				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];
@@ -215,9 +224,11 @@ public class EvalComma extends CPPDependentEvaluation {
 				args[i] = arg;
 			}
 		}
-		if (args == fArguments)
+		if (args == fArguments) {
 			return this;
-		return new EvalComma(args, getTemplateDefinition());
+		}
+		EvalComma evalComma = new EvalComma(args, getTemplateDefinition());
+		return evalComma;
 	}
 
 	@Override

@@ -386,7 +386,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		ICPPTemplateArgument aT2DefaultArgument = templateParameterAT2.getDefaultValue();
 		assertNotNull(aT2DefaultArgument);
 		assertTrue(new CPPBasicType(IBasicType.Kind.eInt, 0).isSameType(aT2DefaultArgument.getTypeOfNonTypeValue()));
-		assertEquals(5, aT2DefaultArgument.getNonTypeValue().numericalValue().longValue());
+		assertEquals(5, aT2DefaultArgument.getNonTypeValue().numberValue().longValue());
 		assertEquals(0, templateParameterAT2.getTemplateNestingLevel());
 		
 		assertDeclarationCount(pdom, "S", 1);

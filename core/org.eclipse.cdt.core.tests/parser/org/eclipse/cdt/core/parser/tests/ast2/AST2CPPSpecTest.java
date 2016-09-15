@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3103,7 +3103,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 
 	// Not legal C++
 	//	//	public void test10_4s2b() throws Exception {
-	//		StringBuffer buffer = new StringBuffer();
+	//		StringBuilder buffer = new StringBuilder();
 	//		buffer.append("struct C {\n"); //$NON-NLS-1$
 	//		buffer.append("virtual void f() { }=0; // illformed\n"); //$NON-NLS-1$
 	//		buffer.append("};\n"); //$NON-NLS-1$

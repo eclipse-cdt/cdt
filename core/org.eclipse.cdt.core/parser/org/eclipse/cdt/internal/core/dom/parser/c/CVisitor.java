@@ -110,7 +110,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
@@ -1746,9 +1746,9 @@ public class CVisitor extends ASTQueries {
     	
 		IType expressionType = expression.getExpressionType();
 		if (expressionType instanceof IBasicType) {
-			IValue value = Value.create(expression);
-			if (value != null && value.numericalValue() != null) {
-				return value.numericalValue().longValue() == 0;
+			IValue value = ValueFactory.create(expression);
+			if (value != null && value.numberValue() != null) {
+				return value.numberValue().longValue() == 0;
 			}
 		}
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	@Override
 	public String getFullyQualifiedName() {
 		if (fSegments.length > 0) {
-			StringBuffer buf = new StringBuffer(fSegments.length * INITIAL_SEGMENT_LENGTH);
+			StringBuilder buf = new StringBuilder(fSegments.length * INITIAL_SEGMENT_LENGTH);
 			for (int i = 0; i < fSegments.length; ++i) {
 				if (i > 0) {
 					buf.append(QUALIFIER);

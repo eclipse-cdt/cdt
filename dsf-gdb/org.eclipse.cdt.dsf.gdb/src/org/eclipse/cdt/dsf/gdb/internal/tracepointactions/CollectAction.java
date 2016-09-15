@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Ericsson and others.
+ * Copyright (c) 2010, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ public class CollectAction extends AbstractTracepointAction {
 
 	@Override
 	public String getMemento() {
-		String collectData = new String(""); //$NON-NLS-1$
+		String collectData = ""; //$NON-NLS-1$
 
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = null;
@@ -159,7 +159,7 @@ public class CollectAction extends AbstractTracepointAction {
 	public String getSummary() {
 		// Return the exact format that will be sent to GDB.
 		
-		StringBuffer collectCmd = new StringBuffer("collect ");  //$NON-NLS-1$
+		StringBuilder collectCmd = new StringBuilder("collect ");  //$NON-NLS-1$
 		if (fCharPtrAsStrings) {
 			collectCmd.append("/s"); //$NON-NLS-1$
 			if (fCharPtrAsStringsLimit != null) {

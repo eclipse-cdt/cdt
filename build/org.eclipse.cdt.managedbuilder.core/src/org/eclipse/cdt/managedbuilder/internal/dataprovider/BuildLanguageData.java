@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,10 +77,10 @@ public class BuildLanguageData extends CLanguageData {
 //				typeId = extType.getId();
 //			else
 //				typeId = inType.getId();
-			fId = inType.getId();//new StringBuffer(fTool.getId()).append(".").append(typeId).toString();
+			fId = inType.getId();//new StringBuilder(fTool.getId()).append(".").append(typeId).toString();
 		} else {
 			fInputType = null;
-			fId = new StringBuffer(fTool.getId()).append(".").append("languagedata").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+			fId = new StringBuilder(fTool.getId()).append(".").append("languagedata").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 //		fDiscoveredInfo = new ProfileInfoProvider(this);
@@ -139,7 +139,7 @@ public class BuildLanguageData extends CLanguageData {
 		String optValue = entry.getName();
 		if(entry.getKind() == ICLanguageSettingEntry.MACRO){
 			String macroValue = entry.getValue();
-			StringBuffer buf = new StringBuffer(optValue).append('=').append(macroValue);
+			StringBuilder buf = new StringBuilder(optValue).append('=').append(macroValue);
 			optValue = buf.toString();
 		}
 		return optValue;
@@ -306,7 +306,7 @@ public class BuildLanguageData extends CLanguageData {
 	
 /*	private IOption[] getOptionsForType(int type){
 		Map map = getTypeToOptionArrayMap();
-		return (IOption[])map.get(new Integer(type));
+		return (IOption[])map.get(Integer.valueOf(type));
 		
 	}
 */	

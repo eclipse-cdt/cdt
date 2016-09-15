@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,7 +134,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
     }
     
     private String getModuleDetail( ICModule module ) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         // Type
         String type = null;
@@ -443,13 +443,11 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         return NAME;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
-    @Override
-	public Object getAdapter(Class required) {
+    @SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> required) {
         if (ITextViewer.class.equals(required)) {
-            return fSourceViewer;
+            return (T) fSourceViewer;
         }
         return null;
     }

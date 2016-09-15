@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 QNX Software Systems and others.
+ * Copyright (c) 2004, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
 
     @Override
 	public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(className);
         buf.append("()"); //$NON-NLS-1$
     	if (fIsInline) {
@@ -53,7 +53,7 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
         if (fIsInline) {
             return ""; //$NON-NLS-1$
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(className);
         buf.append("::"); //$NON-NLS-1$
         buf.append(className);

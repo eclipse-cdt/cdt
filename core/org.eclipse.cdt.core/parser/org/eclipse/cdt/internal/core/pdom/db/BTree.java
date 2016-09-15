@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class BTree {
 	/**
 	 * Constructor.
 	 * 
-	 * @param db the database containing the btree
+	 * @param db the database containing the B-tree
 	 * @param rootPointer offset into database of the pointer to the root node
 	 */
 	public BTree(Database db, long rootPointer, int degree, IBTreeComparator cmp) {
@@ -60,8 +60,8 @@ public class BTree {
 		
 		this.DEGREE = degree;
 		this.MIN_RECORDS = DEGREE - 1;
-		this.MAX_RECORDS = 2*DEGREE - 1;
-		this.MAX_CHILDREN = 2*DEGREE;
+		this.MAX_RECORDS = 2 * DEGREE - 1;
+		this.MAX_CHILDREN = 2 * DEGREE;
 		this.OFFSET_CHILDREN = MAX_RECORDS * Database.INT_SIZE;
 		this.MEDIAN_RECORD = DEGREE - 1;
 	}
@@ -157,7 +157,7 @@ public class BTree {
 			}
 		}
 
-		// Binary search to find the insert point.
+		// Binary search to find the insertion point.
 		int lower= 0; 
 		int upper= MAX_RECORDS - 1;
 		while (lower < upper && getRecord(chunk, node, upper - 1) == 0) {
@@ -165,7 +165,7 @@ public class BTree {
 		}
 
 		while (lower < upper) {
-			int middle= (lower + upper) / 2;
+    		int middle= (lower + upper) >>> 1;
 			long checkRec= getRecord(chunk, node, middle);
 			if (checkRec == 0) {
 				upper= middle;
@@ -314,7 +314,7 @@ public class BTree {
 				}
 				throw new BTreeKeyNotFoundException(
 						MessageFormat.format(Messages.getString("BTree.DeletionOnAbsentKey"), //$NON-NLS-1$
-								new Object[] { new Long(key), new Integer(mode) }));
+								new Object[] { Long.valueOf(key), Integer.valueOf(mode) }));
 			}
 		} else {
 			if (keyIndexInNode != -1) {
@@ -407,14 +407,14 @@ public class BTree {
 
 					throw new BTreeKeyNotFoundException(
 							MessageFormat.format(Messages.getString("BTree.DeletionOnAbsentKey"), //$NON-NLS-1$
-									new Object[]{new Long(key), new Integer(mode)}));
+									new Object[]{Long.valueOf(key), Integer.valueOf(mode)}));
 				}
 			}
 		}
 	}
 
 	/**
-	 * Merge node 'src' onto the right side of node 'dst' using node
+	 * Merges node 'src' onto the right side of node 'dst' using node
 	 * 'keyProvider' as the source of the median key. Bounds checking is not
 	 * performed.
 	 * @param src the key to merge into dst
@@ -446,7 +446,7 @@ public class BTree {
 	}
 
 	/**
-	 * Insert the key and (its predecessor) child at the left side of the specified node. Bounds checking
+	 * Inserts the key and (its predecessor) child at the left side of the specified node. Bounds checking
 	 * is not performed.
 	 * @param node the node to prepend to
 	 * @param key the new leftmost (least) key
@@ -459,7 +459,7 @@ public class BTree {
 	}
 
 	/**
-	 * Insert the key and (its successor) child at the right side of the specified node. Bounds
+	 * Inserts the key and (its successor) child at the right side of the specified node. Bounds
 	 * checking is not performed.
 	 * @param node
 	 * @param key
@@ -471,7 +471,7 @@ public class BTree {
 	}
 
 	/**
-	 * Overwrite a section of the specified node (dst) with the specified section of the source
+	 * Overwrites a section of the specified node (dst) with the specified section of the source
 	 * node. Bounds checking is not performed. To allow just copying of the final child (which has
 	 * no corresponding key) the routine behaves as though there were a corresponding key existing
 	 * with value zero.<p>
@@ -500,7 +500,7 @@ public class BTree {
 	}
 
 	/**
-	 * Delete a section of node content - (key, (predecessor)child) pairs. Bounds checking
+	 * Deletes a section of node content - (key, (predecessor)child) pairs. Bounds checking
 	 * is not performed. To allow deletion of the final child (which has no corresponding key)
 	 * the routine behaves as though there were a corresponding key existing with value zero.<p>
 	 * Content is deleted and remaining content is moved leftward the appropriate amount.
@@ -522,7 +522,7 @@ public class BTree {
 	}
 
 	/**
-	 * Visit all nodes beginning when the visitor comparator
+	 * Visits all nodes beginning when the visitor comparator
 	 * returns >= 0 until the visitor visit returns falls.
 	 * 
 	 * @param visitor
@@ -539,9 +539,7 @@ public class BTree {
 		if (node == 0) {
 			return true;
 		}
-		if (visitor instanceof IBTreeVisitor2) {
-			((IBTreeVisitor2) visitor).preNode(node);
-		}
+		visitor.preVisit(node);
 
 		try {
 			Chunk chunk = db.getChunk(node);
@@ -553,7 +551,7 @@ public class BTree {
 				upper--;
 			}
 			while (lower < upper) {
-				int middle= (lower + upper) / 2;
+				int middle= (lower + upper) >>> 1;
 				long checkRec = getRecord(chunk, node, middle);
 				if (checkRec == 0) {
 					upper= middle;
@@ -578,7 +576,7 @@ public class BTree {
 				if (compare > 0) {
 					// Start point is to the left.
 					return accept(getChild(chunk, node, i), visitor);
-				}  else if (compare == 0) {
+				} else if (compare == 0) {
 					if (!accept(getChild(chunk, node, i), visitor)) 
 						return false;
 					if (!visitor.visit(record))
@@ -587,25 +585,14 @@ public class BTree {
 			}
 			return accept(getChild(chunk, node, i), visitor);
 		} finally {
-			if (visitor instanceof IBTreeVisitor2) {
-				((IBTreeVisitor2) visitor).postNode(node);
-			}
+			visitor.postVisit(node);
 		}
 	}
 
-	/*
-	 * TODO: It would be good to move these into IBTreeVisitor and eliminate
-	 * IBTreeVisitor2 if this is acceptable.
-	 */
-	private interface IBTreeVisitor2 extends IBTreeVisitor {
-		void preNode(long node) throws CoreException;
-		void postNode(long node) throws CoreException;
-	}
-
 	/**
-	 * Debugging method for checking B-tree invariants
-	 * @return the empty String if B-tree invariants hold, otherwise
-	 * a human readable report
+	 * Debugging method for checking B-tree invariants.
+	 *
+	 * @return the empty String if B-tree invariants hold, otherwise a human readable report
 	 * @throws CoreException
 	 */
 	public String getInvariantsErrorReport() throws CoreException {
@@ -618,7 +605,7 @@ public class BTree {
 	 * A B-tree visitor for checking some B-tree invariants.
 	 * Note ordering invariants are not checked here.
 	 */
-	private class InvariantsChecker implements IBTreeVisitor2 {
+	private class InvariantsChecker implements IBTreeVisitor {
 		boolean valid = true;
 		String msg = ""; //$NON-NLS-1$
 		Integer leafDepth;
@@ -627,14 +614,14 @@ public class BTree {
 		public String getMsg() { return msg; }
 		public boolean isValid() { return valid; }
 		@Override
-		public void postNode(long node) throws CoreException { depth--; }
+		public void postVisit(long node) throws CoreException { depth--; }
 		@Override
 		public int compare(long record) throws CoreException { return 0; }
 		@Override
 		public boolean visit(long record) throws CoreException { return true; }
 
 		@Override
-		public void preNode(long node) throws CoreException {
+		public void preVisit(long node) throws CoreException {
 			depth++;
 
 			// Collect information for checking.
@@ -664,14 +651,14 @@ public class BTree {
 				if (!full && !empty) { 
 					valid = false;
 					msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorA"), //$NON-NLS-1$
-							new Object[] { new Long(node), new Integer(indexFirstBlankKey), new Integer(indexLastNonBlankKey) });
+							new Object[] { Long.valueOf(node), Integer.valueOf(indexFirstBlankKey), Integer.valueOf(indexLastNonBlankKey) });
 				}
 			}
 
 			// Check: Key number constrains child numbers
 			if (childCount != 0 && childCount != keyCount + 1) {
 				valid = false;
-				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorB"), new Object[] { new Long(node) }); //$NON-NLS-1$
+				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorB"), new Object[] { Long.valueOf(node) }); //$NON-NLS-1$
 			}
 
 			// The root node is excused from the remaining node constraints.
@@ -682,13 +669,13 @@ public class BTree {
 			// Check: Non-root nodes must have a keyCount within a certain range
 			if (keyCount < MIN_RECORDS || keyCount > MAX_RECORDS) {
 				valid = false;
-				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorC"), new Object[] { new Long(node) }); //$NON-NLS-1$
+				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorC"), new Object[] { Long.valueOf(node) }); //$NON-NLS-1$
 			}
 
 			// Check: All leaf nodes are at the same depth
 			if (childCount == 0) {
 				if (leafDepth == null) {
-					leafDepth = new Integer(depth);
+					leafDepth = Integer.valueOf(depth);
 				}
 				if (depth != leafDepth.intValue()) {
 					valid = false;

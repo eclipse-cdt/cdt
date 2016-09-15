@@ -33,8 +33,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -55,6 +55,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 	private ValueCategory fValueCategory;
 	private IType fType;
 	private ICPPFunction fOverload;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 
 	public EvalConditional(ICPPEvaluation condition, ICPPEvaluation positive, ICPPEvaluation negative,
 			boolean positiveThrows, boolean negativeThrows, IASTNode pointOfDefinition) {
@@ -116,9 +118,9 @@ public class EvalConditional extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		IValue condValue = fCondition.getValue(point);
-		if (condValue == Value.UNKNOWN)
-			return Value.UNKNOWN;
-		Long cond = condValue.numericalValue();
+		if (condValue == IntegralValue.UNKNOWN)
+			return IntegralValue.UNKNOWN;
+		Number cond = condValue.numberValue();
 		if (cond != null) {
 			if (cond.longValue() != 0) {
 				return fPositive == null ? condValue : fPositive.getValue(point);
@@ -126,7 +128,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 				return fNegative.getValue(point);
 			}
 		}
-		return Value.create(this);
+		return IntegralValue.create(this);
 	}
 
 	@Override
@@ -149,6 +151,14 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
 		return fCondition.isConstantExpression(point)
 			&& (fPositive == null || fPositive.isConstantExpression(point))
 			&& fNegative.isConstantExpression(point);
@@ -243,7 +253,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 		// 5.16-5: At least one class type but no conversion
 		if (isClassType2 || isClassType3) {
-			fOverload = CPPSemantics.findOverloadedConditionalOperator(point, getTemplateDefinitionScope(), positive, fNegative);			
+			fOverload = CPPSemantics.findOverloadedConditionalOperator(point, getTemplateDefinitionScope(), positive, fNegative);
 			if (fOverload != null) {
 				fType= ExpressionTypes.typeFromFunctionCall(fOverload);
 			} else {
@@ -352,27 +362,29 @@ public class EvalConditional extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			ConstexprEvaluationContext context) {
-		ICPPEvaluation condition = fCondition.computeForFunctionCall(parameterMap, context.recordStep());
+	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		ICPPEvaluation condition = fCondition.computeForFunctionCall(record, context.recordStep());
 		// If the condition can be evaluated, fold the conditional into
 		// just the branch that is taken. This avoids infinite recursion
 		// when computing a recursive constexpr function where the base
 		// case of the recursion is one of the branches of the conditional.
-		Long conditionValue = condition.getValue(context.getPoint()).numericalValue();
+		Number conditionValue = condition.getValue(context.getPoint()).numberValue();
 		if (conditionValue != null) {
 			if (conditionValue.longValue() != 0) {
-				return fPositive == null ? null : fPositive.computeForFunctionCall(parameterMap, context.recordStep());
+				return fPositive == null ? null : fPositive.computeForFunctionCall(record, context.recordStep());
 			} else {
-				return fNegative.computeForFunctionCall(parameterMap, context.recordStep());
+				return fNegative.computeForFunctionCall(record, context.recordStep());
 			}
 		}
 		ICPPEvaluation positive = fPositive == null ?
-				null : fPositive.computeForFunctionCall(parameterMap, context.recordStep());
-		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, context.recordStep());
-		if (condition == fCondition && positive == fPositive && negative == fNegative)
+				null : fPositive.computeForFunctionCall(record, context.recordStep());
+		ICPPEvaluation negative = fNegative.computeForFunctionCall(record, context.recordStep());
+		if (condition == fCondition && positive == fPositive && negative == fNegative) {
 			return this;
-		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows, getTemplateDefinition());
+		}
+		
+		EvalConditional evalConditional = new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows, getTemplateDefinition());
+		return evalConditional;
 	}
 
 	@Override

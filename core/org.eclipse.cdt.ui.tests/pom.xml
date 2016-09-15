@@ -7,14 +7,19 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>9.0.0-SNAPSHOT</version>
+		<version>9.1.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>5.4.0-SNAPSHOT</version>
+	<version>5.5.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.ui.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
-	
+
+	<properties>
+		<extra.vmargs.indexer.timeout></extra.vmargs.indexer.timeout>
+		<extra.vmargs.displayhelper.timeoutmultipler></extra.vmargs.displayhelper.timeoutmultipler>
+	</properties>
+
 	<!-- Uncommenting this is useful when the repo is built first then you want to run tests on this plugin only -->
 	<!-- <repositories>
 		<repository>
@@ -23,6 +28,32 @@
 			<layout>p2</layout>
 		</repository>
 	</repositories>-->
+
+	<profiles>
+		<profile>
+			<id>indexer-timeout-set</id>
+			<activation>
+				<property>
+					<name>indexer.timeout</name>
+				</property>
+			</activation>
+			<properties>
+				<extra.vmargs.indexer.timeout>-Dindexer.timeout=${indexer.timeout}</extra.vmargs.indexer.timeout>
+			</properties>
+		</profile>
+		<profile>
+			<id>display-timeout-multiplier-set</id>
+			<activation>
+				<property>
+					<name>org.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER</name>
+				</property>
+			</activation>
+			<properties>
+				<extra.vmargs.displayhelper.timeoutmultipler>-Dorg.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER=${org.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER}</extra.vmargs.displayhelper.timeoutmultipler>
+			</properties>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -31,7 +62,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
+					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs.indexer.timeout} ${extra.vmargs.displayhelper.timeoutmultipler}</argLine>
 					<includes>
 						<include>**/AutomatedSuite.*</include>
 					</includes>

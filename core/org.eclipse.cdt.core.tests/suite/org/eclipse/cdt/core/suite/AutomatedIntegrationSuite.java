@@ -12,10 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.suite;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorOldTests;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManagerTests;
@@ -29,6 +25,7 @@ import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
 import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
+import org.eclipse.cdt.core.parser.tests.ast2.constexprevaluation.AllConstexprEvalTests;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.resources.tests.RefreshScopeTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
@@ -40,6 +37,10 @@ import org.eclipse.cdt.utils.FindProgramLocationTest;
 import org.eclipse.cdt.utils.StorableCdtVariablesTest;
 import org.eclipse.cdt.utils.UNCPathConverterTest;
 import org.eclipse.cdt.utils.WeakHashSetTest;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @author vhirsl
@@ -68,10 +69,11 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		if (System.getProperty("cdt.skip.known.test.failures") == null) {		
 			suite.addTest(CDescriptorTests.suite());
 		}
+		suite.addTest(AllConstexprEvalTests.suite());
+		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(CDescriptorOldTests.suite());
 		suite.addTest(IEnvironmentVariableManagerTests.suite());
 		suite.addTest(ErrorParserTests.suite());
-		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());

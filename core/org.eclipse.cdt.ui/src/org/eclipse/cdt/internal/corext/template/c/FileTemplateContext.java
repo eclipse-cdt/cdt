@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class FileTemplateContext extends TemplateContext {
 				return code;
 			}
 			
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			for (int i= 0; i < nLines; i++) {
 				if (i != 0) {
 					buf.append(lineDelim);

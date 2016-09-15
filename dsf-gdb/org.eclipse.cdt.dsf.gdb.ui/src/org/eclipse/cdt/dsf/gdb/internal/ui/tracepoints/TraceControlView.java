@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Ericsson and others.
+ * Copyright (c) 2010, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -550,7 +550,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 			if (traceData.getCurrentTraceFrameId() != null) {
 				fl += TracepointsMessages.bind(TracepointsMessages.TraceControlView_frame_looking,
 						new Object[] { traceData.getCurrentTraceFrameId(), 
-										new Integer(traceData.getTracepointNumberForCurrentTraceFrame())} );
+										Integer.valueOf(traceData.getTracepointNumberForCurrentTraceFrame())} );
 				int recId = 0;
 				try {
 					recId = Integer.parseInt(traceData.getCurrentTraceFrameId());
@@ -972,16 +972,16 @@ public class TraceControlView extends ViewPart implements IViewPart {
         
         StringBuilder sb = new StringBuilder(64);
         if (!shortForm) {
-	        if (days != 0) sb.append(days + TracepointsMessages.TraceControlView_date_days);
-	        if (hours != 0) sb.append(hours + TracepointsMessages.TraceControlView_date_hours);
-	        if (minutes != 0) sb.append(minutes + TracepointsMessages.TraceControlView_date_minutes);
-	        if (seconds != 0) sb.append(seconds + TracepointsMessages.TraceControlView_date_seconds);
+	        if (days != 0) sb.append(days).append(TracepointsMessages.TraceControlView_date_days);
+	        if (hours != 0) sb.append(hours).append(TracepointsMessages.TraceControlView_date_hours);
+	        if (minutes != 0) sb.append(minutes).append(TracepointsMessages.TraceControlView_date_minutes);
+	        if (seconds != 0) sb.append(seconds).append(TracepointsMessages.TraceControlView_date_seconds);
 	        if (sb.length() == 0) sb.append(TracepointsMessages.TraceControlView_date_zero);
         } else {
-	        if (days != 0) sb.append(days + TracepointsMessages.TraceControlView_date_short_days);
-	        if (hours != 0) sb.append(hours + TracepointsMessages.TraceControlView_date_short_hours);
-	        if (minutes != 0) sb.append(minutes + TracepointsMessages.TraceControlView_date_short_minutes);
-	        if (seconds != 0) sb.append(seconds + TracepointsMessages.TraceControlView_date_short_seconds);
+	        if (days != 0) sb.append(days).append(TracepointsMessages.TraceControlView_date_short_days);
+	        if (hours != 0) sb.append(hours).append(TracepointsMessages.TraceControlView_date_short_hours);
+	        if (minutes != 0) sb.append(minutes).append(TracepointsMessages.TraceControlView_date_short_minutes);
+	        if (seconds != 0) sb.append(seconds).append(TracepointsMessages.TraceControlView_date_short_seconds);
 	        if (sb.length() == 0) sb.append(TracepointsMessages.TraceControlView_date_short_zero);
 
         }

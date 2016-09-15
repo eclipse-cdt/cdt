@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2016 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ public class SharedDefaults extends HashMap<String, String> {
 			Element xmlElement = sharedElementList.get(i);
 			key = xmlElement.getAttribute(TemplateEngineHelper.ID);
 			value = xmlElement.getAttribute(TemplateEngineHelper.VALUE);
-			if (key != null && !key.trim().equals("")) { //$NON-NLS-1$
+			if (key != null && !key.trim().isEmpty()) {
 				sharedDefaultsMap.put(key, value);
 			}
 		}

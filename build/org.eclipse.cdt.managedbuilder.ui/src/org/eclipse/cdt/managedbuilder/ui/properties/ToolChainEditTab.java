@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -605,7 +605,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	 */
 	public static String getCompatibilityMessage(CompatibilityStatus cs) {
 		IConflict[] cons = cs.getConflicts();
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i=0; i<cons.length; i++) {
 			IBuildObject bo = cons[i].getBuildObject();
 			String n = (bo == null) ?
@@ -645,10 +645,10 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				break;
 			}
 
-			result.append(Messages.ToolChainEditTab_15 +
-					(i+1) + Messages.ToolChainEditTab_16 +
-					SPACE + t + SPACE + o + SPACE + n +
-					Messages.ToolChainEditTab_17);
+			result.append(Messages.ToolChainEditTab_15)
+					.append(i+1).append(Messages.ToolChainEditTab_16)
+					.append(SPACE).append(t).append(SPACE).append(o).append(SPACE).append(n)
+					.append(Messages.ToolChainEditTab_17);
 		}
 		String s = result.toString();
 		if (s.trim().length() == 0)

@@ -76,7 +76,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		ResourceHelper.cleanUp(getName());
 	}
 
 

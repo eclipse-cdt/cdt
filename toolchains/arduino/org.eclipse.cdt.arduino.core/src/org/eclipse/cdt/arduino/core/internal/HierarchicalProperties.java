@@ -23,10 +23,10 @@ public class HierarchicalProperties {
 	public HierarchicalProperties() {
 	}
 
-	public HierarchicalProperties(Properties properties) {
-		for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-			String key = (String) entry.getKey();
-			String value = (String) entry.getValue();
+	public HierarchicalProperties(LinkedProperties properties) {
+		for (Object keyObj : properties.orderedKeys()) {
+			String key = (String) keyObj;
+			String value = (String) properties.get(key);
 			putProperty(key, value);
 		}
 	}

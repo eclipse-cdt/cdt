@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,9 +47,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 @Deprecated
 public class ReferenceBlock extends AbstractCOptionPage {
 
-	private static final String PREFIX = "ReferenceBlock"; // $NON-NLS-1$ //$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$ //$NON-NLS-1$
-	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$ //$NON-NLS-1$
+	private static final String PREFIX = "ReferenceBlock"; //$NON-NLS-1$ //$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$ //$NON-NLS-1$
+	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$ //$NON-NLS-1$
 
 	private CheckboxTableViewer referenceProjectsViewer;
 

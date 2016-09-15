@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2011 IBM Corporation and others.
+ *  Copyright (c) 2002, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -478,7 +478,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 			try {
 				String curr= tracker.getLineDelimiter(i);
 				if (curr != null && !fLegalLineDelimiters.contains(curr)) {
-					StringBuffer buf= new StringBuffer("New line delimiter added to new code: "); //$NON-NLS-1$
+					StringBuilder buf= new StringBuilder("New line delimiter added to new code: "); //$NON-NLS-1$
 					for (int k= 0; k < curr.length(); k++) {
 						buf.append(String.valueOf((int) curr.charAt(k)));
 					}

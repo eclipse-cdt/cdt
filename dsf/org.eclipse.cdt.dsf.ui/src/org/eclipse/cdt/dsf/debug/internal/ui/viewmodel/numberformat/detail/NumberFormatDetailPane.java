@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -334,8 +334,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                 new DataRequestMonitor<Map<String,Object>>(executor, null) {
                                     @Override
                                     protected void handleSuccess() {
-                                        StringBuffer finalResult = new StringBuffer();
-                                        finalResult.append(NAME).append(getData().get(IElementPropertiesProvider.PROP_NAME)).append(CRLF);
+                                        StringBuilder finalResult = new StringBuilder();
+                                        	finalResult.append(NAME).append(getData().get(IElementPropertiesProvider.PROP_NAME)).append(CRLF);
 
                                         if (formats != null) {
                                         	for (int i = 0; i < formats.length; i++) {
@@ -363,7 +363,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                         		String childMessage = statuses[i].getMessage().trim();
                                         		// Avoid root message duplication
                                         		if (!childMessage.equals(rootMessage)) {
-                                            		finalResult.append(CRLF + CRLF + (i+1) + PARENTHESES + childMessage);	
+                                        			finalResult.append(CRLF).append(CRLF).append(i + 1).append(PARENTHESES).append(childMessage);
                                         		}
                                         	}
                                     	}

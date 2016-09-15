@@ -125,5 +125,9 @@
    <description>Manage common source paths.</description>
    <topic href="reference/cdt_u_dbg_src.htm" label="Source Lookup Path"/>
 </context>
+<context id="source_path_map_entry_dialog_context" title="Edit Path Mappings">
+   <description>Edit path mapping for source lookup.</description>
+   <topic href="reference/cdt_u_dbg_src_path_mapping.htm" label="Edit Path Mappings"/>
+</context>
 
 </contexts>

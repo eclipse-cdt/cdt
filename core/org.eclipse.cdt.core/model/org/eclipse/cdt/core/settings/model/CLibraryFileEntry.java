@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Intel Corporation and others.
+ * Copyright (c) 2007, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,7 +169,7 @@ public final class CLibraryFileEntry extends ACPathEntry implements ICLibraryFil
 		String result = super.contentsToString();
 
 		if(fSourceAttachmentPath != null){
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(result);
 			buf.append(" ; srcPath=").append(fSourceAttachmentPath); //$NON-NLS-1$
 			buf.append("; srcRoot=").append(fSourceAttachmentRootPath); //$NON-NLS-1$

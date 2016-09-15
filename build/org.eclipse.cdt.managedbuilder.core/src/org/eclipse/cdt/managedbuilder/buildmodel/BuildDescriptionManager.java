@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -293,7 +293,7 @@ public class BuildDescriptionManager {
 		
 //		IPath path = null;
 		IPath tmp = cwd;
-		StringBuffer buf = null;
+		StringBuilder buf = null;
 		while(tmp.segmentCount() != 0){
 			if(tmp.isPrefixOf(location)){
 				IPath p = location.removeFirstSegments(tmp.segmentCount()).setDevice(null);
@@ -303,7 +303,7 @@ public class BuildDescriptionManager {
 				return new Path(buf.toString());
 			}
 			if(buf == null){
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 				buf.append("../");	//$NON-NLS-1$
 			} else {
 				buf.append("../");	//$NON-NLS-1$

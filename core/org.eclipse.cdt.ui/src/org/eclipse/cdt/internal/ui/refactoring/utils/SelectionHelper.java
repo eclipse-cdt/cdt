@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,9 +9,11 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
@@ -42,9 +44,9 @@ public class SelectionHelper {
 		return null;
 	}
 	
-	public static IASTSimpleDeclaration findFirstSelectedDeclaration(final Region textSelection,
+	public static IASTSimpleDeclaration findFirstSelectedDeclaration(final IRegion textSelection,
 			IASTTranslationUnit translationUnit) {
-		final Container<IASTSimpleDeclaration> container = new Container<IASTSimpleDeclaration>();
+		final Container<IASTSimpleDeclaration> container = new Container<>();
 
 		translationUnit.accept(new ASTVisitor() {
 			{
@@ -63,18 +65,18 @@ public class SelectionHelper {
 		return container.getObject();
 	}
 	
-	public static boolean doesNodeOverlapWithRegion(IASTNode node, Region region) {
+	public static boolean doesNodeOverlapWithRegion(IASTNode node, IRegion region) {
 		return doRegionsOverlap(getNodeSpan(node), region);
 	}
 	
-	public static boolean isNodeInsideRegion(IASTNode node, Region region) {
+	public static boolean isNodeInsideRegion(IASTNode node, IRegion region) {
 		return isRegionInside(getNodeSpan(node), region);
 	}
 
 	/**
 	 * Returns true if the first region is inside the second.
 	 */
-	private static boolean isRegionInside(Region region1, Region region2) {
+	private static boolean isRegionInside(IRegion region1, IRegion region2) {
 		int offset1 = region1.getOffset();
 		int offset2 = region2.getOffset();
 		return offset1 >= offset2 &&
@@ -84,18 +86,26 @@ public class SelectionHelper {
 	/**
 	 * Returns true if the two regions have at least one common point.
 	 */
-	private static boolean doRegionsOverlap(Region region1, Region region2) {
+	private static boolean doRegionsOverlap(IRegion region1, IRegion region2) {
 		int offset1 = region1.getOffset();
 		int offset2 = region2.getOffset();
 		return offset1 + region1.getLength() >= offset2 &&
 				offset1 <= offset2 + region2.getLength();
 	}
 
-	public static boolean isNodeInsideSelection(IASTNode node, Region selection) {
+	public static boolean isNodeInsideSelection(IASTNode node, IRegion selection) {
 		return node.isPartOfTranslationUnitFile() && isNodeInsideRegion(node, selection);
 	}
 
-	protected static Region getNodeSpan(IASTNode region) {
+	public static boolean isSelectionInsideNode(IASTNode node, IRegion selection) {
+		return node.isPartOfTranslationUnitFile() && isRegionInside(selection, getNodeSpan(node));
+	}
+
+	public static boolean nodeMatchesSelection(IASTNode node, IRegion region) {
+		return getNodeSpan(node).equals(region);
+	}
+
+	protected static IRegion getNodeSpan(IASTNode region) {
 		int start = Integer.MAX_VALUE;
 		int nodeLength = 0;
 		IASTNodeLocation[] nodeLocations = region.getNodeLocations();

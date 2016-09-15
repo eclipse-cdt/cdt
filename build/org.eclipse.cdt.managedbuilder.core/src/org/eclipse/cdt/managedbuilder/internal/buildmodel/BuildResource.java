@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -237,7 +237,7 @@ public class BuildResource implements IBuildResource {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("BR "); //$NON-NLS-1$
 		IPath fullPath = getFullPath();
 		if(fullPath != null)

@@ -8,7 +8,7 @@
  * Contributors:
  * Marc-Andre Laperle - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.console;
+package org.eclipse.cdt.dsf.gdb.internal.ui.console.actions;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +16,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsoleMessages;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.IConsoleImagesConst;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;

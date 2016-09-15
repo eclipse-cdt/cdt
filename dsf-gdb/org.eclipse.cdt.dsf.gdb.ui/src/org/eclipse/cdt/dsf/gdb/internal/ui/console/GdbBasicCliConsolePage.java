@@ -9,6 +9,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleTerminateLaunchAction;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.ui.DebugUITools;

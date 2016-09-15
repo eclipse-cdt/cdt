@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.console;
+package org.eclipse.cdt.dsf.gdb.internal.ui.console.actions;
 
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.action.Action;

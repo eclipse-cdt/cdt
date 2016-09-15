@@ -2525,7 +2525,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 			}
 		};
 		fSession.getExecutor().execute(query);
-		query.get(20000, TimeUnit.MILLISECONDS);
+		query.get(TestsPlugin.massageTimeout(20000), TimeUnit.MILLISECONDS);
 	}
 
 	private void deleteAllPlatformBreakpoints() throws Exception {

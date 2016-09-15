@@ -243,7 +243,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
     	};
     	try {
     		fProcesses.getExecutor().execute(query);
-    		query.get(1000, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(1000), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {
@@ -331,7 +331,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
     	};
     	try {
     		fProcesses.getExecutor().execute(query);
-    		query.get(1000, TimeUnit.MILLISECONDS);
+    		query.get(TestsPlugin.massageTimeout(1000), TimeUnit.MILLISECONDS);
     	} catch (InterruptedException e) {
     		fail(e.getMessage());
     	} catch (ExecutionException e) {

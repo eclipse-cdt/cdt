@@ -212,7 +212,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		fSession.getExecutor().execute(queryRegisters);
 
-		IRegisterDMContext[] regContexts = queryRegisters.get(500, TimeUnit.MILLISECONDS);
+		IRegisterDMContext[] regContexts = queryRegisters.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 
 		assertEquals("Wrong number of registers", get_X86_REGS().size(), regContexts.length);
 
@@ -232,7 +232,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(queryRegistersDmc);           
-        IRegisterDMContext[] regContexts = queryRegistersDmc.get(500, TimeUnit.MILLISECONDS);
+        IRegisterDMContext[] regContexts = queryRegistersDmc.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 
         return(regContexts);
     }
@@ -329,7 +329,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		fRegService.getExecutor().submit(queryFormattedData);
 
-		FormattedValueDMData data = queryFormattedData.get(500, TimeUnit.MILLISECONDS);
+		FormattedValueDMData data = queryFormattedData.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		return data.getFormattedValue();
 	}
 
@@ -430,7 +430,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(queryAction);
-		queryAction.get(500, TimeUnit.MILLISECONDS);
+		queryAction.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 	
 	/**
@@ -938,7 +938,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		fRegService.getExecutor().execute(queryGroupsCtx);
 
-		IRegisterGroupDMContext[] regGroupsDMCs = queryGroupsCtx.get(500, TimeUnit.MILLISECONDS);
+		IRegisterGroupDMContext[] regGroupsDMCs = queryGroupsCtx.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 
 		return (regGroupsDMCs);
 	}
@@ -967,7 +967,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(queryAction);
-		return queryAction.get(500, TimeUnit.MILLISECONDS);
+		return queryAction.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
 	private boolean canEditRegisterGroup(final IRegisterGroupDMContext context) throws Throwable {
@@ -979,7 +979,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(queryAction);
-		return queryAction.get(500, TimeUnit.MILLISECONDS);
+		return queryAction.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
 	private boolean canRemoveRegisterGroups(final IRegisterGroupDMContext[] groupsContext) throws Throwable {
@@ -991,7 +991,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(queryAction);
-		return queryAction.get(500, TimeUnit.MILLISECONDS);
+		return queryAction.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 	
 	private void addGroup(final String groupName, final IRegisterDMContext[] regIndexes) throws Throwable {
@@ -1010,7 +1010,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(queryAction);
-		queryAction.get(500, TimeUnit.MILLISECONDS);
+		queryAction.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
 	private void editGroup(final IRegisterGroupDMContext group, final String newGroupName, final IRegisterDMContext[] regIndexes) throws Throwable {
@@ -1023,7 +1023,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(queryAction);
-		queryAction.get(500, TimeUnit.MILLISECONDS);
+		queryAction.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
 	private void removeGroups(final IRegisterGroupDMContext[] groups) throws Throwable {
@@ -1036,7 +1036,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(queryAction);
-		queryAction.get(500, TimeUnit.MILLISECONDS);
+		queryAction.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
 	private boolean canRestoreDefaultGroups() throws Throwable {
@@ -1053,7 +1053,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		fRegService.getExecutor().submit(queryCanRestore);
 
 		//Validate, we can always restore to defaults
-		return queryCanRestore.get(500, TimeUnit.MILLISECONDS);
+		return queryCanRestore.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 	
 	private void restoreDefaultGroups() throws Throwable {
@@ -1069,7 +1069,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		fRegService.getExecutor().submit(queryRestore);
 
-		queryRestore.get(500, TimeUnit.MILLISECONDS);
+		queryRestore.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
 	private void resetRegService() throws Throwable {
@@ -1086,7 +1086,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		regManager.getExecutor().submit(queryReset);
 
-		queryReset.get(500, TimeUnit.MILLISECONDS);
+		queryReset.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
 	private void saveRegGroups() throws Throwable {
@@ -1104,7 +1104,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		regManager.getExecutor().submit(querySave);
 
-		querySave.get(500, TimeUnit.MILLISECONDS);
+		querySave.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
 	private IRegisterDMData getRegisterData(final IRegisterDMContext registerDmc) throws Throwable {
@@ -1116,7 +1116,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(registerDataQ);
-		IRegisterDMData registerData = registerDataQ.get(500, TimeUnit.MILLISECONDS);
+		IRegisterDMData registerData = registerDataQ.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertNotNull(registerData);
 
 		return registerData;
@@ -1132,7 +1132,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(registerValueQ);
-		FormattedValueDMData registerValue = registerValueQ.get(500, TimeUnit.MILLISECONDS);
+		FormattedValueDMData registerValue = registerValueQ.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertNotNull(registerValue);
 
 		return registerValue;
@@ -1147,7 +1147,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(groupDataQ);
-		IRegisterGroupDMData groupData = groupDataQ.get(500, TimeUnit.MILLISECONDS);
+		IRegisterGroupDMData groupData = groupDataQ.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertNotNull(groupData);
 
 		return groupData;
@@ -1162,7 +1162,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		};
 
 		fRegService.getExecutor().submit(groupDataQ);
-		IRegisterGroupDMData[] groupsData = groupDataQ.get(500, TimeUnit.MILLISECONDS);
+		IRegisterGroupDMData[] groupsData = groupDataQ.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertNotNull(groupsData);
 
 		return groupsData;

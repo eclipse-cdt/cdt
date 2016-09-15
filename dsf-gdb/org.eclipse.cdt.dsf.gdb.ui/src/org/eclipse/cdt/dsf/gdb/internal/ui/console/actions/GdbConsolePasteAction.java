@@ -5,34 +5,35 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.console;
+package org.eclipse.cdt.dsf.gdb.internal.ui.console.actions;
 
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsoleMessages;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.IConsoleImagesConst;
 import org.eclipse.jface.action.Action;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 
 /**
- * Action to copy the selected text from the associated terminal
+ * Action to paste from the clip-board to the associated terminal
  */
-public class GdbConsoleCopyAction extends Action {
+public class GdbConsolePasteAction extends Action {
 
 	private final ITerminalViewControl fTerminalCtrl;
-
-	public GdbConsoleCopyAction(ITerminalViewControl terminalControl) {
+	public GdbConsolePasteAction(ITerminalViewControl terminalControl) {
 		fTerminalCtrl = terminalControl;
 		if (fTerminalCtrl == null || fTerminalCtrl.isDisposed()) {
 			setEnabled(false);
 		}
-		setText(ConsoleMessages.ConsoleCopyAction_name);
-		setToolTipText(ConsoleMessages.ConsoleCopyAction_description);
-		setImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_COPY_ACTIVE_COLOR));
-		setDisabledImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_COPY_DISABLED_COLOR));
+		setText(ConsoleMessages.ConsolePasteAction_name);
+		setToolTipText(ConsoleMessages.ConsolePasteAction_description);
+		setImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_PASTE_ACTIVE_COLOR));
+		setDisabledImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_PASTE_ACTIVE_COLOR));
 	}
 
 	@Override
 	public void run() {
 		if (fTerminalCtrl != null) {
-			fTerminalCtrl.copy();
+			fTerminalCtrl.paste();
 		}
 	}
 }

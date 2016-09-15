@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.ConsoleSaveAction;
 import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;

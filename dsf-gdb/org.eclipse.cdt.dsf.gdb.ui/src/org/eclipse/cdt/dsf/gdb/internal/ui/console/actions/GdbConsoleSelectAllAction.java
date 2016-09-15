@@ -5,34 +5,32 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.console;
+package org.eclipse.cdt.dsf.gdb.internal.ui.console.actions;
 
-import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsoleMessages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 
 /**
- * Action to clear the contents of the associated GDB terminal
+ * Action to Select-All the available text from the associated terminal
  */
-public class GdbConsoleClearAction extends Action {
+public class GdbConsoleSelectAllAction extends Action {
 
 	private final ITerminalViewControl fTerminalCtrl;
-	public GdbConsoleClearAction(ITerminalViewControl terminalControl) {
+
+	public GdbConsoleSelectAllAction(ITerminalViewControl terminalControl) {
 		fTerminalCtrl = terminalControl;
 		if (fTerminalCtrl == null || fTerminalCtrl.isDisposed()) {
 			setEnabled(false);
 		}
-
-		setText(ConsoleMessages.ConsoleClearAction_name);
-		setToolTipText(ConsoleMessages.ConsoleClearAction_description);
-		setImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_CLEAR_ACTIVE_COLOR));
-		setDisabledImageDescriptor(GdbUIPlugin.getImageDescriptor(IConsoleImagesConst.IMG_CONSOLE_CLEAR_DISABLED_COLOR));
+		setText(ConsoleMessages.ConsoleSelectAllAction_name);
+		setToolTipText(ConsoleMessages.ConsoleSelectAllAction_description);
 	}
 
 	@Override
 	public void run() {
 		if (fTerminalCtrl != null) {
-			fTerminalCtrl.clearTerminal();
+			fTerminalCtrl.selectAll();
 		}
 	}
 }

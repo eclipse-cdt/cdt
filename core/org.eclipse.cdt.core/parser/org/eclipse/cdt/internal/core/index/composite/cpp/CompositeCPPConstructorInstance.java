@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPConstructorInstance extends CompositeCPPMethodInstance implements ICPPConstructor {
 	public CompositeCPPConstructorInstance(ICompositesFactory cf, ICPPConstructor rbinding) {
 		super(cf, rbinding);
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return ((ICPPConstructor) rbinding).getConstructorChainExecution(point);
 	}
 }

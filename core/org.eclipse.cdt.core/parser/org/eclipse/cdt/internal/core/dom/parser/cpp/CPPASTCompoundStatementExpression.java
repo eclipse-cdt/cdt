@@ -24,18 +24,21 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 /**
  * Gnu-extension: ({ ... })
  */
 public class CPPASTCompoundStatementExpression extends ASTNode
-		implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
+		implements IGNUASTCompoundStatementExpression, ICPPASTExpression, ICPPEvaluationOwner {
     private IASTCompoundStatement fStatement;
     private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-
+    
+    public CPPASTCompoundStatementExpression() {
+	}
+    
 	public CPPASTCompoundStatementExpression(IASTCompoundStatement statement) {
 		setCompoundStatement(statement);
 	}
@@ -73,11 +76,11 @@ public class CPPASTCompoundStatementExpression extends ASTNode
 			if (fStatement != null) {
 				IASTStatement[] statements = fStatement.getStatements();
 				if (statements.length > 0) {
-					IASTStatement lastStatement = statements[statements.length - 1];
-					if (lastStatement instanceof IASTExpressionStatement) {
-						ICPPASTExpression expression =
-								(ICPPASTExpression) ((IASTExpressionStatement) lastStatement).getExpression();
-						fEval= new EvalCompound(expression.getEvaluation(), this);
+					IASTStatement st = statements[statements.length - 1];
+					if (st instanceof IASTExpressionStatement) {
+						IASTExpressionStatement exprStmt = (IASTExpressionStatement)st;
+						ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)exprStmt.getExpression();
+						fEval= new EvalCompoundStatementExpression(evalOwner.getEvaluation(), this);
 					}
 				}
 			}

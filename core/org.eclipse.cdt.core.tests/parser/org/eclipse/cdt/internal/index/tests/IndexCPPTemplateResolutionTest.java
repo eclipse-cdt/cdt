@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -1486,7 +1487,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPTemplateParameterMap paramMap = c256.getTemplateParameterMap();
 		assertEquals(1, paramMap.getAllParameterPositions().length);
 		ICPPTemplateArgument arg = paramMap.getArgument(0);
-		assertEquals(Long.valueOf(256), arg.getNonTypeValue().numericalValue());
+		assertEquals(Long.valueOf(256), arg.getNonTypeValue().numberValue());
 		assertInstance(arg.getTypeOfNonTypeValue(), ICPPBasicType.class);
 
 		ICPPFunction foo = getBindingFromASTName("foo(t)", 3, ICPPFunction.class);
@@ -2213,7 +2214,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testDependentEnumValue_389009() throws Exception {
 		IEnumerator binding = getBindingFromASTName("id;", 2, IEnumerator.class);
 		IValue value = binding.getValue();
-		Long num = value.numericalValue();
+		Number num = value.numberValue();
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}
@@ -2954,6 +2955,44 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	//	// empty file
 	public void testStackOverflow_462764() throws Exception {
+		checkBindings();
+	}
+	
+	//	template <typename>
+	//	struct base {
+	//		constexpr base() {}
+	//	};
+	//    
+	//	template <typename T>
+	//	struct derived : base<T> {
+	//		constexpr derived() : base<T>() {}
+	//	};
+	
+	//	derived<int> waldo;
+	public void testSerializationOfUnknownConstructor_490475() throws Exception {
+		IASTName waldoName = findName("waldo", 5);
+		IVariable waldo = getBindingFromASTName("waldo", 5);
+		IType derivedInt = waldo.getType();
+		assertInstance(derivedInt, ICPPClassSpecialization.class);
+		ICPPClassType derived = ((ICPPClassSpecialization) derivedInt).getSpecializedBinding();
+		ICPPMethod constructor = ClassTypeHelper.getMethodInClass(derived, MethodKind.DEFAULT_CTOR, null);
+		assertInstance(constructor, ICPPConstructor.class);
+		// Trigger deserialization of constructor chain execution
+		((ICPPConstructor) constructor).getConstructorChainExecution(waldoName);
+	}
+	
+	//	template <typename F>
+	//	struct S {
+	//	    F f;
+	//	};    
+	//
+	//	template <typename F>
+	//	auto foo(F f) -> decltype(S<F>{f});
+	
+	//	void bar() {
+	//	    foo([]{});
+	//	}
+	public void testBracedInitList_490475() throws Exception {
 		checkBindings();
 	}
 }

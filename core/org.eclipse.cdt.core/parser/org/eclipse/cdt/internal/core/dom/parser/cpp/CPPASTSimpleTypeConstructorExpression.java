@@ -18,12 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -31,11 +29,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 
 public class CPPASTSimpleTypeConstructorExpression extends ASTNode
-		implements ICPPASTSimpleTypeConstructorExpression, IASTImplicitNameOwner {
+		implements ICPPASTSimpleTypeConstructorExpression, IASTImplicitNameOwner, ICPPEvaluationOwner {
 	private ICPPASTDeclSpecifier fDeclSpec;
 	private IASTInitializer fInitializer;
 	private ICPPEvaluation fEvaluation;
@@ -97,17 +96,10 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
 			final IType type = CPPVisitor.createType(fDeclSpec);
-			ICPPEvaluation[] args= null;
-			if (fInitializer instanceof ICPPASTConstructorInitializer) {
-				IASTInitializerClause[] a = ((ICPPASTConstructorInitializer) fInitializer).getArguments();
-				args= new ICPPEvaluation[a.length];
-				for (int i = 0; i < a.length; i++) {
-					args[i]= ((ICPPASTInitializerClause) a[i]).getEvaluation();
-				}
-				fEvaluation= new EvalTypeId(type, this, args);
-			} else if (fInitializer instanceof ICPPASTInitializerList) {
-				fEvaluation= new EvalTypeId(type, this,
-						((ICPPASTInitializerList) fInitializer).getEvaluation());
+			if (fInitializer instanceof ICPPASTConstructorInitializer || fInitializer instanceof ICPPASTInitializerList) {
+				boolean usesBracedInitList = (fInitializer instanceof ICPPASTInitializerList);
+				fEvaluation= new EvalTypeId(type, this, usesBracedInitList,
+						EvalConstructor.extractArguments(fInitializer));
 			} else {
 				fEvaluation= EvalFixed.INCOMPLETE;
 			}
@@ -286,7 +278,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 			ICPPEvaluation eval = getEvaluation();
 			if (eval instanceof EvalTypeId) {
 				ICPPFunction constructor = ((EvalTypeId) eval).getConstructor(this);
-				if (constructor != null) {
+				if (constructor != null && constructor != EvalTypeId.AGGREGATE_INITIALIZATION) {
 					CPPASTImplicitName name = new CPPASTImplicitName(constructor.getNameCharArray(), this);
 					name.setOffsetAndLength((ASTNode) fDeclSpec);
 					name.setBinding(constructor);

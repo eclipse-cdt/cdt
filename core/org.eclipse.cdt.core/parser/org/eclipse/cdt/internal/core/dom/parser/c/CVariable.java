@@ -33,7 +33,8 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -160,7 +161,7 @@ public class CVariable extends PlatformObject implements ICInternalBinding, IVar
 	public IValue getInitialValue() {
 		Set<CVariable> recursionProtectionSet = fInitialValueInProgress.get();
 		if (!recursionProtectionSet.add(this)) {
-			return Value.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		}
 		try {
 			if (declarations != null) {
@@ -186,11 +187,11 @@ public class CVariable extends PlatformObject implements ICInternalBinding, IVar
 				final IASTInitializerClause initClause = ((IASTEqualsInitializer) init)
 						.getInitializerClause();
 				if (initClause instanceof IASTExpression) {
-					return Value.create((IASTExpression) initClause);
+					return ValueFactory.create((IASTExpression) initClause);
 				}
 			}
 			if (init != null)
-				return Value.UNKNOWN;
+				return IntegralValue.UNKNOWN;
 		}
 		return null;
 	}

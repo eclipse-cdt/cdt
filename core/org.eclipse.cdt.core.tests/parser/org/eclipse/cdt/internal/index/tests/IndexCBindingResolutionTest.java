@@ -385,7 +385,7 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		v= (IVariable) getBindingFromASTName("b;", 1);
 		checkValue(v.getInitialValue(), 0);
 		v= (IVariable) getBindingFromASTName("c;", 1);
-		assertNull(v.getInitialValue().numericalValue());
+		assertNull(v.getInitialValue().numberValue());
 
 		IEnumerator e= (IEnumerator) getBindingFromASTName("e0", 2);
 		checkValue(e.getValue(), 0);
@@ -401,7 +401,7 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 
 	private void checkValue(IValue initialValue, int i) {
 		assertNotNull(initialValue);
-		final Long numericalValue = initialValue.numericalValue();
+		final Number numericalValue = initialValue.numberValue();
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.intValue());
 	}

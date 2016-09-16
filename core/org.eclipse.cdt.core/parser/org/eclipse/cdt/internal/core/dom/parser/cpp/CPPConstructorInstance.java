@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -26,5 +27,10 @@ public class CPPConstructorInstance extends CPPMethodInstance implements ICPPCon
 	public CPPConstructorInstance(ICPPConstructor orig, ICPPClassType owner, ICPPTemplateParameterMap tpmap,
 			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpec) {
 		super(orig, owner, tpmap, args, type, exceptionSpec);
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return CPPConstructorSpecialization.getConstructorChainExecution(this, point);
 	}
 }

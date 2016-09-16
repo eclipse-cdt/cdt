@@ -13,8 +13,14 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Interface for marshalling types for storage in the index.
+ * Interface for marshalling ICPPEvaluation objects for storage in the index.
  */
 public interface ISerializableEvaluation {
+	/**
+	 * Marshals an ICPPEvaluation object for storage in the index.
+	 * 
+	 * @param  buffer The buffer that will hold the marshalled ICPPEvaluation object.
+	 * @param  includeValue Specifies whether nested IValue objects should be marshalled as well.
+	 * */
 	void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException;
 }

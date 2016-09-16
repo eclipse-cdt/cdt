@@ -112,15 +112,15 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredConstructor()) {
 			// Default constructor: A(void)
-			boolean isConstexpr = ia.isDefaultConstructorConstexpr();
-			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY, isConstexpr);
+			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY, 
+					compTypeSpec);
 			implicits[i++] = m;
 			addBinding(m);
 		}
 
 		if (!ia.hasUserDeclaredCopyConstructor()) {
 			// Copy constructor: A(const A &)
-			ICPPMethod m = new CPPImplicitConstructor(this, className, params, false);
+			ICPPMethod m = new CPPImplicitConstructor(this, className, params, compTypeSpec);
 			implicits[i++] = m;
 			addBinding(m);
 		}

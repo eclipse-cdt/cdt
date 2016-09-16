@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -26,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
 /**
  * Implementation of pack expansion expression.
  */
-public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPackExpansionExpression, IASTAmbiguityParent {
+public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPackExpansionExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
 	private IASTExpression fPattern;
 	private ICPPEvaluation fEvaluation;
 
@@ -64,7 +63,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			fEvaluation = new EvalParameterPack(((ICPPASTExpression) fPattern).getEvaluation(), this);
+			fEvaluation = new EvalParameterPack(((ICPPEvaluationOwner) fPattern).getEvaluation(), this);
 		}
 		return fEvaluation;
 	}

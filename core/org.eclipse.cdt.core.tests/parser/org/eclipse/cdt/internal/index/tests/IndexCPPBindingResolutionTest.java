@@ -175,7 +175,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	private void asserValueEquals(IValue initialValue, long i) {
 		assertNotNull(initialValue);
-		final Long numericalValue = initialValue.numericalValue();
+		final Number numericalValue = initialValue.numberValue();
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.longValue());
 	}
@@ -1476,7 +1476,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		v= (IVariable) getBindingFromASTName("b;", 1);
 		asserValueEquals(v.getInitialValue(), 0);
 		v= (IVariable) getBindingFromASTName("c;", 1);
-		assertNull(v.getInitialValue().numericalValue());
+		assertNull(v.getInitialValue().numberValue());
 
 		IEnumerator e= (IEnumerator) getBindingFromASTName("e0", 2);
 		asserValueEquals(e.getValue(), 0);
@@ -1893,7 +1893,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	constexpr int waldo = foo();
 	public void testNameLookupInDefaultArgument_432701() {
 		IVariable waldo = getBindingFromASTName("waldo", 5);
-		assertEquals(42, waldo.getInitialValue().numericalValue().longValue());
+		assertEquals(42, waldo.getInitialValue().numberValue().longValue());
 	}
 
 	//	struct function {

@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -31,7 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallColl
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
-public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
+public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent, ICPPEvaluationOwner {
     private IASTExpression[] expressions = new IASTExpression[2];
     
 	/**
@@ -188,7 +187,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		
 		ICPPEvaluation[] evals= new ICPPEvaluation[exprs.length];
 		for (int i = 0; i < evals.length; i++) {
-			evals[i]= ((ICPPASTExpression) exprs[i]).getEvaluation();
+			evals[i]= ((ICPPEvaluationOwner) exprs[i]).getEvaluation();
 		}
 		return new EvalComma(evals, this);
 	}

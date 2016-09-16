@@ -60,7 +60,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -208,7 +208,7 @@ public class TemplateArgumentDeduction {
 						// Template-argument deduced from an array bound may be of any integral
 						// type.
 						if (type2 instanceof TypeOfValueDeducedFromArraySize && isIntegralType(type1)) {
-							IValue value = isBooleanType(type1) ? Value.create(true) : arg.getNonTypeValue();
+							IValue value = isBooleanType(type1) ? IntegralValue.create(true) : arg.getNonTypeValue();
 							arg = new CPPTemplateNonTypeArgument(value, type1);
 							deduct.fDeducedArgs.put(tpar, arg);
 						} else if (!type1.isSameType(type2)) {
@@ -819,8 +819,8 @@ public class TemplateArgumentDeduction {
 		if (p.isNonTypeValue()) {
 			IValue tval= p.getNonTypeValue();
 
-			if (Value.referencesTemplateParameter(tval)) {
-				int parId= Value.isTemplateParameter(tval);
+			if (IntegralValue.referencesTemplateParameter(tval)) {
+				int parId= IntegralValue.isTemplateParameter(tval);
 				if (parId >= 0) { 
 					ICPPTemplateArgument old= fDeducedArgs.getArgument(parId, fPackOffset);
 					if (old == null) {
@@ -898,7 +898,7 @@ public class TemplateArgumentDeduction {
 					if (as == null || ps == null)
 						return false;
 					
-					int parID= Value.isTemplateParameter(ps);
+					int parID= IntegralValue.isTemplateParameter(ps);
 					if (parID >= 0) { 
 						ICPPTemplateArgument old= fDeducedArgs.getArgument(parID, fPackOffset);
 						if (old == null) {

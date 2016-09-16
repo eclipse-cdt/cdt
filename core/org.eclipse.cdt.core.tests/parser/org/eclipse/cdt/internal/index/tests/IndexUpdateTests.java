@@ -213,7 +213,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			if (value == null)
 				assertNull(v);
 			else
-				assertEquals(value, v.numericalValue());
+				assertEquals(value, v.numberValue());
 		} finally {
 			fIndex.releaseReadLock();
 		}

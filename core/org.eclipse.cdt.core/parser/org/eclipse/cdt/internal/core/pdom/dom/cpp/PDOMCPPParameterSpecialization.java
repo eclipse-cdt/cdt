@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
@@ -38,7 +38,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	private static final int RECORD_SIZE = DEFAULT_VALUE + Database.VALUE_SIZE;
 
 	private final IType fType;
-	private volatile IValue fDefaultValue = Value.NOT_INITIALIZED;
+	private volatile IValue fDefaultValue = IntegralValue.NOT_INITIALIZED;
 	
 	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, long record, IType t) {
 		super(linkage, record);
@@ -118,7 +118,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	
 	@Override
 	public IValue getDefaultValue() {
-		if (fDefaultValue == Value.NOT_INITIALIZED) {
+		if (fDefaultValue == IntegralValue.NOT_INITIALIZED) {
 			try {
 				fDefaultValue = getLinkage().loadValue(record + DEFAULT_VALUE);
 			} catch (CoreException e) {

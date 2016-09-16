@@ -18,12 +18,16 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSwitch;
 
 /**
  * Switch statement in C++.
  */
-public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPASTSwitchStatement {
+public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPASTSwitchStatement, ICPPExecutionOwner {
 	private IScope scope;
     private IASTExpression controllerExpression;
     private IASTDeclaration controllerDeclaration;
@@ -154,4 +158,25 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
             scope = new CPPBlockScope(this);
         return scope;	
     }
+
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPEvaluationOwner controllerExpr = (ICPPEvaluationOwner)getControllerExpression();
+		ICPPExecutionOwner controllerDecl = (ICPPExecutionOwner)getControllerDeclaration();
+		ICPPEvaluation controllerExprEval = controllerExpr != null ? controllerExpr.getEvaluation() : null;
+		ExecSimpleDeclaration controllerDeclExec = controllerDecl != null ? (ExecSimpleDeclaration)controllerDecl.getExecution() : null;
+		IASTStatement[] bodyStmts = null;
+		if(body instanceof ICPPASTCompoundStatement) {
+			ICPPASTCompoundStatement compoundStmt = (ICPPASTCompoundStatement)body;
+			bodyStmts = compoundStmt.getStatements();
+		} else {
+			bodyStmts = new IASTStatement[]{body};
+		}
+		
+		ICPPExecution[] bodyStmtExecutions = new ICPPExecution[bodyStmts.length];
+		for(int i = 0; i < bodyStmts.length; i++) {
+			bodyStmtExecutions[i] = EvalUtil.getExecutionFromStatement(bodyStmts[i]);
+		}
+		return new ExecSwitch(controllerExprEval, controllerDeclExec, bodyStmtExecutions);
+	}
 }

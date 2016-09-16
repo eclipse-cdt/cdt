@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPConstructorSpecialization extends CompositeCPPMethodSpecialization implements
@@ -18,5 +20,10 @@ public class CompositeCPPConstructorSpecialization extends CompositeCPPMethodSpe
 
 	public CompositeCPPConstructorSpecialization(ICompositesFactory cf, ICPPConstructor cons) {
 		super(cf, cons);
-	}	
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return ((ICPPConstructor) rbinding).getConstructorChainExecution(point);
+	}
 }

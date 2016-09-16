@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -37,7 +37,7 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
         }
 		@Override
 		public IValue getValue() {
-			return Value.UNKNOWN;
+			return IntegralValue.UNKNOWN;
 		}
     }
 
@@ -99,7 +99,7 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
 		if (parent instanceof ASTEnumerator) 
 			return ((ASTEnumerator) parent).getIntegralValue();
 		
-		return Value.UNKNOWN;
+		return IntegralValue.UNKNOWN;
 	}
 
 	@Override

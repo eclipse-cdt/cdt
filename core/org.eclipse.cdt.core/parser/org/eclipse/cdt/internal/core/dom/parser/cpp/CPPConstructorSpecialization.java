@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * Specialization of a constructor for a class-template or class-template specialization.
@@ -25,5 +28,23 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization implem
 	public CPPConstructorSpecialization(ICPPConstructor orig, ICPPClassType owner,
 			ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap, type, exceptionSpecs);
+	}
+	
+	static <T extends ICPPConstructor & ICPPSpecialization & ICPPInternalBinding> ICPPExecution 
+			getConstructorChainExecution(T functionSpec, IASTNode point) {
+		if (!functionSpec.isConstexpr()) {
+			return null;
+		}
+		
+		IASTNode def = functionSpec.getDefinition();
+		if(def != null) {
+			return CPPConstructor.computeConstructorChainExecution(def);
+		}
+		return CPPTemplates.instantiateConstructorChain(functionSpec, point);
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution(this, point);
 	}
 }

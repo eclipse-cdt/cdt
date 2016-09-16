@@ -93,7 +93,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 
 		@Override
-		public byte getFieldPosition() {
+		public int getFieldPosition() {
 			return -1;
 		}
 	}

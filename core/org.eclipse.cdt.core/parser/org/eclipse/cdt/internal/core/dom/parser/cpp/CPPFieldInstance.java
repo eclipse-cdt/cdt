@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Lukas Wegmann (IFS) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -54,7 +55,7 @@ public class CPPFieldInstance extends CPPVariableInstance implements ICPPField {
 	}
 
 	@Override
-	public byte getFieldPosition() {
-		return ((ICPPFieldTemplate)getSpecializedBinding()).getFieldPosition();
+	public int getFieldPosition() {
+		return ((ICPPFieldTemplate) getSpecializedBinding()).getFieldPosition();
 	}
 }

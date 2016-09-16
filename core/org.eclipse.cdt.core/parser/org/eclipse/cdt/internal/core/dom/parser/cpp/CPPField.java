@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -50,7 +51,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		}
 
 		@Override
-		public byte getFieldPosition() {
+		public int getFieldPosition() {
 			return -1;
 		}
     }
@@ -99,13 +100,13 @@ public class CPPField extends CPPVariable implements ICPPField {
 	}
 
 	@Override
-	public byte getFieldPosition() {
+	public int getFieldPosition() {
 		return getFieldPosition(getName(), getClassOwner());
 	}
 	
-	public static byte getFieldPosition(String fieldName, ICPPClassType classOwner) {
+	public static int getFieldPosition(String fieldName, ICPPClassType classOwner) {
 		IField[] fields = ClassTypeHelper.getDeclaredFields(classOwner, null);
-		for (byte fieldPos = 0; fieldPos < fields.length; fieldPos++) {
+		for (int fieldPos = 0; fieldPos < fields.length; fieldPos++) {
 			if (fields[fieldPos].getName().equals(fieldName)) {
 				return fieldPos;
 			}

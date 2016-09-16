@@ -9,16 +9,17 @@
  *     QNX - Initial API and implementation
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -27,10 +28,10 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
-	protected static final int FIELD_POSITION_OFFSET = PDOMCPPVariable.RECORD_SIZE; // byte
+	protected static final int FIELD_POSITION_OFFSET = PDOMCPPVariable.RECORD_SIZE; // 2 bytes 1-based
 	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FIELD_POSITION_OFFSET + 1;
+	protected static final int RECORD_SIZE = FIELD_POSITION_OFFSET + 2;
 	
 	public PDOMCPPField(PDOMLinkage linkage, PDOMNode parent, ICPPField field, boolean setTypeAndValue)
 			throws CoreException {
@@ -50,11 +51,6 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 		}
 	}
 	
-	private void setFieldPosition(ICPPField field) throws CoreException {
-		final Database db = getDB();
-		db.putByte(record + FIELD_POSITION_OFFSET, field.getFieldPosition());
-	}
-
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -109,7 +105,16 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 	}
 
 	@Override
-	public byte getFieldPosition() {
-		return getByte(record + FIELD_POSITION_OFFSET);
+	public int getFieldPosition() {
+		return Short.toUnsignedInt(getShort(record + FIELD_POSITION_OFFSET)) - 1;
+	}
+
+	private void setFieldPosition(ICPPField field) throws CoreException {
+		int shiftedPos = field.getFieldPosition() + 1;
+		if ((shiftedPos & 0xFFFF0000) != 0) {
+			CCorePlugin.log(new IllegalArgumentException("Invalid field position " + field.getFieldPosition())); //$NON-NLS-1$
+			shiftedPos = 0;
+		}
+		getDB().putShort(record + FIELD_POSITION_OFFSET, (short) shiftedPos);
 	}
 }

@@ -41,7 +41,7 @@ public class CompositeCPPFieldInstance extends CompositeCPPVariableInstance impl
 	}
 
 	@Override
-	public byte getFieldPosition() {
-		return ((ICPPField)rbinding).getFieldPosition();
+	public int getFieldPosition() {
+		return ((ICPPField) rbinding).getFieldPosition();
 	}
 }

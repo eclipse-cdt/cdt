@@ -9,6 +9,7 @@
  *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -207,12 +208,28 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 
 	/**
 	 * Convenience method for fetching a byte from the database.
+	 *
 	 * @param offset Location of the byte.
 	 * @return a byte from the database.
 	 */
 	protected byte getByte(long offset) {
 		try {
 			return getDB().getByte(offset);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return 0;
+		}
+	}
+
+	/**
+	 * Convenience method for fetching a two-byte integer number from the database.
+	 *
+	 * @param offset Location of the number
+	 * @return a number from the database.
+	 */
+	protected short getShort(long offset) {
+		try {
+			return getDB().getShort(offset);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;

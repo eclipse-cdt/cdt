@@ -43,7 +43,7 @@ public class CompositeCPPFieldTemplatePartialSpecialization
 	}
 
 	@Override
-	public byte getFieldPosition() {
+	public int getFieldPosition() {
 		return ((ICPPField) rbinding).getFieldPosition();
 	}
 }

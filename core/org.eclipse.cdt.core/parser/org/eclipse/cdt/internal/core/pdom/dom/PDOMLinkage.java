@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
@@ -429,6 +430,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public abstract IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException;
 	public abstract IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException;
 	public abstract ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer typeMarshalBuffer) throws CoreException;
+	public abstract ISerializableExecution unmarshalExecution(ITypeMarshalBuffer typeMarhsalBuffer) throws CoreException;
 
 	public void storeType(long offset, IType type) throws CoreException {
 		final Database db= getDB();
@@ -690,6 +692,31 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (buffer == null)
 			return null;
 		return buffer.unmarshalEvaluation();
+	}
+	
+	public void storeExecution(long offset, ISerializableExecution exec) throws CoreException {
+		final Database db = getDB();
+		deleteExecution(db, offset);
+		storeExecution(db, offset, exec);
+	}
+	
+	private void storeExecution(Database db, long offset, ISerializableExecution exec) throws CoreException {
+		if (exec != null) {
+			TypeMarshalBuffer bc = new TypeMarshalBuffer(this);
+			bc.marshalExecution(exec, true);
+			storeBuffer(db, offset, bc, Database.EXECUTION_SIZE);
+		}
+	}
+	
+	private void deleteExecution(Database db, long offset) throws CoreException {
+		deleteSerializedData(db, offset, Database.EXECUTION_SIZE);
+	}
+	
+	public ISerializableExecution loadExecution(long offset) throws CoreException {
+		TypeMarshalBuffer buffer = loadBuffer(offset, Database.EXECUTION_SIZE);
+		if (buffer == null)
+			return null;
+		return buffer.unmarshalExecution();
 	}
 
 	private TypeMarshalBuffer loadBuffer(long offset, int size) throws CoreException {

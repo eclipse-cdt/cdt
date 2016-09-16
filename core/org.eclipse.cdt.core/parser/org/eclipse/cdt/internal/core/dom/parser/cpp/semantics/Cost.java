@@ -220,10 +220,12 @@ public class Cost {
 				IArrayType arrayType = (IArrayType) fListInitializationTarget;
 				IArrayType otherArrayType = (IArrayType) other.fListInitializationTarget;
 				if (arrayType.getType().isSameType(otherArrayType.getType())) {
-					Long size = arrayType.getSize().numericalValue();
-					Long otherSize = otherArrayType.getSize().numericalValue();
+					Number size = arrayType.getSize().numberValue();
+					Number otherSize = otherArrayType.getSize().numberValue();
 					if (size != null && otherSize != null) {
-						return size.compareTo(otherSize);
+						Long a = size.longValue();
+						Long b = otherSize.longValue();
+						return a.compareTo(b);
 					}
 				}
 			}

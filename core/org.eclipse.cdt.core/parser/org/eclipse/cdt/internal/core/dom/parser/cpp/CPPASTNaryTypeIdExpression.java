@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
-public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTypeIdExpression {
+public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTypeIdExpression, ICPPEvaluationOwner {
 	private Operator fOperator;
 	private ICPPASTTypeId[] fOperands;
 	

@@ -18,11 +18,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
 
 /**
  * @author jcamelon
  */
-public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IASTSimpleDeclaration {
+public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IASTSimpleDeclaration, ICPPExecutionOwner {
     private IASTDeclarator[] declarators;
     private int declaratorsPos = -1;
     private IASTDeclSpecifier declSpecifier;
@@ -125,5 +126,14 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
 			}
 		}
 		super.replace(child, other);
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		ICPPExecution[] declaratorExecutions = new ICPPExecution[declarators.length];
+		for(int i = 0; i < declarators.length; ++i) {
+			declaratorExecutions[i] = ((ICPPExecutionOwner)declarators[i]).getExecution();
+		}
+		return new ExecSimpleDeclaration(declaratorExecutions);
 	}
 }

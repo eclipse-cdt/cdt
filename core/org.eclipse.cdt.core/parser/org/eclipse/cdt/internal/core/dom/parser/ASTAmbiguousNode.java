@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -173,9 +174,14 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		return false;
     }
 
-	public final ICPPEvaluation getEvaluation() {
+    public final ICPPEvaluation getEvaluation() {
 		logAmbiguousNodeError();
 		return EvalFixed.INCOMPLETE;
+	}
+    
+    public final ICPPExecution getExecution() {
+		logAmbiguousNodeError();
+		return null;
 	}
 
 	private void logAmbiguousNodeError() {

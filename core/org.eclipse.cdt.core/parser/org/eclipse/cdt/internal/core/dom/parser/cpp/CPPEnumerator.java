@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -156,7 +156,7 @@ public class CPPEnumerator extends PlatformObject
 		if (parent instanceof ASTEnumerator)
 			return ((ASTEnumerator) parent).getIntegralValue();
 		
-		return Value.UNKNOWN;
+		return IntegralValue.UNKNOWN;
 	}
 
 	@Override

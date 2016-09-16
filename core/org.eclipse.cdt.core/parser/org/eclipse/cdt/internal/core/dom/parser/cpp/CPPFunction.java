@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -484,7 +483,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
 	}
 
-	static ICPPASTFunctionDefinition getFunctionDefinition(IASTNode def) {
+	public static ICPPASTFunctionDefinition getFunctionDefinition(IASTNode def) {
 		while (def != null && !(def instanceof IASTDeclaration)) {
 			def= def.getParent();
 		}
@@ -704,8 +703,8 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 			return EvalFixed.INCOMPLETE;  // constexpr constructors are not supported yet.
 
 	    IASTInitializerClause returnExpression = returnStatement.getReturnArgument();
-	    if (returnExpression instanceof ICPPASTInitializerClause)
-	    	return ((ICPPASTInitializerClause) returnExpression).getEvaluation();
+	    if (returnExpression instanceof ICPPEvaluationOwner)
+	    	return ((ICPPEvaluationOwner) returnExpression).getEvaluation();
 
 	    return EvalFixed.INCOMPLETE;
 	}
@@ -713,6 +712,43 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	public static ICPPEvaluation getReturnExpression(ICPPFunction function, IASTNode point) {
 		if (function instanceof ICPPComputableFunction) {
 			return ((ICPPComputableFunction) function).getReturnExpression(point);
+		}
+		return null;
+	}
+	
+	public static ICPPExecution getFunctionBodyExecution(ICPPFunction function, IASTNode point) {
+		if (function instanceof ICPPComputableFunction) {
+			return ((ICPPComputableFunction) function).getFunctionBodyExecution(point);
+		}
+		return null;
+	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+		if(!isConstexpr())
+			return null;
+		if (getDefinition() == null) {
+			// Trigger a search for the function definition.
+			if (declarations != null && declarations[0] != null) {
+				IASTTranslationUnit tu = declarations[0].getTranslationUnit();
+				if (tu != null) {
+					tu.getDefinitionsInAST(this);
+				}
+			}
+		}
+		return computeFunctionBodyExecution(getDefinition());
+	}
+	
+	public static ICPPExecution computeFunctionBodyExecution(IASTNode def) {
+		ICPPASTFunctionDefinition fnDef = getFunctionDefinition(def);
+		if (fnDef != null) {
+			// Make sure ambiguity resolution has been performed on the function body, even
+			// if it's a class method and we're still processing the class declaration.
+			((ASTNode) fnDef).resolvePendingAmbiguities();
+			if(fnDef.getBody() instanceof CPPASTCompoundStatement) {
+				CPPASTCompoundStatement body = (CPPASTCompoundStatement)fnDef.getBody();
+				return body.getExecution();
+			}
 		}
 		return null;
 	}

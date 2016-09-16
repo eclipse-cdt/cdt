@@ -94,7 +94,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
@@ -3077,12 +3077,12 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPTemplateInstance ci1= assertInstance(t.getType(), ICPPTemplateInstance.class, ICPPClassType.class);
 		ICPPTemplateParameterMap args1= ci1.getTemplateParameterMap();
 		assertEquals(1, args1.getAllParameterPositions().length);
-		assertEquals(256, args1.getArgument(0).getNonTypeValue().numericalValue().intValue());
+		assertEquals(256, args1.getArgument(0).getNonTypeValue().numberValue().intValue());
 
 		ICPPTemplateInstance ct= ba.assertNonProblem("C<_256> ", 7, ICPPTemplateInstance.class, ICPPClassType.class);
 		ICPPTemplateParameterMap args= ct.getTemplateParameterMap();
 		assertEquals(1, args.getAllParameterPositions().length);
-		assertEquals(256, args.getArgument(0).getNonTypeValue().numericalValue().intValue());
+		assertEquals(256, args.getArgument(0).getNonTypeValue().numberValue().intValue());
 
 		ba.assertNonProblem("foo(t)", 3);
 		ba.assertNonProblem("bar(t)", 3);
@@ -3101,7 +3101,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPDeferredClassInstance ci= ba.assertNonProblem("C<y>", 4, ICPPDeferredClassInstance.class);
 		ICPPTemplateArgument[] args= ci.getTemplateArguments();
 		assertEquals(1, args.length);
-		assertEquals(0, Value.isTemplateParameter(args[0].getNonTypeValue()));
+		assertEquals(0, IntegralValue.isTemplateParameter(args[0].getNonTypeValue()));
 	}
 
 	//	template<int x>
@@ -6961,8 +6961,8 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPSpecialization buffRef = assertionHelper.assertNonProblem("myA.buff[0] = 1;", "buff", ICPPSpecialization.class);
 
 		assertEquals(buff, buffRef.getSpecializedBinding());
-		assertEquals(Long.valueOf(4),buffRef.getTemplateParameterMap().getArgument(0).getNonTypeValue().numericalValue());
-		assertEquals(Long.valueOf(5),buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numericalValue());
+		assertEquals(Long.valueOf(4),buffRef.getTemplateParameterMap().getArgument(0).getNonTypeValue().numberValue());
+		assertEquals(Long.valueOf(5),buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numberValue());
 	}
 
 	// template<typename T, int Size>
@@ -6986,7 +6986,7 @@ public class AST2TemplateTests extends AST2TestBase {
 
 		assertEquals(buff, buffRef.getSpecializedBinding());
 		assertSameType(buffRef.getTemplateParameterMap().getArgument(0).getTypeValue(), new CPPBasicType(IBasicType.Kind.eInt, 0));
-		assertEquals(Long.valueOf(5),buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numericalValue());
+		assertEquals(Long.valueOf(5),buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numberValue());
 	}
 
 	// template<typename T>
@@ -8008,7 +8008,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper ah = getAssertionHelper();
 		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
 		IValue value = binding.getValue();
-		Long num = value.numericalValue();
+		Number num = value.numberValue();
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}
@@ -9433,6 +9433,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//
 	//	template <class T>
 	//	struct D {
+	//	  D(T);
 	//	  T t;
 	//	};
 	//
@@ -9601,5 +9602,44 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void waldo() noexcept(S<Int>::value) {}
 	public void testDisambiguationInNoexceptSpecifier_467332() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	struct C {
+	//	    T field;
+	//	    void meow();
+	//	};
+	//	struct S {
+	//	    template <typename U>
+	//	    auto operator()(U u) -> decltype(C<U>{u});
+	//	};
+	//	int main() {
+	//	    S()(0).meow();  // ERROR: Method 'meow' could not be resolved
+	//	}
+	public void testBraceInitialization_490475a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct S {
+	//	    int x;
+	//	    int y;
+	//	};
+	//
+	//	constexpr int foo(S a, S b) {
+	//	    return a.x - b.x;
+	//	}
+	//
+	//	constexpr S a = S{8, 0};
+	//	constexpr S b = S{21, 0};
+	//
+	//	constexpr int waldo = foo(a, b);
+	public void testBraceInitialization_490475b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable waldo = helper.assertNonProblem("waldo");
+		// TODO(nathanridge): 
+		//   Actually test that we get the correct value.
+		//   For this, we need to add support for aggregate initialization in EvalTypeId.
+		//	 For now, just test that attempting to evaluate doesn't throw an exception.
+		waldo.getInitialValue();
 	}
 }

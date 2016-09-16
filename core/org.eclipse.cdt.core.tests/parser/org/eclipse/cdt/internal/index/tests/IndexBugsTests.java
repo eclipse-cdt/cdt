@@ -1949,10 +1949,10 @@ public class IndexBugsTests extends BaseTestCase {
 		try {
 			BindingAssertionHelper aHelper = new BindingAssertionHelper(a, testData[1], index);
 			IEnumerator e1 = aHelper.assertNonProblem("e;", 1, IEnumerator.class);
-			assertEquals(1, e1.getValue().numericalValue().longValue());
+			assertEquals(1, e1.getValue().numberValue().longValue());
 			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
 			IEnumerator e2 = bHelper.assertNonProblem("e;", 1, IEnumerator.class);
-			assertEquals(2, e2.getValue().numericalValue().longValue());
+			assertEquals(2, e2.getValue().numberValue().longValue());
 		} finally {
 			index.releaseReadLock();
 		}

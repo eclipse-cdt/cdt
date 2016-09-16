@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
-public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpression, IASTBinaryTypeIdExpression {
+public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpression, IASTBinaryTypeIdExpression, ICPPEvaluationOwner {
     private Operator fOperator;
     private IASTTypeId fOperand1;
     private IASTTypeId fOperand2;

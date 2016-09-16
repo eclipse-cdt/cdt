@@ -12,6 +12,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -20,13 +21,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
  * Represents a reference to a constructor (instance), which cannot be resolved because 
  * it depends on a template parameter. A compiler would resolve it during instantiation.
  */
-public class CPPUnknownConstructor extends CPPDeferredFunction implements ICPPConstructor {
+public class CPPDeferredConstructor extends CPPDeferredFunction implements ICPPConstructor {
 
-	public CPPUnknownConstructor(ICPPClassType owner) {
+	public CPPDeferredConstructor(ICPPClassType owner) {
 		super(owner, owner.getNameCharArray(), null);
 	}
 
-	public CPPUnknownConstructor(ICPPClassType owner, ICPPFunction[] candidates) {
+	public CPPDeferredConstructor(ICPPClassType owner, ICPPFunction[] candidates) {
 		super(owner, owner.getNameCharArray(), candidates);
 	}
 
@@ -73,5 +74,10 @@ public class CPPUnknownConstructor extends CPPDeferredFunction implements ICPPCo
 	@Override
 	public boolean isFinal() {
 		return false;
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return null;
 	}
 }

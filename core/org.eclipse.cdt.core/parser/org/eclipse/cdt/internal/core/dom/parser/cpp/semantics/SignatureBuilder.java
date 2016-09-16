@@ -19,9 +19,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.core.runtime.CoreException;
 
 class SignatureBuilder implements ITypeMarshalBuffer {
@@ -90,11 +90,20 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 			eval.marshal(this, includeValues);
 		}
 	}
+	
+	@Override
+	public void marshalExecution(ISerializableExecution exec, boolean includeValue) throws CoreException {
+		if (exec == null) {
+			putShort(NULL_TYPE);
+		} else {
+			exec.marshal(this, includeValue);
+		}
+	}
 
 	@Override
 	public void marshalValue(IValue value) throws CoreException {
-		if (value instanceof Value) {
-			((Value) value).marshal(this);
+		if (value != null) {
+			value.marshal(this);
 		} else {
 			putShort(NULL_TYPE);
 		}
@@ -165,6 +174,11 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 
 	@Override
 	public ISerializableEvaluation unmarshalEvaluation() throws CoreException {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public ISerializableExecution unmarshalExecution() throws CoreException {
 		throw new UnsupportedOperationException();
 	}
 

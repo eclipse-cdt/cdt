@@ -80,14 +80,15 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 		// Deleted default constructor: A()
 		CPPImplicitConstructor ctor=
-				new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false);
+				new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, 
+						ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, fLambdaExpression);
 		ctor.setDeleted(true);
 		result[0]= ctor;
 		
 		// Copy constructor: A(const A &)
 		IType pType = new CPPReferenceType(SemanticUtil.constQualify(this), false);
 		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
-		ctor = new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ps, false);
+		ctor = new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ps, fLambdaExpression);
 		result[1]= ctor;
 		
 		// Deleted copy assignment operator: A& operator = (const A &)

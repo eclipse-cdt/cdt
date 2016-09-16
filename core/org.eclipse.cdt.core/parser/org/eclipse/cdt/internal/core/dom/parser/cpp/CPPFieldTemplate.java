@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 
 public class CPPFieldTemplate extends CPPVariableTemplate implements ICPPFieldTemplate {
 
@@ -35,7 +38,22 @@ public class CPPFieldTemplate extends CPPVariableTemplate implements ICPPFieldTe
 
 	@Override
 	public ICPPClassType getClassOwner() {
-		ICPPClassScope scope = (ICPPClassScope) getScope();
-		return scope.getClassType();
+		IScope scope= getScope();
+		if (scope instanceof ICPPTemplateScope) {
+			try {
+				scope= scope.getParent();
+			} catch (DOMException e) {
+				return null;
+			}
+		}
+		if (scope instanceof ICPPClassScope) {
+			return ((ICPPClassScope) scope).getClassType();
+		}
+		return null;
+	}
+
+	@Override
+	public byte getFieldPosition() {
+		return CPPField.getFieldPosition(getName(), getClassOwner());
 	}
 }

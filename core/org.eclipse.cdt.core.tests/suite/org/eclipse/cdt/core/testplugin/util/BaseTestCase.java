@@ -360,7 +360,7 @@ public class BaseTestCase extends TestCase {
 	
 	protected static void assertVariableValue(IVariable var, long expectedValue) {
 		assertNotNull(var.getInitialValue());
-		assertNotNull(var.getInitialValue().numericalValue());
-		assertEquals(expectedValue, var.getInitialValue().numericalValue().longValue());
+		assertNotNull(var.getInitialValue().numberValue());
+		assertEquals(expectedValue, var.getInitialValue().numberValue().longValue());
 	}
 }

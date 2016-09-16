@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -25,35 +29,41 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 public final class InstantiationContext {
 	private CPPTemplateParameterMap parameterMap;
 	private int packOffset;
-	private final ICPPTypeSpecialization contextTypeSpecialization;
+	private final ICPPSpecialization contextSpecialization;
 	private final IASTNode point;
 	private boolean expandPack;
 	private boolean packExpanded;
+	
+	// During the instantiation of a function body, stores mapping from local variables
+	// (including function parameters) to their instantiated versions.
+	// TODO(nathanridge): Get rid of this, replacing it with something analogous to
+	// ICPPClassSpecialization.specializeMember() but for function scopes.
+	private Map<IBinding, IBinding> fInstantiatedLocals = null;
 
 	/**
 	 * @param parameterMap mapping of template parameters to arguments, may be {@code null}.
 	 * @param packOffset parameter pack offset, or -1 if expansion of a parameter pack is not desired pack.
-	 * @param contextTypeSpecialization the type specialization if instantiation happens inside a specialized
-	 *     type, otherwise {@code null}.
+	 * @param contextSpecialization the specialization if instantiation happens inside a specialized
+	 *     type or function, otherwise {@code null}.
 	 * @param point the point of instantiation
 	 */
 	public InstantiationContext(ICPPTemplateParameterMap parameterMap, int packOffset,
-			ICPPTypeSpecialization contextTypeSpecialization, IASTNode point) {
+			ICPPSpecialization contextSpecialization, IASTNode point) {
 		this.parameterMap = (CPPTemplateParameterMap) parameterMap;
 		this.packOffset = packOffset;
-		this.contextTypeSpecialization = contextTypeSpecialization;
+		this.contextSpecialization = contextSpecialization;
 		this.point = point;
 	}
 
 	/**
 	 * @param parameterMap mapping of template parameters to arguments, may be {@code null}.
-	 * @param contextTypeSpecialization the type specialization if instantiation happens inside a specialized
-	 *     type, otherwise {@code null}.
+	 * @param contextSpecialization the specialization if instantiation happens inside a specialized
+	 *     type or function, otherwise {@code null}.
 	 * @param point the point of instantiation
 	 */
 	public InstantiationContext(ICPPTemplateParameterMap parameterMap,
-			ICPPTypeSpecialization contextTypeSpecialization, IASTNode point) {
-		this(parameterMap, -1, contextTypeSpecialization, point);
+			ICPPSpecialization contextSpecialization, IASTNode point) {
+		this(parameterMap, -1, contextSpecialization, point);
 	}
 
 	/**
@@ -113,11 +123,19 @@ public final class InstantiationContext {
 	}
 
 	/**
+	 * Returns the specialization if instantiation happens inside a specialized type or function, otherwise
+	 * {@code null}
+	 */
+	public final ICPPSpecialization getContextSpecialization() {
+		return contextSpecialization;
+	}
+
+	/**
 	 * Returns the type specialization if instantiation happens inside a specialized type, otherwise
 	 * {@code null}.
 	 */
-	public ICPPTypeSpecialization getContextTypeSpecialization() {
-		return contextTypeSpecialization;
+	public final ICPPTypeSpecialization getContextTypeSpecialization() {
+		return contextSpecialization instanceof ICPPTypeSpecialization ? (ICPPTypeSpecialization)contextSpecialization : null;
 	}
 
 	/**
@@ -125,7 +143,7 @@ public final class InstantiationContext {
 	 * {@code null}.
 	 */
 	public ICPPClassSpecialization getContextClassSpecialization() {
-		return getContextClassSpecialization(contextTypeSpecialization);
+		return getContextClassSpecialization(contextSpecialization);
 	}
 
 	/**
@@ -203,7 +221,7 @@ public final class InstantiationContext {
 	}
 
 	/**
-	 * Returns the class specialization that the given binding is or is owned by, otherwise {@code null}. 
+	 * Returns the class specialization that the given binding is or is owned by, otherwise {@code null}.
 	 */
 	public static ICPPClassSpecialization getContextClassSpecialization(IBinding owner) {
 		if (owner instanceof ICPPEnumerationSpecialization)
@@ -212,4 +230,16 @@ public final class InstantiationContext {
 			return (ICPPClassSpecialization) owner;
 		return null;
 	}
+	
+	public void putInstantiatedLocal(IBinding local, IBinding instantiatedLocal) {
+		if (fInstantiatedLocals == null) {
+			fInstantiatedLocals = new HashMap<>();
+		}
+		fInstantiatedLocals.put(local, instantiatedLocal);
+	}
+	
+	public IBinding getInstantiatedLocal(IBinding local) {
+		return fInstantiatedLocals == null ? null : fInstantiatedLocals.get(local);		
+	}
+
 }

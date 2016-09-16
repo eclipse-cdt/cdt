@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 /**
  * Cast expression for C++
  */
-public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpression, IASTAmbiguityParent {
+public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
     private int fOperator;
     private ICPPASTExpression fOperand;
 	private IASTTypeId fTypeId;
@@ -167,7 +167,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
 		
-		return new EvalTypeId(type, this, fOperand.getEvaluation());
+		return new EvalTypeId(type, this, false, ((ICPPEvaluationOwner)fOperand).getEvaluation());
 	}
 
     @Override

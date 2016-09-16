@@ -11,12 +11,83 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecConstructorChain;
 
 public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 
 	public CPPConstructor(ICPPASTFunctionDeclarator declarator) {
 		super(declarator);
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution(this);
+	}
+
+	private static ICPPEvaluation getMemberEvaluation(ICPPField member, ICPPASTConstructorChainInitializer chainInitializer, IASTNode point) {
+		final IASTInitializer initializer = chainInitializer.getInitializer();
+		if(initializer instanceof ICPPEvaluationOwner) {
+			return ((ICPPEvaluationOwner) initializer).getEvaluation();
+		} else if(initializer instanceof ICPPASTConstructorInitializer) {
+			ICPPConstructor constructor = (ICPPConstructor)CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
+			if (constructor == null) {
+				boolean usesBracedInitList = (initializer instanceof ICPPASTInitializerList);
+				return new EvalTypeId(member.getType(), point, usesBracedInitList, 
+						EvalConstructor.extractArguments(initializer));
+			}
+			return new EvalConstructor(member.getType(), constructor, EvalConstructor.extractArguments(initializer), point);
+		}
+		return null;
+	}
+	
+	static ICPPExecution computeConstructorChainExecution(IASTNode def) {
+		ICPPASTFunctionDefinition fnDef = getFunctionDefinition(def);
+		if (fnDef != null) {
+			final ICPPASTConstructorChainInitializer[] ccInitializers = fnDef.getMemberInitializers();
+			final Map<IBinding, ICPPEvaluation> resultPairs = new HashMap<>();
+			for(ICPPASTConstructorChainInitializer ccInitializer : ccInitializers) {
+				final IBinding member = ccInitializer.getMemberInitializerId().resolveBinding();
+				if(member instanceof ICPPField) {
+					final ICPPField fieldMember = (ICPPField)member;
+					final ICPPEvaluation memberEval = getMemberEvaluation(fieldMember, ccInitializer, fnDef);
+					resultPairs.put(fieldMember, memberEval);
+				} else if(member instanceof ICPPConstructor) {
+					final ICPPConstructor ctorMember = (ICPPConstructor)member;
+					final IASTInitializer initializer = ccInitializer.getInitializer();
+					if (initializer instanceof ICPPASTConstructorInitializer || 
+					    initializer instanceof ICPPASTInitializerList) {
+						final ICPPClassType baseClassType = (ICPPClassType)ctorMember.getOwner();				
+						EvalConstructor memberEval = new EvalConstructor(baseClassType, ctorMember, 
+								EvalConstructor.extractArguments(initializer, ctorMember), fnDef);
+						resultPairs.put(ctorMember, memberEval);
+					}
+				}
+			}
+			return new ExecConstructorChain(resultPairs);
+		}
+		return null;
+	}
+	
+	static ICPPExecution getConstructorChainExecution(CPPFunction function) {
+		if(!function.isConstexpr())
+			return null;
+		return computeConstructorChainExecution(function.getDefinition());
 	}
 }

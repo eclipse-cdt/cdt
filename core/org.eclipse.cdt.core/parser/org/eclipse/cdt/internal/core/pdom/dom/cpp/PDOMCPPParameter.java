@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -47,7 +47,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 
 	private final IType fType;
-	private volatile IValue fDefaultValue = Value.NOT_INITIALIZED;
+	private volatile IValue fDefaultValue = IntegralValue.NOT_INITIALIZED;
 
 	public PDOMCPPParameter(PDOMLinkage linkage, long record, IType type) {
 		super(linkage, record);
@@ -187,7 +187,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	
 	@Override
 	public IValue getDefaultValue() {
-		if (fDefaultValue == Value.NOT_INITIALIZED) {
+		if (fDefaultValue == IntegralValue.NOT_INITIALIZED) {
 			try {
 				fDefaultValue = getLinkage().loadValue(record + DEFAULT_VALUE);
 			} catch (CoreException e) {

@@ -18,4 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IField;
  */
 public interface ICPPField extends IField, ICPPMember, ICPPVariable {
     public static final ICPPField[] EMPTY_CPPFIELD_ARRAY = {};
+    
+    /**
+     * Returns the position of this field within its class owner's declared fields.
+	 * @since 6.0
+	 */
+    byte getFieldPosition();
 }

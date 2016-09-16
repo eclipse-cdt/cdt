@@ -36,7 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -338,10 +338,23 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 				ICPPClassSpecialization within = CPPTemplates.getSpecializationContext(getOwner());
 				InstantiationContext context =
 						new InstantiationContext(getTemplateParameterMap(), within, point);
- 				eval = eval.instantiate(context, Value.MAX_RECURSION_DEPTH);
+ 				eval = eval.instantiate(context, IntegralValue.MAX_RECURSION_DEPTH);
 			}
 			return eval;
 		}
 		return null;
+	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+		if (!isConstexpr()) {
+			return null;
+		}
+		
+		IASTNode def = getDefinition();
+		if(def != null) {
+			return CPPFunction.computeFunctionBodyExecution(def);
+		}
+		return CPPTemplates.instantiateFunctionBody(this, point);
 	}
 }

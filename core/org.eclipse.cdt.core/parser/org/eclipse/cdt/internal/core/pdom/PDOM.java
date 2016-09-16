@@ -16,20 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
@@ -99,6 +85,20 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Database for storing semantic information for one project.
@@ -274,10 +274,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  
 	 *  CDT 9.2 development (versions not supported on the 9.0.x branch)
 	 *  202.0 - C++14 constexpr evaluation, bug 490475.
+	 *  202.0 - Use 16 bits to store field position, bug 501616.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(202, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(202, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(202, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(203, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(203, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(203, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

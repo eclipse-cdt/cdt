@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -23,5 +24,5 @@ public interface ICPPField extends IField, ICPPMember, ICPPVariable {
      * Returns the position of this field within its class owner's declared fields.
 	 * @since 6.0
 	 */
-    byte getFieldPosition();
+    int getFieldPosition();
 }

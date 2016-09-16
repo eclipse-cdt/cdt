@@ -41,7 +41,7 @@ class CompositeCPPField extends CompositeCPPVariable implements ICPPField {
 	}
 
 	@Override
-	public byte getFieldPosition() {
+	public int getFieldPosition() {
 		return ((ICPPField)rbinding).getFieldPosition();
 	}
 }

@@ -41,7 +41,7 @@ public class CompositeCPPFieldTemplate extends CompositeCPPVariableTemplate impl
 	}
 
 	@Override
-	public byte getFieldPosition() {
+	public int getFieldPosition() {
 		return ((ICPPField) rbinding).getFieldPosition();
 	}
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -48,7 +49,7 @@ public class CPPFieldSpecialization extends CPPVariableSpecialization implements
 	}
 
 	@Override
-	public byte getFieldPosition() {
+	public int getFieldPosition() {
 		return getField().getFieldPosition();
 	}
 }

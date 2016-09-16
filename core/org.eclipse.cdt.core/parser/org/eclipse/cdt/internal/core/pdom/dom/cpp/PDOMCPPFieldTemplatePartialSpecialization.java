@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Lukas Wegmann (IFS) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -75,7 +76,7 @@ public class PDOMCPPFieldTemplatePartialSpecialization extends PDOMCPPVariableTe
 	}
 
 	@Override
-	public byte getFieldPosition() {
-		return ((ICPPField)getPrimaryTemplate()).getFieldPosition();
+	public int getFieldPosition() {
+		return ((ICPPField) getPrimaryTemplate()).getFieldPosition();
 	}
 }

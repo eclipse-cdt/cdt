@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Lukas Wegmann (IFS) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -45,7 +46,7 @@ public class CPPFieldTemplatePartialSpecialization extends CPPVariableTemplatePa
 	}
 
 	@Override
-	public byte getFieldPosition() {
+	public int getFieldPosition() {
 		return ((ICPPFieldTemplate) getPrimaryTemplate()).getFieldPosition();
 	}
 }

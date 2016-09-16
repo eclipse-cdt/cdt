@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -131,7 +132,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 	}
 
 	@Override
-	public byte getFieldPosition() {
+	public int getFieldPosition() {
 		return getField().getFieldPosition();
 	}
 }

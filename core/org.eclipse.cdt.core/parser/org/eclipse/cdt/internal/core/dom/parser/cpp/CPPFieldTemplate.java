@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Lukas Wegmann (IFS) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -53,7 +54,7 @@ public class CPPFieldTemplate extends CPPVariableTemplate implements ICPPFieldTe
 	}
 
 	@Override
-	public byte getFieldPosition() {
+	public int getFieldPosition() {
 		return CPPField.getFieldPosition(getName(), getClassOwner());
 	}
 }

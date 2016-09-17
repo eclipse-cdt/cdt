@@ -32,13 +32,13 @@ public interface IValue {
 
 	/**
 	 * Returns the value as a number, or {@code null} if it is not possible.
-	 * @since 6.0
+	 * @since 6.1
 	 */
 	Number numberValue();
 	
 	/**
 	 * If this value consists of sub-values, returns the number of these sub-values. Otherwise returns 1.
-	 * @since 6.0
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	int numberOfSubValues();
 	
@@ -97,7 +97,7 @@ public interface IValue {
 	
 	/**
 	 * Make a deep copy of this value.
-	 * @since 6.0
+	 * @since 6.1
 	 */
 	IValue clone();
 	

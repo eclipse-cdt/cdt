@@ -18,8 +18,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
-import java.util.Arrays;
-
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -47,6 +45,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
+
+import java.util.Arrays;
 
 public class EvalFunctionCall extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fArguments;
@@ -221,10 +221,13 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 			return EvalFixed.INCOMPLETE;
 		}
 
+		ICPPFunction functionBinding = resolveFunctionBinding(context.getPoint());
+		if (functionBinding == null)
+			return EvalFixed.INCOMPLETE;
+
 		ICPPEvaluation[] args = new ICPPEvaluation[fArguments.length];
 		System.arraycopy(fArguments, 0, args, 0, fArguments.length);
 		
-		ICPPFunction functionBinding = resolveFunctionBinding(context.getPoint());
 		ICPPParameter[] parameters = functionBinding.getParameters();
 		for (int i = 0; i < fArguments.length; i++) {
 			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(record, context.recordStep());

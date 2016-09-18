@@ -518,7 +518,7 @@ public class CPPTemplates {
 			InstantiationContext context = new InstantiationContext(tpMap, point);
 			IType type = instantiateType(variableTemplate.getType(), context);
 			IValue value = instantiateValue(variableTemplate.getInitialValue(), context, 
-					Value.MAX_RECURSION_DEPTH);
+					IntegralValue.MAX_RECURSION_DEPTH);
 			instance = new CPPVariableInstance(template, template.getOwner(), tpMap, arguments, type, value);
 		}
 		return instance;
@@ -1736,7 +1736,7 @@ public class CPPTemplates {
 						origInstance.getTemplateParameterMap(), context);
 				IType newType = instantiateType(origInstance.getType(), context);
 				IValue newValue = instantiateValue(origInstance.getInitialValue(), context, 
-						Value.MAX_RECURSION_DEPTH);
+						IntegralValue.MAX_RECURSION_DEPTH);
 				return new CPPVariableInstance(origInstance.getTemplateDefinition(), origInstance.getOwner(), 
 						newMap, newArgs, newType, newValue);
 			}

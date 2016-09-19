@@ -24,7 +24,7 @@ public interface ICPPField extends IField, ICPPMember, ICPPVariable {
      * Returns the position of this field within its class owner's declared fields, or -1 if the position
      * cannot be determined.
      *
-	 * @since 6.1
+	 * @since 6.2
 	 */
     int getFieldPosition();
 }

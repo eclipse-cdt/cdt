@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.dsf.gdb" version="2">
+    <resource path="src/org/eclipse/cdt/dsf/gdb/service/IGDBBackend.java" type="org.eclipse.cdt.dsf.gdb.service.IGDBBackend">
+        <filter comment="Default methods are allowed" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.service.IGDBBackend"/>
+                <message_argument value="getProcess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Default methods are allowed" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.service.IGDBBackend"/>
+                <message_argument value="getProcessPty()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Default methods are allowed" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.service.IGDBBackend"/>
+                <message_argument value="isFullGdbConsoleSupported()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/dsf/gdb/service/command/IGDBControl.java" type="org.eclipse.cdt.dsf.gdb.service.command.IGDBControl">
+        <filter comment="Default methods are allowed" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.service.command.IGDBControl"/>
+                <message_argument value="getGDBBackendProcess()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

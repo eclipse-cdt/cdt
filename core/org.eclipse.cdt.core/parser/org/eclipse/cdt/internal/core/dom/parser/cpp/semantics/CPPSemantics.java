@@ -205,6 +205,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
@@ -215,7 +216,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMethod;
@@ -3109,16 +3109,16 @@ public class CPPSemantics {
     }
 	
     private static boolean isViableUserDefinedLiteralOperator(IBinding binding, int kind) {
-    	if(binding == null || binding instanceof ProblemBinding) {
+    	if (binding == null || binding instanceof ProblemBinding) {
     		return false;
     	}
-    	if(binding instanceof ICPPFunction) {
+    	if (binding instanceof ICPPFunction) {
     		ICPPFunction func = (ICPPFunction) binding;
-    		if(func.getRequiredArgumentCount() == 1) {
+    		if (func.getRequiredArgumentCount() == 1) {
     			IType type = null;
-    			if(kind == IASTLiteralExpression.lk_integer_constant) {
+    			if (kind == IASTLiteralExpression.lk_integer_constant) {
     				type = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG_LONG);
-    			} else if(kind == IASTLiteralExpression.lk_float_constant) {
+    			} else if (kind == IASTLiteralExpression.lk_float_constant) {
     				type = new CPPBasicType(Kind.eDouble, IBasicType.IS_LONG);
     			}
     			return func.getParameters()[0].getType().isSameType(type);
@@ -3231,14 +3231,14 @@ public class CPPSemantics {
 			IBinding litTpl = resolveFunction(data, tplFunctions, true);
 			
 			// Do we have valid template and non-template bindings?
-			if(ret != null && !(ret instanceof IProblemBinding)) {
+			if (ret != null && !(ret instanceof IProblemBinding)) {
 				// Do we have valid template and non-template bindings?
-				if(litTpl instanceof ICPPFunctionInstance) {
+				if (litTpl instanceof ICPPFunctionInstance) {
 					// Ambiguity? It has two valid options, and the spec says it shouldn't
 					return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, tplFunctions); 
 				}
 			} else {
-				if(litTpl instanceof ICPPFunctionInstance) {
+				if (litTpl instanceof ICPPFunctionInstance) {
 					// Only the template binding is valid
 					ret = litTpl;
 				} else {

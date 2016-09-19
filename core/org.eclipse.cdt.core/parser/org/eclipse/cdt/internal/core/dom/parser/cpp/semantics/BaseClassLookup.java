@@ -214,7 +214,7 @@ class BaseClassLookup {
 		// There is no result in the baseClass itself or we do content assist, we have to examine
 		// its base classes.
 		ICPPClassType baseClass= result.getClassType();
-		if (baseClass != null) { 
+		if (baseClass != null) {
 			ICPPBase[] grandBases= ClassTypeHelper.getBases(baseClass, data.getLookupPoint());
 			if (grandBases != null && grandBases.length > 0) {
 				HashSet<IBinding> grandBaseBindings= null;

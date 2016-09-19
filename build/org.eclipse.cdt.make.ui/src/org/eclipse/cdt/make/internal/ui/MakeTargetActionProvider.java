@@ -97,13 +97,15 @@ public class MakeTargetActionProvider extends CommonActionProvider {
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 
-		IStructuredSelection selection = (IStructuredSelection) context.getSelection();
-		editTargetAction.selectionChanged(selection);
-		copyTargetAction.selectionChanged(selection);
-		pasteTargetAction.selectionChanged(selection);
-		deleteTargetAction.selectionChanged(selection);
-		buildTargetAction.selectionChanged(selection);
-		buildLastTargetAction.selectionChanged(selection);
+		if (context != null) {
+			IStructuredSelection selection = (IStructuredSelection) context.getSelection();
+			editTargetAction.selectionChanged(selection);
+			copyTargetAction.selectionChanged(selection);
+			pasteTargetAction.selectionChanged(selection);
+			deleteTargetAction.selectionChanged(selection);
+			buildTargetAction.selectionChanged(selection);
+			buildLastTargetAction.selectionChanged(selection);
+		}
 	}
 
 }

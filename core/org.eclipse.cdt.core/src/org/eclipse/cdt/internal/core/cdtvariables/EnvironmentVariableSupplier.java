@@ -101,7 +101,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 	}
 	
 	private static boolean isTextList(String str, String delimiter) {
-		if (delimiter == null || delimiter.isEmpty())
+		if (str == null || delimiter == null || delimiter.isEmpty())
 			return false;
 		
 		// Regex: ([^:]+:)+[^:]*

@@ -27,7 +27,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIBackend;
  * of the {@link Process} abstract methods, but disables all I/O and
  * local CLI handling.
  * 
- * @since 5.1
+ * @since 5.2
  */
 public class GDBBackendProcessWithoutIO extends GDBBackendCLIProcess implements IGDBBackendProcessWithoutIO {
 

@@ -16,7 +16,7 @@ package org.eclipse.cdt.dsf.gdb.service.command;
  * handled by the launch and the console it normally created, but is handled by
  * the full GDB console itself.
  * 
- * @since 5.1
+ * @since 5.2
  */
 public interface IGDBBackendProcessWithoutIO {
 }

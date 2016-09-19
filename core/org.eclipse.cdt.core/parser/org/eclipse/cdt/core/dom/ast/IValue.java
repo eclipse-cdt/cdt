@@ -32,7 +32,7 @@ public interface IValue {
 
 	/**
 	 * Returns the value as a number, or {@code null} if it is not possible.
-	 * @since 6.1
+	 * @since 6.2
 	 */
 	Number numberValue();
 	
@@ -97,7 +97,7 @@ public interface IValue {
 	
 	/**
 	 * Make a deep copy of this value.
-	 * @since 6.1
+	 * @since 6.2
 	 */
 	IValue clone();
 	

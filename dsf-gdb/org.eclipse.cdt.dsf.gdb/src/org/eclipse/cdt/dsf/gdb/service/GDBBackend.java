@@ -157,7 +157,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		};
 	}
 
-	/** @since 5.1 */
+	/** @since 5.2 */
 	protected GdbLaunch getGDBLaunch() {
 		return (GdbLaunch) getSession().getModelAdapter(ILaunch.class);
 	}
@@ -195,7 +195,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	/**
 	 * Returns the GDB command and its arguments as an array.
 	 * Allow subclass to override.
-	 * @since 5.1
+	 * @since 5.2
 	 */
     // This method replaces getGDBCommandLineArray() because we need
     // to override it for GDB 7.12 even if an extender has overridden
@@ -275,7 +275,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	/**
 	 * Launch GDB process. Allow subclass to override.
 	 * 
-	 * @since 5.1
+	 * @since 5.2
 	 */
 	// Again, we create a new method that we know has not been already
 	// overridden.  That way, even if extenders have overridden the

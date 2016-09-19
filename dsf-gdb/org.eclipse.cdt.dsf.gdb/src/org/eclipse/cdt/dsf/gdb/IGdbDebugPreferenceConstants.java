@@ -174,7 +174,7 @@ public interface IGdbDebugPreferenceConstants {
 
 	/**
 	 * Boolean preference indicating if the GDB console should be shown using inverted colors. Default is <code>false</code>. 
-	 * @since 5.1
+	 * @since 5.2
 	 */
 	public static final String PREF_CONSOLE_INVERTED_COLORS = PREFIX + "consoleInvertedColors"; //$NON-NLS-1$
 }

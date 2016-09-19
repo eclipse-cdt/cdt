@@ -36,7 +36,7 @@ import org.eclipse.osgi.util.NLS;
  * If we are unable to create a PTY, we then revert to the previous behavior of
  * the base class.
  * 
- * @since 5.1
+ * @since 5.2
  */
 public class GDBBackend_7_12 extends GDBBackend {
 

@@ -140,7 +140,8 @@ public abstract class AbstractCLIProcess extends Process
 	}
     
     /**
-	 * @since 5.1
+     * Returns if this class should handle the IO streams of the CLI.
+	 * @since 5.2
 	 */
     protected boolean handleIO() { return true; }
     

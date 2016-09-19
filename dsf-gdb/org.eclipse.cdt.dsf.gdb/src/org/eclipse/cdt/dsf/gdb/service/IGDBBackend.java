@@ -161,7 +161,7 @@ public interface IGDBBackend extends IMIBackend {
 	/**
 	 * @return True if the full GDB console should be used.  False otherwise.
 	 * 
-	 * @since 5.1
+	 * @since 5.2
 	 */
 	default boolean isFullGdbConsoleSupported() {
 		return false;
@@ -169,7 +169,7 @@ public interface IGDBBackend extends IMIBackend {
 	
 	/**
 	 * @return The real GDB process that was started for the debug session
-	 * @since 5.1
+	 * @since 5.2
 	 */
 	default Process getProcess() {
 		throw new RuntimeException();
@@ -178,7 +178,7 @@ public interface IGDBBackend extends IMIBackend {
 	/**
 	 * Returns the PTY used when starting the GDB process.
 	 * Can be null if no PTY was used.
-	 * @since 5.1
+	 * @since 5.2
 	 */
 	default PTY getProcessPty() {
 		return null;

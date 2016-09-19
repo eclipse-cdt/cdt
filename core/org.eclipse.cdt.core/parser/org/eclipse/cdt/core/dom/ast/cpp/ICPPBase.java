@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
  */
 public interface ICPPBase extends Cloneable {
 	public static final ICPPBase[] EMPTY_BASE_ARRAY = {};
-	/** @since 6.0 */
+	/** @since 6.2 */
 	public static final ICPPBase[] NO_BASES_BECAUSE_TYPE_IS_INCOMPLETE = {};
 
 	public static final int v_private = ICPPASTBaseSpecifier.v_private;

@@ -31,7 +31,7 @@ public interface IGDBControl extends IMICommandControl {
 	 * To get the real GDB process use
 	 * {@link IGDBBackend#getProcess()}.
 	 * 
-	 * @since 5.1
+	 * @since 5.2
 	 */
 	default Process getGDBBackendProcess() {
 		return getCLIProcess();

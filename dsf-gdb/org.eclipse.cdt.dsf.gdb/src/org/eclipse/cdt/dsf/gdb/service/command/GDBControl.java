@@ -370,7 +370,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		return null;
     }
     
-	/** @since 5.1 */
+	/** @since 5.2 */
 	@Override
     public Process getGDBBackendProcess() {
 		return fBackendProcess;
@@ -730,7 +730,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		return new ControlEventProcessor();
 	}
 
-	/** @since 5.1 */
+	/** @since 5.2 */
 	protected Process createBackendProcess() throws IOException {
 	   	if (fMIBackend.isFullGdbConsoleSupported()) {
 	   		// If the full GDB console is supported, which uses the GDB process itself,

@@ -329,7 +329,7 @@ public interface ITerminalsConnectorConstants {
 	 * The end-of-line sequence to be sent to the server on "Enter".
 	 * <p>
 	 * Property Type: {@link String}
-	 * @since 4.1
+	 * @since 4.2
 	 */
 	public static final String PROP_TELNET_EOL = "telnet.eol"; //$NON-NLS-1$
 

@@ -7,4 +7,5 @@ debug-workspace/
 *~
 \#*\#
 
-
+# MacOSX
+.DS_Store

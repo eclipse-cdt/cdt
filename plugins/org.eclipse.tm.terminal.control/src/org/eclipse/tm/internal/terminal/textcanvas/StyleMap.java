@@ -13,6 +13,7 @@
  * Martin Oberhuber (Wind River) - [247700] Terminal uses ugly fonts in JEE package
  * Martin Oberhuber (Wind River) - [335358] Fix Terminal color definition
  * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
+ * Martin Oberhuber (Wind River) - [475422] Fix display on MacOSX Retina
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -216,21 +217,41 @@ public class StyleMap {
 		
 		for (char c = ' '; c <= '~'; c++) {
 			// consider only the first 128 chars for deciding if a font
-			// is proportional
+			// is proportional. Collect char width as a side-effect.
 			if(measureChar(gc, c, true))
 				fProportional=true;
 		}
-		// TODO should we also consider the upper 128 chars??
-		for (char c = ' '+128; c <= '~'+128; c++) {
-			measureChar(gc, c,false);
-		}
 		if(fProportional) {
-			fCharSize.x-=2; //works better on small fonts
-		}
-		for (int i = 0; i < fOffsets.length; i++) {
-			fOffsets[i]=(fCharSize.x-fOffsets[i])/2;
-		}
-		if(!fProportional) {
+			// Widest char minus the padding on the left and right:
+			// Looks much better for small fonts
+			fCharSize.x-=2;
+			// Collect width of the upper characters (for offset calculation)
+			for (char c = '~'+1; c < fOffsets.length; c++) {
+				measureChar(gc, c,false);
+			}
+			// Calculate offsets based on each character's width and the bounding box
+			for (int i = ' '; i < fOffsets.length; i++) {
+				fOffsets[i]=(fCharSize.x-fOffsets[i])/2;
+			}
+		} else {
+			// Non-Proportional: Reset all offsets (eg after font change)
+			for (int i = 0; i < fOffsets.length; i++) {
+				fOffsets[i]=0;
+			}
+			String t = "The quick brown Fox jumps over the Lazy Dog."; //$NON-NLS-1$
+			Point ext=gc.textExtent(t);
+			if(ext.x != fCharSize.x * t.length()) {
+				//Bug 475422: On OSX with Retina display and due to scaling,
+				//a text many be shorter than the sum of its bounding boxes.
+				//Because even with fixed width font, bounding box size 
+				//may not be an integer but a fraction eg 6.75 pixels.
+				//
+				//Painting in proportional mode ensures that each character
+				//is painted individually into its proper bounding box, rather
+				//than using an optimization where Strings would be drawn as
+				//a whole. This fixes the "fractional bounding box" problem.
+				fProportional=true;
+			}
 			//measure font in boldface, too, and if wider then treat like proportional
 			gc.setFont(getFont(fDefaultStyle.setBold(true)));
 			Point charSizeBold = gc.textExtent("W"); //$NON-NLS-1$

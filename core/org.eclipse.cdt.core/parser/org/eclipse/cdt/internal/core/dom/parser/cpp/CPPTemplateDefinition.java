@@ -193,19 +193,18 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (templateParameters == null) {
+			ICPPTemplateParameter[] result = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
 			ICPPASTTemplateDeclaration template = CPPTemplates.getTemplateDeclaration(getTemplateName());
-			if (template == null)
-				return ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
-			ICPPASTTemplateParameter[] params = template.getTemplateParameters();
-			IBinding p = null;
-			ICPPTemplateParameter[] result = null;
-			for (ICPPASTTemplateParameter param : params) {
-				p= CPPTemplates.getTemplateParameterName(param).resolveBinding();
-				if (p instanceof ICPPTemplateParameter) {
-					result = ArrayUtil.append(ICPPTemplateParameter.class, result, (ICPPTemplateParameter) p);
+			if (template != null) {
+				ICPPASTTemplateParameter[] params = template.getTemplateParameters();
+				for (ICPPASTTemplateParameter param : params) {
+					IBinding p= CPPTemplates.getTemplateParameterName(param).resolveBinding();
+					if (p instanceof ICPPTemplateParameter) {
+						result = ArrayUtil.append(result, (ICPPTemplateParameter) p);
+					}
 				}
 			}
-			templateParameters = ArrayUtil.trim(ICPPTemplateParameter.class, result);
+			templateParameters = ArrayUtil.trim(result);
 		}
 		return templateParameters;
 	}

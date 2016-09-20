@@ -6060,6 +6060,34 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template<typename T>
+	//	T d();
+	//
+	//	template <typename U>
+	//	static decltype(&U::operator()) c(U* p);
+	//
+	//	template <typename F>
+	//	decltype(c<F>(d<F*>()))* waldo(F f);
+	//
+	//	template <typename T, typename U = decltype(&T::m)>
+	//	struct B {};
+	//
+	//	template <typename T, typename R, typename P>
+	//	struct B<T, R (*)(P)> {
+	//	  R operator()(P p);
+	//	};
+	//
+	//	struct A {
+	//	  static void m(int p);
+	//	};
+	//
+	//	void test() {
+	//	  waldo([]() { return B<A>(); }());
+	//	}
+	public void testTemplateArgumentDeductionWithFunctionSet_501549() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<bool V, typename T>
 	//	struct C {
 	//	  typedef int s;

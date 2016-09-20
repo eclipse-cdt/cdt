@@ -932,9 +932,33 @@ public class TemplateArgumentDeduction {
 							remaining.isRestrict());
 				}
 			} else if (p instanceof ICPPFunctionType) {
-				if (!(a instanceof ICPPFunctionType))
-					return false;
-				return fromFunctionType((ICPPFunctionType) p, (ICPPFunctionType) a, point);
+				ICPPFunctionType ftp = (ICPPFunctionType) p;
+				if (a instanceof ICPPFunctionType)
+					return fromFunctionType(ftp, (ICPPFunctionType) a, point);
+
+				if (a instanceof FunctionSetType) {
+					// 14.8.2.1-6 Handling of overloaded function sets.
+					CPPTemplateParameterMap success = null;
+					ICPPFunction[] fs= ((FunctionSetType) a).getFunctionSet().getBindings();
+					for (ICPPFunction f : fs) {
+						ICPPFunctionType fta = f.getType();
+						final CPPTemplateParameterMap saved = saveState();
+						try {
+							if (fromFunctionType(ftp, fta, point)) {
+								if (success != null)
+									return false;
+								success = saveState();
+							}
+						} finally {
+							restoreState(saved);
+						}
+					}
+					if (success != null) {
+						restoreState(success);
+						return true;
+					}
+				}
+				return false;
 			} else if (p instanceof ICPPTemplateParameter) {
 				ICPPTemplateArgument current=
 						fDeducedArgs.getArgument(((ICPPTemplateParameter) p).getParameterID(), fPackOffset);

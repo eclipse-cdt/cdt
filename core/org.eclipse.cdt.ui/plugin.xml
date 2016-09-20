@@ -2356,6 +2356,11 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.ui.edit.text.shiftLeft"/>      
      <key
+            sequence="M1+M2+C"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.toggle.comment"/>
+     <key
             sequence="M1+7"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"

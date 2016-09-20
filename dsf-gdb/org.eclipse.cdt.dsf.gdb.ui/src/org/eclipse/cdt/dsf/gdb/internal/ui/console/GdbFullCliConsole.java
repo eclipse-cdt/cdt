@@ -103,4 +103,11 @@ public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConso
 			fConsolePage.setInvertedColors(enable);
 		}
 	}
+
+	@Override
+	public void dispose() {
+		// No action for this implementation 
+		// We want to keep the GdbFullCliConsolePage instance until the page is removed 
+		// by the view
+	}
 }

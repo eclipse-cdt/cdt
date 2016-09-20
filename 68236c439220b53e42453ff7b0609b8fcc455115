@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_bf189636",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-09-20T19:17:01Z",
+      "side": 1,
+      "message": "This @since is out of date. As a result of CDT 9.1 being branched the cdt-baseline was updated Monday. The correct @since for this is 5.2.",
+      "revId": "68236c439220b53e42453ff7b0609b8fcc455115",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_5ff69a51",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-09-20T19:17:01Z",
+      "side": 1,
+      "message": "This is invalid, there should be no @since here",
+      "revId": "68236c439220b53e42453ff7b0609b8fcc455115",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_9f13d219",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-09-20T19:17:01Z",
+      "side": 1,
+      "message": "This comment is out of date as a result of moving the code.",
+      "revId": "68236c439220b53e42453ff7b0609b8fcc455115",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_7ff35e5f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-09-20T19:17:01Z",
+      "side": 1,
+      "message": "This is missing @since.",
+      "revId": "68236c439220b53e42453ff7b0609b8fcc455115",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

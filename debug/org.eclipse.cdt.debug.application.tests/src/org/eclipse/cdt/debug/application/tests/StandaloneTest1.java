@@ -26,6 +26,7 @@ import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,6 +41,7 @@ public class StandaloneTest1 extends StandaloneTest {
 	}
 
 	@Test
+	@Ignore
 	public void Test1() throws Exception {
 		// Verify the top-level menus are there
 		SWTBotMenu fileMenu = mainShell.menu().menu("File");

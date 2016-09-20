@@ -81,6 +81,11 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 	}
 
 	@Override
+	public void terminateConsole(IDebuggerConsole console) {
+		console.dispose();
+	}
+
+	@Override
 	public void showConsoleView(IDebuggerConsole console) {
 		fShowDebuggerConsoleViewJob.setConsole(console);
 		fShowDebuggerConsoleViewJob.schedule(100);

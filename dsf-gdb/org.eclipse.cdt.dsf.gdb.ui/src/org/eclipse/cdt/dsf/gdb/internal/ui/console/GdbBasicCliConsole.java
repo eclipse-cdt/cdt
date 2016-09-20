@@ -67,7 +67,7 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
 	}
 
 	@Override
-	protected void dispose() {
+	public void dispose() {
         try {
         	fOutputStream.close();
 		} catch (IOException e) {
@@ -86,8 +86,11 @@ public class GdbBasicCliConsole extends IOConsole implements IDebuggerConsole, I
 		boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS);
 
 		Display.getDefault().asyncExec(() -> {
-			getInputStream().setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
-        	fErrorStream.setColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+			if (getInputStream() != null) {
+				getInputStream().setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
+			}
+
+			fErrorStream.setColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 
     		setInvertedColors(enabled);
         });

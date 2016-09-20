@@ -78,6 +78,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 	public void launchesTerminated(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			renameConsole(launch);
+			terminateConsole(launch);
 		}
 	}
 	
@@ -92,6 +93,13 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 		IDebuggerConsole console = getConsole(launch);
 		if (console != null) {
 			removeConsole(console);
+		}
+	}
+
+	protected void terminateConsole(ILaunch launch) {
+		IDebuggerConsole console = getConsole(launch);
+		if (console != null) {
+			terminateConsole(console);
 		}
 	}
 
@@ -120,6 +128,10 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 		getDebuggerConsoleManager().removeConsole(console);
 	}
 	
+	private void terminateConsole(IDebuggerConsole console) {
+		getDebuggerConsoleManager().terminateConsole(console);
+	}
+
 	private IDebuggerConsoleManager getDebuggerConsoleManager() {
 		return CDebugUIPlugin.getDebuggerConsoleManager();
 	}

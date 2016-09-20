@@ -35,4 +35,10 @@ public interface IDebuggerConsole extends IConsole {
 	 * Request a re-computation of the name of the console.
 	 */
 	void resetName();
+	
+	/**
+	 * Release resources associated to this console but don't remove it 
+	 * from the view so its information is still visible to the user
+	 */
+	void dispose();
 }

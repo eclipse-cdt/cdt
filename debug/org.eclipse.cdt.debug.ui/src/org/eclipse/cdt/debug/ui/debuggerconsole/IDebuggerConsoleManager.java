@@ -43,7 +43,15 @@ public interface IDebuggerConsoleManager {
 	 * @param console console to remove
 	 */
 	public void removeConsole(IDebuggerConsole console);
+
 	
+	/**
+	 * Terminates the given console and release associated resources
+	 * but does not get removed from the view or console manager
+	 * @param console console to terminate
+	 */
+	public void terminateConsole(IDebuggerConsole console);
+
 	/**
 	 * Returns a array of consoles registered with the console manager.
 	 * 

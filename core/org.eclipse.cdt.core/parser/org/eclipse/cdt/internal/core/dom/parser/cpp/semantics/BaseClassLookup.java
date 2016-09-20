@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import java.util.ArrayList;
@@ -53,11 +53,11 @@ class BaseClassLookup {
 	public static void lookupInBaseClasses(LookupData data, ICPPClassScope classScope) {
 		if (classScope == null)
 			return;
-		
+
 		final ICPPClassType classType= classScope.getClassType();
-		if (classType == null) 
+		if (classType == null)
 			return;
-		
+
 		final HashMap<IScope, BaseClassLookup> infoMap = new HashMap<>();
 		BaseClassLookup rootInfo= lookupInBaseClass(data, null, false, classType, infoMap, 0);
 		if (data.contentAssist) {
@@ -109,7 +109,7 @@ class BaseClassLookup {
 	public void addBase(boolean virtual, BaseClassLookup baseInfo) {
 		if (virtual && fHiddenAsVirtualBase)
 			return;
-		
+
 		if (fChildren.isEmpty()) {
 			fChildren= new ArrayList<>();
 			fVirtual= new BitSet();
@@ -138,24 +138,24 @@ class BaseClassLookup {
 			child.propagateHiddenAsVirtual();
 		}
 	}
-	
+
 	public boolean containsNonStaticMember() {
 		for (IBinding binding : fBindings) {
 			if (binding == null)
 				return false;
 			if (binding instanceof ICPPMember) {
-				if (!((ICPPMember) binding).isStatic()) 
+				if (!((ICPPMember) binding).isStatic())
 					return true;
 			}
 		}
 		return false;
 	}
-	
+
 	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope,
 			boolean isVirtual, ICPPClassType root, HashMap<IScope, BaseClassLookup> infoMap, int depth) {
 		if (depth++ > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return null;
-	
+
 		if (baseClassScope != null) {
 			BaseClassLookup info= infoMap.get(baseClassScope);
 			if (info != null) {
@@ -210,7 +210,7 @@ class BaseClassLookup {
 				// Continue the lookup.
 			}
 		}
-		
+
 		// There is no result in the baseClass itself or we do content assist, we have to examine
 		// its base classes.
 		ICPPClassType baseClass= result.getClassType();
@@ -229,10 +229,10 @@ class BaseClassLookup {
 					ICPPBase grandBase = grandBases[i];
 					if (selectedBases != null && !selectedBases.get(i))
 						continue;
-	
+
 					IBinding grandBaseBinding = grandBase.getBaseClass();
 					if (!(grandBaseBinding instanceof ICPPClassType)) {
-						// 14.6.2.3 scope is not examined. 
+						// 14.6.2.3 scope is not examined.
 						if (grandBaseBinding instanceof ICPPUnknownBinding) {
 							if (data.skippedScope == null)
 								data.skippedScope= root;
@@ -257,7 +257,7 @@ class BaseClassLookup {
 					}
 					if (!(grandBaseScope instanceof ICPPClassScope))
 						continue;
-					
+
 					BaseClassLookup baseInfo= lookupInBaseClass(data, (ICPPClassScope) grandBaseScope,
 							grandBase.isVirtual(), root, infoMap, depth);
 					if (baseInfo != null)
@@ -266,11 +266,11 @@ class BaseClassLookup {
 			}
 		}
 		result.setResult(matches);
-		return result;	
+		return result;
 	}
 
 	private static BitSet selectPreferredBases(LookupData data, ICPPBase[] grandBases) {
-		if (data.contentAssist) 
+		if (data.contentAssist)
 			return null;
 
 		BitSet selectedBases;
@@ -278,7 +278,7 @@ class BaseClassLookup {
 		IName baseName= null;
 		for (int i = 0; i < grandBases.length; i++) {
 			ICPPBase nbase = grandBases[i];
-			if (nbase instanceof IProblemBinding) 
+			if (nbase instanceof IProblemBinding)
 				continue;
 
 			final IName nbaseName = nbase.getClassDefinitionName();
@@ -315,8 +315,8 @@ class BaseClassLookup {
 	void hideVirtualBases(HashMap<IScope, BaseClassLookup> infoMap, int depth) {
 		if (depth++ > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return;
-		
-		if (fClassType != null) { 
+
+		if (fClassType != null) {
 			ICPPBase[] bases= null;
 			bases= ClassTypeHelper.getBases(fClassType, fLookupPoint);
 			if (bases != null && bases.length > 0) {
@@ -330,7 +330,7 @@ class BaseClassLookup {
 					final IScope baseScope= baseClass.getCompositeScope();
 					if (!(baseScope instanceof ICPPClassScope))
 						continue;
-					
+
 					BaseClassLookup baseInfo= infoMap.get(baseScope);
 					if (baseInfo != null) {
 						if (base.isVirtual()) {
@@ -352,7 +352,7 @@ class BaseClassLookup {
 		if (fCollected)
 			return;
 		fCollected= true;
-		
+
 		@SuppressWarnings("unchecked")
 		final CharArrayObjectMap<Object> resultMap = (CharArrayObjectMap<Object>) data.foundItems;
 		data.foundItems = CPPSemantics.mergePrefixResults(resultMap, fBindings, true);
@@ -389,7 +389,7 @@ class BaseClassLookup {
 			fBindings[numBindingsToAdd] = null;
 		boolean possibleAmbiguity = false;
 		if (result.length > 0 && numBindingsToAdd > 0 && data.problem == null) {
-			// Matches are found in more than one base class - this is usually 
+			// Matches are found in more than one base class - this is usually
 			// an indication of ambiguity (but see below).
 			possibleAmbiguity = true;
 		}
@@ -415,7 +415,7 @@ class BaseClassLookup {
 		}
 		return result;
 	}
-	
+
 	// If all bindings in 'result' are instances of the same class template,
 	// collapse them to the class template itself. Only applies if the lookup
 	// is for a name used as a template-name.
@@ -428,7 +428,7 @@ class BaseClassLookup {
 		ICPPTemplateDefinition template = null;
 		for (IBinding binding : result) {
 			if (binding instanceof ICPPClassType && binding instanceof ICPPTemplateInstance) {
-				ICPPTemplateDefinition specialized = 
+				ICPPTemplateDefinition specialized =
 						(ICPPTemplateDefinition) ((ICPPTemplateInstance) binding).getSpecializedBinding();
 				if (template == null) {
 					template = specialized;

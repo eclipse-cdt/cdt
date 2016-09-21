@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_9509f3be",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-09-21T10:42:16Z",
+      "side": 1,
+      "message": "\u003e This comment is out of date as a result of moving the code.\n\nHi Vincent, last little update, this javadoc comment is still from when the class with MICondition specific. Can you update the wording a little for it please?",
+      "revId": "80e0491f2c869858dbcbfdb86ef4a2ab27d17adc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

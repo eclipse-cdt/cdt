@@ -13,6 +13,7 @@ public class NewWizard extends Wizard implements INewWizard {
 	private final String[] tags;
 
 	private String templateSelectionPageTitle;
+	private String templateSelectionPageDescription;
 	private IWorkbench workbench;
 	private IStructuredSelection selection;
 	private TemplateSelectionPage templateSelectionPage;
@@ -29,10 +30,18 @@ public class NewWizard extends Wizard implements INewWizard {
 		}
 	}
 
+	protected void setTemplateSelectionPageDescription(String description) {
+		this.templateSelectionPageDescription = description;
+		if (templateSelectionPage != null) {
+			templateSelectionPage.setDescription(description);
+		}
+	}
+
 	@Override
 	public void addPages() {
 		templateSelectionPage = new TemplateSelectionPage("templateSelection", tags); //$NON-NLS-1$
 		templateSelectionPage.setTitle(templateSelectionPageTitle);
+		templateSelectionPage.setDescription(templateSelectionPageDescription);
 		this.addPage(templateSelectionPage);
 	}
 

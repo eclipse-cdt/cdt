@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
@@ -56,6 +58,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
+import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 public class RemoveFunctionBodiesRefactoring extends CRefactoring {
 	private INodeFactory nodeFactory;
@@ -63,6 +66,7 @@ public class RemoveFunctionBodiesRefactoring extends CRefactoring {
 
 	private IIndex index;
 	private IASTTranslationUnit ast;
+	private IRegion region;
 
 	public RemoveFunctionBodiesRefactoring(ICElement element, ISelection selection, ICProject project) {
 		super(element, selection, project);
@@ -83,6 +87,8 @@ public class RemoveFunctionBodiesRefactoring extends CRefactoring {
 		ast = getAST(tu, progress.newChild(1));
 		index = getIndex();
 		nodeFactory = ast.getASTNodeFactory();
+		region = selectedRegion.getLength() == 0 ?
+				new Region(0, ast.getFileLocation().getNodeLength()) : selectedRegion;
 
 		if (isProgressMonitorCanceled(progress, initStatus))
 			return initStatus;
@@ -118,6 +124,8 @@ public class RemoveFunctionBodiesRefactoring extends CRefactoring {
 		CTextFileChange fileChange = new CTextFileChange(tu.getElementName(), tu);
 		fileChange.setEdit(new MultiTextEdit());
 		for (IASTFunctionDefinition definition : finder.functionDefinitions) {
+			if (!SelectionHelper.isNodeInsideRegion(definition, region))
+				continue;
 			IASTStatement body = definition.getBody();
 			IASTName name = definition.getDeclarator().getName();
 			IBinding binding = name.resolveBinding();

@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -354,8 +355,8 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 			for (IASTDeclarator declarator : declarators) {
 				declarator = findInnermostDeclarator(declarator);
 				IASTName name = declarator.getName();
-				if (name instanceof ICPPASTConversionName)
-					return null; // Do not remove conversion operators.
+				if (name instanceof ICPPASTConversionName || name instanceof ICPPASTOperatorName)
+					return null; // Do not remove operators.
 				names.add(name);
 			}
 			IASTDeclSpecifier declSpecifier = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();

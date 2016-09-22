@@ -4,6 +4,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 class ProblemFinder extends ASTVisitor {
 	boolean foundProblem;
@@ -21,7 +22,8 @@ class ProblemFinder extends ASTVisitor {
 
 	@Override
 	public int visit(IASTName name) {
-		if (name.resolveBinding() instanceof IProblemBinding) {
+		if (!CharArrayUtils.startsWith(name.getSimpleID(), "__builtin_")
+				&& name.resolveBinding() instanceof IProblemBinding) {
 			foundProblem = true;
 			return PROCESS_ABORT;
 		}

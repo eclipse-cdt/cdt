@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -365,7 +366,13 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 			} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
 				names.add(((IASTElaboratedTypeSpecifier) declSpecifier).getName());
 			} else if (declSpecifier instanceof IASTEnumerationSpecifier) {
-				names.add(((IASTEnumerationSpecifier) declSpecifier).getName());
+				IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) declSpecifier;
+				IASTName name = enumSpecifier.getName();
+				if (name.getSimpleID().length != 0)
+					names.add(name);
+				for (IASTEnumerator enumerator : enumSpecifier.getEnumerators()) {
+					names.add(enumerator.getName());
+				}
 			}
 			return names;
 		} else if (declaration instanceof IASTFunctionDefinition) {

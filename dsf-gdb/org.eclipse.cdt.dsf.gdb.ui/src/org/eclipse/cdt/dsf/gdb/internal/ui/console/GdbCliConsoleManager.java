@@ -198,8 +198,8 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 			}
 			
 			addConsole(console);
-			// Make sure the Debugger Console view is visible
-			getDebuggerConsoleManager().showConsoleView();
+			// Make sure the Debugger Console view is visible but do not force it to the top
+			getDebuggerConsoleManager().openConsoleView();
 		}
 	}
 	

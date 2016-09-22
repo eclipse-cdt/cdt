@@ -41,6 +41,7 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 	/** A list of listeners registered for notifications of changes to consoles */
 	private ListenerList<IConsoleListener> fConsoleListeners = new ListenerList<>();
 	
+	private OpenDebuggerConsoleViewJob fOpenDebuggerConsoleViewJob = new OpenDebuggerConsoleViewJob();
 	private ShowDebuggerConsoleViewJob fShowDebuggerConsoleViewJob = new ShowDebuggerConsoleViewJob();
 	
 	@Override
@@ -85,6 +86,11 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 		fShowDebuggerConsoleViewJob.schedule(100);
 	}
 
+	@Override
+	public void openConsoleView() {
+		fOpenDebuggerConsoleViewJob.schedule(100);
+	}
+
 	private class ShowDebuggerConsoleViewJob extends WorkbenchJob {
 		ShowDebuggerConsoleViewJob() {
 			super("Show GDB Console View"); //$NON-NLS-1$
@@ -123,6 +129,35 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
                 }
             }
 			return Status.OK_STATUS;
+		}
+	}
+	
+	private class OpenDebuggerConsoleViewJob extends WorkbenchJob {
+		OpenDebuggerConsoleViewJob() {
+			super("Open GDB Console View"); //$NON-NLS-1$
+			setSystem(true);
+			setPriority(Job.SHORT);
+		}
+
+		@Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+	           IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	            if (window != null) {
+	                IWorkbenchPage page = window.getActivePage();
+	                if (page != null) {
+						IViewPart view = page.findView(DebuggerConsoleView.DEBUGGER_CONSOLE_VIEW_ID);
+						if (view == null) {
+							try {
+								page.showView(DebuggerConsoleView.DEBUGGER_CONSOLE_VIEW_ID, 
+										      null,
+										      IWorkbenchPage.VIEW_CREATE);
+							} catch (PartInitException e) {
+								CDebugUIPlugin.log(e);
+							}
+						}
+	                }
+	            }
+				return Status.OK_STATUS;
 		}
 	}
 }

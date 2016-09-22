@@ -105,24 +105,12 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
             if (window != null && fConsole != null) {
                 IWorkbenchPage page = window.getActivePage();
                 if (page != null) {
-                	boolean consoleFound = false;
 					IViewPart view = page.findView(DebuggerConsoleView.DEBUGGER_CONSOLE_VIEW_ID);
-					if (view != null) {
-						DebuggerConsoleView consoleView = (DebuggerConsoleView)view;
-						boolean consoleVisible = page.isPartVisible(consoleView);
-						if (consoleVisible) {
-							consoleFound = true;
-							page.bringToTop(consoleView);
-						}
-					}
-
-					if (!consoleFound) {
+					if (view == null) {
 						try {
-							DebuggerConsoleView consoleView = 
-									(DebuggerConsoleView)page.showView(DebuggerConsoleView.DEBUGGER_CONSOLE_VIEW_ID,
-																	   null,
-																	   IWorkbenchPage.VIEW_CREATE);
-							page.bringToTop(consoleView);
+							page.showView(DebuggerConsoleView.DEBUGGER_CONSOLE_VIEW_ID, null,
+									IWorkbenchPage.VIEW_CREATE);
+
 						} catch (PartInitException e) {
 							CDebugUIPlugin.log(e);
 						}

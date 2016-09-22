@@ -1742,12 +1742,7 @@ public class CPPSemantics {
 				ICPPASTEnumerationSpecifier enumeration = (ICPPASTEnumerationSpecifier) declSpec;
 			    specName = enumeration.getName();
 
-			    // Add unscoped enumerators to the enclosing scope
-			    if (!enumeration.isScoped()) {
-			    	for (IASTEnumerator enumerator : enumeration.getEnumerators()) {
-			    		ASTInternal.addName(scope, enumerator.getName());
-			    	}
-			    }
+			    handleEnumeration(enumeration, scope);
 			}
 			if (specName != null) {
 				if (!(specName instanceof ICPPASTQualifiedName)) {
@@ -1785,8 +1780,15 @@ public class CPPSemantics {
 			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
 			ASTInternal.addName(scope, alias);
 		} else if (declaration instanceof ICPPASTAliasDeclaration) {
-			IASTName alias = ((ICPPASTAliasDeclaration) declaration).getAlias();
+			ICPPASTAliasDeclaration aliasDecl = (ICPPASTAliasDeclaration) declaration;
+			IASTName alias = aliasDecl.getAlias();
 			ASTInternal.addName(scope, alias);
+			
+			// The mapping-type-id could declare an enumeration.
+			IASTDeclSpecifier declSpec = aliasDecl.getMappingTypeId().getDeclSpecifier();
+			if (declSpec instanceof ICPPASTEnumerationSpecifier) {
+				handleEnumeration((ICPPASTEnumerationSpecifier) declSpec, scope);
+			}
 		} else if (declaration instanceof IASTFunctionDefinition) {
  			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
 			final IASTDeclSpecifier declSpec = functionDef.getDeclSpecifier();
@@ -1812,6 +1814,16 @@ public class CPPSemantics {
 				break;
 			}
 		}
+	}
+	
+	private static void handleEnumeration(ICPPASTEnumerationSpecifier enumSpec,
+			IScope enclosingScope) {
+		// Add unscoped enumerators to the enclosing scope
+	    if (!enumSpec.isScoped()) {
+	    	for (IASTEnumerator enumerator : enumSpec.getEnumerators()) {
+	    		ASTInternal.addName(enclosingScope, enumerator.getName());
+	    	}
+	    }
 	}
 
 	/**

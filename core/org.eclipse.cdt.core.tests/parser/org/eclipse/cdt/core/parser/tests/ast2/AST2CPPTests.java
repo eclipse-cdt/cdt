@@ -11982,6 +11982,17 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	struct foo {
+	//	  using E = enum { Zero, One, Two };
+	//
+	//	  bool f() {
+	//	    return Zero == 0; // "Symbol 'Zero' could not be resolved"
+	//	  }
+	//	};
+	public void testAnonymousEnumInAliasDeclaration_502016() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	struct S {
 	//	    void foo() {
 	//	        bar(E::A);       // ERROR: Symbol 'A' could not be resolved

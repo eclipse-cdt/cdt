@@ -108,7 +108,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -275,7 +274,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPFunctionType fOriginalFunctionType;
 		private final ICPPParameter[] fOriginalParameters;
 		private final IType[] fOriginalExceptionSpec;
-		private final ICPPEvaluation fReturnExpression;
 		private final ICPPExecution fFunctionBody;
 
 		public ConfigureFunction(ICPPFunction original, PDOMCPPFunction function, IASTNode point) 
@@ -284,7 +282,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fOriginalFunctionType= original.getType();
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= function.extractExceptionSpec(original);
-			fReturnExpression= CPPFunction.getReturnExpression(original, point);
 			fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
 			postProcesses.add(this);
 		}
@@ -292,7 +289,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		@Override
 		public void run() {
 			fFunction.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec,
-					fReturnExpression, fFunctionBody);
+					fFunctionBody);
 		}
 	}
 	
@@ -314,19 +311,17 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	class ConfigureFunctionSpecialization implements Runnable {
 		private final PDOMCPPFunctionSpecialization fSpec;
-		private final ICPPEvaluation fReturnExpression;
 		private final ICPPExecution fFunctionBody;
 		
 		public ConfigureFunctionSpecialization(ICPPFunction original, PDOMCPPFunctionSpecialization spec, IASTNode point) {
 			fSpec = spec;
-			fReturnExpression = CPPFunction.getReturnExpression(original, point);
 			fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
 			postProcesses.add(this);
 		}
 
 		@Override
 		public void run() {
-			fSpec.initData(fReturnExpression, fFunctionBody);
+			fSpec.initData(fFunctionBody);
 		}
 	}
 	
@@ -387,7 +382,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPFunctionType fOriginalFunctionType;
 		private final ICPPParameter[] fOriginalParameters;
 		private final IType[] fOriginalExceptionSpec;
-		private final ICPPEvaluation fReturnExpression;
 		private final ICPPExecution fFunctionBody;
 
 		public ConfigureFunctionTemplate(ICPPFunctionTemplate original, PDOMCPPFunctionTemplate template,
@@ -398,7 +392,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fOriginalFunctionType= original.getType();
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= template.extractExceptionSpec(original);
-			fReturnExpression= CPPFunction.getReturnExpression(original, point);
 			fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
 			postProcesses.add(this);
 		}
@@ -411,7 +404,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					tp.configure(fOriginalTemplateParameters[i]);
 			}
 			fTemplate.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec,
-					fReturnExpression, fFunctionBody);
+					fFunctionBody);
 		}
 	}
 

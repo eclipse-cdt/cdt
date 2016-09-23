@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
@@ -81,11 +80,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	/** Offset of the number of the required arguments. */
 	private static final int REQUIRED_ARG_COUNT = ANNOTATION + 2; // short
 
-	/** Offset of the return expression for constexpr functions. */
-	private static final int RETURN_EXPRESSION = REQUIRED_ARG_COUNT + 2; // Database.EVALUATION_SIZE
-	
 	/** Offset of the function body execution for constexpr functions. */
-	private static final int FUNCTION_BODY = RETURN_EXPRESSION + Database.EVALUATION_SIZE; // Database.EXECUTION_SIZE
+	private static final int FUNCTION_BODY = REQUIRED_ARG_COUNT + 2; // Database.EXECUTION_SIZE
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
@@ -125,12 +121,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	public void initData(ICPPFunctionType ftype, ICPPParameter[] params, IType[] exceptionSpec,
-			ICPPEvaluation returnExpression, ICPPExecution functionBody) {
+			ICPPExecution functionBody) {
 		try {
 			setType(ftype);
 			setParameters(params);
 			storeExceptionSpec(exceptionSpec);
-			getLinkage().storeEvaluation(record + RETURN_EXPRESSION, returnExpression);
 			getLinkage().storeExecution(record + FUNCTION_BODY, functionBody);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -191,7 +186,6 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		if (oldRec != 0) {
 			PDOMCPPTypeList.clearTypes(this, oldRec);
 		}
-		linkage.storeEvaluation(record + RETURN_EXPRESSION, CPPFunction.getReturnExpression(func, point));
 		linkage.storeExecution(record + FUNCTION_BODY, CPPFunction.getFunctionBodyExecution(func, point));
 	}
 
@@ -416,19 +410,6 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record + EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
-	}
-
-	@Override
-	public ICPPEvaluation getReturnExpression(IASTNode point) {
-		if (!isConstexpr())
-			return null;
-
-		try {
-			return (ICPPEvaluation) getLinkage().loadEvaluation(record + RETURN_EXPRESSION);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

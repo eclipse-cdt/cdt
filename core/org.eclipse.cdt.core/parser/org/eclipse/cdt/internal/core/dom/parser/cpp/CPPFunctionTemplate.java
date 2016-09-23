@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -435,16 +434,6 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			return types;
 		}
 		return null;
-	}
-
-	@Override
-	public ICPPEvaluation getReturnExpression(IASTNode point) {
-		if (!isConstexpr())
-			return null;
-		ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(getDefinition());
-		if (functionDefinition == null)
-			return EvalFixed.INCOMPLETE;
-		return CPPFunction.getReturnExpression(functionDefinition);
 	}
 
 	@Override

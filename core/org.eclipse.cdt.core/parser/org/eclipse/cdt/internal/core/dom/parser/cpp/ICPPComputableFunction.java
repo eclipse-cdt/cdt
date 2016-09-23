@@ -17,13 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  */
 public interface ICPPComputableFunction {
 	/**
-	 * For a constexpr function returns the return statement expression. Otherwise returns
-	 * {@code null}.
-	 * @param point the point of instantiation for name lookups
-	 */
-	public ICPPEvaluation getReturnExpression(IASTNode point);
-
-	/**
 	 * For a constexpr function returns the ICPPExecution for its body. Otherwise returns
 	 * {@code null}.
 	 * @param point the point of instantiation for name lookups

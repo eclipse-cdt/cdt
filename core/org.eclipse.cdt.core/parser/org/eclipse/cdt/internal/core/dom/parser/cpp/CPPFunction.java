@@ -18,18 +18,14 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -55,7 +51,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -669,51 +664,6 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	public boolean isNoReturn() {
 		ICPPASTFunctionDeclarator dtor = getPreferredDtor();
 		return dtor != null && AttributeUtil.hasNoreturnAttribute(dtor);
-	}
-
-	@Override
-	public ICPPEvaluation getReturnExpression(IASTNode point) {
-		if (!isConstexpr())
-			return null;
-		if (definition == null)
-			return EvalFixed.INCOMPLETE;
-
-		IASTNode node = ASTQueries.findOutermostDeclarator(definition).getParent();
-	    return getReturnExpression((IASTFunctionDefinition) node);
-	}
-
-	static ICPPEvaluation getReturnExpression(IASTFunctionDefinition functionDefinition) {
-		IASTReturnStatement returnStatement = null;
-		// Make sure ambiguity resolution has been performed on the function body, even
-		// if it's a class method and we're still processing the class declaration.
-		((ASTNode) functionDefinition).resolvePendingAmbiguities();
-	    IASTStatement body = functionDefinition.getBody();
-	    if (body instanceof IASTReturnStatement) {
-	    	returnStatement = (IASTReturnStatement) body;
-	    } else if (body instanceof IASTCompoundStatement) {
-	    	for (IASTStatement statement : ((IASTCompoundStatement) body).getStatements()) {
-	    		if (statement instanceof IASTReturnStatement) {
-	    			if (returnStatement != null)
-	    				return EvalFixed.INCOMPLETE;
-	    			returnStatement = (IASTReturnStatement) statement;
-	    		}
-	    	}
-	    }
-	    if (returnStatement == null)
-			return EvalFixed.INCOMPLETE;  // constexpr constructors are not supported yet.
-
-	    IASTInitializerClause returnExpression = returnStatement.getReturnArgument();
-	    if (returnExpression instanceof ICPPEvaluationOwner)
-	    	return ((ICPPEvaluationOwner) returnExpression).getEvaluation();
-
-	    return EvalFixed.INCOMPLETE;
-	}
-
-	public static ICPPEvaluation getReturnExpression(ICPPFunction function, IASTNode point) {
-		if (function instanceof ICPPComputableFunction) {
-			return ((ICPPComputableFunction) function).getReturnExpression(point);
-		}
-		return null;
 	}
 
 	public static ICPPExecution getFunctionBodyExecution(ICPPFunction function, IASTNode point) {

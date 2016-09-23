@@ -274,11 +274,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  
 	 *  CDT 9.2 development (versions not supported on the 9.0.x branch)
 	 *  202.0 - C++14 constexpr evaluation, bug 490475.
-	 *  202.0 - Use 16 bits to store field position, bug 501616.
+	 *  203.0 - Use 16 bits to store field position, bug 501616.
+	 *  204.0 - Do not store return expression in index, follow-up to bug 490475.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(203, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(203, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(203, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(204, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(204, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(204, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

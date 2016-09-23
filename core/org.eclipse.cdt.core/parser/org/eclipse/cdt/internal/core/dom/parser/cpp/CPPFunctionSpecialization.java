@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -36,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -319,30 +317,6 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	@Override
 	public IType[] getExceptionSpecification() {
 		return fExceptionSpecs;
-	}
-
-	@Override
-	public ICPPEvaluation getReturnExpression(IASTNode point) {
-		if (!isConstexpr())
-			return null;
-
-		IASTNode def = getDefinition();
-		if (def != null) {
-			ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(def);
-			return CPPFunction.getReturnExpression(functionDefinition);
-		}
-		IBinding f = getSpecializedBinding();
-		if (f instanceof ICPPComputableFunction) {
-			ICPPEvaluation eval = ((ICPPComputableFunction) f).getReturnExpression(point);
-			if (eval != null) {
-				ICPPClassSpecialization within = CPPTemplates.getSpecializationContext(getOwner());
-				InstantiationContext context =
-						new InstantiationContext(getTemplateParameterMap(), within, point);
- 				eval = eval.instantiate(context, IntegralValue.MAX_RECURSION_DEPTH);
-			}
-			return eval;
-		}
-		return null;
 	}
 
 	@Override

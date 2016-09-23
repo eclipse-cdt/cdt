@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -71,11 +70,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	/** Offset of the number of the required arguments. */
 	private static final int REQUIRED_ARG_COUNT = ANNOTATION + 2; // short
 
-	/** Offset of the return expression for constexpr functions. */
-	private static final int RETURN_EXPRESSION = REQUIRED_ARG_COUNT + 2; // Database.EVALUATION_SIZE
-	
 	/** Offset of the function body execution for constexpr functions. */
-	private static final int FUNCTION_BODY = RETURN_EXPRESSION + Database.EVALUATION_SIZE; // Database.EXECUTION_SIZE
+	private static final int FUNCTION_BODY = REQUIRED_ARG_COUNT + 2; // Database.EXECUTION_SIZE
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunctionSpecialization record in the database.
@@ -161,11 +157,10 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		super(linkage, bindingRecord);
 	}
 	
-	public void initData(ICPPEvaluation returnExpression, ICPPExecution functionBody) {
-		if (returnExpression == null && functionBody == null)
+	public void initData(ICPPExecution functionBody) {
+		if (functionBody == null)
 			return;
 		try {
-			getLinkage().storeEvaluation(record + RETURN_EXPRESSION, returnExpression);
 			getLinkage().storeExecution(record + FUNCTION_BODY, functionBody);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -334,19 +329,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record + EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
-	}
-
-	@Override
-	public ICPPEvaluation getReturnExpression(IASTNode point) {
-		if (!isConstexpr())
-			return null;
-
-		try {
-			return (ICPPEvaluation) getLinkage().loadEvaluation(record + RETURN_EXPRESSION);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

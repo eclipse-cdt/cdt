@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -40,7 +41,7 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for function specialization in the index. 
  */
 class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
-		implements ICPPFunction, ICPPComputableFunction {
+		implements ICPPFunctionSpecialization, ICPPComputableFunction {
 	/**
 	 * Offset of total number of function parameters (relative to the beginning of the record).
 	 */

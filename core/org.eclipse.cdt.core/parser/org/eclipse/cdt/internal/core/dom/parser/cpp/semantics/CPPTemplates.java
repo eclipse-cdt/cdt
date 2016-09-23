@@ -84,12 +84,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructorSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -3103,8 +3105,7 @@ public class CPPTemplates {
 	 * Returns the instantiated function body of the given function specialization.
 	 * @param point The point of instantiation for name lookups
 	 */
-	public static <T extends ICPPFunction & ICPPSpecialization> ICPPExecution instantiateFunctionBody(T f,
-			IASTNode point) {
+	public static ICPPExecution instantiateFunctionBody(ICPPFunctionSpecialization f, IASTNode point) {
 		ICPPFunction spec = (ICPPFunction) f.getSpecializedBinding();
 		ICPPExecution exec = null;
 		if (spec instanceof ICPPComputableFunction) {
@@ -3117,9 +3118,8 @@ public class CPPTemplates {
 		}
 		return exec;
 	}
-
-	private static <T extends ICPPFunction & ICPPSpecialization> void addInstantiatedParameters(
-			InstantiationContext context, T spec) {
+	private static void addInstantiatedParameters(InstantiationContext context, 
+			ICPPFunctionSpecialization spec) {
 		ICPPFunction specialized = (ICPPFunction) spec.getSpecializedBinding();
 		ICPPParameter paramSpecs[] = spec.getParameters();
 		ICPPParameter specializedParams[] = specialized.getParameters();
@@ -3137,8 +3137,7 @@ public class CPPTemplates {
 	 * Returns the instantiated constructor chain of the given constructor specialization.
 	 * @param point The point of instantiation for name lookups
 	 */
-	public static <T extends ICPPConstructor & ICPPSpecialization> ICPPExecution instantiateConstructorChain(
-			T f, IASTNode point) {
+	public static ICPPExecution instantiateConstructorChain(ICPPConstructorSpecialization f, IASTNode point) {
 		ICPPConstructor spec = (ICPPConstructor) f.getSpecializedBinding();
 		ICPPExecution exec = null;
 		if (spec != null) {

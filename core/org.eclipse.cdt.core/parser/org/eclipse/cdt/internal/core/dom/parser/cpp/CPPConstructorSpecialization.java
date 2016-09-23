@@ -15,22 +15,22 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructorSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * Specialization of a constructor for a class-template or class-template specialization.
  */
-public class CPPConstructorSpecialization extends CPPMethodSpecialization implements ICPPConstructor {
+public class CPPConstructorSpecialization extends CPPMethodSpecialization 
+		implements ICPPConstructorSpecialization {
 
 	public CPPConstructorSpecialization(ICPPConstructor orig, ICPPClassType owner,
 			ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap, type, exceptionSpecs);
 	}
-
-	static <T extends ICPPConstructor & ICPPSpecialization & ICPPInternalBinding> ICPPExecution
+	static <T extends ICPPConstructorSpecialization & ICPPInternalBinding> ICPPExecution 
 			getConstructorChainExecution(T functionSpec, IASTNode point) {
 		if (!functionSpec.isConstexpr()) {
 			return null;

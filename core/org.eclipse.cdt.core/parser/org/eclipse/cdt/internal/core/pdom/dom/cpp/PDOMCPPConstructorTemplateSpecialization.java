@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructorSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  */
 class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpecialization
-		implements ICPPConstructor {
+		implements ICPPConstructorSpecialization {
 	/** Offset of the constructor chain execution for constexpr constructors. */
 	private static final int CONSTRUCTOR_CHAIN = PDOMCPPMethodTemplateSpecialization.RECORD_SIZE + 0; // Database.EXECUTION_SIZE
 	

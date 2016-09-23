@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_5f2a0db3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-23T15:00:10Z",
+      "side": 1,
+      "message": "Please update with new solution description.  You can use the comment\nyou recently put in Gerrit to explain the last patchset.",
+      "revId": "f8453a16af51ede31347795f31b0f18fb97baa76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_df153d70",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-23T15:00:10Z",
+      "side": 1,
+      "message": "There is already such an extention point right above, can\u0027t we just add the entry there?",
+      "revId": "f8453a16af51ede31347795f31b0f18fb97baa76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_1f30951f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-23T15:00:10Z",
+      "side": 1,
+      "message": "\"allows\" with an \u0027s\u0027",
+      "revId": "f8453a16af51ede31347795f31b0f18fb97baa76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_3f2559e2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-09-23T15:00:10Z",
+      "side": 1,
+      "message": "\"with\" instead of the first \"from\"",
+      "revId": "f8453a16af51ede31347795f31b0f18fb97baa76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

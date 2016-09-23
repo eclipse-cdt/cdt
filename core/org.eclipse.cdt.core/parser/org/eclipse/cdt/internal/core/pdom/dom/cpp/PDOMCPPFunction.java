@@ -192,6 +192,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			PDOMCPPTypeList.clearTypes(this, oldRec);
 		}
 		linkage.storeEvaluation(record + RETURN_EXPRESSION, CPPFunction.getReturnExpression(func, point));
+		linkage.storeExecution(record + FUNCTION_BODY, CPPFunction.getFunctionBodyExecution(func, point));
 	}
 
 	private void storeExceptionSpec(IType[] exceptionSpec) throws CoreException {

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructorSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 /**
  * Instantiation of a constructor template
  */
-public class CPPConstructorInstance extends CPPMethodInstance implements ICPPConstructor {
+public class CPPConstructorInstance extends CPPMethodInstance implements ICPPConstructorSpecialization {
 
 	public CPPConstructorInstance(ICPPConstructor orig, ICPPClassType owner, ICPPTemplateParameterMap tpmap,
 			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpec) {

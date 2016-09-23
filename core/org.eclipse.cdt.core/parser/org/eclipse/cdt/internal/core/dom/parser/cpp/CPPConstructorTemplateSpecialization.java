@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructorSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
  * Specialization of a constructor template
  */
 public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpecialization
-		implements ICPPConstructor {
+		implements ICPPConstructorSpecialization {
 
 	public CPPConstructorTemplateSpecialization(ICPPConstructor original,
 			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpmap, ICPPFunctionType type, IType[] exceptionSpecs) {

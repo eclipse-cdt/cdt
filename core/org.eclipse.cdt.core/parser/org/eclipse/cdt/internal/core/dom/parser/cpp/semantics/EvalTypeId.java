@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -30,8 +32,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -77,6 +79,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (arguments == null)
 			throw new NullPointerException("arguments"); //$NON-NLS-1$
 
+		if (!CPPTemplates.isDependentType(type))
+			type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
 		fInputType= type;
 		fArguments= arguments;
 		fRepresentsNewExpression = forNewExpression;
@@ -179,7 +183,6 @@ public class EvalTypeId extends CPPDependentEvaluation {
 					default:
 						return IntegralValue.UNKNOWN;
 				}
-
 			}
 		}
 		if (fArguments.length == 1) {

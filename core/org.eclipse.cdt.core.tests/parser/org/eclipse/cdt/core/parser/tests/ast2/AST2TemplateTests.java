@@ -7482,6 +7482,65 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct true_type {
+	//	  constexpr operator bool() const { return true; }
+	//	};
+	//	
+	//	struct false_type {
+	//	  constexpr operator bool() const { return false; }
+	//	};
+	//	
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//	
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//	
+	//	template<typename T>
+	//	struct C {
+	//	  T* ptr();
+	//	};
+	//	
+	//	struct A {};
+	//	
+	//	struct B {
+	//	  B(A a);
+	//	};
+	//	
+	//	template<class T>
+	//	auto ptr1(T t) -> decltype(t.ptr());
+	//	
+	//	template <typename T>
+	//	struct E {
+	//	  template <typename U>
+	//	  using G = decltype(ptr1(U()));
+	//	  template <typename U>
+	//	  using H = decltype(*U());
+	//	
+	//	  using type1 = H<G<T>>;
+	//	};
+	//	
+	//	template<typename T>
+	//	struct D {
+	//	  typedef true_type type2;
+	//	};
+	//	
+	//	template <typename T>
+	//	using F = typename D<typename E<T>::type1>::type2;
+	//	
+	//	template <typename T, typename = typename enable_if<F<T>{}>::type>
+	//	void waldo(T p);
+	//	
+	//	void test() {
+	//	  C<A> a;
+	//	  waldo(a);
+	//	}
+	public void testAliasTemplate_502109() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename T>
 	//	struct Struct {};
 	//
